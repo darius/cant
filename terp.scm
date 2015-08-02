@@ -310,7 +310,7 @@
      (run    1 ,(lambda (me x) (me x)))
      (run    2 ,(lambda (me x y) (me x y))))))
 
-(define (the-eq? x y)
+(define (is? x y)
   (unwrap x (lambda (x-script x-datum)
               (unwrap y (lambda (y-script y-datum)
                           (and (eq? x-script y-script)
@@ -318,7 +318,7 @@
 
 (define the-global-env
   `((cons ,cons)
-    (is? ,the-eq?)
+    (is? ,is?)
     (symbol? ,symbol?)
     (write ,write)
     (newline ,newline)))
