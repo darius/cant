@@ -7,24 +7,24 @@
   (make _
     ('empty? ()  #t)
     ('has? (k)   #f)
-    ('adjoin (k) (make-adjoin k empty))
+    ('adjoin (k) (adjoin<- k empty))
     ('merge (s)  s)))
 
-(define (make-adjoin n s)
+(define (adjoin<- n s)
   (if ('has? s n)
       s
       (make extension
         ('empty? ()  #f)
         ('has? (k)   (if ('= n k) #t ('has? s k)))
-        ('adjoin (k) (make-adjoin k extension))
-        ('merge (s)  (make-merge extension s)))))
+        ('adjoin (k) (adjoin<- k extension))
+        ('merge (s)  (merge<- extension s)))))
 
-(define (make-merge s1 s2)
+(define (merge<- s1 s2)
   (make meld
     ('empty? ()  (if ('empty? s1) ('empty? s2) #f))
     ('has? (k)   (if ('has? s1 k) #t ('has? s2 k)))
-    ('adjoin (k) (make-adjoin k meld))
-    ('merge (s)  (make-merge meld s))))
+    ('adjoin (k) (adjoin<- k meld))
+    ('merge (s)  (merge<- meld s))))
 
 ;; Smoke test
 
