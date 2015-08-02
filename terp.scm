@@ -267,9 +267,9 @@
 
 ;; Pairs are primitive for the sake of nicely interfacing with the host language
 (define pair-script
-  `((type ,(lambda (me) 'pair))
-    (car  ,car)
-    (cdr  ,cdr)))
+  `((type   ,(lambda (me) 'pair))
+    (first  ,car)
+    (rest   ,cdr)))
 
 (define string-script
   `((type   ,(lambda (me) 'string))
@@ -297,7 +297,7 @@
 
 (define the-global-env
   `((cons ,cons)
-    (eq? ,the-eq?)
+    (is? ,the-eq?)
     (symbol? ,symbol?)
     (write ,write)
     (newline ,newline)))
@@ -309,16 +309,16 @@
          cons)
 (should= (interpret '('- 5 3))
          2)
-(should= (interpret '('car ('cdr '(hello world))))
+(should= (interpret '('first ('rest '(hello world))))
          'world)
 (should= (interpret '('run (make ('run (x) x))
                            '55))
          55)
-(should= (interpret '(let ((x (eq? 4 ('+ 2 2))))
+(should= (interpret '(let ((x (is? 4 ('+ 2 2))))
                        x))
          #t)
 (should= (interpret '(letrec ((fact (lambda (n)
-                                      (if (eq? n 0)
+                                      (if (is? n 0)
                                           1
                                           ('* n (fact ('- n 1)))))))
                        (fact 5)))

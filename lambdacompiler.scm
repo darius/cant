@@ -6,14 +6,14 @@
 (define (expand lexp)
   (if (symbol? lexp)
       (var<- lexp)
-      (if (eq? ('car lexp) 'lambda)
-          (lam<- ('car ('car ('cdr lexp)))
-                 (expand ('car ('cdr ('cdr lexp)))))
-          (app<- (expand ('car lexp))
-                 (expand ('car ('cdr lexp)))))))
+      (if (is? ('first lexp) 'lambda)
+          (lam<- ('first ('first ('rest lexp)))
+                 (expand ('first ('rest ('rest lexp)))))
+          (app<- (expand ('first lexp))
+                 (expand ('first ('rest lexp)))))))
 
 (define (symbol? x)
-  (eq? ('type x) 'symbol))
+  (is? ('type x) 'symbol))
 
 (define (var<- v)
   (make ('free-vars () (list1 v))
@@ -33,7 +33,7 @@
   (make ('free-vars () (union ('free-vars e1) ('free-vars e2)))
         ('compile (r k)
           (let ((code ('compile e2 r ('compile e1 r '(invoke)))))
-            (if (eq? ('car k) 'return)
+            (if (is? ('first k) 'return)
                 code
                 (cons 'pushcont (cons (length code) (append2 code k))))))))
 
@@ -42,7 +42,7 @@
 
 (define (make-static-env v free-vars)
   (lambda (v1)
-    (if (eq? v1 v)
+    (if (is? v1 v)
         'local
         ('+ 1 (list-index v1 free-vars)))))
 

@@ -4,17 +4,17 @@
     (foldr adjoin set2 set1)))
 
 (define (delq x set)
-  (if (eq? '() set)
+  (if (is? '() set)
       '()
-      (if (eq? x ('car set))
-          ('cdr set)
-          (cons ('car set) (delq x ('cdr set))))))
+      (if (is? x ('first set))
+          ('rest set)
+          (cons ('first set) (delq x ('rest set))))))
 
 (define (length xs)
   (letrec ((counting (lambda (n xs)
-                       (if (eq? '() xs)
+                       (if (is? '() xs)
                            n
-                           (counting ('+ n 1) ('cdr xs))))))
+                           (counting ('+ n 1) ('rest xs))))))
     (counting 0 xs)))
 
 (define (map f xs)
@@ -27,22 +27,22 @@
 (define (append2 xs ys)    (foldr cons ys xs))
 
 (define (foldr f z xs)
-  (if (eq? '() xs)
+  (if (is? '() xs)
       z
-      (f ('car xs) (foldr f z ('cdr xs)))))
+      (f ('first xs) (foldr f z ('rest xs)))))
 
 (define (memq? x set)
-  (if (eq? '() set)
+  (if (is? '() set)
       #f
-      (if (eq? x ('car set))
+      (if (is? x ('first set))
           #t
-          (memq? x ('cdr set)))))
+          (memq? x ('rest set)))))
 
 (define (list-index x xs)
   (letrec ((searching (lambda (i xs)
-                        (if (eq? x ('car xs))
+                        (if (is? x ('first xs))
                             i
-                            (searching ('+ n 1) ('cdr xs))))))
+                            (searching ('+ n 1) ('rest xs))))))
     (searching 0 xs)))
 
 (define (print x)
