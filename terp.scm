@@ -174,8 +174,8 @@
                      (cadr e))
            (evaluate (caddr e) new-r)))
         (else
-         (call (evaluate (cadr e) r)
-               (cadar e)
+         (call (cadar e)
+               (evaluate (cadr e) r)
                (map (lambda (operand) (evaluate operand r))
                     (cddr e)))))))
 
@@ -219,7 +219,7 @@
              (receiver (object.script x) (object.datum x))
              (receiver pair-script x)))))
 
-(define (call object selector arguments)
+(define (call selector object arguments)
   (unwrap object
           (lambda (script datum)
             (cond ((assq selector script)
@@ -235,7 +235,7 @@
 (define boolean-script
   `((type ,(lambda (me) 'boolean))
     (choose ,(lambda (me if-true if-false)
-               (call (if me if-true if-false) 'run '())))))
+               (call 'run (if me if-true if-false) '())))))
 
 ;; XXX In a tiny self-hosting system we'd restrict numbers to fixnums.
 ;; So, properly, these should signal overflow outside that range.
