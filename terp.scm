@@ -148,41 +148,75 @@
 
 
 (define (evaluate e r)
+  (ev e r halt-cont))
+
+(define (answer k value) (k value))
+
+(define (halt-cont value) value)
+
+(define (ev e r k)
   (if (symbol? e)
-      (env-lookup r e)
+      (env-lookup r e k)
       (case (car e)
         ((quote)
-         (cadr e))
+         (answer k (cadr e)))
         ((make)
-         (make-object (map (lambda (method)
-                             (list (selector<- (cadar method)
-                                               (length (cadr method)))
-                                   (lambda (r . arguments)
-                                     (evaluate (caddr method)
-                                               (env-extend r
-                                                           (cadr method)
-                                                           arguments)))))
-                           (cdr e))
-                      r))
+         (answer k (make-object (map (lambda (method)
+                                       (list (selector<- (cadar method)
+                                                         (length (cadr method)))
+                                             (lambda (k r . arguments)
+                                               (ev (caddr method)
+                                                   (env-extend r
+                                                               (cadr method)
+                                                               arguments)
+                                                   k))))
+                                     (cdr e))
+                                r)))
         ((letrec)
-         ;; Specified to evaluate left-to-right with a definite
-         ;; 'uninitialized' value.
-         (let ((new-r (env-extend-promises r (map car (cadr e)))))
-           (for-each (lambda (defn)
-                       (env-resolve! new-r
-                                     (car defn)
-                                     (evaluate (cadr defn) new-r)))
-                     (cadr e))
-           (evaluate (caddr e) new-r)))
+         (ev-letrec (cadr e) (caddr e)
+                    (env-extend-promises r (map car (cadr e)))
+                    k))
         (else
-         (call (selector<- (cadar e) (length (cddr e)))
-               (evaluate (cadr e) r)
-               (map (lambda (operand) (evaluate operand r))
-                    (cddr e)))))))
+         (ev (cadr e) r
+             (ev-operands-cont<- (cddr e) r
+                                 (selector<- (cadar e) (length (cddr e)))
+                                 k))))))
 
-(define (env-lookup r v)
-  (cond ((assq v r) => cadr)
-        ((assq v the-global-env) => cadr)
+(define (ev-operands-cont<- operands r selector k)
+  (lambda (receiver)
+    (if (null? operands)
+        (call selector receiver '() k)
+        (ev (car operands) r
+            (ev-remaining-operands-cont<- (cdr operands) '() r
+                                          selector receiver k)))))
+
+(define (ev-remaining-operands-cont<- operands arguments r selector receiver k)
+  (lambda (argument)
+    (if (null? operands)
+        (call selector receiver (reverse (cons argument arguments)) k)
+        (ev (car operands) r
+            (ev-remaining-operands-cont<- (cdr operands)
+                                          (cons argument arguments)
+                                          r selector receiver k)))))
+
+(define (ev-letrec defns body new-r k)
+  (if (null? defns)                     ;XXX shouldn't happen
+      (ev body new-r k)
+      (ev (cadar defns) new-r
+          (letrec-cont<- defns body new-r k))))
+
+(define (letrec-cont<- defns body new-r k)
+  (lambda (value)
+    (env-resolve! new-r (caar defns) value)
+    (if (null? (cdr defns))
+        (ev body new-r k)
+        (ev (cadr defns) new-r
+            (letrec-cont<- (cdr defns) body new-r k)))))
+
+(define (env-lookup r v k)
+  (define (succeed pair) (answer k (cadr pair)))
+  (cond ((assq v r) => succeed)
+        ((assq v the-global-env) => succeed)
         (else (error "Unbound variable" v))))
 
 (define (env-extend r vs values)
@@ -220,12 +254,12 @@
              (receiver (object.script x) (object.datum x))
              (receiver pair-script x)))))
 
-(define (call selector object arguments)
+(define (call selector object arguments k)
   (unwrap object
           (lambda (script datum)
             (cond ((assoc selector script) ;XXX assq when memoized
                    => (lambda (pair)
-                        (apply (cadr pair) datum arguments)))
+                        (apply (cadr pair) k datum arguments)))
                   (else (error "No method found" selector object))))))
 
 (define uninitialized (make-object '() '*uninitialized*))
@@ -236,19 +270,24 @@
 (define (primitive-script<- entries)
   (map (lambda (entry)
          (apply (lambda (cue arity procedure)
-                  (list (selector<- cue arity) procedure))
+                  (list (selector<- cue arity) (prim<- procedure)))
                 entry))
        entries))
+
+(define (prim<- procedure)
+  (lambda (k . args)
+    (answer k (apply procedure args))))
 
 (define (selector<- cue arity) (cons cue arity))
 
 (define run/0 (selector<- 'run 0))
 
 (define boolean-script
-  (primitive-script<-
-   `((type   0 ,(lambda (me) 'boolean))
-     (choose 2 ,(lambda (me if-true if-false)
-                  (call run/0 (if me if-true if-false) '()))))))
+  (cons (list (selector<- 'choose 2)
+              (lambda (k me if-true if-false)
+                (call run/0 (if me if-true if-false) '() k)))
+        (primitive-script<-
+         `((type 0 ,(lambda (k me) (answer k 'boolean)))))))
 
 ;; XXX In a tiny self-hosting system we'd restrict numbers to fixnums.
 ;; So, properly, these should signal overflow outside that range.
@@ -299,14 +338,15 @@
    `((type   0 ,(lambda (me) 'vector))
      (count  0 ,vector-length)
      (run    1 ,vector-ref)
-     (put!   2 ,(lambda (me i value)
+     (set!   2 ,(lambda (me i value)
                   (vector-set! me i value)
                   #f)))))
 
 (define scheme-procedure-script
   (primitive-script<-
    `((type   0 ,(lambda (me) 'procedure))
-     (run    0 ,(lambda (me) (me))) ;XXX should only define arities that work
+     ;;XXX should only define arities that work:
+     (run    0 ,(lambda (me) (me)))
      (run    1 ,(lambda (me x) (me x)))
      (run    2 ,(lambda (me x y) (me x y))))))
 
