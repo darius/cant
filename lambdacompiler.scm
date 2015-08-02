@@ -6,11 +6,11 @@
 (define (expand lexp)
   (if (symbol? lexp)
       (var<- lexp)
-      (if (is? ('first lexp) 'lambda)
-          (lam<- ('first ('first ('rest lexp)))
-                 (expand ('first ('rest ('rest lexp)))))
-          (app<- (expand ('first lexp))
-                 (expand ('first ('rest lexp)))))))
+      (if (is? (lexp 0) 'lambda)
+          (lam<- ((lexp 1) 0)
+                 (expand (lexp 2)))
+          (app<- (expand (lexp 0))
+                 (expand (lexp 1))))))
 
 (define (symbol? x)
   (is? ('type x) 'symbol))
@@ -25,8 +25,8 @@
           ('compile (r k)
             (let ((code ('compile e (make-static-env v free-vars) '(return))))
               (cons 'make-closure 
-                    (cons (length free-vars)
-                          (cons (length code)
+                    (cons ('count free-vars)
+                          (cons ('count code)
                                 (chain (map r free-vars) code k)))))))))
 
 (define (app<- e1 e2)
@@ -35,7 +35,7 @@
           (let ((code ('compile e2 r ('compile e1 r '(invoke)))))
             (if (is? ('first k) 'return)
                 code
-                (cons 'pushcont (cons (length code) (chain code k))))))))
+                (cons 'pushcont (cons ('count code) (chain code k))))))))
 
 (define (global-static-env v)
   (error "Unbound variable" v))

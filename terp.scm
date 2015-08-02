@@ -271,7 +271,9 @@
 
 (define nil-script
   (primitive-script<-
-   `((type   0 ,(lambda (me) 'nil)))))
+   `((type   0 ,(lambda (me) 'nil))
+     (count  0 ,length)
+     (run    1 ,list-ref))))
 
 (define char-script
   (primitive-script<-
@@ -282,18 +284,20 @@
   (primitive-script<-
    `((type   0 ,(lambda (me) 'pair))
      (first  0 ,car)
-     (rest   0 ,cdr))))
+     (rest   0 ,cdr)
+     (count  0 ,length)
+     (run    1 ,list-ref))))
 
 (define string-script
   (primitive-script<-
    `((type   0 ,(lambda (me) 'string))
-     (length 0 ,string-length)
+     (count  0 ,string-length)
      (run    1 ,string-ref))))
 
 (define vector-script
   (primitive-script<-
    `((type   0 ,(lambda (me) 'vector))
-     (length 0 ,vector-length)
+     (count  0 ,vector-length)
      (run    1 ,vector-ref)
      (put!   2 ,(lambda (me i value)
                   (vector-set! me i value)
