@@ -227,11 +227,6 @@
                         (apply (cadr pair) datum arguments)))
                   (else (error "No method found" selector object))))))
 
-(define (must-be ok? x)
-  (if (ok? x)
-      x
-      (error "Bad argument type" x)))
-
 (define uninitialized (make-object '() '*uninitialized*))
 
 ;; A really half-baked selection of types and methods below, just for
