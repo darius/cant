@@ -16,7 +16,7 @@
   (is? ('type x) 'symbol))
 
 (define (var<- v)
-  (make ('free-vars () (list1 v))
+  (make ('free-vars () (list<- v))
         ('compile (r k) (cons (r v) k))))
 
 (define (lam<- v e)
@@ -27,7 +27,7 @@
               (cons 'make-closure 
                     (cons (length free-vars)
                           (cons (length code)
-                                (append3 (map r free-vars) code k)))))))))
+                                (chain (map r free-vars) code k)))))))))
 
 (define (app<- e1 e2)
   (make ('free-vars () (union ('free-vars e1) ('free-vars e2)))
@@ -35,7 +35,7 @@
           (let ((code ('compile e2 r ('compile e1 r '(invoke)))))
             (if (is? ('first k) 'return)
                 code
-                (cons 'pushcont (cons (length code) (append2 code k))))))))
+                (cons 'pushcont (cons (length code) (chain code k))))))))
 
 (define (global-static-env v)
   (error "Unbound variable" v))

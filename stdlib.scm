@@ -22,9 +22,15 @@
          '()
          xs))
 
-(define (list1 x)          (cons x '()))
-(define (append3 xs ys zs) (append2 xs (append2 ys zs)))
-(define (append2 xs ys)    (foldr cons ys xs))
+(define list<-
+  (make ('run () '())
+        ('run (x) (cons x '()))))
+
+(define chain
+  (make ('run () '())
+        ('run (xs) xs)
+        ('run (xs ys) (foldr cons ys xs))
+        ('run (xs ys zs) (chain xs (chain ys zs)))))
 
 (define (foldr f z xs)
   (if (is? '() xs)

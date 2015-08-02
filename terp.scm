@@ -155,7 +155,8 @@
          (cadr e))
         ((make)
          (make-object (map (lambda (method)
-                             (list (cadar method)
+                             (list (selector<- (cadar method)
+                                               (length (cadr method)))
                                    (lambda (r . arguments)
                                      (evaluate (caddr method)
                                                (env-extend r
@@ -174,7 +175,7 @@
                      (cadr e))
            (evaluate (caddr e) new-r)))
         (else
-         (call (cadar e)
+         (call (selector<- (cadar e) (length (cddr e)))
                (evaluate (cadr e) r)
                (map (lambda (operand) (evaluate operand r))
                     (cddr e)))))))
@@ -222,7 +223,7 @@
 (define (call selector object arguments)
   (unwrap object
           (lambda (script datum)
-            (cond ((assq selector script)
+            (cond ((assoc selector script) ;XXX assq when memoized
                    => (lambda (pair)
                         (apply (cadr pair) datum arguments)))
                   (else (error "No method found" selector object))))))
@@ -239,7 +240,7 @@
                 entry))
        entries))
 
-(define (selector<- cue arity) cue)
+(define (selector<- cue arity) (cons cue arity))
 
 (define run/0 (selector<- 'run 0))
 
@@ -301,7 +302,9 @@
 (define scheme-procedure-script
   (primitive-script<-
    `((type   0 ,(lambda (me) 'procedure))
-     (run    0 ,(lambda (me . args) (apply me args)))))) ;XXX
+     (run    0 ,(lambda (me) (me))) ;XXX should only define arities that work
+     (run    1 ,(lambda (me x) (me x)))
+     (run    2 ,(lambda (me x y) (me x y))))))
 
 (define (the-eq? x y)
   (unwrap x (lambda (x-script x-datum)
