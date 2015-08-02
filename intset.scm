@@ -1,6 +1,8 @@
 ;; An example ooscheme program, from William Cook's essay on OOP vs. ADTs
 ;; http://www.cs.utexas.edu/~wcook/Drafts/2009/essay.pdf
 
+(load "stdlib.scm")
+
 (define empty
   (make _
     ('empty? ()  #t)
@@ -25,10 +27,6 @@
     ('merge (s)  (make-merge meld s))))
 
 ;; Smoke test
-
-(define (print x)
-  (write x)
-  (newline))
 
 (define eg ('adjoin ('adjoin empty 6) 5))
 

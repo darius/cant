@@ -44,3 +44,7 @@
                             i
                             (searching ('+ n 1) ('cdr xs))))))
     (searching 0 xs)))
+
+(define (print x)
+  (write x)
+  (newline))
