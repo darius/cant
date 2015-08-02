@@ -232,57 +232,76 @@
 ;; A really half-baked selection of types and methods below, just for
 ;; a concrete start.
 
+(define (primitive-script<- entries)
+  (map (lambda (entry)
+         (apply (lambda (cue arity procedure)
+                  (list (selector<- cue arity) procedure))
+                entry))
+       entries))
+
+(define (selector<- cue arity) cue)
+
+(define run/0 (selector<- 'run 0))
+
 (define boolean-script
-  `((type ,(lambda (me) 'boolean))
-    (choose ,(lambda (me if-true if-false)
-               (call 'run (if me if-true if-false) '())))))
+  (primitive-script<-
+   `((type   0 ,(lambda (me) 'boolean))
+     (choose 2 ,(lambda (me if-true if-false)
+                  (call run/0 (if me if-true if-false) '()))))))
 
 ;; XXX In a tiny self-hosting system we'd restrict numbers to fixnums.
 ;; So, properly, these should signal overflow outside that range.
 (define number-script
-  `((type ,(lambda (me) 'number))
-    (+ ,+)
-    (- ,-)
-    (* ,*)
-    (quotient ,quotient)
-    (remainder ,remainder)
-    (< ,<)
-    (= ,=)
-    ))
+  (primitive-script<-
+   `((type      0 ,(lambda (me) 'number))
+     (+         1 ,+)
+     (-         1 ,-)
+     (*         1 ,*)
+     (quotient  1 ,quotient)
+     (remainder 1 ,remainder)
+     (<         1 ,<)
+     (=         1 ,=)
+     )))
 
 (define symbol-script
-  `((type ,(lambda (me) 'symbol))
-    (name ,symbol->string)))
+  (primitive-script<-
+   `((type   0 ,(lambda (me) 'symbol))
+     (name   0 ,symbol->string))))
 
 (define nil-script
-  `((type ,(lambda (me) 'nil))))
+  (primitive-script<-
+   `((type   0 ,(lambda (me) 'nil)))))
 
 (define char-script
-  `((type ,(lambda (me) 'char)))) 
+  (primitive-script<-
+   `((type   0 ,(lambda (me) 'char)))))
 
 ;; Pairs are primitive for the sake of nicely interfacing with the host language
 (define pair-script
-  `((type   ,(lambda (me) 'pair))
-    (first  ,car)
-    (rest   ,cdr)))
+  (primitive-script<-
+   `((type   0 ,(lambda (me) 'pair))
+     (first  0 ,car)
+     (rest   0 ,cdr))))
 
 (define string-script
-  `((type   ,(lambda (me) 'string))
-    (length ,string-length)
-    (run    ,string-ref)))
+  (primitive-script<-
+   `((type   0 ,(lambda (me) 'string))
+     (length 0 ,string-length)
+     (run    1 ,string-ref))))
 
-;; NB for a compiler all we badly need is a mutable box type, not full vectors
 (define vector-script
-  `((type   ,(lambda (me) 'vector))
-    (length ,vector-length)
-    (run    ,vector-ref)
-    (put!   ,(lambda (me i value)
-               (vector-set! me i value)
-               #f))))
+  (primitive-script<-
+   `((type   0 ,(lambda (me) 'vector))
+     (length 0 ,vector-length)
+     (run    1 ,vector-ref)
+     (put!   2 ,(lambda (me i value)
+                  (vector-set! me i value)
+                  #f)))))
 
 (define scheme-procedure-script
-  `((type ,(lambda (me) 'procedure))
-    (run ,(lambda (me . args) (apply me args)))))
+  (primitive-script<-
+   `((type   0 ,(lambda (me) 'procedure))
+     (run    0 ,(lambda (me . args) (apply me args)))))) ;XXX
 
 (define (the-eq? x y)
   (unwrap x (lambda (x-script x-datum)
