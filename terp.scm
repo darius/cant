@@ -439,10 +439,22 @@
                           (and (eq? x-script y-script)
                                (eqv? x-datum y-datum)))))))
 
+(define (box<- x)
+  (object<- box-script (vector x)))
+
+(define box-script
+  (prim-script<- prim<-
+   `((type   0 ,(lambda (datum) 'box))
+     (run    0 ,(lambda (datum) (vector-ref datum 0)))
+     (set!   1 ,(lambda (datum value)
+                  (vector-set! datum 0 value)
+                  #f)))))
+
 (define the-global-env
   `((cons ,cons)
     (is? ,is?)
     (symbol? ,symbol?)
+    (box<- ,box<-)
     (write ,write)
     (newline ,newline)
     (evaluate ,evaluate-prim)))
@@ -482,3 +494,7 @@
          #f)
 (should= (interpret '(evaluate '('- 5 3) '()))
          2)
+(should= (interpret '(let ((b (box<- 42)))
+                       ('set! b ('+ (b) 1))
+                       (b)))
+         43)
