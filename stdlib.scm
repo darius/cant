@@ -25,8 +25,8 @@
 (define list<-
   (make ('run () '())
         ('run (a) (cons a '()))
-        ('run (a b) (cons a (list b)))
-        ('run (a b c) (cons a (list b c)))))
+        ('run (a b) (cons a (list<- b)))
+        ('run (a b c) (cons a (list<- b c)))))
 
 (define chain
   (make ('run () '())
