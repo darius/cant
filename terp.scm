@@ -185,7 +185,7 @@
             (cond ((assoc selector script) ;XXX assq when memoized
                    => (lambda (pair)
                         (apply (cadr pair) k datum arguments)))
-                  (else (error "No method found" selector object))))))
+                  (else (signal k "No method found" selector object))))))
 
 (define (selector<- cue arity) (cons cue arity))
 
@@ -194,6 +194,9 @@
   (call answer/1 k (list value) 'ignored))
 
 (define answer/1 (selector<- 'answer 1))
+
+(define (signal k plaint . values)
+  (apply error plaint values))
 
 
 ;; A small-step interpreter
@@ -288,7 +291,7 @@
   (define (succeed pair) (answer k (cadr pair)))
   (cond ((assq v r) => succeed)
         ((assq v the-global-env) => succeed)
-        (else (error "Unbound variable" v))))
+        (else (signal k "Unbound variable" v))))
 
 (define (env-extend r vs values)
   (append (map list vs values) r))
@@ -306,6 +309,7 @@
 
 
 ;; Primitive types and functions
+;; TODO: signal any errors instead of panicking
 
 (define (primitive-script<- entries)
   (map (lambda (entry)
