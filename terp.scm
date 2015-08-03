@@ -198,22 +198,61 @@
 (define (signal k plaint . values)
   (apply error plaint values))
 
+(define (prim-script<- wrap-method entries)
+  (map (lambda (entry)
+         (apply (lambda (cue arity procedure)
+                  (list (selector<- cue arity) (wrap-method procedure)))
+                entry))
+       entries))
+
+(define (identity x) x)                 ; a wrap-method
+
+(define (prim<- procedure)              ; another wrap-method
+  (lambda (k . args)
+    (answer k (apply procedure args))))
+
 
 ;; A small-step interpreter
 
 (define (evaluate e r)
   (ev e r halt-cont))
 
-(define (cont-script<- handler)
-  `((,answer/1 ,(lambda (_ datum value)
-                  (apply handler value datum)))))
-
 (define (cont<- script . data)
   (object<- script data))
 
+(define (answer-script<- to-answer)
+  (prim-script<- identity
+   `((answer 1 ,(lambda (_ datum value)
+                  (apply to-answer value datum))))))
+
 (define halt-cont
   (cont<-
-   (cont-script<- (lambda (value) value))))
+   (append
+    (answer-script<- (lambda (value) value))
+    (prim-script<- identity
+     (let ((complain (lambda (k _) (signal k "No more frames" halt-cont))))
+       `((first 0 ,complain)
+         (rest  0 ,complain)
+         (run   1 ,complain))))
+    (prim-script<- prim<-
+     `((empty? 0 ,(lambda (_) #t))
+       (count  0 ,(lambda (_) 0)))))))
+
+;; Script for nonempty continuations, i.e. ones other than halt-cont.
+(define (cont-script<- to-answer)
+  (append
+   (answer-script<- to-answer)
+   (prim-script<- prim<-
+    `((empty? 0 ,(lambda (datum) #f))
+      ;; rest/0 gets the enclosing continuation, which is always
+      ;; the first element of datum.
+      (rest   0 ,car)
+      (first  0 ,(lambda (datum) (error "XXX unimplemented")))
+      ))
+   (prim-script<- identity
+    `((count 0 ,(lambda (k datum) (signal k "XXX unimplemented")))
+      (run   1 ,(lambda (k datum) (signal k "XXX unimplemented")))
+      ))))
 
 (define (ev e r k)
   (if (symbol? e)
@@ -242,42 +281,41 @@
                     k))
         (else
          (ev (cadr e) r
-             (cont<- ev-operands-cont-script
+             (cont<- ev-operands-cont-script k
                      (cddr e) r
-                     (selector<- (cadar e) (length (cddr e)))
-                     k))))))
+                     (selector<- (cadar e) (length (cddr e)))))))))
 
 (define ev-operands-cont-script
   (cont-script<-
-   (lambda (receiver operands r selector k)
+   (lambda (receiver k operands r selector)
      (if (null? operands)
          (call selector receiver '() k)
          (ev (car operands) r
-             (cont<- ev-remaining-operands-cont-script
-                     (cdr operands) '() r selector receiver k))))))
+             (cont<- ev-remaining-operands-cont-script k
+                     (cdr operands) '() r selector receiver))))))
 
 (define ev-remaining-operands-cont-script
   (cont-script<-
-   (lambda (argument operands arguments r selector receiver k)
+   (lambda (argument k operands arguments r selector receiver)
      (if (null? operands)
          (call selector receiver (reverse (cons argument arguments)) k)
          (ev (car operands) r
-             (cont<- ev-remaining-operands-cont-script
+             (cont<- ev-remaining-operands-cont-script k
                      (cdr operands) (cons argument arguments)
-                     r selector receiver k))))))
+                     r selector receiver))))))
 
 (define (ev-letrec defns body new-r k)
   (ev (cadar defns) new-r
-      (cont<- letrec-cont-script defns body new-r k)))
+      (cont<- letrec-cont-script k defns body new-r)))
 
 (define letrec-cont-script
   (cont-script<-
-   (lambda (value defns body new-r k)
+   (lambda (value k defns body new-r)
      (env-resolve! new-r (caar defns) value)
      (if (null? (cdr defns))
          (ev body new-r k)
          (ev (cadadr defns) new-r
-             (cont<- letrec-cont-script (cdr defns) body new-r k))))))
+             (cont<- letrec-cont-script k (cdr defns) body new-r))))))
 
 
 ;; Environments
@@ -310,19 +348,6 @@
 ;; Many needn't be primitive, but are for the sake of nicely
 ;; interfacing with the host language.
 ;; TODO: signal any errors instead of panicking
-
-(define (prim-script<- wrap-method entries)
-  (map (lambda (entry)
-         (apply (lambda (cue arity procedure)
-                  (list (selector<- cue arity) (wrap-method procedure)))
-                entry))
-       entries))
-
-(define (prim<- procedure)
-  (lambda (k . args)
-    (answer k (apply procedure args))))
-
-(define (identity x) x)
 
 (define run/0 (selector<- 'run 0))
 (define run/2 (selector<- 'run 2))
