@@ -8,6 +8,9 @@
 ;;   | (LETREC ((v e) ...) e)
 ;;   | ((QUOTE selector) e e ...)    [call method of object]
 
+
+;; Running a program
+
 (define (run-load filename)
   (call-with-input-file filename
     (lambda (port)
@@ -33,6 +36,9 @@
 
 (define (interpret e)
   (evaluate (elaborate e) '()))
+
+
+;; Expanding out syntactic sugar
 
 (define (elaborate e)
   (cond ((symbol? e) e)
@@ -99,6 +105,8 @@
       (string? x)))
 
 
+;; Smoke test of elaboration
+
 (define (assert ok? plaint culprit)
   (if (not ok?)
       (error plaint culprit)
@@ -146,89 +154,7 @@
                for-each))))
 
 
-(define (evaluate e r)
-  (ev e r halt-cont))
-
-(define (answer k value) (k value))
-
-(define (halt-cont value) value)
-
-(define (ev e r k)
-  (if (symbol? e)
-      (env-lookup r e k)
-      (case (car e)
-        ((quote)
-         (answer k (cadr e)))
-        ((make)
-         (answer k (object<- (map (lambda (method)
-                                    (list (selector<- (cadar method)
-                                                      (length (cadr method)))
-                                          (lambda (k r . arguments)
-                                            (ev (caddr method)
-                                                (env-extend r
-                                                            (cadr method)
-                                                            arguments)
-                                                k))))
-                                  (cdr e))
-                             r)))
-        ((letrec)
-         (ev-letrec (cadr e) (caddr e)
-                    (env-extend-promises r (map car (cadr e)))
-                    k))
-        (else
-         (ev (cadr e) r
-             (ev-operands-cont<- (cddr e) r
-                                 (selector<- (cadar e) (length (cddr e)))
-                                 k))))))
-
-(define (ev-operands-cont<- operands r selector k)
-  (lambda (receiver)
-    (if (null? operands)
-        (call selector receiver '() k)
-        (ev (car operands) r
-            (ev-remaining-operands-cont<- (cdr operands) '() r
-                                          selector receiver k)))))
-
-(define (ev-remaining-operands-cont<- operands arguments r selector receiver k)
-  (lambda (argument)
-    (if (null? operands)
-        (call selector receiver (reverse (cons argument arguments)) k)
-        (ev (car operands) r
-            (ev-remaining-operands-cont<- (cdr operands)
-                                          (cons argument arguments)
-                                          r selector receiver k)))))
-
-(define (ev-letrec defns body new-r k)
-  (if (null? defns)                     ;XXX shouldn't happen
-      (ev body new-r k)
-      (ev (cadar defns) new-r
-          (letrec-cont<- defns body new-r k))))
-
-(define (letrec-cont<- defns body new-r k)
-  (lambda (value)
-    (env-resolve! new-r (caar defns) value)
-    (if (null? (cdr defns))
-        (ev body new-r k)
-        (ev (cadr defns) new-r
-            (letrec-cont<- (cdr defns) body new-r k)))))
-
-(define (env-lookup r v k)
-  (define (succeed pair) (answer k (cadr pair)))
-  (cond ((assq v r) => succeed)
-        ((assq v the-global-env) => succeed)
-        (else (error "Unbound variable" v))))
-
-(define (env-extend r vs values)
-  (append (map list vs values) r))
-
-(define (env-extend-promises r vs)
-  (env-extend r vs (map (lambda (_) uninitialized) vs)))
-
-(define (env-resolve! r v value)
-  (cond ((assq v r) => (lambda (pair)
-                         (assert (eq? (cadr pair) uninitialized) "WTF?" pair)
-                         (set-car! (cdr pair) value)))
-        (else (error "Can't happen" v))))
+;; Objects, calling, and answering
 
 (define object-tag (list '*object))
 
@@ -261,10 +187,125 @@
                         (apply (cadr pair) k datum arguments)))
                   (else (error "No method found" selector object))))))
 
+(define (selector<- cue arity) (cons cue arity))
+
+;; TODO: special-case this path through call for efficiency
+(define (answer k value)
+  (call answer/1 k (list value) 'ignored))
+
+(define answer/1 (selector<- 'answer 1))
+
+
+;; A small-step interpreter
+
+(define (evaluate e r)
+  (ev e r halt-cont))
+
+(define (cont-script<- handler)
+  `((,answer/1 ,(lambda (_ datum value)
+                  (apply handler value datum)))))
+
+(define halt-cont
+  (object<- (cont-script<- (lambda (value) value))
+            '()))
+
+(define (ev e r k)
+  (if (symbol? e)
+      (env-lookup r e k)
+      (case (car e)
+        ((quote)
+         (answer k (cadr e)))
+        ((make)
+         (answer k (object<- (map (lambda (method)
+                                    (list (selector<- (cadar method)
+                                                      (length (cadr method)))
+                                          (lambda (k r . arguments)
+                                            (ev (caddr method)
+                                                (env-extend r
+                                                            (cadr method)
+                                                            arguments)
+                                                k))))
+                                  (cdr e))
+                             r)))
+        ((letrec)
+         (ev-letrec (cadr e) (caddr e)
+                    (env-extend-promises r (map car (cadr e)))
+                    k))
+        (else
+         (ev (cadr e) r
+             (ev-operands-cont<- (cddr e) r
+                                 (selector<- (cadar e) (length (cddr e)))
+                                 k))))))
+
+(define (ev-operands-cont<- operands r selector k)
+  (object<- ev-operands-cont-script (list operands r selector k)))
+
+(define ev-operands-cont-script
+  (cont-script<-
+   (lambda (receiver operands r selector k)
+     (if (null? operands)
+         (call selector receiver '() k)
+         (ev (car operands) r
+             (ev-remaining-operands-cont<- (cdr operands) '() r
+                                           selector receiver k))))))
+
+(define (ev-remaining-operands-cont<- operands arguments r selector receiver k)
+  (object<- ev-remaining-operands-cont-script
+            (list operands arguments r selector receiver k)))
+
+(define ev-remaining-operands-cont-script
+  (cont-script<-
+   (lambda (argument operands arguments r selector receiver k)
+     (if (null? operands)
+         (call selector receiver (reverse (cons argument arguments)) k)
+         (ev (car operands) r
+             (ev-remaining-operands-cont<- (cdr operands)
+                                           (cons argument arguments)
+                                           r selector receiver k))))))
+
+(define (ev-letrec defns body new-r k)
+  (if (null? defns)                     ;XXX shouldn't happen
+      (ev body new-r k)
+      (ev (cadar defns) new-r
+          (letrec-cont<- defns body new-r k))))
+
+(define (letrec-cont<- defns body new-r k)
+  (object<- letrec-cont-script (list defns body new-r k)))
+
+(define letrec-cont-script
+  (cont-script<-
+   (lambda (value defns body new-r k)
+     (env-resolve! new-r (caar defns) value)
+     (if (null? (cdr defns))
+         (ev body new-r k)
+         (ev (cadr defns) new-r
+             (letrec-cont<- (cdr defns) body new-r k))))))
+
+
+;; Environments
+
+(define (env-lookup r v k)
+  (define (succeed pair) (answer k (cadr pair)))
+  (cond ((assq v r) => succeed)
+        ((assq v the-global-env) => succeed)
+        (else (error "Unbound variable" v))))
+
+(define (env-extend r vs values)
+  (append (map list vs values) r))
+
+(define (env-extend-promises r vs)
+  (env-extend r vs (map (lambda (_) uninitialized) vs)))
+
+(define (env-resolve! r v value)
+  (cond ((assq v r) => (lambda (pair)
+                         (assert (eq? (cadr pair) uninitialized) "WTF?" pair)
+                         (set-car! (cdr pair) value)))
+        (else (error "Can't happen" v))))
+
 (define uninitialized (object<- '() '*uninitialized*))
 
-;; A really half-baked selection of types and methods below, just for
-;; a concrete start.
+
+;; Primitive types and functions
 
 (define (primitive-script<- entries)
   (map (lambda (entry)
@@ -276,8 +317,6 @@
 (define (prim<- procedure)
   (lambda (k . args)
     (answer k (apply procedure args))))
-
-(define (selector<- cue arity) (cons cue arity))
 
 (define run/0 (selector<- 'run 0))
 
@@ -362,6 +401,8 @@
     (write ,write)
     (newline ,newline)))
 
+
+;; Smoke test of evaluation
 
 (should= (interpret '42)
          42)
