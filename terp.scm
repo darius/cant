@@ -272,7 +272,7 @@
      (if (null? (cdr defns))
          (ev body new-r k)
          (ev (cadadr defns) new-r
-             (letrec-cont<- (cdr defns) body new-r k))))))
+             (cont<- letrec-cont-script (cdr defns) body new-r k))))))
 
 
 ;; Environments
@@ -325,6 +325,16 @@
                 (call run/0 (if me if-true if-false) '() k)))
         (primitive-script<-
          `((type 0 ,(lambda (k me) (answer k 'boolean)))))))
+
+(define evaluate-prim
+  (let ((script
+         (cons (list (selector<- 'run 2)
+                     (lambda (k me e r)
+                       ;; XXX coerce r to an environment
+                       (ev (elaborate e) r k)))
+               (primitive-script<-
+                `((type 0 ,(lambda (me) 'procedure)))))))
+    (object<- script #f)))
 
 (define number-script
   (primitive-script<-
@@ -395,7 +405,8 @@
     (is? ,is?)
     (symbol? ,symbol?)
     (write ,write)
-    (newline ,newline)))
+    (newline ,newline)
+    (evaluate ,evaluate-prim)))
 
 
 ;; Smoke test of evaluation
@@ -430,3 +441,5 @@
                                           (even? ('- n 1))))))
                        (even? 5)))
          #f)
+(should= (interpret '(evaluate '('- 5 3) '()))
+         2)
