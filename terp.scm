@@ -28,11 +28,9 @@
          (interpret form))))
 
 (define (run-define head body)
-  (define (def name e)
-    (set! the-global-env (cons (list name (interpret e)) the-global-env)))
   (if (symbol? head)
-      (def head (car body))
-      (def (car head) `(lambda ,(cdr head) ,@body))))
+      (global-def! head (interpret (car body)))
+      (global-def! (car head) (interpret `(lambda ,(cdr head) ,@body)))))
 
 (define (interpret e)
   (evaluate (elaborate e) '()))
@@ -210,9 +208,10 @@
   `((,answer/1 ,(lambda (_ datum value)
                   (apply handler value datum)))))
 
-(define halt-cont
-  (object<- (cont-script<- (lambda (value) value))
-            '()))
+(define (cont<- script . data)
+  (object<- script data))
+
+(define halt-cont (cont<- (cont-script<- (lambda (value) value))))
 
 (define (ev e r k)
   (if (symbol? e)
@@ -238,12 +237,10 @@
                     k))
         (else
          (ev (cadr e) r
-             (ev-operands-cont<- (cddr e) r
-                                 (selector<- (cadar e) (length (cddr e)))
-                                 k))))))
-
-(define (ev-operands-cont<- operands r selector k)
-  (object<- ev-operands-cont-script (list operands r selector k)))
+             (cont<- ev-operands-cont-script
+                     (cddr e) r
+                     (selector<- (cadar e) (length (cddr e)))
+                     k))))))
 
 (define ev-operands-cont-script
   (cont-script<-
@@ -251,12 +248,8 @@
      (if (null? operands)
          (call selector receiver '() k)
          (ev (car operands) r
-             (ev-remaining-operands-cont<- (cdr operands) '() r
-                                           selector receiver k))))))
-
-(define (ev-remaining-operands-cont<- operands arguments r selector receiver k)
-  (object<- ev-remaining-operands-cont-script
-            (list operands arguments r selector receiver k)))
+             (cont<- ev-remaining-operands-cont-script
+                     (cdr operands) '() r selector receiver k))))))
 
 (define ev-remaining-operands-cont-script
   (cont-script<-
@@ -264,16 +257,13 @@
      (if (null? operands)
          (call selector receiver (reverse (cons argument arguments)) k)
          (ev (car operands) r
-             (ev-remaining-operands-cont<- (cdr operands)
-                                           (cons argument arguments)
-                                           r selector receiver k))))))
+             (cont<- ev-remaining-operands-cont-script
+                     (cdr operands) (cons argument arguments)
+                     r selector receiver k))))))
 
 (define (ev-letrec defns body new-r k)
   (ev (cadar defns) new-r
-      (letrec-cont<- defns body new-r k)))
-
-(define (letrec-cont<- defns body new-r k)
-  (object<- letrec-cont-script (list defns body new-r k)))
+      (cont<- letrec-cont-script defns body new-r k)))
 
 (define letrec-cont-script
   (cont-script<-
@@ -306,6 +296,9 @@
         (else (error "Can't happen" v))))
 
 (define uninitialized (object<- '() '*uninitialized*))
+
+(define (global-def! name value)
+  (set! the-global-env (cons (list name value) the-global-env)))
 
 
 ;; Primitive types and functions
