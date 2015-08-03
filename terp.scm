@@ -81,7 +81,9 @@
                                    (lambda () ,if-false)))))
            ;; ...
            (else
-            (if (and (pair? (car e)) (eq? (caar e) 'quote))
+            (if (and (pair? (car e))
+                     (eq? (caar e) 'quote)
+                     (symbol? (cadar e)))
                 (cons (car e) (map elaborate (cdr e)))
                 (cons ''run (map elaborate e))))))))  ; default cue
 
