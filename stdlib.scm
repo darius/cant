@@ -4,18 +4,10 @@
     (foldr adjoin set2 set1)))
 
 (define (delq x set)
-  (if (is? '() set)
-      '()
-      (if (is? x ('first set))
-          ('rest set)
-          (cons ('first set) (delq x ('rest set))))))
-
-(define (length xs)
-  (letrec ((counting (lambda (n xs)
-                       (if (is? '() xs)
-                           n
-                           (counting ('+ n 1) ('rest xs))))))
-    (counting 0 xs)))
+  (foldr (lambda (element rest)
+           (if (is? x element) rest (cons element rest)))
+         '()
+         set))
 
 (define (map f xs)
   (foldr (lambda (x ys) (cons (f x) ys))
