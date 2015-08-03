@@ -63,10 +63,12 @@
                                 ,(cadr e)))
                   (make<- (cdr e)))))
            ((letrec)
-            `(letrec ,(map (lambda (defn)
-                             (list (car defn) (elaborate (cadr defn))))
-                           (cadr e))
-               ,(elaborate-seq (cddr e))))
+            (if (null? (cadr e))
+                (elaborate-seq (cddr e))
+                `(letrec ,(map (lambda (defn)
+                                 (list (car defn) (elaborate (cadr defn))))
+                               (cadr e))
+                   ,(elaborate-seq (cddr e)))))
            ((let)
             (elaborate `('run (make ('run ,(map car (cadr e))
                                       ,@(cddr e)))
@@ -267,10 +269,8 @@
                                            r selector receiver k))))))
 
 (define (ev-letrec defns body new-r k)
-  (if (null? defns)                     ;XXX shouldn't happen
-      (ev body new-r k)
-      (ev (cadar defns) new-r
-          (letrec-cont<- defns body new-r k))))
+  (ev (cadar defns) new-r
+      (letrec-cont<- defns body new-r k)))
 
 (define (letrec-cont<- defns body new-r k)
   (object<- letrec-cont-script (list defns body new-r k)))
@@ -281,7 +281,7 @@
      (env-resolve! new-r (caar defns) value)
      (if (null? (cdr defns))
          (ev body new-r k)
-         (ev (cadr defns) new-r
+         (ev (cadadr defns) new-r
              (letrec-cont<- (cdr defns) body new-r k))))))
 
 
@@ -428,3 +428,13 @@
                                           ('* n (fact ('- n 1)))))))
                        (fact 5)))
          120)
+(should= (interpret '(letrec ((even? (lambda (n)
+                                       (if (is? n 0)
+                                           #t
+                                           (odd? ('- n 1)))))
+                              (odd? (lambda (n)
+                                      (if (is? n 0)
+                                          #f
+                                          (even? ('- n 1))))))
+                       (even? 5)))
+         #f)
