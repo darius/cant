@@ -220,6 +220,9 @@
         ((quote)
          (answer k (cadr e)))
         ((make)
+         ;; TODO: build the object's script at elaboration time. I'm
+         ;; holding off on this for the sake of should= on elaboration
+         ;; results.
          (answer k (object<- (map (lambda (method)
                                     (list (selector<- (cadar method)
                                                       (length (cadr method)))
