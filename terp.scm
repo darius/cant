@@ -309,10 +309,10 @@
 ;; interfacing with the host language.
 ;; TODO: signal any errors instead of panicking
 
-(define (primitive-script<- entries)
+(define (primitive-script<- wrap-method entries)
   (map (lambda (entry)
          (apply (lambda (cue arity procedure)
-                  (list (selector<- cue arity) (prim<- procedure)))
+                  (list (selector<- cue arity) (wrap-method procedure)))
                 entry))
        entries))
 
@@ -320,28 +320,32 @@
   (lambda (k . args)
     (answer k (apply procedure args))))
 
+(define (identity x) x)
+
 (define run/0 (selector<- 'run 0))
 (define run/2 (selector<- 'run 2))
 
 (define boolean-script
-  (cons (list (selector<- 'choose 2)
-              (lambda (k me if-true if-false)
-                (call run/0 (if me if-true if-false) '() k)))
-        (primitive-script<-
-         `((type 0 ,(lambda (k me) (answer k 'boolean)))))))
+  (append
+   (primitive-script<- identity 
+    `((choose 2 ,(lambda (k me if-true if-false)
+                   (call run/0 (if me if-true if-false) '() k)))))
+   (primitive-script<- prim<-
+    `((type 0 ,(lambda (k me) (answer k 'boolean)))))))
 
 (define evaluate-prim
   (let ((script
-         (cons (list run/2
-                     (lambda (k me e r)
+         (append
+          (primitive-script<- identity 
+           `((run 2 ,(lambda (k me e r)
                        ;; XXX coerce r to an environment
-                       (ev (elaborate e) r k)))
-               (primitive-script<-
-                `((type 0 ,(lambda (me) 'procedure)))))))
+                       (ev (elaborate e) r k)))))
+          (primitive-script<- prim<-
+           `((type 0 ,(lambda (me) 'procedure)))))))
     (object<- script #f)))
 
 (define number-script
-  (primitive-script<-
+  (primitive-script<- prim<-
    `((type      0 ,(lambda (me) 'number))
      (+         1 ,+)
      (-         1 ,-)
@@ -353,22 +357,22 @@
      )))
 
 (define symbol-script
-  (primitive-script<-
+  (primitive-script<- prim<-
    `((type   0 ,(lambda (me) 'symbol))
      (name   0 ,symbol->string))))
 
 (define nil-script
-  (primitive-script<-
+  (primitive-script<- prim<-
    `((type   0 ,(lambda (me) 'nil))
      (count  0 ,length)
      (run    1 ,list-ref))))
 
 (define char-script
-  (primitive-script<-
+  (primitive-script<- prim<-
    `((type   0 ,(lambda (me) 'char)))))
 
 (define pair-script
-  (primitive-script<-
+  (primitive-script<- prim<-
    `((type   0 ,(lambda (me) 'pair))
      (first  0 ,car)
      (rest   0 ,cdr)
@@ -376,13 +380,13 @@
      (run    1 ,list-ref))))
 
 (define string-script
-  (primitive-script<-
+  (primitive-script<- prim<-
    `((type   0 ,(lambda (me) 'string))
      (count  0 ,string-length)
      (run    1 ,string-ref))))
 
 (define vector-script
-  (primitive-script<-
+  (primitive-script<- prim<-
    `((type   0 ,(lambda (me) 'vector))
      (count  0 ,vector-length)
      (run    1 ,vector-ref)
@@ -391,7 +395,7 @@
                   #f)))))
 
 (define scheme-procedure-script
-  (primitive-script<-
+  (primitive-script<- prim<-
    `((type   0 ,(lambda (me) 'procedure))
      ;;XXX should only define arities that work:
      (run    0 ,(lambda (me) (me)))
