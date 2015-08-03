@@ -1,3 +1,6 @@
+(define (symbol? x)
+  (is? ('type x) 'symbol))
+
 (define (union set1 set2)
   (let ((adjoin (lambda (x xs)
                   (if (memq? x set2) xs (cons x xs)))))

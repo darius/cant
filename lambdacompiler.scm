@@ -12,9 +12,6 @@
           (app<- (expand (lexp 0))
                  (expand (lexp 1))))))
 
-(define (symbol? x)
-  (is? ('type x) 'symbol))
-
 (define (var<- v)
   (make ('free-vars () (list<- v))
         ('compile (r k) (cons (r v) k))))
