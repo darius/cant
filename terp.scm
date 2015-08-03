@@ -182,7 +182,7 @@
 (define (call selector object arguments k)
   (unwrap object
           (lambda (script datum)
-            (cond ((assoc selector script) ;XXX assq when memoized
+            (cond ((assoc selector script) ;TODO assq when memoized
                    => (lambda (pair)
                         (apply (cadr pair) k datum arguments)))
                   (else (signal k "No method found" selector object))))))
