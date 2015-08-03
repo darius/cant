@@ -18,13 +18,15 @@
   (make ('run () '())
         ('run (a) (cons a '()))
         ('run (a b) (cons a (list<- b)))
-        ('run (a b c) (cons a (list<- b c)))))
+        ('run (a b c) (cons a (list<- b c)))
+        ('run (a b c d) (cons a (list<- b c d)))))
 
 (define chain
   (make ('run () '())
         ('run (xs) xs)
         ('run (xs ys) (foldr cons ys xs))
-        ('run (xs ys zs) (chain xs (chain ys zs)))))
+        ('run (xs ys zs) (chain xs (chain ys zs)))
+        ('run (ws xs ys zs) (chain ws (chain xs ys zs)))))
 
 (define (foldr f z xs)
   (if (is? '() xs)

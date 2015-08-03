@@ -24,10 +24,10 @@
     (make ('free-vars () free-vars)
           ('compile (r k)
             (let ((code ('compile e (static-env<- v free-vars) '(return))))
-              (cons 'make-closure 
-                    (cons ('count free-vars)
-                          (cons ('count code)
-                                (chain (map r free-vars) code k)))))))))
+              (chain (list<- 'make-closure ('count free-vars) ('count code))
+                     (map r free-vars)
+                     code
+                     k))))))
 
 (define (app<- e1 e2)
   (make ('free-vars () (union ('free-vars e1) ('free-vars e2)))
