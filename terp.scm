@@ -45,7 +45,7 @@
            ((begin)
             (elaborate-seq (cdr e)))
            ((make)
-            (let ((make-make
+            (let ((make<-
                    (lambda (methods)
                      `(make ,@(map (lambda (method)
                                      `(,(car method) ,(cadr method)
@@ -53,9 +53,9 @@
                                    methods)))))
               (if (and (not (null? (cdr e)))
                        (symbol? (cadr e)))
-                  (elaborate `(letrec ((,(cadr e) ,(make-make (cddr e))))
+                  (elaborate `(letrec ((,(cadr e) ,(make<- (cddr e))))
                                 ,(cadr e)))
-                  (make-make (cdr e)))))
+                  (make<- (cdr e)))))
            ((letrec)
             `(letrec ,(map (lambda (defn)
                              (list (car defn) (elaborate (cadr defn))))
@@ -80,15 +80,14 @@
                 (cons ''run (map elaborate e))))))))  ; default selector
 
 (define (elaborate-seq es)
-  (make-begin (map elaborate es)))
+  (begin<- (map elaborate es)))
 
-(define (make-begin es)
+(define (begin<- es)
   (cond ((null? es) ''#f)
         ((null? (cdr es)) (car es))
-        (else (make-begin2 (car es)
-                           (make-begin (cdr es))))))
+        (else (begin2<- (car es) (begin<- (cdr es))))))
 
-(define (make-begin2 e1 e2)
+(define (begin2<- e1 e2)
   `('run (make ('run (v thunk) ('run thunk)))
          ,e1
          (make ('run () ,e2))))
@@ -161,17 +160,17 @@
         ((quote)
          (answer k (cadr e)))
         ((make)
-         (answer k (make-object (map (lambda (method)
-                                       (list (selector<- (cadar method)
-                                                         (length (cadr method)))
-                                             (lambda (k r . arguments)
-                                               (ev (caddr method)
-                                                   (env-extend r
-                                                               (cadr method)
-                                                               arguments)
-                                                   k))))
-                                     (cdr e))
-                                r)))
+         (answer k (object<- (map (lambda (method)
+                                    (list (selector<- (cadar method)
+                                                      (length (cadr method)))
+                                          (lambda (k r . arguments)
+                                            (ev (caddr method)
+                                                (env-extend r
+                                                            (cadr method)
+                                                            arguments)
+                                                k))))
+                                  (cdr e))
+                             r)))
         ((letrec)
          (ev-letrec (cadr e) (caddr e)
                     (env-extend-promises r (map car (cadr e)))
@@ -233,7 +232,7 @@
 
 (define object-tag (list '*object))
 
-(define (make-object script datum)
+(define (object<- script datum)
   (list object-tag script datum))
 
 (define object.script cadr)
@@ -262,7 +261,7 @@
                         (apply (cadr pair) k datum arguments)))
                   (else (error "No method found" selector object))))))
 
-(define uninitialized (make-object '() '*uninitialized*))
+(define uninitialized (object<- '() '*uninitialized*))
 
 ;; A really half-baked selection of types and methods below, just for
 ;; a concrete start.

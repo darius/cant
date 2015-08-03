@@ -23,7 +23,7 @@
   (let ((free-vars (delq v ('free-vars e))))
     (make ('free-vars () free-vars)
           ('compile (r k)
-            (let ((code ('compile e (make-static-env v free-vars) '(return))))
+            (let ((code ('compile e (static-env<- v free-vars) '(return))))
               (cons 'make-closure 
                     (cons ('count free-vars)
                           (cons ('count code)
@@ -35,12 +35,12 @@
           (let ((code ('compile e2 r ('compile e1 r '(invoke)))))
             (if (is? ('first k) 'return)
                 code
-                (cons 'pushcont (cons ('count code) (chain code k))))))))
+                (chain (list<- 'pushcont ('count code)) code k))))))
 
 (define (global-static-env v)
   (error "Unbound variable" v))
 
-(define (make-static-env v free-vars)
+(define (static-env<- v free-vars)
   (lambda (v1)
     (if (is? v1 v)
         'local
