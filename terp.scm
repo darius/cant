@@ -211,7 +211,9 @@
 (define (cont<- script . data)
   (object<- script data))
 
-(define halt-cont (cont<- (cont-script<- (lambda (value) value))))
+(define halt-cont
+  (cont<-
+   (cont-script<- (lambda (value) value))))
 
 (define (ev e r k)
   (if (symbol? e)
@@ -364,6 +366,7 @@
 (define nil-script
   (prim-script<- prim<-
    `((type   0 ,(lambda (me) 'nil))
+     (empty? 0 ,null?)
      (count  0 ,length)
      (run    1 ,list-ref))))
 
@@ -374,6 +377,7 @@
 (define pair-script
   (prim-script<- prim<-
    `((type   0 ,(lambda (me) 'pair))
+     (empty? 0 ,null?)
      (first  0 ,car)
      (rest   0 ,cdr)
      (count  0 ,length)
@@ -382,12 +386,14 @@
 (define string-script
   (prim-script<- prim<-
    `((type   0 ,(lambda (me) 'string))
+     (empty? 0 ,(lambda (me) (= 0 (string-length me))))
      (count  0 ,string-length)
      (run    1 ,string-ref))))
 
 (define vector-script
   (prim-script<- prim<-
    `((type   0 ,(lambda (me) 'vector))
+     (empty? 0 ,(lambda (me) (= 0 (vector-length me))))
      (count  0 ,vector-length)
      (run    1 ,vector-ref)
      (set!   2 ,(lambda (me i value)

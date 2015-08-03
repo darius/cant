@@ -1,6 +1,3 @@
-(define (symbol? x)
-  (is? ('type x) 'symbol))
-
 (define (union set1 set2)
   (let ((adjoin (lambda (x xs)
                   (if (memq? x set2) xs (cons x xs)))))
@@ -32,12 +29,12 @@
         ('run (ws xs ys zs) (chain ws (chain xs ys zs)))))
 
 (define (foldr f z xs)
-  (if (is? '() xs)
+  (if ('empty? xs)
       z
       (f ('first xs) (foldr f z ('rest xs)))))
 
 (define (memq? x set)
-  (if (is? '() set)
+  (if ('empty? set)
       #f
       (if (is? x ('first set))
           #t
