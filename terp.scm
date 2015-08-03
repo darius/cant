@@ -113,8 +113,7 @@
 
 (define (assert ok? plaint culprit)
   (if (not ok?)
-      (error plaint culprit)
-      'fuck-off-mzscheme))
+      (error plaint culprit)))
 
 (define (should= x expected)
   (assert (equal? x expected) "Expected" expected))
