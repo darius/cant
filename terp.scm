@@ -4,9 +4,9 @@
 ;; Core syntax, first cut:
 ;; e = v
 ;;   | (QUOTE constant)
-;;   | (MAKE ((QUOTE selector) (v ...) e) ...)   [make object]
+;;   | (MAKE ((QUOTE cue) (v ...) e) ...)   [make object]
 ;;   | (LETREC ((v e) ...) e)
-;;   | ((QUOTE selector) e e ...)    [call method of object]
+;;   | ((QUOTE cue) e e ...)    [call method of object]
 
 
 ;; Running a program
@@ -83,7 +83,7 @@
            (else
             (if (and (pair? (car e)) (eq? (caar e) 'quote))
                 (cons (car e) (map elaborate (cdr e)))
-                (cons ''run (map elaborate e))))))))  ; default selector
+                (cons ''run (map elaborate e))))))))  ; default cue
 
 (define (elaborate-seq es)
   (begin<- (map elaborate es)))
