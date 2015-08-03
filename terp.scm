@@ -318,6 +318,7 @@
     (answer k (apply procedure args))))
 
 (define run/0 (selector<- 'run 0))
+(define run/2 (selector<- 'run 2))
 
 (define boolean-script
   (cons (list (selector<- 'choose 2)
@@ -328,7 +329,7 @@
 
 (define evaluate-prim
   (let ((script
-         (cons (list (selector<- 'run 2)
+         (cons (list run/2
                      (lambda (k me e r)
                        ;; XXX coerce r to an environment
                        (ev (elaborate e) r k)))
