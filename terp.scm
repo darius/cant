@@ -20,9 +20,9 @@
                (loading (read port))))))))
 
 (define (run form)
-  (cond ((and (pair? form) (eq? (car form) 'define))
+  (cond ((starts-with? form 'define)
          (run-define (cadr form) (cddr form)))
-        ((and (pair? form) (eq? (car form) 'load))
+        ((starts-with? form 'load)
          (run-load (cadr form)))
         (else
          (interpret form))))
@@ -34,6 +34,9 @@
 
 (define (interpret e)
   (evaluate (elaborate e) '()))
+
+(define (starts-with? form tag)
+  (and (pair? form) (eq? (car form) tag)))
 
 
 ;; Expanding out syntactic sugar
@@ -81,8 +84,7 @@
                                    (lambda () ,if-false)))))
            ;; ...
            (else
-            (if (and (pair? (car e))
-                     (eq? (caar e) 'quote)
+            (if (and (starts-with? (car e) 'quote)
                      (symbol? (cadar e)))
                 (cons (car e) (map elaborate (cdr e)))
                 (cons ''run (map elaborate e))))))))  ; default cue
