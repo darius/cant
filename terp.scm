@@ -309,6 +309,8 @@
 
 
 ;; Primitive types and functions
+;; Many needn't be primitive, but are for the sake of nicely
+;; interfacing with the host language.
 ;; TODO: signal any errors instead of panicking
 
 (define (primitive-script<- entries)
@@ -331,8 +333,6 @@
         (primitive-script<-
          `((type 0 ,(lambda (k me) (answer k 'boolean)))))))
 
-;; XXX In a tiny self-hosting system we'd restrict numbers to fixnums.
-;; So, properly, these should signal overflow outside that range.
 (define number-script
   (primitive-script<-
    `((type      0 ,(lambda (me) 'number))
@@ -360,7 +360,6 @@
   (primitive-script<-
    `((type   0 ,(lambda (me) 'char)))))
 
-;; Pairs are primitive for the sake of nicely interfacing with the host language
 (define pair-script
   (primitive-script<-
    `((type   0 ,(lambda (me) 'pair))
