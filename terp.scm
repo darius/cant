@@ -242,7 +242,7 @@
        (count  0 ,(lambda (_) 0)))))))
 
 ;; Script for nonempty continuations, i.e. ones other than halt-cont.
-(define (cont-script<- to-answer)
+(define (cont-script<- to-answer to-first)
   (append
    (answer-script<- to-answer)
    (prim-script<- prim<-
@@ -250,7 +250,7 @@
       ;; rest/0 gets the enclosing continuation, which is always
       ;; the first element of datum.
       (rest   0 ,car)
-      (first  0 ,(lambda (datum) (error "XXX unimplemented")))
+      (first  0 ,(lambda (rest-k . data) (apply to-first data)))
       ))
    (prim-script<- identity
     `((count 0 ,(lambda (k datum) (signal k "XXX unimplemented")))
@@ -295,7 +295,9 @@
          (call selector receiver '() k)
          (ev (car operands) r
              (cont<- ev-remaining-operands-cont-script k
-                     (cdr operands) '() r selector receiver))))))
+                     (cdr operands) '() r selector receiver))))
+   (lambda (operands r selector)
+     `(ev-operands ,selector))))
 
 (define ev-remaining-operands-cont-script
   (cont-script<-
@@ -305,7 +307,10 @@
          (ev (car operands) r
              (cont<- ev-remaining-operands-cont-script k
                      (cdr operands) (cons argument arguments)
-                     r selector receiver))))))
+                     r selector receiver))))
+   (lambda (operands arguments r selector receiver)
+     `(ev-remaining-operands
+       ,selector ,receiver ,(reverse arguments) ,operands))))
 
 (define (ev-letrec defns body new-r k)
   (ev (cadar defns) new-r
@@ -318,7 +323,9 @@
      (if (null? (cdr defns))
          (ev body new-r k)
          (ev (cadadr defns) new-r
-             (cont<- letrec-cont-script k (cdr defns) body new-r))))))
+             (cont<- letrec-cont-script k (cdr defns) body new-r))))
+   (lambda (defns body new-r)
+     `(ev-letrec ,defns ,body))))
 
 
 ;; Environments
