@@ -16,27 +16,30 @@
 ;; Variable reference
 (define (var-ref<- v)
   (make ('free-vars () (list<- v))
-        ('compile (r k) (cons (r v) k))))
+        ('compile (s k) (cons (s v) k))))
 
 ;; Lambda expression
-(define (abstraction<- v e)
-  (let ((free-vars (delq v ('free-vars e))))
+(define (abstraction<- v body)
+  (let ((free-vars (delq v ('free-vars body))))
     (make ('free-vars () free-vars)
-          ('compile (r k)
-            (let ((code ('compile e (static-env<- v free-vars) '(return))))
+          ('compile (s k)
+            (let ((code ('compile body (static-env<- v free-vars) '(return))))
               (chain (list<- 'make-closure ('count free-vars) ('count code))
-                     (map r free-vars)
+                     (map s free-vars)
                      code
                      k))))))
 
 ;; Application
-(define (call<- e1 e2)
-  (make ('free-vars () (union ('free-vars e1) ('free-vars e2)))
-        ('compile (r k)
-          (let ((code ('compile e2 r ('compile e1 r '(invoke)))))
+(define (call<- operator operand)
+  (make ('free-vars () (union ('free-vars operator) ('free-vars operand)))
+        ('compile (s k)
+          (let ((code ('compile operand s ('compile operator s '(invoke)))))
             (if (is? ('first k) 'return)
                 code
                 (chain (list<- 'pushcont ('count code)) code k))))))
+
+
+;; Static environments (called 's' above)
 
 (define (global-static-env v)
   (error "Unbound variable" v))
