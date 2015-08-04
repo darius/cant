@@ -50,3 +50,9 @@
 (define (print x)
   (write x)
   (newline))
+
+(define (for-each f xs)
+  (if ('empty? xs)
+      #f
+      (begin (f ('first xs))
+             (for-each f ('rest xs)))))

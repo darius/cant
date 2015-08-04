@@ -478,6 +478,7 @@
     (is? ,is?)
     (symbol? ,symbol?)
     (box<- ,box<-)
+    (display ,display)
     (write ,write)
     (newline ,newline)
     (evaluate ,evaluate-prim)
