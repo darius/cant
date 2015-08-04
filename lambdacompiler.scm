@@ -6,18 +6,20 @@
 
 (define (parse lexp)
   (if (symbol? lexp)
-      (var<- lexp)
+      (var-ref<- lexp)
       (if (is? (lexp 0) 'lambda)
-          (lam<- ((lexp 1) 0)
-                 (parse (lexp 2)))
-          (app<- (parse (lexp 0))
-                 (parse (lexp 1))))))
+          (abstraction<- ((lexp 1) 0)
+                         (parse (lexp 2)))
+          (call<- (parse (lexp 0))
+                  (parse (lexp 1))))))
 
-(define (var<- v)
+;; Variable reference
+(define (var-ref<- v)
   (make ('free-vars () (list<- v))
         ('compile (r k) (cons (r v) k))))
 
-(define (lam<- v e)
+;; Lambda expression
+(define (abstraction<- v e)
   (let ((free-vars (delq v ('free-vars e))))
     (make ('free-vars () free-vars)
           ('compile (r k)
@@ -27,7 +29,8 @@
                      code
                      k))))))
 
-(define (app<- e1 e2)
+;; Application
+(define (call<- e1 e2)
   (make ('free-vars () (union ('free-vars e1) ('free-vars e2)))
         ('compile (r k)
           (let ((code ('compile e2 r ('compile e1 r '(invoke)))))
