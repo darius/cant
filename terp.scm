@@ -415,10 +415,6 @@
      (count  0 ,length)
      (run    1 ,list-ref))))
 
-(define char-script
-  (prim-script<- prim<-
-   `((type   0 ,(lambda (me) 'char)))))
-
 (define pair-script
   (prim-script<- prim<-
    `((type   0 ,(lambda (me) 'pair))
@@ -427,6 +423,10 @@
      (rest   0 ,cdr)
      (count  0 ,length)
      (run    1 ,list-ref))))
+
+(define char-script
+  (prim-script<- prim<-
+   `((type   0 ,(lambda (me) 'char)))))
 
 (define string-script
   (prim-script<- prim<-
@@ -471,6 +471,9 @@
                   (vector-set! datum 0 value)
                   #f)))))
 
+(define (box? x)
+  (unwrap x (lambda (script _) (eq? script box-script))))
+
 (define the-signal-handler-box (box<- panic))
 
 (define error-script
@@ -484,7 +487,16 @@
 (define the-global-env
   `((cons ,cons)
     (is? ,is?)
+    (number? ,number?)
     (symbol? ,symbol?)
+    (list? ,(lambda (x)
+              (or (null? x)
+                  (and (pair? x)
+                       (not (eq? (car x) object-tag))))))
+    (char? ,char?)
+    (string? ,string?)
+    (vector? ,vector?)
+    (box? ,box?)
     (box<- ,box<-)
     (display ,display)
     (write ,write)
