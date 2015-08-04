@@ -2,16 +2,16 @@
 ;(load "traceback.scm")
 
 (define (compile lexp)
-  ('compile (expand lexp) global-static-env '(halt)))
+  ('compile (parse lexp) global-static-env '(halt)))
 
-(define (expand lexp)
+(define (parse lexp)
   (if (symbol? lexp)
       (var<- lexp)
       (if (is? (lexp 0) 'lambda)
           (lam<- ((lexp 1) 0)
-                 (expand (lexp 2)))
-          (app<- (expand (lexp 0))
-                 (expand (lexp 1))))))
+                 (parse (lexp 2)))
+          (app<- (parse (lexp 0))
+                 (parse (lexp 1))))))
 
 (define (var<- v)
   (make ('free-vars () (list<- v))
@@ -38,11 +38,11 @@
 (define (global-static-env v)
   (error "Unbound variable" v))
 
-(define (static-env<- v free-vars)
-  (lambda (v1)
-    (if (is? v1 v)
+(define (static-env<- param free-vars)
+  (lambda (v)
+    (if (is? v param)
         'local
-        ('+ 1 (list-index v1 free-vars)))))
+        ('+ 1 (list-index free-vars v)))))
 
 
 ;; Smoke test

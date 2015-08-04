@@ -40,7 +40,7 @@
           #t
           (memq? x ('rest set)))))
 
-(define (list-index x xs)
+(define (list-index xs x)
   (letrec ((searching (lambda (i xs)
                         (if (is? x ('first xs))
                             i
