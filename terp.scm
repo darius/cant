@@ -473,6 +473,14 @@
 
 (define the-signal-handler-box (box<- panic))
 
+(define error-script
+  (prim-script<- identity
+   `((type   0 ,(lambda (k _) (answer k 'procedure)))
+     ;; XXX sort of need variable-arity matcher:
+     (run    2 ,(lambda (k _ plaint value) (signal k plaint value))))))
+
+(define error-prim (object<- error-script #f))
+
 (define the-global-env
   `((cons ,cons)
     (is? ,is?)
@@ -482,6 +490,7 @@
     (write ,write)
     (newline ,newline)
     (evaluate ,evaluate-prim)
+    (error ,error-prim)
     (the-signal-handler-box ,the-signal-handler-box)
     ))
 

@@ -1,4 +1,5 @@
 (load "stdlib.scm")
+;(load "traceback.scm")
 
 (define (compile lexp)
   ('compile (expand lexp) global-static-env '(halt)))
@@ -48,5 +49,6 @@
 
 (print (compile
 ;  '(lambda (x) x)
+;  '(lambda (x) y)
   '((lambda (x) (lambda (y) x)) (lambda (z) z))  ; XXX is output wrong?
 ))
