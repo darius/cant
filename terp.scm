@@ -197,9 +197,15 @@
   (call answer/1 k (list value) 'ignored))
 
 (define answer/1 (selector<- 'answer 1))
+(define run/0    (selector<- 'run 0))
+(define run/2    (selector<- 'run 2))
+(define run/3    (selector<- 'run 3))
 
 (define (signal k plaint . values)
-  (apply error plaint values))
+  (let ((handler (get-signal-handler)))
+    ;; XXX install backstop handler or something, that'd act like:
+    ;;     (apply error plaint values))
+    (call run/3 handler (list k plaint values) halt-cont)))
 
 (define (prim-script<- wrap-method entries)
   (map (lambda (entry)
@@ -213,6 +219,13 @@
 (define (prim<- procedure)              ; another wrap-method
   (lambda (k . args)
     (answer k (apply procedure args))))
+
+(define (get-signal-handler)
+  (call run/0 the-signal-handler-box '() halt-cont))
+
+;; The default bare-bones signal handler.
+(define (panic k plaint values)           ;XXX should be an object
+  (apply error plaint values))
 
 
 ;; A small-step interpreter
@@ -250,7 +263,7 @@
       ;; rest/0 gets the enclosing continuation, which is always
       ;; the first element of datum.
       (rest   0 ,car)
-      (first  0 ,(lambda (rest-k . data) (apply to-first data)))
+      (first  0 ,(lambda (data) (apply to-first (cdr data))))
       ))
    (prim-script<- identity
     `((count 0 ,(lambda (k datum) (signal k "XXX unimplemented")))
@@ -359,9 +372,6 @@
 ;; interfacing with the host language.
 ;; TODO: signal any errors instead of panicking
 
-(define run/0 (selector<- 'run 0))
-(define run/2 (selector<- 'run 2))
-
 (define boolean-script
   (append
    (prim-script<- identity 
@@ -440,8 +450,9 @@
    `((type   0 ,(lambda (me) 'procedure))
      ;;XXX should only define arities that work:
      (run    0 ,(lambda (me) (me)))
-     (run    1 ,(lambda (me x) (me x)))
-     (run    2 ,(lambda (me x y) (me x y))))))
+     (run    1 ,(lambda (me a) (me a)))
+     (run    2 ,(lambda (me a b) (me a b)))
+     (run    3 ,(lambda (me a b c) (me a b c))))))
 
 (define (is? x y)
   (unwrap x (lambda (x-script x-datum)
@@ -460,6 +471,8 @@
                   (vector-set! datum 0 value)
                   #f)))))
 
+(define the-signal-handler-box (box<- panic))
+
 (define the-global-env
   `((cons ,cons)
     (is? ,is?)
@@ -467,7 +480,9 @@
     (box<- ,box<-)
     (write ,write)
     (newline ,newline)
-    (evaluate ,evaluate-prim)))
+    (evaluate ,evaluate-prim)
+    (the-signal-handler-box ,the-signal-handler-box)
+    ))
 
 
 ;; Smoke test of evaluation
