@@ -5,10 +5,7 @@
 
 ;; TODO: s/vector/array?
 
-(import io)                             ;XXX these convey capabilities
-(import os)
-
-(define (run program)
+(define (run program out-port in-port)
   (let mem (growable-vector<-))         ;TODO: shorter name? flexlist?
   (.append! mem program)
   (let free-list (growable-vector<-))
@@ -61,7 +58,7 @@
                    (.bit-not (.bit-and (reg b) (reg c))))
             (running program (.u+ pc 1)))
 
-         (7 (os:exit 0))
+         (7 "Successful exit")
 
          (8 (let chunk (vector<-count (reg c) 0)) ;TODO: typed vector again
             (.set! reg b
@@ -80,10 +77,10 @@
             (.append! free-list (reg c))
             (running program (.u+ pc 1)))
 
-         (10 (.write-char io:stdout (char<- (reg c)))
+         (10 (.write-char out-port (char<- (reg c)))
              (running program (.u+ pc 1)))
 
-         (11 (let s (.read-char io:stdin))
+         (11 (let s (.read-char in-port))
              (.set! reg c
                     (if (is? s none) 0xFFFFFFFF (string<- s)))
              (running program (.u+ pc 1)))
@@ -95,25 +92,25 @@
                     (.set! mem 0 new-program)
                     (running new-program (reg c)))))
 
-         (_ (.writeln io:stdout "Bad opcode")
-            (os:exit 1)))))))
+         (_ (.writeln out-port "Bad opcode")
+            "Error exit"))))))
 
-(define (read-program filename)
+(define (read-program in-port)
   (let program (growable-vector<-))
-  (io:call-with-input-file filename "rb"
-    (given (f)
-      (recurse reading ()
-        (let c0 (.read-char f))
-        (when (not (is? c0 none))
-          (let c1 (.read-char f))
-          (let c2 (.read-char f))
-          (let c3 (.read-char f))
-          (.append! program
-                    (.u+ (.u<< (.u+ (.u<< (.u+ (.u<< c0 8)
-                                               c1)
-                                          8)
-                                    c2)
-                               8)
-                         c3))
-          (reading)))))
-  program)
+  (recurse reading ()
+    (let c3 (.read-char in-port))
+    (when (not (is? c3 none))
+      (let c2 (.read-char in-port))
+      (let c1 (.read-char in-port))
+      (let c0 (.read-char in-port))
+      ;; TODO: a syntax for int-guard coercion instead?
+      (.append! program
+                (u32<-bytes (.code c3) (.code c2) (.code c1) (.code c0)))
+      (reading)))))
+  program)                              ;TODO: snapshot it
+
+(define (u32<-bytes b3 b2 b1 b0)
+  (append-byte (append-byte (append-byte b3 b2) b1) b0))
+
+(define (append-byte u byte)
+  (.u+ (.u<< u 8) byte))
