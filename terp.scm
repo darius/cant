@@ -442,8 +442,7 @@
    `((type   0 ,(lambda (me) 'string))
      (empty? 0 ,(lambda (me) (= 0 (string-length me))))
      (first  0 ,(lambda (me) (string-ref me 0)))
-     (rest   0 ,(lambda (me) ;; this is rather hacky:
-                  (cdr (string->list me))))
+     (rest   0 ,(lambda (me) (substring me 1 (string-length me))))
      (count  0 ,string-length)
      (run    1 ,string-ref)
      (chain  1 ,string-append)
@@ -458,8 +457,7 @@
    `((type   0 ,(lambda (me) 'vector))
      (empty? 0 ,(lambda (me) (= 0 (vector-length me))))
      (first  0 ,(lambda (me) (vector-ref me 0)))
-     (rest   0 ,(lambda (me) ;; this is rather hacky:
-                  (cdr (vector->list me))))
+     (rest   0 ,(lambda (me) (subvector me 1 (vector-length me))))
      (count  0 ,vector-length)
      (run    1 ,vector-ref)
      (chain  1 ,vector-append)          ; (gambit-specific, I think)
