@@ -19,12 +19,15 @@
         ('run (a) (cons a '()))
         ('run (a b) (cons a (list<- b)))
         ('run (a b c) (cons a (list<- b c)))
-        ('run (a b c d) (cons a (list<- b c d)))))
+        ('run (a b c d) (cons a (list<- b c d)))
+        ('run (a b c d e) (cons a (list<- b c d e)))
+        ('run (a b c d e f) (cons a (list<- b c d e f)))
+        ))
 
 (define chain
   (make ('run () '())
         ('run (xs) xs)
-        ('run (xs ys) (foldr cons ys xs))
+        ('run (xs ys) ('chain xs ys))
         ('run (xs ys zs) (chain xs (chain ys zs)))
         ('run (ws xs ys zs) (chain ws (chain xs ys zs)))))
 
@@ -56,3 +59,34 @@
       #f
       (begin (f ('first xs))
              (for-each f ('rest xs)))))
+
+(define range<-
+  (make
+    ('run (hi-bound)
+      (range<- 0 hi-bound))
+    ('run (lo hi-bound)
+      (if (<= hi-bound lo)
+          '()
+          (make ('empty? () #f)
+                ('first () lo)
+                ('rest () (range<- ('+ lo 1) hi-bound))
+                ;; ...
+                )))))
+
+(define (vector<-list xs)
+  (let ((v (vector<-count ('count xs))))
+    (letrec ((setting
+              (lambda (i xs)
+                (if ('empty? xs)
+                    v
+                    (begin
+                      ('set! v i ('first xs))
+                      (setting ('+ i 1) ('rest xs)))))))
+      (setting 0 xs))))
+
+(define (some? ok? xs)
+  (if ('empty? xs)
+      #f
+      (if (ok? ('first xs))
+          #t
+          (some? ok? ('rest xs)))))

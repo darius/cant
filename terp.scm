@@ -401,6 +401,12 @@
      (remainder 1 ,remainder)
      (<         1 ,<)
      (=         1 ,=)
+     ;; (Gambit-specific implementations:)
+     (<<        1 ,arithmetic-shift)
+     (bit-not   0 ,bitwise-not)
+     (bit-and   1 ,bitwise-and)
+     (bit-or    1 ,bitwise-ior)
+     (bit-xor   1 ,bitwise-xor)
      )))
 
 (define symbol-script
@@ -413,7 +419,8 @@
    `((type   0 ,(lambda (me) 'nil))
      (empty? 0 ,null?)
      (count  0 ,length)
-     (run    1 ,list-ref))))
+     (run    1 ,list-ref)
+     (chain  1 ,(lambda (me seq) seq)))))
 
 (define pair-script
   (prim-script<- prim<-
@@ -422,25 +429,42 @@
      (first  0 ,car)
      (rest   0 ,cdr)
      (count  0 ,length)
-     (run    1 ,list-ref))))
+     (run    1 ,list-ref)
+     (chain  1 ,append))))
 
 (define char-script
   (prim-script<- prim<-
-   `((type   0 ,(lambda (me) 'char)))))
+   `((type   0 ,(lambda (me) 'char))
+     (code   0 ,char->integer))))       ; better name?
 
 (define string-script
   (prim-script<- prim<-
    `((type   0 ,(lambda (me) 'string))
      (empty? 0 ,(lambda (me) (= 0 (string-length me))))
+     (first  0 ,(lambda (me) (string-ref me 0)))
+     (rest   0 ,(lambda (me) ;; this is rather hacky:
+                  (cdr (string->list me))))
      (count  0 ,string-length)
-     (run    1 ,string-ref))))
+     (run    1 ,string-ref)
+     (chain  1 ,string-append)
+     (slice  1 ,(lambda (me lo) (substring me lo (string-length me))))
+     (slice  2 ,substring)
+     (parse-int 0 ,string->number)      ;XXX not precisely
+     (parse-int 1 ,string->number)
+     )))
 
 (define vector-script
   (prim-script<- prim<-
    `((type   0 ,(lambda (me) 'vector))
      (empty? 0 ,(lambda (me) (= 0 (vector-length me))))
+     (first  0 ,(lambda (me) (vector-ref me 0)))
+     (rest   0 ,(lambda (me) ;; this is rather hacky:
+                  (cdr (vector->list me))))
      (count  0 ,vector-length)
      (run    1 ,vector-ref)
+     (chain  1 ,vector-append)          ; (gambit-specific, I think)
+     (slice  1 ,(lambda (me lo) (subvector me lo (vector-length me))))
+     (slice  2 ,subvector)
      (set!   2 ,(lambda (me i value)
                   (vector-set! me i value)
                   #f)))))
@@ -498,6 +522,10 @@
     (vector? ,vector?)
     (box? ,box?)
     (box<- ,box<-)
+    (< ,<)  ;; XXX use 'compare method instead
+    (<= ,<=)
+    (= ,=)
+    (vector<-count ,make-vector)
     (display ,display)
     (write ,write)
     (newline ,newline)
