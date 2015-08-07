@@ -106,6 +106,8 @@
 
 
 ;; Debugger
+;; Instead of interacting at a prompt, it takes a list of commands,
+;; for now, for ease of rerunning during development.
 
 (define autodebug (box<- '()))
 
