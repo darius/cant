@@ -387,16 +387,10 @@
 (define call-prim
   (let ((script
          (append
-          ;; XXX yet another thing that needs to be variadic.
-          ;; Also, cues vs. selectors
           (prim-script<- identity 
-           `((run 2 ,(lambda (k _ cue receiver)
-                       (call (selector<- cue 0) receiver '() k)))
-             (run 3 ,(lambda (k _ cue receiver a)
-                       (call (selector<- cue 1) receiver (list a) k)))
-             (run 4 ,(lambda (k _ cue receiver a b)
-                       (call (selector<- cue 2) receiver (list a b) k)))
-             ))
+           `((run 3 ,(lambda (k _ cue receiver arguments)
+                       (call (selector<- cue (length arguments))
+                             receiver arguments k)))))
           (prim-script<- prim<-
            `((type 0 ,(lambda (me) 'procedure)))))))
     (object<- script #f)))
