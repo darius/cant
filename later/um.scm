@@ -13,6 +13,10 @@
   ;; TODO: mem could also be a typed vector, but neither the vector
   ;; nor the type is as simple...
   (recurse running ((program program) (pc 0))
+
+    (define (next)
+      (running program (.u+ pc 1)))
+
     (let inst (program pc))
     (let opcode (.u>> inst 28))
     ;;XXX .u<op> means small, unsigned op
@@ -23,7 +27,7 @@
     (match opcode
       (13 (.set! reg (.bit-and 7 (.u>> inst 25))
                  (.bit-and inst 0x1FFFFFF))
-          (running program (.u+ pc 1)))
+          (next))
       (_
        (let a (.bit-and 7 (.u>> inst 6)))
        (let b (.bit-and 7 (.u>> inst 3)))
@@ -32,31 +36,31 @@
 
          (0 (when (not= (reg c) 0)
               (.set! reg a (reg b)))
-            (running program (.u+ pc 1)))
+            (next))
 
          (1 (.set! reg a
                    ((mem (reg b)) (reg c)))
-            (running program (.u+ pc 1)))
+            (next))
 
          (2 (.set! (mem (reg a)) (reg b)
                    (reg c))
-            (running program (.u+ pc 1)))
+            (next))
 
          (3 (.set! reg a
                    (.s+ (reg b) (reg c)))
-            (running program (.u+ pc 1)))
+            (next))
 
          (4 (.set! reg a
                    (.s* (reg b) (reg c)))
-            (running program (.u+ pc 1)))
+            (next))
 
          (5 (.set! reg a
                    (.u/ (reg b) (reg c)))
-            (running program (.u+ pc 1)))
+            (next))
 
          (6 (.set! reg a
                    (.bit-not (.bit-and (reg b) (reg c))))
-            (running program (.u+ pc 1)))
+            (next))
 
          (7 "Successful exit")
 
@@ -71,19 +75,19 @@
                           (let i (.pop! free-list))
                           (.set! mem i chunk)
                           i)))
-            (running program (.u+ pc 1)))
+            (next))
 
          (9 (.set! mem (reg c) none)
             (.append! free-list (reg c))
-            (running program (.u+ pc 1)))
+            (next))
 
          (10 (.write-char out-port (char<- (reg c)))
-             (running program (.u+ pc 1)))
+             (next))
 
          (11 (let s (.read-char in-port))
              (.set! reg c
                     (if (is? s none) 0xFFFFFFFF (string<- s)))
-             (running program (.u+ pc 1)))
+             (next))
 
          (12 (cond ((= (reg b) 0)
                     (running program (reg c)))
