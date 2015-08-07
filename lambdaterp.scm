@@ -107,9 +107,20 @@
 
 ;; Debugger
 
+(define autodebug (box<- '()))
+
+(define (next-command)
+  (let ((cmds (autodebug)))
+    (if ('empty? cmds)
+        #f
+        (begin
+          ('set! autodebug ('rest cmds))
+          ('first cmds)))))
+
 (define (debug k plaint culprit)
   (complain plaint culprit)
-  (traceback k))
+  (traceback k)
+  (debugger-loop k))
 
 (define (complain plaint culprit)
   (display "Lambaterp error: ")
@@ -121,12 +132,27 @@
 (define (traceback k)
   (for-each print k))
 
+(define (debugger-loop k)
+  (let ((cmd (next-command)))
+    (if (not cmd)
+        #f
+        (call ('first cmd) (debugger-interpreter k) ('rest cmd)))))
+;; XXX that was a clumsy way to send a message, dude.
+
+(define (debugger-interpreter k)
+  (make
+    ('continue (value) ('take k value))))
+
 
 ;; Smoke test
 
-(define (try lexp)
-  (let ((result (interpret lexp)))
-    (if result (print (survey result)) 'failed)))
+(define try
+  (make ('run (lexp)
+          (try lexp '()))
+        ('run (lexp commands)
+          ('set! autodebug commands)
+          (let ((result (interpret lexp)))
+            (if result (print (survey result)) 'failed)))))
 
 (try '(lambda (x) x))
 (try '((lambda (x) ((+ x) 2)) 1))
@@ -134,3 +160,6 @@
 (try '((lambda (x) ((+ y) 1)) 42))
 (try '((+ (lambda (z) z)) y))
 (try '(((+ 1) y) 2))
+
+(try '((lambda (x) ((+ y) 1)) 42)
+     '((continue 42)))
