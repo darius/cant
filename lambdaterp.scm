@@ -80,9 +80,14 @@
 (define prim+
   (make ('survey () '+)
         ('call (arg1 k1)
-          ('take k1 (make ('survey () (list<- '+ (survey arg1)))
-                          ('call (arg2 k2)
-                            ('take k2 ('+ arg1 arg2))))))))
+          (if (number? arg1)
+              ('take k1 (make ('survey () (list<- '+ (survey arg1)))
+                              ('call (arg2 k2)
+                                (if (number? arg2)
+                                    ('take k2 ('+ arg1 arg2))
+                                    ;; XXX should supply self, too:
+                                    (debug k2 "Bad arg2 to +" (survey arg2))))))
+              (debug k1 "Bad arg1 to +" (survey arg1))))))
 
 
 ;; Environments
@@ -128,3 +133,4 @@
 
 (try '((lambda (x) ((+ y) 1)) 42))
 (try '((+ (lambda (z) z)) y))
+(try '(((+ 1) y) 2))
