@@ -102,7 +102,6 @@
 
 (define symbol<-chars (compose symbol<- string<-list))
 
-;; TODO: I don't understand this
 (define hug (feed-list (lambda (vals) vals)))
 
 (define sexpr
