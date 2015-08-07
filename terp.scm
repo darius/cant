@@ -528,6 +528,7 @@
     (= ,=)
     (vector<-count ,make-vector)
     (not ,not)
+    (assq ,assq)  ;; TODO replace with 'real' hashmaps
     (display ,display)
     (write ,write)
     (newline ,newline)
