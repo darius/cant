@@ -136,10 +136,9 @@
 
 (define (debugger-loop k)
   (let ((cmd (next-command)))
-    (if (not cmd)
-        #f
-        (call ('first cmd) (debugger-interpreter k) ('rest cmd)))))
-;; XXX that was a clumsy way to send a message, dude.
+    (if cmd
+        (call (debugger-interpreter k) cmd)
+        #f)))
 
 (define (debugger-interpreter k)
   (make

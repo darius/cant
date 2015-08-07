@@ -388,7 +388,12 @@
   (let ((script
          (append
           (prim-script<- identity 
-           `((run 3 ,(lambda (k _ cue receiver arguments)
+           `((run 2 ,(lambda (k _ receiver message)
+                       (let ((cue (car message))
+                             (arguments (cdr message)))
+                         (call (selector<- cue (length arguments))
+                               receiver arguments k))))
+             (run 3 ,(lambda (k _ cue receiver arguments)
                        (call (selector<- cue (length arguments))
                              receiver arguments k)))))
           (prim-script<- prim<-
