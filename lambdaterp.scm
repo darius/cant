@@ -70,12 +70,12 @@
                               ('call fn arg k))))))))))
 
 
+;; Built-in values
+
 (define (survey value)
   (if (number? value)
       value
       ('survey value)))
-
-;; Built-ins
 
 (define prim+
   (make ('survey () '+)
@@ -119,10 +119,12 @@
 
 ;; Smoke test
 
-(print (interpret
-  '((lambda (x) ((+ x) 2)) 1)
-;  '(lambda (x) y)
-;  '((lambda (x) (lambda (y) x)) (lambda (z) z))  ; XXX is output wrong?
-))
+(define (try lexp)
+  (let ((result (interpret lexp)))
+    (if result (print (survey result)) 'failed)))
 
-(interpret '((lambda (x) ((+ y) 1)) 42))
+(try '(lambda (x) x))
+(try '((lambda (x) ((+ x) 2)) 1))
+
+(try '((lambda (x) ((+ y) 1)) 42))
+(try '((+ (lambda (z) z)) y))
