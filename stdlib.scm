@@ -90,3 +90,6 @@
       (if (ok? ('first xs))
           #t
           (some? ok? ('rest xs)))))
+
+(define (compose f g)
+  (lambda (x) (f (g x))))

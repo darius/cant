@@ -82,10 +82,11 @@
             (elaborate `(make ('run ,(cadr e) ,@(cddr e)))))
            ((if)
             (let ((test (cadr e)) (if-true (caddr e)) (if-false (cadddr e)))
+              ;; XXX I suspect the boolean coercion is a bad idea in
+              ;; our context: there's too much polymorphism.
               (elaborate `('choose ('run ',boolean<- ,test)
                                    (lambda () ,if-true)
                                    (lambda () ,if-false)))))
-           ;; ...
            (else
             (if (and (starts-with? (car e) 'quote)
                      (symbol? (cadar e)))
@@ -383,6 +384,23 @@
    (prim-script<- prim<-
     `((type 0 ,(lambda (k me) (answer k 'boolean)))))))
 
+(define call-prim
+  (let ((script
+         (append
+          ;; XXX yet another thing that needs to be variadic.
+          ;; Also, cues vs. selectors
+          (prim-script<- identity 
+           `((run 2 ,(lambda (k _ cue receiver)
+                       (call (selector<- cue 0) receiver '() k)))
+             (run 3 ,(lambda (k _ cue receiver a)
+                       (call (selector<- cue 1) receiver (list a) k)))
+             (run 4 ,(lambda (k _ cue receiver a b)
+                       (call (selector<- cue 2) receiver (list a b) k)))
+             ))
+          (prim-script<- prim<-
+           `((type 0 ,(lambda (me) 'procedure)))))))
+    (object<- script #f)))
+
 (define evaluate-prim
   (let ((script
          (append
@@ -412,10 +430,19 @@
      (bit-xor   1 ,bitwise-xor)
      )))
 
-(define symbol-script
+'(define symbol-script
   (prim-script<- prim<-
    `((type   0 ,(lambda (me) 'symbol))
      (name   0 ,symbol->string))))
+
+(define symbol-script
+  (append
+   (prim-script<- prim<-
+    `((type   0 ,(lambda (me) 'symbol))
+      (name   0 ,symbol->string)))
+   (prim-script<- identity  ;; XXX actually need a variadic matcher
+    `((run    1 ,(lambda (k me a)   (call (selector<- me 0) a '() k)))
+      (run    2 ,(lambda (k me a b) (call (selector<- me 1) a (list b) k)))))))
 
 (define nil-script
   (prim-script<- prim<-
@@ -437,8 +464,13 @@
 
 (define char-script
   (prim-script<- prim<-
-   `((type   0 ,(lambda (me) 'char))
-     (code   0 ,char->integer))))       ; better name?
+   `((type          0 ,(lambda (me) 'char))
+     (code          0 ,char->integer)          ; better name?
+     (alphabetic?   0 ,char-alphabetic?)
+     (numeric?      0 ,char-numeric?)
+     (alphanumeric? 0 ,(lambda (me) (or (char-alphabetic? me)
+                                        (char-numeric? me))))
+     )))
 
 (define string-script
   (prim-script<- prim<-
@@ -523,6 +555,8 @@
     (vector? ,vector?)
     (box? ,box?)
     (box<- ,box<-)
+    (symbol<- ,string->symbol)
+    (string<-list ,list->string)
     (< ,<)  ;; XXX use 'compare method instead
     (<= ,<=)
     (= ,=)
@@ -532,6 +566,7 @@
     (display ,display)
     (write ,write)
     (newline ,newline)
+    (call ,call-prim)
     (evaluate ,evaluate-prim)
     (error ,error-prim)
     (the-signal-handler-box ,the-signal-handler-box)
