@@ -41,6 +41,10 @@
 
 ;; Expanding out syntactic sugar
 
+;;TODO: make this something like ('coerce boolean? x)
+(define (boolean<- x)                   
+  (not (not x)))
+
 (define (elaborate e)
   (cond ((symbol? e) e)
         ((self-evaluating? e) (list 'quote e))
@@ -78,8 +82,7 @@
             (elaborate `(make ('run ,(cadr e) ,@(cddr e)))))
            ((if)
             (let ((test (cadr e)) (if-true (caddr e)) (if-false (cadddr e)))
-              ;; XXX ought to coerce test to boolean
-              (elaborate `('choose ,test 
+              (elaborate `('choose ('run ',boolean<- ,test)
                                    (lambda () ,if-true)
                                    (lambda () ,if-false)))))
            ;; ...
@@ -129,9 +132,9 @@
            (make ('run (v thunk) ('run thunk)))
            ('run write x)
            (make ('run () (make ('run (y) ('+ x y)))))))
-(should= (elaborate '(begin (if x y z)))
+'(should= (elaborate '(begin (if x y z)))
          '('choose x (make ('run () y)) (make ('run () z))))
-(should= (elaborate '(lambda ()
+'(should= (elaborate '(lambda ()
                       (letrec ((for-each
                                 (lambda (f xs)
                                   (if (null? xs)
@@ -524,6 +527,7 @@
     (<= ,<=)
     (= ,=)
     (vector<-count ,make-vector)
+    (not ,not)
     (display ,display)
     (write ,write)
     (newline ,newline)
