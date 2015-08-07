@@ -31,38 +31,57 @@
 ;; ASTs and continuations
 
 (define halt
-  (make ('take (val) val)))
+  (make ('take (val) val)
+        ('empty? () #t)))
 
 ;; Constant
 (define (constant<- c)
-  (make ('evaluate (r k) ('take k c))))
+  (make ('source () c)
+        ('evaluate (r k) ('take k c))))
 
 ;; Variable reference
 (define (var-ref<- v)
-  (make ('evaluate (r k) (lookup r v k))))
+  (make ('source () v)
+        ('evaluate (r k) (lookup r v k))))
 
 ;; Lambda expression
 (define (abstraction<- v body)
-  (make ('evaluate (r k)
+  (make ('source () (list<- '& v ('source body)))
+        ('evaluate (r k)
           ('take k (make
+                     ('survey () (list<- v '-> '...))
                      ('call (arg k2)
                        ('evaluate body (extend r v arg) k2)))))))
 
 ;; Application
 (define (call<- operator operand)
-  (make ('evaluate (r k)
+  (make ('source () (list<- ('source operator) ('source operand)))
+        ('evaluate (r k)
           ('evaluate operator r
-            (make ('take (fn)
+            (make ('empty? () #f)
+                  ('rest () k)
+                  ('first () (list<- '^ ('source operand)))
+                  ('take (fn)
                     ('evaluate operand r
-                      (make ('take (arg)
+                      (make ('empty? () #f)
+                            ('first () (list<- (survey fn) '^))
+                            ('rest () k)
+                            ('take (arg)
                               ('call fn arg k))))))))))
 
+
+(define (survey value)
+  (if (number? value)
+      value
+      ('survey value)))
 
 ;; Built-ins
 
 (define prim+
-  (make ('call (arg1 k1)
-          ('take k1 (make ('call (arg2 k2)
+  (make ('survey () '+)
+        ('call (arg1 k1)
+          ('take k1 (make ('survey () (list<- '+ (survey arg1)))
+                          ('call (arg2 k2)
                             ('take k2 ('+ arg1 arg2))))))))
 
 
@@ -78,7 +97,24 @@
   (let ((record (assq v r)))
     (if record
         ('take k (record 1))
-        (error "Unbound var in interpret" v))))
+        (debug k "Unbound var" v))))
+
+
+;; Debugger
+
+(define (debug k plaint culprit)
+  (complain plaint culprit)
+  (traceback k))
+
+(define (complain plaint culprit)
+  (display "Lambaterp error: ")
+  (write plaint)
+  (display ": ")
+  (write culprit)
+  (newline))
+
+(define (traceback k)
+  (for-each print k))
 
 
 ;; Smoke test
@@ -88,3 +124,5 @@
 ;  '(lambda (x) y)
 ;  '((lambda (x) (lambda (y) x)) (lambda (z) z))  ; XXX is output wrong?
 ))
+
+(interpret '((lambda (x) ((+ y) 1)) 42))
