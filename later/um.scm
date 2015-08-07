@@ -64,13 +64,13 @@
             (.set! reg b
                    (cond ((.empty? free-list)
                           ;; TODO: mem could have a method doing this?
-                          (let t (.count mem))
+                          (let i (.count mem))
                           (.append! mem chunk)
-                          t)
+                          i)
                          (else
-                          (let t (.pop! free-list))
-                          (.set! mem t chunk)
-                          t)))
+                          (let i (.pop! free-list))
+                          (.set! mem i chunk)
+                          i)))
             (running program (.u+ pc 1)))
 
          (9 (.set! mem (reg c) none)
