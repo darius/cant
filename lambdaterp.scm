@@ -6,14 +6,12 @@
 (load "traceback.scm")
 
 ;; Conventions:
-;;  c constant value
-;;  v variable name (a symbol)
-;;  r environment
-;;  k continuation
-;;  others an AST or a value
-
-(define (interpret lexp)
-  ('evaluate (parse lexp) global-env halt))
+;;  lexp    source form of lambda expression
+;;  c       constant value
+;;  v       variable name (a symbol)
+;;  r       environment
+;;  k       continuation
+;;  others  an AST or a value
 
 (define (parse lexp)
   (if (symbol? lexp)
@@ -25,6 +23,9 @@
                              (parse (lexp 2)))
               (call<- (parse (lexp 0))
                       (parse (lexp 1)))))))
+
+(define (interpret lexp)
+  ('evaluate (parse lexp) global-env halt))
 
 
 ;; ASTs and continuations
