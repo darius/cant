@@ -26,7 +26,7 @@
 
     (match opcode
       (13 (.set! reg (.bit-and 7 (.u>> inst 25))
-                 (.bit-and inst 0x1FFFFFF))
+                 (.bit-and inst #x1FFFFFF))
           (next))
       (_
        (let a (.bit-and 7 (.u>> inst 6)))
@@ -86,7 +86,7 @@
 
          (11 (let s (.read-char in-port))
              (.set! reg c
-                    (if (is? s none) 0xFFFFFFFF (string<- s)))
+                    (if (is? s none) #xFFFFFFFF (string<- s)))
              (next))
 
          (12 (cond ((= (reg b) 0)
