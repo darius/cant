@@ -31,8 +31,10 @@
 ;; ASTs and continuations
 
 (define halt
-  (make ('take (val) val)
-        ('empty? () #t)))
+  (make ('empty? () #t)
+        ('inject (k<-) halt)
+        ('take (val) val)))
+
 
 ;; Constant
 (define (constant<- c)
@@ -57,17 +59,23 @@
 (define (call<- operator operand)
   (make ('source () (list<- ('source operator) ('source operand)))
         ('evaluate (r k)
-          ('evaluate operator r
-            (make ('empty? () #f)
-                  ('rest () k)
-                  ('first () (list<- '^ ('source operand)))
-                  ('take (fn)
-                    ('evaluate operand r
-                      (make ('empty? () #f)
-                            ('rest () k)
-                            ('first () (list<- (survey fn) '^))
-                            ('take (arg)
-                              ('call fn arg k))))))))))
+          ('evaluate operator r (ev-arg-cont<- operand r k)))))
+
+(define (ev-arg-cont<- operand r k)
+  (make ('empty? () #f)
+        ('rest () k)
+        ('first () (list<- '^ ('source operand)))
+        ('inject (k<-) (ev-arg-cont<- operand r (k<- k)))
+        ('take (fn)
+           ('evaluate operand r (call-cont<- fn k)))))
+
+(define (call-cont<- fn k)
+  (make ('empty? () #f)
+        ('rest () k)
+        ('first () (list<- (survey fn) '^))
+        ('inject (k<-) (call-cont<- fn (k<- k)))
+        ('take (arg)
+           ('call fn arg k))))
 
 
 ;; Built-in values
@@ -75,7 +83,9 @@
 (define (survey value)
   (if (number? value)
       value
-      ('survey value)))
+      (if (symbol? value)
+          value
+          ('survey value))))
 
 (define prim+
   (make ('survey () '+)
@@ -109,23 +119,25 @@
 ;; Instead of interacting at a prompt, it takes a list of commands,
 ;; for now, for ease of rerunning during development.
 
-(define autodebug (box<- '()))
+(define command-queue (box<- '()))
 
 (define (next-command)
-  (let ((cmds (autodebug)))
+  (display "debug> ")
+  (let ((cmds (command-queue)))
     (if ('empty? cmds)
-        #f
+        (begin (newline) #f)
         (begin
-          ('set! autodebug ('rest cmds))
+          (print ('first cmds))
+          ('set! command-queue ('rest cmds))
           ('first cmds)))))
 
 (define (debug k plaint culprit)
   (complain plaint culprit)
   (traceback k)
-  (debugging k))
+  (debugging (out-step<- k 'default-error-value)))
 
 (define (complain plaint culprit)
-  (display "Lambaterp error: ")
+  (display "Lambdaterp error: ")
   (write plaint)
   (display ": ")
   (write culprit)
@@ -134,16 +146,29 @@
 (define (traceback k)
   (for-each print k))
 
-(define (debugging k)
+(define (debugging state)
   (let ((cmd (next-command)))
-    (if cmd
-        (call (debugger-interpreter k) cmd)
-        #f)))
+    (if cmd (call state cmd) #f)))
 
-(define (debugger-interpreter k)
-  (make
-    ('continue (value) ('take k value))
+(define (out-step<- k value)
+  (make out-step
+    ('b ()
+      (traceback k)
+      (debugging out-step))
+    ('continue ()
+      ('take k value))
+    ('hop ()
+      ('take ('inject k debugger-trap-cont<-) value))
+    ('step () XXX)
+    ('value (new-value)
+      (debugging (out-step<- k new-value)))
     ))
+
+(define (debugger-trap-cont<- k)
+  (make
+    ('take (value) (debugging (out-step<- k value)))
+    ;; XXX ('inject ...) ?
+    (else (cue arguments) (call cue k arguments))))
 
 
 ;; Smoke test
@@ -152,7 +177,7 @@
   (make ('run (lexp)
           (try lexp '()))
         ('run (lexp commands)
-          ('set! autodebug commands)
+          ('set! command-queue commands)
           (let ((result (interpret lexp)))
             (if result (print (survey result)) 'failed)))))
 
@@ -164,4 +189,6 @@
 (try '(((+ 1) y) 2))
 
 (try '((lambda (x) ((+ y) 1)) 42)
-     '((continue 42)))
+     '((value 42) (continue)))
+(try '((lambda (x) ((+ y) 1)) 42)
+     '((value 42) (hop) (b) (hop) (hop)))
