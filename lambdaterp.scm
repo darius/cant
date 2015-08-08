@@ -64,8 +64,8 @@
                   ('take (fn)
                     ('evaluate operand r
                       (make ('empty? () #f)
-                            ('first () (list<- (survey fn) '^))
                             ('rest () k)
+                            ('first () (list<- (survey fn) '^))
                             ('take (arg)
                               ('call fn arg k))))))))))
 
@@ -122,7 +122,7 @@
 (define (debug k plaint culprit)
   (complain plaint culprit)
   (traceback k)
-  (debugger-loop k))
+  (debugging k))
 
 (define (complain plaint culprit)
   (display "Lambaterp error: ")
@@ -134,7 +134,7 @@
 (define (traceback k)
   (for-each print k))
 
-(define (debugger-loop k)
+(define (debugging k)
   (let ((cmd (next-command)))
     (if cmd
         (call (debugger-interpreter k) cmd)
@@ -142,7 +142,8 @@
 
 (define (debugger-interpreter k)
   (make
-    ('continue (value) ('take k value))))
+    ('continue (value) ('take k value))
+    ))
 
 
 ;; Smoke test
