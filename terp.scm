@@ -192,9 +192,21 @@
             (cond ((assoc selector script) ;TODO assq when memoized
                    => (lambda (pair)
                         (apply (cadr pair) k datum arguments)))
-                  (else (signal k "No method found" selector object))))))
+                  ((assq matcher-selector script)
+                   => (lambda (pair)
+                        ((cadr pair)
+                         k datum (selector.cue selector) arguments)))
+                  (else (message-not-found selector object k))))))
+
+(define (message-not-found selector object k)
+  (signal k "No method found" selector object))
 
 (define (selector<- cue arity) (cons cue arity))
+(define selector.cue car)
+(define matcher-selector (list '*matcher)) ;XXX not private until we can assq above with memoized selectors
+
+(define (matcher-script<- proc)
+  `((,matcher-selector ,proc)))
 
 ;; TODO: special-case this path through call for efficiency
 (define (answer k value)
@@ -389,13 +401,13 @@
          (append
           (prim-script<- identity 
            `((run 2 ,(lambda (k _ receiver message)
+                       ;; XXX dubious design: it's easy to suppose
+                       ;; cue defaults to 'run here instead.
                        (let ((cue (car message))
                              (arguments (cdr message)))
-                         (call (selector<- cue (length arguments))
-                               receiver arguments k))))
+                         (call/cue cue receiver arguments k))))
              (run 3 ,(lambda (k _ cue receiver arguments)
-                       (call (selector<- cue (length arguments))
-                             receiver arguments k)))))
+                       (call/cue cue receiver arguments k)))))
           (prim-script<- prim<-
            `((type 0 ,(lambda (me) 'procedure)))))))
     (object<- script #f)))
@@ -429,19 +441,22 @@
      (bit-xor   1 ,bitwise-xor)
      )))
 
-'(define symbol-script
-  (prim-script<- prim<-
-   `((type   0 ,(lambda (me) 'symbol))
-     (name   0 ,symbol->string))))
+(define (call/cue cue receiver arguments k)
+  (call (selector<- cue (length arguments))
+        receiver arguments k))
 
 (define symbol-script
   (append
    (prim-script<- prim<-
     `((type   0 ,(lambda (me) 'symbol))
       (name   0 ,symbol->string)))
-   (prim-script<- identity  ;; XXX actually need a variadic matcher
-    `((run    1 ,(lambda (k me a)   (call (selector<- me 0) a '() k)))
-      (run    2 ,(lambda (k me a b) (call (selector<- me 1) a (list b) k)))))))
+   (matcher-script<-
+    (lambda (k me cue arguments)
+      (if (eq? cue 'run)
+          (call/cue me (car arguments) (cdr arguments) k)
+          (message-not-found (selector<- cue (length arguments))
+                             object
+                             k))))))
 
 (define nil-script
   (prim-script<- prim<-
