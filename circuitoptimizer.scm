@@ -20,9 +20,10 @@
 
 (define say
   (make
-    ('run (a b c d)     (for-each display (list<- a b c d)))
-    ('run (a b c d e f) (for-each display (list<- a b c d e f)))
-    ))
+    (else (cue arguments)
+          (if (is? cue 'run)
+              (for-each display arguments)
+              (error "XXX need to punt to miranda methods" cue)))))
 
 ;; OK now:
 
