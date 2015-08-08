@@ -58,10 +58,7 @@
            ((make)
             (let ((make<-
                    (lambda (methods)
-                     `(make ,@(map (lambda (method)
-                                     `(,(car method) ,(cadr method)
-                                       ,(elaborate-seq (cddr method))))
-                                   methods)))))
+                     `(make ,@(map elaborate-method/matcher methods)))))
               (if (and (not (null? (cdr e)))
                        (symbol? (cadr e)))
                   (elaborate `(letrec ((,(cadr e) ,(make<- (cddr e))))
@@ -92,6 +89,13 @@
                      (symbol? (cadar e)))
                 (cons (car e) (map elaborate (cdr e)))
                 (cons ''run (map elaborate e))))))))  ; default cue
+
+(define (elaborate-method/matcher method)
+  (assert (or (eq? (car method) 'else)
+              (starts-with? (car method) 'quote))
+          "Bad method/matcher syntax" method)
+  `(,(car method) ,(cadr method)
+    ,(elaborate-seq (cddr method))))
 
 (define (elaborate-seq es)
   (begin<- (map elaborate es)))
@@ -296,17 +300,26 @@
          ;; TODO: build the object's script at elaboration time. I'm
          ;; holding off on this for the sake of should= on elaboration
          ;; results.
-         (answer k (object<- (map (lambda (method)
-                                    (list (selector<- (cadar method)
-                                                      (length (cadr method)))
-                                          (lambda (k r . arguments)
-                                            (ev (caddr method)
-                                                (env-extend r
-                                                            (cadr method)
-                                                            arguments)
-                                                k))))
-                                  (cdr e))
-                             r)))
+         (answer k (object<-
+                    (map (lambda (method)
+                           (if (eq? (car method) 'else)
+                               (list matcher-selector
+                                     (lambda (k r cue arguments)
+                                       (ev (caddr method)
+                                           (env-extend r
+                                                       (cadr method)
+                                                       (list cue arguments))
+                                           k)))
+                               (list (selector<- (cadar method)
+                                                 (length (cadr method)))
+                                     (lambda (k r . arguments)
+                                       (ev (caddr method)
+                                           (env-extend r
+                                                       (cadr method)
+                                                       arguments)
+                                           k)))))
+                         (cdr e))
+                    r)))
         ((letrec)
          (ev-letrec (cadr e) (caddr e)
                     (env-extend-promises r (map car (cadr e)))
