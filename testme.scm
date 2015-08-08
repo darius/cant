@@ -7,6 +7,7 @@
   (newline)
   (run-load filename))
 
+(shout "failing.scm")
 (shout "intset.scm")
 (shout "lambdacompiler.scm")
 (shout "lambdaterp.scm")
