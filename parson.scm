@@ -9,15 +9,29 @@
 ;(load "traceback.scm")
 
 (define (empty chars vals)
-  (make
-    ('leftovers () chars)
-    ('results () vals)
+  (make success
+    ('display () 
+      (write chars)
+      (display " ")
+      (write vals))
+    ('result () (if (is? 1 ('count vals))
+                    (vals 0)
+                    (error "Wrong # of results" vals)))
+    ('else (p cs vs) success)
     ('continue (p) (p chars vals))
-    ('prepend (pre-vals) (empty chars (chain pre-vals vals)))
-    ))
+    ('prefix (pre-vals) (empty chars (chain pre-vals vals)))
+    ('leftovers () chars)
+    ('results () vals)))
 
 (define (fail chars vals)
-  #f)
+  failure)
+
+(define failure
+  (make
+    ('display () (display "failed"))
+    ('else (p cs vs) (p cs vs))
+    ('continue (p) failure)
+    ('prefix (pre-vals) failure)))
 
 (define (folded<- combine)
   (make
@@ -32,16 +46,12 @@
 (define either
   (folded<- (lambda (p q)
               (lambda (chars vals)
-                (let ((result (p chars vals)))
-                  (if result result (q chars vals)))))))
+                ('else (p chars vals) q chars vals)))))
 
 (define seq
   (folded<- (lambda (p q)
               (lambda (chars vals)
-                (let ((result (p chars vals)))
-                  (if result
-                      ('continue result q)
-                      #f))))))
+                ('continue (p chars vals) q)))))
 
 (define (feed-list f)
   (lambda (chars vals)
@@ -52,31 +62,28 @@
 
 (define (seclude p)
   (lambda (chars vals)
-    (let ((result (p chars '())))
-      (if result
-          ('prepend result vals)
-          #f))))
+    ('prefix (p chars '()) vals)))
 
-(define (eat1 ok?)
+(define (take-1 ok?)
   (lambda (chars vals)
     (if ('empty? chars)
-        #f
+        failure
         (if (ok? ('first chars))
             (empty ('rest chars) (chain vals (list<- ('first chars))))
-            #f))))
+            failure))))
     
-(define (skip1 ok?)
+(define (skip-1 ok?)
   (lambda (chars vals)
     (if ('empty? chars)
-        #f
+        failure
         (if (ok? ('first chars))
             (empty ('rest chars) vals)
-            #f))))
-    
-(define any1 (eat1 (lambda (char) #t)))
+            failure))))
 
-(define (lit1 my-char)
-  (skip1 (lambda (char) (is? my-char char))))
+(define any-1 (take-1 (lambda (char) #t)))
+
+(define (lit-1 my-char)
+  (skip-1 (lambda (char) (is? my-char char))))
 
 (define (maybe p)
   (either p empty))
@@ -92,21 +99,16 @@
 (define (try p string)
   (write string)
   (display " --> ")
-  (let ((outcome (p string '())))
-    (if outcome
-        (begin
-          (write ('leftovers outcome))
-          (display " ")
-          (print ('results outcome)))
-        (print 'failed))))
+  ('display (p string '()))
+  (newline))
 
-(try any1 "a")
-(try (seclude any1) "a")
-(try (many any1) "abc")
+(try any-1 "a")
+(try (seclude any-1) "a")
+(try (many any-1) "abc")
 
 (define bal
   (lambda (cs vs)
-    ((maybe (seq (lit1 #\() bal (lit1 #\)) bal))
+    ((maybe (seq (lit-1 #\() bal (lit-1 #\)) bal))
      cs vs)))
 
 (try bal "(abc")
@@ -114,7 +116,7 @@
 (try bal "()()xyz")
 (try bal "(()(()))")
 
-(try (many (lit1 #\space)) "  hey")
+(try (many (lit-1 #\space)) "  hey")
 
 
 (define symbol<-chars (compose symbol<- string<-list))
@@ -123,11 +125,11 @@
 
 (define sexpr
   (let ((subexpr (lambda (cs vs) (sexpr cs vs)))
-        (_ (many (lit1 #\space))))
+        (_ (many (lit-1 #\space))))
     (seclude
-     (seq _ (either (seq (lit1 #\() _ (many subexpr) (lit1 #\)) _
+     (seq _ (either (seq (lit-1 #\() _ (many subexpr) (lit-1 #\)) _
                          hug)
-                    (seq (eat1 'alphabetic?) (many (eat1 'alphanumeric?)) _
+                    (seq (take-1 'alphabetic?) (many (take-1 'alphanumeric?)) _
                          (feed-list symbol<-chars)))))))
 
 (try sexpr "")
