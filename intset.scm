@@ -1,10 +1,10 @@
-;; An example ooscheme program, from William Cook's essay on OOP vs. ADTs
+;; An example from William Cook's essay on OOP vs. ADTs
 ;; http://www.cs.utexas.edu/~wcook/Drafts/2009/essay.pdf
 
 (load "stdlib.scm")
 
 (define empty
-  (make _
+  (make
     ('empty? ()  #t)
     ('has? (k)   #f)
     ('adjoin (k) (adjoin<- k empty))
