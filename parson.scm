@@ -41,13 +41,10 @@
 
 (define (folded<- combine)
   (make
-    ('run (p) p)
-    ('run (p q) (combine p q))
-    ('run (p q r) (combine p (combine q r)))
-    ('run (p q r s) (combine p (combine q (combine r s))))
-    ('run (p q r s t) (combine p (combine q (combine r (combine s t)))))
-    ('run (p q r s t u) (combine p (combine q (combine r (combine s (combine t u))))))
-    ))
+    (else (cue arguments)
+          (if (is? cue 'run)
+              (foldr1 combine arguments)
+              (error "XXX need to punt to miranda methods" cue)))))
 
 (define either
   (folded<- (lambda (p q)

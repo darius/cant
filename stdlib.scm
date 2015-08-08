@@ -14,6 +14,17 @@
          '()
          xs))
 
+(define (foldr f z xs)
+  (if ('empty? xs)
+      z
+      (f ('first xs) (foldr f z ('rest xs)))))
+
+(define (foldr1 f xs)
+  (let ((tail ('rest xs)))
+    (if ('empty? tail)
+        ('first xs)
+        (f ('first xs) (foldr1 f tail)))))
+
 (define list<-
   (make ('run () '())
         ('run (a) (cons a '()))
@@ -22,7 +33,7 @@
         ('run (a b c d) (cons a (list<- b c d)))
         (else (cue arguments)
               (if (is? cue 'run)
-                  (foldr cons '() arguments)
+                  (foldr1 cons arguments)
                   (error "XXX need to punt to miranda methods" cue)))))
 
 (define chain
@@ -31,13 +42,8 @@
         ('run (xs ys) ('chain xs ys))
         (else (cue arguments)
               (if (is? cue 'run)
-                  (foldr 'chain '() arguments) ;XXX what if non-list arguments? define foldr1
+                  (foldr1 'chain arguments)
                   (error "XXX need to punt to miranda methods" cue)))))
-
-(define (foldr f z xs)
-  (if ('empty? xs)
-      z
-      (f ('first xs) (foldr f z ('rest xs)))))
 
 (define (memq? x set)
   (if ('empty? set)
