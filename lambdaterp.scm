@@ -165,10 +165,12 @@
     ))
 
 (define (debugger-trap-cont<- k)
-  (make
-    ('take (value) (debugging (out-step<- k value)))
-    ;; XXX ('inject ...) ?
-    (else (cue arguments) (call cue k arguments))))
+  (if (is? k halt)
+      k
+      (make
+        ('take (value) (debugging (out-step<- k value)))
+        ;; XXX ('inject ...) ?
+        (else (cue arguments) (call cue k arguments)))))
 
 
 ;; Smoke test
@@ -191,4 +193,4 @@
 (try '((lambda (x) ((+ y) 1)) 42)
      '((value 42) (continue)))
 (try '((lambda (x) ((+ y) 1)) 42)
-     '((value 42) (hop) (b) (hop) (hop)))
+     '((value 42) (hop) (b) (hop)))
