@@ -468,8 +468,7 @@
       (if (eq? cue 'run)
           (call/cue me (car arguments) (cdr arguments) k)
           (message-not-found (selector<- cue (length arguments))
-                             object
-                             k))))))
+                             me k))))))
 
 (define nil-script
   (prim-script<- prim<-
