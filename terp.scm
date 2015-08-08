@@ -567,6 +567,33 @@
 
 (define error-prim (object<- error-script #f))
 
+(define (prim-write x)
+  (write (deep-format x)))
+
+(define (deep-format x)
+  (cond ((pair? x)
+         (cond ((starts-with? x object-tag)
+                (format-script (object.script x)))
+               (else
+                (cons (deep-format (car x))
+                      (deep-format (cdr x))))))
+        (else x)))                      ;for now
+
+(define (format-script script)
+  (define sep "")
+  (define (format-entry entry)
+    (let ((s sep))
+      (set! sep ",")
+      (string-append s (format-selector (car entry)))))
+  (define (format-selector sel)
+    (if (eq? sel matcher-selector)
+        "..."
+        (string-append (symbol->string (car sel))
+                       "/"
+                       (number->string (cdr sel)))))
+  (string->symbol (apply string-append
+                         `("[" ,@(map format-entry script) "]"))))
+
 (define the-global-env
   `((cons ,cons)
     (is? ,is?)
@@ -590,7 +617,7 @@
     (not ,not)
     (assq ,assq)  ;; TODO replace with 'real' hashmaps
     (display ,display)
-    (write ,write)
+    (write ,prim-write)
     (newline ,newline)
     (call ,call-prim)
     (evaluate ,evaluate-prim)
