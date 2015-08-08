@@ -6,9 +6,15 @@
 ;; TODO: memoize
 
 (load "stdlib.scm")
+;(load "traceback.scm")
 
 (define (empty chars vals)
-  (list<- chars vals))
+  (make
+    ('leftovers () chars)
+    ('results () vals)
+    ('continue (p) (p chars vals))
+    ('prepend (pre-vals) (empty chars (chain pre-vals vals)))
+    ))
 
 (define (fail chars vals)
   #f)
@@ -34,12 +40,12 @@
               (lambda (chars vals)
                 (let ((result (p chars vals)))
                   (if result
-                      (q (result 0) (result 1))
+                      ('continue result q)
                       #f))))))
 
 (define (feed-list f)
   (lambda (chars vals)
-    (list<- chars (list<- (f vals)))))
+    (empty chars (list<- (f vals)))))
 
 (define (feed f)
   (feed-list (lambda (vals) (call 'run f vals))))
@@ -48,7 +54,7 @@
   (lambda (chars vals)
     (let ((result (p chars '())))
       (if result
-          (list<- (result 0) (chain vals (result 1)))
+          ('prepend result vals)
           #f))))
 
 (define (eat1 ok?)
@@ -56,7 +62,7 @@
     (if ('empty? chars)
         #f
         (if (ok? ('first chars))
-            (list<- ('rest chars) (chain vals (list<- ('first chars))))
+            (empty ('rest chars) (chain vals (list<- ('first chars))))
             #f))))
     
 (define (skip1 ok?)
@@ -64,7 +70,7 @@
     (if ('empty? chars)
         #f
         (if (ok? ('first chars))
-            (list<- ('rest chars) vals)
+            (empty ('rest chars) vals)
             #f))))
     
 (define any1 (eat1 (lambda (char) #t)))
@@ -83,21 +89,32 @@
 
 ;; Smoke test
 
-(print (any1 "a" '()))
-(print ((seclude any1) "a" '()))
-(print ((many any1) "abc" '()))
+(define (try p string)
+  (write string)
+  (display " --> ")
+  (let ((outcome (p string '())))
+    (if outcome
+        (begin
+          (write ('leftovers outcome))
+          (display " ")
+          (print ('results outcome)))
+        (print 'failed))))
+
+(try any1 "a")
+(try (seclude any1) "a")
+(try (many any1) "abc")
 
 (define bal
   (lambda (cs vs)
     ((maybe (seq (lit1 #\() bal (lit1 #\)) bal))
      cs vs)))
 
-(print (bal "(abc" '()))
-(print (bal "()xyz" '()))
-(print (bal "()()xyz" '()))
-(print (bal "(()(()))" '()))
+(try bal "(abc")
+(try bal "()xyz")
+(try bal "()()xyz")
+(try bal "(()(()))")
 
-(print ((many (lit1 #\space)) "  hey" '()))
+(try (many (lit1 #\space)) "  hey")
 
 
 (define symbol<-chars (compose symbol<- string<-list))
@@ -113,7 +130,7 @@
                     (seq (eat1 'alphabetic?) (many (eat1 'alphanumeric?)) _
                          (feed-list symbol<-chars)))))))
 
-(print (sexpr "" '()))
-(print (sexpr "yo" '()))
-(print (sexpr "(lisp)" '()))
-(print (sexpr "(lisp (the  GREATEST  ) hurrah)" '()))
+(try sexpr "")
+(try sexpr "yo")
+(try sexpr "(lisp)")
+(try sexpr "(lisp (the  GREATEST  ) hurrah)")
