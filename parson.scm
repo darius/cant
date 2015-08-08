@@ -1,12 +1,22 @@
 ;; Basic PEG-ish parsing
 
 ;; TODO: track farthest reached
-;; TODO: 'not' combinator
 ;; TODO: reasonable efficiency
 ;; TODO: memoize
 
 (load "stdlib.scm")
 ;(load "traceback.scm")
+
+(define (fail chars vals)
+  failure)
+
+(define failure
+  (make
+    ('display () (display "failed"))
+    ('invert () empty)
+    ('else (p cs vs) (p cs vs))
+    ('continue (p) failure)
+    ('prefix (pre-vals) failure)))
 
 (define (empty chars vals)
   (make success
@@ -17,21 +27,17 @@
     ('result () (if (is? 1 ('count vals))
                     (vals 0)
                     (error "Wrong # of results" vals)))
+    ('invert () fail)
     ('else (p cs vs) success)
     ('continue (p) (p chars vals))
     ('prefix (pre-vals) (empty chars (chain pre-vals vals)))
     ('leftovers () chars)
     ('results () vals)))
 
-(define (fail chars vals)
-  failure)
-
-(define failure
-  (make
-    ('display () (display "failed"))
-    ('else (p cs vs) (p cs vs))
-    ('continue (p) failure)
-    ('prefix (pre-vals) failure)))
+(define (invert p)
+  (lambda (chars vals)
+    (('invert (p chars vals))
+     chars vals)))
 
 (define (folded<- combine)
   (make
