@@ -31,7 +31,7 @@
         ('run (xs ys) ('chain xs ys))
         (else (cue arguments)
               (if (is? cue 'run)
-                  (foldr 'chain '() arguments)
+                  (foldr 'chain '() arguments) ;XXX what if non-list arguments? define foldr1
                   (error "XXX need to punt to miranda methods" cue)))))
 
 (define (foldr f z xs)
