@@ -339,7 +339,14 @@
              (cont<- ev-remaining-operands-cont-script k
                      (cdr operands) '() r selector receiver))))
    (lambda (operands r selector)
-     `(ev-operands ,selector))))
+     (cons `',(show-selector selector)
+           (cons '% operands)))))
+
+(define (show-selector selector)
+  (car selector))
+
+(define (show-value value)
+  (list 'unquote (deep-format value)))
 
 (define ev-remaining-operands-cont-script
   (cont-script<-
@@ -351,8 +358,11 @@
                      (cdr operands) (cons argument arguments)
                      r selector receiver))))
    (lambda (operands arguments r selector receiver)
-     `(ev-remaining-operands
-       ,selector ,receiver ,(reverse arguments) ,operands))))
+     (append (list `',(show-selector selector)
+                   (show-value receiver))
+             (map show-value (reverse arguments))
+             (list '%)
+             operands))))
 
 (define (ev-letrec defns body new-r k)
   (ev (cadar defns) new-r
