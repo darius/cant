@@ -72,6 +72,10 @@
 (define (feed f)
   (feed-list (lambda (vals) (call 'run f vals))))
 
+(define (push constant)
+  (lambda (chars vals)
+    (empty chars (chain vals (list<- constant)))))
+
 (define (seclude p)
   (lambda (chars vals)
     ('prefix (p chars '()) vals)))
