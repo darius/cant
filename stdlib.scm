@@ -102,3 +102,7 @@
 
 (define (compose f g)
   (lambda (x) (f (g x))))
+
+;; XXX float contagion
+(define (min x y) (if (< x y) x y))
+(define (max x y) (if (< x y) y x))
