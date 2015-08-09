@@ -1,4 +1,5 @@
-(load "terp.scm")
+;(load "terp.scm")
+(load "loadme.scm")
 
 (define (shout filename)
   (newline)
