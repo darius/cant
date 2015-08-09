@@ -16,6 +16,7 @@
     ('invert () empty)
     ('else (p cs vs) (p cs vs))
     ('continue (p) failure)
+    ('capture (cs) failure)
     ('prefix (pre-vals) failure)))
 
 (define (empty chars vals)
@@ -30,6 +31,10 @@
     ('invert () fail)
     ('else (p cs vs) success)
     ('continue (p) (p chars vals))
+    ('capture (cs)
+      ;; XXX this'd be simpler if we were working by indices already:
+      (let ((d ('- ('count cs) ('count chars))))
+        (empty chars (chain vals (list<- ('slice cs 0 d))))))
     ('prefix (pre-vals) (empty chars (chain pre-vals vals)))
     ('leftovers () chars)
     ('results () vals)))
@@ -38,6 +43,10 @@
   (lambda (chars vals)
     (('invert (p chars vals))
      chars vals)))
+
+(define (capture p)
+  (lambda (chars vals)
+    ('capture (p chars vals) chars)))
 
 (define (folded<- combine)
   (make
@@ -68,12 +77,7 @@
     ('prefix (p chars '()) vals)))
 
 (define (take-1 ok?)
-  (lambda (chars vals)
-    (if ('empty? chars)
-        failure
-        (if (ok? ('first chars))
-            (empty ('rest chars) (chain vals (list<- ('first chars))))
-            failure))))
+  (capture (skip-1 ok?)))
     
 (define (skip-1 ok?)
   (lambda (chars vals)
@@ -121,9 +125,6 @@
 
 (try (many (lit-1 #\space)) "  hey")
 
-
-(define symbol<-chars (compose symbol<- string<-list))
-
 (define hug (feed-list (lambda (vals) vals)))
 
 (define sexpr
@@ -133,7 +134,7 @@
      (seq _ (either (seq (lit-1 #\() _ (many subexpr) (lit-1 #\)) _
                          hug)
                     (seq (take-1 'alphabetic?) (many (take-1 'alphanumeric?)) _
-                         (feed-list symbol<-chars)))))))
+                         (feed chain) (feed symbol<-)))))))
 
 (try sexpr "")
 (try sexpr "yo")
