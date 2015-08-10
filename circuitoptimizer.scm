@@ -68,13 +68,12 @@
                                   (let ((value (nand L-wire (wire R))))
                                     ('set! R-input gate R)
                                     ('set! wire ('+ n-inputs gate) value)
-                                    (if (< ('+ gate 1) n-gates)
-                                        (sweeping ('+ gate 1))
-                                        (if (= wanted ('bit-and mask value))
-                                            (begin
-                                              ('set! found? #t)
-                                              (print-formula L-input
-                                                             R-input))))))
+                                    (cond
+                                      ((< ('+ gate 1) n-gates)
+                                       (sweeping ('+ gate 1)))
+                                      ((= wanted ('bit-and mask value))
+                                       ('set! found? #t)
+                                       (print-formula L-input R-input)))))
                                 (range<- ('+ L 1)))))
                            (range<- ('+ n-inputs gate))))))
                     (sweeping 0)))

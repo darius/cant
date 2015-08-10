@@ -5,13 +5,14 @@
   ('compile (parse lexp) global-static-env '(halt)))
 
 (define (parse lexp)
-  (if (symbol? lexp)
-      (var-ref<- lexp)
-      (if (is? (lexp 0) 'lambda)
-          (abstraction<- ((lexp 1) 0)
-                         (parse (lexp 2)))
-          (call<- (parse (lexp 0))
-                  (parse (lexp 1))))))
+  (cond ((symbol? lexp)
+         (var-ref<- lexp))
+        ((is? (lexp 0) 'lambda)
+         (abstraction<- ((lexp 1) 0)
+                        (parse (lexp 2))))
+        (else
+         (call<- (parse (lexp 0))
+                 (parse (lexp 1))))))
 
 ;; Variable reference
 (define (var-ref<- v)

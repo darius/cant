@@ -65,10 +65,9 @@
   (newline))
 
 (define (for-each f xs)
-  (if ('empty? xs)
-      #f
-      (begin (f ('first xs))
-             (for-each f ('rest xs)))))
+  (when (not ('empty? xs))
+    (f ('first xs))
+    (for-each f ('rest xs))))
 
 (define range<-
   (make
@@ -87,11 +86,10 @@
   (let ((v (vector<-count ('count xs))))
     (letrec ((setting
               (lambda (i xs)
-                (if ('empty? xs)
-                    v
-                    (begin
-                      ('set! v i ('first xs))
-                      (setting ('+ i 1) ('rest xs)))))))
+                (cond (('empty? xs) v)
+                      (else
+                       ('set! v i ('first xs))
+                       (setting ('+ i 1) ('rest xs)))))))
       (setting 0 xs))))
 
 (define (compose f g)

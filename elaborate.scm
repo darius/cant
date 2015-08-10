@@ -75,6 +75,9 @@
            `('choose ('run ',boolean<- ,test)
                      (lambda () ,if-so)
                      (lambda () ,if-not)))))
+    ('when (mlambda
+            ((_ test . body)
+             `(if ,test (begin . ,body)))))
     ('cond (mlambda
             ((_) #f)                 ;TODO: generate an error-raising?
             ((_ ('else . es)) `(begin . ,es))

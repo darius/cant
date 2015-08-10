@@ -14,15 +14,16 @@
 ;;  others  an AST or a value
 
 (define (parse lexp)
-  (if (symbol? lexp)
-      (var-ref<- lexp)
-      (if (number? lexp)
-          (constant<- lexp)
-          (if (is? (lexp 0) 'lambda)
-              (abstraction<- ((lexp 1) 0)
-                             (parse (lexp 2)))
-              (call<- (parse (lexp 0))
-                      (parse (lexp 1)))))))
+  (cond ((symbol? lexp)
+         (var-ref<- lexp))
+        ((number? lexp)
+         (constant<- lexp))
+        ((is? (lexp 0) 'lambda)
+         (abstraction<- ((lexp 1) 0)
+                        (parse (lexp 2))))
+        (else
+         (call<- (parse (lexp 0))
+                 (parse (lexp 1))))))
 
 (define (interpret lexp)
   ('evaluate (parse lexp) global-env halt))
@@ -99,11 +100,9 @@
 ;; Built-in values
 
 (define (survey value)
-  (if (number? value)
+  (if (or (number? value) (symbol? value))
       value
-      (if (symbol? value)
-          value
-          ('survey value))))
+      ('survey value)))
 
 (define prim+
   (make ('survey () '+)
@@ -131,10 +130,8 @@
   (cons (list<- v val) r))
 
 (define (lookup r v k)
-  (let ((record (assq v r)))
-    (if record
-        ('take k (record 1))
-        (debug k "Unbound var" v))))
+  (cond ((assq v r) => (lambda (record) ('take k (record 1))))
+        (else (debug k "Unbound var" v))))
 
 
 ;; Debugger
@@ -146,12 +143,13 @@
 (define (next-command)
   (display "debug> ")
   (let ((cmds (command-queue)))
-    (if ('empty? cmds)
-        (begin (newline) #f)
-        (begin
-          (print ('first cmds))
-          ('set! command-queue ('rest cmds))
-          ('first cmds)))))
+    (cond (('empty? cmds)
+           (newline)
+           #f)
+          (else
+           (print ('first cmds))
+           ('set! command-queue ('rest cmds))
+           ('first cmds)))))
 
 (define (debug k plaint culprit)
   (complain plaint culprit)
