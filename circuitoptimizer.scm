@@ -73,8 +73,8 @@
                                         (if (= wanted ('bit-and mask value))
                                             (begin
                                               ('set! found? #t)
-                                              (print-formula L-input R-input))
-                                            'pass))))
+                                              (print-formula L-input
+                                                             R-input))))))
                                 (range<- ('+ L 1)))))
                            (range<- ('+ n-inputs gate))))))
                     (sweeping 0)))
