@@ -468,11 +468,11 @@
       (set! sep ",")
       (string-append s (format-selector (car entry)))))
   (define (format-selector sel)
-    (if (eq? sel else-selector)         ;XXX check for variable-arity too
-        "..."
-        (string-append (symbol->string (car sel))
-                       "/"
-                       (number->string (cdr sel)))))
+    (cond ((eq? sel else-selector) "...")
+          ((symbol? sel) (symbol->string sel))
+          (else (string-append (symbol->string (car sel))
+                               "/"
+                               (number->string (cdr sel))))))
   (string->symbol (apply string-append
                          `("[" ,@(map format-entry script) "]"))))
 
