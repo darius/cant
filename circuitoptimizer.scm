@@ -56,27 +56,24 @@
                     (R-input (vector<-count n-gates #f))
                     (found?  (box<- #f)))
                 (let ((wire (chain inputs L-input)))
-                  (letrec
-                      ((sweeping
-                        (lambda (gate)
+                  (recurse sweeping ((gate 0))
+                    (for-each
+                      (lambda (L)
+                        (let ((L-wire (wire L)))
+                          ('set! L-input gate L)
                           (for-each
-                           (lambda (L)
-                             (let ((L-wire (wire L)))
-                               ('set! L-input gate L)
-                               (for-each
-                                (lambda (R)
-                                  (let ((value (nand L-wire (wire R))))
-                                    ('set! R-input gate R)
-                                    ('set! wire ('+ n-inputs gate) value)
-                                    (cond
-                                      ((< ('+ gate 1) n-gates)
-                                       (sweeping ('+ gate 1)))
-                                      ((= wanted ('bit-and mask value))
-                                       ('set! found? #t)
-                                       (print-formula L-input R-input)))))
-                                (range<- ('+ L 1)))))
-                           (range<- ('+ n-inputs gate))))))
-                    (sweeping 0)))
+                            (lambda (R)
+                              (let ((value (nand L-wire (wire R))))
+                                ('set! R-input gate R)
+                                ('set! wire ('+ n-inputs gate) value)
+                                (cond
+                                  ((< ('+ gate 1) n-gates)
+                                   (sweeping ('+ gate 1)))
+                                  ((= wanted ('bit-and mask value))
+                                   ('set! found? #t)
+                                   (print-formula L-input R-input)))))
+                            (range<- ('+ L 1)))))
+                      (range<- ('+ n-inputs gate)))))
                 (found?)))))
         (some? find-for-n (range<- 1 ('+ max-gates 1)))))))
 
