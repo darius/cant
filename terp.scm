@@ -166,9 +166,7 @@
         ((quote)
          (answer k (cadr e)))
         ((make)
-         ;; TODO: build the object's script at elaboration time. I'm
-         ;; holding off on this for the sake of should= on elaboration
-         ;; results.
+         ;; TODO: build the object's script at elaboration time.
          (answer k (object<-
                     (map (lambda (method)
                            (if (eq? (car method) 'else)
