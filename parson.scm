@@ -40,64 +40,63 @@
     (.results () vals)))
 
 (define (invert p)
-  (lambda (chars vals)
+  (given (chars vals)
     ((.invert (p chars vals))
      chars vals)))
 
 (define (capture p)
-  (lambda (chars vals)
+  (given (chars vals)
     (.capture (p chars vals) chars)))
 
 (define (folded<- combine)
-  (make
-    (.run arguments
-      (foldr1 combine arguments))))
+  (given arguments
+    (foldr1 combine arguments)))
 
 (define either
-  (folded<- (lambda (p q)
-              (lambda (chars vals)
+  (folded<- (given (p q)
+              (given (chars vals)
                 (.else (p chars vals) q chars vals)))))
 
 (define seq
-  (folded<- (lambda (p q)
-              (lambda (chars vals)
+  (folded<- (given (p q)
+              (given (chars vals)
                 (.continue (p chars vals) q)))))
 
 (define (feed-list f)
-  (lambda (chars vals)
+  (given (chars vals)
     (empty chars (list<- (f vals)))))
 
 (define (feed f)
-  (feed-list (lambda (vals) (call '.run f vals))))
+  (feed-list (given (vals) (call '.run f vals))))
 
 (define (push constant)
-  (lambda (chars vals)
+  (given (chars vals)
     (empty chars (chain vals (list<- constant)))))
 
 (define (seclude p)
-  (lambda (chars vals)
+  (given (chars vals)
     (.prefix (p chars '()) vals)))
 
 (define (take-1 ok?)
   (capture (skip-1 ok?)))
     
 (define (skip-1 ok?)
-  (lambda (chars vals)
+  (given (chars vals)
     (if (and (not (.empty? chars))
              (ok? (.first chars)))
         (empty (.rest chars) vals)
         failure)))
 
-(define any-1 (take-1 (lambda (char) #t)))
+(define any-1 (take-1 (given (char) #t)))
 
 (define (lit-1 my-char)
-  (skip-1 (lambda (char) (is? my-char char))))
+  (skip-1 (given (char) (is? my-char char))))
 
 (define (maybe p)
   (either p empty))
 
 (define (many p)
-  (letrec ((p* (maybe (seq p (lambda (cs vs)
+  (letrec ((p* (maybe (seq p (given (cs vs)
                                (p* cs vs))))))
     p*))
 
@@ -115,7 +114,7 @@
 (try (many any-1) "abc")
 
 (define bal
-  (lambda (cs vs)
+  (given (cs vs)
     ((maybe (seq (lit-1 #\() bal (lit-1 #\)) bal))
      cs vs)))
 
@@ -126,10 +125,10 @@
 
 (try (many (lit-1 #\space)) "  hey")
 
-(define hug (feed-list (lambda (vals) vals)))
+(define hug (feed-list (given (vals) vals)))
 
 (define sexpr
-  (let ((subexpr (lambda (cs vs) (sexpr cs vs)))
+  (let ((subexpr (given (cs vs) (sexpr cs vs)))
         (_ (many (lit-1 #\space))))
     (seclude
      (seq _ (either (seq (lit-1 #\() _ (many subexpr) (lit-1 #\)) _

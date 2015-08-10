@@ -18,9 +18,8 @@
                           (error "Bad argument" n))))))))
 
 (define say
-  (make
-    (.run arguments
-      (for-each display arguments))))
+  (given arguments
+    (for-each display arguments)))
 
 (define (pow2 n)
   (.<< 1 n))
@@ -30,11 +29,11 @@
         (mask (- (pow2 (pow2 n-inputs)) 1)))
 
     (let ((print-formula
-           (lambda (L-input R-input)
+           (given (L-input R-input)
              (let ((v-name (chain (.slice "ABCDEF" 0 n-inputs)
                                   (.slice "abcdefghijklmnopqrstuvwxyz"
                                           n-inputs))))
-               (for-each (lambda (i)
+               (for-each (given (i)
                            (let ((g (v-name (+ i n-inputs)))
                                  (L (v-name (L-input i)))
                                  (R (v-name (R-input i))))
@@ -44,7 +43,7 @@
 
       (letrec
           ((find-for-n
-            (lambda (n-gates)
+            (given (n-gates)
               (say "Trying " n-gates " gates..." #\newline)
               (let ((n-wires (+ n-inputs n-gates))
                     (L-input (vector<-count n-gates #f))
@@ -53,11 +52,11 @@
                 (let ((wire (chain inputs L-input)))
                   (recurse sweeping ((gate 0))
                     (for-each
-                      (lambda (L)
+                      (given (L)
                         (let ((L-wire (wire L)))
                           (.set! L-input gate L)
                           (for-each
-                            (lambda (R)
+                            (given (R)
                               (let ((value (nand L-wire (wire R))))
                                 (.set! R-input gate R)
                                 (.set! wire (+ n-inputs gate) value)
@@ -86,7 +85,7 @@
       '()
       (let ((shift (pow2 (- n-inputs 1))))
         (cons (- (pow2 shift) 1)
-              (map (lambda (iv) (.bit-or iv (.<< iv shift)))
+              (map (given (iv) (.bit-or iv (.<< iv shift)))
                    (tabulate-inputs (- n-inputs 1)))))))
 
 (superopt "0110" 3)

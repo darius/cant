@@ -130,7 +130,7 @@
   (cons (list<- v val) r))
 
 (define (lookup r v k)
-  (cond ((assq v r) => (lambda (record) (.take k (record 1))))
+  (cond ((assq v r) => (given (record) (.take k (record 1))))
         (else (debug k "Unbound var" v))))
 
 

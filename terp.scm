@@ -30,7 +30,7 @@
 (define (run-define head body)
   (if (symbol? head)
       (global-def! head (interpret (car body)))
-      (global-def! (car head) (interpret `(lambda ,(cdr head) ,@body)))))
+      (global-def! (car head) (interpret `(given ,(cdr head) ,@body)))))
 
 (define (interpret e)
   (evaluate (elaborate e) '()))
@@ -521,17 +521,17 @@
 (should= (interpret '(let ((x (is? 4 (.+ 2 2))))
                        x))
          #t)
-(should= (interpret '(letrec ((fact (lambda (n)
+(should= (interpret '(letrec ((fact (given (n)
                                       (if (is? n 0)
                                           1
                                           (.* n (fact (.- n 1)))))))
                        (fact 5)))
          120)
-(should= (interpret '(letrec ((even? (lambda (n)
+(should= (interpret '(letrec ((even? (given (n)
                                        (if (is? n 0)
                                            #t
                                            (odd? (.- n 1)))))
-                              (odd? (lambda (n)
+                              (odd? (given (n)
                                       (if (is? n 0)
                                           #f
                                           (even? (.- n 1))))))

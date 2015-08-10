@@ -26,18 +26,18 @@
       (foldl f (f z (.first xs)) (.rest xs))))
 
 (define (union set1 set2)
-  (let ((adjoin (lambda (x xs)
+  (let ((adjoin (given (x xs)
                   (if (memq? x set2) xs (cons x xs)))))
     (foldr adjoin set2 set1)))
 
 (define (delq x set)
-  (foldr (lambda (element rest)
+  (foldr (given (element rest)
            (if (is? x element) rest (cons element rest)))
          '()
          set))
 
 (define (map f xs)
-  (foldr (lambda (x ys) (cons (f x) ys))
+  (foldr (given (x ys) (cons (f x) ys))
          '()
          xs))
 
@@ -53,8 +53,7 @@
         (f (.first xs) (foldr1 f tail)))))
 
 (define list<-
-  (make
-    (.run arguments arguments)))
+  (given arguments arguments))
 
 (define chain
   (make (.run () '())
@@ -63,7 +62,7 @@
         (.run arguments (foldr1 '.chain arguments))))
 
 (define (memq? x set)
-  (some (lambda (y) (is? x y)) set))
+  (some (given (y) (is? x y)) set))
 
 (define (some? ok? xs)
   (and (not (.empty? xs))
@@ -107,7 +106,7 @@
              (setting (+ i 1) (.rest xs)))))))
 
 (define (compose f g)
-  (lambda (x) (f (g x))))
+  (given (x) (f (g x))))
 
 ;; XXX float contagion
 (define (min x y) (if (< x y) x y))
