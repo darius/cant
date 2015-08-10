@@ -85,11 +85,10 @@
     
 (define (skip-1 ok?)
   (lambda (chars vals)
-    (if ('empty? chars)
-        failure
-        (if (ok? ('first chars))
-            (empty ('rest chars) vals)
-            failure))))
+    (if (and (not ('empty? chars))
+             (ok? ('first chars)))
+        (empty ('rest chars) vals)
+        failure)))
 
 (define any-1 (take-1 (lambda (char) #t)))
 

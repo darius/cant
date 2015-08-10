@@ -46,11 +46,12 @@
                   (error "XXX need to punt to miranda methods" cue)))))
 
 (define (memq? x set)
-  (if ('empty? set)
-      #f
-      (if (is? x ('first set))
-          #t
-          (memq? x ('rest set)))))
+  (some (lambda (y) (is? x y)) set))
+
+(define (some? ok? xs)
+  (and (not ('empty? xs))
+       (or (ok? ('first xs))
+           (some? ok? ('rest xs)))))
 
 (define (list-index xs x)
   (letrec ((searching (lambda (i xs)
@@ -92,13 +93,6 @@
                       ('set! v i ('first xs))
                       (setting ('+ i 1) ('rest xs)))))))
       (setting 0 xs))))
-
-(define (some? ok? xs)
-  (if ('empty? xs)
-      #f
-      (if (ok? ('first xs))
-          #t
-          (some? ok? ('rest xs)))))
 
 (define (compose f g)
   (lambda (x) (f (g x))))

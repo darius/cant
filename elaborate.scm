@@ -87,6 +87,10 @@
                       (cond . ,clauses)))))
             ((_ (e . es) . clauses)
              `(if ,e (begin . ,es) (cond . ,clauses)))))
+    ('and (mlambda
+           ((_) #t)
+           ((_ e) e)
+           ((_ e . es) `(if ,e (begin . ,es) #f))))
     ('or (mlambda
           ((_) #f)
           ((_ e) e)

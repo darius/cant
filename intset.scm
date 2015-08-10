@@ -15,14 +15,14 @@
       s
       (make extension
         ('empty? ()  #f)
-        ('has? (k)   (if ('= n k) #t ('has? s k)))
+        ('has? (k)   (or ('= n k) ('has? s k)))
         ('adjoin (k) (adjoin<- k extension))
         ('merge (s)  (merge<- extension s)))))
 
 (define (merge<- s1 s2)
   (make meld
-    ('empty? ()  (if ('empty? s1) ('empty? s2) #f))
-    ('has? (k)   (if ('has? s1 k) #t ('has? s2 k)))
+    ('empty? ()  (and ('empty? s1) ('empty? s2)))
+    ('has? (k)   (or ('has? s1 k) ('has? s2 k)))
     ('adjoin (k) (adjoin<- k meld))
     ('merge (s)  (merge<- meld s))))
 
