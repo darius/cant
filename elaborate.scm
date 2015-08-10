@@ -1,69 +1,14 @@
-;; Expanding out syntactic sugar
+(include "gambit-macros.scm")
 
 (define (elaborate e)
   (cond ((symbol? e) e)
-        ((self-evaluating? e) (list 'quote e))
-        (else
-         (assert (pair? e) "Bad syntax" e)
-         (case (car e)
-           ((quote)
-            e)
-           ((begin)
-            (elaborate-seq (cdr e)))
-           ((make)
-            (let ((make<-
-                   (lambda (methods)
-                     `(make ,@(map elaborate-method/matcher methods)))))
-              (if (and (not (null? (cdr e)))
-                       (symbol? (cadr e)))
-                  (elaborate `(letrec ((,(cadr e) ,(make<- (cddr e))))
-                                ,(cadr e)))
-                  (make<- (cdr e)))))
-           ((letrec)
-            (if (null? (cadr e))
-                (elaborate-seq (cddr e))
-                `(letrec ,(map (lambda (defn)
-                                 (list (car defn) (elaborate (cadr defn))))
-                               (cadr e))
-                   ,(elaborate-seq (cddr e)))))
-           ((let)
-            (elaborate `('run (make ('run ,(map car (cadr e))
-                                      ,@(cddr e)))
-                              ,@(map cadr (cadr e)))))
-           ((lambda)
-            (elaborate `(make ('run ,(cadr e) ,@(cddr e)))))
-           ((if)
-            (let ((test (cadr e)) (if-true (caddr e)) (if-false (cadddr e)))
-              ;; XXX I suspect the boolean coercion is a bad idea in
-              ;; our context: there's too much polymorphism.
-              (elaborate `('choose ('run ',boolean<- ,test)
-                                   (lambda () ,if-true)
-                                   (lambda () ,if-false)))))
-           (else
-            (if (and (starts-with? (car e) 'quote)
-                     (symbol? (cadar e)))
-                (cons (car e) (map elaborate (cdr e)))
-                (cons ''run (map elaborate e))))))))  ; default cue
-
-(define (elaborate-method/matcher method)
-  (assert (or (eq? (car method) 'else)
-              (starts-with? (car method) 'quote))
-          "Bad method/matcher syntax" method)
-  `(,(car method) ,(cadr method)
-    ,(elaborate-seq (cddr method))))
-
-(define (elaborate-seq es)
-  (begin<- (map elaborate es)))
-
-(define (begin<- es)
-  (cond ((null? es) ''#f)
-        ((null? (cdr es)) (car es))
-        (else (begin2<- (car es) (begin<- (cdr es))))))
-
-(define (begin2<- e1 e2)
-  `('run (make ('run (v thunk) ('run thunk)))
-         ,e1
-         (make ('run () ,e2))))
+        ((self-evaluating? e) `',e)
+        ((not (pair? e)) (error "Bad syntax" e))
+        ((look-up-macro (car e))
+         => (lambda (expand) (elaborate (expand e))))
+        ((look-up-core-syntax (car e))
+         => (lambda (expand) (expand e)))
+        (else (elaborate-call (car e) (cdr e)))))
 
 (define (self-evaluating? x)
   (or (boolean? x)
@@ -71,43 +16,81 @@
       (char? x)
       (string? x)))
 
+(define (elaborate-call first rest)
+  (if (and (starts-with? first 'quote)
+           (symbol? (cadr first)))
+      (cons first (map elaborate rest))
+      (cons ''run (map elaborate (cons first rest)))))  ; default cue
+  
+(define (look-up-core-syntax key)
+  (mcase key
+    ('quote  (mlambda
+              ((_ datum) `',datum)))
+    ('make   (mlambda
+              ((_ (: name symbol?) . clauses)
+               (elaborate `(letrec ((,name (make . ,clauses)))
+                             ,name)))
+              ((_ . clauses)
+               `(make ,@(map elaborate-method/matcher clauses)))))
+    ('letrec (mlambda
+              ((_ () . body)
+               (elaborate-seq body))
+              ((_ defns . body)
+               `(letrec ,(map (mlambda (((: v symbol?) e)
+                                        `(,v ,(elaborate e))))
+                              defns)
+                  ,(elaborate-seq body)))))
+    ('begin  (mlambda                   ;XXX not really core syntax
+              ((_ . es)
+               (elaborate-seq es))))
+    (_ #f)))
 
-;; Smoke test of elaboration
+(define (elaborate-method/matcher clause)
+  (assert (or (eq? (car clause) 'else)
+              (starts-with? (car clause) 'quote))
+          "Bad method/matcher syntax" clause)
+  `(,(car clause) ,(cadr clause)
+    ,(elaborate-seq (cddr clause))))
 
-(should= (elaborate '42)
-         ''42)
-(should= (elaborate '#f)
-         ''#f)
-(should= (elaborate ''())
-         ''())
-(should= (elaborate '(begin (write x) (lambda (y) ('+ x y))))
-         '('run
-           (make ('run (v thunk) ('run thunk)))
-           ('run write x)
-           (make ('run () (make ('run (y) ('+ x y)))))))
-'(should= (elaborate '(begin (if x y z)))
-         '('choose x (make ('run () y)) (make ('run () z))))
-'(should= (elaborate '(lambda ()
-                      (letrec ((for-each
-                                (lambda (f xs)
-                                  (if (null? xs)
-                                      '()
-                                      (begin (f ('car xs))
-                                             (for-each f ('cdr xs)))))))
-                        for-each)))
-         '(make
-           ('run ()
-             (letrec ((for-each
-                       (make
-                        ('run (f xs)
-                          ('choose
-                           ('run null? xs)
-                           (make ('run () '()))
-                           (make
-                            ('run ()
-                              ('run
-                               (make ('run (v thunk) ('run thunk)))
-                               ('run f ('car xs))
-                               (make
-                                ('run () ('run for-each f ('cdr xs))))))))))))
-               for-each))))
+(define (elaborate-seq es)
+  (elaborate (mcase es
+               ((e) e)
+               ((e . es) `((lambda (,(gensym)) . ,es)
+                           ,e)))))
+
+(define (look-up-macro key)
+  (mcase key
+    ('lambda (mlambda
+              ((_ vars . body)
+               `(make ('run ,vars . ,body)))))
+    ('let (mlambda
+           ((_ bindings . body)
+            `((lambda ,(map car bindings) . ,body)
+              . ,(map cadr bindings)))))
+    ('if (mlambda
+          ((_ test if-so) `(if ,test ,if-so #f))
+          ((_ test if-so if-not)
+           ;; TODO: I suspect the boolean coercion is a bad idea in
+           ;; our context: there's too much polymorphism.
+           `('choose ('run ',boolean<- ,test)
+                     (lambda () ,if-so)
+                     (lambda () ,if-not)))))
+    ('cond (mlambda
+            ((_) #f)                 ;TODO: generate an error-raising?
+            ((_ ('else . es)) `(begin . ,es))
+            ((_ (e) . clauses) `(or ,e (cond . ,clauses)))
+            ((_ (e1 '=> e2) . clauses)
+             (let ((test-var (gensym)))
+               `(let ((,test-var ,e1))
+                  (if ,test-var
+                      (,e2 ,test-var)
+                      (cond . ,clauses)))))
+            ((_ (e . es) . clauses)
+             `(if ,e (begin . ,es) (cond . ,clauses)))))
+    ('or (mlambda
+          ((_) #f)
+          ((_ e) e)
+          ((_ e . es)
+           (let ((t (gensym)))
+             `(let ((,t ,e)) (if ,t ,t (begin . ,es)))))))
+    (_ #f)))
