@@ -31,19 +31,13 @@
         ('run (a b) (cons a (list<- b)))
         ('run (a b c) (cons a (list<- b c)))
         ('run (a b c d) (cons a (list<- b c d)))
-        (else (cue arguments)
-          (if (is? cue 'run)
-              (foldr1 cons arguments)
-              (error "XXX need to punt to miranda methods" cue)))))
+        ('run arguments (foldr1 cons arguments))))
 
 (define chain
   (make ('run () '())
         ('run (xs) xs)
         ('run (xs ys) ('chain xs ys))
-        (else (cue arguments)
-          (if (is? cue 'run)
-              (foldr1 'chain arguments)
-              (error "XXX need to punt to miranda methods" cue)))))
+        ('run arguments (foldr1 'chain arguments))))
 
 (define (memq? x set)
   (some (lambda (y) (is? x y)) set))

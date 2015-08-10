@@ -64,10 +64,11 @@
 (define (call selector object arguments k)
   (unwrap object
           (lambda (script datum)
-            (cond ((assoc selector script) ;TODO assq when memoized
+            (cond ((or (assoc selector script) ;TODO assq when memoized
+                       (assq (selector.cue selector) script))
                    => (lambda (pair)
                         (apply (cadr pair) k datum arguments)))
-                  ((assq matcher-selector script)
+                  ((assq else-selector script)
                    => (lambda (pair)
                         ((cadr pair)
                          k datum (selector.cue selector) arguments)))
@@ -78,10 +79,10 @@
 
 (define (selector<- cue arity) (cons cue arity))
 (define selector.cue car)
-(define matcher-selector (list '*matcher)) ;XXX not private until we can assq above with memoized selectors
+(define else-selector (list "else")) ;XXX not private until we can assq above with memoized selectors
 
 (define (matcher-script<- proc)
-  `((,matcher-selector ,proc)))
+  `((,else-selector ,proc)))
 
 ;; TODO: special-case this path through call for efficiency
 (define (answer k value)
@@ -169,14 +170,24 @@
          ;; TODO: build the object's script at elaboration time.
          (answer k (object<-
                     (map (lambda (method)
-                           (if (eq? (car method) 'else)
-                               (list matcher-selector
-                                     (lambda (k r cue arguments)
-                                       (ev (caddr method)
-                                           (env-extend r
-                                                       (cadr method)
-                                                       (list cue arguments))
-                                           k)))
+                           (cond
+                             ((eq? (car method) 'else)
+                              (list else-selector
+                                    (lambda (k r cue arguments)
+                                      (ev (caddr method)
+                                          (env-extend r
+                                                      (cadr method)
+                                                      (list cue arguments))
+                                          k))))
+                             ((symbol? (cadr method))  ; variable arity
+                              (list (cadar method)
+                                    (lambda (k r . arguments)
+                                      (ev (caddr method)
+                                          (env-extend r
+                                                      (list (cadr method))
+                                                      (list arguments))
+                                          k))))
+                              (else
                                (list (selector<- (cadar method)
                                                  (length (cadr method)))
                                      (lambda (k r . arguments)
@@ -184,7 +195,7 @@
                                            (env-extend r
                                                        (cadr method)
                                                        arguments)
-                                           k)))))
+                                           k))))))
                          (cdr e))
                     r)))
         ((letrec)
@@ -463,7 +474,7 @@
       (set! sep ",")
       (string-append s (format-selector (car entry)))))
   (define (format-selector sel)
-    (if (eq? sel matcher-selector)
+    (if (eq? sel else-selector)
         "..."
         (string-append (symbol->string (car sel))
                        "/"

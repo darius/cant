@@ -50,10 +50,8 @@
 
 (define (folded<- combine)
   (make
-    (else (cue arguments)
-      (if (is? cue 'run)
-          (foldr1 combine arguments)
-          (error "XXX need to punt to miranda methods" cue)))))
+    ('run arguments
+      (foldr1 combine arguments))))
 
 (define either
   (folded<- (lambda (p q)

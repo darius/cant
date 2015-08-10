@@ -7,9 +7,8 @@
   (let ((n-inputs (int-log2 ('count truth-table))))
     (find-circuits ('parse-int truth-table 2) n-inputs max-gates)))
 
-;; XXX ugly and silly prelims
-
 (define (int-log2 n)
+  ;; XXX ugly
   (if (is? n 1) 0
       (if (is? n 2) 1
           (if (is? n 4) 2
@@ -20,12 +19,8 @@
 
 (define say
   (make
-    (else (cue arguments)
-      (if (is? cue 'run)
-          (for-each display arguments)
-          (error "XXX need to punt to miranda methods" cue)))))
-
-;; OK now:
+    ('run arguments
+      (for-each display arguments))))
 
 (define (pow2 n)
   ('<< 1 n))

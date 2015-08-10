@@ -46,6 +46,7 @@
     (_ #f)))
 
 (define (elaborate-method/matcher clause)
+  ;; XXX check more of the syntax
   (assert (or (eq? (car clause) 'else)
               (starts-with? (car clause) 'quote))
           "Bad method/matcher syntax" clause)
