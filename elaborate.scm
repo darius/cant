@@ -67,6 +67,13 @@
            ((_ bindings . body)
             `((lambda ,(map car bindings) . ,body)
               . ,(map cadr bindings)))))
+    ('recurse (mlambda
+               ((_ (: proc symbol?) bindings . body)
+                (for-each (mlambda (((: v symbol?) e) 'ok))
+                          bindings)
+                `((letrec ((,proc (lambda ,(map car bindings) . ,body)))
+                    ,proc)
+                  . ,(map cadr bindings)))))
     ('if (mlambda
           ((_ test if-so) `(if ,test ,if-so #f))
           ((_ test if-so if-not)

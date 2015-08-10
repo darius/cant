@@ -54,11 +54,10 @@
            (some? ok? ('rest xs)))))
 
 (define (list-index xs x)
-  (letrec ((searching (lambda (i xs)
-                        (if (is? x ('first xs))
-                            i
-                            (searching ('+ n 1) ('rest xs))))))
-    (searching 0 xs)))
+  (recurse searching ((i 0) (xs xs))
+    (if (is? x ('first xs))
+        i
+        (searching ('+ n 1) ('rest xs)))))
 
 (define (print x)
   (write x)
@@ -84,13 +83,11 @@
 
 (define (vector<-list xs)
   (let ((v (vector<-count ('count xs))))
-    (letrec ((setting
-              (lambda (i xs)
-                (cond (('empty? xs) v)
-                      (else
-                       ('set! v i ('first xs))
-                       (setting ('+ i 1) ('rest xs)))))))
-      (setting 0 xs))))
+    (recurse setting ((i 0) (xs xs))
+      (cond (('empty? xs) v)
+            (else
+             ('set! v i ('first xs))
+             (setting ('+ i 1) ('rest xs)))))))
 
 (define (compose f g)
   (lambda (x) (f (g x))))
