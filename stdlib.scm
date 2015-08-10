@@ -1,3 +1,30 @@
+(define +
+  (make
+    (.run () 0)
+    (.run (a) a)
+    (.run (a b) (.+ a b))
+    (.run arguments (foldr1 '.+ arguments))))
+
+(define *
+  (make
+    (.run () 1)
+    (.run (a) a)
+    (.run (a b) (.* a b))
+    (.run arguments (foldr1 '.* arguments))))
+
+(define -
+  (make
+    (.run () (error "Bad arity"))
+    (.run (a) (.- 0 a))
+    (.run (a b) (.- a b))
+    (.run arguments (foldl '.- (.first arguments) (.rest arguments)))))
+
+(define (foldl f z xs)
+  (if (.empty? xs)
+      z
+      ;;XXX is this the conventional arg order to f?
+      (foldl f (f z (.first xs)) (.rest xs))))
+
 (define (union set1 set2)
   (let ((adjoin (lambda (x xs)
                   (if (memq? x set2) xs (cons x xs)))))
@@ -26,12 +53,8 @@
         (f (.first xs) (foldr1 f tail)))))
 
 (define list<-
-  (make (.run () '())
-        (.run (a) (cons a '()))
-        (.run (a b) (cons a (list<- b)))
-        (.run (a b c) (cons a (list<- b c)))
-        (.run (a b c d) (cons a (list<- b c d)))
-        (.run arguments (foldr1 cons arguments))))
+  (make
+    (.run arguments arguments)))
 
 (define chain
   (make (.run () '())
@@ -51,7 +74,7 @@
   (recurse searching ((i 0) (xs xs))
     (if (is? x (.first xs))
         i
-        (searching (.+ n 1) (.rest xs)))))
+        (searching (+ n 1) (.rest xs)))))
 
 (define (print x)
   (write x)
@@ -71,7 +94,7 @@
           '()
           (make (.empty? () #f)
                 (.first () lo)
-                (.rest () (range<- (.+ lo 1) hi-bound))
+                (.rest () (range<- (+ lo 1) hi-bound))
                 ;; ...
                 )))))
 
@@ -81,7 +104,7 @@
       (cond ((.empty? xs) v)
             (else
              (.set! v i (.first xs))
-             (setting (.+ i 1) (.rest xs)))))))
+             (setting (+ i 1) (.rest xs)))))))
 
 (define (compose f g)
   (lambda (x) (f (g x))))

@@ -115,7 +115,7 @@
                                 XXX)
                               (.call (arg2 k2)
                                 (if (number? arg2)
-                                    (.take k2 (.+ arg1 arg2))
+                                    (.take k2 (+ arg1 arg2))
                                     ;; XXX should supply self, too:
                                     (debug k2 "Bad arg2 to +" (survey arg2))))))
               (debug k1 "Bad arg1 to +" (survey arg1))))))

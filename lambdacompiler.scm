@@ -49,7 +49,7 @@
   (lambda (v)
     (if (is? v param)
         'local
-        (.+ 1 (list-index free-vars v)))))
+        (+ 1 (list-index free-vars v)))))
 
 
 ;; Smoke test
