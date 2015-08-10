@@ -79,8 +79,9 @@
       '()
       (let ((shift (pow2 (- n-inputs 1))))
         (cons (- (pow2 shift) 1)
-              (map (given (iv) (.bit-or iv (.<< iv shift)))
-                   (tabulate-inputs (- n-inputs 1)))))))
+              (for map ((iv (tabulate-inputs (- n-inputs 1))))
+                (.bit-or iv (.<< iv shift)))))))
+                   
 
 (superopt "0110" 3)
 (superopt "1011" 3)
