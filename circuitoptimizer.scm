@@ -21,9 +21,9 @@
 (define say
   (make
     (else (cue arguments)
-          (if (is? cue 'run)
-              (for-each display arguments)
-              (error "XXX need to punt to miranda methods" cue)))))
+      (if (is? cue 'run)
+          (for-each display arguments)
+          (error "XXX need to punt to miranda methods" cue)))))
 
 ;; OK now:
 
