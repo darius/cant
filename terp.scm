@@ -38,13 +38,10 @@
 
 ;; Objects, calling, and answering
 
-(define object-tag (list '*object))
-
-(define (object<- script datum)
-  (list object-tag script datum))
-
-(define object.script cadr)
-(define object.datum caddr)
+(define-structure object script datum)
+(define object<- make-object)
+(define object.script object-script)
+(define object.datum  object-datum)
 
 (define (unwrap x receiver)
   (cond ((boolean? x)   (receiver boolean-script x))
@@ -55,12 +52,10 @@
         ((string? x)    (receiver string-script x))
         ((vector? x)    (receiver vector-script x))
         ((procedure? x) (receiver scheme-procedure-script x))
-        (else
-         (assert (pair? x) "Non-object" x)
-         (if (eq? (car x) object-tag)
-             (receiver (object.script x) (object.datum x))
-             (receiver pair-script x)))))
-
+        ((pair? x)      (receiver pair-script x))
+        ((object? x)    (receiver (object.script x) (object.datum x)))
+        (else (error "Non-object" x))))
+             
 (define (call selector object arguments k)
   (unwrap object
           (lambda (script datum)
@@ -460,12 +455,11 @@
   (write (deep-format x)))
 
 (define (deep-format x)
-  (cond ((pair? x)
-         (cond ((starts-with? x object-tag)
-                (format-script (object.script x)))
-               (else
-                (cons (deep-format (car x))
-                      (deep-format (cdr x))))))
+  (cond ((object? x)
+         (format-script (object.script x)))
+        ((pair? x)
+         (cons (deep-format (car x))
+               (deep-format (cdr x))))
         (else x)))                      ;for now
 
 (define (format-script script)
@@ -475,7 +469,7 @@
       (set! sep ",")
       (string-append s (format-selector (car entry)))))
   (define (format-selector sel)
-    (if (eq? sel else-selector)
+    (if (eq? sel else-selector)         ;XXX check for variable-arity too
         "..."
         (string-append (symbol->string (car sel))
                        "/"
@@ -488,10 +482,7 @@
     (is? ,is?)
     (number? ,number?)
     (symbol? ,symbol?)
-    (list? ,(lambda (x)
-              (or (null? x)
-                  (and (pair? x)
-                       (not (eq? (car x) object-tag))))))
+    (list? ,(lambda (x) (or (null? x) (pair? x))))
     (char? ,char?)
     (string? ,string?)
     (vector? ,vector?)
