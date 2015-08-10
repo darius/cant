@@ -64,12 +64,17 @@
                `(make (.run ,vars . ,body)))))
     ('let (mlambda
            ((_ bindings . body)
+            (check-bindings bindings)
             `((given ,(map car bindings) . ,body)
               . ,(map cadr bindings)))))
+    ('for (mlambda
+           ((_ fn bindings . body)
+            (check-bindings bindings)
+            `(,fn (given ,(map car bindings) . ,body)
+                  . ,(map cadr bindings)))))
     ('recurse (mlambda
                ((_ (: proc symbol?) bindings . body)
-                (for-each (mlambda (((: v symbol?) e) 'ok))
-                          bindings)
+                (check-bindings bindings)
                 `((letrec ((,proc (given ,(map car bindings) . ,body)))
                     ,proc)
                   . ,(map cadr bindings)))))
@@ -107,3 +112,7 @@
            (let ((t (gensym)))
              `(let ((,t ,e)) (if ,t ,t (begin . ,es)))))))
     (_ #f)))
+
+(define (check-bindings bindings)
+  (for-each (mlambda (((: v symbol?) e) 'ok))
+            bindings))

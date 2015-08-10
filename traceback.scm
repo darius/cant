@@ -14,6 +14,6 @@
   (newline))
 
 (define (print-traceback k)
-  (for-each print k))
+  (each! print k))
 
 (.set! the-signal-handler-box on-error-traceback)

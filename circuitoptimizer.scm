@@ -19,7 +19,7 @@
 
 (define say
   (given arguments
-    (for-each display arguments)))
+    (each! display arguments)))
 
 (define (pow2 n)
   (.<< 1 n))
@@ -33,12 +33,11 @@
              (let ((v-name (chain (.slice "ABCDEF" 0 n-inputs)
                                   (.slice "abcdefghijklmnopqrstuvwxyz"
                                           n-inputs))))
-               (for-each (given (i)
-                           (let ((g (v-name (+ i n-inputs)))
-                                 (L (v-name (L-input i)))
-                                 (R (v-name (R-input i))))
-                             (say g " = " L " ~& " R "; ")))
-                         (range<- (.count L-input))))
+               (for each! ((i (range<- (.count L-input))))
+                 (let ((g (v-name (+ i n-inputs)))
+                       (L (v-name (L-input i)))
+                       (R (v-name (R-input i))))
+                   (say g " = " L " ~& " R "; "))))
              (newline))))
 
       (letrec
@@ -51,23 +50,18 @@
                     (found?  (box<- #f)))
                 (let ((wire (chain inputs L-input)))
                   (recurse sweeping ((gate 0))
-                    (for-each
-                      (given (L)
-                        (let ((L-wire (wire L)))
-                          (.set! L-input gate L)
-                          (for-each
-                            (given (R)
-                              (let ((value (nand L-wire (wire R))))
-                                (.set! R-input gate R)
-                                (.set! wire (+ n-inputs gate) value)
-                                (cond
-                                  ((< (+ gate 1) n-gates)
+                    (for each! ((L (range<- (+ n-inputs gate))))
+                      (let ((L-wire (wire L)))
+                        (.set! L-input gate L)
+                        (for each! ((R (range<- (+ L 1))))
+                          (let ((value (nand L-wire (wire R))))
+                            (.set! R-input gate R)
+                            (.set! wire (+ n-inputs gate) value)
+                            (cond ((< (+ gate 1) n-gates)
                                    (sweeping (+ gate 1)))
                                   ((= wanted (.bit-and mask value))
                                    (.set! found? #t)
-                                   (print-formula L-input R-input)))))
-                            (range<- (+ L 1)))))
-                      (range<- (+ n-inputs gate)))))
+                                   (print-formula L-input R-input)))))))))
                 (found?)))))
         (some? find-for-n (range<- 1 (+ max-gates 1)))))))
 

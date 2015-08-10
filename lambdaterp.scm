@@ -164,7 +164,7 @@
   (newline))
 
 (define (traceback k)
-  (for-each print k))
+  (each! print k))
 
 (define (debugging state)
   (let ((cmd (next-command)))

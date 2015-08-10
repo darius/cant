@@ -79,10 +79,10 @@
   (write x)
   (newline))
 
-(define (for-each f xs)
+(define (each! f xs)
   (when (not (.empty? xs))
     (f (.first xs))
-    (for-each f (.rest xs))))
+    (each! f (.rest xs))))
 
 (define range<-
   (make
