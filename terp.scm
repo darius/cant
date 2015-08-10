@@ -1,13 +1,4 @@
-;; Scheme subset except with a fancier LAMBDA making objects, with
-;; primitives being objects, and with LETREC specified more tightly.
-
-;; Core syntax, first cut:
-;; e = v
-;;   | (QUOTE constant)
-;;   | (MAKE ((QUOTE cue) (v ...) e) ...)   [make object]
-;;   | (LETREC ((v e) ...) e)
-;;   | ((QUOTE cue) e e ...)    [call method of object]
-
+;; Interpreter
 
 ;; Running a program
 
