@@ -40,10 +40,10 @@
                                   ('slice "abcdefghijklmnopqrstuvwxyz"
                                           n-inputs))))
                (for-each (lambda (i)
-                           (say (v-name ('+ i n-inputs))
-                                " = "  (v-name (L-input i))
-                                " ~& " (v-name (R-input i))
-                                "; "))
+                           (let ((g (v-name ('+ i n-inputs)))
+                                 (L (v-name (L-input i)))
+                                 (R (v-name (R-input i))))
+                             (say g " = " L " ~& " R "; ")))
                          (range<- ('count L-input))))
              (newline))))
 
