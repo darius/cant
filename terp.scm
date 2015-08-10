@@ -81,7 +81,7 @@
 (define selector.cue car)
 (define else-selector (list "else")) ;XXX not private until we can assq above with memoized selectors
 
-(define (matcher-script<- proc)
+(define (else-script<- proc)
   `((,else-selector ,proc)))
 
 ;; TODO: special-case this path through call for efficiency
@@ -351,7 +351,7 @@
    (prim-script<- prim<-
     `((type   0 ,(lambda (me) 'symbol))
       (name   0 ,symbol->string)))
-   (matcher-script<-
+   (else-script<-
     (lambda (k me cue arguments)
       (if (eq? cue 'run)
           (call/cue me (car arguments) (cdr arguments) k)
