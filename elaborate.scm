@@ -17,10 +17,9 @@
       (string? x)))
 
 (define (elaborate-call first rest)
-  (if (and (starts-with? first 'quote)
-           (symbol? (cadr first)))
+  (if (cue? first)
       (cons first (map elaborate rest))
-      (cons ''run (map elaborate (cons first rest)))))  ; default cue
+      (cons '.run (map elaborate (cons first rest)))))  ; default cue
   
 (define (look-up-core-syntax key)
   (mcase key
@@ -47,8 +46,7 @@
 
 (define (elaborate-method/matcher clause)
   ;; XXX check more of the syntax
-  (assert (or (eq? (car clause) 'else)
-              (starts-with? (car clause) 'quote))
+  (assert (or (cue? (car clause)) (eq? (car clause) 'else))
           "Bad method/matcher syntax" clause)
   `(,(car clause) ,(cadr clause)
     ,(elaborate-seq (cddr clause))))
@@ -63,7 +61,7 @@
   (mcase key
     ('lambda (mlambda
               ((_ vars . body)
-               `(make ('run ,vars . ,body)))))
+               `(make (.run ,vars . ,body)))))
     ('let (mlambda
            ((_ bindings . body)
             `((lambda ,(map car bindings) . ,body)
@@ -80,7 +78,7 @@
           ((_ test if-so if-not)
            ;; TODO: I suspect the boolean coercion is a bad idea in
            ;; our context: there's too much polymorphism.
-           `('choose ('run ',boolean<- ,test)
+           `(.choose (.run ',boolean<- ,test)
                      (lambda () ,if-so)
                      (lambda () ,if-not)))))
     ('when (mlambda

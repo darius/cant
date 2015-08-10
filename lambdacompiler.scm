@@ -2,7 +2,7 @@
 ;(load "traceback.scm")
 
 (define (compile lexp)
-  ('compile (parse lexp) global-static-env '(halt)))
+  (.compile (parse lexp) global-static-env '(halt)))
 
 (define (parse lexp)
   (cond ((symbol? lexp)
@@ -16,28 +16,28 @@
 
 ;; Variable reference
 (define (var-ref<- v)
-  (make ('free-vars () (list<- v))
-        ('compile (s k) (cons (s v) k))))
+  (make (.free-vars () (list<- v))
+        (.compile (s k) (cons (s v) k))))
 
 ;; Lambda expression
 (define (abstraction<- v body)
-  (let ((free-vars (delq v ('free-vars body))))
-    (make ('free-vars () free-vars)
-          ('compile (s k)
-            (let ((code ('compile body (static-env<- v free-vars) '(return))))
-              (chain (list<- 'make-closure ('count free-vars) ('count code))
+  (let ((free-vars (delq v (.free-vars body))))
+    (make (.free-vars () free-vars)
+          (.compile (s k)
+            (let ((code (.compile body (static-env<- v free-vars) '(return))))
+              (chain (list<- 'make-closure (.count free-vars) (.count code))
                      (map s free-vars)
                      code
                      k))))))
 
 ;; Application
 (define (call<- operator operand)
-  (make ('free-vars () (union ('free-vars operator) ('free-vars operand)))
-        ('compile (s k)
-          (let ((code ('compile operand s ('compile operator s '(invoke)))))
-            (if (is? ('first k) 'return)
+  (make (.free-vars () (union (.free-vars operator) (.free-vars operand)))
+        (.compile (s k)
+          (let ((code (.compile operand s (.compile operator s '(invoke)))))
+            (if (is? (.first k) 'return)
                 code
-                (chain (list<- 'pushcont ('count code)) code k))))))
+                (chain (list<- 'pushcont (.count code)) code k))))))
 
 
 ;; Static environments (called 's' above)
@@ -49,7 +49,7 @@
   (lambda (v)
     (if (is? v param)
         'local
-        ('+ 1 (list-index free-vars v)))))
+        (.+ 1 (list-index free-vars v)))))
 
 
 ;; Smoke test

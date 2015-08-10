@@ -83,10 +83,10 @@
 (define (answer k value)
   (call answer/1 k (list value) 'ignored))
 
-(define answer/1 (selector<- 'answer 1))
-(define run/0    (selector<- 'run 0))
-(define run/2    (selector<- 'run 2))
-(define run/3    (selector<- 'run 3))
+(define answer/1 (selector<- '.answer 1))
+(define run/0    (selector<- '.run 0))
+(define run/2    (selector<- '.run 2))
+(define run/3    (selector<- '.run 3))
 
 (define (signal k plaint . values)
   (let ((handler (get-signal-handler)))
@@ -123,8 +123,8 @@
 
 (define (answer-script<- to-answer)
   (prim-script<- identity
-   `((answer 1 ,(lambda (_ datum value)
-                  (apply to-answer value datum))))))
+   `((.answer 1 ,(lambda (_ datum value)
+                   (apply to-answer value datum))))))
 
 (define halt-cont
   (cont<-
@@ -132,27 +132,27 @@
     (answer-script<- (lambda (value) value))
     (prim-script<- identity
      (let ((complain (lambda (k _) (signal k "No more frames" halt-cont))))
-       `((first 0 ,complain)
-         (rest  0 ,complain)
-         (run   1 ,complain))))
+       `((.first 0 ,complain)
+         (.rest  0 ,complain)
+         (.run   1 ,complain))))
     (prim-script<- prim<-
-     `((empty? 0 ,(lambda (_) #t))
-       (count  0 ,(lambda (_) 0)))))))
+     `((.empty? 0 ,(lambda (_) #t))
+       (.count  0 ,(lambda (_) 0)))))))
 
 ;; Script for nonempty continuations, i.e. ones other than halt-cont.
 (define (cont-script<- to-answer to-first)
   (append
    (answer-script<- to-answer)
    (prim-script<- prim<-
-    `((empty? 0 ,(lambda (datum) #f))
+    `((.empty? 0 ,(lambda (datum) #f))
       ;; rest/0 gets the enclosing continuation, which is always
       ;; the first element of datum.
-      (rest   0 ,car)
-      (first  0 ,(lambda (data) (apply to-first (cdr data))))
+      (.rest   0 ,car)
+      (.first  0 ,(lambda (data) (apply to-first (cdr data))))
       ))
    (prim-script<- identity
-    `((count 0 ,(lambda (k datum) (signal k "XXX unimplemented")))
-      (run   1 ,(lambda (k datum) (signal k "XXX unimplemented")))
+    `((.count 0 ,(lambda (k datum) (signal k "XXX unimplemented")))
+      (.run   1 ,(lambda (k datum) (signal k "XXX unimplemented")))
       ))))
 
 (define (ev e r k)
@@ -175,7 +175,7 @@
                                                       (list cue arguments))
                                           k))))
                              ((symbol? (cadr method))  ; variable arity
-                              (list (cadar method)
+                              (list (car method)
                                     (lambda (k r . arguments)
                                       (ev (caddr method)
                                           (env-extend r
@@ -183,7 +183,7 @@
                                                       (list arguments))
                                           k))))
                               (else
-                               (list (selector<- (cadar method)
+                               (list (selector<- (car method)
                                                  (length (cadr method)))
                                      (lambda (k r . arguments)
                                        (ev (caddr method)
@@ -201,7 +201,7 @@
          (ev (cadr e) r
              (cont<- ev-operands-cont-script k
                      (cddr e) r
-                     (selector<- (cadar e) (length (cddr e)))))))))
+                     (selector<- (car e) (length (cddr e)))))))))
 
 (define ev-operands-cont-script
   (cont-script<-
@@ -212,8 +212,7 @@
              (cont<- ev-remaining-operands-cont-script k
                      (cdr operands) '() r selector receiver))))
    (lambda (operands r selector)
-     (cons `',(show-selector selector)
-           (cons '% operands)))))
+     `(,(show-selector selector) % ,@operands))))
 
 (define (show-selector selector)
   (car selector))
@@ -287,54 +286,54 @@
 (define boolean-script
   (append
    (prim-script<- identity 
-    `((choose 2 ,(lambda (k me if-true if-false)
-                   (call run/0 (if me if-true if-false) '() k)))))
+    `((.choose 2 ,(lambda (k me if-true if-false)
+                    (call run/0 (if me if-true if-false) '() k)))))
    (prim-script<- prim<-
-    `((type 0 ,(lambda (k me) (answer k 'boolean)))))))
+    `((.type 0 ,(lambda (k me) (answer k 'boolean)))))))
 
 (define call-prim
   (let ((script
          (append
           (prim-script<- identity 
-           `((run 2 ,(lambda (k _ receiver message)
-                       ;; XXX dubious design: it's easy to suppose
-                       ;; cue defaults to 'run here instead.
-                       (let ((cue (car message))
-                             (arguments (cdr message)))
-                         (call/cue cue receiver arguments k))))
-             (run 3 ,(lambda (k _ cue receiver arguments)
-                       (call/cue cue receiver arguments k)))))
+           `((.run 2 ,(lambda (k _ receiver message)
+                        ;; XXX dubious design: it's easy to suppose
+                        ;; cue defaults to .run here instead.
+                        (let ((cue (car message))
+                              (arguments (cdr message)))
+                          (call/cue cue receiver arguments k))))
+             (.run 3 ,(lambda (k _ cue receiver arguments)
+                        (call/cue cue receiver arguments k)))))
           (prim-script<- prim<-
-           `((type 0 ,(lambda (me) 'procedure)))))))
+           `((.type 0 ,(lambda (me) 'procedure)))))))
     (object<- script #f)))
 
 (define evaluate-prim
   (let ((script
          (append
           (prim-script<- identity 
-           `((run 2 ,(lambda (k me e r)
-                       ;; XXX coerce r to an environment
-                       (ev (elaborate e) r k)))))
+           `((.run 2 ,(lambda (k me e r)
+                        ;; XXX coerce r to an environment
+                        (ev (elaborate e) r k)))))
           (prim-script<- prim<-
-           `((type 0 ,(lambda (me) 'procedure)))))))
+           `((.type 0 ,(lambda (me) 'procedure)))))))
     (object<- script #f)))
 
 (define number-script
   (prim-script<- prim<-
-   `((type      0 ,(lambda (me) 'number))
-     (+         1 ,+)
-     (-         1 ,-)
-     (*         1 ,*)
-     (quotient  1 ,quotient)
-     (remainder 1 ,remainder)
-     (<         1 ,<)
-     (=         1 ,=)
+   `((.type      0 ,(lambda (me) 'number))
+     (.+         1 ,+)
+     (.-         1 ,-)
+     (.*         1 ,*)
+     (.quotient  1 ,quotient)
+     (.remainder 1 ,remainder)
+     (.<         1 ,<)
+     (.=         1 ,=)
      ;; (Gambit-specific implementations:)
-     (<<        1 ,arithmetic-shift)
-     (bit-not   0 ,bitwise-not)
-     (bit-and   1 ,bitwise-and)
-     (bit-or    1 ,bitwise-ior)
-     (bit-xor   1 ,bitwise-xor)
+     (.<<        1 ,arithmetic-shift)
+     (.bit-not   0 ,bitwise-not)
+     (.bit-and   1 ,bitwise-and)
+     (.bit-or    1 ,bitwise-ior)
+     (.bit-xor   1 ,bitwise-xor)
      )))
 
 (define (call/cue cue receiver arguments k)
@@ -344,81 +343,81 @@
 (define symbol-script
   (append
    (prim-script<- prim<-
-    `((type   0 ,(lambda (me) 'symbol))
-      (name   0 ,symbol->string)))
+    `((.type   0 ,(lambda (me) 'symbol))
+      (.name   0 ,symbol->string)))
    (else-script<-
     (lambda (k me cue arguments)
-      (if (eq? cue 'run)
+      (if (eq? cue '.run)
           (call/cue me (car arguments) (cdr arguments) k)
           (message-not-found (selector<- cue (length arguments))
                              me k))))))
 
 (define nil-script
   (prim-script<- prim<-
-   `((type   0 ,(lambda (me) 'nil))
-     (empty? 0 ,null?)
-     (count  0 ,length)
-     (run    1 ,list-ref)
-     (chain  1 ,(lambda (me seq) seq)))))
+   `((.type   0 ,(lambda (me) 'nil))
+     (.empty? 0 ,null?)
+     (.count  0 ,length)
+     (.run    1 ,list-ref)
+     (.chain  1 ,(lambda (me seq) seq)))))
 
 (define pair-script
   (prim-script<- prim<-
-   `((type   0 ,(lambda (me) 'pair))
-     (empty? 0 ,null?)
-     (first  0 ,car)
-     (rest   0 ,cdr)
-     (count  0 ,length)
-     (run    1 ,list-ref)
-     (chain  1 ,append))))
+   `((.type   0 ,(lambda (me) 'pair))
+     (.empty? 0 ,null?)
+     (.first  0 ,car)
+     (.rest   0 ,cdr)
+     (.count  0 ,length)
+     (.run    1 ,list-ref)
+     (.chain  1 ,append))))
 
 (define char-script
   (prim-script<- prim<-
-   `((type          0 ,(lambda (me) 'char))
-     (code          0 ,char->integer)          ; better name?
-     (alphabetic?   0 ,char-alphabetic?)
-     (numeric?      0 ,char-numeric?)
-     (alphanumeric? 0 ,(lambda (me) (or (char-alphabetic? me)
-                                        (char-numeric? me))))
+   `((.type          0 ,(lambda (me) 'char))
+     (.code          0 ,char->integer)          ; better name?
+     (.alphabetic?   0 ,char-alphabetic?)
+     (.numeric?      0 ,char-numeric?)
+     (.alphanumeric? 0 ,(lambda (me) (or (char-alphabetic? me)
+                                         (char-numeric? me))))
      )))
 
 (define string-script
   (prim-script<- prim<-
-   `((type   0 ,(lambda (me) 'string))
-     (empty? 0 ,(lambda (me) (= 0 (string-length me))))
-     (first  0 ,(lambda (me) (string-ref me 0)))
-     (rest   0 ,(lambda (me) (substring me 1 (string-length me))))
-     (count  0 ,string-length)
-     (run    1 ,string-ref)
-     (chain  1 ,string-append)
-     (slice  1 ,(lambda (me lo) (substring me lo (string-length me))))
-     (slice  2 ,substring)
-     (parse-int 0 ,string->number)      ;XXX not precisely
-     (parse-int 1 ,string->number)
+   `((.type   0 ,(lambda (me) 'string))
+     (.empty? 0 ,(lambda (me) (= 0 (string-length me))))
+     (.first  0 ,(lambda (me) (string-ref me 0)))
+     (.rest   0 ,(lambda (me) (substring me 1 (string-length me))))
+     (.count  0 ,string-length)
+     (.run    1 ,string-ref)
+     (.chain  1 ,string-append)
+     (.slice  1 ,(lambda (me lo) (substring me lo (string-length me))))
+     (.slice  2 ,substring)
+     (.parse-int 0 ,string->number)      ;XXX not precisely
+     (.parse-int 1 ,string->number)
      )))
 
 (define vector-script
   (prim-script<- prim<-
-   `((type   0 ,(lambda (me) 'vector))
-     (empty? 0 ,(lambda (me) (= 0 (vector-length me))))
-     (first  0 ,(lambda (me) (vector-ref me 0)))
-     (rest   0 ,(lambda (me) (subvector me 1 (vector-length me))))
-     (count  0 ,vector-length)
-     (run    1 ,vector-ref)
-     (chain  1 ,vector-append)          ; (gambit-specific, I think)
-     (slice  1 ,(lambda (me lo) (subvector me lo (vector-length me))))
-     (slice  2 ,subvector)
-     (set!   2 ,(lambda (me i value)
-                  (vector-set! me i value)
-                  #f)))))
+   `((.type   0 ,(lambda (me) 'vector))
+     (.empty? 0 ,(lambda (me) (= 0 (vector-length me))))
+     (.first  0 ,(lambda (me) (vector-ref me 0)))
+     (.rest   0 ,(lambda (me) (subvector me 1 (vector-length me))))
+     (.count  0 ,vector-length)
+     (.run    1 ,vector-ref)
+     (.chain  1 ,vector-append)          ; (gambit-specific, I think)
+     (.slice  1 ,(lambda (me lo) (subvector me lo (vector-length me))))
+     (.slice  2 ,subvector)
+     (.set!   2 ,(lambda (me i value)
+                   (vector-set! me i value)
+                   #f)))))
 
 (define scheme-procedure-script
   (prim-script<- prim<-
-   `((type   0 ,(lambda (me) 'procedure))
+   `((.type   0 ,(lambda (me) 'procedure))
      ;;XXX should only define arities that work:
-     (run    0 ,(lambda (me) (me)))
-     (run    1 ,(lambda (me a) (me a)))
-     (run    2 ,(lambda (me a b) (me a b)))
-     (run    3 ,(lambda (me a b c) (me a b c))))))
+     (.run    0 ,(lambda (me) (me)))
+     (.run    1 ,(lambda (me a) (me a)))
+     (.run    2 ,(lambda (me a b) (me a b)))
+     (.run    3 ,(lambda (me a b c) (me a b c))))))
 
 (define (is? x y)
   (unwrap x (lambda (x-script x-datum)
@@ -431,11 +430,11 @@
 
 (define box-script
   (prim-script<- prim<-
-   `((type   0 ,(lambda (datum) 'box))
-     (run    0 ,(lambda (datum) (vector-ref datum 0)))
-     (set!   1 ,(lambda (datum value)
-                  (vector-set! datum 0 value)
-                  #f)))))
+   `((.type   0 ,(lambda (datum) 'box))
+     (.run    0 ,(lambda (datum) (vector-ref datum 0)))
+     (.set!   1 ,(lambda (datum value)
+                   (vector-set! datum 0 value)
+                   #f)))))
 
 (define (box? x)
   (unwrap x (lambda (script _) (eq? script box-script))))
@@ -445,9 +444,9 @@
 (define error-script
   (append
    (prim-script<- prim<-
-    `((type   0 ,(lambda (me) ('procedure)))))
-   `((run ,(lambda (k _ plaint . values)
-             (apply signal k plaint values))))))
+    `((.type   0 ,(lambda (me) 'procedure))))
+   `((.run ,(lambda (k _ plaint . values)
+              (apply signal k plaint values))))))
 
 (define error-prim (object<- error-script #f))
 
@@ -512,35 +511,35 @@
          42)
 (should= (interpret 'cons)
          cons)
-(should= (interpret '('- 5 3))
+(should= (interpret '(.- 5 3))
          2)
-(should= (interpret '('first ('rest '(hello world))))
+(should= (interpret '(.first (.rest '(hello world))))
          'world)
-(should= (interpret '('run (make ('run (x) x))
+(should= (interpret '(.run (make (.run (x) x))
                            '55))
          55)
-(should= (interpret '(let ((x (is? 4 ('+ 2 2))))
+(should= (interpret '(let ((x (is? 4 (.+ 2 2))))
                        x))
          #t)
 (should= (interpret '(letrec ((fact (lambda (n)
                                       (if (is? n 0)
                                           1
-                                          ('* n (fact ('- n 1)))))))
+                                          (.* n (fact (.- n 1)))))))
                        (fact 5)))
          120)
 (should= (interpret '(letrec ((even? (lambda (n)
                                        (if (is? n 0)
                                            #t
-                                           (odd? ('- n 1)))))
+                                           (odd? (.- n 1)))))
                               (odd? (lambda (n)
                                       (if (is? n 0)
                                           #f
-                                          (even? ('- n 1))))))
+                                          (even? (.- n 1))))))
                        (even? 5)))
          #f)
-(should= (interpret '(evaluate '('- 5 3) '()))
+(should= (interpret '(evaluate '(.- 5 3) '()))
          2)
 (should= (interpret '(let ((b (box<- 42)))
-                       ('set! b ('+ (b) 1))
+                       (.set! b (.+ (b) 1))
                        (b)))
          43)

@@ -26,74 +26,74 @@
                  (parse (lexp 1))))))
 
 (define (interpret lexp)
-  ('evaluate (parse lexp) global-env halt))
+  (.evaluate (parse lexp) global-env halt))
 
 
 ;; ASTs and continuations
 
 (define halt
-  (make ('empty? () #t)
-        ('inject (k<-) halt)
-        ('take-step (val) val)
-        ('take (val) val)))
+  (make (.empty? () #t)
+        (.inject (k<-) halt)
+        (.take-step (val) val)
+        (.take (val) val)))
 
 
 ;; Constant
 (define (constant<- c)
   (make constant
-    ('source () c)
-    ('eval-step (r k) (debugging (value-step<- constant r k)))
-    ('evaluate (r k) ('take k c))))
+    (.source () c)
+    (.eval-step (r k) (debugging (value-step<- constant r k)))
+    (.evaluate (r k) (.take k c))))
 
 ;; Variable reference
 (define (var-ref<- v)
   (make var-ref
-    ('source () v)
-    ('eval-step (r k) (debugging (value-step<- var-ref r k)))
-    ('evaluate (r k) (lookup r v k))))
+    (.source () v)
+    (.eval-step (r k) (debugging (value-step<- var-ref r k)))
+    (.evaluate (r k) (lookup r v k))))
 
 ;; Lambda expression
 (define (abstraction<- v body)
   (make abstraction
-    ('source () (list<- '& v ('source body)))
-    ('eval-step (r k) (debugging (value-step<- abstraction r k)))
-    ('evaluate (r k)
-      ('take k (make
-                 ('survey () (list<- v '-> '...))
-                 ('call (arg k2)
-                   ('evaluate body (extend r v arg) k2))
-                 ('call-step (arg k2)
-                   ('eval-step body (extend r v arg) k2)))))))
+    (.source () (list<- '& v (.source body)))
+    (.eval-step (r k) (debugging (value-step<- abstraction r k)))
+    (.evaluate (r k)
+      (.take k (make
+                 (.survey () (list<- v '-> '...))
+                 (.call (arg k2)
+                   (.evaluate body (extend r v arg) k2))
+                 (.call-step (arg k2)
+                   (.eval-step body (extend r v arg) k2)))))))
 
 ;; Application
 (define (call<- operator operand)
   (make app
-    ('source () (list<- ('source operator) ('source operand)))
-    ('eval-step (r k)
+    (.source () (list<- (.source operator) (.source operand)))
+    (.eval-step (r k)
       (debugging (subeval-step<- operator r (ev-arg-cont<- operand r k))))
-    ('evaluate (r k)
-      ('evaluate operator r (ev-arg-cont<- operand r k)))))
+    (.evaluate (r k)
+      (.evaluate operator r (ev-arg-cont<- operand r k)))))
 
 (define (ev-arg-cont<- operand r k)
-  (make ('empty? () #f)
-        ('rest () k)
-        ('first () (list<- '^ ('source operand)))
-        ('inject (k<-) (ev-arg-cont<- operand r (k<- k)))
-        ('take (fn)
-           ('evaluate operand r (call-cont<- fn k)))
-        ('take-step (fn)
-           ('eval-step operand r (call-cont<- fn k)))
+  (make (.empty? () #f)
+        (.rest () k)
+        (.first () (list<- '^ (.source operand)))
+        (.inject (k<-) (ev-arg-cont<- operand r (k<- k)))
+        (.take (fn)
+           (.evaluate operand r (call-cont<- fn k)))
+        (.take-step (fn)
+           (.eval-step operand r (call-cont<- fn k)))
         ))
 
 (define (call-cont<- fn k)
-  (make ('empty? () #f)
-        ('rest () k)
-        ('first () (list<- (survey fn) '^))
-        ('inject (k<-) (call-cont<- fn (k<- k)))
-        ('take (arg)
-           ('call fn arg k))
-        ('take-step (arg)
-           ('call-step fn arg k))
+  (make (.empty? () #f)
+        (.rest () k)
+        (.first () (list<- (survey fn) '^))
+        (.inject (k<-) (call-cont<- fn (k<- k)))
+        (.take (arg)
+           (.call fn arg k))
+        (.take-step (arg)
+           (.call-step fn arg k))
         ))
 
 
@@ -102,20 +102,20 @@
 (define (survey value)
   (if (or (number? value) (symbol? value))
       value
-      ('survey value)))
+      (.survey value)))
 
 (define prim+
-  (make ('survey () '+)
-        ('call-step (arg1 k1)
+  (make (.survey () '+)
+        (.call-step (arg1 k1)
           XXX)
-        ('call (arg1 k1)
+        (.call (arg1 k1)
           (if (number? arg1)
-              ('take k1 (make ('survey () (list<- '+ (survey arg1)))
-                              ('call-step (arg2 k2)
+              (.take k1 (make (.survey () (list<- '+ (survey arg1)))
+                              (.call-step (arg2 k2)
                                 XXX)
-                              ('call (arg2 k2)
+                              (.call (arg2 k2)
                                 (if (number? arg2)
-                                    ('take k2 ('+ arg1 arg2))
+                                    (.take k2 (.+ arg1 arg2))
                                     ;; XXX should supply self, too:
                                     (debug k2 "Bad arg2 to +" (survey arg2))))))
               (debug k1 "Bad arg1 to +" (survey arg1))))))
@@ -130,7 +130,7 @@
   (cons (list<- v val) r))
 
 (define (lookup r v k)
-  (cond ((assq v r) => (lambda (record) ('take k (record 1))))
+  (cond ((assq v r) => (lambda (record) (.take k (record 1))))
         (else (debug k "Unbound var" v))))
 
 
@@ -143,13 +143,13 @@
 (define (next-command)
   (display "debug> ")
   (let ((cmds (command-queue)))
-    (cond (('empty? cmds)
+    (cond ((.empty? cmds)
            (newline)
            #f)
           (else
-           (print ('first cmds))
-           ('set! command-queue ('rest cmds))
-           ('first cmds)))))
+           (print (.first cmds))
+           (.set! command-queue (.rest cmds))
+           (.first cmds)))))
 
 (define (debug k plaint culprit)
   (complain plaint culprit)
@@ -172,48 +172,48 @@
 
 (define (value-step<- e r k)
   (make value-step
-    ('show ()
-      (display "ev-> ") (print ('source e)))
-    ('b ()
+    (.show ()
+      (display "ev-> ") (print (.source e)))
+    (.b ()
       (traceback k)
       (debugging value-step))
-    ('continue ()
-      ('evaluate e r k))
-    ('hop ()
-      ('evaluate e r ('inject k debugger-trap-cont<-)))
-    ('step ()
-      ('hop value-step))
+    (.continue ()
+      (.evaluate e r k))
+    (.hop ()
+      (.evaluate e r (.inject k debugger-trap-cont<-)))
+    (.step ()
+      (.hop value-step))
     ))
 
 (define (subeval-step<- e r k)
   (make subeval-step
-    ('show ()
-      (display "ev-> ") (print ('source e)))
-    ('b ()
+    (.show ()
+      (display "ev-> ") (print (.source e)))
+    (.b ()
       (traceback k)
       (debugging subeval-step))
-    ('continue ()
-      ('evaluate e r k))
-    ('hop ()
-      ('evaluate e r ('inject k debugger-trap-cont<-)))
-    ('step ()
-      ('eval-step e r k))
+    (.continue ()
+      (.evaluate e r k))
+    (.hop ()
+      (.evaluate e r (.inject k debugger-trap-cont<-)))
+    (.step ()
+      (.eval-step e r k))
     ))
 
 (define (out-step<- k value)
   (make out-step
-    ('show ()
+    (.show ()
       (display "<-ret ") (print (survey value)))
-    ('b ()
+    (.b ()
       (traceback k)
       (debugging out-step))
-    ('continue ()
-      ('take k value))
-    ('hop ()
-      ('take ('inject k debugger-trap-cont<-) value))
-    ('step () 
-      ('take-step k value))
-    ('value (new-value)
+    (.continue ()
+      (.take k value))
+    (.hop ()
+      (.take (.inject k debugger-trap-cont<-) value))
+    (.step () 
+      (.take-step k value))
+    (.value (new-value)
       (debugging (out-step<- k new-value)))
     ))
 
@@ -221,18 +221,18 @@
   (if (is? k halt)
       k
       (make
-        ('take (value) (debugging (out-step<- k value)))
-        ;; XXX ('inject ...) ?
+        (.take (value) (debugging (out-step<- k value)))
+        ;; XXX (.inject ...) ?
         (else (cue arguments) (call cue k arguments)))))
 
 
 ;; Smoke test
 
 (define try
-  (make ('run (lexp)
+  (make (.run (lexp)
           (try lexp '()))
-        ('run (lexp commands)
-          ('set! command-queue commands)
+        (.run (lexp commands)
+          (.set! command-queue commands)
           (let ((result (interpret lexp)))
             (if result (print (survey result)) 'failed)))))
 
@@ -244,6 +244,6 @@
 (try '(((+ 1) y) 2))
 
 (try '((lambda (x) ((+ y) 1)) 42)
-     '((value 42) (continue)))
+     '((.value 42) (.continue)))
 (try '((lambda (x) ((+ y) 1)) 42)
-     '((value 42) (hop) (b) (hop)))
+     '((.value 42) (.hop) (.b) (.hop)))

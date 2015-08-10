@@ -1,6 +1,12 @@
 (define (starts-with? form tag)
   (and (pair? form) (eq? (car form) tag)))
 
+(define (cue? x)
+  (and (symbol? x)
+       ;; XXX just gonna assume a 0-length symbol won't come up, here
+       (char=? (string-ref (symbol->string x) 0)
+               #\.)))
+
 ;;TODO: make this something like ('coerce boolean? x)
 (define (boolean<- x)                   
   (not (not x)))

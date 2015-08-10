@@ -15,73 +15,73 @@
          xs))
 
 (define (foldr f z xs)
-  (if ('empty? xs)
+  (if (.empty? xs)
       z
-      (f ('first xs) (foldr f z ('rest xs)))))
+      (f (.first xs) (foldr f z (.rest xs)))))
 
 (define (foldr1 f xs)
-  (let ((tail ('rest xs)))
-    (if ('empty? tail)
-        ('first xs)
-        (f ('first xs) (foldr1 f tail)))))
+  (let ((tail (.rest xs)))
+    (if (.empty? tail)
+        (.first xs)
+        (f (.first xs) (foldr1 f tail)))))
 
 (define list<-
-  (make ('run () '())
-        ('run (a) (cons a '()))
-        ('run (a b) (cons a (list<- b)))
-        ('run (a b c) (cons a (list<- b c)))
-        ('run (a b c d) (cons a (list<- b c d)))
-        ('run arguments (foldr1 cons arguments))))
+  (make (.run () '())
+        (.run (a) (cons a '()))
+        (.run (a b) (cons a (list<- b)))
+        (.run (a b c) (cons a (list<- b c)))
+        (.run (a b c d) (cons a (list<- b c d)))
+        (.run arguments (foldr1 cons arguments))))
 
 (define chain
-  (make ('run () '())
-        ('run (xs) xs)
-        ('run (xs ys) ('chain xs ys))
-        ('run arguments (foldr1 'chain arguments))))
+  (make (.run () '())
+        (.run (xs) xs)
+        (.run (xs ys) (.chain xs ys))
+        (.run arguments (foldr1 '.chain arguments))))
 
 (define (memq? x set)
   (some (lambda (y) (is? x y)) set))
 
 (define (some? ok? xs)
-  (and (not ('empty? xs))
-       (or (ok? ('first xs))
-           (some? ok? ('rest xs)))))
+  (and (not (.empty? xs))
+       (or (ok? (.first xs))
+           (some? ok? (.rest xs)))))
 
 (define (list-index xs x)
   (recurse searching ((i 0) (xs xs))
-    (if (is? x ('first xs))
+    (if (is? x (.first xs))
         i
-        (searching ('+ n 1) ('rest xs)))))
+        (searching (.+ n 1) (.rest xs)))))
 
 (define (print x)
   (write x)
   (newline))
 
 (define (for-each f xs)
-  (when (not ('empty? xs))
-    (f ('first xs))
-    (for-each f ('rest xs))))
+  (when (not (.empty? xs))
+    (f (.first xs))
+    (for-each f (.rest xs))))
 
 (define range<-
   (make
-    ('run (hi-bound)
+    (.run (hi-bound)
       (range<- 0 hi-bound))
-    ('run (lo hi-bound)
+    (.run (lo hi-bound)
       (if (<= hi-bound lo)
           '()
-          (make ('empty? () #f)
-                ('first () lo)
-                ('rest () (range<- ('+ lo 1) hi-bound))
+          (make (.empty? () #f)
+                (.first () lo)
+                (.rest () (range<- (.+ lo 1) hi-bound))
                 ;; ...
                 )))))
 
 (define (vector<-list xs)
-  (let ((v (vector<-count ('count xs))))
+  (let ((v (vector<-count (.count xs))))
     (recurse setting ((i 0) (xs xs))
-      (cond (('empty? xs) v)
+      (cond ((.empty? xs) v)
             (else
-             ('set! v i ('first xs))
-             (setting ('+ i 1) ('rest xs)))))))
+             (.set! v i (.first xs))
+             (setting (.+ i 1) (.rest xs)))))))
 
 (define (compose f g)
   (lambda (x) (f (g x))))
