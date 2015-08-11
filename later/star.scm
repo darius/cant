@@ -12,9 +12,8 @@
         (and (not (.empty? chars))
              (hide
               (let char (.first chars))
-              (let states (set<-sequence
-                           (with flatmap ((state states))
-                             (.after state char))))
+              (let states (set<-sequence (for flatmap ((state states))
+                                           (.after state char))))
               (or (any (map .nullable? states))
                   (scanning states (.rest chars))))))))
 
@@ -42,7 +41,7 @@
       (make
         (.nullable? () (and (.nullable? r) (.nullable? s)))
         (.after (char)
-          (let dr+s (with map ((r-rest (.after r char)))
+          (let dr+s (for map ((r-rest (.after r char)))
                       (chain<- r-rest s)))
           (if (.nullable? r)
               (chain dr+s (.after s char))
@@ -51,12 +50,12 @@
 (define (star<- r)
   (make star
     (.nullable? () #y)
-    (.after (char) (with map ((r-rest (.after r char)))
+    (.after (char) (for map ((r-rest (.after r char)))
                      (chain<- r-rest star)))))
                         
 
-;; So the Python came out shorter even with more comments and no
-;; technicalities still to fill in.
+;; So the Python came out a little shorter even with more comments and
+;; no technicalities still to fill in.
 
 ;; TODO: work out what this would look like with "case classes"
 ;; or algebraic datatypes and matching.
