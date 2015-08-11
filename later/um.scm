@@ -5,13 +5,20 @@
 
 ;; TODO: s/vector/array?
 
+;;XXX .u<op> means small, unsigned op
+;; and I'm gonna assume 32-bit here
+;; Similar for .s<op> (signed).
+;; Do these mix OK? Is this reasonable?
+
+;; TODO: mem could also be a typed vector, but neither the vector
+;; nor the type is as simple...
+
 (define (run program out-port in-port)
   (let mem (growable-vector<-))         ;TODO: shorter name? flexlist?
-  (.append! mem program)
+  (.push! mem program)
   (let free-list (growable-vector<-))
   (let reg (vector<-count 8 0))         ;TODO: typed vector, for efficiency
-  ;; TODO: mem could also be a typed vector, but neither the vector
-  ;; nor the type is as simple...
+
   (recurse running ((program program) (pc 0))
 
     (define (next)
@@ -19,10 +26,6 @@
 
     (let inst (program pc))
     (let opcode (.u>> inst 28))
-    ;;XXX .u<op> means small, unsigned op
-    ;; and I'm gonna assume 32-bit here
-    ;; Similar for .s<op> (signed).
-    ;; Do these mix OK? Is this reasonable?
 
     (match opcode
       (13 (.set! reg (.bit-and 7 (.u>> inst 25))
@@ -67,10 +70,7 @@
          (8 (let chunk (vector<-count (reg c) 0)) ;TODO: typed vector again
             (.set! reg b
                    (cond ((.empty? free-list)
-                          ;; TODO: mem could have a method doing this?
-                          (let i (.count mem))
-                          (.append! mem chunk)
-                          i)
+                          (.push! mem chunk))
                          (else
                           (let i (.pop! free-list))
                           (.set! mem i chunk)
@@ -78,7 +78,7 @@
             (next))
 
          (9 (.set! mem (reg c) none)
-            (.append! free-list (reg c))
+            (.push! free-list (reg c))
             (next))
 
          (10 (.write-char out-port (char<- (reg c)))
@@ -103,13 +103,13 @@
   (let program (growable-vector<-))
   (recurse reading ()
     (let c3 (.read-char in-port))
-    (when (not (is? c3 none))
+    (unless (is? c3 none)
       (let c2 (.read-char in-port))
       (let c1 (.read-char in-port))
       (let c0 (.read-char in-port))
       ;; TODO: a syntax for int-guard coercion instead?
-      (.append! program
-                (u32<-bytes (.code c3) (.code c2) (.code c1) (.code c0)))
+      (.push! program
+              (u32<-bytes (.code c3) (.code c2) (.code c1) (.code c0)))
       (reading)))))
   program)                              ;TODO: snapshot it
 

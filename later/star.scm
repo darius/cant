@@ -13,8 +13,8 @@
              (hide
               (let char (.first chars))
               (let states (set<-sequence
-                           (flatmap (given (state) (.after state char))
-                                    states)))
+                           (with flatmap ((state states))
+                             (.after state char))))
               (or (any (map .nullable? states))
                   (scanning states (.rest chars))))))))
 
@@ -42,8 +42,8 @@
       (make
         (.nullable? () (and (.nullable? r) (.nullable? s)))
         (.after (char)
-          (let dr+s (map (given (r-rest) (chain<- r-rest s))
-                         (.after r char)))
+          (let dr+s (with map ((r-rest (.after r char)))
+                      (chain<- r-rest s)))
           (if (.nullable? r)
               (chain dr+s (.after s char))
               dr+s)))))
@@ -51,8 +51,9 @@
 (define (star<- r)
   (make star
     (.nullable? () #y)
-    (.after (char) (map (given (r-rest) (chain<- r-rest star))
-                        (.after r char)))))
+    (.after (char) (with map ((r-rest (.after r char)))
+                     (chain<- r-rest star)))))
+                        
 
 ;; So the Python came out shorter even with more comments and no
 ;; technicalities still to fill in.
