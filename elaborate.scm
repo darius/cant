@@ -56,7 +56,7 @@
      `(,cue ,params ,(elaborate-hide body)))))
 
 (define (elaborate-hide body)
-  (let* ((commands (map elaborate-command body))
+  (let* ((commands (elaborate-commands body '()))
          (vars (flatmap get-hide-vars commands))
          (body (foldr (lambda (cmd rest)
                         (mcase cmd
@@ -67,6 +67,18 @@
     (if (null? vars)
         body
         `(%hide ,vars ,body))))
+
+(define (elaborate-commands cmds rest)
+  (foldr (lambda (cmd rest)
+           (mcase cmd
+             (('begin . cmds1)
+              (elaborate-commands cmds1 rest))
+             (('include filename)
+              (elaborate-commands (snarf filename) rest))
+             (_
+              (cons (elaborate-command cmd) rest))))
+         rest
+         cmds))
 
 (define (elaborate-command cmd)
   (mcase cmd

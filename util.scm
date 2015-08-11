@@ -45,6 +45,14 @@
       (cons (car ls) 
             (remove-nth (cdr ls) (- n 1)))))
 
+(define (snarf filename)
+  (call-with-input-file filename
+    (lambda (port)
+      (let reading ((form (read port)))
+        (if (eof-object? form)
+            '()
+            (cons form (reading (read port))))))))
+
 (define (expand-mlambda subject clauses)
   (letrec
       ((expand-clause 
