@@ -6,7 +6,7 @@
 (load "traceback.scm")
 
 ;; Conventions:
-;;  lexp    source form of lambda expression
+;;  lexp    source form of lambda-calculus expression
 ;;  c       constant value
 ;;  v       variable name (a symbol)
 ;;  r       environment
@@ -55,11 +55,11 @@
 ;; Lambda expression
 (define (abstraction<- v body)
   (make abstraction
-    (.source () (list<- '& v (.source body)))
+    (.source () `(& ,v ,(.source body)))
     (.eval-step (r k) (debugging (value-step<- abstraction r k)))
     (.evaluate (r k)
       (.take k (make
-                 (.survey () (list<- v '-> '...))
+                 (.survey () `(,v -> ...))
                  (.call (arg k2)
                    (.evaluate body (extend r v arg) k2))
                  (.call-step (arg k2)
@@ -68,7 +68,7 @@
 ;; Application
 (define (call<- operator operand)
   (make app
-    (.source () (list<- (.source operator) (.source operand)))
+    (.source () `(,(.source operator) ,(.source operand)))
     (.eval-step (r k)
       (debugging (subeval-step<- operator r (ev-arg-cont<- operand r k))))
     (.evaluate (r k)
@@ -77,7 +77,7 @@
 (define (ev-arg-cont<- operand r k)
   (make (.empty? () #f)
         (.rest () k)
-        (.first () (list<- '^ (.source operand)))
+        (.first () `(^ ,(.source operand)))
         (.inject (k<-) (ev-arg-cont<- operand r (k<- k)))
         (.take (fn)
            (.evaluate operand r (call-cont<- fn k)))
@@ -88,7 +88,7 @@
 (define (call-cont<- fn k)
   (make (.empty? () #f)
         (.rest () k)
-        (.first () (list<- (survey fn) '^))
+        (.first () `(,(survey fn) ^))
         (.inject (k<-) (call-cont<- fn (k<- k)))
         (.take (arg)
            (.call fn arg k))
@@ -110,7 +110,7 @@
           XXX)
         (.call (arg1 k1)
           (if (number? arg1)
-              (.take k1 (make (.survey () (list<- '+ (survey arg1)))
+              (.take k1 (make (.survey () `(+ ,(survey arg1)))
                               (.call-step (arg2 k2)
                                 XXX)
                               (.call (arg2 k2)
@@ -124,10 +124,10 @@
 ;; Environments
 
 (define global-env
-  (list<- (list<- '+ prim+)))
+  `((+ ,prim+)))
 
 (define (extend r v val)
-  (cons (list<- v val) r))
+  `((,v ,val) ,@r))
 
 (define (lookup r v k)
   (cond ((assq v r) => (given (record) (.take k (record 1))))

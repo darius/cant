@@ -34,7 +34,7 @@
     (.capture (cs)
       ;; XXX this'd be simpler if we were working by indices already:
       (let ((d (.- (.count cs) (.count chars))))
-        (empty chars (chain vals (list<- (.slice cs 0 d))))))
+        (empty chars `(,@vals ,(.slice cs 0 d)))))
     (.prefix (pre-vals) (empty chars (chain pre-vals vals)))
     (.leftovers () chars)
     (.results () vals)))
@@ -71,7 +71,7 @@
 
 (define (push constant)
   (given (chars vals)
-    (empty chars (chain vals (list<- constant)))))
+    (empty chars `(,@vals ,constant))))
 
 (define (seclude p)
   (given (chars vals)
