@@ -36,9 +36,10 @@
     ('hide   (mlambda
               ((_ . body)
                (elaborate-hide body))))
-    ('begin  (mlambda                   ;XXX not really core syntax
-              ((_ . es)
-               (elaborate-seq es))))
+    ('begin  (mlambda
+              ((_ e) (elaborate e))
+              ((_ e . es) `(%let _ ,(elaborate e)
+                             ,(elaborate `(begin . ,es))))))
     (_ #f)))
 
 (define (elaborate-method/matcher clause)
@@ -97,12 +98,6 @@
   (mcase cmd
     (('let '_ e) '())
     (('let v e) (list v))))
-
-(define (elaborate-seq es)
-  (elaborate (mcase es
-               ((e) e)
-               ((e . es) `((given (,(gensym)) . ,es)
-                           ,e)))))
 
 (define (look-up-macro key)
   (mcase key
