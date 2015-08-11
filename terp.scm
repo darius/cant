@@ -19,9 +19,11 @@
          (interpret form))))
 
 (define (run-define head body)
-  (if (symbol? head)
-      (global-def! head (interpret (car body)))
-      (global-def! (car head) (interpret `(given ,(cdr head) ,@body)))))
+  (cond ((symbol? head)
+         (assert (null? (cdr body)) "define syntax" body)
+         (global-def! head (interpret (car body))))
+        (else
+         (global-def! (car head) (interpret `(given ,(cdr head) ,@body))))))
 
 (define (interpret e)
   (evaluate (elaborate e) '()))
@@ -526,8 +528,9 @@
 (should= (interpret '(.run (make (.run (x) x))
                            '55))
          55)
-(should= (interpret '(let ((x (is? 4 (.+ 2 2))))
-                       x))
+(should= (interpret '(hide
+                      (define x (is? 4 (.+ 2 2)))
+                      x))
          #t)
 (should= (interpret '(letrec ((fact (given (n)
                                       (if (is? n 0)
@@ -547,7 +550,8 @@
          #f)
 (should= (interpret '(evaluate '(.- 5 3) '()))
          2)
-(should= (interpret '(let ((b (box<- 42)))
-                       (.set! b (.+ (b) 1))
-                       (b)))
+(should= (interpret '(hide
+                      (define b (box<- 42))
+                      (.set! b (.+ (b) 1))
+                      (b)))
          43)

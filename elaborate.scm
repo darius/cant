@@ -92,11 +92,11 @@
     ('given (mlambda
               ((_ vars . body)
                `(make (.run ,vars . ,body)))))
-    ('let (mlambda
-           ((_ bindings . body)
-            (check-bindings bindings)
-            `((given ,(map car bindings) . ,body)
-              . ,(map cadr bindings)))))
+    ('with (mlambda
+            ((_ bindings . body)
+             (check-bindings bindings)
+             `((given ,(map car bindings) . ,body)
+               . ,(map cadr bindings)))))
     ('for (mlambda
            ((_ fn bindings . body)
             (check-bindings bindings)
@@ -128,7 +128,7 @@
             ((_ (e) . clauses) `(or ,e (cond . ,clauses)))
             ((_ (e1 '=> e2) . clauses)
              (let ((test-var (gensym)))
-               `(let ((,test-var ,e1))
+               `(with ((,test-var ,e1))
                   (if ,test-var
                       (,e2 ,test-var)
                       (cond . ,clauses)))))
@@ -143,7 +143,7 @@
           ((_ e) e)
           ((_ e . es)
            (let ((t (gensym)))
-             `(let ((,t ,e)) (if ,t ,t (begin . ,es)))))))
+             `(with ((,t ,e)) (if ,t ,t (begin . ,es)))))))
     ('quasiquote (mlambda
                   ((_ q) (expand-quasiquote q))))
     (_ #f)))

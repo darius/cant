@@ -26,9 +26,9 @@
       (foldl f (f z (.first xs)) (.rest xs))))
 
 (define (union set1 set2)
-  (let ((adjoin (given (x xs)
-                  (if (memq? x set2) xs (cons x xs)))))
-    (foldr adjoin set2 set1)))
+  (define (adjoin x xs)
+    (if (memq? x set2) xs (cons x xs)))
+  (foldr adjoin set2 set1))
 
 (define (delq x set)
   (foldr (given (element rest)
@@ -47,10 +47,10 @@
       (f (.first xs) (foldr f z (.rest xs)))))
 
 (define (foldr1 f xs)
-  (let ((tail (.rest xs)))
-    (if (.empty? tail)
-        (.first xs)
-        (f (.first xs) (foldr1 f tail)))))
+  (define tail (.rest xs))
+  (if (.empty? tail)
+      (.first xs)
+      (f (.first xs) (foldr1 f tail))))
 
 (define list<-
   (given arguments arguments))
@@ -98,12 +98,12 @@
                 )))))
 
 (define (vector<-list xs)
-  (let ((v (vector<-count (.count xs))))
-    (recurse setting ((i 0) (xs xs))
-      (cond ((.empty? xs) v)
-            (else
-             (.set! v i (.first xs))
-             (setting (+ i 1) (.rest xs)))))))
+  (define v (vector<-count (.count xs)))
+  (recurse setting ((i 0) (xs xs))
+    (cond ((.empty? xs) v)
+          (else
+           (.set! v i (.first xs))
+           (setting (+ i 1) (.rest xs))))))
 
 (define (compose f g)
   (given (x) (f (g x))))

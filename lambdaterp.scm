@@ -142,14 +142,14 @@
 
 (define (next-command)
   (display "debug> ")
-  (let ((cmds (command-queue)))
-    (cond ((.empty? cmds)
-           (newline)
-           #f)
-          (else
-           (print (.first cmds))
-           (.set! command-queue (.rest cmds))
-           (.first cmds)))))
+  (define cmds (command-queue))
+  (cond ((.empty? cmds)
+         (newline)
+         #f)
+        (else
+         (print (.first cmds))
+         (.set! command-queue (.rest cmds))
+         (.first cmds))))
 
 (define (debug k plaint culprit)
   (complain plaint culprit)
@@ -167,8 +167,8 @@
   (each! print k))
 
 (define (debugging state)
-  (let ((cmd (next-command)))
-    (if cmd (call state cmd) #f)))
+  (define cmd (next-command))
+  (if cmd (call state cmd) #f))
 
 (define (value-step<- e r k)
   (make value-step
@@ -233,8 +233,8 @@
           (try lexp '()))
         (.run (lexp commands)
           (.set! command-queue commands)
-          (let ((result (interpret lexp)))
-            (if result (print (survey result)) 'failed)))))
+          (define result (interpret lexp))
+          (if result (print (survey result)) 'failed))))
 
 (try '(lambda (x) x))
 (try '((lambda (x) ((+ x) 2)) 1))

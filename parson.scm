@@ -33,8 +33,8 @@
     (.continue (p) (p chars vals))
     (.capture (cs)
       ;; XXX this'd be simpler if we were working by indices already:
-      (let ((d (.- (.count cs) (.count chars))))
-        (empty chars `(,@vals ,(.slice cs 0 d)))))
+      (define d (.- (.count cs) (.count chars)))
+      (empty chars `(,@vals ,(.slice cs 0 d))))
     (.prefix (pre-vals) (empty chars (chain pre-vals vals)))
     (.leftovers () chars)
     (.results () vals)))
@@ -128,13 +128,15 @@
 (define hug (feed-list (given (vals) vals)))
 
 (define sexpr
-  (let ((subexpr (given (cs vs) (sexpr cs vs)))
-        (_ (many (lit-1 #\space))))
-    (seclude
-     (seq _ (either (seq (lit-1 #\() _ (many subexpr) (lit-1 #\)) _
-                         hug)
-                    (seq (take-1 '.alphabetic?) (many (take-1 '.alphanumeric?)) _
-                         (feed chain) (feed symbol<-)))))))
+  (hide
+   (define subexpr (given (cs vs) (sexpr cs vs)))
+   (define __ (many (lit-1 #\space)))
+   (seclude
+    (seq __
+         (either (seq (lit-1 #\() __ (many subexpr) (lit-1 #\)) __
+                      hug)
+                 (seq (take-1 '.alphabetic?) (many (take-1 '.alphanumeric?)) __
+                      (feed chain) (feed symbol<-)))))))
 
 (try sexpr "")
 (try sexpr "yo")
