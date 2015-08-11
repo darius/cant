@@ -25,6 +25,11 @@
       z
       (f (car xs) (foldr f z (cdr xs)))))
 
+(define (all f xs)
+  (or (null? xs)
+      (and (f (car xs))
+           (all f (cdr xs)))))
+
 (define (flatmap f xs)
   (foldr append '() (map f xs)))
 

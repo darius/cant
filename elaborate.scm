@@ -42,11 +42,18 @@
     (_ #f)))
 
 (define (elaborate-method/matcher clause)
-  ;; XXX check more of the syntax
-  (assert (or (cue? (car clause)) (eq? (car clause) 'else))
-          "Bad method/matcher syntax" clause)
-  `(,(car clause) ,(cadr clause)
-    ,(elaborate-hide (cddr clause))))
+  (define (param-list? x)
+    (and (list? x) (all symbol? x)))  ;XXX and distinct
+  (mcase clause
+    ((cue params . body)
+     (assert (not (null? body)) "Empty body" clause)
+     (cond ((eq? cue 'else)
+            (assert (param-list? params) "Bad param list" clause))
+           (else
+            (assert (cue? cue) "Not a method decl" clause)
+            (assert (or (symbol? params) (param-list? params))
+                    "Bad params syntax" clause)))
+     `(,cue ,params ,(elaborate-hide body)))))
 
 (define (elaborate-hide body)
   (let* ((commands (map elaborate-command body))
