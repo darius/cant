@@ -80,7 +80,7 @@
   (newline))
 
 (define (each! f xs)
-  (when (not (.empty? xs))
+  (unless (.empty? xs)
     (f (.first xs))
     (each! f (.rest xs))))
 

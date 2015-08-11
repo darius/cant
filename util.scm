@@ -25,6 +25,21 @@
       z
       (f (car xs) (foldr f z (cdr xs)))))
 
+(define (flatmap f xs)
+  (foldr append '() (map f xs)))
+
+(define (last ls)
+  (if (null? (cdr ls))
+      (car ls)
+      (last (cdr ls))))
+(define (butlast ls)
+  (remove-nth ls (- (length ls) 1)))
+(define (remove-nth ls n)
+  (if (= 0 n)
+      (cdr ls)
+      (cons (car ls) 
+            (remove-nth (cdr ls) (- n 1)))))
+
 (define (expand-mlambda subject clauses)
   (letrec
       ((expand-clause 

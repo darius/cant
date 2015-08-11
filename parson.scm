@@ -96,9 +96,10 @@
   (either p empty))
 
 (define (many p)
-  (letrec ((p* (maybe (seq p (given (cs vs)
-                               (p* cs vs))))))
-    p*))
+  (hide
+   (define p* (maybe (seq p (given (cs vs)
+                              (p* cs vs)))))
+   p*))
 
 
 ;; Smoke test

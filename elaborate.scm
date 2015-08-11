@@ -31,6 +31,9 @@
                              ,name)))
               ((_ . clauses)
                `(make ,@(map elaborate-method/matcher clauses)))))
+    ('hide   (mlambda
+              ((_ . body)
+               (elaborate-hide body))))
     ('letrec (mlambda
               ((_ () . body)
                (elaborate-seq body))
@@ -50,6 +53,33 @@
           "Bad method/matcher syntax" clause)
   `(,(car clause) ,(cadr clause)
     ,(elaborate-seq (cddr clause))))
+
+(define (elaborate-hide body)
+  (let* ((commands (map elaborate-command body))
+         (vars (flatmap get-hide-vars commands))
+         (body (foldr (lambda (cmd rest)
+                        (mcase cmd
+                          (('define v e) `(%define ,v ,e ,rest))))
+                      (mcase (last commands)
+                        (('define '_ e) e))
+                      (butlast commands))))
+    (if (null? vars)
+        body
+        `(%hide ,vars ,body))))
+
+(define (elaborate-command cmd)
+  (mcase cmd
+    (('define (: v symbol?) e)
+     `(define ,v ,(elaborate e)))
+    (('define ((: v symbol?) . params) . body)
+     `(define ,v ,(elaborate `(given ,params . ,body))))
+    (_
+     `(define _ ,(elaborate cmd)))))
+
+(define (get-hide-vars cmd)
+  (mcase cmd
+    (('define '_ e) '())
+    (('define v e) (list v))))
 
 (define (elaborate-seq es)
   (elaborate (mcase es
@@ -89,6 +119,9 @@
     ('when (mlambda
             ((_ test . body)
              `(if ,test (begin . ,body)))))
+    ('unless (mlambda
+              ((_ test . body)
+               `(if ,test #f (begin . ,body)))))
     ('cond (mlambda
             ((_) #f)                 ;TODO: generate an error-raising?
             ((_ ('else . es)) `(begin . ,es))

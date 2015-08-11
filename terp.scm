@@ -184,6 +184,14 @@
                                            k))))))
                          (cdr e))
                     r)))
+        ((%hide)
+         (ev (caddr e)
+             (env-extend-promises r (cadr e))
+             k))
+        ((%define)
+         (ev (caddr e) r
+             (cont<- define-cont-script k
+                     r (cadr e) (cadddr e))))
         ((letrec)
          (ev-letrec (cadr e) (caddr e)
                     (env-extend-promises r (map car (cadr e)))
@@ -193,6 +201,15 @@
              (cont<- ev-operands-cont-script k
                      (cddr e) r
                      (selector<- (car e) (length (cddr e)))))))))
+
+(define define-cont-script
+  (cont-script<-
+   (lambda (value k r var next-e)
+     (if (not (eq? var '_))
+         (env-resolve! r var value))
+     (ev next-e r k))
+   (lambda (r var next-e)
+     `(ev-define ,var ,next-e))))
 
 (define ev-operands-cont-script
   (cont-script<-
