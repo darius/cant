@@ -198,10 +198,6 @@
          (ev (caddr e) r
              (cont<- let-cont-script k
                      r (cadr e) (cadddr e))))
-        ((letrec)
-         (ev-letrec (cadr e) (caddr e)
-                    (env-extend-promises r (map car (cadr e)))
-                    k))
         (else
          (ev (cadr e) r
              (cont<- ev-operands-cont-script k
@@ -249,21 +245,6 @@
              (map show-value (reverse arguments))
              (list '%)
              operands))))
-
-(define (ev-letrec defns body new-r k)
-  (ev (cadar defns) new-r
-      (cont<- letrec-cont-script k defns body new-r)))
-
-(define letrec-cont-script
-  (cont-script<-
-   (lambda (value k defns body new-r)
-     (env-resolve! new-r (caar defns) value)
-     (if (null? (cdr defns))
-         (ev body new-r k)
-         (ev (cadadr defns) new-r
-             (cont<- letrec-cont-script k (cdr defns) body new-r))))
-   (lambda (defns body new-r)
-     `(ev-letrec ,defns ,body))))
 
 
 ;; Environments
@@ -536,21 +517,23 @@
                       (let x (is? 4 (.+ 2 2)))
                       x))
          #t)
-(should= (interpret '(letrec ((fact (given (n)
-                                      (if (is? n 0)
-                                          1
-                                          (.* n (fact (.- n 1)))))))
+(should= (interpret '(hide
+                      (define (fact n)
+                        (if (is? n 0)
+                            1
+                            (.* n (fact (.- n 1)))))
                        (fact 5)))
          120)
-(should= (interpret '(letrec ((even? (given (n)
-                                       (if (is? n 0)
-                                           #t
-                                           (odd? (.- n 1)))))
-                              (odd? (given (n)
-                                      (if (is? n 0)
-                                          #f
-                                          (even? (.- n 1))))))
-                       (even? 5)))
+(should= (interpret '(hide
+                      (define (even? n)
+                        (if (is? n 0)
+                            #t
+                            (odd? (.- n 1))))
+                      (define (odd? n)
+                        (if (is? n 0)
+                            #f
+                            (even? (.- n 1))))
+                      (even? 5)))
          #f)
 (should= (interpret '(evaluate '(.- 5 3) '()))
          2)

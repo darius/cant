@@ -27,21 +27,14 @@
               ((_ datum) `',datum)))
     ('make   (mlambda
               ((_ (: name symbol?) . clauses)
-               (elaborate `(letrec ((,name (make . ,clauses)))
-                             ,name)))
+               (elaborate `(hide
+                            (let ,name (make . ,clauses))
+                            ,name)))
               ((_ . clauses)
                `(make ,@(map elaborate-method/matcher clauses)))))
     ('hide   (mlambda
               ((_ . body)
                (elaborate-hide body))))
-    ('letrec (mlambda
-              ((_ () . body)
-               (elaborate-seq body))
-              ((_ defns . body)
-               `(letrec ,(map (mlambda (((: v symbol?) e)
-                                        `(,v ,(elaborate e))))
-                              defns)
-                  ,(elaborate-seq body)))))
     ('begin  (mlambda                   ;XXX not really core syntax
               ((_ . es)
                (elaborate-seq es))))
@@ -105,8 +98,8 @@
     ('recurse (mlambda
                ((_ (: proc symbol?) bindings . body)
                 (check-bindings bindings)
-                `((letrec ((,proc (given ,(map car bindings) . ,body)))
-                    ,proc)
+                `((hide (let ,proc (given ,(map car bindings) . ,body))
+                        ,proc)
                   . ,(map cadr bindings)))))
     ('if (mlambda
           ((_ test if-so) `(if ,test ,if-so #f))
