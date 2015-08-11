@@ -122,6 +122,7 @@
 (define (expand-quasiquote e)
   (mcase e
     (('unquote e1) e1)
+    ((('unquote-splicing e1)) e1)
     ((('unquote-splicing e1) . qcdr)
      `(.chain ,e1 ,(expand-quasiquote qcdr)))
     ((qcar . qcdr)
