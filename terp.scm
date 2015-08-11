@@ -218,11 +218,11 @@
                      (cdr operands) (cons argument arguments)
                      r selector receiver))))
    (lambda (operands arguments r selector receiver)
-     (append (list (show-selector selector)
-                   (show-value receiver))
-             (map show-value (reverse arguments))
-             (list '^)
-             operands))))
+     `(,(show-selector selector)
+       ,(show-value receiver)
+       ,@(map show-value (reverse arguments))
+       ^
+       ,@operands))))
 
 
 ;; Environments
