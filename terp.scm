@@ -188,7 +188,8 @@
          (env-resolve! r var value))
      (ev next-e r k))
    (lambda (r var next-e)
-     `(ev-let ,var ,next-e))))
+     `(begin ,(if (eq? var '_) '^ `(let ,var ^))
+             ,next-e))))
 
 (define ev-operands-cont-script
   (cont-script<-
@@ -199,7 +200,7 @@
              (cont<- ev-remaining-operands-cont-script k
                      (cdr operands) '() r selector receiver))))
    (lambda (operands r selector)
-     `(,(show-selector selector) % ,@operands))))
+     `(,(show-selector selector) ^ ,@operands))))
 
 (define (show-selector selector)
   (car selector))
@@ -217,10 +218,10 @@
                      (cdr operands) (cons argument arguments)
                      r selector receiver))))
    (lambda (operands arguments r selector receiver)
-     (append (list `',(show-selector selector)
+     (append (list (show-selector selector)
                    (show-value receiver))
              (map show-value (reverse arguments))
-             (list '%)
+             (list '^)
              operands))))
 
 
