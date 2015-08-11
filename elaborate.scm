@@ -58,15 +58,15 @@
 (define (elaborate-hide body)
   (let* ((commands (elaborate-commands body '()))
          (vars (flatmap get-hide-vars commands))
-         (body (foldr (lambda (cmd rest)
-                        (mcase cmd
-                          (('let v e) `(%let ,v ,e ,rest))))
-                      (mcase (last commands)
-                        (('let '_ e) e))
-                      (butlast commands))))
+         (result (foldr (lambda (cmd rest)
+                          (mcase cmd
+                            (('let v e) `(%let ,v ,e ,rest))))
+                        (mcase (last commands)
+                          (('let '_ e) e))
+                        (butlast commands))))
     (if (null? vars)
-        body
-        `(%hide ,vars ,body))))
+        result
+        `(%hide ,vars ,result))))
 
 (define (elaborate-commands cmds rest)
   (foldr (lambda (cmd rest)
@@ -75,6 +75,10 @@
               (elaborate-commands cmds1 rest))
              (('include filename)
               (elaborate-commands (snarf filename) rest))
+             (('make (: name symbol?) . clauses)
+              `((let ,name ,(elaborate `(make . ,clauses)))
+                (let _ ,name)   ; make has a value, not just a binding
+                . ,rest))
              (_
               (cons (elaborate-command cmd) rest))))
          rest
