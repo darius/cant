@@ -52,7 +52,7 @@
   (assert (or (cue? (car clause)) (eq? (car clause) 'else))
           "Bad method/matcher syntax" clause)
   `(,(car clause) ,(cadr clause)
-    ,(elaborate-seq (cddr clause))))
+    ,(elaborate-hide (cddr clause))))
 
 (define (elaborate-hide body)
   (let* ((commands (map elaborate-command body))
