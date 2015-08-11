@@ -111,8 +111,20 @@
           ((_ e . es)
            (let ((t (gensym)))
              `(let ((,t ,e)) (if ,t ,t (begin . ,es)))))))
+    ('quasiquote (mlambda
+                  ((_ q) (expand-quasiquote q))))
     (_ #f)))
 
 (define (check-bindings bindings)
   (for-each (mlambda (((: v symbol?) e) 'ok))
             bindings))
+
+(define (expand-quasiquote e)
+  (mcase e
+    (('unquote e1) e1)
+    ((('unquote-splicing e1) . qcdr)
+     `(.chain ,e1 ,(expand-quasiquote qcdr)))
+    ((qcar . qcdr)
+     `(cons ,(expand-quasiquote qcar) ;XXX hygiene
+            ,(expand-quasiquote qcdr)))
+    (else `',e)))
