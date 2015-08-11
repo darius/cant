@@ -8,7 +8,7 @@
          => (lambda (expand) (elaborate (expand e))))
         ((look-up-core-syntax (car e))
          => (lambda (expand) (expand e)))
-        (else (elaborate-call (car e) (cdr e)))))
+        (else (elaborate-call e))))
 
 (define (self-evaluating? x)
   (or (boolean? x)
@@ -16,10 +16,11 @@
       (char? x)
       (string? x)))
 
-(define (elaborate-call first rest)
-  (if (cue? first)
-      (cons first (map elaborate rest))
-      (cons '.run (map elaborate (cons first rest)))))  ; default cue
+(define (elaborate-call e)
+  (mcase e
+    (((: cue cue?) . es)
+     (cons cue (map elaborate es)))
+    (_ (cons '.run (map elaborate e)))))
   
 (define (look-up-core-syntax key)
   (mcase key
