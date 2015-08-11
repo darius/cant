@@ -21,10 +21,10 @@
 
 ;; Lambda expression
 (define (abstraction<- v body)
-  (define free-vars (delq v (.free-vars body)))
+  (let free-vars (delq v (.free-vars body)))
   (make (.free-vars () free-vars)
         (.compile (s k)
-          (define code (.compile body (static-env<- v free-vars) '(return)))
+          (let code (.compile body (static-env<- v free-vars) '(return)))
           `(make-closure
             ,(.count free-vars) ,(.count code) ,@(map s free-vars)
             ,@code ,@k))))
@@ -33,7 +33,7 @@
 (define (call<- operator operand)
   (make (.free-vars () (union (.free-vars operator) (.free-vars operand)))
         (.compile (s k)
-          (define code (.compile operand s (.compile operator s '(invoke))))
+          (let code (.compile operand s (.compile operator s '(invoke))))
           (if (is? (.first k) 'return)
               code
               `(pushcont ,(.count code) ,@code ,@k)))))

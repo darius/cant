@@ -4,7 +4,7 @@
 (load "stdlib.scm")
 
 (define (superopt truth-table max-gates)
-  (define n-inputs (int-log2 (.count truth-table)))
+  (let n-inputs (int-log2 (.count truth-table)))
   (find-circuits (.parse-int truth-table 2) n-inputs max-gates))
 
 (define (int-log2 n)
@@ -17,7 +17,7 @@
                       (if (is? n 32) 5
                           (error "Bad argument" n))))))))
 
-(define say
+(let say
   (given arguments
     (each! display arguments)))
 
@@ -25,32 +25,32 @@
   (.<< 1 n))
 
 (define (find-circuits wanted n-inputs max-gates)
-  (define inputs (vector<-list (tabulate-inputs n-inputs)))
-  (define mask (- (pow2 (pow2 n-inputs)) 1))
+  (let inputs (vector<-list (tabulate-inputs n-inputs)))
+  (let mask (- (pow2 (pow2 n-inputs)) 1))
 
   (define (print-formula L-input R-input)
-    (define v-name (chain (.slice "ABCDEF" 0 n-inputs)
-                          (.slice "abcdefghijklmnopqrstuvwxyz" n-inputs)))
+    (let v-name (chain (.slice "ABCDEF" 0 n-inputs)
+                       (.slice "abcdefghijklmnopqrstuvwxyz" n-inputs)))
     (for each! ((i (range<- (.count L-input))))
-      (define g (v-name (+ i n-inputs)))
-      (define L (v-name (L-input i)))
-      (define R (v-name (R-input i)))
+      (let g (v-name (+ i n-inputs)))
+      (let L (v-name (L-input i)))
+      (let R (v-name (R-input i)))
       (say g " = " L " ~& " R "; "))
     (newline))
 
   (define (find-for-n n-gates)
     (say "Trying " n-gates " gates..." #\newline)
-    (define n-wires (+ n-inputs n-gates))
-    (define L-input (vector<-count n-gates #f))
-    (define R-input (vector<-count n-gates #f))
-    (define found?  (box<- #f))
-    (define wire    (chain inputs L-input))
+    (let n-wires (+ n-inputs n-gates))
+    (let L-input (vector<-count n-gates #f))
+    (let R-input (vector<-count n-gates #f))
+    (let found?  (box<- #f))
+    (let wire    (chain inputs L-input))
     (recurse sweeping ((gate 0))
       (for each! ((L (range<- (+ n-inputs gate))))
-        (define L-wire (wire L))
+        (let L-wire (wire L))
         (.set! L-input gate L)
         (for each! ((R (range<- (+ L 1))))
-          (define value (nand L-wire (wire R)))
+          (let value (nand L-wire (wire R)))
           (.set! R-input gate R)
           (.set! wire (+ n-inputs gate) value)
           (cond ((< (+ gate 1) n-gates)
@@ -75,7 +75,7 @@
   (if (= n-inputs 0)
       '()
       (hide
-       (define shift (pow2 (- n-inputs 1)))
+       (let shift (pow2 (- n-inputs 1)))
        (cons (- (pow2 shift) 1)
              (for map ((iv (tabulate-inputs (- n-inputs 1))))
                (.bit-or iv (.<< iv shift)))))))

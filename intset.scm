@@ -3,7 +3,7 @@
 
 (load "stdlib.scm")
 
-(define empty
+(let empty
   (make
     (.empty? ()  #t)
     (.has? (k)   #f)
@@ -28,7 +28,7 @@
 
 ;; Smoke test
 
-(define eg (.adjoin (.adjoin empty 6) 5))
+(let eg (.adjoin (.adjoin empty 6) 5))
 
 (print (.has? eg 5))
 (print (.has? eg 6))

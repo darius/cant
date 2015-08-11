@@ -11,19 +11,23 @@
                (loading (read port))))))))
 
 (define (run form)
-  (cond ((starts-with? form 'define)
+  (cond ((starts-with? form 'let)
+         (run-let (cadr form) (cddr form)))
+        ((starts-with? form 'define)
          (run-define (cadr form) (cddr form)))
         ((starts-with? form 'load)
          (run-load (cadr form)))
         (else
          (interpret form))))
 
+(define (run-let var rest)
+  (assert (symbol? var) "let syntax" var)
+  (assert (null? (cdr rest)) "let syntax" rest)
+  (global-def! var (interpret (car rest))))
+
 (define (run-define head body)
-  (cond ((symbol? head)
-         (assert (null? (cdr body)) "define syntax" body)
-         (global-def! head (interpret (car body))))
-        (else
-         (global-def! (car head) (interpret `(given ,(cdr head) ,@body))))))
+  (assert (symbol? (car head)) "define syntax" head)
+  (global-def! (car head) (interpret `(given ,(cdr head) ,@body))))
 
 (define (interpret e)
   (evaluate (elaborate e) '()))
@@ -190,9 +194,9 @@
          (ev (caddr e)
              (env-extend-promises r (cadr e))
              k))
-        ((%define)
+        ((%let)
          (ev (caddr e) r
-             (cont<- define-cont-script k
+             (cont<- let-cont-script k
                      r (cadr e) (cadddr e))))
         ((letrec)
          (ev-letrec (cadr e) (caddr e)
@@ -204,14 +208,14 @@
                      (cddr e) r
                      (selector<- (car e) (length (cddr e)))))))))
 
-(define define-cont-script
+(define let-cont-script
   (cont-script<-
    (lambda (value k r var next-e)
      (if (not (eq? var '_))
          (env-resolve! r var value))
      (ev next-e r k))
    (lambda (r var next-e)
-     `(ev-define ,var ,next-e))))
+     `(ev-let ,var ,next-e))))
 
 (define ev-operands-cont-script
   (cont-script<-
@@ -529,7 +533,7 @@
                            '55))
          55)
 (should= (interpret '(hide
-                      (define x (is? 4 (.+ 2 2)))
+                      (let x (is? 4 (.+ 2 2)))
                       x))
          #t)
 (should= (interpret '(letrec ((fact (given (n)
@@ -551,7 +555,7 @@
 (should= (interpret '(evaluate '(.- 5 3) '()))
          2)
 (should= (interpret '(hide
-                      (define b (box<- 42))
+                      (let b (box<- 42))
                       (.set! b (.+ (b) 1))
                       (b)))
          43)

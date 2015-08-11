@@ -1,18 +1,18 @@
-(define +
+(let +
   (make
     (.run () 0)
     (.run (a) a)
     (.run (a b) (.+ a b))
     (.run arguments (foldr1 '.+ arguments))))
 
-(define *
+(let *
   (make
     (.run () 1)
     (.run (a) a)
     (.run (a b) (.* a b))
     (.run arguments (foldr1 '.* arguments))))
 
-(define -
+(let -
   (make
     (.run () (error "Bad arity"))
     (.run (a) (.- 0 a))
@@ -47,15 +47,15 @@
       (f (.first xs) (foldr f z (.rest xs)))))
 
 (define (foldr1 f xs)
-  (define tail (.rest xs))
+  (let tail (.rest xs))
   (if (.empty? tail)
       (.first xs)
       (f (.first xs) (foldr1 f tail))))
 
-(define list<-
+(let list<-
   (given arguments arguments))
 
-(define chain
+(let chain
   (make (.run () '())
         (.run (xs) xs)
         (.run (xs ys) (.chain xs ys))
@@ -84,7 +84,7 @@
     (f (.first xs))
     (each! f (.rest xs))))
 
-(define range<-
+(let range<-
   (make
     (.run (hi-bound)
       (range<- 0 hi-bound))
@@ -98,7 +98,7 @@
                 )))))
 
 (define (vector<-list xs)
-  (define v (vector<-count (.count xs)))
+  (let v (vector<-count (.count xs)))
   (recurse setting ((i 0) (xs xs))
     (cond ((.empty? xs) v)
           (else

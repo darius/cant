@@ -10,7 +10,7 @@
 (define (fail chars vals)
   failure)
 
-(define failure
+(let failure
   (make
     (.display () (display "failed"))
     (.invert () empty)
@@ -33,7 +33,7 @@
     (.continue (p) (p chars vals))
     (.capture (cs)
       ;; XXX this'd be simpler if we were working by indices already:
-      (define d (.- (.count cs) (.count chars)))
+      (let d (.- (.count cs) (.count chars)))
       (empty chars `(,@vals ,(.slice cs 0 d))))
     (.prefix (pre-vals) (empty chars (chain pre-vals vals)))
     (.leftovers () chars)
@@ -52,12 +52,12 @@
   (given arguments
     (foldr1 combine arguments)))
 
-(define either
+(let either
   (folded<- (given (p q)
               (given (chars vals)
                 (.else (p chars vals) q chars vals)))))
 
-(define seq
+(let seq
   (folded<- (given (p q)
               (given (chars vals)
                 (.continue (p chars vals) q)))))
@@ -87,7 +87,7 @@
         (empty (.rest chars) vals)
         failure)))
 
-(define any-1 (take-1 (given (char) #t)))
+(let any-1 (take-1 (given (char) #t)))
 
 (define (lit-1 my-char)
   (skip-1 (given (char) (is? my-char char))))
@@ -96,8 +96,8 @@
   (either p empty))
 
 (define (many p)
-  (define p* (maybe (seq p (given (cs vs)
-                             (p* cs vs)))))
+  (let p* (maybe (seq p (given (cs vs)
+                          (p* cs vs)))))
   p*)
 
 
@@ -113,7 +113,7 @@
 (try (seclude any-1) "a")
 (try (many any-1) "abc")
 
-(define bal
+(let bal
   (given (cs vs)
     ((maybe (seq (lit-1 #\() bal (lit-1 #\)) bal))
      cs vs)))
@@ -125,12 +125,12 @@
 
 (try (many (lit-1 #\space)) "  hey")
 
-(define hug (feed-list (given (vals) vals)))
+(let hug (feed-list (given (vals) vals)))
 
-(define sexpr
+(let sexpr
   (hide
-   (define subexpr (given (cs vs) (sexpr cs vs)))
-   (define __ (many (lit-1 #\space)))
+   (let subexpr (given (cs vs) (sexpr cs vs)))
+   (let __ (many (lit-1 #\space)))
    (seclude
     (seq __
          (either (seq (lit-1 #\() __ (many subexpr) (lit-1 #\)) __

@@ -31,7 +31,7 @@
 
 ;; ASTs and continuations
 
-(define halt
+(let halt
   (make (.empty? () #t)
         (.inject (k<-) halt)
         (.take-step (val) val)
@@ -104,7 +104,7 @@
       value
       (.survey value)))
 
-(define prim+
+(let prim+
   (make (.survey () '+)
         (.call-step (arg1 k1)
           XXX)
@@ -123,7 +123,7 @@
 
 ;; Environments
 
-(define global-env
+(let global-env
   `((+ ,prim+)))
 
 (define (extend r v val)
@@ -138,11 +138,11 @@
 ;; Instead of interacting at a prompt, it takes a list of commands,
 ;; for now, for ease of rerunning during development.
 
-(define command-queue (box<- '()))
+(let command-queue (box<- '()))
 
 (define (next-command)
   (display "debug> ")
-  (define cmds (command-queue))
+  (let cmds (command-queue))
   (cond ((.empty? cmds)
          (newline)
          #f)
@@ -167,7 +167,7 @@
   (each! print k))
 
 (define (debugging state)
-  (define cmd (next-command))
+  (let cmd (next-command))
   (if cmd (call state cmd) #f))
 
 (define (value-step<- e r k)
@@ -228,12 +228,12 @@
 
 ;; Smoke test
 
-(define try
+(let try
   (make (.run (lexp)
           (try lexp '()))
         (.run (lexp commands)
           (.set! command-queue commands)
-          (define result (interpret lexp))
+          (let result (interpret lexp))
           (if result (print (survey result)) 'failed))))
 
 (try '(lambda (x) x))
