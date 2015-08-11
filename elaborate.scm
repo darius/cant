@@ -56,6 +56,14 @@
                     "Bad params syntax" clause)))
      `(,cue ,params ,(elaborate-hide body)))))
 
+(define (elaborate-top-level body)
+  (let ((commands (elaborate-commands body '())))
+    (foldr (lambda (cmd rest)
+             (mcase cmd
+               (('let v e) `(%let ,v ,e ,rest))))
+           ''#f
+           commands)))
+
 (define (elaborate-hide body)
   (let* ((commands (elaborate-commands body '()))
          (vars (flatmap get-hide-vars commands))

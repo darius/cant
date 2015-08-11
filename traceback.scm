@@ -1,6 +1,6 @@
 ;; Install an error handler that prints a (crude) traceback.
 
-(load "stdlib.scm")
+(include "stdlib.scm")
 
 (define (on-error-traceback k plaint values)
   (print-plaint plaint values)

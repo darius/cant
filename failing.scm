@@ -1,6 +1,6 @@
 ;; An example failing computation, to exercise the debugger.
 
-(load "traceback.scm")
+(include "traceback.scm")
 
 (define (factorial n)
   (if (is? 0 n)

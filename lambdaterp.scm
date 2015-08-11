@@ -2,8 +2,8 @@
 ;; the call-by-value lambda calculus.
 ;; (That's the goal; not there yet.)
 
-(load "stdlib.scm")
-(load "traceback.scm")
+;(include "stdlib.scm")
+(include "traceback.scm")
 
 ;; Conventions:
 ;;  lexp    source form of lambda-calculus expression

@@ -1,7 +1,7 @@
 ;; An example from William Cook's essay on OOP vs. ADTs
 ;; http://www.cs.utexas.edu/~wcook/Drafts/2009/essay.pdf
 
-(load "stdlib.scm")
+(include "stdlib.scm")
 
 (let empty
   (make

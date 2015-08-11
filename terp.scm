@@ -3,31 +3,8 @@
 ;; Running a program
 
 (define (run-load filename)
-  (call-with-input-file filename
-    (lambda (port)
-      (let loading ((form (read port)))
-        (cond ((not (eof-object? form))
-               (run form)
-               (loading (read port))))))))
-
-(define (run form)
-  (cond ((starts-with? form 'let)
-         (run-let (cadr form) (cddr form)))
-        ((starts-with? form 'define)
-         (run-define (cadr form) (cddr form)))
-        ((starts-with? form 'load)
-         (run-load (cadr form)))
-        (else
-         (interpret form))))
-
-(define (run-let var rest)
-  (assert (symbol? var) "let syntax" var)
-  (assert (null? (cdr rest)) "let syntax" rest)
-  (global-def! var (interpret (car rest))))
-
-(define (run-define head body)
-  (assert (symbol? (car head)) "define syntax" head)
-  (global-def! (car head) (interpret `(given ,(cdr head) ,@body))))
+  (evaluate (elaborate-top-level (snarf filename))
+            '()))
 
 (define (interpret e)
   (evaluate (elaborate e) '()))
@@ -262,16 +239,16 @@
   (env-extend r vs (map (lambda (_) uninitialized) vs)))
 
 (define (env-resolve! r v value)
+  (assert (list? r) "what's an r?" r)
   (cond ((assq v r) => (lambda (pair)
-                         (assert (eq? (cadr pair) uninitialized) "WTF?" pair)
+                         (assert (eq? (cadr pair) uninitialized)
+                                 "Multiple definition" v)
                          (set-car! (cdr pair) value)))
+        ((null? r)
+         (set! the-global-env (cons (list v value) the-global-env)))
         (else (error "Can't happen" v))))
 
 (define uninitialized (object<- '() '*uninitialized*))
-
-(define (global-def! name value)
-  (set! the-global-env (cons (list name value) the-global-env)))
-
 
 ;; Primitive types and functions
 ;; Many needn't be primitive, but are for the sake of nicely

@@ -4,8 +4,8 @@
 ;; TODO: reasonable efficiency
 ;; TODO: memoize
 
-(load "stdlib.scm")
-;(load "traceback.scm")
+(include "stdlib.scm")
+;(include "traceback.scm")
 
 (define (fail chars vals)
   failure)
