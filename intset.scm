@@ -15,7 +15,7 @@
       s
       (make extension
         (.empty? ()  #f)
-        (.has? (k)   (or (.= n k) (.has? s k)))
+        (.has? (k)   (or (= n k) (.has? s k)))
         (.adjoin (k) (adjoin<- k extension))
         (.merge (s)  (merge<- extension s)))))
 
