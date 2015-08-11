@@ -1,23 +1,20 @@
-(let +
-  (make
-    (.run () 0)
-    (.run (a) a)
-    (.run (a b) (.+ a b))
-    (.run arguments (foldr1 '.+ arguments))))
+(make +
+  (.run () 0)
+  (.run (a) a)
+  (.run (a b) (.+ a b))
+  (.run arguments (foldr1 '.+ arguments)))
 
-(let *
-  (make
-    (.run () 1)
-    (.run (a) a)
-    (.run (a b) (.* a b))
-    (.run arguments (foldr1 '.* arguments))))
+(make *
+  (.run () 1)
+  (.run (a) a)
+  (.run (a b) (.* a b))
+  (.run arguments (foldr1 '.* arguments)))
 
-(let -
-  (make
-    (.run () (error "Bad arity"))
-    (.run (a) (.- 0 a))
-    (.run (a b) (.- a b))
-    (.run arguments (foldl '.- (.first arguments) (.rest arguments)))))
+(make -
+  (.run () (error "Bad arity"))
+  (.run (a) (.- 0 a))
+  (.run (a b) (.- a b))
+  (.run arguments (foldl '.- (.first arguments) (.rest arguments))))
 
 (define (foldl f z xs)
   (if (.empty? xs)
@@ -55,11 +52,11 @@
 (let list<-
   (given arguments arguments))
 
-(let chain
-  (make (.run () '())
-        (.run (xs) xs)
-        (.run (xs ys) (.chain xs ys))
-        (.run arguments (foldr1 '.chain arguments))))
+(make chain
+  (.run () '())
+  (.run (xs) xs)
+  (.run (xs ys) (.chain xs ys))
+  (.run arguments (foldr1 '.chain arguments)))
 
 (define (memq? x set)
   (some (given (y) (is? x y)) set))
@@ -84,18 +81,17 @@
     (f (.first xs))
     (each! f (.rest xs))))
 
-(let range<-
-  (make
-    (.run (hi-bound)
-      (range<- 0 hi-bound))
-    (.run (lo hi-bound)
-      (if (<= hi-bound lo)
-          '()
-          (make (.empty? () #f)
-                (.first () lo)
-                (.rest () (range<- (+ lo 1) hi-bound))
-                ;; ...
-                )))))
+(make range<-
+  (.run (hi-bound)
+    (range<- 0 hi-bound))
+  (.run (lo hi-bound)
+    (if (<= hi-bound lo)
+        '()
+        (make (.empty? () #f)
+              (.first () lo)
+              (.rest () (range<- (+ lo 1) hi-bound))
+              ;; ...
+              ))))
 
 (define (vector<-list xs)
   (let v (vector<-count (.count xs)))

@@ -31,11 +31,11 @@
 
 ;; ASTs and continuations
 
-(let halt
-  (make (.empty? () #t)
-        (.inject (k<-) halt)
-        (.take-step (val) val)
-        (.take (val) val)))
+(make halt
+  (.empty? () #t)
+  (.inject (k<-) halt)
+  (.take-step (val) val)
+  (.take (val) val))
 
 
 ;; Constant
@@ -104,21 +104,21 @@
       value
       (.survey value)))
 
-(let prim+
-  (make (.survey () '+)
-        (.call-step (arg1 k1)
-          XXX)
-        (.call (arg1 k1)
-          (if (number? arg1)
-              (.take k1 (make (.survey () `(+ ,(survey arg1)))
-                              (.call-step (arg2 k2)
-                                XXX)
-                              (.call (arg2 k2)
-                                (if (number? arg2)
-                                    (.take k2 (+ arg1 arg2))
-                                    ;; XXX should supply self, too:
-                                    (debug k2 "Bad arg2 to +" (survey arg2))))))
-              (debug k1 "Bad arg1 to +" (survey arg1))))))
+(make prim+
+  (.survey () '+)
+  (.call-step (arg1 k1)
+    XXX)
+  (.call (arg1 k1)
+    (if (number? arg1)
+        (.take k1 (make (.survey () `(+ ,(survey arg1)))
+                        (.call-step (arg2 k2)
+                          XXX)
+                        (.call (arg2 k2)
+                          (if (number? arg2)
+                              (.take k2 (+ arg1 arg2))
+                              ;; XXX should supply self, too:
+                              (debug k2 "Bad arg2 to +" (survey arg2))))))
+        (debug k1 "Bad arg1 to +" (survey arg1)))))
 
 
 ;; Environments
@@ -228,13 +228,13 @@
 
 ;; Smoke test
 
-(let try
-  (make (.run (lexp)
-          (try lexp '()))
-        (.run (lexp commands)
-          (.set! command-queue commands)
-          (let result (interpret lexp))
-          (if result (print (survey result)) 'failed))))
+(make try
+  (.run (lexp)
+    (try lexp '()))
+  (.run (lexp commands)
+    (.set! command-queue commands)
+    (let result (interpret lexp))
+    (if result (print (survey result)) 'failed)))
 
 (try '(lambda (x) x))
 (try '((lambda (x) ((+ x) 2)) 1))

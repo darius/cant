@@ -10,14 +10,13 @@
 (define (fail chars vals)
   failure)
 
-(let failure
-  (make
-    (.display () (display "failed"))
-    (.invert () empty)
-    (.else (p cs vs) (p cs vs))
-    (.continue (p) failure)
-    (.capture (cs) failure)
-    (.prefix (pre-vals) failure)))
+(make failure
+  (.display () (display "failed"))
+  (.invert () empty)
+  (.else (p cs vs) (p cs vs))
+  (.continue (p) failure)
+  (.capture (cs) failure)
+  (.prefix (pre-vals) failure))
 
 (define (empty chars vals)
   (make success

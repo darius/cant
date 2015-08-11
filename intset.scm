@@ -3,12 +3,11 @@
 
 (include "stdlib.scm")
 
-(let empty
-  (make
-    (.empty? ()  #t)
-    (.has? (k)   #f)
-    (.adjoin (k) (adjoin<- k empty))
-    (.merge (s)  s)))
+(make empty
+  (.empty? ()  #t)
+  (.has? (k)   #f)
+  (.adjoin (k) (adjoin<- k empty))
+  (.merge (s)  s))
 
 (define (adjoin<- n s)
   (if (.has? s n)
