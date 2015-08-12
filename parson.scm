@@ -66,7 +66,7 @@
               (given (text far i vals)
                 (.else (p text far i vals) q text i vals)))))
 
-(let seq
+(let then
   (folded<- (given (p q)
               (given (text far i vals)
                 (.continue (p text far i vals) q)))))
@@ -86,15 +86,22 @@
   (given (text far i vals)
     (.prefix (p text far i '()) vals)))
 
-(define (take-1 ok?)
-  (capture (skip-1 ok?)))
-    
+(define (delay thunk)                ;TODO: implement promises instead
+  (given (text far i vs)
+    ((thunk) text far i vs)))
+
 (define (skip-1 ok?)
   (given (text far i vals)
     (if (and (.has? text i) (ok? (text i)))
         (empty text (max far (+ i 1)) (+ i 1) vals)
         (fail text far i vals))))
 
+
+;; Derived combinators
+
+(define (take-1 ok?)
+  (capture (skip-1 ok?)))
+    
 (let any-1 (take-1 (given (char) #t)))
 
 (define (lit-1 my-char)
@@ -103,12 +110,8 @@
 (define (maybe p)
   (either p empty))
 
-(define (delay thunk)                ;TODO: implement promises instead
-  (given (text far i vs)
-    ((thunk) text far i vs)))
-
 (define (many p)
-  (let p* (maybe (seq p (delay (given () p*)))))
+  (let p* (maybe (then p (delay (given () p*)))))
   p*)
 
 
@@ -126,7 +129,7 @@
 
 (let bal (hide
           (let sub-bal (delay (given () bal)))
-          (maybe (seq (lit-1 #\() sub-bal (lit-1 #\)) sub-bal))))
+          (maybe (then (lit-1 #\() sub-bal (lit-1 #\)) sub-bal))))
 
 (try bal "(abc")
 (try bal "()xyz")
@@ -142,11 +145,11 @@
    (let subexpr (delay (given () sexpr)))
    (let __ (many (lit-1 #\space)))
    (seclude
-    (seq __
-         (either (seq (lit-1 #\() __ (many subexpr) (lit-1 #\)) __
-                      hug)
-                 (seq (take-1 '.alphabetic?) (many (take-1 '.alphanumeric?)) __
-                      (feed chain) (feed symbol<-)))))))
+    (then __
+         (either (then (lit-1 #\() __ (many subexpr) (lit-1 #\)) __
+                       hug)
+                 (then (take-1 '.alphabetic?) (many (take-1 '.alphanumeric?)) __
+                       (feed chain) (feed symbol<-)))))))
 
 (try sexpr "")
 (try sexpr "yo")
