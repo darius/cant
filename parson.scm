@@ -103,9 +103,12 @@
 (define (maybe p)
   (either p empty))
 
+(define (delay thunk)                ;TODO: implement promises instead
+  (given (text far i vs)
+    ((thunk) text far i vs)))
+
 (define (many p)
-  (let p* (maybe (seq p (given (text far i vs)
-                          (p* text far i vs)))))
+  (let p* (maybe (seq p (delay (given () p*)))))
   p*)
 
 
@@ -121,10 +124,9 @@
 (try (seclude any-1) "a")
 (try (many any-1) "abc")
 
-(let bal
-  (given (text far i vs)
-    ((maybe (seq (lit-1 #\() bal (lit-1 #\)) bal))
-     text far i vs)))
+(let bal (hide
+          (let sub-bal (delay (given () bal)))
+          (maybe (seq (lit-1 #\() sub-bal (lit-1 #\)) sub-bal))))
 
 (try bal "(abc")
 (try bal "()xyz")
@@ -137,7 +139,7 @@
 
 (let sexpr
   (hide
-   (let subexpr (given (text far i vs) (sexpr text far i vs)))
+   (let subexpr (delay (given () sexpr)))
    (let __ (many (lit-1 #\space)))
    (seclude
     (seq __
