@@ -361,12 +361,16 @@
      (.rest   0 ,(lambda (me) (substring me 1 (string-length me))))
      (.count  0 ,string-length)
      (.run    1 ,string-ref)
+     (.has?   1 ,(lambda (me i) (and (integer? i)
+                                     (< -1 i (string-length me)))))
      (.chain  1 ,string-append)
      (.slice  1 ,(lambda (me lo) (substring me lo (string-length me))))
      (.slice  2 ,substring)
      (.parse-int 0 ,string->number)      ;XXX not precisely
      (.parse-int 1 ,string->number)
      )))
+
+;; XXX .has? for all the other collections too
 
 (define vector-script
   (prim-script<- prim<-
