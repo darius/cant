@@ -12,5 +12,6 @@
 (shout "eg/lambdacompiler.scm")
 (shout "eg/lambdaterp.scm")
 (shout "eg/parson.scm")
+(shout "eg/parse.scm")
 
 (shout "eg/circuitoptimizer.scm")

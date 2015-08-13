@@ -472,12 +472,14 @@
     (< ,<)  ;; XXX use 'compare method instead
     (<= ,<=)
     (= ,=)
+    (equal? ,equal?)  ;; XXX just a stub for the real treatment of equality
     (vector<-count ,make-vector)
     (not ,not)
     (assq ,assq)  ;; TODO replace with 'real' hashmaps
     (display ,display)
     (write ,prim-write)
     (newline ,newline)
+    (pp ,pp)                     ;XXX obviously shouldn't be primitive
     (call ,call-prim)
     (evaluate ,evaluate-prim)
     (error ,error-prim)

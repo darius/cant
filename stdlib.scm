@@ -1,3 +1,7 @@
+(define (assert ok? plaint culprit)
+  (unless ok?
+    (error plaint culprit)))
+
 (make +
   (.run () 0)
   (.run (a) a)
@@ -40,6 +44,12 @@
 
 (define (each-chained f xs)
   (foldr (given (x ys) (chain (f x) ys))
+         '()
+         xs))
+
+(define (filter ok? xs)
+  (foldr (given (x ys)
+           (if (ok? x) (cons x ys) ys))
          '()
          xs))
 
