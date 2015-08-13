@@ -1,10 +1,8 @@
 ;; Basic PEG-ish parsing
 
-;; TODO: reasonable efficiency
+;; TODO: fuller error reporting
 ;; TODO: memoize
-
-;(include "stdlib.scm")
-(include "traceback.scm")
+;; TODO: delay semantic actions until final success
 
 ;; Glossary:
 ;;  p, q       parsing expression

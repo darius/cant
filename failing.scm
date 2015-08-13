@@ -1,7 +1,5 @@
 ;; An example failing computation, to exercise the debugger.
 
-(include "traceback.scm")
-
 (define (factorial n)
   (if (is? 0 n)
       one

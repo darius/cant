@@ -2,6 +2,9 @@
 
 ;; Running a program
 
+(define (boot)
+  (run-load "traceback.scm"))
+
 (define (run-load filename)
   (evaluate (elaborate-top-level (snarf filename))
             '()))

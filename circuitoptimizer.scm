@@ -1,8 +1,6 @@
 ;; XXX comment
 ;; ~/git/superbench/superopt/circuitoptimizer.scm
 
-(include "stdlib.scm")
-
 (define (superopt truth-table max-gates)
   (let n-inputs (int-log2 (.count truth-table)))
   (find-circuits (.parse-int truth-table 2) n-inputs max-gates))

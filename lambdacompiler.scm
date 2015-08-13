@@ -1,6 +1,3 @@
-(include "stdlib.scm")
-;(include "traceback.scm")
-
 (define (compile lexp)
   (.compile (parse lexp) global-static-env '(halt)))
 
