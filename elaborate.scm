@@ -179,6 +179,18 @@
     ((('unquote-splicing e1) . qcdr)
      `(.chain ,e1 ,(expand-quasiquote qcdr)))
     ((qcar . qcdr)
-     `(cons ,(expand-quasiquote qcar) ;XXX hygiene
-            ,(expand-quasiquote qcdr)))
+     (qq-cons e (expand-quasiquote qcar)
+                (expand-quasiquote qcdr)))
     (else `',e)))
+
+(define (qq-cons pair qq-car qq-cdr)
+  (mcase (list qq-car qq-cdr)
+    ((('quote a) ('quote d))
+     `',(reuse-cons pair a d))
+    (_ `(',cons ,qq-car ,qq-cdr))))
+
+(define (reuse-cons pair a d)
+  (if (and (eqv? (car pair) a)
+           (eqv? (cdr pair) d))
+      pair
+      (cons a d)))
