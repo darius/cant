@@ -7,10 +7,10 @@
   (newline)
   (run-load filename))
 
-(shout "failing.scm")
-(shout "intset.scm")
-(shout "lambdacompiler.scm")
-(shout "lambdaterp.scm")
-(shout "parson.scm")
+(shout "eg/failing.scm")
+(shout "eg/intset.scm")
+(shout "eg/lambdacompiler.scm")
+(shout "eg/lambdaterp.scm")
+(shout "eg/parson.scm")
 
-(shout "circuitoptimizer.scm")
+(shout "eg/circuitoptimizer.scm")
