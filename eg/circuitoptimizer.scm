@@ -75,7 +75,7 @@
       (hide
        (let shift (pow2 (- n-inputs 1)))
        (cons (- (pow2 shift) 1)
-             (for map ((iv (tabulate-inputs (- n-inputs 1))))
+             (for each ((iv (tabulate-inputs (- n-inputs 1))))
                (.bit-or iv (.<< iv shift)))))))
                    
 

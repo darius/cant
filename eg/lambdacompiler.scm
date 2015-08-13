@@ -23,7 +23,7 @@
         (.compile (s k)
           (let code (.compile body (static-env<- v free-vars) '(return)))
           `(make-closure
-            ,(.count free-vars) ,(.count code) ,@(map s free-vars)
+            ,(.count free-vars) ,(.count code) ,@(each s free-vars)
             ,@code ,@k))))
 
 ;; Application

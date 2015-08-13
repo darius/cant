@@ -33,8 +33,13 @@
          '()
          set))
 
-(define (map f xs)
+(define (each f xs)
   (foldr (given (x ys) (cons (f x) ys))
+         '()
+         xs))
+
+(define (each-chained f xs)
+  (foldr (given (x ys) (chain (f x) ys))
          '()
          xs))
 
