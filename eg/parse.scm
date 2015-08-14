@@ -14,14 +14,14 @@
 (define (extend-parse lhs rhs rest needed)
   "Look for the categories needed to complete the parse."
   (cond ((.empty? needed)
-         ;; If nothing needed, return parse and upward extensions.
+         ;; Return parse and upward extensions.
          (let tree (tree<- lhs rhs))
          (cons (parse<- tree rest)
                (for each-chained ((rule (rules-starting-with lhs)))
                  (extend-parse (.lhs rule) `(,tree)
                                rest (.rest (.rhs rule))))))
         (else
-         ;; Otherwise try to extend rightward.
+         ;; Try to extend rightward.
          (for each-chained ((p (parse rest)))
            (if (is? (.lhs p) (.first needed))
                (extend-parse lhs `(,@rhs ,(.tree p))
@@ -42,7 +42,7 @@
     (.starts-with? (cat)
       (and (list? rhs)
            (not (.empty? rhs))
-           (equal? (.first rhs) cat)))))
+           (is? (.first rhs) cat)))))
 
 (define (parse<- tree remainder)
   "A parse tree and a remainder."
