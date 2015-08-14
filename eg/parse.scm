@@ -57,7 +57,7 @@
 (define (lexical-rules word)
   "Return a list of those rules with word on the rhs."
   (for filter ((rule (*grammar*)))
-    (equal? (.rhs rule) word)))
+    (is? (.rhs rule) word)))
 
 (define (rules-starting-with cat)
   "Return a list of those rules where cat starts the rhs."
@@ -113,13 +113,18 @@
 
 ;; Smoke test
 
-(.set! *grammar* grammar3)
-
 (define (try sentence)
   (write sentence) (display ":") (newline)
   (each! print (each '.show (parser sentence)))
   (newline))
 
+(.set! *grammar* grammar3)
+
 (try '(the table))
 (try '(the ball hit the table))
 (try '(the noun took the verb))
+
+(.set! *grammar* grammar4)
+
+;(try '(the man hit the table with the ball))
+;(try '(the orange saw))
