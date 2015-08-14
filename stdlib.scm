@@ -112,6 +112,9 @@
             (if (and (<= lo j) (< j hi-bound)) ;XXX also, integer?
                 j
                 (error "Out of range" range i)))
+          (.has? (i)
+            (let j (+ lo i))
+            (and (<= lo j) (< j hi-bound))) ;XXX also, integer?
           ;; ...
           ))))
 
