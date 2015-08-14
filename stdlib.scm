@@ -74,7 +74,7 @@
   (.run arguments (foldr1 '.chain arguments)))
 
 (define (memq? x set)
-  (some (given (y) (is? x y)) set))
+  (some? (given (y) (is? x y)) set))
 
 (define (some? ok? xs)
   (and (not (.empty? xs))
@@ -102,11 +102,18 @@
   (.run (lo hi-bound)
     (if (<= hi-bound lo)
         '()
-        (make (.empty? () #f)
-              (.first () lo)
-              (.rest () (range<- (+ lo 1) hi-bound))
-              ;; ...
-              ))))
+        (make range
+          (.empty? () #f)
+          (.first ()  lo)
+          (.rest ()   (range<- (+ lo 1) hi-bound))
+          (.count ()  (- hi-bound lo))
+          (.run (i)
+            (let j (+ lo i))
+            (if (and (<= lo j) (< j hi-bound)) ;XXX also, integer?
+                j
+                (error "Out of range" range i)))
+          ;; ...
+          ))))
 
 (define (vector<-list xs)
   (let v (vector<-count (.count xs)))
