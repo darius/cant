@@ -1,18 +1,18 @@
 ;; Ported from PAIP chapter 9
 
+;; Return all complete parses of a list of words.
 (define (parser words)
-  "Return all complete parses of a list of words."
   (each '.tree (filter '.complete? (parse words))))
 
+;; Return all parses of any prefix of words (working bottom-up).
 (define (parse words)
-  "Return all parses of any prefix of words (working bottom-up)."
   (if (.empty? words)
       '()
       (for each-chained ((rule (lexical-rules (.first words))))
         (extend-parse (.lhs rule) `(,(.first words)) (.rest words) '()))))
 
+;; Look for the categories needed to complete the parse.
 (define (extend-parse lhs rhs rest needed)
-  "Look for the categories needed to complete the parse."
   (cond ((.empty? needed)
          ;; Return parse and upward extensions.
          (let tree (tree<- lhs rhs))
@@ -44,8 +44,8 @@
            (not (.empty? rhs))
            (is? (.first rhs) cat)))))
 
+;; A parse tree and a remainder.
 (define (parse<- tree remainder)
-  "A parse tree and a remainder."
   (make
     (.show ()      `((tree: ,(.show tree))
                      (remainder: ,remainder)))
@@ -54,13 +54,13 @@
     (.lhs ()       (.lhs tree))
     (.complete? () (.empty? remainder))))
 
+;; Return a list of those rules with word on the rhs.
 (define (lexical-rules word)
-  "Return a list of those rules with word on the rhs."
   (for filter ((rule (*grammar*)))
     (is? (.rhs rule) word)))
 
+;; Return a list of those rules where cat starts the rhs.
 (define (rules-starting-with cat)
-  "Return a list of those rules where cat starts the rhs."
   (for filter ((rule (*grammar*)))
     (.starts-with? rule cat)))
 
