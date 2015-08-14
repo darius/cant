@@ -1,4 +1,4 @@
-;; XXX comment
+;; From https://github.com/darius/superbench
 ;; ~/git/superbench/superopt/circuitoptimizer.scm
 
 (define (superopt truth-table max-gates)
