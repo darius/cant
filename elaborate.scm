@@ -99,6 +99,9 @@
      `(let ,v ,(elaborate e)))
     (('define ((: v symbol?) . params) . body)
      `(let ,v ,(elaborate `(given ,params . ,body))))
+    (('define (call-form . params) . body)
+     (elaborate-command
+      `(define ,call-form (given ,params . ,body))))
     (_
      `(let _ ,(elaborate cmd)))))
 

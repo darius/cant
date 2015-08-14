@@ -46,14 +46,12 @@
           ('first vals)
           (error "Wrong # of results" vals)))))
 
-(define (invert p)
-  (given (text far i vals)
-    ((.invert (p text far i vals))
-     text far i vals)))
+(define ((invert p) text far i vals)
+  ((.invert (p text far i vals))
+   text far i vals))
 
-(define (capture p)
-  (given (text far i vals)
-    (.capture-from (p text far i vals) i)))
+(define ((capture p) text far i vals)
+  (.capture-from (p text far i vals) i))
 
 (define (folded<- combine)
   (given arguments
@@ -69,30 +67,26 @@
               (given (text far i vals)
                 (.continue (p text far i vals) q)))))
 
-(define (feed-list f)
-  (given (text far i vals)
-    (empty text far i (list<- (f vals)))))
+(define ((feed-list f) text far i vals)
+  (empty text far i `(,(f vals))))
 
 (define (feed f)
   (feed-list (given (vals) (call '.run f vals))))
 
-(define (push constant)
-  (given (text far i vals)
-    (empty text far i `(,@vals ,constant))))
+(define ((push constant) text far i vals)
+  (empty text far i `(,@vals ,constant)))
 
-(define (seclude p)
-  (given (text far i vals)
-    (.prefix (p text far i '()) vals)))
+(define ((seclude p) text far i vals)
+  (.prefix (p text far i '()) vals))
 
-(define (delay thunk)                ;TODO: implement promises instead
-  (given (text far i vs)
-    ((thunk) text far i vs)))
+;;TODO: implement promises instead
+(define ((delay thunk) text far i vs)
+  ((thunk) text far i vs))
 
-(define (skip-1 ok?)
-  (given (text far i vals)
-    (if (and (.has? text i) (ok? (text i)))
-        (empty text (max far (+ i 1)) (+ i 1) vals)
-        (fail text far i vals))))
+(define ((skip-1 ok?) text far i vals)
+  (if (and (.has? text i) (ok? (text i)))
+      (empty text (max far (+ i 1)) (+ i 1) vals)
+      (fail text far i vals)))
 
 
 ;; Derived combinators

@@ -116,8 +116,8 @@
            (.set! v i (.first xs))
            (setting (+ i 1) (.rest xs))))))
 
-(define (compose f g)
-  (given (x) (f (g x))))
+(define ((compose f g) x)
+  (f (g x)))
 
 ;; XXX float contagion
 (define (min x y) (if (< x y) x y))

@@ -41,11 +41,10 @@
 (define (global-static-env v)
   (error "Unbound variable" v))
 
-(define (static-env<- param free-vars)
-  (given (v)
-    (if (is? v param)
-        'local
-        (+ 1 (list-index free-vars v)))))
+(define ((static-env<- param free-vars) v)
+  (if (is? v param)
+      'local
+      (+ 1 (list-index free-vars v))))
 
 
 ;; Smoke test
