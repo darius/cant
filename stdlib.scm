@@ -97,24 +97,24 @@
     (each! f (.rest xs))))
 
 (make range<-
-  (.run (hi-bound)
-    (range<- 0 hi-bound))
-  (.run (lo hi-bound)
-    (if (<= hi-bound lo)
+  (.run (limit)
+    (range<- 0 limit))
+  (.run (first limit)
+    (if (<= limit first)
         '()
         (make range
           (.empty? () #f)
-          (.first ()  lo)
-          (.rest ()   (range<- (+ lo 1) hi-bound))
-          (.count ()  (- hi-bound lo))
+          (.first ()  first)
+          (.rest ()   (range<- (+ first 1) limit))
+          (.count ()  (- limit first))
           (.run (i)
-            (let j (+ lo i))
-            (if (and (<= lo j) (< j hi-bound)) ;XXX also, integer?
+            (let j (+ first i))
+            (if (and (<= first j) (< j limit)) ;XXX also, integer?
                 j
                 (error "Out of range" range i)))
           (.has? (i)
-            (let j (+ lo i))
-            (and (<= lo j) (< j hi-bound))) ;XXX also, integer?
+            (let j (+ first i))
+            (and (<= first j) (< j limit))) ;XXX also, integer?
           ;; ...
           ))))
 
