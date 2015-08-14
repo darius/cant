@@ -57,7 +57,7 @@
 (define (lexical-rules word)
   "Return a list of those rules with word on the rhs."
   (for filter ((rule (*grammar*)))
-    (equal? (.rhs rule) word)))         ;TODO
+    (equal? (.rhs rule) word)))
 
 (define (rules-starting-with cat)
   "Return a list of those rules where cat starts the rhs."
