@@ -2,9 +2,8 @@
 ;; TODO: shrink capacity sometimes
 
 (let fillvector<-
-  (make
-    (.run arguments
-      (fillvector<-vector (call '.run vector<- arguments)))))
+  (given arguments
+    (fillvector<-vector (call '.run vector<- arguments))))
 
 (define (fillvector<-count start-count start-value)
   (fillvector<-vector (vector<-count start-count start-value)))
@@ -46,17 +45,17 @@
       ((vec) i))
     (.snapshot ()
       (.slice (vec) 0 (count)))         ;XXX make immutable
-    (.copy! (v lo hib)
-      (count-check hib)
-      (.copy! (vec) lo hib))
+    (.copy! (v lo bound)
+      (count-check bound)
+      (.copy! (vec) lo bound))
 
     ;; XXX should be vector trait...
-    (.empty? ()      (= 0 (.count fillvector)))
-    (.first ()       (fillvector 0))
-    (.rest ()        (.slice fillvector 1))
-    (.copy! (v)      (.copy! fillvector v 0 (.count v)))
-    (.slice (lo)     (.slice fillvector lo (.count fillvector)))
+    (.empty? ()        (= 0 (.count fillvector)))
+    (.first ()         (fillvector 0))
+    (.rest ()          (.slice fillvector 1))
+    (.copy! (v)        (.copy! fillvector v 0 (.count v)))
+    (.slice (lo)       (.slice fillvector lo (.count fillvector)))
     ;; inefficient:
-    (.chain (v)      (.chain (.snapshot fillvector) v))
-    (.slice (lo hib) (.slice (.snapshot fillvector) lo hib))
+    (.chain (v)        (.chain (.snapshot fillvector) v))
+    (.slice (lo bound) (.slice (.snapshot fillvector) lo bound))
     ))
