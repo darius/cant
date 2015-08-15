@@ -3,8 +3,8 @@
 ;; (using not-yet-implemented syntax)
 
 ;; N.B. the elements needn't be chars...
-
 ;; TODO: nicer looping?
+;; XXX also need comparison/hashing -- "case classes" to automate that?
 
 (define (search re chars)
   (or (.nullable? re)
@@ -12,20 +12,18 @@
         (and (not (.empty? chars))
              (hide
               (let char (.first chars))
-              (let states (set<-sequence (for flatmap ((state states))
+              (let states (set<-sequence (for each-chained ((state states))
                                            (.after state char))))
-              (or (any (map .nullable? states))
+              (or (some .nullable? states)
                   (scanning states (.rest chars))))))))
 
-;; XXX also need comparison/hashing -- "case classes" to automate that?
-
 (make empty
-  (.nullable? () #y)
+  (.nullable? () #yes)
   (.after (char) '()))
 
 (define (literal<- my-char)
   (make
-    (.nullable? () #n)
+    (.nullable? () #no)
     (.after (char) (if (is? char my-char) ; XXX need to think about equality
                        (list<- empty)
                        '()))))
@@ -41,7 +39,7 @@
       (make
         (.nullable? () (and (.nullable? r) (.nullable? s)))
         (.after (char)
-          (let dr+s (for map ((r-rest (.after r char)))
+          (let dr+s (for each ((r-rest (.after r char)))
                       (chain<- r-rest s)))
           (if (.nullable? r)
               (chain dr+s (.after s char))
@@ -49,8 +47,8 @@
 
 (define (star<- r)
   (make star
-    (.nullable? () #y)
-    (.after (char) (for map ((r-rest (.after r char)))
+    (.nullable? () #yes)
+    (.after (char) (for each ((r-rest (.after r char)))
                      (chain<- r-rest star)))))
                         
 
