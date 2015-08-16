@@ -19,7 +19,7 @@
       `((,my-var : ,my-val) ,@(.show s)))))
 
 (define (extend s var val)
-  (if (occurs? s var val) #f (extend-unchecked s var val)))
+  (if (occurs? s var val) #no (extend-unchecked s var val)))
 
 (define (occurs? s var val)
   (let val1 (.subst s val))
@@ -59,7 +59,7 @@
           (else
            val))))
 
-;; TODO: consider making a 'failed' subst type instead of #f
+;; TODO: consider making a 'failed' subst type instead of #no
 ;; or using 0-or-1-length lists. In fact, the latter meshes
 ;; perfectly with lazy-lists-as-Kanren-results.
 

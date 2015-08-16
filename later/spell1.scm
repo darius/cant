@@ -11,7 +11,7 @@
   (max-by candidates (given (w) (.get NWORDS w 0))))
 
 (define (if-any xs)
-  (if (.empty? xs) #f xs))
+  (if (.empty? xs) #no xs))
 
 (define (known words)  ;TODO: iter instead of list? set comprehension?
   (set<-list (for filter ((w words))

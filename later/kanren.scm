@@ -23,7 +23,7 @@
 
 (define (cons/lazy x thunk)
   (make lazy-list
-    (.empty? () #f)
+    (.empty? () #no)
     (.first () x)
     (.rest () (thunk))  ;XXX memoize?
     ;; ...
