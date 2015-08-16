@@ -11,9 +11,9 @@
 (define (boolean<- x)                   
   (not (not x)))
 
-(define (assert ok? plaint culprit)
+(define (assert ok? plaint irritant)
   (if (not ok?)
-      (error plaint culprit)))
+      (error plaint irritant)))
 
 (define (should= x expected)
   (assert (equal? x expected) "Expected" expected))

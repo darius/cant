@@ -1,6 +1,6 @@
-(define (assert ok? plaint culprit)
+(define (assert ok? plaint irritant)
   (unless ok?
-    (error plaint culprit)))
+    (error plaint irritant)))
 
 (make +
   (.run () 0)

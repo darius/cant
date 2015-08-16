@@ -148,16 +148,16 @@
          (.set! command-queue (.rest cmds))
          (.first cmds))))
 
-(define (debug k plaint culprit)
-  (complain plaint culprit)
+(define (debug k plaint irritant)
+  (complain plaint irritant)
   (traceback k)
   (debugging (out-step<- k 'default-error-value)))
 
-(define (complain plaint culprit)
+(define (complain plaint irritant)
   (display "Lambdaterp error: ")
   (write plaint)
   (display ": ")
-  (write culprit)
+  (write irritant)
   (newline))
 
 (define (traceback k)
