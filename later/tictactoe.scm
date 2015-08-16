@@ -82,9 +82,9 @@
       (call '.format grid-format
             (for each ((pair (zip (player-bits p) (player-bits q))))
               (case pair
-                ((1 _) (marks 0))
-                ((_ 1) (marks 1))
-                (_     #\.)))))
+                ((1 0) (marks 0))
+                ((0 1) (marks 1))
+                ((0 0) #\.)))))
     ))
 
 (let grid-format (.join "\n" (for each ((_ (range<- 3)))
