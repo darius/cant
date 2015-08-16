@@ -73,10 +73,13 @@
                 (.set! (vals) j (old-vals i)))))))
                             
   (make hashmap
-    (.keys ()   (map (keys) (occupants))) ;XXX lazy-map
-    (.values () (map (vals) (occupants)))
-    (.items ()  (map (given (i) (list<- ((keys) i) ((vals) i)))
-                     (occupants)))
+    (.keys ()   (each (keys) (occupants))) ;XXX lazy-map
+    (.values () (each (vals) (occupants)))
+    (.items ()
+      (let ks (keys))
+      (let vs (vals))
+      (for each ((i (occupants)))
+        `(,(ks i) ,(vs i))))
     (.empty? () (is? (count) 0))
     (.count ()  (count))
     (.run (key)
