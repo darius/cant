@@ -148,7 +148,7 @@
          (either (then (lit-1 #\() __ (many subexpr) (lit-1 #\)) __
                        hug)
                  (then (take-1 '.alphabetic?) (many (take-1 '.alphanumeric?)) __
-                       (feed chain) (feed symbol<-)))))))
+                       (feed (compose symbol<- chain))))))))
 
 (try sexpr "")
 (try sexpr "yo")
