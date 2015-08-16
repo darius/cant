@@ -351,7 +351,8 @@
    `((.type          0 ,(lambda (me) 'char))
      (.code          0 ,char->integer)          ; better name?
      (.alphabetic?   0 ,char-alphabetic?)
-     (.numeric?      0 ,char-numeric?)
+     (.digit?        0 ,char-numeric?)
+     (.whitespace?   0 ,char-whitespace?)
      (.alphanumeric? 0 ,(lambda (me) (or (char-alphabetic? me)
                                          (char-numeric? me))))
      )))

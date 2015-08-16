@@ -93,8 +93,12 @@
 
 (define (take-1 ok?)
   (capture (skip-1 ok?)))
-    
-(let any-1 (take-1 (given (char) #t)))
+
+(define ((always value) _)
+  value)
+
+(let any-1      (take-1 (always #t)))
+(let skip-any-1 (skip-1 (always #t)))
 
 (define (lit-1 my-char)
   (skip-1 (given (char) (is? my-char char))))
@@ -135,7 +139,10 @@
 (let sexpr
   (hide
    (let subexpr (delay (given () sexpr)))
-   (let __ (many (lit-1 #\space)))
+   (let comment (then (lit-1 #\;) (many (then (invert (lit-1 #\newline))
+                                              skip-any-1))))
+   (let __ (many (either (skip-1 '.whitespace?)
+                         comment)))
    (seclude
     (then __
          (either (then (lit-1 #\() __ (many subexpr) (lit-1 #\)) __
@@ -148,3 +155,5 @@
 (try sexpr "(lisp)")
 (try sexpr "(lisp (the  GREATEST  ) hurrah)")
 (try sexpr "(oops (unbalanced parens -- before unknown chars))")
+(try sexpr "(ok ; I am comment-goat.
+hi)")
