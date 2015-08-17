@@ -107,8 +107,7 @@
   (either p empty))
 
 (define (many p)
-  (let p* (maybe (then p (delay (given () p*)))))
-  p*)
+  (let p* (maybe (then p (delay (given () p*))))))
 
 
 ;; Smoke test
