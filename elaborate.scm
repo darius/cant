@@ -27,6 +27,8 @@
     ('quote  (mlambda
               ((_ datum) `',datum)))
     ('make   (mlambda
+              ((_ '_ . clauses)
+               `(make ,@(map elaborate-method/matcher clauses)))
               ((_ (: name symbol?) . clauses)
                (elaborate `(hide
                             (let ,name (make . ,clauses))
@@ -84,6 +86,9 @@
               (elaborate-commands cmds1 rest))
              (('include filename)
               (elaborate-commands (snarf filename) rest))
+             (('make '_ . clauses)
+              `((let _ ,(elaborate `(make . ,clauses)))
+                . ,rest))
              (('make (: name symbol?) . clauses)
               `((let ,name ,(elaborate `(make . ,clauses)))
                 (let _ ,name)   ; make has a value, not just a binding
