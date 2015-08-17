@@ -1,4 +1,4 @@
-;; Basic PEG-ish parsing
+;; PEG parsing
 
 ;; TODO: fuller error reporting
 ;; TODO: memoize
