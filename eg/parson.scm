@@ -58,14 +58,12 @@
     (foldr1 combine arguments)))
 
 (let either
-  (folded<- (given (p q)
-              (given (text far i vals)
-                (.else (p text far i vals) q text i vals)))))
+  (folded<- (define ((either p q) text far i vals)
+              (.else (p text far i vals) q text i vals))))
 
 (let then
-  (folded<- (given (p q)
-              (given (text far i vals)
-                (.continue (p text far i vals) q)))))
+  (folded<- (define ((then p q) text far i vals)
+              (.continue (p text far i vals) q))))
 
 (define ((feed-list f) text far i vals)
   (empty text far i `(,(f vals))))
