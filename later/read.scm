@@ -86,7 +86,7 @@
           ((.alphabetic? peek)
            (read-hash-symbol (read-symbol port)))
           ((is? peek #\( )	; vector constant
-           (list->vector (read-list port (.read-char port))))
+           (vector<-list (read-list port (.read-char port))))
           (else
            (read-error port "Unknown '#' read macro")))))
 
