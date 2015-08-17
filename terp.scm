@@ -10,7 +10,7 @@
             '()))
 
 (define (interpret e)
-  (evaluate (elaborate e) '()))
+  (evaluate (elaborate-expression e) '()))
 
 
 ;; Objects, calling, and answering
@@ -138,7 +138,7 @@
       (case (car e)
         ((quote)
          (answer k (cadr e)))
-        ((make)
+        ((%make)
          ;; TODO: build the object's script at elaboration time.
          (answer k (object<-
                     (map (lambda (method)
@@ -168,7 +168,7 @@
                                                        (cadr method)
                                                        arguments)
                                            k))))))
-                         (cdr e))
+                         (cddr e))
                     r)))
         ((%hide)
          (ev (caddr e)
@@ -289,7 +289,7 @@
           (prim-script<- identity 
            `((.run 2 ,(lambda (k me e r)
                         ;; XXX coerce r to an environment
-                        (ev (elaborate e) r k)))))
+                        (ev (elaborate-expression e) r k)))))
           (prim-script<- prim<-
            `((.type 0 ,(lambda (me) 'procedure)))))))
     (object<- script #f)))

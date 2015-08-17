@@ -1,14 +1,123 @@
 (include "gambit-macros.scm")
 
-(define (elaborate e)
-  (cond ((symbol? e) e)
-        ((self-evaluating? e) `',e)
-        ((not (pair? e)) (error "Bad syntax" e))
-        ((look-up-macro (car e))
-         => (lambda (expand) (elaborate (expand e))))
-        ((look-up-core-syntax (car e))
-         => (lambda (expand) (expand e)))
-        (else (elaborate-call e))))
+(define (elaborate-expression e)
+  (elaborate top-context e #f))
+
+(define (elaborate-top-level commands)
+  (mcase (elaborate top-context `(hide . ,commands) #f)
+    (('%hide _ ast) ast)
+    (ast ast)))
+
+(define-structure context counter names)
+
+(define top-context (make-context 0 '()))
+
+(define (extend-context context opt-name)
+  (make-context 0 (cons (or opt-name (next-anon context))
+                        (context-names context))))
+
+(define (next-anon context)
+  (let ((n (+ (context-counter context) 1)))
+    (context-counter-set! context n)
+    (string->symbol (string-append "#" (number->string n)))))
+
+(define (fq-name<- context)
+  (string->symbol
+   (string-join "." (reverse (map symbol->string (context-names context))))))
+
+;; If e is a command, i.e. a top-level form or right under a (hide ...):
+;;   sequel is the already-elaborated following AST.
+;; else:
+;;   sequel is #f.
+(define (elaborate context e sequel)
+
+  (define (elab subexpression)
+    (elaborate context subexpression #f))
+
+  (define (elaborate-make opt-name clauses)
+    (let ((new-context (extend-context context opt-name)))
+      (define (elaborate-clause clause)
+        (mcase clause
+          ((cue params . body)
+           (check-clause-syntax clause cue params body)
+           `(,cue ,params ,(elaborate-hide new-context body)))))
+      `(%make ,(fq-name<- new-context)
+         ,@(map elaborate-clause clauses))))
+
+  (cond ((and (pair? e) (look-up-macro (car e)))
+         => (lambda (expand) (elaborate context (expand e) sequel)))
+        (else
+         (mcase e
+           ((: _ symbol?)
+            (then e sequel))
+           (('quote datum)
+            (then e sequel))
+           ((: _ self-evaluating?)
+            (then `',e sequel))
+           (('hide . body)
+            (then (elaborate-hide context body) sequel))
+           (('let '_ e1)
+            (then (elab e1) sequel))
+           (('let name e1)
+            (then-let name (elab e1) sequel))
+           (('make '_ . clauses)
+            (then (elaborate-make #f clauses) sequel))
+           (('make (: name symbol?) . clauses)
+            (then-let name (elaborate-make name clauses) sequel))
+           (('make . clauses)
+            (then (elaborate-make #f clauses) sequel))
+           (('include filename)
+            (elaborate context `(begin . ,(snarf filename)) sequel))
+           (('begin e1 . es)
+            (elaborate context e1
+                       (if (null? es)
+                           sequel
+                           (elaborate context `(begin . ,es) sequel))))
+
+           (((: cue cue?) e1 . es)
+            (then `(,cue . ,(map elab (cons e1 es)))
+                  sequel))
+           ((_ . _)
+            (then `(.run . ,(map elab e))
+                  sequel))))))
+
+(define (elaborate-hide context commands)
+  (assert (not (null? commands))
+          "Syntax error -- hide" commands)
+  (let* ((ast (foldr (lambda (command sequel)
+                      (elaborate context command sequel))
+                    '(%last) ;; (always removed by unlasting, below)
+                    commands))
+         (vars (let collecting ((vars '()) (a ast))
+                 (mcase a
+                   (('%let '_ a1 a2)
+                    (collecting vars a2))
+                   (('%let v a1 a2)
+                    (collecting (cons v vars) a2))
+                   (('%last)
+                    (reverse vars)))))
+         (body (let unlasting ((a ast))
+                 (mcase a
+                   (('%let '_ a1 ('%last))
+                    a1)
+                   (('%let v a1 ('%last))
+                    `(%let ,v ,a1 ,v))
+                   (('%let v a1 a2)
+                    `(%let ,v ,a1 ,(unlasting a2)))))))
+    (if (null? vars)
+        body
+        `(%hide ,vars ,body))))
+
+(define (then ast sequel)
+  (if sequel
+      `(%let _ ,ast ,sequel)
+      ast))
+
+(define (then-let name ast sequel)
+  (if sequel
+      `(%let ,name ,ast ,sequel)
+      `(%hide (,name)
+         (%let ,name ,ast ,name))))
 
 (define (self-evaluating? x)
   (or (boolean? x)
@@ -16,107 +125,25 @@
       (char? x)
       (string? x)))
 
-(define (elaborate-call e)
-  (mcase e
-    (((: cue cue?) . es)
-     (cons cue (map elaborate es)))
-    (_ (cons '.run (map elaborate e)))))
-  
-(define (look-up-core-syntax key)
-  (mcase key
-    ('quote  (mlambda
-              ((_ datum) `',datum)))
-    ('make   (mlambda
-              ((_ '_ . clauses)
-               `(make ,@(map elaborate-method/matcher clauses)))
-              ((_ (: name symbol?) . clauses)
-               (elaborate `(hide
-                            (let ,name (make . ,clauses))
-                            ,name)))
-              ((_ . clauses)
-               `(make ,@(map elaborate-method/matcher clauses)))))
-    ('hide   (mlambda
-              ((_ . body)
-               (elaborate-hide body))))
-    ('begin  (mlambda
-              ((_ e) (elaborate e))
-              ((_ e . es) `(%let _ ,(elaborate e)
-                             ,(elaborate `(begin . ,es))))))
-    (_ #f)))
+(define (check-clause-syntax clause cue params body)
+  (assert (not (null? body)) "Empty body" clause)
+  (cond ((eq? cue 'else)
+         (assert (param-list? params) "Bad param list" clause))
+        (else
+         (assert (cue? cue) "Not a method decl" clause)
+         (assert (or (symbol? params) (param-list? params))
+                 "Bad params syntax" clause))))
 
-(define (elaborate-method/matcher clause)
-  (define (param-list? x)
-    (and (list? x) (all symbol? x)))  ;XXX and distinct
-  (mcase clause
-    ((cue params . body)
-     (assert (not (null? body)) "Empty body" clause)
-     (cond ((eq? cue 'else)
-            (assert (param-list? params) "Bad param list" clause))
-           (else
-            (assert (cue? cue) "Not a method decl" clause)
-            (assert (or (symbol? params) (param-list? params))
-                    "Bad params syntax" clause)))
-     `(,cue ,params ,(elaborate-hide body)))))
-
-(define (elaborate-top-level body)
-  (let ((commands (elaborate-commands body '())))
-    (foldr (lambda (cmd rest)
-             (mcase cmd
-               (('let v e) `(%let ,v ,e ,rest))))
-           ''#f
-           commands)))
-
-(define (elaborate-hide body)
-  (let* ((commands (elaborate-commands body '()))
-         (vars (flatmap get-hide-vars commands))
-         (result (foldr (lambda (cmd rest)
-                          (mcase cmd
-                            (('let v e) `(%let ,v ,e ,rest))))
-                        (mcase (last commands)
-                          (('let '_ e) e))
-                        (butlast commands))))
-    (if (null? vars)
-        result
-        `(%hide ,vars ,result))))
-
-(define (elaborate-commands cmds rest)
-  (foldr (lambda (cmd rest)
-           (mcase cmd
-             (('begin . cmds1)
-              (elaborate-commands cmds1 rest))
-             (('include filename)
-              (elaborate-commands (snarf filename) rest))
-             (('make '_ . clauses)
-              `((let _ ,(elaborate `(make . ,clauses)))
-                . ,rest))
-             (('make (: name symbol?) . clauses)
-              `((let ,name ,(elaborate `(make . ,clauses)))
-                (let _ ,name)   ; make has a value, not just a binding
-                . ,rest))
-             (_
-              (cons (elaborate-command cmd) rest))))
-         rest
-         cmds))
-
-(define (elaborate-command cmd)
-  (mcase cmd
-    (('let (: v symbol?) e)
-     `(let ,v ,(elaborate e)))
-    (('define ((: v symbol?) . params) . body)
-     `(let ,v ,(elaborate `(given ,params . ,body))))
-    (('define (call-form . params) . body)
-     (elaborate-command
-      `(define ,call-form (given ,params . ,body))))
-    (_
-     `(let _ ,(elaborate cmd)))))
-
-(define (get-hide-vars cmd)
-  (mcase cmd
-    (('let '_ e) '())
-    (('let v e) (list v))))
+(define (param-list? x)
+  (and (list? x) (all symbol? x)))  ;XXX and distinct
 
 (define (look-up-macro key)
   (mcase key
+    ('define (mlambda
+              ((_ ((: v symbol?) . params) . body)
+               `(make ,v (.run ,params . ,body)))
+              ((_ (call-form . params) . body)
+               `(define ,call-form (given ,params . ,body)))))
     ('given (mlambda
               ((_ vars . body)
                `(make (.run ,vars . ,body)))))

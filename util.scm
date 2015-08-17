@@ -53,6 +53,17 @@
             '()
             (cons form (reading (read port))))))))
 
+(define (string-join between strings)
+  (if (null? strings)
+      ""
+      (list->string
+       (let ((tween (string->list between)))
+         (let appending ((ls strings))
+           (let ((head (string->list (car ls))))
+             (if (null? (cdr ls))
+                 head
+                 (append head tween (appending (cdr ls))))))))))
+
 (define (expand-mlambda subject clauses)
   (letrec
       ((expand-clause 
