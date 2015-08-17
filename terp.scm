@@ -36,15 +36,20 @@
 (define (call selector object arguments k)
   (unwrap object
           (lambda (script datum)
-            (cond ((or (assoc selector script) ;TODO assq when memoized
-                       (assq (selector.cue selector) script))
-                   => (lambda (pair)
-                        (apply (cadr pair) k datum arguments)))
-                  ((assq else-selector script)
-                   => (lambda (pair)
-                        ((cadr pair)
-                         k datum (selector.cue selector) arguments)))
-                  (else (message-not-found selector object k))))))
+            ;; (For now, the script for a primitive is just the vtable,
+            ;; hence this ad-hoc if:)
+            (let ((vtable (if (script? script)
+                              (script-vtable script)
+                              script)))
+              (cond ((or (assoc selector vtable) ;TODO assq when memoized
+                         (assq (selector.cue selector) vtable))
+                     => (lambda (pair)
+                          (apply (cadr pair) k datum arguments)))
+                    ((assq else-selector vtable)
+                     => (lambda (pair)
+                          ((cadr pair)
+                           k datum (selector.cue selector) arguments)))
+                    (else (message-not-found selector object k)))))))
 
 (define (message-not-found selector object k)
   (signal k "No method found" selector object))
@@ -52,6 +57,8 @@
 (define (selector<- cue arity) (cons cue arity))
 (define selector.cue car)
 (define else-selector (list "else")) ;XXX not private until we can assq above with memoized selectors
+
+(define-structure script fq-name vtable)
 
 (define (else-script<- proc)
   `((,else-selector ,proc)))
@@ -140,36 +147,38 @@
          (answer k (cadr e)))
         ((%make)
          ;; TODO: build the object's script at elaboration time.
-         (answer k (object<-
-                    (map (lambda (method)
-                           (cond
-                             ((eq? (car method) 'else)
-                              (list else-selector
-                                    (lambda (k r cue arguments)
-                                      (ev (caddr method)
-                                          (env-extend r
-                                                      (cadr method)
-                                                      (list cue arguments))
-                                          k))))
-                             ((symbol? (cadr method))  ; variable arity
-                              (list (car method)
-                                    (lambda (k r . arguments)
-                                      (ev (caddr method)
-                                          (env-extend r
-                                                      (list (cadr method))
-                                                      (list arguments))
-                                          k))))
-                              (else
-                               (list (selector<- (car method)
-                                                 (length (cadr method)))
-                                     (lambda (k r . arguments)
-                                       (ev (caddr method)
-                                           (env-extend r
-                                                       (cadr method)
-                                                       arguments)
-                                           k))))))
-                         (cddr e))
-                    r)))
+         (let ((script
+                (make-script
+                 (cadr e)
+                 (map (lambda (method)
+                        (cond
+                         ((eq? (car method) 'else)
+                          (list else-selector
+                                (lambda (k r cue arguments)
+                                  (ev (caddr method)
+                                      (env-extend r
+                                                  (cadr method)
+                                                  (list cue arguments))
+                                      k))))
+                         ((symbol? (cadr method))  ; variable arity
+                          (list (car method)
+                                (lambda (k r . arguments)
+                                  (ev (caddr method)
+                                      (env-extend r
+                                                  (list (cadr method))
+                                                  (list arguments))
+                                      k))))
+                         (else
+                          (list (selector<- (car method)
+                                            (length (cadr method)))
+                                (lambda (k r . arguments)
+                                  (ev (caddr method)
+                                      (env-extend r
+                                                  (cadr method)
+                                                  arguments)
+                                      k))))))
+                      (cddr e)))))
+           (answer k (object<- script r))))
         ((%hide)
          (ev (caddr e)
              (env-extend-promises r (cadr e))
@@ -454,8 +463,10 @@
           (else (string-append (symbol->string (car sel))
                                "/"
                                (number->string (cdr sel))))))
-  (string->symbol (apply string-append
-                         `("[" ,@(map format-entry script) "]"))))
+  (if (script? script)
+      (script-fq-name script)
+      (string->symbol (apply string-append
+                             `("[" ,@(map format-entry script) "]")))))
 
 (define the-global-env
   `((cons ,cons)
