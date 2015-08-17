@@ -80,8 +80,8 @@
   (.prefix (p text far i '()) vals))
 
 ;;TODO: implement promises instead
-(define ((delay thunk) text far i vs)
-  ((thunk) text far i vs))
+(define ((delay thunk) text far i vals)
+  ((thunk) text far i vals))
 
 (define ((skip-1 ok?) text far i vals)
   (if (and (.has? text i) (ok? (text i)))
