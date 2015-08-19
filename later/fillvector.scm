@@ -47,7 +47,7 @@
       (.slice (vec) 0 (count)))         ;XXX make immutable
     (.copy! (v lo bound)
       (count-check bound)
-      (.copy! (vec) lo bound))
+      (.copy! (vec) v lo bound))
 
     ;; XXX should be vector trait...
     (.empty? ()        (= 0 (.count fillvector)))
