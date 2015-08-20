@@ -274,9 +274,9 @@
           (cond ((< (+ gate 1) n-gates)
                  (sweeping (+ gate 1)))
                 ((= wanted (mask .and value))
-                 (found? .set! #yes)
+                 (found? .^= #yes)
                  (print-formula L-input R-input))))))
-    (found?))
+    found?.^)
 
   (some find-for-n (range<- 1 (+ max-gates 1))))
 
@@ -598,13 +598,13 @@
 
 (define (next-command)
   (display "debug> ")
-  (let cmds (command-queue))
+  (let cmds command-queue.^)
   (cond (cmds.empty?
          (newline)
          #no)
         (else
          (print cmds.first)
-         (command-queue .set! cmds.rest)
+         (command-queue .^= cmds.rest)
          cmds.first)))
 
 (define (debug k plaint irritant)
@@ -688,7 +688,7 @@
   ((lexp)
    (try lexp '()))
   ((lexp commands)
-   (command-queue .set! commands)
+   (command-queue .^= commands)
    (let result (interpret lexp))
    (if result (print (survey result)) 'failed)))
 
@@ -764,12 +764,12 @@
 
 ;; Return a list of those rules with word on the rhs.
 (define (lexical-rules word)
-  (for filter ((rule (*grammar*)))
+  (for filter ((rule *grammar*.^))
     (= rule.rhs word)))
 
 ;; Return a list of those rules where cat starts the rhs.
 (define (rules-starting-with cat)
-  (for filter ((rule (*grammar*)))
+  (for filter ((rule *grammar*.^))
     (rule .starts-with? cat)))
 
 (let *grammar* (box<- '()))
@@ -826,13 +826,13 @@
   (each! print (each '.show (parser sentence)))
   (newline))
 
-(*grammar* .set! grammar3)
+(*grammar* .^= grammar3)
 
 (try '(the table))
 (try '(the ball hit the table))
 (try '(the noun took the verb))
 
-(*grammar* .set! grammar4)
+(*grammar* .^= grammar4)
 
 ;(try '(the man hit the table with the ball))
 ;(try '(the orange saw))
@@ -1205,41 +1205,41 @@ hi)")
   (let vec   (box<- start-vector))
 
   (define (grow)
-    (let old (vec))
+    (let old vec.^)
     (let n old.count)
-    (vec .set! (vector<-count (if (= 0 n) 1 (* 2 n))))
-    (vec .copy! old))
+    (vec .^= (vector<-count (if (= 0 n) 1 (* 2 n))))
+    (vec.^ .copy! old))
 
   (define (count-check i)
-    (unless (< i (count))
+    (unless (< i count.^)
       (error "Bad index" fillvector i)))
 
   (make fillvector
     ((i)
      (count-check i)
-     ((vec) i))
+     (vec.^ i))
     ({.count}
-     (count))
+     count.^)
     ({.set! i value}
      (count-check i)
-     ((vec) .set! i value))
+     (vec.^ .set! i value))
     ({.push! value}
-     (let i (count))
-     (if (= i ((vec) .count)) (grow) 'pass)
-     ((vec) .set! i value)
-     (count .set! (+ i 1))
+     (let i count.^)
+     (if (= i vec.^.count) (grow) 'pass)
+     (vec.^ .set! i value)
+     (count .^= (+ i 1))
      i)                              ; (should we be returning this?)
     ({.pop!}
-     (let i (- (count) 1))
+     (let i (- count.^ 1))
      (when (< i 0)
        (error "Underflow" fillvector))
-     (count .set! i)
-     ((vec) i))
+     (count .^= i)
+     (vec.^ i))
     ({.snapshot}
-     ((vec) .slice 0 (count)))         ;XXX make immutable
+     (vec.^ .slice 0 count.^))         ;XXX make immutable
     ({.copy! v lo bound}
      (count-check bound)
-     ((vec) .copy! v lo bound))
+     (vec.^ .copy! v lo bound))
 
     ;; XXX should be vector trait...
     ({.empty?}         (= 0 (fillvector .count)))
@@ -1281,24 +1281,24 @@ hi)")
   (let keys  (box<- (vector<- empty)))  ;; size a power of 2
   (let vals  (box<- (vector<- #no)))     ;; same size
 
-  (define (capacity) ((keys) .count))
+  (define (capacity) keys.^.count)
 
   (define (occupants)
     (recurse walking ((i (- (capacity) 1)))
       (if (< i 0)
           '()
           (hide
-           (let k ((keys) i))
+           (let k (keys.^ i))
            (if (= k empty)
                (walking (- i 1))
                (cons i (walking (- i 1))))))))
 
   (define (find key succeed fail)
     (let h    key.hash)              ;XXX coerce to fixnum
-    (let mask (- ((keys) .count) 1))
+    (let mask (- keys.^.count 1))
     (let i0   (mask .and h))
     (recurse walking ((i i0))
-      (let k ((keys) i))
+      (let k (keys.^ i))
       (cond ((= k empty)
              (fail i))
             ((= k key)             ;XXX
@@ -1311,46 +1311,47 @@ hi)")
 
   (define (maybe-grow)
     (when (< (* 2 (capacity))
-             (* 3 (count)))
+             (* 3 count.^))
       (resize (* 2 (capacity)))))
 
   (define (resize new-capacity)
-    (let old-keys (keys))
-    (let old-vals (vals))
-    (keys .set! (vector<-count new-capacity empty))
-    (vals .set! (vector<-count new-capacity))
+    (let old-keys keys.^)
+    (let old-vals vals.^)
+    (keys .^= (vector<-count new-capacity empty))
+    (vals .^= (vector<-count new-capacity))
     (for each! ((i (range<- old-keys.count)))
       (let key (old-keys i))
       (unless (= key empty)
         (find key
               (given (j) (error "Can't happen"))
               (given (j)
-                ((keys) .set! j key)
-                ((vals) .set! j (old-vals i)))))))
+                (keys.^ .set! j key)
+                (vals.^ .set! j (old-vals i)))))))
                             
   (make hashmap
-    ({.keys}   (each (keys) (occupants))) ;XXX lazy-map
-    ({.values} (each (vals) (occupants)))
+    ({.keys}   (each keys.^ (occupants))) ;XXX lazy-map
+    ({.values} (each vals.^ (occupants)))
     ({.items}
-     (let ks (keys))
-     (let vs (vals))
+     (let ks keys.^)
+     (let vs vals.^)
      (for each ((i (occupants)))
        `(,(ks i) ,(vs i))))
-    ({.empty?} (= (count) 0))
-    ({.count}  (count))
+    ({.empty?} (= count.^ 0))
+    ({.count}  count.^)
     ((key)
-     (find key (vals) (given (i) (error "Missing key" hashmap key))))
+     (find key vals.^ (given (i) (error "Missing key" hashmap key))))
     ({.get key}
      (hashmap .get key #no))
     ({.get key default}
-     (find key (vals) (given (i) default)))
+     (find key vals.^ (given (i) default)))
     ({.set! key val}
      (find key
            (given (i)
-             ((vals) .set! i val))
+             (vals.^ .set! i val))
             (given (i)
-              ((keys) .set! i key)
-              ((vals) .set! i val)
+              (keys.^ .set! i key)
+              (vals.^ .set! i val)
+              (count .^= (+ count.^ 1))
               (maybe-grow))))
     ))
 
@@ -1642,9 +1643,9 @@ hi)")
       (hide
        (let states (box<- (set<- re)))
        (for some ((char chars))
-         (states .set! (set<-sequence (for each-chained ((state (states)))
+         (states .^= (set<-sequence (for each-chained ((state states.^))
                                         (after state char))))
-         (some nullable? (states))))))
+         (some nullable? states.^)))))
 
 (define (nullable? r)
   (case r
