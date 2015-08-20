@@ -1651,6 +1651,14 @@ hi)")
     ({chain s t}  (and (nullable? s) (nullable? t)))
     ({star _}     #yes)))
 
+;; Or equivalently:
+(make nullable?
+  (({empty})      #yes)
+  (({literal _})  #no)
+  (({either s t}) (or (nullable? s) (nullable? t)))
+  (({chain s t})  (and (nullable? s) (nullable? t)))
+  (({star _})     #yes))
+
 (define (after r char)
   (case r
     ({empty}       '())
