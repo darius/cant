@@ -677,7 +677,7 @@
   (if (= k halt)
       k
       (make
-        ({.take (value) (debugging (out-step<- k value)))
+        ({.take value} (debugging (out-step<- k value)))
         ;; XXX (.inject ...) ?
         (else (cue arguments) (call cue k arguments)))))
 
