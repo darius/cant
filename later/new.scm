@@ -737,7 +737,7 @@
 (define (tree<- lhs rhs)
   (make
     ({.show} `(,lhs ,@(for each ((part rhs))
-                         (if (symbol? part) part part.show))))
+                        (if (symbol? part) part part.show))))
     ({.lhs} lhs)
     ({.rhs} rhs)))
 
