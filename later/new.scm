@@ -9,7 +9,7 @@
          list.first
          (list.rest (- i 1))))
     ({.empty?}
-     (= 0 (list .count)))
+     (= 0 list.count)) ;N.B. these default implementations are circular
     ({.first}
      (list 0))
     ({.rest}
@@ -18,12 +18,12 @@
      (if list.empty?
          0
          (+ 1 list.rest.count)))
-    ({.slice i}                         ;XXX result is a cons-list (here, below)
+    ({.slice i}
      (assert (<= i 0))
      (if (= i 0)
          list
          (list.rest .slice (- i 1))))
-    ({.slice i bound}
+    ({.slice i bound}     ;XXX result is a cons-list; be more generic?
      (assert (<= i 0))
      (cond (list.empty? list)
            ((<= bound i) '())
@@ -33,18 +33,20 @@
      (if list.empty?
          seq
          (cons list.first (list.rest .chain seq))))
-    ({.has? key}                        ;XXX name: .maps?
+    ;; A sequence is a kind of collection. Start implementing that:
+    ({.maps? key}
      (and (not list.empty?)
           (or (= 0 key)
               (and (< 0 key)
-                   (list.rest .has? (- key 1))))))
-    ({.has-value? value}                ;XXX better name? member? maps-to?
+                   (list.rest .maps? (- key 1))))))
+    ({.maps-to? value}
      (some (given (x) (= x value)) list))
-    ({.find-key-for x}                  ;XXX name?
-     (cond (list.empty? (error "Missing key" x))
-           ((= x list.first) 0)
-           (else (+ 1 (list.rest .find-key-for x)))))
-    ...))
+    ({.find-key-for value}                  ;XXX name?
+     (cond (list.empty? (error "Missing key" value))
+           ((= value list.first) 0)
+           (else (+ 1 (list.rest .find-key-for value)))))
+    ;;...
+    ))
 
 (let (pair? pair-stamp) (stamp<- "pair"))
 
@@ -95,7 +97,7 @@
 
 (define (union set1 set2)
   (define (adjoin x xs)
-    (if (set2 .has-value? x) xs (cons x xs)))
+    (if (set2 .maps-to? x) xs (cons x xs)))
   (foldr adjoin set2 set1))
 
 (define (remove set x)
@@ -171,7 +173,7 @@
           (if (and (<= first j) (< j limit)) ;XXX also, integer?
               j
               (error "Out of range" range i)))
-         ({.has? i}
+         ({.maps? i}
           (let j (+ first i))
           (and (<= first j) (< j limit))) ;XXX also, integer?
           ;; ...
@@ -922,7 +924,7 @@
   ((thunk) text far i vals))
 
 (define ((skip-1 ok?) text far i vals)
-  (if (and (text .has? i) (ok? (text i)))
+  (if (and (text .maps? i) (ok? (text i)))
       (empty text (max far (+ i 1)) (+ i 1) vals)
       (fail text far i vals)))
 
@@ -1179,7 +1181,7 @@ hi)")
                          (value 0)
                          (branches node.branches))
           (and (not branches.empty?)
-               (cond ((`(#no ,goal) .has-value? branches.first.constant-value)
+               (cond ((`(#no ,goal) .maps-to? branches.first.constant-value)
                       (env .set! rank value)
                       (walking branches.first))
                      (else
@@ -1382,7 +1384,7 @@ hi)")
     ({.empty?} #no)
     ({.first} x)
     ({.rest} (thunk))  ;XXX memoize?
-    ;; ... XXX use list-trait? or need to rewrite for laziness?
+    ;; ... XXX use list-trait? except it'd need a rewrite for laziness
     ))
 
 (define (each-chained/lazy f xs)
@@ -1589,12 +1591,12 @@ hi)")
 
 (define (known words)  ;TODO: iter instead of list? set comprehension?
   (set<-list (for filter ((w words))
-               (NWORDS .has? w))))
+               (NWORDS .maps? w))))
 
 (define (known-edits2 word)
   (set<-list (for each-chained ((e1 (edits1 word)))
                (for filter ((e2 (edits1 e1)))
-                 (NWORDS .has? e2)))))
+                 (NWORDS .maps? e2)))))
 
 (define (edits1 word)      ;TODO: real list comprehensions should help
   (let splits     (for each ((i (range<- (+ word.count 1))))
@@ -1685,7 +1687,7 @@ hi)")
   (cond (grid.won?   (say grid.last-to-move " wins."))
         (grid.drawn? (say "A draw."))
         (else
-         (unless (`(,player ,opponent) .has-value? human-play)
+         (unless (`(,player ,opponent) .maps-to? human-play)
            (display grid.show)
            (newline)
            (say player.show " to move " grid.whose-move
@@ -1972,7 +1974,7 @@ hi)")
   (recurse reifying ((val-in val))
     (let val (s .subst val))
     (cond ((variable? val)
-           (unless (free-vars .has? val)
+           (unless (free-vars .maps? val)
              (free-vars .set! val
                         (variable<- "_" free-vars.count)))
            (free-vars val))
