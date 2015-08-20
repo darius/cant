@@ -40,7 +40,7 @@
               (and (< 0 key)
                    (list.rest .maps? (- key 1))))))
     ({.maps-to? value}
-     (some (given (x) (= x value)) list))
+     (for some ((x list)) (= x value)))
     ({.find-key-for value}                  ;XXX name?
      (cond (list.empty? (error "Missing key" value))
            ((= value list.first) 0)
