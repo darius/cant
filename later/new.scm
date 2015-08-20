@@ -1685,7 +1685,7 @@ hi)")
   (cond (grid.won?   (say grid.last-to-move " wins."))
         (grid.drawn? (say "A draw."))
         (else
-         (unless (memq human-play `(,player ,opponent))
+         (unless (`(,player ,opponent) .has-value? human-play)
            (display grid.show)
            (newline)
            (say player.show " to move " grid.whose-move
