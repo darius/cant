@@ -81,8 +81,8 @@
 
 (make -
   (() (error "Bad arity"))
-  ((a) (.- 0 a))
-  ((a b) (.- a b))
+  ((a) (0 .- a))
+  ((a b) (a .- b))
   ((& arguments)
    (foldl '.- arguments.first arguments.rest)))
 
@@ -138,7 +138,7 @@
 (make chain
   (() '())
   ((xs) xs)
-  ((xs ys) (.chain xs ys))
+  ((xs ys) (xs .chain ys))
   ((& arguments) (foldr1 '.chain arguments)))
 
 (define (some ok? xs)
@@ -479,7 +479,7 @@
                  (parse (lexp 1))))))
 
 (define (interpret lexp)
-  (.evaluate (parse lexp) global-env halt))
+  ((parse lexp) .evaluate global-env halt))
 
 
 ;; ASTs and continuations
@@ -511,7 +511,7 @@
     ({.source} `(& ,v ,body.source))
     ({.eval-step r k} (debugging (value-step<- abstraction r k)))
     ({.evaluate r k}
-     (.take k (make
+     (k .take (make
                 ({.survey} `(,v -> ...))
                 ({.call arg k2}
                  (body .evaluate (extend r v arg) k2))
@@ -525,7 +525,7 @@
     ({.eval-step r k}
      (debugging (subeval-step<- operator r (ev-arg-cont<- operand r k))))
     ({.evaluate r k}
-     (.evaluate operator r (ev-arg-cont<- operand r k)))))
+     (operator .evaluate r (ev-arg-cont<- operand r k)))))
 
 (define (ev-arg-cont<- operand r k)
   (make ({.empty?} #no)
@@ -684,11 +684,11 @@
 
 (make try
   ((lexp)
-    (try lexp '()))
+   (try lexp '()))
   ((lexp commands)
-    (command-queue .set! commands)
-    (let result (interpret lexp))
-    (if result (print (survey result)) 'failed)))
+   (command-queue .set! commands)
+   (let result (interpret lexp))
+   (if result (print (survey result)) 'failed)))
 
 (try '(lambda (x) x))
 (try '((lambda (x) ((+ x) 2)) 1))
@@ -698,9 +698,9 @@
 (try '(((+ 1) y) 2))
 
 (try '((lambda (x) ((+ y) 1)) 42)
-     '((.value 42) (.continue)))
+     '({.value 42} {.continue}))
 (try '((lambda (x) ((+ y) 1)) 42)
-     '((.value 42) (.hop) (.b) (.hop)))
+     '({.value 42} {.hop} {.b} {.hop}))
 
 
 ;; eg/parse.scm
@@ -754,7 +754,7 @@
 (define (parse<- tree remainder)
   (make
     ({.show}      `((tree: ,tree.show)
-                     (remainder: ,remainder)))
+                    (remainder: ,remainder)))
     ({.tree}      tree)
     ({.remainder} remainder)
     ({.lhs}       tree.lhs)
@@ -824,13 +824,13 @@
   (each! print (each '.show (parser sentence)))
   (newline))
 
-(.set! *grammar* grammar3)
+(*grammar* .set! grammar3)
 
 (try '(the table))
 (try '(the ball hit the table))
 (try '(the noun took the verb))
 
-(.set! *grammar* grammar4)
+(*grammar* .set! grammar4)
 
 ;(try '(the man hit the table with the ball))
 ;(try '(the orange saw))
@@ -1030,7 +1030,7 @@ hi)")
   (cond (already)
         (else
          (assert (< rank infinite-rank))
-         (let index (.push ranks rank))
+         (let index (ranks .push! rank))
          ( if0s .push if0)
          ( if1s .push if1)
          (memo-table .set! if1 index)
@@ -1172,7 +1172,7 @@ hi)")
 (define (satisfy node goal)
   (let env (map<-))
   (recurse walking ((node node))
-    (if (.constant-value node)
+    (if node.constant-value
         (and (= goal node.constant-value)
              env)
         (recurse trying ((rank node.rank)
@@ -1291,7 +1291,7 @@ hi)")
                (cons i (walking (- i 1))))))))
 
   (define (find key succeed fail)
-    (let h    (.hash key))              ;XXX coerce to fixnum
+    (let h    key.hash)              ;XXX coerce to fixnum
     (let mask (- ((keys) .count) 1))
     (let i0   (mask .and h))
     (recurse walking ((i i0))
@@ -1952,7 +1952,7 @@ hi)")
          (extend s u v))
         ((and (list? u) (list? v) (= u.count v.count))
          (recurse unifying ((s s) (u u) (v v))
-           (cond ((.empty? u) s)
+           (cond (u.empty? s)
                  (else
                   (let s1 (unify s u.first v.first))
                   (and s1 (unifying s1 u.rest v.rest))))))
