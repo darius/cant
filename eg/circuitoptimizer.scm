@@ -77,7 +77,7 @@
        (cons (- (pow2 shift) 1)
              (for each ((iv (tabulate-inputs (- n-inputs 1))))
                (.bit-or iv (.<< iv shift)))))))
-                   
+
 
 (superopt "0110" 3)
 (superopt "1011" 3)
