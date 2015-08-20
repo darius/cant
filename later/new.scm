@@ -856,10 +856,10 @@
 (define (fail text far i vals)
   (make failure
     ({.display}
-      (display "failed: ")
-      (write (text .slice 0 far))
-      (display "/")
-      (write (text .slice far)))
+     (display "failed: ")
+     (write (text .slice 0 far))
+     (display "/")
+     (write (text .slice far)))
     ({.invert}           empty)
     ({.else p text j vs} (p text far j vs))
     ({.continue p}       failure)
@@ -872,9 +872,9 @@
 (define (empty text far i vals)
   (make success
     ({.display} 
-      (write (text .slice i))
-      (display " ")
-      (write vals))
+     (write (text .slice i))
+     (display " ")
+     (write vals))
     ({.invert}           fail)
     ({.else p text j vs} success)
     ({.continue p}       (p text far i vals))
@@ -883,9 +883,9 @@
     ({.leftovers}        i)
     ({.opt-results}      vals)
     ({.result}
-      (if (= 1 vals.count)
-          vals.first
-          (error "Wrong # of results" vals)))))
+     (if (= 1 vals.count)
+         vals.first
+         (error "Wrong # of results" vals)))))
 
 (define ((invert p) text far i vals)
   (let p-result (p text far i vals))
@@ -964,7 +964,8 @@
 
 (let bal (hide
           (let sub-bal (delay (given () bal)))
-          (maybe (then (lit-1 #\() sub-bal (lit-1 #\)) sub-bal))))
+          (maybe
+           (then (lit-1 #\() sub-bal (lit-1 #\)) sub-bal))))
 
 (try bal "(abc")
 (try bal "()xyz")
@@ -1033,8 +1034,8 @@ hi)")
         (else
          (assert (< rank infinite-rank))
          (let index (ranks .push! rank))
-         ( if0s .push if0)
-         ( if1s .push if1)
+         (if0s .push! if0)
+         (if1s .push! if1)
          (memo-table .set! if1 index)
          index)))
 
