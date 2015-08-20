@@ -70,7 +70,7 @@
   ((a) a)
   ((a b) (a .+ b))
   ((& arguments)                        ;XXX syntax?
-   (foldr1 '.+ arguments)))             ;XXX is '.+ still reasonable?
+   (foldr1 '.+ arguments)))
 
 (make *
   (() 1)
