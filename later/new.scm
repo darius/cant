@@ -71,22 +71,19 @@
   (() 0)
   ((a) a)
   ((a b) (a .+ b))
-  ((& arguments)                        ;XXX syntax?
-   (foldr1 '.+ arguments)))
+  ((@arguments) (foldr1 '.+ arguments)))
 
 (make *
   (() 1)
   ((a) a)
   ((a b) (a .* b))
-  ((& arguments)
-   (foldr1 '.* arguments)))
+  ((@arguments) (foldr1 '.* arguments)))
 
 (make -
   (() (error "Bad arity"))
   ((a) (0 .- a))
   ((a b) (a .- b))
-  ((& arguments)
-   (foldl '.- arguments.first arguments.rest)))
+  ((@arguments) (foldl '.- arguments.first arguments.rest)))
 
 ;;XXX so shouldn't some of these be in list-trait?
 
@@ -134,14 +131,14 @@
       xs.first
       (f xs.first (foldr1 f tail))))
 
-(define (list<- & arguments)
+(define (list<- @arguments)
   arguments)
 
 (make chain
   (() '())
   ((xs) xs)
   ((xs ys) (xs .chain ys))
-  ((& arguments) (foldr1 '.chain arguments)))
+  ((@arguments) (foldr1 '.chain arguments)))
 
 (define (some ok? xs)
   (and (not xs.empty?)
@@ -187,9 +184,8 @@
            (v .set! i xs.first)
            (setting (+ i 1) xs.rest)))))
 
-(define (compose f g)
-  (given (& arguments)
-    (f (apply g arguments))))
+(define ((compose f g) @arguments)
+  (f (apply g arguments)))
 
 ;; XXX float contagion
 (define (min x y) (if (< x y) x y))
@@ -236,7 +232,7 @@
                       (if (= n 32) 5
                           (error "Bad argument" n))))))))
 
-(define (say & arguments)
+(define (say @arguments)
   (each! display arguments))
 
 (define (pow2 n)
@@ -895,9 +891,8 @@
   (let p-result (p text far i vals))
   (p-result .capture-from i))
 
-(define (folded<- combine)
-  (given (& arguments)
-    (foldr1 combine arguments)))
+(define ((folded<- combine) @arguments)
+  (foldr1 combine arguments))
 
 (let either
   (folded<- (define ((either p q) text far i vals)
@@ -1193,9 +1188,8 @@ hi)")
 ;; growable mutable vectors (have a better name?)
 ;; TODO: shrink capacity sometimes
 
-(let fillvector<-
-  (given (& arguments)
-    (fillvector<-vector (apply vector<- arguments))))
+(define (fillvector<- @arguments)
+  (fillvector<-vector (apply vector<- arguments)))
 
 (define (fillvector<-count start-count start-value)
   (fillvector<-vector (vector<-count start-count start-value)))
@@ -1478,7 +1472,7 @@ hi)")
 (let radix-map '((#\x 16) (#\X 16)      ;TODO: hashmap
                  (#\d 10) (#\D 10)
                  (#\o  8) (#\O  8)
-                 (#\b  2) (@\B  2)))
+                 (#\b  2) (#\B  2)))
 
 (set-read-macro #\#
   (given (port _)

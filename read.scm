@@ -231,11 +231,11 @@
 
     (install-read-macro #\'
       (lambda (port c)
-	(list 'quote (read port))))
+	(list 'quote (must-read port))))
     
     (install-read-macro #\`
       (lambda (port c)
-	(list 'quasiquote (read port))))
+	(list 'quasiquote (must-read port))))
 
     (install-read-macro #\,
       (lambda (port c)
@@ -243,7 +243,11 @@
 	 (if (eqv? (peek-char port) #\@)
 	     (begin (read-char port) 'unquote-splicing)
 	     'unquote)
-	 (read port))))
+	 (must-read port))))
+
+    (install-read-macro #\@
+      (lambda (port c)
+        XXX))                           ;to do
 
     (lambda opt:in-port
       (read (optional-arg opt:in-port (current-input-port))))))
