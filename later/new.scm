@@ -109,7 +109,7 @@
          '()
          xs))
 
-(define (each-chained f xs)
+(define (gather f xs)
   (foldr (given (x ys) (chain (f x) ys))
          '()
          xs))
@@ -712,7 +712,7 @@
 (define (parse words)
   (if words.empty?
       '()
-      (for each-chained ((rule (lexical-rules words.first)))
+      (for gather ((rule (lexical-rules words.first)))
         (extend-parse rule.lhs `(,words.first) words.rest '()))))
 
 ;; Look for the categories needed to complete the parse.
@@ -721,12 +721,12 @@
          ;; Return parse and upward extensions.
          (let tree (tree<- lhs rhs))
          (cons (parse<- tree rest)
-               (for each-chained ((rule (rules-starting-with lhs)))
+               (for gather ((rule (rules-starting-with lhs)))
                  (extend-parse rule.lhs `(,tree)
                                rest rule.rhs.rest))))
         (else
          ;; Try to extend rightward.
-         (for each-chained ((p (parse rest)))
+         (for gather ((p (parse rest)))
            (if (= p.lhs needed.first)
                (extend-parse lhs `(,@rhs ,p.tree)
                              p.remainder needed.rest)
@@ -1373,7 +1373,7 @@ hi)")
                  (given () (interleave ys xs.rest)))))
 
 (define ((both goal1 goal2) s)
-  (each-chained/lazy goal2 (goal1 s)))
+  (gather/lazy goal2 (goal1 s)))
 
 (define (cons/lazy x thunk)
   (make lazy-list
@@ -1383,7 +1383,7 @@ hi)")
     ;; ... XXX use list-trait? except it'd need a rewrite for laziness
     ))
 
-(define (each-chained/lazy f xs)
+(define (gather/lazy f xs)
   (foldr/lazy (given (x rest-thunk) (chain/lazy (f x) rest-thunk))
               (given () '())
               xs))
@@ -1590,7 +1590,7 @@ hi)")
                (NWORDS .maps? w))))
 
 (define (known-edits2 word)
-  (set<-list (for each-chained ((e1 (edits1 word)))
+  (set<-list (for gather ((e1 (edits1 word)))
                (for filter ((e2 (edits1 e1)))
                  (NWORDS .maps? e2)))))
 
@@ -1604,12 +1604,12 @@ hi)")
   (let transposes (for each (((a b) (for filter (((a b) splits))
                                       (< 1 b.count))))
                     (chain a (string<- (b 1) (b 0)) (b .slice 2))))
-  (let replaces   (for each-chained ((a b) splits)
+  (let replaces   (for gather ((a b) splits)
                     (if b.empty?
                         '()
                         (for each ((c alphabet))
                           (chain a (string<- c) (b .slice 1))))))
-  (let inserts    (for each-chained ((a b) splits)
+  (let inserts    (for gather ((a b) splits)
                     (for each ((c alphabet))
                       (chain a (string<- c) b))))
   (set<-list (chain deletes transposes replaces inserts)))
@@ -1637,7 +1637,7 @@ hi)")
       (hide
        (let states (box<- (set<- re)))
        (for some ((char chars))
-         (states .^= (set<-sequence (for each-chained ((state states.^))
+         (states .^= (set<-sequence (for gather ((state states.^))
                                       (after state char))))
          (some nullable? states.^)))))
 
