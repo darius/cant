@@ -178,7 +178,7 @@
 
 (define (vector<-list xs)
   (let v (vector<-count xs.count))
-  (recurse setting ((i 0) (xs xs))
+  (begin setting ((i 0) (xs xs))
     (cond (xs.empty? v)
           (else
            (v .set! i xs.first)
@@ -259,7 +259,7 @@
     (let R-input (vector<-count n-gates #no))
     (let found?  (box<- #no))
     (let wire    (chain inputs L-input))
-    (recurse sweeping ((gate 0))
+    (begin sweeping ((gate 0))
       (for each! ((L (range<- (+ n-inputs gate))))
         (let L-wire (wire L))
         (L-input .set! gate L)          ;XXX how about .:= or .<- or something?
@@ -1086,7 +1086,7 @@ hi)")
 (define (satisfy-first node goal)
   (let goal-node (constant<- goal))
   (let env (map<-))
-  (recurse walking ((node node))
+  (begin walking ((node node))
     (cond ((<= node lit1)
            (and (= node goal-node) env))
           (else
@@ -1169,13 +1169,13 @@ hi)")
 ;; XXX ugly
 (define (satisfy node goal)
   (let env (map<-))
-  (recurse walking ((node node))
+  (begin walking ((node node))
     (if node.constant-value
         (and (= goal node.constant-value)
              env)
-        (recurse trying ((rank node.rank)
-                         (value 0)
-                         (branches node.branches))
+        (begin trying ((rank node.rank)
+                       (value 0)
+                       (branches node.branches))
           (and (not branches.empty?)
                (cond ((`(#no ,goal) .maps-to? branches.first.constant-value)
                       (env .set! rank value)
@@ -1278,7 +1278,7 @@ hi)")
   (define (capacity) keys.^.count)
 
   (define (occupants)
-    (recurse walking ((i (- (capacity) 1)))
+    (begin walking ((i (- (capacity) 1)))
       (if (< i 0)
           '()
           (hide
@@ -1291,11 +1291,11 @@ hi)")
     (let h    key.hash)              ;XXX coerce to fixnum
     (let mask (- keys.^.count 1))
     (let i0   (mask .and h))
-    (recurse walking ((i i0))
+    (begin walking ((i i0))
       (let k (keys.^ i))
       (cond ((= k empty)
              (fail i))
-            ((= k key)             ;XXX
+            ((= k key)
              (succeed i))
             (else
              (let j (mask .and (- i 1)))
@@ -1431,7 +1431,7 @@ hi)")
 ;; '(' tree* ')' -- where we've just eaten the '('.
 ;; XXX the extra must-read is ugly
 (define (read-list port _)
-  (recurse read-rest ()
+  (begin reading ()
     (skip-blanks port)
     (let peek port.peek-char)
     (cond ((= peek eof)
@@ -1440,7 +1440,7 @@ hi)")
            port.read-char
            '())
           (else 
-           (cons (must-read port) (read-rest))))))
+           (cons (must-read port) (reading))))))
 
 (define (skip-blanks port) ;; and comments too
   XXX)
@@ -1493,7 +1493,7 @@ hi)")
 
 (set-read-macro #\"
   (given (port _)
-    (recurse loop ((prev-chars '()))    ;TODO use growable-vector
+    (begin scanning ((prev-chars '()))    ;TODO use growable-vector
       (let char port.read-char)
       (cond ((= char eof)
              (read-error port "Unexpected EOF in string constant"))
@@ -1509,11 +1509,11 @@ hi)")
                                  (#\t #\tab)
                                  (#\r #\return)))
                     => (given (pair)
-		         (loop (cons (pair 1) prev-chars))))
+		         (scanning (cons (pair 1) prev-chars))))
                    (else
                     (read-error port 
                                 "Unknown escape sequence in string"))))
-            (else (loop (cons char prev-chars)))))))
+            (else (scanning (cons char prev-chars)))))))
 
 (set-read-macro #\'
   (given (port _)
@@ -1820,7 +1820,7 @@ hi)")
   (let free-list (growable-vector<-))
   (let reg (vector<-count 8 0))         ;TODO: typed vector, for efficiency
 
-  (recurse running ((program program) (pc 0))
+  (begin running ((program program) (pc 0))
 
     (define (next)
       (running program (pc .u+ 1)))
@@ -1897,7 +1897,7 @@ hi)")
 
 (define (read-program in-port)
   (let program (growable-vector<-))
-  (recurse reading ()
+  (begin reading ()
     (let c3 in-port.read-char)
     (unless (= c3 none)
       (let c2 in-port.read-char)
@@ -1957,7 +1957,7 @@ hi)")
         ((variable? v)
          (extend s u v))
         ((and (list? u) (list? v) (= u.count v.count))
-         (recurse unifying ((s s) (u u) (v v))
+         (begin unifying ((s s) (u u) (v v))
            (cond (u.empty? s)
                  (else
                   (let s1 (unify s u.first v.first))
@@ -1967,7 +1967,7 @@ hi)")
 
 (define (reify s val)
   (let free-vars (map<-))
-  (recurse reifying ((val-in val))
+  (begin reifying ((val-in val))
     (let val (s .subst val))
     (cond ((variable? val)
            (unless (free-vars .maps? val)
