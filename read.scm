@@ -59,7 +59,7 @@
 (define (symbol-constituent? c)
   (or (char-alphabetic? c)
       (char-numeric? c)
-      (memv c '(#\! #\$ #\% #\^ #\& #\* #\/ #\? #\= #\+ #\- #\_ #\< #\>))))
+      (memv c '(#\! #\$ #\% #\^ #\& #\* #\/ #\? #\= #\+ #\- #\_ #\< #\> #\:))))
 
 (define (flush-input-line port)
   (let loop ()
@@ -164,13 +164,17 @@
                        (cue<- atom))
                       (else
                        (read-error "Bad syntax after '.'" atom))))
-              (read-error "Lone '.'")))))
+              (read-error "Lone '.'" c)))))
 
     (install-read-macro #\#
       (lambda (port c)
         ;; TODO: add back a syntax for non-decimal numbers
         (let ((next (read-char port)))
           (case next
+            ((#\x #\o)
+             ;;XXX just gonna get hex/octal-number literals to read
+             ;;without crashing for now
+             (read-atom port next))
             ((#\\)
              (let ((next (read-char port)))
                (if (and (char-alphabetic? next)
@@ -247,7 +251,7 @@
 
     (install-read-macro #\@
       (lambda (port c)
-        XXX))                           ;to do
+        (list '@ (must-read port))))    ;XXX for now
 
     (lambda opt:in-port
       (read (optional-arg opt:in-port (current-input-port))))))

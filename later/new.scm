@@ -510,7 +510,7 @@
     ({.eval-step r k} (debugging (value-step<- abstraction r k)))
     ({.evaluate r k}
      (k .take (make
-                ({.survey} `(,v -> ...))
+                ({.survey} `(,v -> <body>))
                 ({.call arg k2}
                  (body .evaluate (extend r v arg) k2))
                 ({.call-step arg k2}
