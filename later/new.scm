@@ -1602,7 +1602,7 @@ hi)")
                                       (not b.empty?))))
                     (chain a (b .slice 1))))
   (let transposes (for each (((a b) (for filter (((a b) splits))
-                                     (< 1 b.count))))
+                                      (< 1 b.count))))
                     (chain a (string<- (b 1) (b 0)) (b .slice 2))))
   (let replaces   (for each-chained ((a b) splits)
                     (if b.empty?
