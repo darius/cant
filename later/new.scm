@@ -1638,7 +1638,7 @@ hi)")
        (let states (box<- (set<- re)))
        (for some ((char chars))
          (states .^= (set<-sequence (for each-chained ((state states.^))
-                                        (after state char))))
+                                      (after state char))))
          (some nullable? states.^)))))
 
 (define (nullable? r)
