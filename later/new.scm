@@ -1530,7 +1530,7 @@ hi)")
     (list<- 'quasiquote (must-read port))))
 
 (set-read-macro #\,
-  (given (port char)
+  (given (port _)
     (list<- (cond ((= port.peek-char #\@)
                    port.read-char
                    'unquote-splicing)
