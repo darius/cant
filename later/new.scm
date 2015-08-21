@@ -1594,7 +1594,7 @@ hi)")
                (for filter ((e2 (edits1 e1)))
                  (NWORDS .maps? e2)))))
 
-(define (edits1 word)      ;TODO: real list comprehensions should help
+(define (edits1 word)
   (let splits     (for each ((i (range<- (+ word.count 1))))
                     `(,(word .slice 0 i)
                       ,(word .slice i))))
