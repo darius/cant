@@ -1,6 +1,10 @@
 (define (starts-with? form tag)
   (and (pair? form) (eq? (car form) tag)))
 
+(define (cue<- symbol)
+  ;;XXX define a new type instead
+  (string->symbol (string-append "." (symbol->string symbol))))
+
 (define (cue? x)
   (and (symbol? x)
        ;; XXX just gonna assume a 0-length symbol won't come up, here
@@ -105,3 +109,9 @@
 
 (define (%match-error)
   (error "Match failure"))
+
+;; XXX better name? record? struct? row? tagged tuple? glom? functor? (hah)
+(define-structure term tag parts)
+
+(define (term<-list list)
+  (make-term (car list) (cdr list)))
