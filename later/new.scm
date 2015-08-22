@@ -1236,14 +1236,14 @@ hi)")
      (vec.^ .copy! v lo bound))
 
     ;; XXX should be vector trait...
-    ({.empty?}         (= 0 (fillvector .count)))
+    ({.empty?}         (= 0 fillvector.count))
     ({.first}          (fillvector 0))
     ({.rest}           (fillvector .slice 1))
-    ({.copy! v}        (fillvector .copy! v 0 (v .count)))
-    ({.slice lo}       (fillvector .slice lo (fillvector .count)))
+    ({.copy! v}        (fillvector .copy! v 0 v.count))
+    ({.slice lo}       (fillvector .slice lo fillvector.count))
     ;; inefficient:
-    ({.chain v}        ((fillvector .snapshot) .chain v))
-    ({.slice lo bound} ((fillvector .snapshot) .slice lo bound))
+    ({.chain v}        (fillvector.snapshot .chain v))
+    ({.slice lo bound} (fillvector.snapshot .slice lo bound))
     ))
 
 
