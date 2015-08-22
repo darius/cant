@@ -27,38 +27,42 @@
     ({list es}
      (for each ((e1 es))
        (eval e1 r)))
-    ({term tag es}
-     (term<- tag (for each ((e1 es))
-                   (eval e1 r))))
+    ({term tag e1}
+     (term<- tag (eval e1 r)))
     ;; XXX make-trait?
     ))
 
 (define (match subject p r)
   (case p
-    ({match-any}
+    ({any-pat}
      #yes)
-    ({match-var name}
+    ({variable-pat name}
      (env-resolve! r name subject)
      #yes)
-    ({match-constant value}
+    ({constant-pat value}
      (= subject value))
-    ({match-list ps}                    ;XXX what about @vars?
+    ({count-pat n}
+     (and (list? subject) (= subject.count n)))
+    ({prefix-pat ps p-rest}
      (and (list? subject)
-          (match-all subject ps r)))
-    ({match-term tag ps}
+          (match-prefix subject ps p-rest r)))
+    ({term-pat tag p-args}
      (and (term? subject)
-          (match subject.tag tag r)     ;XXX make this always constant?
-          (match-all subject.arguments ps r)))
-    ({match-view e p1}
+          (match subject.tag tag r)
+          (match subject.arguments p-args r)))
+    ({view-pat e p1}
      (match (call (eval e r) subject)  ;;XXX (list<- subject)?
             p1 r))
-    ;; I'm not sure we don't need more pattern types to be comfy
     ))
 
-(define (match-all subjects ps r)
-  (and (= subjects.count ps.count)
-       (for every (((val p1) (zip subjects ps)))
-         (match val p1 r))))
+(define (match-prefix subjects ps p-rest r)
+  (and (list? subjects)
+       (<= subjects.count ps.count)
+       (begin matching ((subjects subjects) (ps ps))
+         (if ps.empty?
+             (match subjects p-rest r)
+             (and (match subjects.first ps.first r)
+                  (matching subjects.rest ps.rest))))))
 
 (define (exp-vars-defined e)
   (case e
@@ -69,20 +73,18 @@
 
 (define (pat-vars-defined p)
   (case p
-    ({match-any}
+    ({any-pat}
      '())
-    ({match-var name}
+    ({variable-pat name}
      `(,name))
-    ({match-constant value}
+    ({constant-pat value}
      '())
-    ({match-list ps}                    ;XXX what about @vars?
-     (gather pat-vars-defined ps))
-    ({match-term tag ps}
-     (chain (pat-vars-defined tag)
-            (gather pat-vars-defined ps)))
-    ({match-view e p1}
+    ({count-pat n}
+     '())
+    ({prefix-pat ps p-rest}
+     (chain (gather pat-vars-defined ps) (pat-vars-defined p-rest)))
+    ({term-pat tag p-args}
+     (chain (pat-vars-defined tag) (pat-vars-defined p-args)))
+    ({view-pat e p1}
      (pat-vars-defined p1))
     ))
-
-;; TODO, probably: go back to allowing (let ...) anywhere, not only
-;; right inside a (hide) or a (sequence)
