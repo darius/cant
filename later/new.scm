@@ -875,7 +875,7 @@
     ({.else p text j vs} success)
     ({.continue p}       (p text far i vals))
     ({.capture-from j}   (empty text far i `(,@vals ,(text .slice j i))))
-    ({.prefix pre-vals}  (empty text far i (chain pre-vals vals)))
+    ({.prefix pre-vals}  (empty text far i `(,@pre-vals ,@vals)))
     ({.leftovers}        i)
     ({.opt-results}      vals)
     ({.result}
