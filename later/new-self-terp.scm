@@ -59,10 +59,12 @@
   (and (list? subjects)
        (<= subjects.count ps.count)
        (begin matching ((subjects subjects) (ps ps))
-         (if ps.empty?
-             (match subjects p-rest r)
-             (and (match subjects.first ps.first r)
-                  (matching subjects.rest ps.rest))))))
+         (case ps
+           (()
+            (match subjects p-rest r))
+           ((first @rest)
+            (and (match subjects.first first r)
+                 (matching subjects.rest rest)))))))
 
 (define (exp-vars-defined e)
   (case e
