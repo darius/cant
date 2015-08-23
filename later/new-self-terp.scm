@@ -94,8 +94,7 @@
     ({view-pat e p1}
      (eval-match (call (eval e (parent-only r))
                        `(,subject))  ;;XXX or just subject?
-            p1 r))
-    ))
+            p1 r))))
 
 (define (match-prefix subjects ps p-rest r)
   (and (list? subjects)
@@ -110,10 +109,16 @@
 
 (define (exp-vars-defined e)
   (match e
-    ({let p e1} (pat-vars-defined p))
-    ({do e1 e2} (chain (exp-vars-defined e1)
-                       (exp-vars-defined e2)))
-    (_          '())))
+    ({constant _}  '())
+    ({variable _}  '())
+    ({make _ _ _}  '())
+    ({do e1 e2}    (chain (exp-vars-defined e1)
+                          (exp-vars-defined e2)))
+    ({let p _}     (pat-vars-defined p))
+    ({call e1 e2}  (chain (exp-vars-defined e1)
+                          (exp-vars-defined e2)))
+    ({list es}     (gather exp-vars-defined es))
+    ({term tag e1} (exp-vars-defined e1))))
 
 (define (pat-vars-defined p)
   (match p
@@ -129,6 +134,5 @@
      (chain (gather pat-vars-defined ps) (pat-vars-defined p-rest)))
     ({term-pat tag p-args}
      (chain (pat-vars-defined tag) (pat-vars-defined p-args)))
-    ({view-pat e p1}
-     (pat-vars-defined p1))
-    ))
+    ({view-pat _ p1}
+     (pat-vars-defined p1))))
