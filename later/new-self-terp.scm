@@ -7,13 +7,13 @@
   (make script
     ({.receive message parent-r}
      (begin matching ((clauses clauses))
-       (case clauses
+       (match clauses
          (()
           (delegate trait (actor<- script parent-r) message))
          (((pattern body) @rest)
           (let r (env-extend parent-r (chain (pat-vars-defined pattern)
                                              (exp-vars-defined body))))
-          (if (match message pattern r)
+          (if (eval-match message pattern r)
               (eval body r)
               (matching rest))))))
     ({.verify alleged-stamp}
@@ -29,7 +29,7 @@
   XXX)
 
 (define (eval e r)
-  (case e
+  (match e
     ({constant value}
      value)
     ({variable name}
@@ -44,7 +44,7 @@
      (eval e2 new-r))
     ({let p e1}
      (let value (eval e1 r))
-     (if (match value p r)
+     (if (eval-match value p r)
          value
          (error "Match failure" p value)))
     ({call e1 e2}
@@ -71,8 +71,8 @@
      #no)                               ;I guess
     (message (call r message))))
 
-(define (match subject p r)
-  (case p
+(define (eval-match subject p r)
+  (match p
     ({any-pat}
      #yes)
     ({variable-pat name}
@@ -87,11 +87,11 @@
           (match-prefix subject ps p-rest r)))
     ({term-pat tag p-args}
      (and (term? subject)
-          (match subject.tag tag r)
-          (match subject.arguments p-args r)))
+          (eval-match subject.tag tag r)
+          (eval-match subject.arguments p-args r)))
     ({view-pat e p1}
-     (match (call (eval e (parent-only r))
-                  `(,subject))  ;;XXX or just subject?
+     (eval-match (call (eval e (parent-only r))
+                       `(,subject))  ;;XXX or just subject?
             p1 r))
     ))
 
@@ -99,22 +99,22 @@
   (and (list? subjects)
        (<= subjects.count ps.count)
        (begin matching ((subjects subjects) (ps ps))
-         (case ps
+         (match ps
            (()
-            (match subjects p-rest r))
+            (eval-match subjects p-rest r))
            ((first @rest)
-            (and (match subjects.first first r)
+            (and (eval-match subjects.first first r)
                  (matching subjects.rest rest)))))))
 
 (define (exp-vars-defined e)
-  (case e
+  (match e
     ({let p e1}       (pat-vars-defined p))
     ({sequence e1 e2} (chain (exp-vars-defined e1)
                              (exp-vars-defined e2)))
     (_                '())))
 
 (define (pat-vars-defined p)
-  (case p
+  (match p
     ({any-pat}
      '())
     ({variable-pat name}

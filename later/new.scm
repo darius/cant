@@ -25,7 +25,7 @@
          (list.rest .slice (- i 1))))
     ({.slice i bound}     ;XXX result is a cons-list; be more generic?
      (assert (<= i 0))
-     (cond (list.empty? list)
+     (case (list.empty? list)
            ((<= bound i) '())
            ((= i 0) (cons list.first (list.rest .slice 0 (- bound 1))))
            (else (list.rest .slice 0 (- bound 1)))))
@@ -42,7 +42,7 @@
     ({.maps-to? value}
      (for some ((x list)) (= x value)))
     ({.find-key-for value}                  ;XXX name?
-     (cond (list.empty? (error "Missing key" value))
+     (case (list.empty? (error "Missing key" value))
            ((= value list.first) 0)
            (else (+ 1 (list.rest .find-key-for value)))))
     ;;...
@@ -179,10 +179,10 @@
 (define (vector<-list xs)
   (let v (vector<-count xs.count))
   (begin setting ((i 0) (xs xs))
-    (cond (xs.empty? v)
-          (else
-           (v .set! i xs.first)
-           (setting (+ i 1) xs.rest)))))
+    (if xs.empty?
+        v
+        (do (v .set! i xs.first)
+            (setting (+ i 1) xs.rest)))))
 
 (define ((compose f g) @arguments)
   (f (apply g arguments)))
@@ -267,7 +267,7 @@
           (let value (nand L-wire (wire R)))
           (R-input .set! gate R)
           (wire .set! (+ n-inputs gate) value)
-          (cond ((< (+ gate 1) n-gates)
+          (case ((< (+ gate 1) n-gates)
                  (sweeping (+ gate 1)))
                 ((= wanted (mask .and value))
                  (found? .^= #yes)
@@ -288,11 +288,10 @@
   ;; operators.
   (if (= n-inputs 0)
       '()
-      (hide
-       (let shift (pow2 (- n-inputs 1)))
-       (cons (- (pow2 shift) 1)
-             (for each ((iv (tabulate-inputs (- n-inputs 1))))
-               (iv .or (iv .<< shift)))))))
+      (do (let shift (pow2 (- n-inputs 1)))
+          (cons (- (pow2 shift) 1)
+                (for each ((iv (tabulate-inputs (- n-inputs 1))))
+                  (iv .or (iv .<< shift)))))))
 
 
 (superopt "0110" 3)
@@ -305,7 +304,7 @@
   ((parse lexp) .compile '(HALT)))
 
 (define (parse lexp)
-  (cond ((symbol? lexp)
+  (case ((symbol? lexp)
          (var-ref<- lexp))
         ((= (lexp 0) 'lambda)
          (abstraction<- ((lexp 1) 0)
@@ -397,7 +396,7 @@
   ((parse lexp) .compile global-static-env '(halt)))
 
 (define (parse lexp)
-  (case lexp
+  (match lexp
     ((: _ symbol?)
      (var-ref<- lexp))
     (('lambda (v) body)
@@ -465,7 +464,7 @@
 ;;  others  an AST or a value
 
 (define (parse lexp)
-  (cond ((symbol? lexp)
+  (case ((symbol? lexp)
          (var-ref<- lexp))
         ((number? lexp)
          (constant<- lexp))
@@ -582,7 +581,7 @@
   `((,v ,val) ,@r))
 
 (define (lookup r v k)
-  (cond ((assq v r) => (given (record) (k .take (record 1))))
+  (case ((assq v r) => (given (record) (k .take (record 1))))
         (else (debug k "Unbound var" v))))
 
 
@@ -595,7 +594,7 @@
 (define (next-command)
   (display "debug> ")
   (let cmds command-queue.^)
-  (cond (cmds.empty?
+  (case (cmds.empty?
          (newline)
          #no)
         (else
@@ -717,7 +716,7 @@
 
 ;; Look for the categories needed to complete the parse.
 (define (extend-parse lhs rhs rest needed)
-  (cond (needed.empty?
+  (case (needed.empty?
          ;; Return parse and upward extensions.
          (let tree (tree<- lhs rhs))
          (cons (parse<- tree rest)
@@ -1014,9 +1013,9 @@ hi)")
 (define (dedup memo k1 k2 k3)
   (define (enter map key)
     (or (map .get key)
-        (hide (let v (map<-))
-              (map .set! key v)
-              v)))
+        (do (let v (map<-))
+            (map .set! key v)
+            v)))
   (let mem1 (enter memo k1))
   (let mem2 (enter mem1 k2))
   (list<- (mem2 .get k3) mem2))
@@ -1025,14 +1024,13 @@ hi)")
 
 (define (build-choice rank if0 if1)
   (let (already memo-table) (dedup choice-memo rank if0 if1))
-  (cond (already)
-        (else
-         (assert (< rank infinite-rank))
-         (let index (ranks .push! rank))
-         (if0s .push! if0)
-         (if1s .push! if1)
-         (memo-table .set! if1 index)
-         index)))
+  (or already
+      (do (assert (< rank infinite-rank))
+          (let index (ranks .push! rank))
+          (if0s .push! if0)
+          (if1s .push! if1)
+          (memo-table .set! if1 index)
+          index)))
 
 (define (make-choice rank if0 if1)
   (if (= if0 if1)
@@ -1040,14 +1038,14 @@ hi)")
       (build-choice rank if0 if1)))
 
 (define (evaluate node env)             ;XXX name
-  (cond ((<= node lit1) node)
+  (case ((<= node lit1) node)
         (else
          (let value (env (ranks node)))
          (evaluate ((ifs value) node) env))))
 
 (define (do-choose node if0 if1)
-  (cond ((<= node lit1)
-         (case node
+  (case ((<= node lit1)
+         (match node
            (0 if0)                      ;N.B. 0 == lit0
            (1 if1)))
         ((= if0 if1)
@@ -1058,7 +1056,7 @@ hi)")
          (choose node if0 if1))))
 
 (define (subst rank replacement node)
-  (case (rank .compare (ranks node))
+  (match (rank .compare (ranks node))
     (-1 node)
     ( 0 (do-choose replacement (if0s node) (if1s node)))
     (+1 (make-choice (ranks node)
@@ -1069,29 +1067,28 @@ hi)")
 
 (define (choose node if0 if1)
   (let (already memo-table) (dedup choose-memo node if0 if1))
-  (cond (already)
-        (else
-         (assert (< lit1 node))
-         (let top (min (ranks node) (ranks if0) (ranks if1)))
-         (let on0 (do-choose (subst top lit0 node)
-                             (subst top lit0 if0)
-                             (subst top lit0 if1)))
-         (let on1 (do-choose (subst top lit1 node)
-                             (subst top lit1 if0)
-                             (subst top lit1 if1)))
-         (let result (make-choice top on0 on1))
-         (memo-table .set! if1 result)
-         result)))
+  (or already
+      (do (assert (< lit1 node))
+          (let top (min (ranks node) (ranks if0) (ranks if1)))
+          (let on0 (do-choose (subst top lit0 node)
+                              (subst top lit0 if0)
+                              (subst top lit0 if1)))
+          (let on1 (do-choose (subst top lit1 node)
+                              (subst top lit1 if0)
+                              (subst top lit1 if1)))
+          (let result (make-choice top on0 on1))
+          (memo-table .set! if1 result)
+          result)))
 
 (define (satisfy-first node goal)
   (let goal-node (constant<- goal))
   (let env (map<-))
   (begin walking ((node node))
-    (cond ((<= node lit1)
+    (case ((<= node lit1)
            (and (= node goal-node) env))
           (else
            (let if0 (if0s node))
-           (cond ((or (< lit1 if0) (= if0 goal-node))
+           (case ((or (< lit1 if0) (= if0 goal-node))
                   (env .set! (ranks node) 0)
                   (walking if0))
                  (else
@@ -1123,7 +1120,7 @@ hi)")
     ({.evaluate env}   ((branches (env rank)) .evaluate env))
     ({.branches}       branches)
     ({.choose nodes}
-     (cond ((all-same? nodes)
+     (case ((all-same? nodes)
             (nodes 0))
            ((= (each '.constant-value nodes)
                (range<- nodes.count))
@@ -1155,7 +1152,7 @@ hi)")
   (for each ((e nodes)) (subst rank value e)))
 
 (define (subst rank value node)
-  (cond ((< rank node.rank)
+  (case ((< rank node.rank)
          node) ; N.B. node must be a constant, iff we arrived here (XXX why?)
         ((= rank node.rank)
          (node.branches value))
@@ -1177,7 +1174,7 @@ hi)")
                        (value 0)
                        (branches node.branches))
           (and (not branches.empty?)
-               (cond ((`(#no ,goal) .maps-to? branches.first.constant-value)
+               (case ((`(#no ,goal) .maps-to? branches.first.constant-value)
                       (env .set! rank value)
                       (walking branches.first))
                      (else
@@ -1281,11 +1278,10 @@ hi)")
     (begin walking ((i (- (capacity) 1)))
       (if (< i 0)
           '()
-          (hide
-           (let k (keys.^ i))
-           (if (= k empty)
-               (walking (- i 1))
-               (cons i (walking (- i 1))))))))
+          (do (let k (keys.^ i))
+              (if (= k empty)
+                  (walking (- i 1))
+                  (cons i (walking (- i 1))))))))
 
   (define (find key succeed fail)
     (let h    key.hash)              ;XXX coerce to fixnum
@@ -1293,7 +1289,7 @@ hi)")
     (let i0   (mask .and h))
     (begin walking ((i i0))
       (let k (keys.^ i))
-      (cond ((= k empty)
+      (case ((= k empty)
              (fail i))
             ((= k key)
              (succeed i))
@@ -1434,7 +1430,7 @@ hi)")
   (begin reading ()
     (skip-blanks port)
     (let peek port.peek-char)
-    (cond ((= peek eof)
+    (case ((= peek eof)
            (read-error port "Unexpected EOF in list"))
           ((= peek #\) ) 
            port.read-char
@@ -1477,7 +1473,7 @@ hi)")
 (set-read-macro #\#
   (given (port _)
     (let peek port.peek-char)
-    (cond ((assq peek radix-map) ;XXX can conflict with read-hash-symbol
+    (case ((assq peek radix-map) ;XXX can conflict with read-hash-symbol
            => (given (pair)
                 port.read-char
                 (read-number port (pair 1))))
@@ -1495,13 +1491,13 @@ hi)")
   (given (port _)
     (begin scanning ((prev-chars '()))    ;TODO use growable-vector
       (let char port.read-char)
-      (cond ((= char eof)
+      (case ((= char eof)
              (read-error port "Unexpected EOF in string constant"))
             ((= char #\")
              (string<-list (reverse prev-chars)))
             ((= char #\\)
              (let next port.read-char)
-             (cond ((= next eof)
+             (case ((= next eof)
                     (read-error port "Unexpected EOF in escape sequence"))
                    ((assq next '((#\\ #\\)
                                  (#\" #\")
@@ -1531,7 +1527,7 @@ hi)")
 
 (set-read-macro #\,
   (given (port _)
-    (list<- (cond ((= port.peek-char #\@)
+    (list<- (case ((= port.peek-char #\@)
                    port.read-char
                    'unquote-splicing)
                   (else
@@ -1634,15 +1630,14 @@ hi)")
 
 (define (search re chars)
   (or (nullable? re)
-      (hide
-       (let states (box<- (set<- re)))
-       (for some ((char chars))
-         (states .^= (set<-sequence (for gather ((state states.^))
-                                      (after state char))))
-         (some nullable? states.^)))))
+      (do (let states (box<- (set<- re)))
+          (for some ((char chars))
+            (states .^= (set<-sequence (for gather ((state states.^))
+                                         (after state char))))
+            (some nullable? states.^)))))
 
 (define (nullable? r)
-  (case r
+  (match r
     ({empty}      #yes)
     ({literal _}  #no)
     ({either s t} (or (nullable? s) (nullable? t)))
@@ -1658,7 +1653,7 @@ hi)")
   (({star _})     #yes))
 
 (define (after r char)
-  (case r
+  (match r
     ({empty}       '())
     ({literal lit} (if (= char lit) '({empty}) '()))
     ({either s t}  (chain (after s char) (after t char)))
@@ -1680,7 +1675,7 @@ hi)")
 ;; tic-tac-toe, as a warmup.
 
 (define (tic-tac-toe player opponent grid)
-  (cond (grid.won?   (say grid.last-to-move " wins."))
+  (case (grid.won?   (say grid.last-to-move " wins."))
         (grid.drawn? (say "A draw."))
         (else
          (unless (`(,player ,opponent) .maps-to? human-play)
@@ -1708,20 +1703,20 @@ hi)")
 
 ;; TODO: memoize
 (define (drunk-value grid)
-  (cond (grid.won? -1)
-        (else
-         (let succs grid.successors)
-         (if succs.empty?
-             0
-             (- (average (each drunk-value succs)))))))
-      
+  (if grid.won?
+      -1
+      (do (let succs grid.successors)
+          (if succs.empty?
+              0
+              (- (average (each drunk-value succs)))))))
+
 (define (spock-value grid)
-  (cond (grid.won? -1)
-        (else
-         (let succs grid.successors)
-         (if succs.empty?
-             0
-             (- (minimum (each spock-value succs)))))))
+  (if grid.won?
+      -1
+      (do (let succs grid.successors)
+          (if succs.empty?
+              0
+              (- (minimum (each spock-value succs)))))))
 
 (define (average numbers)
   (/ (sum numbers) numbers.count))   ;TODO floats
@@ -1760,7 +1755,7 @@ hi)")
      (let marks (player-marks))
      (call '.format grid-format
            (for each ((pair (zip (player-bits p) (player-bits q))))
-             (case pair
+             (match pair
                ((1 0) (marks 0))
                ((0 1) (marks 1))
                ((0 0) #\.)))))
@@ -1783,7 +1778,7 @@ hi)")
   (filter identity xs))
 
 (define (zip xs ys)
-  (cond (xs.empty?
+  (case (xs.empty?
          (assert ys.empty? "Unequal list lengths" xs ys)
          '())
         (ys.empty?
@@ -1828,7 +1823,7 @@ hi)")
     (let inst (program pc))
     (let opcode (inst .u>> 28))
 
-    (case opcode
+    (match opcode
       (13 (reg .set! (7 .and (inst .u>> 25))
                (inst .and #x1FFFFFF))
           (next))
@@ -1836,7 +1831,7 @@ hi)")
        (let a (7 .and (inst .u>> 6)))
        (let b (7 .and (inst .u>> 3)))
        (let c (7 .and inst))
-       (case opcode
+       (match opcode
 
          (0 (when (not= (reg c) 0)
               (reg .set! a (reg b)))
@@ -1865,7 +1860,7 @@ hi)")
 
          (8 (let chunk (vector<-count (reg c) 0)) ;TODO: typed vector again
             (reg .set! b
-                 (cond ((free-list .empty?)
+                 (case ((free-list .empty?)
                         (mem .push! chunk))
                        (else
                         (let i (free-list .pop!))
@@ -1885,7 +1880,7 @@ hi)")
                   (if (= s none) #xFFFFFFFF (string<- s)))
              (next))
 
-         (12 (cond ((= (reg b) 0)
+         (12 (case ((= (reg b) 0)
                     (running program (reg c)))
                    (else
                     (let new-program ((mem (reg b)) .shallow-copy))
@@ -1951,17 +1946,17 @@ hi)")
 (define (unify s val1 val2)
   (let u (s .subst val1))
   (let v (s .subst val2))
-  (cond ((= u v) s)
+  (case ((= u v) s)
         ((variable? u)
          ((if (variable? v) extend-unchecked extend) s u v))
         ((variable? v)
          (extend s u v))
         ((and (list? u) (list? v) (= u.count v.count))
          (begin unifying ((s s) (u u) (v v))
-           (cond (u.empty? s)
-                 (else
-                  (let s1 (unify s u.first v.first))
-                  (and s1 (unifying s1 u.rest v.rest))))))
+           (if u.empty?
+               s
+               (do (let s1 (unify s u.first v.first))
+                   (and s1 (unifying s1 u.rest v.rest))))))
         (else
          (and (= u v) s))))
 
@@ -1969,7 +1964,7 @@ hi)")
   (let free-vars (map<-))
   (begin reifying ((val-in val))
     (let val (s .subst val))
-    (cond ((variable? val)
+    (case ((variable? val)
            (unless (free-vars .maps? val)
              (free-vars .set! val
                         (variable<- "_" free-vars.count)))
