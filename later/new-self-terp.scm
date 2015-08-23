@@ -3,17 +3,50 @@
 ;; p pattern
 ;; r environment
 
+(define (script<- stamp trait clauses)
+  (make self
+    ({.receive message parent-r}
+     (begin matching ((clauses clauses))
+       (case clauses
+         (()
+          (delegate trait (actor<- self parent-r) message))
+         (((pattern body) @rest)
+          (let r (env-extend parent-r (chain (pat-vars-defined pattern)
+                                             (exp-vars-defined body))))
+          (if (match message pattern r)
+              (eval body r)
+              (matching rest))))))))
+
+(define (actor<- script r)
+  (make _
+    (message
+     (script .receive message r))))
+
+(define (delegate trait self message)
+  XXX)
+
+(define (parent-only r)
+  (make _
+    ((name)
+     (assert (not (r .inner? name)))
+     (r name))
+    ({.let name value}
+     (assert #no))
+    ({.inner? name}
+     #no)                               ;I guess
+    (message (call r message))))
+
 (define (eval e r)
   (case e
     ({constant value}
      value)
     ({variable name}
      (r name))
-    ({make script}
-     (object<- script r))               ;XXX elaborate
-    ({hide e1}
-     (let new-r (env-extend-promises r (exp-vars-defined e1)))
-     (eval e1 new-r))
+    ({make stamp trait clauses}
+     (actor<- (script<- (eval stamp (parent-only r))
+                        (eval trait (parent-only r))
+                        clauses)
+              r))
     ({sequence e1 e2}
      (eval e1 new-r)
      (eval e2 new-r))
