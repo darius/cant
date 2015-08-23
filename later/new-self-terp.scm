@@ -41,7 +41,7 @@
                         (eval e-trait (parent-only r))
                         clauses)
               r))
-    ({sequence e1 e2}
+    ({do e1 e2}
      (eval e1 new-r)
      (eval e2 new-r))
     ({let p e1}
@@ -110,10 +110,10 @@
 
 (define (exp-vars-defined e)
   (match e
-    ({let p e1}       (pat-vars-defined p))
-    ({sequence e1 e2} (chain (exp-vars-defined e1)
-                             (exp-vars-defined e2)))
-    (_                '())))
+    ({let p e1} (pat-vars-defined p))
+    ({do e1 e2} (chain (exp-vars-defined e1)
+                       (exp-vars-defined e2)))
+    (_          '())))
 
 (define (pat-vars-defined p)
   (match p
