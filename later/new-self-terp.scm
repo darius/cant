@@ -4,7 +4,6 @@
 ;; r environment
 
 (define (script<- stamp trait clauses)
-  ;;XXX where does the stamp come in?
   (make script
     ({.receive message parent-r}
      (begin matching ((clauses clauses))
@@ -16,7 +15,10 @@
                                              (exp-vars-defined body))))
           (if (match message pattern r)
               (eval body r)
-              (matching rest))))))))
+              (matching rest))))))
+    ({.verify alleged-stamp}
+     ;;XXX this is probably crap; figure it out
+     (= stamp alleged-stamp))))
 
 (define (actor<- script r)
   (make _
@@ -32,9 +34,9 @@
      value)
     ({variable name}
      (r name))
-    ({make stamp trait clauses}
-     (actor<- (script<- (eval stamp (parent-only r))
-                        (eval trait (parent-only r))
+    ({make e-stamp e-trait clauses}
+     (actor<- (script<- (eval e-stamp (parent-only r))
+                        (eval e-trait (parent-only r))
                         clauses)
               r))
     ({sequence e1 e2}
