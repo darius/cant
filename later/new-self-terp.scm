@@ -87,7 +87,8 @@
           (match subject.tag tag r)
           (match subject.arguments p-args r)))
     ({view-pat e p1}
-     (match (call (eval e r) subject)  ;;XXX (list<- subject)?
+     (match (call (eval e (parent-only r))
+                  `(,subject))  ;;XXX or just subject?
             p1 r))
     ))
 
