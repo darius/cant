@@ -4,6 +4,7 @@
 ;; r environment
 
 (define (script<- stamp trait clauses)
+  ;;XXX where does the stamp come in?
   (make script
     ({.receive message parent-r}
      (begin matching ((clauses clauses))
@@ -43,7 +44,7 @@
      (let value (eval e1 r))
      (if (match value p r)
          value
-         (fail-match)))
+         (error "Match failure" p value)))
     ({call e1 e2}
      (call (eval e1 r) (eval e2 r)))
     ({list es}
