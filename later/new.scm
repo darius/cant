@@ -173,8 +173,8 @@
          ({.maps? i}
           (let j (+ first i))
           (and (<= first j) (< j limit))) ;XXX also, integer?
-          ;; ...
-          ))))
+         ;; ...
+         ))))
 
 (define (vector<-list xs)
   (let v (vector<-count xs.count))
