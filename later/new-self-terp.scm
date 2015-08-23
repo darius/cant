@@ -30,7 +30,7 @@
     ((name)
      (assert (not (r .inner? name)))
      (r name))
-    ({.let name value}
+    ({.bind name value}
      (assert #no))
     ({.inner? name}
      #no)                               ;I guess
@@ -70,7 +70,7 @@
     ({any-pat}
      #yes)
     ({variable-pat name}
-     (env-resolve! r name subject)
+     (r .bind name subject)
      #yes)
     ({constant-pat value}
      (= subject value))
