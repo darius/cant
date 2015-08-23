@@ -4,12 +4,12 @@
 ;; r environment
 
 (define (script<- stamp trait clauses)
-  (make self
+  (make script
     ({.receive message parent-r}
      (begin matching ((clauses clauses))
        (case clauses
          (()
-          (delegate trait (actor<- self parent-r) message))
+          (delegate trait (actor<- script parent-r) message))
          (((pattern body) @rest)
           (let r (env-extend parent-r (chain (pat-vars-defined pattern)
                                              (exp-vars-defined body))))
