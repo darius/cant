@@ -593,14 +593,14 @@
 
 (define (next-command)
   (display "debug> ")
-  (let cmds command-queue.^)
-  (case (cmds.empty?
-         (newline)
-         #no)
-        (else
-         (print cmds.first)
-         (command-queue .^= cmds.rest)
-         cmds.first)))
+  (match command-queue.^
+    (()
+     (newline)
+     #no)
+    ((first @rest)
+     (print first)
+     (command-queue .^= rest)
+     first)))
 
 (define (debug k plaint irritant)
   (complain plaint irritant)
@@ -743,9 +743,9 @@
     ({.lhs} lhs)
     ({.rhs} rhs)
     ({.starts-with? cat}
-     (and (list? rhs)
-          (not rhs.empty?)
-          (= rhs.first cat)))))
+     (match rhs
+       ((first @_) (= first cat))
+       (_ #no)))))
 
 ;; A parse tree and a remainder.
 (define (parse<- tree remainder)
@@ -1778,14 +1778,10 @@ hi)")
   (filter identity xs))
 
 (define (zip xs ys)
-  (case (xs.empty?
-         (assert ys.empty? "Unequal list lengths" xs ys)
-         '())
-        (ys.empty?
-         (error "Unequal list lengths" xs ys))
-        (else
-         (cons `(,xs.first ,ys.first)
-               (zip xs.rest ys.rest)))))
+  (match `(,xs ,ys)
+    ((() ()) '())
+    (((x @xs1) (y @ys1))
+     `((,x ,y) ,@(zip xs1 ys1)))))
 
 (define (identity x)
   x)
