@@ -4,6 +4,8 @@
 ;; r environment
 
 (define (script<- stamp trait clauses)
+  (when stamp (assert (stamp? stamp)))
+  (assert (trait? trait))
   (make script
     ({.receive message parent-r}
      (begin matching ((clauses clauses))
