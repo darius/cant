@@ -304,14 +304,14 @@
   ((parse lexp) .compile '(HALT)))
 
 (define (parse lexp)
-  (case ((symbol? lexp)
-         (var-ref<- lexp))
-        ((= (lexp 0) 'lambda)
-         (abstraction<- ((lexp 1) 0)
-                        (parse (lexp 2))))
-        (else
-         (call<- (parse (lexp 0))
-                 (parse (lexp 1))))))
+  (match lexp
+    ((: symbol?)
+     (var-ref<- lexp))
+    (('lambda (v) body)
+     (abstraction<- v (parse body)))
+    ((operator operand)
+     (call<- (parse operator)
+             (parse operand)))))
 
 ;; Variable reference
 (define (var-ref<- v)
@@ -330,7 +330,7 @@
   (make
     ({.compile k}
      (let code (operator .compile (operand .compile '(call))))
-     (if (= k.first 'RET)
+     (if (= k '(RET))
          code
          `(SAVE ,code.count ,@code ,@k)))))
 
@@ -397,7 +397,7 @@
 
 (define (parse lexp)
   (match lexp
-    ((: _ symbol?)
+    ((: symbol?)
      (var-ref<- lexp))
     (('lambda (v) body)
      (abstraction<- v (parse body)))
@@ -425,7 +425,7 @@
   (make ({.free-vars} (union operator.free-vars operand.free-vars))
         ({.compile s k}
          (let code (operand .compile s (operator .compile s '(invoke))))
-         (if (= k.first 'return)
+         (if (= k '(return))
              code
              `(pushcont ,code.count ,@code ,@k)))))
 
@@ -464,16 +464,16 @@
 ;;  others  an AST or a value
 
 (define (parse lexp)
-  (case ((symbol? lexp)
-         (var-ref<- lexp))
-        ((number? lexp)
-         (constant<- lexp))
-        ((= (lexp 0) 'lambda)
-         (abstraction<- ((lexp 1) 0)
-                        (parse (lexp 2))))
-        (else
-         (call<- (parse (lexp 0))
-                 (parse (lexp 1))))))
+  (match lexp
+    ((: symbol?)
+     (var-ref<- lexp))
+    ((: number?)
+     (constant<- lexp))
+    (('lambda (v) body)
+     (abstraction<- v (parse body)))
+    ((operator operand)
+     (call<- (parse operator)
+             (parse operand)))))
 
 (define (interpret lexp)
   ((parse lexp) .evaluate global-env halt))
