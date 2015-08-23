@@ -25,17 +25,6 @@
 (define (delegate trait self message)
   XXX)
 
-(define (parent-only r)
-  (make _
-    ((name)
-     (assert (not (r .inner? name)))
-     (r name))
-    ({.bind name value}
-     (assert #no))
-    ({.inner? name}
-     #no)                               ;I guess
-    (message (call r message))))
-
 (define (eval e r)
   (case e
     ({constant value}
@@ -64,6 +53,20 @@
      (term<- tag (eval e1 r)))
     ;; XXX make-trait?
     ))
+
+;; Enforce that only r's parent is accessed. In practice this'd be a
+;; static analysis. Later on, this arbitrary implementation
+;; restriction might be dropped.
+(define (parent-only r)
+  (make _
+    ((name)
+     (assert (not (r .inner? name)))
+     (r name))
+    ({.bind name value}
+     (assert #no))
+    ({.inner? name}
+     #no)                               ;I guess
+    (message (call r message))))
 
 (define (match subject p r)
   (case p
