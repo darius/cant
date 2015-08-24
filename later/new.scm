@@ -770,10 +770,8 @@
 (let *grammar* (box<- '()))
 
 (define (grammar<- sexprs)
-  (for each ((s sexprs))
-    (assert (= (s 1) '->) "Bad rule syntax" s)
-    (assert (= s.count 3) "Bad rule syntax" s)
-    (rule<- (s 0) (s 2))))
+  (for each (((lhs '-> rhs) sexprs))
+    (rule<- lhs rhs)))
 
 
 ;; Example grammars
