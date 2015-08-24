@@ -94,7 +94,7 @@
     ({view-pat e p1}
      (eval-match (call (eval e (parent-only r))
                        `(,subject))  ;;XXX or just subject?
-            p1 r))))
+                 p1 r))))
 
 (define (match-prefix subjects ps p-rest r)
   (and (list? subjects)
