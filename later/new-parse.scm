@@ -55,19 +55,15 @@
     ((': p1 e)
      {and-pat (parse-pat p1)
               {view-pat (parse-exp e1) {constant-pat #yes}}})
+    ;; N.B. an @pattern should be disjoint from all the above
     ))
 
 (define (parse-list-pat ps)
-  (begin parsing ((results '()) (ps ps))
-    (match ps
-      (()
-       (list-pat<- (reverse results)))
-      (((: p at-variable?))
-       {prefix-pat (reverse results) (parse-pat p.argument)})
-      (((: _ at-variable?) @_)
-       (error "@pattern not at end of list" ps))
-      ((p rest)
-       (parsing (cons (parse-pat p) results) rest)))))
+  (match (reverse ps)
+    (((: p at-variable?) @rest)
+     {prefix-pat (reverse (each parse-pat rest))
+                 (parse-pat p.argument)})
+    (_ (list-pat<- (each parse-pat ps)))))
 
 (define (list-pat<- ps)
   {and-pat {count-pat ps.count}
