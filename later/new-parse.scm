@@ -61,7 +61,7 @@
 (define (parse-list-pat ps)
   (match (reverse ps)
     (((: p at-variable?) @rest)
-     {prefix-pat (reverse (each parse-pat rest))
+     {prefix-pat (each parse-pat (reverse rest))
                  (parse-pat p.argument)})
     (_ (list-pat<- (each parse-pat ps)))))
 
