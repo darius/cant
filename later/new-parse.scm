@@ -82,7 +82,8 @@
 (define (look-up-macro key)
   (match key
     ('hide   (make
-              XXX))
+              ((_ @es)
+               `((given () ,@es)))))
     ('include (make             ;temporary
                ((_ (: filename string?))
                 `(do ,@(snarf filename)))))
