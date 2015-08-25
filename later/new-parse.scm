@@ -47,14 +47,14 @@
      {constant-pat p})
     (('quote datum)
      {constant-pat datum})
-    ((@ps)
-     (parse-list-pat ps))
     ((': p1 e p2)
      {and-pat (parse-pat p1)
               {view-pat (parse-exp e1) (parse-pat p2)}})
     ((': p1 e)
      {and-pat (parse-pat p1)
               {view-pat (parse-exp e1) {constant-pat #yes}}})
+    ((@ps)
+     (parse-list-pat ps))
     ;; N.B. an @pattern should be disjoint from all the above
     ))
 
