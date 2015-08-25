@@ -91,6 +91,9 @@
      (and (term? subject)
           (eval-match subject.tag tag r)
           (eval-match subject.arguments p-args r)))
+    ({and-pat p1 p2}
+     (and (eval-match subject p1 r)
+          (eval-match subject p2 r)))
     ({view-pat e p1}
      (eval-match (call (eval e (parent-only r))
                        `(,subject))  ;;XXX or just subject?
@@ -134,5 +137,7 @@
      (chain (gather pat-vars-defined ps) (pat-vars-defined p-rest)))
     ({term-pat tag p-args}
      (chain (pat-vars-defined tag) (pat-vars-defined p-args)))
+    ({and-pat p1 p2}
+     (chain (pat-vars-defined p1) (pat-vars-defined p2)))
     ({view-pat _ p1}
      (pat-vars-defined p1))))

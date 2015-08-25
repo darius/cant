@@ -8,11 +8,11 @@
      => (given (expand) (parse-exp (expand e))))
     (else
      (match e
-       ((: symbol?)
+       ((: _ symbol?)
         {variable e})
        (('quote datum)
         {constant datum})
-       ((: self-evaluating?)
+       ((: _ self-evaluating?)
         {constant e})
        (('let p e1)
         {let (parse-pat p) (parse-exp e1)})
@@ -32,9 +32,8 @@
        ((addressee @operands)
         {call (parse-exp addressee)
               {list (each parse-exp operands)}})
-       ;; TODO:
-       ;; term expressions
-       ;; what's the concrete syntax for view patterns?
+       ((: _ term?)
+        {term e.tag {list (each parse-exp e.arguments)}})
        ))))
 
 ;; what's the syntax for a macro in pattern context?
@@ -42,16 +41,33 @@
   (match p
     ('_
      {any-pat})
-    ((: symbol?)
+    ((: _ symbol?)
      {variable-pat p})
-    ((: self-evaluating?)
+    ((: _ self-evaluating?)
      {constant-pat p})
     (('quote datum)
      {constant-pat datum})
     ((@ps)
-     ;; XXX what about @ patterns?
-     (list-pat<- (each parse-pat ps)))
+     (parse-list-pat ps))
+    ((': p1 e p2)
+     {and-pat (parse-pat p1)
+              {view-pat (parse-exp e1) (parse-pat p2)}})
+    ((': p1 e)
+     {and-pat (parse-pat p1)
+              {view-pat (parse-exp e1) {constant-pat #yes}}})
     ))
+
+(define (parse-list-pat ps)
+  (begin parsing ((results '()) (ps ps))
+    (match ps
+      (()
+       (list-pat<- (reverse results)))
+      (((: p at-variable?))
+       {prefix-pat (reverse results) (parse-pat p.argument)})
+      (((: _ at-variable?) @_)
+       (error "@pattern not at end of list" ps))
+      ((p rest)
+       (parsing (cons (parse-pat p) results) rest)))))
 
 (define (list-pat<- ps)
   {and-pat {count-pat ps.count}
@@ -129,7 +145,7 @@
     (_ #no)))
 
 (define (parse-bindings bindings)
-  (for each! (((: symbol?) _) bindings)
+  (for each! (((: _ symbol?) _) bindings)
     'ok)
   `(,(each '.first bindings) ,(each second bindings)))
 
