@@ -166,7 +166,7 @@
     (_ `(',cons ,qq-car ,qq-cdr))))
 
 (define (reuse-cons pair car cdr)
-  (if (and (= (pair .first) car)
-           (= (pair .rest) cdr))
+  (if (and (= pair.first car)
+           (= pair.rest cdr))
       pair
       (cons car cdr)))
