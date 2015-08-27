@@ -31,9 +31,20 @@
       (let walk ((i (- len 1)) (L L))
         (if (< i 0)
             (or (string->number s)
+                (prefixed-string->number "0x" 16 s)
+                (prefixed-string->number "0o"  8 s)
+                (prefixed-string->number "0b"  2 s)
                 (string->symbol s))
             (begin (string-set! s i (car L))
                    (walk (- i 1) (cdr L)))))))
+
+  (define (prefixed-string->number prefix radix s)
+    (let ((pn (string-length prefix))
+          (sn (string-length s)))
+      (and (string=? (substring s 0 (min pn sn))
+                     prefix)
+           (string->number (substring s pn sn)
+                           radix))))
 
   (define (combine prefix atom)
     (cond (prefix
@@ -169,13 +180,8 @@
 
     (install-read-macro #\#
       (lambda (port c)
-        ;; TODO: add back a syntax for non-decimal numbers
         (let ((next (read-char port)))
           (case next
-            ((#\x #\o)
-             ;;XXX just gonna get hex/octal-number literals to read
-             ;;without crashing for now
-             (read-atom port next))
             ((#\\)
              (let ((next (read-char port)))
                (if (and (char-alphabetic? next)

@@ -1002,7 +1002,7 @@ hi)")
           "Not binary" value)
   value)
 
-(let infinite-rank #x7fffffff)
+(let infinite-rank 0x7fffffff)
 (let ranks (fillvector<- infinite-rank infinite-rank))
 (let if0s  (fillvector<- lit0 lit1))
 (let if1s  (fillvector<- lit0 lit1))
@@ -1417,7 +1417,7 @@ hi)")
   (the-readtable .set! char.code reader))
 
 (define (read port)
-  (let char port.read-char))
+  (let char port.read-char)
   (if (= char eof)
       eof
       ((the-readtable char.code) port char)))
@@ -1560,7 +1560,7 @@ hi)")
 (define (call<- cue addressee operands)
   (make
     ({.evaluate r}
-     (call cue (addressee .evaluate r) (map '.evaluate operands))))))
+     (call cue (addressee .evaluate r) (map '.evaluate operands)))))
 
 
 ;; spell1.scm
@@ -1762,7 +1762,7 @@ hi)")
 (let grid-format ("\n" .join (for each ((_ (range<- 3)))
                                " %s %s %s")))
 
-(let ways-to-win '(#o700 #o070 #o007 #o444 #o222 #o111 #o421 #o124))
+(let ways-to-win '(0o700 0o070 0o007 0o444 0o222 0o111 0o421 0o124))
 
 (let empty-grid (grid<- 0 0))
 
@@ -1819,7 +1819,7 @@ hi)")
 
     (match opcode
       (13 (reg .set! (7 .and (inst .u>> 25))
-               (inst .and #x1FFFFFF))
+               (inst .and 0x1FFFFFF))
           (next))
       (_
        (let a (7 .and (inst .u>> 6)))
@@ -1871,7 +1871,7 @@ hi)")
 
          (11 (let s in-port.read-char)
              (reg .set! c
-                  (if (= s none) #xFFFFFFFF (string<- s)))
+                  (if (= s none) 0xFFFFFFFF (string<- s)))
              (next))
 
          (12 (case ((= (reg b) 0)
@@ -1895,7 +1895,7 @@ hi)")
       ;; TODO: a syntax for int-guard coercion instead?
       (program .push!
                (u32<-bytes c3.code c2.code c1.code c0.code))
-      (reading)))))
+      (reading)))
   program)                              ;TODO: snapshot it
 
 (define (u32<-bytes b3 b2 b1 b0)
