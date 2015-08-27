@@ -6,6 +6,7 @@
 ;;   c      a character (or possibly an EOF object)
 
 ;; XXX error reporting could be a lot better
+;; XXX symbol as anything that doesn't parse as a number, that's error-prone
 
 (define (skip-blanks port)
   (let loop ()
