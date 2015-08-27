@@ -115,3 +115,6 @@
 
 (define (term<-list list)
   (make-term (car list) (cdr list)))
+
+(define (term<- tag . parts)
+  (make-term tag parts))
