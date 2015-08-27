@@ -1,11 +1,13 @@
 ;; Like elaborate.scm for the new scheme
 
+(include "gambit-macros.scm")
+
 (define (parse-exp e)
   (cond
     ((and (pair? e) (look-up-macro (car e)))
      => (lambda (expand) (parse-exp (expand e))))
     (else
-     (match e
+     (mcase e
        ((: _ symbol?)
         (term<- 'variable e))
        (('quote datum)
@@ -42,7 +44,7 @@
 
 ;; what's the syntax for a macro in pattern context?
 (define (parse-pat p)
-  (match p
+  (mcase p
     ('_
      (term<- 'any-pat))
     ((: _ symbol?)
@@ -64,7 +66,7 @@
     ))
 
 (define (parse-list-pat ps)
-  (match (reverse ps)
+  (mcase (reverse ps)
     (((: p at-variable?) . rest)
      (term<- 'prefix-pat (map parse-pat (reverse rest))
                  (parse-pat p.argument)))
@@ -82,49 +84,49 @@
       (string? x)))
 
 (define (look-up-macro key)
-  (match key
-    ('hide   (make
+  (mcase key
+    ('hide   (mlambda
               ((_ . es)
                `((given () ,@es)))))
-    ('include (make             ;temporary
+    ('include (mlambda             ;temporary
                ((_ (: filename string?))
                 `(do ,@(snarf filename)))))
-    ('define (make
+    ('define (mlambda
               ((_ ((: v symbol?) . params) . body)
                `(make ,v (,params ,@body)))
               ((_ (call-form . params) . body)
                `(define ,call-form (given ,params ,@body)))))
-    ('given  (make
+    ('given  (mlambda
               ((_ vars . body)
                `(make (,vars ,@body)))))
-    ('with   (make
+    ('with   (mlambda
               ((_ bindings . body)
                (parse-bindings bindings
                  (lambda (ps es)
                    `((given ,ps ,@body) ,@es))))))
-    ('for    (make
+    ('for    (mlambda
               ((_ fn bindings . body)
                (parse-bindings bindings
                  (lambda (ps es)
                    `(,fn (given ,ps ,@body) ,@es))))))
-    ('begin  (make
+    ('begin  (mlambda
               ((_ (: proc symbol?) bindings . body)
                (parse-bindings bindings
                  (lambda (ps es)
                    `((hide (define (,proc ,@ps) ,@body))
                      ,@es))))))
-    ('if     (make
+    ('if     (mlambda
               ((_ test if-so if-not)
                `((',boolean<- ,test)
                  .choose (given () ,if-so)
                          (given () ,if-not)))))
-    ('when   (make
+    ('when   (mlambda
               ((_ test . body)
                `(if ,test (do ,@body) #f))))
-    ('unless (make
+    ('unless (mlambda
               ((_ test . body)
                `(if ,test #f (do ,@body)))))
-    ('case   (make
+    ('case   (mlambda
               ((_) #f)                 ;TODO: generate an error-raising?
               ((_ ('else . es)) `(do ,@es))
               ((_ (e) . clauses) `(or ,e (case ,@clauses)))
@@ -136,30 +138,30 @@
                         (case ,@clauses)))))
               ((_ (e . es) . clauses)
                `(if ,e (do ,@es) (case ,@clauses)))))
-    ('and    (make
+    ('and    (mlambda
               ((_) #t)
               ((_ e) e)
               ((_ e . es) `(if ,e (do ,@es) #f))))
-    ('or     (make
+    ('or     (mlambda
               ((_) #f)
               ((_ e) e)
               ((_ e . es)
-               (let t (gensym))
-               `(with ((,t ,e)) (if ,t ,t (do ,@es))))))
-    ('quasiquote (make
+               (let ((t (gensym)))
+                 `(with ((,t ,e)) (if ,t ,t (do ,@es)))))))
+    ('quasiquote (mlambda
                   ((_ q) (expand-quasiquote q))))
     (_ #f)))
 
 (define (parse-bindings bindings receiver)
   (for-each (lambda (binding)
-              (match binding
+              (mcase binding
                 (((: _ symbol?) _)
                  'ok)))
             bindings)
   (receiver (map car bindings) (map cadr bindings)))
 
 (define (expand-quasiquote e)
-  (match e
+  (mcase e
     (('unquote e1) e1)
     ((('unquote-splicing e1)) e1)
     ((('unquote-splicing e1) . qcdr)
@@ -170,7 +172,7 @@
     (else `',e)))
 
 (define (qq-cons pair qq-car qq-cdr)
-  (match `(,qq-car ,qq-cdr)
+  (mcase `(,qq-car ,qq-cdr)
     ((('quote a) ('quote d))
      `',(reuse-cons pair a d))
     (_ `(',cons ,qq-car ,qq-cdr))))
