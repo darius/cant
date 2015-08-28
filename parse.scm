@@ -90,7 +90,7 @@
                `((given () ,@es)))))
     ('include (mlambda             ;temporary
                ((_ (: filename string?))
-                `(do ,@(snarf filename)))))
+                `(do ,@(snarf filename squeam-read)))))
     ('define (mlambda
               ((_ ((: v symbol?) . params) . body)
                `(make ,v (,params ,@body)))

@@ -67,7 +67,7 @@
            (('make . clauses)
             (then (elaborate-make #f clauses) sequel))
            (('include filename)
-            (elaborate context `(begin . ,(snarf filename)) sequel))
+            (elaborate context `(begin . ,(snarf filename read)) sequel))
            (('begin e1 . es)
             (elaborate context e1
                        (if (null? es)

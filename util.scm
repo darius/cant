@@ -49,13 +49,13 @@
       (cons (car ls) 
             (remove-nth (cdr ls) (- n 1)))))
 
-(define (snarf filename)
+(define (snarf filename reader)
   (call-with-input-file filename
     (lambda (port)
-      (let reading ((form (read port)))
+      (let reading ((form (reader port)))
         (if (eof-object? form)
             '()
-            (cons form (reading (read port))))))))
+            (cons form (reading (reader port))))))))
 
 (define (string-join between strings)
   (if (null? strings)

@@ -6,7 +6,7 @@
   (run-load "traceback.scm"))
 
 (define (run-load filename)
-  (evaluate (elaborate-top-level (snarf filename))
+  (evaluate (elaborate-top-level (snarf filename read))
             '()))
 
 (define (interpret e)
