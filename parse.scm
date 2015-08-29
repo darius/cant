@@ -26,6 +26,8 @@
         (term<- 'let name (parse-make name clauses)))
        (('make . clauses)
         (parse-make #f clauses))
+       (('make-trait (: name symbol?) (: self symbol?) . clauses)
+        (parse-make-trait name self clauses))
        (('do e1)
         (parse-exp e1))
        (('do e1 . es)
@@ -63,18 +65,21 @@
      (error "An @-pattern must be at the end of a list" p))
     ((: _ list?)
      (parse-list-pat p))
+    ((: _ term?)
+     (term<- 'term-pat (term-tag p) (parse-list-pat (term-parts p))))
     ))
 
 (define (parse-list-pat ps)
   (mcase (reverse ps)
-    (((: p at-variable?) . rest)
-     (term<- 'prefix-pat (map parse-pat (reverse rest))
-                 (parse-pat p.argument)))
+    ((('@ p) . rest)
+     (term<- 'prefix-pat
+             (map parse-pat (reverse rest))
+             (parse-pat p)))
     (_ (list-pat<- (map parse-pat ps)))))
 
 (define (list-pat<- ps)
   (term<- 'and-pat
-          (term<- 'count-pat ps.count)
+          (term<- 'count-pat (length ps))
           (term<- 'prefix-pat ps (term<- 'any-pat))))
 
 (define (self-evaluating? x)
@@ -82,6 +87,17 @@
       (number? x)
       (char? x)
       (string? x)))
+
+(define (parse-make opt-name clauses)
+  (term<- 'make opt-name (map parse-clause clauses)))
+
+(define (parse-make-trait name self clauses)
+  (term<- 'make-trait name self (map parse-clause clauses)))
+
+(define (parse-clause clause)
+  (mcase clause
+    ((pat . body)
+     `(,(parse-pat pat) ,(parse-exp `(do ,@body))))))
 
 (define (look-up-macro key)
   (mcase key

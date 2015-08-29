@@ -33,7 +33,7 @@
         {call (parse-exp addressee)
               {list (each parse-exp operands)}})
        ((: _ term?)
-        {term e.tag {list (each parse-exp e.arguments)}})
+        {term e.tag {list (each parse-exp e.parts)}})
        ))))
 
 ;; what's the syntax for a macro in pattern context?
@@ -56,6 +56,8 @@
     ((@ps)
      (parse-list-pat ps))
     ;; N.B. an @pattern should be disjoint from all the above
+    ((: _ term?)
+     {term-pat e.tag (parse-list-pat e.parts)})
     ))
 
 (define (parse-list-pat ps)

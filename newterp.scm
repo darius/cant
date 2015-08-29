@@ -136,3 +136,6 @@
 
 (define halt-cont
   'XXX)
+
+(define (ev e r k)
+  'XXX)
