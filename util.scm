@@ -105,10 +105,10 @@
                   (else
                    (test-constant pattern)))))))
 
-    (foldr expand-clause '(%match-error) clauses)))
+    (foldr expand-clause `(%match-error ,subject) clauses)))
 
-(define (%match-error)
-  (error "Match failure"))
+(define (%match-error subject)
+  (error "Match failure" subject))
 
 ;; XXX better name? record? struct? row? tagged tuple? glom? functor? (hah)
 (define-structure term tag parts)
