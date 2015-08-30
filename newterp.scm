@@ -138,4 +138,36 @@
   'XXX)
 
 (define (ev e r k)
-  'XXX)
+  (assert (term? e) "Unparsed expression" e)
+  (let ((parts (term-parts e)))
+    (case (term-tag e)
+      ((variable)
+       (env-lookup r (car parts) k))
+      ((constant)
+       (answer k (car parts)))
+      ((make)
+       (answer k (object<- (ev-make-script parts) r)))
+      ((term)
+       (let ((tag (car parts))
+             (arg (cadr parts)))
+         (ev arg r
+             (cont<- term-cont k tag))))
+      ((list)
+       (ev-list (car parts) r k))
+      ((let)
+       (let ((p (car parts))
+             (e1 (cadr parts)))
+         (ev e1 r
+             (cont<- let-cont k p))))
+      ((do)
+       (let ((e1 (car parts))
+             (e2 (cadr parts)))
+         (ev e1 r
+             (cont<- do-cont k e2))))
+      ((call)
+       (let ((addressee (car parts))
+             (argument (cadr parts)))
+         (ev addressee r
+             (cont<- ev-arg-cont k argument))))
+      (else
+       (error "Unknown expression type" e)))))
