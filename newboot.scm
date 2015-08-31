@@ -1,5 +1,4 @@
 (make-trait halt-cont-primitive halt
-  ({.answer val} val)                   ;XXX special
   ({.empty?} #yes)
   ({.first}  (error "No more frames" halt))
   ({.rest}   (error "No more frames" halt))

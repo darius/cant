@@ -134,8 +134,11 @@
 (define (evaluate e r)
   (ev e r halt-cont))
 
+(define (cont<- script . data)
+  (object<- script data))
+
 (define halt-cont
-  'XXX)
+  (cont<- (lambda (value) value)))      ;XXX inadequate script, here and below
 
 (define (ev e r k)
   (assert (term? e) "Unparsed expression" e)
@@ -151,23 +154,82 @@
        (let ((tag (car parts))
              (arg (cadr parts)))
          (ev arg r
-             (cont<- term-cont k tag))))
+             (cont<- term-cont-script k tag))))
       ((list)
        (ev-list (car parts) r k))
       ((let)
        (let ((p (car parts))
              (e1 (cadr parts)))
          (ev e1 r
-             (cont<- let-cont k p))))
+             (cont<- let-cont-script k p r))))
       ((do)
        (let ((e1 (car parts))
              (e2 (cadr parts)))
          (ev e1 r
-             (cont<- do-cont k e2))))
+             (cont<- do-cont-script k e2))))
       ((call)
        (let ((addressee (car parts))
              (argument (cadr parts)))
          (ev addressee r
-             (cont<- ev-arg-cont k argument))))
+             (cont<- ev-arg-cont-script k argument))))
       (else
        (error "Unknown expression type" e)))))
+
+(define let-cont-script
+  (cont-script<-
+   (lambda (value k p r)
+     (ev-pat value p r 
+       (cont<- let-value-cont-script k value)))))
+
+(define let-value-cont-script
+  (cont-script<-
+   (lambda (match? k value)
+     (if match?
+         (answer k value)
+         (signal k "Match failure" value)))))
+
+(define (ev-pat value p r k)
+  (assert (term? p) "Unparsed pattern" p)
+  (let ((parts (term-parts p)))
+    (case (term-tag p)
+      ((any-pat)
+       #yes)
+      ((variable-pat)
+       (let ((name (car parts)))
+         ;(r .bind name subject)
+         ;#yes)
+         XXX))
+      ((constant-pat)
+       (let ((constant-value (car parts)))
+         ;(= subject value))
+         ;;XXX need to compare script and data
+         (answer k (equal? value constant-value))))
+      ((count-pat)
+       (let ((n (car parts)))
+         ;(and (list? subject) (= subject.count n)))
+         XXX))
+      ((prefix-pat)
+       (let ((ps (car parts))
+             (p-rest (cadr parts)))
+         ;(and (list? subject) (match-prefix subject ps p-rest r)))
+         XXX))
+      ((term-pat)
+       (let ((tag (car parts))
+             (p-args (cadr parts)))
+         ;(and (term? subject)
+         ;     (eval-match subject.tag tag r)
+         ;     (eval-match subject.arguments p-args r)))
+         XXX))
+      ((and-pat)
+       (let ((p1 (car parts))
+             (p2 (car parts)))
+         ;(and (eval-match subject p1 r)
+         ;     (eval-match subject p2 r)))
+         XXX))
+      ((view-pat)
+       (let ((e (car parts))
+             (p1 (car parts)))
+         ;(eval-match (call (eval e (parent-only r))
+         XXX))
+      (else
+       (error "Oops")))))
