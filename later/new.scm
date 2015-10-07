@@ -1660,7 +1660,7 @@ hi)")
        (chain<- r-rest star)))))
 
 (define (chain<- r s)
-  (if (= r empty) s {chain r s}))
+  (if (= r {empty}) s {chain r s}))
 
 
 ;; tictactoe.scm
