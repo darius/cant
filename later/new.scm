@@ -90,46 +90,40 @@
 (define (foldl f z xs)
   (if xs.empty?
       z
-      (foldl f (f z xs.first) xs.rest))) ;XXX conventional arg order to f?
+      (foldl f (f z xs.first) xs.rest)))
 
-(define (union set1 set2)
-  (define (adjoin x xs)
-    (if (set2 .maps-to? x) xs (cons x xs)))
-  (foldr adjoin set2 set1))
-
-(define (remove set x)
-  ;; XXX removes *all* instances -- but we know a set has at most 1
-  (foldr (given (element rest)
-           (if (= x element) rest (cons element rest)))
-         '()
-         set))
-
-(define (each f xs)
-  (foldr (given (x ys) (cons (f x) ys))
-         '()
-         xs))
-
-(define (gather f xs)
-  (foldr (given (x ys) (chain (f x) ys))
-         '()
-         xs))
-
-(define (filter ok? xs)
-  (foldr (given (x ys)
-           (if (ok? x) (cons x ys) ys))
-         '()
-         xs))
-
-(define (foldr f z xs)
+(define (foldr f xs z)
   (if xs.empty?
       z
-      (f xs.first (foldr f z xs.rest))))
+      (f xs.first (foldr f xs.rest z))))
 
 (define (foldr1 f xs)
   (let tail xs.rest)
   (if tail.empty?
       xs.first
       (f xs.first (foldr1 f tail))))
+
+(define (each f xs)
+  (for foldr ((x xs) (ys '()))
+    (cons (f x) ys)))
+
+(define (union set1 set2)
+  (define (adjoin x xs)
+    (if (set2 .maps-to? x) xs (cons x xs)))
+  (foldr adjoin set1 set2))
+
+(define (remove set x)
+  ;; XXX removes *all* instances -- but we know a set has at most 1
+  (for foldr ((element set) (rest '()))
+    (if (= x element) rest (cons element rest))))
+
+(define (gather f xs)
+  (for foldr ((x xs) (ys '()))
+    (chain (f x) ys)))
+
+(define (filter ok? xs)
+  (for foldr ((x xs) (ys '()))
+    (if (ok? x) (cons x ys) ys)))
 
 (define (list<- @arguments)
   arguments)
@@ -1378,18 +1372,18 @@ hi)")
     ))
 
 (define (gather/lazy f xs)
-  (foldr/lazy (given (x rest-thunk) (chain/lazy (f x) rest-thunk))
-              (given () '())
-              xs))
+  (for foldr/lazy ((x xs)
+                   (rest-thunk (given () '())))
+    (chain/lazy (f x) rest-thunk)))
 
 (define (chain/lazy xs ys-thunk)
-  (foldr/lazy cons/lazy ys-thunk xs))
+  (foldr/lazy cons/lazy xs ys-thunk))
 
-(define (foldr/lazy f z-thunk xs)
+(define (foldr/lazy f xs z-thunk)
   (if xs.empty?
       (z-thunk)
       (f xs.first
-         (given () (foldr/lazy f xs.rest)))))
+         (given () (foldr/lazy f xs.rest z-thunk)))))
 
 
 ;; read.scm
