@@ -668,7 +668,7 @@
       (make
         ({.take value} (debugging (out-step<- k value)))
         ;; XXX (.inject ...) ?
-        (else (cue arguments) (call cue k arguments)))))
+        (else message (call k message)))))
 
 
 ;; Smoke test
@@ -1551,10 +1551,10 @@ hi)")
                      ((defn 1) .evaluate new-r)))
      (evaluate body new-r))))
 
-(define (call<- cue addressee operands)
+(define (call<- addressee cue operands) ;XXX not necessarily with a cue anymore
   (make
     ({.evaluate r}
-     (call cue (addressee .evaluate r) (map '.evaluate operands)))))
+     (call (addressee .evaluate r) cue (map '.evaluate operands)))))
 
 
 ;; spell1.scm
@@ -1745,7 +1745,7 @@ hi)")
      ((player-marks) 1))
     ({.show}
      (let marks (player-marks))
-     (call '.format grid-format
+     (call grid-format '.format
            (for each ((pair (zip (player-bits p) (player-bits q))))
              (match pair
                ((1 0) (marks 0))
