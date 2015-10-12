@@ -107,16 +107,6 @@
   (for foldr ((x xs) (ys '()))
     (cons (f x) ys)))
 
-(define (union set1 set2)
-  (define (adjoin x xs)
-    (if (set2 .maps-to? x) xs (cons x xs)))
-  (foldr adjoin set1 set2))
-
-(define (remove set x)
-  ;; XXX removes *all* instances -- but we know a set has at most 1
-  (for foldr ((element set) (rest '()))
-    (if (= x element) rest (cons element rest))))
-
 (define (gather f xs)
   (for foldr ((x xs) (ys '()))
     (chain (f x) ys)))
@@ -124,6 +114,16 @@
 (define (filter ok? xs)
   (for foldr ((x xs) (ys '()))
     (if (ok? x) (cons x ys) ys)))
+
+(define (union set1 set2)
+  (define (adjoin x xs)
+    (if (set2 .maps-to? x) xs (cons x xs)))
+  (foldr adjoin set1 set2))
+
+(define (remove set x)
+  ;; XXX removes *all* instances -- but we know a set has at most 1
+  (for filter ((element set))
+    (not (= x element))))
 
 (define (list<- @arguments)
   arguments)
