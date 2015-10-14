@@ -1,3 +1,5 @@
+#lang racket
+
 ;; Kernel Squeam
 
 ;; Variable names:
@@ -112,6 +114,8 @@
              n))]
     [(Prefix-pat ps p-rest)
      (and (squeam-list? subject)
+          (<= (call subject (Term-data 'count '()))
+              (call ps (Term-data 'count '())))
           (match-prefix subject ps p-rest r))]
     [(Term-pat tag p-args)
      (match subject
@@ -126,3 +130,40 @@
      (eval-match (call (eval-exp e r) (list subject))
                  p1
                  r)]))
+
+(define (match-prefix subjects ps p-rest r)
+  (let matching ([subjects subjects] [ps ps])
+    (match ps
+      ['()
+       (eval-match subjects p-rest r)]
+      [`(,first ,@rest)
+       (and (eval-match (call subjects (Term-data 'first '())) first r)
+            (matching (call subjects (Term-data 'rest '())) rest))])))
+
+(define (exp-vars-defined e)
+  (match e
+    [(Constant _)  '()]
+    [(Variable _)  '()]
+    [(Make _)      '()]
+    [(Do e1 e2)    (append (exp-vars-defined e1)
+                           (exp-vars-defined e2))]
+    [(Let p _)     (pat-vars-defined p)]
+    [(Call e1 e2)  (append (exp-vars-defined e1)
+                           (exp-vars-defined e2))]
+    [(List es)     (append-map exp-vars-defined es)]
+    [(Term tag e1) (exp-vars-defined e1)]))
+
+(define (pat-vars-defined p)
+  (match p
+    [(Any-pat)           '()]
+    [(Variable-pat name) (list name)]
+    [(Constant-pat _)    '()]
+    [(Count-pat _)       '()]
+    [(Prefix-pat ps p-rest)
+     (append (append-map pat-vars-defined ps) (pat-vars-defined p-rest))]
+    [(Term-pat tag p-args)
+     (append (pat-vars-defined tag) (pat-vars-defined p-args))]
+    [(And-pat p1 p2)
+     (append (pat-vars-defined p1) (pat-vars-defined p2))]
+    [(View-pat _ p1)
+     (pat-vars-defined p1)]))
