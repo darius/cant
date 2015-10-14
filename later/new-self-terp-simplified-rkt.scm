@@ -80,8 +80,8 @@
     [(Make clauses)
      (actor<- (script<- clauses) r)]
     [(Do e1 e2)
-     (eval-exp e1 new-r)
-     (eval-exp e2 new-r)]
+     (eval-exp e1 r)
+     (eval-exp e2 r)]
     [(Let p e1)
      (let ([value (eval-exp e1 r)])
        (if (eval-match value p r)
