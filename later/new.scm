@@ -315,24 +315,22 @@
 
 ;; Variable reference
 (define (var-ref<- v)
-  (make
-    ({.compile k} `(VAR ,v ,@k))))
+  (given {.compile k}
+    `(VAR ,v ,@k)))
 
 ;; Lambda expression
 (define (abstraction<- v body)
-  (make
-    ({.compile k}
-     (let code (body .compile '(RET)))
-     `(LAM ,v ,code.count ,@code ,@k))))
+  (given {.compile k}
+    (let code (body .compile '(RET)))
+    `(LAM ,v ,code.count ,@code ,@k)))
 
 ;; Application
 (define (call<- operator operand)
-  (make
-    ({.compile k}
-     (let code (operator .compile (operand .compile '(call))))
-     (if (= k '(RET))
-         code
-         `(SAVE ,code.count ,@code ,@k)))))
+  (given {.compile k}
+    (let code (operator .compile (operand .compile '(call))))
+    (if (= k '(RET))
+        code
+        `(SAVE ,code.count ,@code ,@k))))
 
 
 ;; Smoke test
