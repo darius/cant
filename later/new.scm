@@ -1297,11 +1297,11 @@ hi)")
      (find key
            (given (i)
              (vals.^ .set! i val))
-            (given (i)
-              (keys.^ .set! i key)
-              (vals.^ .set! i val)
-              (count .^= (+ count.^ 1))
-              (maybe-grow))))
+           (given (i)
+             (keys.^ .set! i key)
+             (vals.^ .set! i val)
+             (count .^= (+ count.^ 1))
+             (maybe-grow))))
     ))
 
 
