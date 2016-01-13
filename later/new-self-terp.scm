@@ -42,8 +42,8 @@
                         clauses)
               r))
     ({do e1 e2}
-     (eval e1 new-r)
-     (eval e2 new-r))
+     (eval e1 r)
+     (eval e2 r))
     ({let p e1}
      (let value (eval e1 r))
      (if (eval-match value p r)
