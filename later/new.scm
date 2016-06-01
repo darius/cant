@@ -881,6 +881,13 @@
   ((p text far i '()) .prefix vals))
 
 ;;TODO: implement promises instead
+(define (delay thunk)
+  (let p (box<- (given (text far i vals)
+                  (p .^= (thunk))
+                  (p.^ text far i vals))))
+  (given (text far i vals)
+    (p.^ text far i vals)))
+
 (define ((delay thunk) text far i vals)
   ((thunk) text far i vals))
 
