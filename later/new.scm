@@ -116,9 +116,8 @@
     (if (ok? x) (cons x ys) ys)))
 
 (define (union set1 set2)
-  (define (adjoin x xs)
-    (if (set2 .maps-to? x) xs (cons x xs)))
-  (foldr adjoin set1 set2))
+  (for foldr ((x set1) (ys set2))
+    (if (set2 .maps-to? x) ys (cons x ys))))
 
 (define (remove set x)
   ;; XXX removes *all* instances -- but we know a set has at most 1
@@ -170,16 +169,25 @@
          ;; ...
          ))))
 
+(make enumerate
+  ((xs)
+   (enumerate xs 0))
+  ((xs i)
+   (if xs.empty?
+       '()
+       (make enumeration extending list-trait
+         ({.empty?} #no)
+         ({.first}  `(,xs.first ,i))
+         ({.rest}   (enumerate xs.rest (+ i 1)))))))
+
 (define (vector<-list xs)
   (let v (vector<-count xs.count))
-  (begin setting ((i 0) (xs xs))
-    (if xs.empty?
-        v
-        (do (v .set! i xs.first)
-            (setting (+ i 1) xs.rest)))))
+  (for each! ((i x) (enumerate xs))
+    (v .set! i x))
+  v)
 
 (define ((compose f g) @arguments)
-  (f (apply g arguments)))
+  (f (apply g arguments))) ;XXX did I have a reason to say 'apply' instead of 'call'?
 
 ;; XXX float contagion
 (define (min x y) (if (< x y) x y))
