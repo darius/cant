@@ -1226,7 +1226,7 @@ hi)")
 
 ;; TODO:
 ;;   define equal?, 'hash -- mirandizing
-;;   nonlinear probing
+;;   nonlinear probing -- how about xor probing?
 ;;   preserving insertion order
 ;;   deletion
 ;;   define a special None value like Python?
