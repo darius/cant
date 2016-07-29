@@ -57,7 +57,7 @@
 
 (define (actor<- script r)
   (lambda (message)
-     (script message r)))
+    (script message r)))
 
 (define (script<- clauses)
   (lambda (message parent-r}
