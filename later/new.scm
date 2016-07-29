@@ -138,6 +138,11 @@
        (or (ok? xs.first)
            (some ok? xs.rest))))
 
+(define (every ok? xs)
+  (or xs.empty?
+      (and (ok? xs.first)
+           (every ok? xs.rest))))
+
 (define (print x)
   (write x)
   (newline))
@@ -1830,10 +1835,10 @@ hi)")
 
          (8 (let chunk (vector<-count (reg c) 0)) ;TODO: typed vector again
             (reg .set! b
-                 (case ((free-list .empty?)
+                 (case (free-list.empty?
                         (mem .push! chunk))
                        (else
-                        (let i (free-list .pop!))
+                        (let i free-list.pop!)
                         (mem .set! i chunk)
                         i)))
             (next))
