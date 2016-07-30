@@ -11,7 +11,7 @@
 
 ;; must be composed with nonempty-cont-primitive:
 (make-trait let-cont-primitive cont
-  ({.first} `(let ,(__let-cont-var cont) ^)) ;XXX proably obsolete
+  ({.first} `(let ,(__let-cont-var cont) ^)) ;XXX probably obsolete
   )
 
 ;;XXX and so on for other continuation types
