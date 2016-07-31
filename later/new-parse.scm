@@ -3,7 +3,7 @@
 (define (parse-exp e)
   (case
     ((match e
-       ((operator @_) (look-up-macro operator))
+       ((operator @_) (look-up-macro operator)) ;hey, could this use a view pattern?
        (_ #no))
      => (given (expand) (parse-exp (expand e))))
     (else
@@ -28,48 +28,53 @@
         {do (parse-exp e1) (parse-exp `(do ,@es))})
        ((addressee (: cue cue?) @operands)
         {call (parse-exp addressee)
-              {term cue {list (each parse-exp operands)}}})
+              {term cue (each parse-exp operands)}})
        ((addressee @operands)
         {call (parse-exp addressee)
-              {list (each parse-exp operands)}})
+              (build-list (each parse-exp operands))})
        ((: _ term?)
-        {term e.tag {list (each parse-exp e.parts)}})
+        {term e.tag (each parse-exp e.parts)})
        ))))
+
+(define (build-list es)
+  (match es
+    (() {constant '()})
+    ((head @tail)
+     {term 'cons (list<- head (build-list tail))})))
 
 ;; what's the syntax for a macro in pattern context?
 (define (parse-pat p)
   (match p
     ('_
      {any-pat})
-    ((: _ symbol?)
+    ((: symbol?)
      {variable-pat p})
-    ((: _ self-evaluating?)
+    ((: self-evaluating?)
      {constant-pat p})
     (('quote datum)
      {constant-pat datum})
-    ((': p1 e p2)
-     {and-pat (parse-pat p1)
-              {view-pat (parse-exp e1) (parse-pat p2)}})
+    ((': e)
+     {view-pat (parse-exp e) {constant-pat #yes}})
     ((': p1 e)
      {and-pat (parse-pat p1)
               {view-pat (parse-exp e1) {constant-pat #yes}}})
-    ((@ps)
-     (parse-list-pat ps))
-    ;; N.B. an @pattern should be disjoint from all the above
-    ((: _ term?)
-     {term-pat e.tag (parse-list-pat e.parts)})
+    ((: list?)
+     (parse-list-pat p))
+    ((: term?)
+     {term-pat e.tag (each parse-pat e.parts)})
     ))
 
 (define (parse-list-pat ps)
-  (match (reverse ps)
-    (((: p at-variable?) @rest)
-     {prefix-pat (each parse-pat (reverse rest))
-                 (parse-pat p.argument)})
-    (_ (list-pat<- (each parse-pat ps)))))
-
-(define (list-pat<- ps)
-  {and-pat {count-pat ps.count}
-           {prefix-pat ps {any-pat}}})
+  (match ps
+    (()
+     {view-pat {variable '__as-nil}
+               {term-pat 'nil '()}}) ;TODO __as-nil, etc.
+    (((: v at-variable?))
+     {variable-pat v.name})                     ;TODO v.name, at-variable?
+    ((head @tail)
+     {view-pat {variable '__as-cons}
+               {term-pat 'cons (list<- (parse-pat head)
+                                       (parse-list-pat tail))}})))
 
 (define (self-evaluating? x)
   (or (boolean? x)
@@ -118,7 +123,7 @@
               ((_ test @body)
                `(if ,test #no (do ,@body)))))
     ('case   (make
-              ((_) #no)                 ;TODO: generate an error-raising?
+              ((_) #no)                 ;TODO: generate an error-raising? I think so.
               ((_ ('else @es)) `(do ,@es))
               ((_ (e) @clauses) `(or ,e (case ,@clauses)))
               ((_ (e1 '=> e2) @clauses)
@@ -144,7 +149,7 @@
     (_ #no)))
 
 (define (parse-bindings bindings)
-  (for each! (((: _ symbol?) _) bindings)
+  (for each! (((: symbol?) _) bindings)
     'ok)
   `(,(each '.first bindings) ,(each second bindings)))
 

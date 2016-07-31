@@ -22,9 +22,11 @@
 (struct Term (tag es)    #:transparent)
 
 ;; Patterns
-(struct Constant-pat (value)   #:transparent)  ; (replaceable using View-pat and Term-pat, but that'd be a pain to have come up a lot)
+(struct Any-pat ()             #:transparent)
 (struct Variable-pat (name)    #:transparent)
-(struct Term-pat (tag p-args)  #:transparent)
+(struct Constant-pat (value)   #:transparent)
+(struct Term-pat (tag p-args)  #:transparent)  ; TODO consider making it like Term-pat (term)
+(struct And-pat (p1 p2)        #:transparent)
 (struct View-pat (e p)         #:transparent)
 
 ;; Runtime data types
@@ -79,24 +81,30 @@
 
 (define (eval-match subject p r)
   (match p
-    ({constant-pat value}
-     (= subject value))
+    ({any-pat}
+     #yes)
     ({variable-pat name}
      (r .bind name subject)
      #yes)
+    ({constant-pat value}
+     (= subject value))
     ({term-pat tag p-args}
      (and (term? subject)
           (= subject.tag tag) ;; N.B. it'd be nice for efficiency to bundle the arity in at desugar time
-          (begin matching ((args subject.arguments)
-                           (p-args p-args))
-            (case (args.empty? p-args.empty?)
-                  (p-args.empty? #no)
-                  (else (and (eval-match args.first p-args.first r)
-                             (matching args.rest p-args.rest)))))))
-    ({view-pat e p1}
+          (match-all subject.arguments p-args r)))
+    ({and-pat p1 p2}
+     (and (eval-match subject p1 r)
+          (eval-match subject p2 r)))
+    ({view-pat e p}
      (eval-match (call (eval e (parent-only r))
-                       `(,subject))  ;;XXX or just subject?
-                 p1 r))))
+                       `(,subject))
+                 p r))))
+
+(define (match-all values pats r)
+  (case (values.empty? pats.empty?)
+        (pats.empty? #no)
+        (else (and (eval-match values.first pats.first r)
+                   (match-all values.rest pats.rest r)))))
 
 ;; N.B. the parent-only expressions are assumed not to define anything
 ;; (which should be statically checked also)
@@ -115,7 +123,10 @@
 
 (define (pat-vars-defined p)
   (match p
-    ({constant-pat _}      '())
+    ({any-pat}             '())
     ({variable-pat name}   `(,name))
+    ({constant-pat _}      '())
     ({term-pat tag p-args} (gather pat-vars-defined p-args))
-    ({view-pat e p1}       (pat-vars-defined p1))))
+    ({and-pat p1 p2}       (chain (pat-vars-defined p1)
+                                  (pat-vars-defined p2)))
+    ({view-pat e p}        (pat-vars-defined p))))
