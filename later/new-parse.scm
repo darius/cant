@@ -8,11 +8,11 @@
      => (given (expand) (parse-exp (expand e))))
     (else
      (match e
-       ((: _ symbol?)
+       ((: symbol?)
         {variable e})
        (('quote datum)
         {constant datum})
-       ((: _ self-evaluating?)
+       ((: self-evaluating?)
         {constant e})
        (('let p e1)
         {let (parse-pat p) (parse-exp e1)})
@@ -22,6 +22,8 @@
         {let name (parse-make name clauses)})
        (('make @clauses)
         (parse-make #no clauses))
+       (('make-trait 'XXX)
+        XXX)
        (('do e1)
         (parse-exp e1))
        (('do e1 @es)
@@ -98,6 +100,7 @@
     ('given  (make
               ((_ vars @body)
                `(make (,vars ,@body)))))
+    ;; XXX missing 'match
     ('with   (make
               ((_ bindings @body)
                (let (ps es) (parse-bindings bindings))

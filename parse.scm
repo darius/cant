@@ -17,7 +17,7 @@
        ((: _ term?)
         (term<- 'term
                 (term-tag e)
-                (term<- 'list (map parse-exp (term-parts e)))))
+                (map parse-exp (term-parts e))))
        (('let p e1)
         (term<- 'let (parse-pat p) (parse-exp e1)))
        (('make '_ . clauses)
@@ -35,14 +35,21 @@
        ((addressee (: cue cue?) . operands)
         (term<- 'call
                 (parse-exp addressee)
-                (term<- 'term cue (term<- 'list (map parse-exp operands)))))
+                (term<- 'term cue (map parse-exp operands))))
        ((addressee . operands)
         (term<- 'call
                 (parse-exp addressee)
-                (term<- 'list (map parse-exp operands))))
+                (build-list (map parse-exp operands))))
        ((: _ term?)
-        (term<- 'term e.tag (term<- 'list (map parse-exp e.arguments))))
+        (term<-list `(term
+                      ,(term-tag e)
+                      ,@(map parse-exp (term-parts e)))))
        ))))
+
+(define (build-list es)
+  (if (null? es)
+      (term<- 'constant '())
+      (term<- 'term 'cons (list (car es) (build-list (cdr es))))))
 
 ;; what's the syntax for a macro in pattern context?
 (define (parse-pat p)
@@ -55,32 +62,32 @@
      (term<- 'constant-pat p))
     (('quote datum)
      (term<- 'constant-pat datum))
-    ((': p1 e p2)
-     (term<- 'and-pat (parse-pat p1)
-              (term<- 'view-pat (parse-exp e1) (parse-pat p2))))
+    ((': e)
+     (term<- 'view-pat (parse-exp e) (term<- 'constant-pat #t)))
     ((': p1 e)
      (term<- 'and-pat (parse-pat p1)
               (term<- 'view-pat (parse-exp e1) (term<- 'constant-pat #t))))
-    (('@ _)
+    (('@ _)                      ;XXX make @vars be some disjoint type
      (error "An @-pattern must be at the end of a list" p))
     ((: _ list?)
      (parse-list-pat p))
     ((: _ term?)
-     (term<- 'term-pat (term-tag p) (parse-list-pat (term-parts p))))
+     (term<- 'term-pat (term-tag p) (map parse-pat (term-parts p))))
     ))
 
 (define (parse-list-pat ps)
-  (mcase (reverse ps)
-    ((('@ p) . rest)
-     (term<- 'prefix-pat
-             (map parse-pat (reverse rest))
-             (parse-pat p)))
-    (_ (list-pat<- (map parse-pat ps)))))
-
-(define (list-pat<- ps)
-  (term<- 'and-pat
-          (term<- 'count-pat (length ps))
-          (term<- 'prefix-pat ps (term<- 'any-pat))))
+  (mcase ps
+    (()
+     (term<- 'view-pat
+             (term<- 'variable '__as-nil)
+             (term<- 'term-pat 'nil '()))) ;TODO __as-nil, etc.
+    ((('@ v))
+     (parse-pat v))
+    ((head . tail)
+     (term<- view-pat
+             (term<- 'variable '__as-cons)
+             (term<- 'term-pat 'cons (list (parse-pat head)
+                                           (parse-list-pat tail)))))))
 
 (define (self-evaluating? x)
   (or (boolean? x)
@@ -133,7 +140,7 @@
                      ,@es))))))
     ('if     (mlambda
               ((_ test if-so if-not)
-               `((',boolean<- ,test)
+               `((',boolean<- ,test)    ;XXX use a global var instead?
                  .choose (given () ,if-so)
                          (given () ,if-not)))))
     ('when   (mlambda
@@ -181,7 +188,7 @@
     (('unquote e1) e1)
     ((('unquote-splicing e1)) e1)
     ((('unquote-splicing e1) . qcdr)
-     `(,e1 .chain ,(expand-quasiquote qcdr)))
+     `(,e1 .chain ,(expand-quasiquote qcdr))) ;XXX use a global fn instead?
     ((qcar . qcdr)
      (qq-cons e (expand-quasiquote qcar)
                 (expand-quasiquote qcdr)))
