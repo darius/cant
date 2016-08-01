@@ -67,8 +67,8 @@
                        (vector-set! me i val)
                        #f))
 
-    (__box-ref   ,(lambda (me) (vector-ref me 0)))
-    (__box-set!  ,(lambda (me val)
+    (__box-ref      ,(lambda (me) (vector-ref me 0)))
+    (__box-set!     ,(lambda (me val)
                        (vector-set! me 0 val)
                        #f))
     ))
