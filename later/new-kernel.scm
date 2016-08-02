@@ -15,7 +15,7 @@
 ;; Expressions
 (struct Constant (value) #:transparent)
 (struct Variable (name)  #:transparent)
-(struct Make (clauses)   #:transparent)
+(struct Make (name stamp trait clauses) #:transparent)   ; stamp and trait are variables, which must be from an enclosing scope
 (struct Do (e1 e2)       #:transparent)
 (struct Let (p e)        #:transparent)
 (struct Call (e1 e2)     #:transparent)
@@ -58,9 +58,9 @@
      value)
     ({variable name}
      (r name))
-    ({make e-stamp e-trait clauses}
-     (actor<- (script<- (eval e-stamp (parent-only r))
-                        (eval e-trait (parent-only r))
+    ({make _ stamp trait clauses}
+     (actor<- (script<- (eval stamp (parent-only r))
+                        (eval trait (parent-only r))
                         clauses)
               r))
     ({do e1 e2}

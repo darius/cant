@@ -22,12 +22,10 @@
         (term<- 'let (parse-pat p) (parse-exp e1)))
        (('make '_ . clauses)
         (parse-make #f clauses))
-       (('make (: name symbol?) . clauses)
+       (('make (: name symbol?) . clauses) ;TODO: cons up a fully-qualified name
         (term<- 'let name (parse-make name clauses)))
        (('make . clauses)
         (parse-make #f clauses))
-       (('make-trait (: name symbol?) (: self symbol?) . clauses)
-        (parse-make-trait name self clauses))
        (('do e1)
         (parse-exp e1))
        (('do e1 . es)
@@ -98,9 +96,6 @@
 (define (parse-make opt-name clauses)
   (term<- 'make opt-name (map parse-clause clauses)))
 
-(define (parse-make-trait name self clauses)
-  (term<- 'make-trait name self (map parse-clause clauses)))
-
 (define (parse-clause clause)
   (mcase clause
     ((pat . body)
@@ -114,6 +109,15 @@
     ('include (mlambda             ;temporary
                ((_ (: filename string?))
                 `(do ,@(snarf filename squeam-read)))))
+    ('make-trait
+             (mlambda
+              ((_ (: v symbol?) (: self symbol?) . clauses)
+               (let ((msg (gensym)))
+                 `(define (,v ,self ,msg)
+                    (match ,msg ,@clauses))))))
+    ('match  (mlambda
+              ((_ subject . clauses)
+               `(call (make _ ,@clauses) ,subject))))
     ('define (mlambda
               ((_ ((: v symbol?) . params) . body)
                `(make ,v (,params ,@body)))
