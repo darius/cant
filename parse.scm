@@ -64,7 +64,7 @@
      (term<- 'view-pat (parse-exp e) (term<- 'constant-pat #t)))
     ((': p1 e)
      (term<- 'and-pat (parse-pat p1)
-              (term<- 'view-pat (parse-exp e1) (term<- 'constant-pat #t))))
+              (term<- 'view-pat (parse-exp e) (term<- 'constant-pat #t))))
     (('@ _)                      ;XXX make @vars be some disjoint type
      (error "An @-pattern must be at the end of a list" p))
     ((: _ list?)

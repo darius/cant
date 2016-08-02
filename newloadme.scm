@@ -4,6 +4,8 @@
 (define eg-program (snarf "later/compact-lambda.scm" squeam-read))
 (load "parse.scm")
 (map parse-exp eg-program)
+(map parse-exp (snarf "newboot.scm" squeam-read))
+
 ;(load "newterp.scm")
 
 ;(boot)
