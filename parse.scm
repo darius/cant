@@ -82,7 +82,7 @@
     ((('@ v))
      (parse-pat v))
     ((head . tail)
-     (term<- view-pat
+     (term<- 'view-pat
              (term<- 'variable '__as-cons)
              (term<- 'term-pat 'cons (list (parse-pat head)
                                            (parse-list-pat tail)))))))
