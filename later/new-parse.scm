@@ -22,8 +22,6 @@
         {let name (parse-make name clauses)})
        (('make @clauses)
         (parse-make #no clauses))
-       (('make-trait 'XXX)
-        XXX)
        (('do e1)
         (parse-exp e1))
        (('do e1 @es)
@@ -92,6 +90,15 @@
     ('include (make             ;temporary
                ((_ (: filename string?))
                 `(do ,@(snarf filename)))))
+    ('make-trait
+             (make
+              ((_ (: v symbol?) (: self symbol?) @clauses)
+               (let msg (gensym))
+               `(define (,v ,self ,msg)
+                  (match ,msg ,@clauses)))))
+    ('match  (make
+              ((_ subject @clauses)
+               `(call (make _ ,@clauses) ,subject))))
     ('define (make
               ((_ ((: v symbol?) @params) @body)
                `(make ,v (,params ,@body)))
@@ -100,7 +107,6 @@
     ('given  (make
               ((_ vars @body)
                `(make (,vars ,@body)))))
-    ;; XXX missing 'match
     ('with   (make
               ((_ bindings @body)
                (let (ps es) (parse-bindings bindings))
