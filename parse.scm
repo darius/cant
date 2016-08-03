@@ -76,9 +76,7 @@
 (define (parse-list-pat ps)
   (mcase ps
     (()
-     (term<- 'view-pat
-             (term<- 'variable '__as-nil)
-             (term<- 'term-pat 'nil '()))) ;TODO __as-nil, etc.
+     (term<- 'constant-pat '()))
     ((('@ v))
      (parse-pat v))
     ((head . tail)
