@@ -1,3 +1,8 @@
+(make-trait miranda-trait self
+  ({.format} (__format self))
+  (message   (error "I don't understand the message" message))
+  )
+
 (make-trait halt-cont-primitive halt
   ({.empty?} #yes)
   ({.first}  (error "No more frames" halt))

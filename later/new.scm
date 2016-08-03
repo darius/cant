@@ -1263,7 +1263,7 @@ hi)")
                   (cons i (walking (- i 1))))))))
 
   (define (find key succeed fail)
-    (let h    key.hash)              ;XXX coerce to fixnum
+    (let h    key.hash)              ;XXX needs a closely-held primitive; also, coerce to fixnum
     (let mask (- keys.^.count 1))
     (let i0   (mask .and h))
     (begin walking ((i i0))
