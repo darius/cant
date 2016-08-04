@@ -122,9 +122,9 @@
                  ,@es))))
     ('if     (make
               ((_ test if-so if-not)
-               `((',boolean<- ,test)
-                 .choose (given () ,if-so)
-                         (given () ,if-not)))))
+               `(match ,test
+                  (#no ,if-not)
+                  (_ ,if-so)))))
     ('when   (make
               ((_ test @body)
                `(if ,test (do ,@body) #no))))

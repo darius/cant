@@ -142,9 +142,9 @@
                      ,@es))))))
     ('if     (mlambda
               ((_ test if-so if-not)
-               `((',boolean<- ,test)    ;XXX use a global var instead?
-                 .choose (given () ,if-so)
-                         (given () ,if-not)))))
+               `(match ,test
+                  (#f ,if-not)
+                  (_ ,if-so)))))
     ('when   (mlambda
               ((_ test . body)
                `(if ,test (do ,@body) #f))))
