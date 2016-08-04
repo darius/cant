@@ -52,6 +52,35 @@
 
 ;; OK, so the interpreter now looks like:
 
+(define (script<- stamp trait clauses)
+  (when stamp (assert (stamp? stamp)))
+;  (assert (trait? trait))
+  (make script
+    ({.receive message parent-r}
+     (begin matching ((clauses clauses))
+       (match clauses
+         (()
+          (delegate trait
+                    (actor<- script parent-r) ;N.B. must not change the identity: = must compare script, r parts
+                    message))
+         (((pattern body) @rest)
+          (let pat-r (env-extend parent-r (pat-vars-defined pattern)))
+          (if (eval-match message pattern pat-r)
+              (eval body (env-extend pat-r (exp-vars-defined body)))
+              (matching rest))))))
+    ({.verify alleged-stamp}
+     ;;XXX this is probably crap; figure it out
+     (= stamp alleged-stamp))))
+
+(define (delegate trait self message)
+  (trait self message))
+
+(define (actor<- script r)
+  ;; XXX This is not quite right: we need to virtualize the stamp stuff too.
+  (make _
+    (message
+     (script .receive message r))))
+
 (define (eval e r)
   (match e
     ({constant value}
@@ -59,8 +88,8 @@
     ({variable name}
      (r name))
     ({make _ stamp trait clauses}
-     (actor<- (script<- (eval stamp (parent-only r))
-                        (eval trait (parent-only r))
+     (actor<- (script<- (eval stamp r)
+                        (eval trait r)
                         clauses)
               r))
     ({do e1 e2}
@@ -75,9 +104,7 @@
      (call (eval e1 r) (eval e2 r)))
     ({term tag es}
      (term<- tag (for each ((e1 es))
-                   (eval e1 r))))
-    ;; XXX make-trait?
-    ))
+                   (eval e1 r))))))
 
 (define (eval-match subject p r)
   (match p
@@ -96,18 +123,14 @@
      (and (eval-match subject p1 r)
           (eval-match subject p2 r)))
     ({view-pat e p}
-     (eval-match (call (eval e (parent-only r))
-                       `(,subject))
+     (eval-match (call (eval e r) `(,subject))
                  p r))))
 
 (define (match-all values pats r)
   (case (values.empty? pats.empty?)
         (pats.empty? #no)
         (else (and (eval-match values.first pats.first r)
-                   (match-all values.rest pats.rest r)))))
-
-;; N.B. the parent-only expressions are assumed not to define anything
-;; (which should be statically checked also)
+                   (match-all  values.rest  pats.rest  r)))))
 
 (define (exp-vars-defined e)
   (match e
@@ -116,7 +139,8 @@
     ({make _ _ _}  '())
     ({do e1 e2}    (chain (exp-vars-defined e1)
                           (exp-vars-defined e2)))
-    ({let p _}     (pat-vars-defined p))
+    ({let p e}     (chain (pat-vars-defined p)
+                          (exp-vars-defined e)))
     ({call e1 e2}  (chain (exp-vars-defined e1)
                           (exp-vars-defined e2)))
     ({term tag es} (gather exp-vars-defined es))))
@@ -129,4 +153,5 @@
     ({term-pat tag p-args} (gather pat-vars-defined p-args))
     ({and-pat p1 p2}       (chain (pat-vars-defined p1)
                                   (pat-vars-defined p2)))
-    ({view-pat e p}        (pat-vars-defined p))))
+    ({view-pat e p}        (chain (exp-vars-defined e)
+                                  (pat-vars-defined p)))))
