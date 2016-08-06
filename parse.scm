@@ -23,7 +23,7 @@
        (('make '_ . clauses)
         (parse-make #f clauses))
        (('make (: name symbol?) . clauses) ;TODO: cons up a fully-qualified name
-        (term<- 'let name (parse-make name clauses)))
+        (term<- 'let (parse-pat name) (parse-make name clauses)))
        (('make . clauses)
         (parse-make #f clauses))
        (('do e1)
