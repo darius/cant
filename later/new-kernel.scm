@@ -20,9 +20,7 @@
 (struct Let (p e)        #:transparent)
 (struct Call (e1 e2)     #:transparent)
 (struct Term (tag es)    #:transparent)
-
-(struct List (es)        #:transparent)  ; XXX not integrated yet. or maybe do:
-(struct Cons-exp (e e)   #:transparent)  ; nah, too verbose
+(struct List (es)        #:transparent)  ; blah
 
 ;; Patterns
 (struct Any-pat ()             #:transparent)
@@ -149,7 +147,8 @@
                           (exp-vars-defined e)))
     ({call e1 e2}  (chain (exp-vars-defined e1)
                           (exp-vars-defined e2)))
-    ({term tag es} (gather exp-vars-defined es))))
+    ({term tag es} (gather exp-vars-defined es))
+    ({list es}     (gather exp-vars-defined es))))
 
 (define (pat-vars-defined p)
   (match p
