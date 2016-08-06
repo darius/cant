@@ -162,6 +162,7 @@
 ;; A small-step interpreter
 
 (define (evaluate e r)
+;  (print `(evaluate ,e))
   (ev-exp e r halt-cont))
 
 (define (ev-exp e r k)

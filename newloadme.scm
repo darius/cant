@@ -13,6 +13,7 @@
   (newline))
 
 (print (interpret 42))
+(print (interpret '(make _)))
 
 
 ;(boot)
