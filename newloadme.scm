@@ -19,5 +19,5 @@
 (print (interpret '((make (xs xs)) 1 2 3)))
 (print (interpret '(if #f 1 2)))
 (print (interpret '(if #t 1 2)))
-;(print (interpret '((make ((#f) 'no) (_ 'yes)) #f)))
-;(print (interpret '((make ((#f) 'no) (_ 'yes)) #t)))
+(print (interpret '((make ((#f) 'no) (_ 'yes)) #f)))
+(print (interpret '((make ((#f) 'no) (_ 'yes)) #t)))

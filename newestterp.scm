@@ -86,9 +86,15 @@
   (error plaint values))                ;XXX
 
 
+(define (as-cons x)
+  (and (pair? x)
+       (term<- 'cons (car x) (cdr x))))
+      
+
 ;; Environments
 
-(define the-global-env '())
+(define the-global-env
+  `((__as-cons ,as-cons)))
 
 (define (env-lookup r v k)
   (define (succeed pair) (answer k (cadr pair)))
