@@ -16,6 +16,6 @@
 (print (interpret '(make _)))
 (print (interpret '((make (xs xs)))))
 (print (interpret '((make (xs xs)) 1 2 3)))
-
-
-;(boot)
+;(print (interpret '(if #f 1 2)))
+;(print (interpret '((make ((#f) 'no) (_ 'yes)) #f)))
+;(print (interpret '((make ((#f) 'no) (_ 'yes)) #t)))

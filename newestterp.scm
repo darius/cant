@@ -88,6 +88,8 @@
 
 ;; Environments
 
+(define the-global-env '())
+
 (define (env-lookup r v k)
   (define (succeed pair) (answer k (cadr pair)))
   (cond ((assq v r) => succeed)

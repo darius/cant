@@ -114,7 +114,7 @@
                     (match ,msg ,@clauses))))))
     ('match  (mlambda
               ((_ subject . clauses)
-               `(call (make _ ,@clauses) ,subject))))
+               `(call (make _ ,@clauses) ,subject)))) ;XXX unhygienic (call)
     ('define (mlambda
               ((_ ((: v symbol?) . params) . body)
                `(make ,v (,params ,@body)))
