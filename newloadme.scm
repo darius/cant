@@ -14,6 +14,8 @@
 
 (print (interpret 42))
 (print (interpret '(make _)))
+(print (interpret '((make (xs xs)))))
+(print (interpret '((make (xs xs)) 1 2 3)))
 
 
 ;(boot)

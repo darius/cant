@@ -70,8 +70,8 @@
        (delegate (script-trait script) object message k))
       (((pattern body) . rest-clauses)
        (let ((pat-r (env-extend-promises datum (pat-vars-defined pattern))))
-         (if (eval-match message pattern pat-r)
-             (eval-exp body (env-extend pat-r (exp-vars-defined body)) k)
+         (if (ev-pat message pattern pat-r k)
+             (ev-exp body (env-extend-promises pat-r (exp-vars-defined body)) k)
              (matching rest-clauses)))))))
 
 (define (delegate trait object message k)
@@ -193,7 +193,7 @@
                   (cont<- ev-tag-cont k tag))))
       ((list)
        (let ((es (car parts)))
-         (ev-args es r k '() tag)))
+         (ev-args es r '() k)))
       (else
        (error "Bad exp type" e)))))
 
