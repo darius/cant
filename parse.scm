@@ -30,6 +30,8 @@
         (parse-exp e1))
        (('do e1 . es)
         (term<- 'do (parse-exp e1) (parse-exp `(do ,@es))))
+       (('call e1 e2)
+        (term<- 'call (parse-exp e1) (parse-exp e2)))
        ((addressee (: cue cue?) . operands)
         (term<- 'call
                 (parse-exp addressee)
@@ -75,6 +77,7 @@
     ((('@ v))
      (parse-pat v))
     ((head . tail)
+     ;; TODO: special case if both head and tail are constant
      (term<- 'view-pat
              (term<- 'variable '__as-cons)
              (term<- 'term-pat 'cons (list (parse-pat head)
@@ -114,7 +117,7 @@
                     (match ,msg ,@clauses))))))
     ('match  (mlambda
               ((_ subject . clauses)
-               `(call (make _ ,@clauses) ,subject)))) ;XXX unhygienic (call)
+               `(call (make _ ,@clauses) ,subject))))
     ('define (mlambda
               ((_ ((: v symbol?) . params) . body)
                `(make ,v (,params ,@body)))
