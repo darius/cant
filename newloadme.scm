@@ -8,4 +8,11 @@
 
 (load "newestterp.scm")
 
+(define (print x)
+  (write x)
+  (newline))
+
+(print (interpret 42))
+
+
 ;(boot)

@@ -164,8 +164,6 @@
 (define (evaluate e r)
   (ev-exp e r halt-cont))
 
-(define halt-cont 'XXX)
-
 (define (ev-exp e r k)
   (let ((parts (term-parts e)))
     (case (term-tag e)
@@ -257,7 +255,7 @@
   equal?)
 
 (define (cont<- cont-script k . values)
-  (actor<- cont-script (cons k values)))
+  (object<- cont-script (cons k values)))
 
 ;; Continuation scripts are special mainly for efficiency at answering
 ;; to continuations. It also saves us from having to name and bind,
@@ -265,6 +263,10 @@
 ;; the actual answering -- and those'd have to be a special kind of
 ;; primitive that doesn't need a continuation, too.
 (define-structure cont-script answerer script)
+
+(define halt-cont
+  (cont<- (make-cont-script (lambda (value _) value) 'XXX)
+          #f))
 
 (define ev-trait-cont-script
   (make-cont-script
@@ -276,8 +278,8 @@
 (define ev-stamp-cont-script
   (make-cont-script
    (lambda (trait-val k stamp-val r clauses)
-     (answer k (actor<- (script<- trait-val clauses) ;XXX use stamp-val
-                        r)))
+     (answer k (object<- (script<- trait-val clauses) ;XXX use stamp-val
+                         r)))
    'XXX))
 
 (define ev-do-rest-cont
