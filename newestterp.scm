@@ -35,16 +35,6 @@
         ((procedure? x) (receiver scheme-procedure-script x))
         (else (error "Non-object" x))))
 
-(define boolean-script 'XXX)
-(define number-script 'XXX)
-(define symbol-script 'XXX)
-(define nil-script 'XXX)
-(define char-script 'XXX)
-(define string-script 'XXX)
-(define vector-script 'XXX)
-(define procedure-script 'XXX)
-(define pair-script 'XXX)
-             
 (define (answer k value)
   (dbg `(answer ,value ,k))
   (call k (list value) 'ignored))
@@ -398,3 +388,30 @@
          (ev-match-all subjects ps r k)
          (answer k #f)))
    'XXX))
+
+
+;; Primitive types
+
+(define boolean-script 'XXX)
+
+(define tmp (car (map parse-exp (snarf "number.scm" squeam-read))))
+(define primitive-env
+  (append `(
+            (__+ ,+)
+            (__- ,-)
+            (__* ,*)
+            )
+          the-global-env))
+(define number-trait
+  (evaluate tmp primitive-env))
+
+
+(define number-script (script<- number-trait '()))
+
+(define symbol-script 'XXX)
+(define nil-script 'XXX)
+(define char-script 'XXX)
+(define string-script 'XXX)
+(define vector-script 'XXX)
+(define procedure-script 'XXX)
+(define pair-script 'XXX)

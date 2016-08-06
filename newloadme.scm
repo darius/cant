@@ -22,3 +22,16 @@
 (print (interpret '((make ((#f) 'no) (_ 'yes)) #f)))
 (print (interpret '((make ((#f) 'no) (_ 'yes)) #t)))
 (print (interpret '`(hello ,(if #t 'yes 'no))))
+(print (interpret '(2 .+ 3)))
+(pp (parse-exp '(let x 55)))
+(print (interpret '(let x 55)))
+
+
+
+(pp (parse-exp '(define (f) 42)))
+(print (interpret '(define (f) 42)))
+(print (interpret '(do (define (factorial n)
+                         (match n
+                           (0 1)
+                           (_ (n .* (factorial (n .- 1))))))
+                       (factorial 5))))
