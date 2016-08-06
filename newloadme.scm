@@ -6,6 +6,6 @@
 (map parse-exp eg-program)
 (map parse-exp (snarf "newboot.scm" squeam-read))
 
-;(load "newterp.scm")
+(load "newestterp.scm")
 
 ;(boot)

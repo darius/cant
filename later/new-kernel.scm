@@ -21,6 +21,9 @@
 (struct Call (e1 e2)     #:transparent)
 (struct Term (tag es)    #:transparent)
 
+(struct List (es)        #:transparent)  ; XXX not integrated yet. or maybe do:
+(struct Cons-exp (e e)   #:transparent)  ; nah, too verbose
+
 ;; Patterns
 (struct Any-pat ()             #:transparent)
 (struct Variable-pat (name)    #:transparent)
@@ -104,7 +107,10 @@
      (call (eval e1 r) (eval e2 r)))
     ({term tag es}
      (term<- tag (for each ((e1 es))
-                   (eval e1 r))))))
+                   (eval e1 r))))
+    ({list es}
+     (for each ((e1 es))
+       (eval e1 r)))))
 
 (define (eval-match subject p r)
   (match p

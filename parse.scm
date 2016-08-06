@@ -37,17 +37,12 @@
        ((addressee . operands)
         (term<- 'call
                 (parse-exp addressee)
-                (build-list (map parse-exp operands))))
+                (term<- 'list (map parse-exp operands))))
        ((: _ term?)
-        (term<-list `(term
-                      ,(term-tag e)
-                      ,@(map parse-exp (term-parts e)))))
+        (term<- 'term
+                (cons (term-tag e)
+                      (map parse-exp (term-parts e)))))
        ))))
-
-(define (build-list es)
-  (if (null? es)
-      (term<- 'constant '())
-      (term<- 'term 'cons (list (car es) (build-list (cdr es))))))
 
 ;; what's the syntax for a macro in pattern context?
 (define (parse-pat p)
