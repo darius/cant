@@ -152,6 +152,9 @@
       ((term)
        (let ((es (cadr parts)))
          (flatmap exp-vars-defined es)))
+      ((list)
+       (let ((es (car parts)))
+         (flatmap exp-vars-defined es)))
       (else
        (error "Bad expression type" e)))))
 
@@ -187,15 +190,19 @@
          (ev-exp e1 r (cont<- ev-arg-cont k r e2))))
       ((term)
        (let ((tag (car parts)) (es (cadr parts)))
+         (ev-args es r '()
+                  (cont<- ev-tag-cont k tag))))
+      ((list)
+       (let ((es (car parts)))
          (ev-args es r k '() tag)))
       (else
        (error "Bad exp type" e)))))
 
-(define (ev-args es r k vals tag)
+(define (ev-args es r vals k)
   (if (null? es)
-      (answer k (make-term tag (reverse vals)))
+      (answer k (reverse vals))
       (ev-exp (car es) r
-              (cont<- ev-rest-args-cont k r (cdr es) vals tag))))
+              (cont<- ev-rest-args-cont k (cdr es) r vals))))
 
 (define (ev-pat subject p r k)
   (let ((parts (term-parts p)))
@@ -309,8 +316,14 @@
 
 (define ev-rest-args-cont
   (make-cont-script
-   (lambda (val k r es vals tag)
-     (ev-args es r k (cons val vals) tag))
+   (lambda (val k es r vals)
+     (ev-args es r (cons val vals) k))
+   'XXX))
+
+(define ev-tag-cont
+  (make-cont-script
+   (lambda (vals k tag)
+     (answer k (make-term tag vals)))
    'XXX))
 
 (define ev-and-pat-cont
