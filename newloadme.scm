@@ -21,3 +21,4 @@
 (print (interpret '(if #t 1 2)))
 (print (interpret '((make ((#f) 'no) (_ 'yes)) #f)))
 (print (interpret '((make ((#f) 'no) (_ 'yes)) #t)))
+(print (interpret '`(hello ,(if #t 'yes 'no))))

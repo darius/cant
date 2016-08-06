@@ -192,7 +192,7 @@
     (('unquote e1) e1)
     ((('unquote-splicing e1)) e1)
     ((('unquote-splicing e1) . qcdr)
-     `(,e1 .chain ,(expand-quasiquote qcdr))) ;XXX use a global fn instead?
+     `(',append ,e1 ,(expand-quasiquote qcdr))) ;XXX call .chain method instead?
     ((qcar . qcdr)
      (qq-cons e (expand-quasiquote qcar)
                 (expand-quasiquote qcdr)))

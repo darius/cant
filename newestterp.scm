@@ -10,6 +10,9 @@
 
 (define repl-env '())
 
+(define (dbg x)
+  #f)
+
 
 ;; Objects, calling, and answering
 
@@ -43,6 +46,7 @@
 (define pair-script 'XXX)
              
 (define (answer k value)
+  (dbg `(answer ,value ,k))
   (call k (list value) 'ignored))
 
 (define (call object message k)
@@ -64,17 +68,20 @@
                        (error "Not a script" script)))))))
 
 (define (run-script object script datum message k)
-  (let matching ((clauses (script-clauses script)))
-    (mcase clauses
-      (()
-       (delegate (script-trait script) object message k))
-      (((pattern body) . rest-clauses)
-       (let ((pat-r (env-extend-promises datum (pat-vars-defined pattern))))
-         (if (ev-pat message pattern pat-r k)
-             (ev-exp body (env-extend-promises pat-r (exp-vars-defined body)) k)
-             (matching rest-clauses)))))))
+  (matching (script-clauses script) object script datum message k))
+
+(define (matching clauses object script datum message k)
+  (dbg `(matching ,clauses))
+  (mcase clauses
+    (()
+     (delegate (script-trait script) object message k))
+    (((pattern body) . rest-clauses)
+     (let ((pat-r (env-extend-promises datum (pat-vars-defined pattern))))
+       (ev-pat message pattern pat-r
+               (cont<- match-clause-cont k pat-r body rest-clauses object script datum message))))))  ;XXX geeeez
 
 (define (delegate trait object message k)
+  (dbg `(delegate))
   (cond ((object? trait)
          (call trait (list object message) k))
         ((not trait) ;XXX instead of #f use a special message-not-understood trait
@@ -174,6 +181,7 @@
   (ev-exp e r halt-cont))
 
 (define (ev-exp e r k)
+  (dbg `(ev ,e))
   (let ((parts (term-parts e)))
     (case (term-tag e)
       ((constant)
@@ -212,6 +220,7 @@
               (cont<- ev-rest-args-cont k (cdr es) r vals))))
 
 (define (ev-pat subject p r k)
+  (dbg `(match ,subject ,p))
   (let ((parts (term-parts p)))
     (case (term-tag p)
       ((constant-pat)
@@ -261,6 +270,8 @@
   ;; XXX Actually that makes it too willing to call objects equal --
   ;; it'll also look inside a Squeam-defined object since it's a
   ;; structure. Let's just live with that for now in this prototype.
+  ;; TODO actually define-type (but not define-structure) apparently
+  ;; has an 'opaque' option to override that -- come back and see.
   equal?)
 
 (define (cont<- cont-script k . values)
@@ -277,16 +288,27 @@
   (cont<- (make-cont-script (lambda (value _) value) 'XXX)
           #f))
 
+(define match-clause-cont
+  (make-cont-script
+   (lambda (matched? k pat-r body rest-clauses object script datum message)
+     (dbg `(match-clause-cont))
+     (if matched?
+         (ev-exp body (env-extend-promises pat-r (exp-vars-defined body)) k)
+         (matching rest-clauses object script datum message k)))
+   'XXX))
+
 (define ev-trait-cont-script
   (make-cont-script
    (lambda (stamp-val k r trait clauses)
+     (dbg `(ev-trait-cont))
      (ev-exp trait r
-             (cont<- ev-stamp-cont-script k stamp-val r clauses)))
+             (cont<- ev-make-cont-script k stamp-val r clauses)))
    'XXX))
 
-(define ev-stamp-cont-script
+(define ev-make-cont-script
   (make-cont-script
    (lambda (trait-val k stamp-val r clauses)
+     (dbg `(ev-make-cont))
      (answer k (object<- (script<- trait-val clauses) ;XXX use stamp-val
                          r)))
    'XXX))
@@ -294,12 +316,14 @@
 (define ev-do-rest-cont
   (make-cont-script
    (lambda (_ k r e2)
+     (dbg `(ev-do-rest-cont))
      (ev-exp e2 r k))
    'XXX))
 
 (define ev-let-match-cont
   (make-cont-script
    (lambda (val k r p)
+     (dbg `(ev-let-match-cont))
      (ev-pat val p r
              (cont<- ev-let-check-cont k val)))
    'XXX))
@@ -307,6 +331,7 @@
 (define ev-let-check-cont
   (make-cont-script
    (lambda (matched? k val)
+     (dbg `(ev-let-check-cont))
      (if matched?
          (answer k val)
          (signal k "Match failure" val)))
@@ -315,6 +340,7 @@
 (define ev-arg-cont
   (make-cont-script
    (lambda (receiver k r e2)
+     (dbg `(ev-arg-cont))
      (ev-exp e2 r
              (cont<- ev-call-cont k receiver)))
    'XXX))
@@ -322,24 +348,28 @@
 (define ev-call-cont
   (make-cont-script
    (lambda (message k receiver)
+     (dbg `(ev-call-cont ,receiver ,message))
      (call receiver message k))
    'XXX))
 
 (define ev-rest-args-cont
   (make-cont-script
    (lambda (val k es r vals)
+     (dbg `(ev-rest-args-cont))
      (ev-args es r (cons val vals) k))
    'XXX))
 
 (define ev-tag-cont
   (make-cont-script
    (lambda (vals k tag)
+     (dbg `(ev-tag-cont))
      (answer k (make-term tag vals)))
    'XXX))
 
 (define ev-and-pat-cont
   (make-cont-script
    (lambda (matched? k r subject p2)
+     (dbg `(ev-and-pat-cont))
      (if matched?
          (ev-pat subject p2 r k)
          (answer k #f)))
@@ -348,6 +378,7 @@
 (define ev-view-call-cont
   (make-cont-script
    (lambda (convert k r subject p)
+     (dbg `(ev-view-call-cont))
      (call convert (list subject)
            (cont<- ev-view-match-cont k r p)))
    'XXX))
@@ -355,12 +386,14 @@
 (define ev-view-match-cont
   (make-cont-script
    (lambda (new-subject k r p)
+     (dbg `(ev-view-match-cont))
      (ev-pat new-subject p r k))
    'XXX))
 
 (define ev-match-rest-cont
   (make-cont-script
    (lambda (matched? k r subjects ps)
+     (dbg `(ev-match-rest-cont))
      (if matched?
          (ev-match-all subjects ps r k)
          (answer k #f)))
