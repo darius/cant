@@ -6,11 +6,11 @@
 (map parse-exp eg-program)
 (map parse-exp (snarf "newboot.scm" squeam-read))
 
-(load "newestterp.scm")
-
 (define (print x)
   (write x)
   (newline))
+
+(load "newestterp.scm")
 
 (print (interpret 42))
 (print (interpret ''hello))
@@ -32,3 +32,8 @@
                        (factorial 10))))
 
 (run-load "later/compact-lambda.scm")
+
+(define (repl)
+  (display "> ")
+  (pp (interpret (read)))
+  (repl))
