@@ -14,6 +14,23 @@
   #f)
 
 
+(define squeam=?
+  ;; For now, I'm gonna assume Squeam-defined objects are equal iff
+  ;; eq?. This means you can't reconstitute an object from its script
+  ;; and datum, which would be a reasonable implementation-level
+  ;; operation for which squeam=? would check if script and datum
+  ;; are eq? -- but then we'd have to walk over lists and terms if
+  ;; they might contain these objects that are squeam=? but not eq?.
+  ;; N.B. this depends on equal? working with define-structure, for
+  ;; equality over terms.
+  ;; XXX Actually that makes it too willing to call objects equal --
+  ;; it'll also look inside a Squeam-defined object since it's a
+  ;; structure. Let's just live with that for now in this prototype.
+  ;; TODO actually define-type (but not define-structure) apparently
+  ;; has an 'opaque' option to override that -- come back and see.
+  equal?)
+
+
 ;; Objects, calling, and answering
 
 (define-structure object script datum)   ; Nonprimitive objects, that is.
@@ -55,7 +72,7 @@
                            (run-script object (cont-script-script script)
                                        datum message k)))
                       (else
-                       (error "Not a script" script)))))))
+                       (error "Not a script" script datum)))))))
 
 (define (run-script object script datum message k)
   (matching (script-clauses script) object script datum message k))
@@ -91,7 +108,42 @@
 ;; Environments
 
 (define the-global-env
-  `((__as-cons ,as-cons)))
+  `((__as-cons ,as-cons)
+    (= ,squeam=?)
+
+    (cons ,cons)
+    (null? ,null?)
+    (list? ,(lambda (x) (or (null? x) (pair? x))))
+    (number? ,number?)
+    (symbol? ,symbol?)
+    (char? ,char?)
+    (string? ,string?)
+    (vector? ,vector?)
+;    (box? ,box?)
+;    (box<- ,box<-)
+    (symbol<- ,string->symbol)
+    (string<-list ,list->string)
+    (< ,<)  ;; XXX use 'compare method instead
+    (<= ,<=)
+    (vector<-count ,make-vector)
+    (not ,not)
+    (assq ,assq)  ;; TODO replace with 'real' hashmaps
+    (display ,display)
+;    (write ,prim-write)
+    (print ,print)                      ;XXXtemporary
+    (newline ,newline)
+    (pp ,pp)                     ;XXX obviously shouldn't be primitive
+
+    ;; Primitives only -- TODO seclude in their own env:
+    (__+ ,+)
+    (__- ,-)
+    (__* ,*)
+    (__car ,car)
+    (__cdr ,cdr)
+    (__length ,length)
+    (__list-ref ,list-ref)
+    (__append ,append)
+    ))
 
 (define (env-lookup r v k)
   (define (succeed pair) (answer k (cadr pair)))
@@ -248,22 +300,6 @@
          (ev-pat (car subjects) (car ps) r
                  (cont<- ev-match-rest-cont k r (cdr subjects) (cdr ps))))))
 
-(define squeam=?
-  ;; For now, I'm gonna assume Squeam-defined objects are equal iff
-  ;; eq?. This means you can't reconstitute an object from its script
-  ;; and datum, which would be a reasonable implementation-level
-  ;; operation for which squeam=? would check if script and datum
-  ;; are eq? -- but then we'd have to walk over lists and terms if
-  ;; they might contain these objects that are squeam=? but not eq?.
-  ;; N.B. this depends on equal? working with define-structure, for
-  ;; equality over terms.
-  ;; XXX Actually that makes it too willing to call objects equal --
-  ;; it'll also look inside a Squeam-defined object since it's a
-  ;; structure. Let's just live with that for now in this prototype.
-  ;; TODO actually define-type (but not define-structure) apparently
-  ;; has an 'opaque' option to override that -- come back and see.
-  equal?)
-
 (define (cont<- cont-script k . values)
   (object<- cont-script (cons k values)))
 
@@ -392,26 +428,29 @@
 
 ;; Primitive types
 
+(define primitive-env '())
+
+(define (get-script name)
+  (script<- (get-prim name) primitive-env))
+
+(define (get-prim name)
+  (env-lookup primitive-env name halt-cont))
+
+(run-load "number.scm")
+
 (define boolean-script 'XXX)
 
-(define tmp (car (map parse-exp (snarf "number.scm" squeam-read))))
-(define primitive-env
-  (append `(
-            (__+ ,+)
-            (__- ,-)
-            (__* ,*)
-            )
-          the-global-env))
-(define number-trait
-  (evaluate tmp primitive-env))
+;(define tmp (car (map parse-exp (snarf "number.scm" squeam-read))))
+;(define (run-load filename)
+;  (interpret `(do ,@(snarf filename squeam-read))))
 
+(define number-script (get-script 'number-primitive))
 
-(define number-script (script<- number-trait '()))
+(define nil-script  (get-script 'list-primitive))
+(define pair-script (get-script 'list-primitive))
 
 (define symbol-script 'XXX)
-(define nil-script 'XXX)
 (define char-script 'XXX)
 (define string-script 'XXX)
 (define vector-script 'XXX)
 (define procedure-script 'XXX)
-(define pair-script 'XXX)

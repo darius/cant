@@ -14,7 +14,7 @@
 
 (print (interpret 42))
 (print (interpret ''hello))
-(print (interpret '(make _)))
+;(print (interpret '(make _)))
 (print (interpret '((make (xs xs)))))
 (print (interpret '((make (xs xs)) 1 2 3)))
 (print (interpret '(if #f 1 2)))
@@ -23,15 +23,12 @@
 (print (interpret '((make ((#f) 'no) (_ 'yes)) #t)))
 (print (interpret '`(hello ,(if #t 'yes 'no))))
 (print (interpret '(2 .+ 3)))
-(pp (parse-exp '(let x 55)))
 (print (interpret '(let x 55)))
-
-
-
-(pp (parse-exp '(define (f) 42)))
-(print (interpret '(define (f) 42)))
+(print (interpret '(do (define (f) 136) (f))))
 (print (interpret '(do (define (factorial n)
                          (match n
                            (0 1)
                            (_ (n .* (factorial (n .- 1))))))
-                       (factorial 5))))
+                       (factorial 10))))
+
+(run-load "later/compact-lambda.scm")
