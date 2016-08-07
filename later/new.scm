@@ -54,8 +54,8 @@
   ;; XXX where do we define the selflessness and equality?
   ;;     also, the pattern-matching syntax?
   (make pair
-    stamped pair-stamp
-    extending list-trait                ;XXX syntax?
+    {stamped pair-stamp}
+    {extending list-trait}              ;XXX syntax?
     ({.empty?} #no)
     ({.first}  head)
     ({.rest}   tail)))
@@ -1718,8 +1718,9 @@ hi)")
     ({.drawn?}
      grid.successors.empty?)
     ({.successors}
-     (for filter-false ((move (range<- 9))) ;TODO better name
-       (grid .move move)))
+     (filter-false                      ;TODO better name
+      (for each ((move (range<- 9)))
+        (grid .move move))))
     ({.move move}
      (let bit (1 .<< move))
      (and (= 0 (bit .and (p .or q)))
@@ -1730,13 +1731,17 @@ hi)")
      ((player-marks) 1))
     ({.show}
      (let marks (player-marks))
-     (call grid-format '.format ;XXX need to support this variant of call
+     (call (method<- grid-format '.format)
            (for each ((pair (zip (player-bits p) (player-bits q))))
              (match pair
                ((1 0) (marks 0))
                ((0 1) (marks 1))
                ((0 0) #\.)))))
     ))
+
+(define (method<- actor cue)
+  (given (@arguments)
+    (call actor (term<- cue arguments))))
 
 (let grid-format ("\n" .join (for each ((_ (range<- 3)))
                                " %s %s %s")))
