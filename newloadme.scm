@@ -37,3 +37,8 @@
   (display "> ")
   (pp (interpret (read)))
   (repl))
+
+(run-load "later/sicp1.scm")
+(run-load "later/sicp2.scm")
+
+(run-load "later/lambdacompiler.scm")
