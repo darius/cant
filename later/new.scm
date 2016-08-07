@@ -1708,7 +1708,7 @@ hi)")
         "OX"))
 
   (define (player-bits bits)
-    (for each ((i (reverse (range<- 9)))) ;TODO: this is less efficient
+    (for each ((i (range<- 9)))
       (1 .and (bits .>> i))))
 
   (make grid
@@ -1732,7 +1732,8 @@ hi)")
     ({.show}
      (let marks (player-marks))
      (call (method<- grid-format '.format)
-           (for each ((pair (zip (player-bits p) (player-bits q))))
+           (for each ((pair (reverse (zip (player-bits p)
+                                          (player-bits q)))))
              (match pair
                ((1 0) (marks 0))
                ((0 1) (marks 1))
