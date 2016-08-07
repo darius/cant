@@ -1684,18 +1684,16 @@ hi)")
 (define (drunk-value grid)
   (if grid.won?
       -1
-      (do (let succs grid.successors)
-          (if succs.empty?
-              0
-              (- (average (each drunk-value succs)))))))
+      (match grid.successors
+        (() 0)
+        (succs (- (average (each drunk-value succs)))))))
 
 (define (spock-value grid)
   (if grid.won?
       -1
-      (do (let succs grid.successors)
-          (if succs.empty?
-              0
-              (- (minimum (each spock-value succs)))))))
+      (match grid.successors
+        (() 0)
+        (succs (- (minimum (each spock-value succs)))))))
 
 (define (average numbers)
   (/ (sum numbers) numbers.count))   ;TODO floats
@@ -1732,7 +1730,7 @@ hi)")
      ((player-marks) 1))
     ({.show}
      (let marks (player-marks))
-     (call grid-format '.format
+     (call grid-format '.format ;XXX need to support this variant of call
            (for each ((pair (zip (player-bits p) (player-bits q))))
              (match pair
                ((1 0) (marks 0))
@@ -1765,7 +1763,9 @@ hi)")
 (define (identity x)
   x)
 
-(let say XXX)
+(define (say @arguments) ;XXX I want @arguments to match only a list of arguments
+  (each! display arguments)
+  (newline))
 
 
 ;; um.scm
