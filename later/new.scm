@@ -2,52 +2,6 @@
 
 ;;; pair.scm
 
-(let list-trait
-  (make-trait list
-    ((i)
-     (if (= i 0)
-         list.first
-         (list.rest (- i 1))))
-    ({.empty?}
-     (= 0 list.count)) ;N.B. these default implementations are circular
-    ({.first}
-     (list 0))
-    ({.rest}
-     (list .slice 1))
-    ({.count}
-     (if list.empty?
-         0
-         (+ 1 list.rest.count)))
-    ({.slice i}
-     (assert (<= i 0))
-     (if (= i 0)
-         list
-         (list.rest .slice (- i 1))))
-    ({.slice i bound}     ;XXX result is a cons-list; be more generic?
-     (assert (<= i 0))
-     (case (list.empty? list)
-           ((<= bound i) '())
-           ((= i 0) (cons list.first (list.rest .slice 0 (- bound 1))))
-           (else (list.rest .slice 0 (- bound 1)))))
-    ({.chain seq}
-     (if list.empty?
-         seq
-         (cons list.first (list.rest .chain seq))))
-    ;; A sequence is a kind of collection. Start implementing that:
-    ({.maps? key}
-     (and (not list.empty?)
-          (or (= 0 key)
-              (and (< 0 key)
-                   (list.rest .maps? (- key 1))))))
-    ({.maps-to? value}
-     (for some ((x list)) (= x value)))
-    ({.find-key-for value}                  ;XXX name?
-     (case (list.empty? (error "Missing key" value))
-           ((= value list.first) 0)
-           (else (+ 1 (list.rest .find-key-for value)))))
-    ;;...
-    ))
-
 (let (pair? pair-stamp) (stamp<- "pair"))
 
 (define (cons head tail)
@@ -62,10 +16,6 @@
 
 
 ;;; stdlib.scm
-
-(define (assert ok? plaint irritant)
-  (unless ok?
-    (error plaint irritant)))
 
 (make +
   (() 0)
@@ -85,95 +35,6 @@
   ((a b) (a .- b))
   ((@arguments) (foldl '.- arguments.first arguments.rest)))
 
-;;XXX so shouldn't some of these be in list-trait?
-
-(define (foldl f z xs)
-  (if xs.empty?
-      z
-      (foldl f (f z xs.first) xs.rest)))
-
-(define (foldr f xs z)
-  (if xs.empty?
-      z
-      (f xs.first (foldr f xs.rest z))))
-
-(define (foldr1 f xs)
-  (let tail xs.rest)
-  (if tail.empty?
-      xs.first
-      (f xs.first (foldr1 f tail))))
-
-(define (each f xs)
-  (for foldr ((x xs) (ys '()))
-    (cons (f x) ys)))
-
-(define (gather f xs)
-  (for foldr ((x xs) (ys '()))
-    (chain (f x) ys)))
-
-(define (filter ok? xs)
-  (for foldr ((x xs) (ys '()))
-    (if (ok? x) (cons x ys) ys)))
-
-(define (union set1 set2)
-  (for foldr ((x set1) (ys set2))
-    (if (set2 .maps-to? x) ys (cons x ys))))
-
-(define (remove set x)
-  ;; XXX removes *all* instances -- but we know a set has at most 1
-  (for filter ((element set))
-    (not (= x element))))
-
-(define (list<- @arguments)
-  arguments)
-
-(make chain
-  (() '())
-  ((xs) xs)
-  ((xs ys) (xs .chain ys))
-  ((@arguments) (foldr1 '.chain arguments)))
-
-(define (some ok? xs)
-  (and (not xs.empty?)
-       (or (ok? xs.first)
-           (some ok? xs.rest))))
-
-(define (every ok? xs)
-  (or xs.empty?
-      (and (ok? xs.first)
-           (every ok? xs.rest))))
-
-(define (print x)
-  (write x)
-  (newline))
-
-(define (each! f xs)
-  (unless xs.empty?
-    (f xs.first)
-    (each! f xs.rest)))
-
-(make range<-
-  ((limit)
-   (range<- 0 limit))
-  ((first limit)
-   (if (<= limit first)
-       '()
-       (make range extending list-trait
-         ({.empty?} #no)
-         ({.first}  first)
-         ({.rest}   (range<- (+ first 1) limit))
-         ({.count}  (- limit first))
-         ((i)
-          (let j (+ first i))
-          (if (and (<= first j) (< j limit)) ;XXX also, integer?
-              j
-              (error "Out of range" range i)))
-         ({.maps? i}
-          (let j (+ first i))
-          (and (<= first j) (< j limit))) ;XXX also, integer?
-         ;; ...
-         ))))
-
 (make enumerate
   ((xs)
    (enumerate xs 0))
@@ -190,9 +51,6 @@
   (for each! ((i x) (enumerate xs))
     (v .set! i x))
   v)
-
-(define ((compose f g) @arguments)
-  (f (apply g arguments))) ;XXX did I have a reason to say 'apply' instead of 'call'?
 
 ;; XXX float contagion
 (define (min x y) (if (< x y) x y))

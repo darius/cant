@@ -4,6 +4,8 @@
   (unless ok?
     (call error (if (null? arguments) '("Assertion failed") arguments))))
 
+;;XXX so should some of these be in list-trait?
+
 (define (foldl f z xs)
   (if xs.empty?
       z
