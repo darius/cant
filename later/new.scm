@@ -1731,7 +1731,7 @@ hi)")
      ((player-marks) 1))
     ({.show}
      (let marks (player-marks))
-     (call (method<- grid-format '.format)
+     (call (method<- grid-format '.format) ;XXX make format a fn instead
            (for each ((pair (reverse (zip (player-bits p)
                                           (player-bits q)))))
              (match pair
@@ -1897,7 +1897,7 @@ hi)")
 (let variable? symbol?)                 ;XXX not really
 
 (define (variable<- prefix n)
-  (symbol<- ((chain prefix ".%d") .format n)))
+  (symbol<- (chain prefix (format ".%d" n)))) ;XXX define format
 
 (make empty-subst
   ({.subst val}
@@ -1927,8 +1927,7 @@ hi)")
 (define (unify s val1 val2)
   (let u (s .subst val1))
   (let v (s .subst val2))
-  (case ((= u v) s)
-        ((variable? u)
+  (case ((variable? u)
          ((if (variable? v) extend-unchecked extend) s u v))
         ((variable? v)
          (extend s u v))
