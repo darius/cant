@@ -80,7 +80,7 @@
   ((first limit)
    (if (<= limit first)
        '()
-       (make range   ; {extending list-trait}
+       (make range {extending list-trait}
          ({.empty?} #no)
          ({.first}  first)
          ({.rest}   (range<- (+ first 1) limit))
@@ -93,7 +93,4 @@
          ({.maps? i}
           (let j (+ first i))
           (and (<= first j) (< j limit))) ;XXX also, integer?
-         ;; ...
-         (message                       ;XXX use trait syntax instead
-          (list-trait range message))
          ))))

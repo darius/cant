@@ -89,10 +89,19 @@
       (char? x)
       (string? x)))
 
-;; XXX what about stamp and trait?
+;; XXX what about stamp?
 ;; XXX also, terp doesn't support opt-name yet
-(define (parse-make opt-name clauses)
-  (term<- 'make none-exp none-exp (map parse-clause clauses)))
+(define (parse-make opt-name stuff)
+  (mcase stuff
+    (((: decl term?) . clauses)
+     (assert (eq? (term-tag decl) 'extending) "bad syntax" decl)
+     (assert (= (length (term-parts decl)) 1) "bad syntax" decl)
+     (term<- 'make
+             none-exp
+             (parse-exp (car (term-parts decl)))
+             (map parse-clause clauses)))
+    (clauses
+     (term<- 'make none-exp none-exp (map parse-clause clauses)))))
 
 (define none-exp (term<- 'constant '#f))
 
