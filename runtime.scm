@@ -76,12 +76,7 @@
   ({.count}       (__length me))
   ((i)            (__list-ref me i))
   ({.chain a}     (__append me a))
-  ({.maps-to? value}
-   (for some ((x me)) (= x value)))     ;XXX 'some' from stdlib
-  ({.find-key-for value}                  ;XXX name?
-   (case (me.empty? (error "Missing key" value))
-         ((= value me.first) 0)
-         (else (+ 1 (me.rest .find-key-for value)))))
+  (message        (list-trait me message)) ;XXX use trait syntax instead
   )
 
 (make-trait vector-primitive me
