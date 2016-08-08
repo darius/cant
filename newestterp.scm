@@ -465,7 +465,7 @@
 (define (get-prim name)
   (env-lookup primitive-env name halt-cont))
 
-(run-load "number.scm")
+(run-load "runtime.scm")
 
 (define boolean-script 'XXX)
 

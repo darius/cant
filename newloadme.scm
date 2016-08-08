@@ -23,13 +23,16 @@
 (print (interpret '((make ((#f) 'no) (_ 'yes)) #t)))
 (print (interpret '`(hello ,(if #t 'yes 'no))))
 (print (interpret '(2 .+ 3)))
-(print (interpret '(let x 55)))
-(print (interpret '(do (define (f) 136) (f))))
-(print (interpret '(do (define (factorial n)
+(print (interpret '(hide (let x 55))))
+(print (interpret '(hide (define (f) 136) (f))))
+(print (interpret '(hide
+                       (define (factorial n)
                          (match n
                            (0 1)
                            (_ (n .* (factorial (n .- 1))))))
                        (factorial 10))))
+
+(run-load "newlib.scm")
 
 (run-load "later/compact-lambda.scm")
 
