@@ -51,6 +51,7 @@
         ((vector? x)    (receiver vector-script x))
         ((box? x)       (receiver box-script x))
         ((output-port? x) (receiver sink-script x))
+        ((term? x)      (receiver term-script x))
         ((procedure? x) (receiver scheme-procedure-script x))
         (else (error "Non-object" x))))
 
@@ -190,6 +191,8 @@
     (__char-whitespace? ,char-whitespace?)
     (__box-value ,box-value)
     (__box-value-set! ,box-value-set!)
+    (__term-tag ,term-tag)
+    (__term-arguments ,term-parts)
     (__display ,(lambda (sink thing)
                   (display thing sink)))              ;XXX handle non-string/char properly
     (__write ,(lambda (sink thing)
@@ -504,4 +507,5 @@
 (define vector-script (get-script 'vector-primitive))
 (define box-script    (get-script 'box-primitive))
 (define sink-script   (get-script 'sink-primitive))
+(define term-script   (get-script 'term-primitive))
 (define procedure-script (get-script 'procedure-primitive))

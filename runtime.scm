@@ -169,3 +169,15 @@
   ({.write a}     (__write me a))     ;XXX Scheme naming isn't very illuminating here
   ({.print a}     (a .print-on me))
   )
+
+(make-trait term-primitive me
+  ({.tag}         (__term-tag me))
+  ({.arguments}   (__term-arguments me))
+  ({.print-on sink}
+   (sink .display "{")
+   (sink .print me.tag)
+   (for each! ((a me.arguments))
+     (sink .display " ")
+     (sink .print a))
+   (sink .display "}"))
+  )
