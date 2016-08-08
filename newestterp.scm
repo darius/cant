@@ -144,11 +144,21 @@
     (* ,*)
     (/ ,/)
     (max ,max)
+    (number<-string ,string->number)
+    (vector<-list ,list->vector)
 
     ;; Primitives only -- TODO seclude in their own env:
     (__+ ,+)
     (__- ,-)
     (__* ,*)
+    (__quotient ,quotient)
+    (__remainder ,remainder)
+;    (__number-compare
+    (__bit-<< ,arithmetic-shift)
+    (__bit-not ,bitwise-not)
+    (__bit-and ,bitwise-and)
+    (__bit-or  ,bitwise-ior)
+    (__bit-xor ,bitwise-xor)
     (__car ,car)
     (__cdr ,cdr)
     (__append ,append)

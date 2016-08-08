@@ -8,6 +8,14 @@
   ({.+ a} (__+ me a))
   ({.- a} (__- me a))
   ({.* a} (__* me a))
+  ({.quotient b}  (__quotient me b))
+  ({.remainder b} (__remainder me b))
+;  ({.compare b}   (__number-compare me b))
+  ({.<< b}        (__bit-<<  me b))
+  ({.not b}       (__bit-not me b))
+  ({.and b}       (__bit-and me b))
+  ({.or b}        (__bit-or  me b))
+  ({.xor b}       (__bit-xor me b))
   )
 
 (make-trait symbol-primitive me

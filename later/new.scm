@@ -227,7 +227,7 @@
 
 (define (superopt truth-table max-gates)
   (let n-inputs (int-log2 truth-table.count))
-  (find-circuits (truth-table .parse-int 2) n-inputs max-gates))
+  (find-circuits (number<-string truth-table 2) n-inputs max-gates))
 
 (define (int-log2 n)
   ;; XXX ugly
