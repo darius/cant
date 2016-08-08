@@ -34,12 +34,12 @@
 
 (run-load "newlib.scm")
 
-(run-load "later/compact-lambda.scm")
-
 (define (repl)
   (display "> ")
   (pp (interpret (read)))
   (repl))
+
+(run-load "later/compact-lambda.scm")
 
 (run-load "later/sicp1.scm")
 (run-load "later/sicp2.scm")
@@ -48,3 +48,4 @@
 (run-load "later/parson.scm")
 (run-load "later/parse.scm")
 (run-load "later/intset.scm")
+(run-load "later/circuitoptimizer.scm")
