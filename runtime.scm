@@ -44,9 +44,12 @@
   )
 
 (make-trait claim-primitive me
+  ({.print-on sink}
+   (sink .display (if me "#yes" "#no")))
   )
 
 (make-trait procedure-primitive me
+  ({.print-on sink} (sink .display me)) ;XXX miranda method
   )
 
 (make-trait number-primitive me
@@ -61,12 +64,14 @@
   ({.and b}       (__bit-and me b))
   ({.or b}        (__bit-or  me b))
   ({.xor b}       (__bit-xor me b))
+  ({.print-on sink} (sink .display me)) ;XXX miranda method
   )
 
 (make-trait symbol-primitive me
   ((actor @arguments)
    (call actor (term<- me arguments)))
   ({.name}        (__symbol->string me))
+  ({.print-on sink} (sink .display me)) ;XXX miranda method
   )
 
 (make-trait list-primitive me
@@ -76,6 +81,12 @@
   ({.count}       (__length me))
   ((i)            (__list-ref me i))
   ({.chain a}     (__append me a))
+  ({.print-on sink}
+   (sink .display "(")
+   (for each! ((x me))                  ;XXX haven't ruled out dotted pairs
+     (sink .display " ")                ;XXX not the first time
+     (sink .print x))
+   (sink .display ")"))
   (message        (list-trait me message)) ;XXX use trait syntax instead
   )
 
@@ -90,6 +101,9 @@
   ({.slice i}     (__subvector me i me.count))
   ({.slice i j}   (__subvector me i j))
   ({.set! i val}  (__vector-set! me i val))
+  ({.print-on sink}
+   (sink .display "#")
+   (sink .print (__vector->list me)))
   )
 
 (make-trait string-primitive me
@@ -102,6 +116,10 @@
   ({.chain b}     (__string-append me b))
   ({.slice i}     (__substring me i me.count))
   ({.slice i j}   (__substring me i j))
+  ({.print-on sink}
+   (sink .display #\")
+   (sink .display me)                   ;XXX escaping
+   (sink .display #\"))
   )
 
 (make-trait char-primitive me
@@ -110,13 +128,19 @@
   ({.digit?}      (__char-digit? me))
   ({.whitespace?} (__char-whitespace? me))
   ({.alphanumeric?} (or me.letter? me.digit?))
+  ({.print-on sink} (sink .display me)) ;XXX miranda method
   )
 
 (make-trait box-primitive me
   ({.^}           (__box-value me))
   ({.^= val}      (__box-value-set! me val))
+  ({.print-on sink}
+   (sink .display "<box ")
+   (sink .print me.^)
+   (sink .display ">"))
   )
 
 (make-trait sink-primitive me
   ({.display a}   (__display me a))
+  ({.print a}     (a .print-on me))
   )

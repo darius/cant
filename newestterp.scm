@@ -184,6 +184,7 @@
                             (< -1 i (vector-length me)))))
     (__vector-ref ,vector-ref)
     (__vector-set! ,vector-set!)
+    (__vector->list ,vector->list)
     (__subvector ,subvector)
     (__char->integer ,char->integer)
     (__char-digit? ,char-numeric?)

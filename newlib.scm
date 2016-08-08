@@ -94,3 +94,6 @@
           (let j (+ first i))
           (and (<= first j) (< j limit))) ;XXX also, integer?
          ))))
+
+(define (format x)                      ;TODO rename
+  (x .print-on out))
