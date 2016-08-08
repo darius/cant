@@ -49,3 +49,4 @@
 (run-load "later/parse.scm")
 (run-load "later/intset.scm")
 (run-load "later/circuitoptimizer.scm")
+(run-load "later/fizzbuzz.scm")
