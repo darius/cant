@@ -163,6 +163,14 @@
                             (< -1 i (string-length me)))))
     (__string-ref ,string-ref)
     (__substring ,substring)
+    (__vector-append ,vector-append)
+    (__vector-length ,vector-length)
+    (__vector-maps? ,(lambda (me i)
+                       (and (integer? i)
+                            (< -1 i (vector-length me)))))
+    (__vector-ref ,vector-ref)
+    (__vector-set! ,vector-set!)
+    (__subvector ,subvector)
     (__char->integer ,char->integer)
     (__char-digit? ,char-numeric?)
     (__char-letter? ,char-alphabetic?)
@@ -464,11 +472,7 @@
 
 (run-load "runtime.scm")
 
-(define boolean-script 'XXX)
-
-;(define tmp (car (map parse-exp (snarf "number.scm" squeam-read))))
-;(define (run-load filename)
-;  (interpret `(do ,@(snarf filename squeam-read))))
+(define boolean-script (get-script 'claim-primitive))
 
 (define number-script (get-script 'number-primitive))
 
@@ -478,6 +482,6 @@
 (define symbol-script (get-script 'symbol-primitive))
 (define char-script   (get-script 'char-primitive))
 (define string-script (get-script 'string-primitive))
-(define vector-script 'XXX)
+(define vector-script (get-script 'vector-primitive))
 (define box-script    (get-script 'box-primitive))
-(define procedure-script 'XXX)
+(define procedure-script (get-script 'procedure-primitive))

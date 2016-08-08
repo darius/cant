@@ -1,3 +1,9 @@
+(make-trait claim-primitive me
+  )
+
+(make-trait procedure-primitive me
+  )
+
 (make-trait number-primitive me
   ({.+ a} (__+ me a))
   ({.- a} (__- me a))
@@ -23,6 +29,19 @@
    (case (me.empty? (error "Missing key" value))
          ((= value me.first) 0)
          (else (+ 1 (me.rest .find-key-for value)))))
+  )
+
+(make-trait vector-primitive me
+  ({.empty?}      (= 0 me.count))
+  ({.first}       (me 0))
+  ({.rest}        (me .slice 1))
+  ({.count}       (__vector-count me))
+  ((i)            (__vector-ref me i))
+  ({.maps? i}     (__vector-maps? me i))
+  ({.chain b}     (__vector-append me b))
+  ({.slice i}     (__subvector me i me.count))
+  ({.slice i j}   (__subvector me i j))
+  ({.set! i val}  (__vector-set! me i val))
   )
 
 (make-trait string-primitive me
