@@ -182,7 +182,7 @@
 (define (parse-bindings bindings receiver)
   (for-each (lambda (binding)
               (mcase binding
-                (((: _ symbol?) _)
+                ((_ _)   ; (used to check here for a variable, but now can be any pattern)
                  'ok)))
             bindings)
   (receiver (map car bindings) (map cadr bindings)))
