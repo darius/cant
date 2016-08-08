@@ -95,5 +95,8 @@
           (and (<= first j) (< j limit))) ;XXX also, integer?
          ))))
 
-(define (format x)                      ;TODO rename
+(define (write x)                      ;TODO rename
   (x .print-on out))
+(define (print x)                      ;TODO rename
+  (write x)
+  (newline))

@@ -117,6 +117,7 @@
 
     (cons ,cons)
     (null? ,null?)
+    (cons? ,pair?)
     (list? ,(lambda (x) (or (null? x) (pair? x))))
     (number? ,number?)
     (symbol? ,symbol?)
@@ -134,9 +135,8 @@
     (vector<-count ,make-vector)
     (not ,not)
     (assq ,assq)  ;; TODO replace with 'real' hashmaps
-    (display ,display)
-    (write ,write)                      ;XXXtemporary
-    (newline ,newline)
+    (display ,display)           ;XXX temp
+    (newline ,newline)           ;XXX temp
     (pp ,pp)                     ;XXX obviously shouldn't be primitive
 
     ;; These will get high-level definitions later TODO
@@ -495,8 +495,8 @@
 
 (define number-script (get-script 'number-primitive))
 
-(define nil-script    (get-script 'list-primitive))
-(define pair-script   (get-script 'list-primitive))
+(define nil-script    (get-script 'nil-primitive))
+(define pair-script   (get-script 'cons-primitive))
 
 (define symbol-script (get-script 'symbol-primitive))
 (define char-script   (get-script 'char-primitive))

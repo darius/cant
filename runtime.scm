@@ -74,8 +74,19 @@
   ({.name}        (__symbol->string me))
   )
 
-(make-trait list-primitive me
-  ({.empty?}      (null? me))
+(make-trait nil-primitive me
+  ({.empty?}      #yes)
+  ({.first}       (error "Empty list" '.first))
+  ({.rest}        (error "Empty list" '.rest))
+  ({.count}       0)
+  ((i)            (error "Empty list" 'nth))
+  ({.chain a}     a)
+  ({.print-on sink} (sink .display "()"))
+  (message        (list-trait me message)) ;XXX use trait syntax instead
+  )
+
+(make-trait cons-primitive me
+  ({.empty?}      #no)
   ({.first}       (__car me))
   ({.rest}        (__cdr me))
   ({.count}       (__length me))
@@ -83,9 +94,16 @@
   ({.chain a}     (__append me a))
   ({.print-on sink}
    (sink .display "(")
-   (for each! ((x me))                  ;XXX haven't ruled out dotted pairs
-     (sink .display " ")                ;XXX not the first time
-     (sink .print x))
+   (sink .print me.first)
+   (begin printing ((r me.rest))
+     (case ((cons? r)
+            (sink .display " ")
+            (sink .print r.first)
+            (printing r.rest))
+           ((null? r))
+           (else
+            (sink .display " . ")       ;N.B. we're not supporting this in read, iirc
+            (sink .print r))))
    (sink .display ")"))
   (message        (list-trait me message)) ;XXX use trait syntax instead
   )
@@ -118,7 +136,14 @@
   ({.slice i j}   (__substring me i j))
   ({.print-on sink}
    (sink .display #\")
-   (sink .display me)                   ;XXX escaping
+   (for each! ((c me))
+     (sink .display (match c            ;XXX super slow. We might prefer to use the Gambit built-in.
+                      (#\\ "\\\\")
+                      (#\" "\\\"")
+                      (#\newline "\\n")
+                      (#\tab     "\\t")
+                      (#\return  "\\r")
+                      (_ c))))
    (sink .display #\"))
   )
 
