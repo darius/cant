@@ -50,6 +50,7 @@
         ((string? x)    (receiver string-script x))
         ((vector? x)    (receiver vector-script x))
         ((box? x)       (receiver box-script x))
+        ((output-port? x) (receiver sink-script x))
         ((procedure? x) (receiver scheme-procedure-script x))
         (else (error "Non-object" x))))
 
@@ -114,6 +115,7 @@
 (define the-global-env
   `((__as-cons ,as-cons)
     (= ,squeam=?)
+    (out ,(current-output-port))
 
     (cons ,cons)
     (null? ,null?)
@@ -124,6 +126,7 @@
     (string? ,string?)
     (vector? ,vector?)
     (box? ,box?)
+    (sink? ,output-port?)
     (box<- ,box<-)
     (symbol<- ,string->symbol)
     (term<- ,make-term)
@@ -188,6 +191,8 @@
     (__char-whitespace? ,char-whitespace?)
     (__box-value ,box-value)
     (__box-value-set! ,box-value-set!)
+    (__display ,(lambda (sink thing)
+                  (display thing sink)))              ;XXX handle non-string/char properly
     ))
 
 (define (env-lookup r v k)
@@ -495,4 +500,5 @@
 (define string-script (get-script 'string-primitive))
 (define vector-script (get-script 'vector-primitive))
 (define box-script    (get-script 'box-primitive))
+(define sink-script   (get-script 'sink-primitive))
 (define procedure-script (get-script 'procedure-primitive))

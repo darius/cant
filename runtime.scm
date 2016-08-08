@@ -117,3 +117,6 @@
   ({.^= val}      (__box-value-set! me val))
   )
 
+(make-trait sink-primitive me
+  ({.display a}   (__display me a))
+  )
