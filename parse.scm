@@ -207,6 +207,7 @@
     ((qcar . qcdr)
      (qq-cons e (expand-quasiquote qcar)
                 (expand-quasiquote qcdr)))
+    ;; TODO handle terms too
     (else `',e)))
 
 (define (qq-cons pair qq-car qq-cdr)

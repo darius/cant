@@ -82,8 +82,7 @@
   ((i)            (error "Empty list" 'nth))
   ({.chain a}     a)
   ({.print-on sink} (sink .display "()"))
-  (message        (list-trait me message)) ;XXX use trait syntax instead
-  )
+  (message        (list-trait me message))) ;XXX use trait syntax instead
 
 (make-trait cons-primitive me
   ({.empty?}      #no)
@@ -105,8 +104,7 @@
             (sink .display " . ")       ;N.B. we're not supporting this in read, iirc
             (sink .print r))))
    (sink .display ")"))
-  (message        (list-trait me message)) ;XXX use trait syntax instead
-  )
+  (message        (list-trait me message))) ;XXX use trait syntax instead
 
 (make-trait vector-primitive me
   ({.empty?}      (= 0 me.count))
@@ -181,3 +179,94 @@
      (sink .print a))
    (sink .display "}"))
   )
+
+
+;; Continuations
+
+(make __halt-cont
+  ({.empty?}        #yes)
+  ({.first}         (error "No more frames" __halt-cont))
+  ({.rest}          (error "No more frames" __halt-cont))
+  ({.print-on sink} (sink .display "<halt-cont>"))
+  (message          (list-trait me message))) ;XXX use trait syntax instead
+
+(make-trait __cont-trait me
+  ({.empty?}        #no)
+  ({.print-on sink} (sink .display "<cont>")) ;XXX more
+  (message          (list-trait me message))) ;XXX use trait syntax instead
+
+(define (__match-clause-cont k pat-r body rest-clauses object script datum message)
+  (make {extending __cont-trait}
+    ({.rest} k)
+    ({.first} `((^ ,body) ,@rest-clauses))))
+
+(define (__ev-trait-cont k r trait clauses)
+  (make {extending __cont-trait}
+    ({.rest} k)
+    ({.first} `(make
+                 ,trait                ;XXX not source syntax
+                 ^ 
+                 ,@clauses))))
+
+(define (__ev-make-cont k stamp-val r clauses)
+  (make {extending __cont-trait}
+    ({.rest} k)
+    ({.first} `(make ^ #no   ; XXX as above
+                 ,@clauses))))
+
+(define (__ev-do-rest-cont k r e2)
+  (make {extending __cont-trait}
+    ({.rest} k)
+    ({.first} e2)))
+
+(define (__ev-let-match-cont k r p)
+  (make {extending __cont-trait}
+    ({.rest} k)
+    ({.first} `(<match> ,p))))          ;XXX lously presentation
+
+(define (__ev-let-check-cont k val)
+  (make {extending __cont-trait}
+    ({.rest} k)
+    ({.first} `(<assert-matched-then> ',val))))
+
+(define (__ev-arg-cont k r e2)
+  (make {extending __cont-trait}
+    ({.rest} k)
+    ({.first} `(^ ,e2))))
+
+(define (__ev-call-cont k receiver)
+  (make {extending __cont-trait}
+    ({.rest} k)
+    ({.first} `(call ',receiver ^))))
+
+(define (__ev-rest-args-cont k es r vals)
+  (make {extending __cont-trait}
+    ({.rest} k)
+    ({.first}
+     (define (quotify v) `',v)
+     `(,@(each quotify (reverse vals)) ^ ,@es))))
+
+(define (__ev-tag-cont k tag)
+  (make {extending __cont-trait}
+    ({.rest} k)
+    ({.first} (term<- tag '^^^))))
+
+(define (__ev-and-pat-cont k r subject p2)
+  (make {extending __cont-trait}
+    ({.rest} k)
+    ({.first} `(<and-match?> ,p2))))
+
+(define (__ev-view-call-cont k r subject p)
+  (make {extending __cont-trait}
+    ({.rest} k)
+    ({.first} `(: _ ^ ,p))))
+
+(define (__ev-view-match-cont k r p)
+  (make {extending __cont-trait}
+    ({.rest} k)
+    ({.first} p)))
+
+(define (__ev-match-rest-cont k r subjects ps)
+  (make {extending __cont-trait}
+    ({.rest} k)
+    ({.first} `(<all-match?> ,@ps))))
