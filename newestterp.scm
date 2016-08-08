@@ -91,12 +91,10 @@
 
 (define (delegate trait object message k)
   (dbg `(delegate))
-  (cond ((object? trait)
-         (call trait (list object message) k))
-        ((not trait) ;XXX instead of #f use a special message-not-understood trait
-         (signal k "Message not understood" message object))
-        (else
-         (error "Unknown script type" script))))
+  (let ((handler (cond ((object? trait) trait)
+                       ((not trait) miranda-trait)
+                       (else (error "Unknown script type" script)))))
+    (call handler (list object message) k)))
 
 (define (signal k plaint . values)
   (error plaint values))                ;XXX
@@ -194,6 +192,8 @@
     (__box-value-set! ,box-value-set!)
     (__display ,(lambda (sink thing)
                   (display thing sink)))              ;XXX handle non-string/char properly
+    (__write ,(lambda (sink thing)
+                  (write thing sink)))              ;XXX handle non-primitive properly?
     ))
 
 (define (env-lookup r v k)
@@ -488,6 +488,8 @@
   (env-lookup primitive-env name halt-cont))
 
 (run-load "runtime.scm")
+
+(define miranda-trait (get-prim 'miranda-trait))
 
 (define boolean-script (get-script 'claim-primitive))
 

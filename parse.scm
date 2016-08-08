@@ -120,10 +120,12 @@
                 `(do ,@(snarf filename squeam-read)))))
     ('make-trait
              (mlambda
-              ((_ (: v symbol?) (: self symbol?) . clauses)
+              ((_ (: v symbol?) (: self symbol?) . clauses) ;XXX allow other patterns?
                (let ((msg (gensym)))
                  `(define (,v ,self ,msg)
-                    (match ,msg ,@clauses))))))
+                    (match ,msg
+                      ,@clauses
+                      (_ (miranda-trait ,self ,msg)))))))) ;XXX hygiene, and XXX make it overridable
     ('match  (mlambda
               ((_ subject . clauses)
                `(call (make _ ,@clauses) ,subject))))

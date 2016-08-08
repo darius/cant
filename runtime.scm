@@ -1,3 +1,7 @@
+(make-trait miranda-trait me
+  ({.print-on sink} (sink .write me))  
+  (message (error "Message not understood" message me)))
+
 (make-trait list-trait list
   ((i)
    (if (= i 0)
@@ -40,7 +44,6 @@
    (case (list.empty? (error "Missing key" value))
          ((= value list.first) 0)
          (else (+ 1 (list.rest .find-key-for value)))))
-  ;;...
   )
 
 (make-trait claim-primitive me
@@ -49,7 +52,6 @@
   )
 
 (make-trait procedure-primitive me
-  ({.print-on sink} (sink .display me)) ;XXX miranda method
   )
 
 (make-trait number-primitive me
@@ -64,14 +66,12 @@
   ({.and b}       (__bit-and me b))
   ({.or b}        (__bit-or  me b))
   ({.xor b}       (__bit-xor me b))
-  ({.print-on sink} (sink .display me)) ;XXX miranda method
   )
 
 (make-trait symbol-primitive me
   ((actor @arguments)
    (call actor (term<- me arguments)))
   ({.name}        (__symbol->string me))
-  ({.print-on sink} (sink .display me)) ;XXX miranda method
   )
 
 (make-trait list-primitive me
@@ -128,7 +128,6 @@
   ({.digit?}      (__char-digit? me))
   ({.whitespace?} (__char-whitespace? me))
   ({.alphanumeric?} (or me.letter? me.digit?))
-  ({.print-on sink} (sink .display me)) ;XXX miranda method
   )
 
 (make-trait box-primitive me
@@ -142,5 +141,6 @@
 
 (make-trait sink-primitive me
   ({.display a}   (__display me a))
+  ({.write a}     (__write me a))     ;XXX Scheme naming isn't very illuminating here
   ({.print a}     (a .print-on me))
   )
