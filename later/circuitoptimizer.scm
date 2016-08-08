@@ -7,13 +7,14 @@
 
 (define (int-log2 n)
   ;; XXX ugly
-  (if (= n 1) 0
-      (if (= n 2) 1
-          (if (= n 4) 2
-              (if (= n 8) 3
-                  (if (= n 16) 4
-                      (if (= n 32) 5
-                          (error "Bad argument" n))))))))
+  (match n
+    (1  0)
+    (2  1)
+    (4  2)
+    (8  3)
+    (16 4)
+    (32 5)
+    (_ (error "Bad argument" n))))
 
 (define (say @arguments)
   (each! display arguments))
