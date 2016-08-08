@@ -134,10 +134,7 @@
     (not ,not)
     (assq ,assq)  ;; TODO replace with 'real' hashmaps
     (display ,display)
-;    (write ,prim-write)
-    (print ,print)                      ;XXXtemporary
     (write ,write)                      ;XXXtemporary
-    (display ,display)                  ;XXXtemporary
     (newline ,newline)
     (pp ,pp)                     ;XXX obviously shouldn't be primitive
 
