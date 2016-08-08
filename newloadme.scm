@@ -42,3 +42,4 @@
 (run-load "later/sicp2.scm")
 
 (run-load "later/lambdacompiler.scm")
+(run-load "later/parse.scm")

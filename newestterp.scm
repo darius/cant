@@ -122,6 +122,7 @@
 ;    (box? ,box?)
 ;    (box<- ,box<-)
     (symbol<- ,string->symbol)
+    (term<- ,make-term)
     (string<-list ,list->string)
     (< ,<)  ;; XXX use 'compare method instead
     (<= ,<=)
@@ -131,6 +132,8 @@
     (display ,display)
 ;    (write ,prim-write)
     (print ,print)                      ;XXXtemporary
+    (write ,write)                      ;XXXtemporary
+    (display ,display)                  ;XXXtemporary
     (newline ,newline)
     (pp ,pp)                     ;XXX obviously shouldn't be primitive
 
@@ -150,6 +153,7 @@
     (__length ,length)
     (__list-ref ,list-ref)
     (__append ,append)
+    (__symbol->string ,symbol->string)
     ))
 
 (define (env-lookup r v k)
@@ -456,7 +460,7 @@
 (define nil-script  (get-script 'list-primitive))
 (define pair-script (get-script 'list-primitive))
 
-(define symbol-script 'XXX)
+(define symbol-script (get-script 'symbol-primitive))
 (define char-script 'XXX)
 (define string-script 'XXX)
 (define vector-script 'XXX)
