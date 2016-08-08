@@ -1,5 +1,9 @@
 ;; stdlib
 
+(define (assert ok? @arguments)
+  (unless ok?
+    (call error (if (null? arguments) '("Assertion failed") arguments))))
+
 (define (foldl f z xs)
   (if xs.empty?
       z
@@ -68,3 +72,26 @@
 (define ((compose f g) @arguments)
   (f (call g arguments)))
 
+(make range<-
+  ((limit)
+   (range<- 0 limit))
+  ((first limit)
+   (if (<= limit first)
+       '()
+       (make range   ; {extending list-trait}
+         ({.empty?} #no)
+         ({.first}  first)
+         ({.rest}   (range<- (+ first 1) limit))
+         ({.count}  (- limit first))
+         ((i)
+          (let j (+ first i))
+          (if (and (<= first j) (< j limit)) ;XXX also, integer?
+              j
+              (error "Out of range" range i)))
+         ({.maps? i}
+          (let j (+ first i))
+          (and (<= first j) (< j limit))) ;XXX also, integer?
+         ;; ...
+         (message                       ;XXX use trait syntax instead
+          (list-trait range message))
+         ))))

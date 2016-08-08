@@ -1,3 +1,48 @@
+(make-trait list-trait list
+  ((i)
+   (if (= i 0)
+       list.first
+       (list.rest (- i 1))))
+  ({.empty?}
+   (= 0 list.count)) ;N.B. these default implementations are circular
+  ({.first}
+   (list 0))
+  ({.rest}
+   (list .slice 1))
+  ({.count}
+   (if list.empty?
+       0
+       (+ 1 list.rest.count)))
+  ({.slice i}
+   (assert (<= 0 i))
+   (if (= i 0)
+       list
+       (list.rest .slice (- i 1))))
+  ({.slice i bound}     ;XXX result is a cons-list; be more generic?
+   (assert (<= 0 i))
+   (case (list.empty? list)
+         ((<= bound i) '())
+         ((= i 0) (cons list.first (list.rest .slice 0 (- bound 1))))
+         (else (list.rest .slice (- i 1) (- bound 1)))))
+  ({.chain seq}
+   (if list.empty?
+       seq
+       (cons list.first (list.rest .chain seq))))
+  ;; A sequence is a kind of collection. Start implementing that:
+  ({.maps? key}
+   (and (not list.empty?)
+        (or (= 0 key)
+            (and (< 0 key)
+                 (list.rest .maps? (- key 1))))))
+  ({.maps-to? value}
+   (for some ((x list)) (= x value)))
+  ({.find-key-for value}                  ;XXX name?
+   (case (list.empty? (error "Missing key" value))
+         ((= value list.first) 0)
+         (else (+ 1 (list.rest .find-key-for value)))))
+  ;;...
+  )
+
 (make-trait claim-primitive me
   )
 

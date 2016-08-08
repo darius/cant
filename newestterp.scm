@@ -139,6 +139,7 @@
     (pp ,pp)                     ;XXX obviously shouldn't be primitive
 
     ;; These will get high-level definitions later TODO
+    (error ,error)
     (+ ,+)
     (- ,-)
     (* ,*)
