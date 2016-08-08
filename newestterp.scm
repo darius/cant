@@ -49,6 +49,7 @@
         ((char? x)      (receiver char-script x))
         ((string? x)    (receiver string-script x))
         ((vector? x)    (receiver vector-script x))
+        ((box? x)       (receiver box-script x))
         ((procedure? x) (receiver scheme-procedure-script x))
         (else (error "Non-object" x))))
 
@@ -103,6 +104,9 @@
 (define (as-cons x)
   (and (pair? x)
        (term<- 'cons (car x) (cdr x))))
+
+(define-structure box value)
+(define box<- make-box)
       
 
 ;; Environments
@@ -119,8 +123,8 @@
     (char? ,char?)
     (string? ,string?)
     (vector? ,vector?)
-;    (box? ,box?)
-;    (box<- ,box<-)
+    (box? ,box?)
+    (box<- ,box<-)
     (symbol<- ,string->symbol)
     (term<- ,make-term)
     (string<-list ,list->string)
@@ -154,6 +158,16 @@
     (__list-ref ,list-ref)
     (__append ,append)
     (__symbol->string ,symbol->string)
+    (__string-append ,string-append)
+    (__string-length ,string-length)
+    (__string-ref ,string-ref)
+    (__substring ,substring)
+    (__char->integer ,char->integer)
+    (__char-digit? ,char-numeric?)
+    (__char-letter? ,char-alphabetic?)
+    (__char-whitespace? ,char-whitespace?)
+    (__box-value ,box-value)
+    (__box-value-set! ,box-value-set!)
     ))
 
 (define (env-lookup r v k)
@@ -457,11 +471,12 @@
 
 (define number-script (get-script 'number-primitive))
 
-(define nil-script  (get-script 'list-primitive))
-(define pair-script (get-script 'list-primitive))
+(define nil-script    (get-script 'list-primitive))
+(define pair-script   (get-script 'list-primitive))
 
 (define symbol-script (get-script 'symbol-primitive))
-(define char-script 'XXX)
-(define string-script 'XXX)
+(define char-script   (get-script 'char-primitive))
+(define string-script (get-script 'string-primitive))
 (define vector-script 'XXX)
+(define box-script    (get-script 'box-primitive))
 (define procedure-script 'XXX)
