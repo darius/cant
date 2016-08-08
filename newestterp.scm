@@ -93,7 +93,7 @@
   (cond ((object? trait)
          (call trait (list object message) k))
         ((not trait) ;XXX instead of #f use a special message-not-understood trait
-         (signal k "Message not understood" object message))
+         (signal k "Message not understood" message object))
         (else
          (error "Unknown script type" script))))
 
