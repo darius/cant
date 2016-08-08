@@ -175,10 +175,6 @@
 (print (factorial 5))
 
 
-;; eg/intset.scm
-;; (see new-intset.scm in this directory)
-
-
 ;; eg/lambdaterp.scm
 ;; Let's work out a source-level debugger in a simpler setting,
 ;; the call-by-value lambda calculus.

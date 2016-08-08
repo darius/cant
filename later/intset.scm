@@ -3,7 +3,7 @@
 
 (make empty
   ({.empty?}   #yes)
-  ({.has? k}   #no)
+  ({.has? _}   #no)
   ({.adjoin k} (adjoin<- k empty))
   ({.merge s}  s))
 

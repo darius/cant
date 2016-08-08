@@ -47,3 +47,4 @@
 (run-load "later/lambdacompiler.scm")
 (run-load "later/parson.scm")
 (run-load "later/parse.scm")
+(run-load "later/intset.scm")
