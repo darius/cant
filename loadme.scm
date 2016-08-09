@@ -4,13 +4,12 @@
 (define eg-program (snarf "later/compact-lambda.scm" squeam-read))
 (load "parse.scm")
 (map parse-exp eg-program)
-(map parse-exp (snarf "newboot.scm" squeam-read))
 
 (define (print x)
   (write x)
   (newline))
 
-(load "newestterp.scm")
+(load "terp.scm")
 
 (print (interpret 42))
 (print (interpret ''hello))
@@ -32,7 +31,7 @@
                            (_ (n .* (factorial (n .- 1))))))
                        (factorial 10))))
 
-(run-load "newlib.scm")
+(run-load "stdlib.scm")
 
 (define (repl)
   (display "> ")
