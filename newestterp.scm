@@ -11,6 +11,7 @@
 (define repl-env '())
 
 (define (dbg x)
+;  (pp x))
   #f)
 
 
@@ -56,32 +57,49 @@
         (else (error "Non-object" x))))
 
 (define (answer k value)
-  (dbg `(answer ,value ,k))
+;  (dbg `(answer ,value ,k))
+  (dbg `(answer))
   (call k (list value) 'ignored))
 
 (define (call object message k)
+  (dbg `(call))
   (if (and (procedure? object)
            (list? message))
-      (answer k (apply object message))
+      (if (eq? object error-prim)
+          (error-prim (cons k message))
+          (answer k (apply object message)))
       (unwrap object
               (lambda (script datum)
                 (cond ((script? script)
                        (run-script object script datum message k))
                       ((cont-script? script)
+;                       (dbg `(cont-script ,(cont-script-name script)))
+;                       (if (eq? (cont-script-name script) '__halt-cont)
+;                           (dbg `(message ,message)))
                        (if (and (pair? message) (null? (cdr message)))
                            (apply (cont-script-answerer script)
-                                  (car message)
-                                  datum)
-                           (run-script object (cont-script-script script)
-                                       datum message k)))
+                                  (cons (car message) datum))
+                           (call-cont-standin script datum message k)))
                       (else
                        (error "Not a script" script datum)))))))
+
+;; XXX This is a hack.
+(define (call-cont-standin script datum message k)
+;  (pp `(making standin ,(cont-script-name script)))
+  (let ((make-standin (get-prim (cont-script-name script))))
+    (call make-standin datum
+          (cont<- call-cont-standin-cont k message))))
+
+(define (error-prim message)
+  (let* ((the-box (get-prim 'the-signal-handler-box))
+         (handler (call the-box (term<- '.^) halt-cont)))
+    (call handler message halt-cont)))
 
 (define (run-script object script datum message k)
   (matching (script-clauses script) object script datum message k))
 
 (define (matching clauses object script datum message k)
-  (dbg `(matching ,clauses))
+  (dbg `(matching)) ; ,clauses))
   (mcase clauses
     (()
      (delegate (script-trait script) object message k))
@@ -139,9 +157,13 @@
     (display ,display)           ;XXX temp
     (newline ,newline)           ;XXX temp
     (pp ,pp)                     ;XXX obviously shouldn't be primitive
+    (panic ,(lambda (k . message)
+              (print 'panicking)
+              (print (car message))
+              (apply error message)))
+    (error ,error-prim)
 
     ;; These will get high-level definitions later TODO
-    (error ,error)
     (+ ,+)
     (- ,-)
     (* ,*)
@@ -277,7 +299,7 @@
   (ev-exp e r halt-cont))
 
 (define (ev-exp e r k)
-  (dbg `(ev ,e))
+  (dbg `(ev-exp)) ; ,e))
   (let ((parts (term-parts e)))
     (case (term-tag e)
       ((constant)
@@ -316,7 +338,7 @@
               (cont<- ev-rest-args-cont k (cdr es) r vals))))
 
 (define (ev-pat subject p r k)
-  (dbg `(match ,subject ,p))
+  (dbg `(match)) ; ,subject ,p))
   (let ((parts (term-parts p)))
     (case (term-tag p)
       ((constant-pat)
@@ -362,122 +384,132 @@
 ;; for each continuation type, a separate primitive procedure to do
 ;; the actual answering -- and those'd have to be a special kind of
 ;; primitive that doesn't need a continuation, too.
-(define-structure cont-script answerer script)
+(define-structure cont-script name answerer)
 
 (define halt-cont
-  (cont<- (make-cont-script (lambda (value _) value) 'XXX)
-          #f))
+  (object<- (make-cont-script '__halt-cont (lambda (value) value))
+            '()))
+
+(set! the-global-env
+      `((halt-cont ,halt-cont) ,@the-global-env)) ;XXX temp
+
+(define call-cont-standin-cont          ;XXX still a hack
+  (make-cont-script
+   '__call-cont-standin-cont
+   (lambda (standin k message)
+;;     (pp `(call-cont-standin-cont ,message))
+     (call standin message k))))
 
 (define match-clause-cont
   (make-cont-script
+   '__match-clause-cont
    (lambda (matched? k pat-r body rest-clauses object script datum message)
      (dbg `(match-clause-cont))
      (if matched?
          (ev-exp body (env-extend-promises pat-r (exp-vars-defined body)) k)
-         (matching rest-clauses object script datum message k)))
-   'XXX))
+         (matching rest-clauses object script datum message k)))))
 
 (define ev-trait-cont-script
   (make-cont-script
+   '__ev-trait-cont
    (lambda (stamp-val k r trait clauses)
      (dbg `(ev-trait-cont))
      (ev-exp trait r
-             (cont<- ev-make-cont-script k stamp-val r clauses)))
-   'XXX))
+             (cont<- ev-make-cont-script k stamp-val r clauses)))))
 
 (define ev-make-cont-script
   (make-cont-script
+   '__ev-make-cont
    (lambda (trait-val k stamp-val r clauses)
      (dbg `(ev-make-cont))
      (answer k (object<- (script<- trait-val clauses) ;XXX use stamp-val
-                         r)))
-   'XXX))
+                         r)))))
 
 (define ev-do-rest-cont
   (make-cont-script
+   '__ev-do-rest-cont
    (lambda (_ k r e2)
      (dbg `(ev-do-rest-cont))
-     (ev-exp e2 r k))
-   'XXX))
+     (ev-exp e2 r k))))
 
 (define ev-let-match-cont
   (make-cont-script
+   '__ev-let-match-cont
    (lambda (val k r p)
      (dbg `(ev-let-match-cont))
      (ev-pat val p r
-             (cont<- ev-let-check-cont k val)))
-   'XXX))
+             (cont<- ev-let-check-cont k val)))))
 
 (define ev-let-check-cont
   (make-cont-script
+   '__ev-let-check-cont
    (lambda (matched? k val)
      (dbg `(ev-let-check-cont))
      (if matched?
          (answer k val)
-         (signal k "Match failure" val)))
-   'XXX))
+         (signal k "Match failure" val)))))
 
 (define ev-arg-cont
   (make-cont-script
+   '__ev-arg-cont
    (lambda (receiver k r e2)
      (dbg `(ev-arg-cont))
      (ev-exp e2 r
-             (cont<- ev-call-cont k receiver)))
-   'XXX))
+             (cont<- ev-call-cont k receiver)))))
 
 (define ev-call-cont
   (make-cont-script
+   '__ev-call-cont
    (lambda (message k receiver)
      (dbg `(ev-call-cont ,receiver ,message))
-     (call receiver message k))
-   'XXX))
+     (call receiver message k))))
 
 (define ev-rest-args-cont
   (make-cont-script
+   '__ev-rest-args-cont
    (lambda (val k es r vals)
      (dbg `(ev-rest-args-cont))
-     (ev-args es r (cons val vals) k))
-   'XXX))
+     (ev-args es r (cons val vals) k))))
 
 (define ev-tag-cont
   (make-cont-script
+   '__ev-tag-cont
    (lambda (vals k tag)
      (dbg `(ev-tag-cont))
-     (answer k (make-term tag vals)))
-   'XXX))
+     (answer k (make-term tag vals)))))
 
 (define ev-and-pat-cont
   (make-cont-script
+   '__ev-and-pat-cont
    (lambda (matched? k r subject p2)
      (dbg `(ev-and-pat-cont))
      (if matched?
          (ev-pat subject p2 r k)
-         (answer k #f)))
-   'XXX))
+         (answer k #f)))))
 
 (define ev-view-call-cont
   (make-cont-script
+   '__ev-view-call-cont
    (lambda (convert k r subject p)
      (dbg `(ev-view-call-cont))
      (call convert (list subject)
-           (cont<- ev-view-match-cont k r p)))
-   'XXX))
+           (cont<- ev-view-match-cont k r p)))))
 
 (define ev-view-match-cont
   (make-cont-script
+   '__ev-view-match-cont
    (lambda (new-subject k r p)
      (dbg `(ev-view-match-cont))
-     (ev-pat new-subject p r k))
-   'XXX))
+     (ev-pat new-subject p r k))))
 
 (define ev-match-rest-cont
   (make-cont-script
+   '__ev-match-rest-cont
    (lambda (matched? k r subjects ps)
      (dbg `(ev-match-rest-cont))
      (if matched?
          (ev-match-all subjects ps r k)
-         (answer k #f)))
-   'XXX))
+         (answer k #f)))))
 
 
 ;; Primitive types

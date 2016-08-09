@@ -1,3 +1,11 @@
+;; This special source file must be written to load without actually
+;; invoking any primitive object, because this code *defines* their
+;; scripts. Only after this file is loaded will the definitions get
+;; magically connected to the primitives.
+
+;; That works out because the top level here is just definitions, with
+;; no top-level actions.
+
 (make-trait miranda-trait me
   ({.print-on sink} (sink .write me))  
   (message (error "Message not understood" message me)))
@@ -183,17 +191,22 @@
 
 ;; Continuations
 
-(make __halt-cont
-  ({.empty?}        #yes)
-  ({.first}         (error "No more frames" __halt-cont))
-  ({.rest}          (error "No more frames" __halt-cont))
-  ({.print-on sink} (sink .display "<halt-cont>"))
-  (message          (list-trait me message))) ;XXX use trait syntax instead
+(define (__halt-cont)
+  (make me {extending list-trait}
+    ({.empty?}        #yes)
+    ({.first}         (error "No more frames" me))
+    ({.rest}          (error "No more frames" me))
+    ({.print-on sink} (sink .display "<halt-cont>"))))
 
 (make-trait __cont-trait me
   ({.empty?}        #no)
   ({.print-on sink} (sink .display "<cont>")) ;XXX more
   (message          (list-trait me message))) ;XXX use trait syntax instead
+
+(define (__call-cont-standin-cont k message)
+  (make {extending __cont-trait}
+    ({.rest} k)
+    ({.first} '("XXX still a hack"))))
 
 (define (__match-clause-cont k pat-r body rest-clauses object script datum message)
   (make {extending __cont-trait}

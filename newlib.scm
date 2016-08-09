@@ -100,3 +100,5 @@
 (define (print x)                      ;TODO rename
   (write x)
   (newline))
+
+(let the-signal-handler-box (box<- panic))
