@@ -1126,9 +1126,9 @@
 ;; nor the type is as simple...
 
 (define (run program out-port in-port)
-  (let mem (growable-vector<-))         ;TODO: shorter name? flexlist?
+  (let mem (fillvector<-))         ;TODO: shorter name? flexlist?
   (mem .push! program)
-  (let free-list (growable-vector<-))
+  (let free-list (fillvector<-))
   (let reg (vector<-count 8 0))         ;TODO: typed vector, for efficiency
 
   (begin running ((program program) (pc 0))
@@ -1207,7 +1207,7 @@
             "Error exit"))))))
 
 (define (read-program in-port)
-  (let program (growable-vector<-))
+  (let program (fillvector<-))
   (begin reading ()
     (let c3 in-port.read-char)
     (unless (= c3 none)
