@@ -1,7 +1,7 @@
 (load "util.scm")
 (load "read.scm")
 ;(snarf "later/new.scm" squeam-read)  ; or readtest.scm?
-(define eg-program (snarf "later/compact-lambda.scm" squeam-read))
+(define eg-program (snarf "eg/compact-lambda.scm" squeam-read))
 (load "parse.scm")
 (map parse-exp eg-program)
 
@@ -38,14 +38,14 @@
   (pp (interpret (read)))
   (repl))
 
-(run-load "later/compact-lambda.scm")
+(run-load "eg/compact-lambda.scm")
 
-(run-load "later/sicp1.scm")
-(run-load "later/sicp2.scm")
+(run-load "eg/sicp1.scm")
+(run-load "eg/sicp2.scm")
 
-(run-load "later/lambdacompiler.scm")
-(run-load "later/parson.scm")
-(run-load "later/parse.scm")
-(run-load "later/intset.scm")
-(run-load "later/circuitoptimizer.scm")
-(run-load "later/fizzbuzz.scm")
+(run-load "eg/lambdacompiler.scm")
+(run-load "eg/parson.scm")
+(run-load "eg/parse.scm")
+(run-load "eg/intset.scm")
+(run-load "eg/circuitoptimizer.scm")
+(run-load "eg/fizzbuzz.scm")
