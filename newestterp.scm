@@ -65,9 +65,9 @@
   (dbg `(call))
   (if (and (procedure? object)
            (list? message))
-      (if (eq? object error-prim)
-          (error-prim (cons k message))
-          (answer k (apply object message)))
+      (cond ((eq? object error-prim) (error-prim (cons k message)))
+            ((eq? object evaluate-prim) (evaluate-prim message k))
+            (else (answer k (apply object message))))
       (unwrap object
               (lambda (script datum)
                 (cond ((script? script)
@@ -126,6 +126,9 @@
 (define-structure box value)
 (define box<- make-box)
       
+(define (evaluate-prim message k)
+  (apply ev-exp `(,@message ,k)))
+
 
 ;; Environments
 
@@ -162,6 +165,7 @@
               (print (car message))
               (apply error message)))
     (error ,error-prim)
+    (evaluate ,evaluate-prim)
 
     ;; These will get high-level definitions later TODO
     (+ ,+)
@@ -171,6 +175,9 @@
     (max ,max)
     (number<-string ,string->number)
     (vector<-list ,list->vector)
+    (read ,squeam-read)
+    (parse-exp ,parse-exp)
+    (parse-pat ,parse-pat)
 
     ;; Primitives only -- TODO seclude in their own env:
     (__+ ,+)
