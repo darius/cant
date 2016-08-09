@@ -5,26 +5,26 @@
 (load "parse.scm")
 (map parse-exp eg-program)
 
-(define (print x)
+(define (report x)
   (write x)
   (newline))
 
 (load "terp.scm")
 
-(print (interpret 42))
-(print (interpret ''hello))
-;(print (interpret '(make _)))
-(print (interpret '((make (xs xs)))))
-(print (interpret '((make (xs xs)) 1 2 3)))
-(print (interpret '(if #f 1 2)))
-(print (interpret '(if #t 1 2)))
-(print (interpret '((make ((#f) 'no) (_ 'yes)) #f)))
-(print (interpret '((make ((#f) 'no) (_ 'yes)) #t)))
-(print (interpret '`(hello ,(if #t 'yes 'no))))
-(print (interpret '(2 .+ 3)))
-(print (interpret '(hide (let x 55))))
-(print (interpret '(hide (define (f) 136) (f))))
-(print (interpret '(hide
+(report (interpret 42))
+(report (interpret ''hello))
+;(report (interpret '(make _)))
+(report (interpret '((make (xs xs)))))
+(report (interpret '((make (xs xs)) 1 2 3)))
+(report (interpret '(if #f 1 2)))
+(report (interpret '(if #t 1 2)))
+(report (interpret '((make ((#f) 'no) (_ 'yes)) #f)))
+(report (interpret '((make ((#f) 'no) (_ 'yes)) #t)))
+(report (interpret '`(hello ,(if #t 'yes 'no))))
+(report (interpret '(2 .+ 3)))
+(report (interpret '(hide (let x 55))))
+(report (interpret '(hide (define (f) 136) (f))))
+(report (interpret '(hide
                        (define (factorial n)
                          (match n
                            (0 1)
@@ -49,3 +49,6 @@
 (run-load "eg/intset.scm")
 (run-load "eg/circuitoptimizer.scm")
 (run-load "eg/fizzbuzz.scm")
+
+(run-load "eg/traceback.scm")
+(run-load "eg/failing.scm")

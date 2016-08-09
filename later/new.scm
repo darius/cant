@@ -57,39 +57,6 @@
 (define (max x y) (if (< x y) y x))
 
 
-;; traceback.scm
-;; Install an error handler that prints a (crude) traceback.
-
-(include "stdlib.scm")
-
-(define (on-error-traceback k plaint values)
-  (print-plaint plaint values)
-  (print-traceback k))
-
-(define (print-plaint plaint values)
-  (display "Error! ")
-  (write plaint)
-  (display ": ")
-  (write values)
-  (newline))
-
-(define (print-traceback k)
-  (each! print k))
-
-(the-signal-handler-box .set! on-error-traceback)
-
-
-;; eg/failing.scm
-;; An example failing computation, to exercise the debugger.
-
-(define (factorial n)
-  (if (= 0 n)
-      one
-      (* n (factorial (- n 1)))))
-
-(print (factorial 5))
-
-
 ;; eg/lambdaterp.scm
 ;; Let's work out a source-level debugger in a simpler setting,
 ;; the call-by-value lambda calculus.

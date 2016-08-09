@@ -6,6 +6,10 @@
 
 ;;XXX so should some of these be in list-trait?
 
+(define (reverse xs)
+  (define (snoc ys y) (cons y ys))
+  (foldl snoc '() xs))
+
 (define (foldl f z xs)
   (if xs.empty?
       z

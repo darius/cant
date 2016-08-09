@@ -53,7 +53,7 @@
         ((box? x)       (receiver box-script x))
         ((output-port? x) (receiver sink-script x))
         ((term? x)      (receiver term-script x))
-        ((procedure? x) (receiver scheme-procedure-script x))
+        ((procedure? x) (receiver procedure-script x))
         (else (error "Non-object" x))))
 
 (define (answer k value)
@@ -161,8 +161,6 @@
     (newline ,newline)           ;XXX temp
     (pp ,pp)                     ;XXX obviously shouldn't be primitive
     (panic ,(lambda (k . message)
-              (print 'panicking)
-              (print (car message))
               (apply error message)))
     (error ,error-prim)
     (evaluate ,evaluate-prim)
@@ -302,7 +300,7 @@
 ;; A small-step interpreter
 
 (define (evaluate e r)
-;  (print `(evaluate ,e))
+;  (report `(evaluate ,e))
   (ev-exp e r halt-cont))
 
 (define (ev-exp e r k)

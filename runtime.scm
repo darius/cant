@@ -182,9 +182,9 @@
   ({.print-on sink}
    (sink .display "{")
    (sink .print me.tag)
-   (for each! ((a me.arguments))
+   (for each! ((arg me.arguments))
      (sink .display " ")
-     (sink .print a))
+     (sink .print arg))
    (sink .display "}"))
   )
 
