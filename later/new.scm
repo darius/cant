@@ -814,7 +814,7 @@
 (let alphabet "abcdefghijklmnopqrstuvwxyz")
 
 (define (train features)
-  (let model (map<-))               ;TODO
+  (let model (map<-))
   (for each! ((f features))
     (model .set! f (+ 1 (model .get f 1))))
   model)
@@ -822,7 +822,7 @@
 (define (words<-string string)
   (re:findall "[a-z]+" string.lowercase))  ;TODO
 
-(let NWORDS (train (words<-string (call-with-open-file "big.txt" '.read-all))))
+(let NWORDS (train (words<-string (call-with-open-file "big.txt" '.read-all)))) ;TODO
 
 
 ;; star2.scm
