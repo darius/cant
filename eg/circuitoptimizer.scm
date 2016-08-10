@@ -1,5 +1,6 @@
 ;; From https://github.com/darius/superbench
-;; ~/git/superbench/superopt/circuitoptimizer.scm
+;; Ultimately based on Kragen Sitaker's in C, but vectorized and
+;; not doing don't-cares.
 
 (define (superopt truth-table max-gates)
   (let n-inputs (int-log2 truth-table.count))
