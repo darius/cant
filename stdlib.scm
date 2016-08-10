@@ -113,6 +113,10 @@
 (define (vector<- @elements)
   (vector<-list elements))
 
+(define (method<- actor cue)
+  (given (@arguments)
+    (call actor (term<- cue arguments))))
+
 (define (write x)                      ;TODO rename
   (x .print-on out))
 (define (print x)                      ;TODO rename

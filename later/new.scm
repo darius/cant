@@ -640,18 +640,14 @@
      ((player-marks) 1))
     ({.show}
      (let marks (player-marks))
-     (call (method<- grid-format '.format) ;XXX make format a fn instead
-           (for each ((pair (reverse (zip (player-bits p)
-                                          (player-bits q)))))
-             (match pair
-               ((1 0) (marks 0))
-               ((0 1) (marks 1))
-               ((0 0) #\.)))))
+     (let values (for each ((pair (zip (player-bits p)
+                                       (player-bits q))))
+                   (match pair
+                     ((1 0) (marks 0))
+                     ((0 1) (marks 1))
+                     ((0 0) #\.))))
+     (call format `(,grid-format ,@(reverse values))))
     ))
-
-(define (method<- actor cue)
-  (given (@arguments)
-    (call actor (term<- cue arguments))))
 
 (let grid-format ("\n" .join (for each ((_ (range<- 3)))
                                " %s %s %s")))
