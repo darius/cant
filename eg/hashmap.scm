@@ -106,5 +106,17 @@
 (a .set! 'x "yay")
 (print a)
 (print (a .get 'x))
+(a .set! 'x "boo")
+(print a)
+(print (a .get 'x))
+(print (a .get 'y 'nope))
+
+(a .set! 'z "zeee")
+(print a)
+(print (a .get 'x))
+(print (a .get 'y))
+(print (a .get 'z))
+(print (list<- a.keys a.values a.items a.empty? a.count))
+(print (a 'z))
 
 ;; TODO more tests
