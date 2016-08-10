@@ -18,6 +18,25 @@
   (set! dbg (if debug? pp (lambda (x) #f))))
 
 
+;; Hashing and equality
+
+(define (hash x)
+  (cond ((term? x) (hash-term x))
+        ((pair? x) (hash-pair x))
+        (else (eqv?-hash x))))
+
+(define (hash-term x)
+  (hash-em 1 (cons (term-tag x) (term-parts x))))
+
+(define (hash-pair x)
+  (hash-em 2 (list (car x) (cdr x))))
+
+(define (hash-em seed xs)
+  (foldl hash-mix seed xs))
+
+(define (hash-mix h x)
+  (+ (* 7 h) (hash x)))               ;XXX a random untested function
+
 (define squeam=?
   ;; For now, I'm gonna assume Squeam-defined objects are equal iff
   ;; eq?. This means you can't reconstitute an object from its script
@@ -183,6 +202,7 @@
     (parse-pat ,parse-pat)
 
     ;; Primitives only -- TODO seclude in their own env:
+    (__hash ,hash)
     (__+ ,+)
     (__- ,-)
     (__* ,*)
