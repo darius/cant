@@ -14,6 +14,9 @@
 ;  (pp x))
   #f)
 
+(define (set-dbg! debug?)
+  (set! dbg (if debug? pp (lambda (x) #f))))
+
 
 (define squeam=?
   ;; For now, I'm gonna assume Squeam-defined objects are equal iff
@@ -54,6 +57,7 @@
         ((output-port? x) (receiver sink-script x))
         ((term? x)      (receiver term-script x))
         ((procedure? x) (receiver procedure-script x))
+        ((eq? x (void)) (receiver void-script x))
         (else (error "Non-object" x))))
 
 (define (answer k value)
@@ -164,6 +168,7 @@
               (apply error message)))
     (error ,error-prim)
     (evaluate ,evaluate-prim)
+    (__set-dbg! ,set-dbg!)
 
     ;; These will get high-level definitions later TODO
     (+ ,+)
@@ -223,7 +228,9 @@
     (__display ,(lambda (sink thing)
                   (display thing sink)))              ;XXX handle non-string/char properly
     (__write ,(lambda (sink thing)
-                  (write thing sink)))              ;XXX handle non-primitive properly?
+                (if (object? thing)
+                    (display "#<object>" sink) ;XXX say more
+                    (write thing sink)))) ;XXX other types specially?
     ))
 
 (define (env-lookup r v k)
@@ -546,3 +553,4 @@
 (define sink-script   (get-script 'sink-primitive))
 (define term-script   (get-script 'term-primitive))
 (define procedure-script (get-script 'procedure-primitive))
+(define void-script   (get-script 'void-primitive))

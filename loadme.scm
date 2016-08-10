@@ -30,9 +30,7 @@
 (run-load "stdlib.scm")
 
 (define (repl)
-  (display "> ")
-  (pp (interpret (read)))
-  (repl))
+  (interpret '(repl)))
 
 (run-load "eg/compact-lambda.scm")
 

@@ -188,6 +188,10 @@
    (sink .display "}"))
   )
 
+(make-trait void-primitive me
+  ;; A Gambit type some operations return.
+  )
+
 
 ;; Continuations
 
