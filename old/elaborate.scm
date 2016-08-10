@@ -1,4 +1,4 @@
-(include "gambit-macros.scm")
+(include "../gambit-macros.scm")
 
 (define (elaborate-expression e)
   (elaborate top-context e #f))
