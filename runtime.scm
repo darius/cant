@@ -78,9 +78,9 @@
   )
 
 (make-trait number-primitive me
-  ({.+ a} (__+ me a))
-  ({.- a} (__- me a))
-  ({.* a} (__* me a))
+  ({.+ a}         (__+ me a))
+  ({.- a}         (__- me a))
+  ({.* a}         (__* me a))
   ({.quotient b}  (__quotient me b))
   ({.remainder b} (__remainder me b))
 ;  ({.compare b}   (__number-compare me b))
@@ -254,7 +254,7 @@
 (define (__ev-let-match-cont k r p)
   (make {extending __cont-trait}
     ({.rest} k)
-    ({.first} `(<match> ,p))))          ;XXX lously presentation
+    ({.first} `(<match> ,p))))          ;XXX lousy presentation
 
 (define (__ev-let-check-cont k val)
   (make {extending __cont-trait}
