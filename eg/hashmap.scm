@@ -106,6 +106,8 @@
      (sink .display ")>"))
     ))
 
+(let map<- hash-map<-)
+
 (newline)
 
 (let a (hash-map<-))
