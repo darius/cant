@@ -57,20 +57,20 @@
 
 (define (tree<- lhs rhs)
   (make
-    ({.show} `(,lhs ,@(for each ((part rhs))
-                        (if (symbol? part) part part.show))))
     ({.lhs} lhs)
-    ({.rhs} rhs)))
+    ({.rhs} rhs)
+    ({.print-on sink} (sink .print (cons lhs rhs)))))
 
 ;; A parse tree and a remainder.
 (define (parse<- tree remainder)
   (make
-    ({.show}      `((tree: ,tree.show)
-                    (remainder: ,remainder)))
     ({.tree}      tree)
     ({.remainder} remainder)
     ({.lhs}       tree.lhs)
-    ({.complete?} remainder.empty?)))
+    ({.complete?} remainder.empty?)
+    ({.print-on sink}
+     (sink .print `((tree: ,tree)
+                    (remainder: ,remainder))))))
 
 
 ;; Example grammars
@@ -115,7 +115,7 @@
 
 (define (try grammar sentence)
   (write sentence) (display ":") (newline)
-  (each! print (each '.show (grammar .parse sentence)))
+  (each! print (grammar .parse sentence))
   (newline))
 
 (try grammar3 '(the table))
