@@ -36,3 +36,4 @@
 (run-load "eg/failing.scm")
 
 (run-load "eg/hashmap.scm")
+(run-load "eg/lambdaterp.scm")
