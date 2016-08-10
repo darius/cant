@@ -140,6 +140,11 @@
   ({.slice i}     (__subvector me i me.count))
   ({.slice i j}   (__subvector me i j))
   ({.set! i val}  (__vector-set! me i val))
+  ({.copy! v}     (me .copy! v 0 v.count))
+  ({.copy! v lo bound}
+   ;; XXX range-check first
+   (for each! ((i (range<- lo bound)))
+     (__vector-set! me (- i lo) (v i)))) ;XXX was this what I wanted? I forget.
   ({.print-on sink}
    (sink .display "#")
    (sink .print (__vector->list me)))

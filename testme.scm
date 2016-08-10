@@ -37,3 +37,4 @@
 
 (run-load "eg/hashmap.scm")
 (run-load "eg/lambdaterp.scm")
+(run-load "eg/fillvector.scm")
