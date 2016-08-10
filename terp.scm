@@ -20,6 +20,12 @@
 
 ;; Hashing and equality
 
+;; For now, I'm gonna assume Squeam-defined objects are equal iff
+;; eq?. This means you can't reconstitute an object from its script
+;; and datum, which would be a reasonable implementation-level
+;; operation for which squeam=? would check if script and datum are
+;; eq?, and hashing would also have to look at both.
+
 (define (hash x)
   (cond ((term? x) (hash-term x))
         ((pair? x) (hash-pair x))
@@ -37,21 +43,24 @@
 (define (hash-mix h x)
   (+ (* 7 h) (hash x))) ;XXX we want a function that mixes nicely into the low-order bits
 
-(define squeam=?
-  ;; For now, I'm gonna assume Squeam-defined objects are equal iff
-  ;; eq?. This means you can't reconstitute an object from its script
-  ;; and datum, which would be a reasonable implementation-level
-  ;; operation for which squeam=? would check if script and datum
-  ;; are eq? -- but then we'd have to walk over lists and terms if
-  ;; they might contain these objects that are squeam=? but not eq?.
-  ;; N.B. this depends on equal? working with define-structure, for
-  ;; equality over terms.
-  ;; XXX Actually that makes it too willing to call objects equal --
-  ;; it'll also look inside a Squeam-defined object since it's a
-  ;; structure. Let's just live with that for now in this prototype.
-  ;; TODO actually define-type (but not define-structure) apparently
-  ;; has an 'opaque' option to override that -- come back and see.
-  equal?)
+(define (squeam=? x y)
+  (cond ((term? x) (and (term? y) (term=? x y)))
+        ((pair? x) (and (pair? y) (pair=? x y)))
+        (else (eqv? x y))))
+
+(define (pair=? x y)
+  (and (squeam=? (car x) (car y))
+       (squeam=? (cdr x) (cdr y))))
+
+(define (term=? x y)
+  (and (squeam=? (term-tag x) (term-tag y))
+       (let ((xs (term-parts x))
+             (ys (term-parts y)))
+         (and (= (length xs) (length ys))
+              (let checking ((xs xs) (ys ys))
+                (or (null? xs)
+                    (and (squeam=? (car xs) (car ys))
+                         (checking (cdr xs) (cdr ys)))))))))
 
 
 ;; Objects, calling, and answering
@@ -559,12 +568,9 @@
 (define miranda-trait (get-prim 'miranda-trait))
 
 (define boolean-script (get-script 'claim-primitive))
-
 (define number-script (get-script 'number-primitive))
-
 (define nil-script    (get-script 'nil-primitive))
 (define pair-script   (get-script 'cons-primitive))
-
 (define symbol-script (get-script 'symbol-primitive))
 (define char-script   (get-script 'char-primitive))
 (define string-script (get-script 'string-primitive))
