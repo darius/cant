@@ -35,7 +35,7 @@
   (foldl hash-mix seed xs))
 
 (define (hash-mix h x)
-  (+ (* 7 h) (hash x)))               ;XXX a random untested function
+  (+ (* 7 h) (hash x))) ;XXX we want a function that mixes nicely into the low-order bits
 
 (define squeam=?
   ;; For now, I'm gonna assume Squeam-defined objects are equal iff

@@ -16,10 +16,10 @@
 
 (let empty (make))
 
-(define (hashmap<-)
+(define (hash-map<-)
   (let count (box<- 0))
   (let keys  (box<- (vector<- empty)))  ;; size a power of 2
-  (let vals  (box<- (vector<- #no)))     ;; same size
+  (let vals  (box<- (vector<- #no)))    ;; same size
 
   (define (capacity) keys.^.count)
 
@@ -33,7 +33,7 @@
                   (cons i (walking (- i 1))))))))
 
   (define (find key succeed fail)
-    (let h    key.hash)              ;XXX needs a closely-held primitive; also, coerce to fixnum
+    (let h    (__hash key))
     (let mask (- keys.^.count 1))
     (let i0   (mask .and h))
     (begin walking ((i i0))
@@ -92,4 +92,19 @@
              (vals.^ .set! i val)
              (count .^= (+ count.^ 1))
              (maybe-grow))))
+    ({.print-on sink}
+     (sink .display "#<hash-map (")
+     (sink .print hashmap.count)
+     (sink .display ")>"))
     ))
+
+(newline)
+
+(let a (hash-map<-))
+(print a)
+(print (a .get 42))
+(a .set! 'x "yay")
+(print a)
+(print (a .get 'x))
+
+;; TODO more tests

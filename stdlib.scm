@@ -99,6 +99,9 @@
           (and (<= first j) (< j limit))) ;XXX also, integer?
          ))))
 
+(define (vector<- @elements)
+  (vector<-list elements))
+
 (define (write x)                      ;TODO rename
   (x .print-on out))
 (define (print x)                      ;TODO rename

@@ -46,3 +46,5 @@
 
 (run-load "eg/traceback.scm")
 (run-load "eg/failing.scm")
+
+(run-load "eg/hashmap.scm")
