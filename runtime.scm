@@ -160,6 +160,21 @@
   ({.chain b}     (__string-append me b))
   ({.slice i}     (__substring me i me.count))
   ({.slice i j}   (__substring me i j))
+  ;;XXX below mostly from list-trait, until .print-on
+  ({.keys}        (range<- me.count))
+  ({.values}      me)
+  ({.items}       (enumerate me))
+  ({.get key}     (me .get key #no))
+  ({.get key default}
+   (if (me .maps? key)
+       (me key)
+       default))
+  ({.maps? key}
+   (and (integer? key) (<= 0 key) (< key me.count)))
+  ({.maps-to? value}
+   (for some ((x list)) (= x value)))
+  ({.find-key-for value}
+   (unimplemented))                       ;XXX
   ({.print-on sink}
    (sink .display #\")
    (for each! ((c me))
