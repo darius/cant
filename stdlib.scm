@@ -99,6 +99,17 @@
           (and (<= first j) (< j limit))) ;XXX also, integer?
          ))))
 
+(make enumerate
+  ((xs)
+   (enumerate xs 0))
+  ((xs i)
+   (if xs.empty?
+       '()
+       (make enumeration {extending list-trait}
+         ({.empty?} #no)
+         ({.first}  `(,xs.first ,i))
+         ({.rest}   (enumerate xs.rest (+ i 1)))))))
+
 (define (vector<- @elements)
   (vector<-list elements))
 

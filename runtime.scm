@@ -41,6 +41,21 @@
        seq
        (cons list.first (list.rest .chain seq))))
   ;; A sequence is a kind of collection. Start implementing that:
+  ({.keys}
+   (range<- list.count))
+  ({.values}
+   list)
+  ({.items}
+   (enumerate list))
+  ({.get key}
+   (list .get key #no))
+  ({.get key default}
+   (if (and (integer? key) (<= 0 key) (not list.empty?))
+       (begin walking ((k key) (xs rest))
+         (case ((= k 0) xs.first)
+               (xs.empty? default)
+               (else (walking (- k 1) xs.rest))))
+       default))
   ({.maps? key}
    (and (not list.empty?)
         (or (= 0 key)

@@ -78,11 +78,11 @@
     ({.empty?} (= count.^ 0))
     ({.count}  count.^)
     ((key)
-     (find key vals.^ (given (i) (error "Missing key" hashmap key))))
+     (find key vals.^ (given (_) (error "Missing key" hashmap key))))
     ({.get key}
      (hashmap .get key #no))
     ({.get key default}
-     (find key vals.^ (given (i) default)))
+     (find key vals.^ (given (_) default)))
     ({.set! key val}
      (find key
            (given (i)
@@ -92,6 +92,14 @@
              (vals.^ .set! i val)
              (count .^= (+ count.^ 1))
              (maybe-grow))))
+    ({.maps? key}
+     (find key
+           (given (_) #yes)
+           (given (_) #no)))
+    ({.maps-to? value}
+     (hashmap.values .maps-to? value))
+    ({.find-key-for value}
+     (unimplemented))                   ;XXX
     ({.print-on sink}
      (sink .display "#<hash-map (")
      (sink .print hashmap.count)

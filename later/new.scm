@@ -35,17 +35,6 @@
   ((a b) (a .- b))
   ((@arguments) (foldl '.- arguments.first arguments.rest)))
 
-(make enumerate
-  ((xs)
-   (enumerate xs 0))
-  ((xs i)
-   (if xs.empty?
-       '()
-       (make enumeration extending list-trait
-         ({.empty?} #no)
-         ({.first}  `(,xs.first ,i))
-         ({.rest}   (enumerate xs.rest (+ i 1)))))))
-
 (define (vector<-list xs)
   (let v (vector<-count xs.count))
   (for each! ((i x) (enumerate xs))
