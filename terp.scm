@@ -218,9 +218,6 @@
     (__set-dbg! ,set-dbg!)
 
     ;; These will get high-level definitions later TODO
-    (+ ,+)
-    (- ,-)
-    (* ,*)
     (/ ,/)
     (number<-string ,string->number)
     (vector<-list ,list->vector)

@@ -17,24 +17,6 @@
 
 ;;; stdlib.scm
 
-(make +
-  (() 0)
-  ((a) a)
-  ((a b) (a .+ b))
-  ((@arguments) (foldr1 '.+ arguments)))
-
-(make *
-  (() 1)
-  ((a) a)
-  ((a b) (a .* b))
-  ((@arguments) (foldr1 '.* arguments)))
-
-(make -
-  (() (error "Bad arity"))
-  ((a) (0 .- a))
-  ((a b) (a .- b))
-  ((@arguments) (foldl '.- arguments.first arguments.rest)))
-
 (define (vector<-list xs)
   (let v (vector<-count xs.count))
   (for each! ((i x) (enumerate xs))

@@ -79,7 +79,7 @@
 (make-trait claim-primitive me
   ({.print-on sink}
    (sink .display (if me "#yes" "#no")))
-  ({.compare a}   (case ((= me a) 0)    ;XXX untested
+  ({.compare a}   (case ((= me a) 0)    ;XXX untested. also, need to check that a is boolean.
                         (me       1)
                         (_       -1)))
   )
@@ -136,7 +136,7 @@
             (printing r.rest))
            ((null? r))
            (else
-            (sink .display " . ")       ;N.B. we're not supporting this in read, iirc
+            (sink .display " . ")       ;XXX we're not supporting this in read, iirc
             (sink .print r))))
    (sink .display ")"))
   (message

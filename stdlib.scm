@@ -4,6 +4,24 @@
   (unless ok?
     (call error (if (null? arguments) '("Assertion failed") arguments))))
 
+(make +
+  (() 0)
+  ((a) a)
+  ((a b) (a .+ b))
+  ((a b @arguments) (foldl '.+ (a .+ b) arguments)))
+
+(make *
+  (() 1)
+  ((a) a)
+  ((a b) (a .* b))
+  ((a b @arguments) (foldl '.* (a .* b) arguments)))
+
+(make -
+  (() (error "Bad arity"))
+  ((a) (0 .- a))
+  ((a b) (a .- b))
+  ((a b @arguments) (foldl '.- (a .- b) arguments)))
+
 ;; TODO transitive multi-arg
 (define (<   a b)      (= (a .compare b) -1))
 (define (<=  a b) (not (= (a .compare b)  1)))
