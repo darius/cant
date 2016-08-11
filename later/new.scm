@@ -41,10 +41,6 @@
     (v .set! i x))
   v)
 
-;; XXX float contagion
-(define (min x y) (if (< x y) x y))
-(define (max x y) (if (< x y) y x))
-
 
 ;; dd.scm
 ;; Decision diagrams
