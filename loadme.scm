@@ -8,6 +8,7 @@
 (load "terp.scm")
 
 (run-load "stdlib.scm")
+(run-load "eg/traceback.scm")  ;; Let's default to traceback-on-error
 
 (define (repl)
   (interpret '(repl)))

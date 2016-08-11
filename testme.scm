@@ -21,20 +21,15 @@
                        (factorial 10))))
 
 (run-load "eg/compact-lambda.scm")
-
 (run-load "eg/sicp1.scm")
 (run-load "eg/sicp2.scm")
-
 (run-load "eg/lambdacompiler.scm")
 (run-load "eg/parson.scm")
 (run-load "eg/parse.scm")
 (run-load "eg/intset.scm")
 (run-load "eg/circuitoptimizer.scm")
 (run-load "eg/fizzbuzz.scm")
-
-(run-load "eg/traceback.scm")
 (run-load "eg/failing.scm")
-
 (run-load "eg/hashmap.scm")
 (run-load "eg/lambdaterp.scm")
 (run-load "eg/fillvector.scm")
