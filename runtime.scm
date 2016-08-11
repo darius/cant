@@ -40,6 +40,13 @@
    (if list.empty?
        seq
        (cons list.first (list.rest .chain seq))))
+  ({.compare xs}
+   ;; N.B. mutable vectors compare by this method, so it's really a comparison as of right now
+   (case (list.empty? (if xs.empty? 0 -1))
+         (xs.empty? 1)
+         (else (match (list.first .compare xs.first)
+                 (0 (list.rest .compare xs.rest))
+                 (d d)))))
   ;; A sequence is a kind of collection. Start implementing that:
   ({.keys}
    (range<- list.count))
@@ -129,7 +136,8 @@
             (sink .display " . ")       ;N.B. we're not supporting this in read, iirc
             (sink .print r))))
    (sink .display ")"))
-  (message        (list-trait me message))) ;XXX use trait syntax instead
+  (message
+   (list-trait me message))) ;XXX use trait syntax instead
 
 (make-trait vector-primitive me
   ({.empty?}      (= 0 me.count))
@@ -150,7 +158,8 @@
   ({.print-on sink}
    (sink .display "#")
    (sink .print (__vector->list me)))
-  )
+  (message
+   (list-trait me message))) ;XXX use trait syntax instead
 
 (make-trait string-primitive me
   ({.empty?}      (= 0 me.count))
@@ -189,7 +198,8 @@
                       (#\return  "\\r")
                       (_ c))))
    (sink .display #\"))
-  )
+  (message
+   (list-trait me message))) ;XXX use trait syntax instead
 
 (make-trait char-primitive me
   ({.code}        (__char->integer me))
