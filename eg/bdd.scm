@@ -1,7 +1,7 @@
 ;; from ~/git/mccarthy-to-bryant/lua/bdd3.lua
 
-(define (bdd-and f g) XXX)
-(define (bdd-or f g) XXX)
+(define (bdd-and f g) (do-choose f lit0 g)) ;TODO rename do-choose
+(define (bdd-or  f g) (do-choose f g lit1))
 
 (let lit0 0)
 (let lit1 1)

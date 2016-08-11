@@ -8,7 +8,7 @@
     ((prog @_) (format "Usage: %s board-size" prog))))
 
 (define (queens n)
-  (match (satisfy (queens-problem n) 1)
+  (match (satisfy-first (queens-problem n) 1)
     (#no (display "none\n"))
     (env (show-board n env))))
 
