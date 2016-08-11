@@ -9,7 +9,7 @@
   )
 
 (define (compare x y)
-  (x .compare y))                       ;TODO implement
+  (x .compare y))
 
 (define (compare-reversed x y)
   (y .compare x))
@@ -31,8 +31,7 @@
                     `(,xs.first ,@(merge xs.rest ys))
                     `(,ys.first ,@(merge xs ys.rest))))))
 
-  ;; TODO convert to list so .rest is efficient?
   (sorting sequence))
 
 (print (sort '(3 1 4 1 5 9)))
-(print (sort '(i am a badass)))
+(print (sort '(i am a badass) {reverse}))

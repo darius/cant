@@ -265,7 +265,7 @@
     (__vector-ref ,vector-ref)
     (__vector-set! ,vector-set!)
     (__vector->list ,vector->list)
-    (__subvector ,subvector)
+    (__subvector ,subvector)            ;XXX redefine this to result in a view instead of a copy? ditto for strings
     (__char->integer ,char->integer)
     (__char-digit? ,char-numeric?)
     (__char-letter? ,char-alphabetic?)
