@@ -204,6 +204,7 @@
     (* ,*)
     (/ ,/)
     (max ,max)
+    (min ,min)
     (number<-string ,string->number)
     (vector<-list ,list->vector)
     (read ,squeam-read)

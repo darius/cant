@@ -1,5 +1,8 @@
 ;; from ~/git/mccarthy-to-bryant/lua/bdd3.lua
 
+(define (bdd-and f g) XXX)
+(define (bdd-or f g) XXX)
+
 (let lit0 0)
 (let lit1 1)
 
