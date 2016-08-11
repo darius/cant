@@ -169,7 +169,7 @@
     (call handler (list object message) k)))
 
 (define (signal k plaint . values)
-  (error plaint values))                ;XXX
+  (error-prim `(,k ,plaint ,@values)))
 
 
 (define (as-cons x)
