@@ -79,6 +79,9 @@
 (make-trait claim-primitive me
   ({.print-on sink}
    (sink .display (if me "#yes" "#no")))
+  ({.compare a}   (case ((= me a) 0)    ;XXX untested
+                        (me       1)
+                        (_       -1)))
   )
 
 (make-trait procedure-primitive me
@@ -207,6 +210,7 @@
   ({.digit?}      (__char-digit? me))
   ({.whitespace?} (__char-whitespace? me))
   ({.alphanumeric?} (or me.letter? me.digit?))
+  ({.compare c}   (__char-compare me c)) ;XXX untested
   )
 
 (make-trait box-primitive me
@@ -234,6 +238,8 @@
      (sink .display " ")
      (sink .print arg))
    (sink .display "}"))
+  ({.compare t}
+   (`(,me.tag ,@me.arguments) .compare `(,t.tag ,@t.arguments))) ;XXX untested
   )
 
 (make-trait void-primitive me

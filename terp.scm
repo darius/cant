@@ -65,12 +65,17 @@
 
 ;; Compare primitives
 
+(define (char-compare x y)
+  (and (char? x) (char? y)      ;; XXX raise an error instead?
+       (cond ((char<? x y) -1)
+             ((char=? x y)  0)
+             (else            +1))))
+
 (define (number-compare x y)
   (and (number? x) (number? y)      ;; XXX raise an error instead?
        (cond ((< x y) -1)
              ((= x y)  0)
-             ((> x y) +1)
-             (else (error "wtf" x y)))))
+             (else    +1))))
 
 (define (string-compare x y)
   (and (string? x) (string? y)      ;; XXX raise an error instead?
@@ -229,6 +234,7 @@
 
     ;; Primitives only -- TODO seclude in their own env:
     (__hash ,hash)
+    (__char-compare ,char-compare)
     (__number-compare ,number-compare)
     (__+ ,+)
     (__- ,-)
