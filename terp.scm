@@ -205,8 +205,6 @@
     (symbol<- ,string->symbol)
     (term<- ,make-term)
     (string<-list ,list->string)
-    (< ,<)  ;; XXX use 'compare method instead
-    (<= ,<=)
     (vector<-count ,make-vector)
     (not ,not)
     (assq ,assq)  ;; TODO replace with 'real' hashmaps
@@ -224,8 +222,6 @@
     (- ,-)
     (* ,*)
     (/ ,/)
-    (max ,max)
-    (min ,min)
     (number<-string ,string->number)
     (vector<-list ,list->vector)
     (read ,squeam-read)

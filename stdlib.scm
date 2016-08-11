@@ -4,6 +4,23 @@
   (unless ok?
     (call error (if (null? arguments) '("Assertion failed") arguments))))
 
+;; TODO transitive multi-arg
+(define (<   a b)      (= (a .compare b) -1))
+(define (<=  a b) (not (= (a .compare b)  1)))
+(define (<=> a b)      (= (a .compare b)  0))
+(define (>=  a b) (not (= (a .compare b) -1)))
+(define (>   a b)      (= (a .compare b)  1))
+
+;; XXX float contagion
+(make min
+  ((a) a)
+  ((a b) (if (< a b) a b))
+  ((a b @rest) (call min `(,(min a b) ,@rest))))
+(make max
+  ((a) a)
+  ((a b) (if (< a b) b a))
+  ((a b @rest) (call max `(,(max a b) ,@rest))))
+
 ;;XXX so should some of these be in list-trait?
 
 (define (reverse xs)
