@@ -83,18 +83,20 @@
   ({.* a}         (__* me a))
   ({.quotient b}  (__quotient me b))
   ({.remainder b} (__remainder me b))
-;  ({.compare b}   (__number-compare me b))
   ({.<< b}        (__bit-<<  me b))
   ({.not}         (__bit-not me))
   ({.and b}       (__bit-and me b))
   ({.or b}        (__bit-or  me b))
   ({.xor b}       (__bit-xor me b))
+  ({.compare a}   (__number-compare me a))
   )
 
 (make-trait symbol-primitive me
   ((actor @arguments)
    (call actor (term<- me arguments)))
   ({.name}        (__symbol->string me))
+  ({.compare a}   (and (symbol? a)
+                       (me.name .compare a.name)))
   )
 
 (make-trait nil-primitive me
@@ -136,7 +138,7 @@
   ({.count}       (__vector-length me))
   ((i)            (__vector-ref me i))
   ({.maps? i}     (__vector-maps? me i))
-  ({.chain b}     (__vector-append me b))
+  ({.chain v}     (__vector-append me v))
   ({.slice i}     (__subvector me i me.count))
   ({.slice i j}   (__subvector me i j))
   ({.set! i val}  (__vector-set! me i val))
@@ -157,9 +159,10 @@
   ({.count}       (__string-length me))
   ((i)            (__string-ref me i))
   ({.maps? i}     (__string-maps? me i))
-  ({.chain b}     (__string-append me b))
+  ({.chain s}     (__string-append me s))
   ({.slice i}     (__substring me i me.count))
   ({.slice i j}   (__substring me i j))
+  ({.compare s}   (__string-compare me s))
   ;;XXX below mostly from list-trait, until .print-on
   ({.keys}        (range<- me.count))
   ({.values}      me)

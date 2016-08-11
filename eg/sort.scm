@@ -1,6 +1,5 @@
 ;; Generic sorting
-;; XXX untested
-t
+
 (make sort
   ((xs)
    (merge-sort xs compare))
@@ -17,13 +16,13 @@ t
 
 (define (merge-sort sequence cmp)
 
-  (define (sort seq)
+  (define (sorting seq)
     (begin splitting ((seq seq) (xs '()) (ys '()))
-      (case (seq.empty?
-             (if xs.empty?
-                 ys
-                 (merge (sort xs) (sort ys))))
-            (else (splitting seq.rest ys (cons seq.first xs))))))
+      (if seq.empty?
+          (if xs.empty?
+              ys
+              (merge (sorting xs) (sorting ys)))
+          (splitting seq.rest ys (cons seq.first xs)))))
 
   (define (merge xs ys)
     (case (xs.empty? ys)
@@ -33,4 +32,7 @@ t
                     `(,ys.first ,@(merge xs ys.rest))))))
 
   ;; TODO convert to list so .rest is efficient?
-  (sort sequence))
+  (sorting sequence))
+
+(print (sort '(3 1 4 1 5 9)))
+(print (sort '(i am a badass)))

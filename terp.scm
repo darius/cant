@@ -63,6 +63,22 @@
                          (checking (cdr xs) (cdr ys)))))))))
 
 
+;; Compare primitives
+
+(define (number-compare x y)
+  (and (number? x) (number? y)      ;; XXX raise an error instead?
+       (cond ((< x y) -1)
+             ((= x y)  0)
+             ((> x y) +1)
+             (else (error "wtf" x y)))))
+
+(define (string-compare x y)
+  (and (string? x) (string? y)      ;; XXX raise an error instead?
+       (cond ((string<? x y) -1)
+             ((string=? x y)  0)
+             (else            +1))))
+
+
 ;; Objects, calling, and answering
 
 (define-structure object script datum)   ; Nonprimitive objects, that is.
@@ -213,6 +229,7 @@
 
     ;; Primitives only -- TODO seclude in their own env:
     (__hash ,hash)
+    (__number-compare ,number-compare)
     (__+ ,+)
     (__- ,-)
     (__* ,*)
@@ -232,6 +249,7 @@
     (__append ,append)
     (__symbol->string ,symbol->string)
     (__string-append ,string-append)
+    (__string-compare ,string-compare)
     (__string-length ,string-length)
     (__string-maps? ,(lambda (me i)
                        (and (integer? i)
