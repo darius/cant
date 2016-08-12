@@ -36,3 +36,4 @@
 (run-load "eg/fillvector.scm")
 (run-load "eg/format.scm")
 (run-load "eg/sort.scm")
+(run-load "eg/nfa.scm")

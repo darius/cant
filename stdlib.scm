@@ -83,13 +83,8 @@
   (for foldr ((x xs) (ys '()))
     (if (ok? x) (cons x ys) ys)))
 
-(define (union set1 set2)
-  (for foldr ((x set1) (ys set2))
-    (if (set2 .maps-to? x) ys (cons x ys))))
-
-(define (remove set x)
-  ;; XXX removes *all* instances -- but we know a set has at most 1
-  (for filter ((element set))
+(define (remove xs x)
+  (for filter ((element xs))
     (not (= x element))))
 
 (define (list<- @arguments)

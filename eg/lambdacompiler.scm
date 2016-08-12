@@ -47,6 +47,13 @@
       (+ 1 (free-vars .find-key-for v))))
 
 
+;; Helpers
+
+(define (union set1 set2)
+  (for foldr ((x set1) (ys set2))
+    (if (set2 .maps-to? x) ys (cons x ys))))
+
+
 ;; Smoke test
 
 (print (compile
