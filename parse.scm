@@ -114,7 +114,7 @@
   (mcase key
     ('hide   (mlambda
               ((_ . es)
-               `((given () ,@es)))))
+               `((given _ ,@es)))))
     ('include (mlambda             ;temporary
                ((_ (: filename string?))
                 `(do ,@(snarf filename squeam-read)))))
@@ -133,7 +133,7 @@
               ((_ ((: v symbol?) . params) . body)
                `(make ,v (,params ,@body)))
               ((_ (call-form . params) . body)
-               `(define ,call-form (given ,params ,@body)))))
+               `(define ,call-form (given ,params ,@body))))) ;TODO propagate some kind of name to the given-expression
     ('given  (mlambda
               ((_ vars . body)
                `(make (,vars ,@body)))))
