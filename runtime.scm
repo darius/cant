@@ -94,6 +94,7 @@
   ({.quotient b}  (__quotient me b))
   ({.remainder b} (__remainder me b))
   ({.<< b}        (__bit-<<  me b))
+  ({.>> b}        (__bit->>  me b))
   ({.not}         (__bit-not me))
   ({.and b}       (__bit-and me b))
   ({.or b}        (__bit-or  me b))
@@ -175,6 +176,10 @@
   ({.slice i}     (__substring me i me.count))
   ({.slice i j}   (__substring me i j))
   ({.compare s}   (__string-compare me s))
+  ({.join ss}   ;should this be a function, not a method?
+   (if ss.empty?
+       ss
+       (foldr1 (given (x y) (chain x me y)) ss)))
   ;;XXX below mostly from list-trait, until .print-on
   ({.keys}        (range<- me.count))
   ({.values}      me)

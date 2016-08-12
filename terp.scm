@@ -238,6 +238,7 @@
     (__remainder ,remainder)
 ;    (__number-compare
     (__bit-<< ,arithmetic-shift)
+    (__bit->> ,(lambda (x y) (arithmetic-shift x (- y))))
     (__bit-not ,bitwise-not)
     (__bit-and ,bitwise-and)
     (__bit-or  ,bitwise-ior)

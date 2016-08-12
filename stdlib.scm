@@ -39,6 +39,16 @@
   ((a b) (if (< a b) b a))
   ((a b @rest) (call max `(,(max a b) ,@rest))))
 
+(define (minimum xs) (foldr1 min xs))
+(define (maximum xs) (foldr1 max xs))
+
+(define (arg-min xs key) (foldr1 (given (x y) (if (< (key x) (key y)) x y))
+                                 xs))
+(define (arg-max xs key) (foldr1 (given (x y) (if (> (key x) (key y)) x y))
+                                 xs))
+;;XXX factor the above stuff better
+
+
 ;;XXX so should some of these be in list-trait?
 
 (define (reverse xs)
