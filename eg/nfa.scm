@@ -47,7 +47,34 @@
   result)
 
 
+;; Parser
+;; XXX buggy
+
+(let regex-parser
+  (hide
+   (let primary (delay (given ()
+                         (seclude
+                          (either (then (lit-1 #\() exp (lit-1 #\)))
+                                  (then any-1 (feed lit<-))))))) ;XXX any-1 is overly permissive
+   (let factor (seclude
+                (then primary
+                      (maybe (either (then (lit-1 #\*) (feed star<-)))))))
+   (let term (delay (given ()
+                      (seclude
+                       (then factor (many (then term (feed chain<-))))))))
+   (let exp (delay (given ()
+                     (seclude
+                      (either (then term (many (then (lit-1 #\|) exp (feed alt<-))))
+                              empty)))))
+   (then exp (invert skip-any-1))))
+
+(define (parse-regex string)
+  ((regex-parser string 0 0 '()) .result))
+
+
 ; TODO more tests
 
 (print (re-match (lit<- #\A) "hello"))
 (print (re-match (lit<- #\A) "A"))
+
+;(print (re-match (parse-regex "B") "B"))
