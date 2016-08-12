@@ -276,18 +276,16 @@
     ({.rest} k)
     ({.first} `((^ ,body) ,@rest-clauses))))
 
-(define (__ev-trait-cont k r trait clauses)
+(define (__ev-trait-cont k r name trait clauses)
   (make {extending __cont-trait}
     ({.rest} k)
-    ({.first} `(make
-                 ,trait                ;XXX not source syntax
-                 ^ 
+    ({.first} `(make ,name ,trait ^
                  ,@clauses))))
 
-(define (__ev-make-cont k stamp-val r clauses)
+(define (__ev-make-cont k name stamp-val r clauses)
   (make {extending __cont-trait}
     ({.rest} k)
-    ({.first} `(make ^ #no   ; XXX as above
+    ({.first} `(make ,name ^ #no   ; XXX as above
                  ,@clauses))))
 
 (define (__ev-do-rest-cont k r e2)

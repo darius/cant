@@ -89,7 +89,7 @@
 (define-structure object script datum)   ; Nonprimitive objects, that is.
 (define object<- make-object)
 
-(define-structure script trait clauses)
+(define-structure script name trait clauses)
 (define script<- make-script)
 
 (define (unwrap x receiver)
@@ -279,9 +279,14 @@
     (__display ,(lambda (sink thing)
                   (display thing sink)))              ;XXX handle non-string/char properly
     (__write ,(lambda (sink thing)
-                (if (object? thing)
-                    (display "#<object>" sink) ;XXX say more
-                    (write thing sink)))) ;XXX other types specially?
+                (cond ((object? thing)
+                       (display "#<" sink)
+                       (let ((script (object-script thing)))
+                         (cond ((script? script) (write (script-name script)))
+                               ((cont-script? script) (write (cont-script-name script)))
+                               (else (display "WTF"))))
+                       (display ">" sink))
+                      (else (write thing sink))))) ;XXX other types specially?
     ))
 
 (define (env-lookup r v k)
@@ -306,7 +311,7 @@
          (set! the-global-env (cons (list v value) the-global-env)))
         (else (error "Can't happen" v))))
 
-(define uninitialized (object<- (script<- #f '()) '*uninitialized*))
+(define uninitialized (object<- (script<- '<uninitialized> #f '()) '*uninitialized*))
 
 
 ;; Variables defined
@@ -370,11 +375,12 @@
       ((variable)
        (env-lookup r (car parts) k))
       ((make)
-       (let ((stamp (car parts))
-             (trait (cadr parts))
-             (clauses (caddr parts)))
+       (let ((name (car parts))
+             (stamp (cadr parts))
+             (trait (caddr parts))
+             (clauses (cadddr parts)))
          (ev-exp stamp r
-                 (cont<- ev-trait-cont-script k r trait clauses))))
+                 (cont<- ev-trait-cont-script k r name trait clauses))))
       ((do)
        (let ((e1 (car parts)) (e2 (cadr parts)))
          (ev-exp e1 r (cont<- ev-do-rest-cont k r e2))))
@@ -475,17 +481,17 @@
 (define ev-trait-cont-script
   (make-cont-script
    '__ev-trait-cont
-   (lambda (stamp-val k r trait clauses)
+   (lambda (stamp-val k r name trait clauses)
      (dbg `(ev-trait-cont))
      (ev-exp trait r
-             (cont<- ev-make-cont-script k stamp-val r clauses)))))
+             (cont<- ev-make-cont-script k name stamp-val r clauses)))))
 
 (define ev-make-cont-script
   (make-cont-script
    '__ev-make-cont
-   (lambda (trait-val k stamp-val r clauses)
+   (lambda (trait-val k name stamp-val r clauses)
      (dbg `(ev-make-cont))
-     (answer k (object<- (script<- trait-val clauses) ;XXX use stamp-val
+     (answer k (object<- (script<- name trait-val clauses) ;XXX use stamp-val
                          r)))))
 
 (define ev-do-rest-cont
@@ -580,7 +586,7 @@
 (define primitive-env '())
 
 (define (get-script name)
-  (script<- (get-prim name) primitive-env))
+  (script<- name (get-prim name) primitive-env))
 
 (define (get-prim name)
   (env-lookup primitive-env name halt-cont))

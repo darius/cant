@@ -97,11 +97,12 @@
      (assert (eq? (term-tag decl) 'extending) "bad syntax" decl)
      (assert (= (length (term-parts decl)) 1) "bad syntax" decl)
      (term<- 'make
+             opt-name
              none-exp
              (parse-exp (car (term-parts decl)))
              (map parse-clause clauses)))
     (clauses
-     (term<- 'make none-exp none-exp (map parse-clause clauses)))))
+     (term<- 'make opt-name none-exp none-exp (map parse-clause clauses)))))
 
 (define none-exp (term<- 'constant '#f))
 
