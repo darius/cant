@@ -5,17 +5,17 @@
 (define (main argv)
   (match argv
     ((_ n) (queens (number<-string n)))
-    ((prog @_) (format "Usage: %s board-size" prog))))
+    ((prog @_) (format "Usage: %d board-size" prog))))
 
 (define (queens n)
   (match (satisfy-first (queens-problem n) 1)
     (#no (display "none\n"))
-    (env (show-board n env))))
+    (env (print-board n env))))
 
-(define (show-board n env)
+(define (print-board n env)
   (for each! ((row (make-board n)))
     (for each! ((var row))
-      (format "%s " (".Q" (env var))))
+      (format "%d " (".Q" (env var))))
     (newline)))
 
 (define (queens-problem n)
@@ -33,6 +33,7 @@
   (define (exclude rr cc)
     (when (and (<= 0 rr) (< rr n)
                (<= 0 cc) (< cc n))
+;      (print `(exclude ,rr ,cc))
       (env .set! (queen n rr cc) #no)))
   
   (for each! ((cc (range<- n)))
@@ -60,11 +61,10 @@
 
 (define (queen n r c)
   ;; The variable for a queen at (row r, column c) in an n*n board.
-  (+ 1 (* n r) c))
+  (+ 2 (* n r) c))  ;; vars must be >= 2
 
 (define (make-board n)
   ;; Return a 2-d array of distinct variables: each means there's a
-  ;; queen at its position.
-  ;; XXX make it a vector instead of a list?
+  ;; queen at its position. Row/column numbers start from 0.
   (for each ((r (range<- n)))
-    (range<- (+ 1 (* r n)) (+ 1 (* (+ r 1) n)))))
+    (range<- (+ 2 (* r n)) (+ 2 (* (+ r 1) n)))))

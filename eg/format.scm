@@ -10,8 +10,11 @@
        (()
         (unless args.empty?
           (error "Leftover arguments" args)))
-       ((#\% #\s)
+       ((#\% #\w)             ;XXX actually design the format language
         (sink .print args.first)
+        (scanning (s .slice 2) args.rest))
+       ((#\% #\d)
+        (sink .display args.first)
         (scanning (s .slice 2) args.rest))
        ((#\% #\%)
         (sink .display "%")
@@ -28,5 +31,5 @@
       '()
       (cons seq.first (as-list seq.rest))))
 
-(format "Dear %s,\n\nI wish to subscribe to 100%% of your %s.\n"
-        'Archimedes 'codices)
+(format "Dear %w,\n\nI wish to %d to 100%% of your %w.\n"
+        "Archimedes" "subscribe" 'codices)

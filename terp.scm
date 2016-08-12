@@ -208,6 +208,7 @@
     (vector<-count ,make-vector)
     (not ,not)
     (assq ,assq)  ;; TODO replace with 'real' hashmaps
+    (assv ,assv)  ;; TODO replace with 'real' hashmaps
     (display ,display)           ;XXX temp
     (newline ,newline)           ;XXX temp
     (pp ,pp)                     ;XXX obviously shouldn't be primitive
@@ -224,6 +225,7 @@
     (read ,squeam-read)
     (parse-exp ,parse-exp)
     (parse-pat ,parse-pat)
+    (random-integer ,random-integer)
 
     ;; Primitives only -- TODO seclude in their own env:
     (__hash ,hash)
