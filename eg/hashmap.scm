@@ -14,12 +14,12 @@
 ;;   special-case impls for small maps and common-typed maps
 ;;   store hash codes instead of recomputing?
 
-(let empty (make))
+(let vacant (make))  ; (was 'empty', but renamed because global name clash)
 
 (define (hash-map<-)
   (let count (box<- 0))
-  (let keys  (box<- (vector<- empty)))  ;; size a power of 2
-  (let vals  (box<- (vector<- #no)))    ;; same size
+  (let keys  (box<- (vector<- vacant)))  ;; size a power of 2
+  (let vals  (box<- (vector<- #no)))     ;; same size
 
   (define (capacity) keys.^.count)
 
@@ -28,7 +28,7 @@
       (if (< i 0)
           '()
           (do (let k (keys.^ i))
-              (if (= k empty)
+              (if (= k vacant)
                   (walking (- i 1))
                   (cons i (walking (- i 1))))))))
 
@@ -38,7 +38,7 @@
     (let i0   (mask .and h))
     (begin walking ((i i0))
       (let k (keys.^ i))
-      (case ((= k empty)
+      (case ((= k vacant)
              (fail i))
             ((= k key)
              (succeed i))
@@ -56,11 +56,11 @@
   (define (resize new-capacity)
     (let old-keys keys.^)
     (let old-vals vals.^)
-    (keys .^= (vector<-count new-capacity empty))
+    (keys .^= (vector<-count new-capacity vacant))
     (vals .^= (vector<-count new-capacity))
     (for each! ((i (range<- old-keys.count)))
       (let key (old-keys i))
-      (unless (= key empty)
+      (unless (= key vacant)
         (find key
               (given (j) (error "Can't happen"))
               (given (j)
