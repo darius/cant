@@ -179,13 +179,13 @@
     ('and    (mlambda
               ((_) #t)
               ((_ e) e)
-              ((_ e . es) `(if ,e (do ,@es) #f))))
+              ((_ e . es) `(if ,e (and ,@es) #f))))
     ('or     (mlambda
               ((_) #f)
               ((_ e) e)
               ((_ e . es)
                (let ((t (gensym)))
-                 `(with ((,t ,e)) (if ,t ,t (do ,@es)))))))
+                 `(with ((,t ,e)) (if ,t ,t (or ,@es)))))))
     ('quasiquote (mlambda
                   ((_ q) (expand-quasiquote q))))
     (_ #f)))
