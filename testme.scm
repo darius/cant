@@ -32,6 +32,7 @@
 (run-load "eg/fizzbuzz.scm")
 (run-load "eg/failing.scm")
 (run-load "eg/hashmap.scm")
+;(run-load "eg/hashset.scm")
 (run-load "eg/lambdaterp.scm")
 (run-load "eg/fillvector.scm")
 (run-load "eg/format.scm")
