@@ -1,5 +1,4 @@
 ;; The N-queens problem as a BDD.
-;; XXX untested
 
 ;; TODO design command-line interfacing
 (define (main argv)
@@ -33,7 +32,6 @@
   (define (exclude rr cc)
     (when (and (<= 0 rr) (< rr n)
                (<= 0 cc) (< cc n))
-;      (print `(exclude ,rr ,cc))
       (env .set! (queen n rr cc) #no)))
   
   (for each! ((cc (range<- n)))
@@ -52,7 +50,6 @@
 (define (match-env env)
   ;; Return a BDD that evaluates to 1 just when every variable in env
   ;; has its given value.
-  ;; TODO checkme
   (for foldl ((tree lit1)
               ((var value) (sort env.items {reverse})))
     (if value
@@ -61,7 +58,7 @@
 
 (define (queen n r c)
   ;; The variable for a queen at (row r, column c) in an n*n board.
-  (+ 2 (* n r) c))  ;; vars must be >= 2
+  (+ 2 (* n r) c))  ;; vars must be >= 2, to not clash with lits.
 
 (define (make-board n)
   ;; Return a 2-d array of distinct variables: each means there's a
