@@ -21,11 +21,11 @@
        (('let p e1)
         (term<- 'let (parse-pat p) (parse-exp e1)))
        (('make '_ . clauses)
-        (parse-make #f clauses))
+        (parse-make '_ clauses))
        (('make (: name symbol?) . clauses) ;TODO: cons up a fully-qualified name
         (term<- 'let (parse-pat name) (parse-make name clauses)))
        (('make . clauses)
-        (parse-make #f clauses))
+        (parse-make '_ clauses))
        (('do e1)
         (parse-exp e1))
        (('do e1 . es)
@@ -90,19 +90,18 @@
       (string? x)))
 
 ;; XXX what about stamp?
-;; XXX also, terp doesn't support opt-name yet
-(define (parse-make opt-name stuff)
+(define (parse-make name stuff)
   (mcase stuff
     (((: decl term?) . clauses)
      (assert (eq? (term-tag decl) 'extending) "bad syntax" decl)
      (assert (= (length (term-parts decl)) 1) "bad syntax" decl)
      (term<- 'make
-             opt-name
+             name
              none-exp
              (parse-exp (car (term-parts decl)))
              (map parse-clause clauses)))
     (clauses
-     (term<- 'make opt-name none-exp none-exp (map parse-clause clauses)))))
+     (term<- 'make name none-exp none-exp (map parse-clause clauses)))))
 
 (define none-exp (term<- 'constant '#f))
 
