@@ -4,7 +4,7 @@
 ;; we could actually hack that up in terms of =, but it'd be
 ;; nicer with a primitive.
 
-(let empty {empty})
+(let empty-set {empty})
 
 (define (adjoin<- n s)
   (if (has? s n)
@@ -30,7 +30,7 @@
 
 ;; Smoke test
 
-(let eg (adjoin<- 5 (adjoin<- 6 empty)))
+(let eg (adjoin<- 5 (adjoin<- 6 empty-set)))
 
 (print (has? eg 5))
 (print (has? eg 6))

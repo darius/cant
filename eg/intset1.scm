@@ -1,10 +1,10 @@
 ;; An example from William Cook's essay on OOP vs. ADTs
 ;; http://www.cs.utexas.edu/~wcook/Drafts/2009/essay.pdf
 
-(make empty
+(make empty-set
   ({.empty?}   #yes)
   ({.has? _}   #no)
-  ({.adjoin k} (adjoin<- k empty))
+  ({.adjoin k} (adjoin<- k empty-set))
   ({.merge s}  s))
 
 (define (adjoin<- n s)
@@ -25,7 +25,7 @@
 
 ;; Smoke test
 
-(let eg ((empty .adjoin 6) .adjoin 5))
+(let eg ((empty-set .adjoin 6) .adjoin 5))
 
 (print (eg .has? 5))
 (print (eg .has? 6))
