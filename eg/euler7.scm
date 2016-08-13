@@ -1,5 +1,6 @@
 ;; https://projecteuler.net/problem=7
 ;; The 10,001st prime number.
+;; TODO this lazy-list code is clumsy
 
 (define (euler7 n)
   ((primes) n))
