@@ -4,6 +4,9 @@
   (unless ok?
     (call error (if (null? arguments) '("Assertion failed") arguments))))
 
+(define (not= x y)
+  (not (= x y)))
+
 (make +
   (() 0)
   ((a) a)
@@ -25,7 +28,7 @@
 ;; TODO transitive multi-arg
 (define (<   a b)      (= (a .compare b) -1))
 (define (<=  a b) (not (= (a .compare b)  1)))
-(define (<=> a b)      (= (a .compare b)  0))
+(define (<=> a b)      (= (a .compare b)  0)) ; XXX better name?
 (define (>=  a b) (not (= (a .compare b) -1)))
 (define (>   a b)      (= (a .compare b)  1))
 
@@ -149,6 +152,9 @@
          ({.empty?} #no)
          ({.first}  `(,xs.first ,i))
          ({.rest}   (enumerate xs.rest (+ i 1)))))))
+
+(define (sum ns)
+  (foldl + 0 ns))
 
 (define (vector<- @elements)
   (vector<-list elements))

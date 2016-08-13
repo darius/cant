@@ -220,12 +220,14 @@
 
     ;; These will get high-level definitions later TODO
     (/ ,/)
-    (number<-string ,string->number)
     (vector<-list ,list->vector)
     (read ,squeam-read)
     (parse-exp ,parse-exp)
     (parse-pat ,parse-pat)
     (random-integer ,random-integer)
+    ;; Should use string ports instead:
+    (number<-string ,string->number)
+    (string<-number ,number->string)
 
     ;; Primitives only -- TODO seclude in their own env:
     (__hash ,hash)

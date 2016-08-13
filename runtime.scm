@@ -24,7 +24,7 @@
   ({.count}
    (if list.empty?
        0
-       (+ 1 list.rest.count)))
+       (+ 1 list.rest.count)))          ;TODO tail recursion
   ({.slice i}
    (assert (<= 0 i))
    (if (= i 0)
@@ -125,7 +125,7 @@
   ({.first}       (__car me))
   ({.rest}        (__cdr me))
   ({.count}       (__length me))
-  ((i)            (__list-ref me i))
+  ((i)            (__list-ref me i))    ;XXX just use the trait method? then can e.g. mix lazy and eager list nodes
   ({.chain a}     (__append me a))
   ({.print-on sink}
    (sink .display "(")
@@ -175,7 +175,10 @@
   ({.chain s}     (__string-append me s))
   ({.slice i}     (__substring me i me.count))
   ({.slice i j}   (__substring me i j))
-  ({.compare s}   (__string-compare me s))
+  ({.compare s}
+   (if (string? s)
+       (__string-compare me s)          ; just a speedup
+       (list-trait me {.compare s})))   ; but is this what we really want? (<=> "a" '(#\a))
   ({.join ss}   ;should this be a function, not a method?
    (if ss.empty?
        ss

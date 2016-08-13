@@ -99,9 +99,6 @@
 (define (move<-human-numbered n)
   (- 9 n))
 
-(define (sum ns)
-  (foldl + 0 ns))
-
 (define (filter-false xs)
   (filter identity xs))
 
