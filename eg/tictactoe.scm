@@ -110,3 +110,7 @@
 
 (define (identity x)
   x)
+
+
+(hide (let g (grid<- 0o610 0o061))
+      (tic-tac-toe spock-play spock-play g))
