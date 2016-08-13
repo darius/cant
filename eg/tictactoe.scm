@@ -1,12 +1,12 @@
 ;; tic-tac-toe, as a warmup.
 
 (define (tic-tac-toe player opponent grid)
+  grid.show
+  (newline)
   (case (grid.won?   (format "%d wins.\n" grid.last-to-move))
         (grid.drawn? (format "A draw.\n"))
         (else
          (unless (`(,player ,opponent) .maps-to? human-play)
-           (display grid.show)
-           (newline)
            (format "%w to move %d. (Press a key.)\n"
                    player grid.whose-move)
 ;           (get-key)                    ;XXX
