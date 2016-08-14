@@ -214,14 +214,18 @@
 (define (expand-qq-term term)
   (let ((tag (term-tag term))
         (parts (term-parts term)))
-    (if (any (mlambda (('unquote-splicing _) #t) (_ #f))
-             parts)
-        `(term<- ',tag ,(expand-quasiquote parts)) ;XXX hygiene
-        (let ((es (map expand-quasiquote parts)))
-          (if (all (mlambda (('quote _) #t) (_ #f))
-                   es)
-              `',term
-              `(term<- ',tag ,(expand-quasiquote parts)))))))
+    (let ((tag-e (expand-quasiquote tag)))
+      (if (or (not (qq-constant? tag-e))
+              (any (mlambda (('unquote-splicing _) #t) (_ #f))
+                   parts))
+          `(term<- ,tag-e ,(expand-quasiquote parts)) ;XXX hygiene
+          (let ((part-es (map expand-quasiquote parts)))
+            (if (all qq-constant? part-es)
+                `',term
+                (make-term tag part-es)))))))
+
+(define qq-constant?
+  (mlambda (('quote _) #t) (_ #f)))
 
 (define (qq-cons pair qq-car qq-cdr)
   (mcase `(,qq-car ,qq-cdr)
