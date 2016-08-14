@@ -114,6 +114,11 @@
     (f xs.first)
     (each! f xs.rest)))
 
+(define (as-list seq)            ;XXX naming convention for coercions?
+  (if seq.empty?
+      '()
+      (cons seq.first (as-list seq.rest))))
+
 (define (zip xs ys)
   (match `(,xs ,ys)
     ((() ()) '())

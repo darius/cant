@@ -24,11 +24,5 @@
         (sink .display c)
         (scanning s.rest args))))))
 
-;; XXX belongs in stdlib if anywhere
-(define (as-list seq)
-  (if seq.empty?
-      '()
-      (cons seq.first (as-list seq.rest))))
-
 (format "Dear %w,\n\nI wish to %d to 100%% of your %w.\n"
         "Archimedes" "subscribe" 'codices)
