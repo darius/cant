@@ -1,4 +1,6 @@
 *~
+*.expected
+*.out
 
 # Object files
 *.o
