@@ -30,6 +30,8 @@
         (parse-exp e1))
        (('do e1 . es)
         (term<- 'do (parse-exp e1) (parse-exp `(do ,@es))))
+       (('do)
+        (term<- 'constant #f))          ;I guess
        (('call e1 e2)
         (term<- 'call (parse-exp e1) (parse-exp e2)))
        ((addressee (: cue cue?) . operands)
@@ -67,15 +69,27 @@
     ((: _ list?)
      (parse-list-pat p))
     ((: _ term?)
-     (term<- 'term-pat (term-tag p) (map parse-pat (term-parts p))))
+     (let ((tag (term-tag p))
+           (parts (term-parts p)))
+       (if (any (mlambda (('@ _) #t) (_ #f)) parts)  ;XXX really only need to check the last one
+           (term<- 'view-pat
+                   explode-term-exp
+                   (term<- 'term-pat 'term (list (term<- 'constant-pat tag)
+                                                 (parse-list-pat parts))))
+           (term<- 'term-pat tag (map parse-pat parts)))))
     ))
+
+(define explode-term-exp
+  (term<- 'constant (lambda (thing)
+                      (and (term? thing)
+                           (term<- 'term (term-tag thing) (term-parts thing))))))
 
 (define (parse-list-pat ps)
   (mcase ps
     (()
      (term<- 'constant-pat '()))
     ((('@ v))
-     (term<- 'and-pat list?-exp (parse-pat v)))
+     (term<- 'and-pat list?-pat (parse-pat v)))
     ((head . tail)
      ;; TODO: special case if both head and tail are constant
      (term<- 'view-pat
@@ -83,7 +97,7 @@
              (term<- 'term-pat 'cons (list (parse-pat head)
                                            (parse-list-pat tail)))))))
 
-(define list?-exp (term<- 'view-pat
+(define list?-pat (term<- 'view-pat
                           (term<- 'constant list?) ;XXX just check pair?/null?
                           (term<- 'constant-pat #t)))
 
