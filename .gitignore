@@ -2,6 +2,15 @@
 *.expected
 *.out
 
+benchmark-log
+
+junk/
+notes/
+old/
+others/
+paip/
+save/
+
 # Object files
 *.o
 *.ko
