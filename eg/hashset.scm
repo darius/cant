@@ -1,8 +1,7 @@
 (make set<-             ;XXX this name is better saved for frozen sets
-  (() (hash-set<-))
-  ((val @vals) ;XXX would be nicer as (@vals) but that still matches non-lists
+  ((@vals)
    (let s (hash-set<-))
-   (s .add-all! `(,val ,@vals))
+   (s .add-all! vals)
    s))
 
 (define (hash-set<-)

@@ -75,13 +75,17 @@
     (()
      (term<- 'constant-pat '()))
     ((('@ v))
-     (parse-pat v))
+     (term<- 'and-pat list?-exp (parse-pat v)))
     ((head . tail)
      ;; TODO: special case if both head and tail are constant
      (term<- 'view-pat
              (term<- 'variable '__as-cons)
              (term<- 'term-pat 'cons (list (parse-pat head)
                                            (parse-list-pat tail)))))))
+
+(define list?-exp (term<- 'view-pat
+                          (term<- 'constant list?) ;XXX just check pair?/null?
+                          (term<- 'constant-pat #t)))
 
 (define (self-evaluating? x)
   (or (boolean? x)
