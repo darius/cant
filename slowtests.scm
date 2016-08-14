@@ -10,3 +10,5 @@
 ;; Actual test
 (loud-load "eg/nqueens.scm")
 (interpret '(queens 4))
+
+(report-stats)

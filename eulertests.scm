@@ -10,3 +10,5 @@
 (loud-load "eg/euler4.scm")
 (loud-load "eg/euler5.scm")
 (loud-load "eg/euler7.scm")
+
+(report-stats)

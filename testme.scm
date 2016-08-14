@@ -41,3 +41,5 @@
 (loud-load "eg/nfa.scm")
 (loud-load "eg/tictactoe.scm")
 (loud-load "eg/unify.scm")
+
+(report-stats)
