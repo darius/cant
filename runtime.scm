@@ -326,7 +326,7 @@
 (define (__ev-tag-cont k tag)
   (make {extending __cont-trait}
     ({.rest} k)
-    ({.first} (term<- tag '(^^^)))))
+    ({.first} `{,tag ^^^})))
 
 (define (__ev-and-pat-cont k r subject p2)
   (make {extending __cont-trait}

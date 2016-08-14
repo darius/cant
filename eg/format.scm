@@ -1,7 +1,6 @@
 (make format
   ((format-string @arguments)
-   ;;XXX pretty terrible, but `{.to ,out ,format-string ,arguments} would be ok:
-   (call format (term<- '.to `(,out ,format-string ,arguments))))
+   (call format `{.to ,out ,format-string ,arguments}))
   ({.to sink format-string arguments}   ;XXX can't have @arguments here yet
    (begin scanning ((s format-string)
                     (args arguments))
