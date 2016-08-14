@@ -117,7 +117,7 @@
 (define (call object message k)
 ;  (dbg `(call))
   (if (and (procedure? object)
-           (list? message))
+           (or (pair? message) (null? message)))
       (cond ((eq? object error-prim) (error-prim (cons k message)))
             ((eq? object evaluate-prim) (evaluate-prim message k))
             (else (answer k (apply object message))))
@@ -304,7 +304,6 @@
   (env-extend r vs (map (lambda (_) uninitialized) vs)))
 
 (define (env-resolve! r v value)
-  (assert (list? r) "what's an r?" r)
   (cond ((assq v r) => (lambda (pair)
                          (assert (eq? (cadr pair) uninitialized)
                                  "Multiple definition" v)
