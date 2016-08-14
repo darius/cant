@@ -1,12 +1,12 @@
 (load "loadme.scm")
 
 ;; Dependencies
-(run-load "eg/hashmap.scm")
-(run-load "eg/fillvector.scm")
-(run-load "eg/format.scm")
-(run-load "eg/sort.scm")
-(run-load "eg/bdd.scm")
+(loud-load "eg/hashmap.scm")
+(loud-load "eg/fillvector.scm")
+(loud-load "eg/format.scm")
+(loud-load "eg/sort.scm")
+(loud-load "eg/bdd.scm")
 
 ;; Actual test
-(run-load "eg/nqueens.scm")
+(loud-load "eg/nqueens.scm")
 (interpret '(queens 4))

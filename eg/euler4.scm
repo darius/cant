@@ -12,7 +12,8 @@
   (let s (string<-number n))      ;TODO use a string port instead
   (<=> s (reverse s)))
 
-(print (euler4 10 100))
+(print (euler4 10 30))
+;(print (euler4 10 100))
 ;(print (euler4 (range<- 100 1000)))
 
 ;; This code'd be adequate on a nice fast Squeam system; but

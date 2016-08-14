@@ -10,6 +10,14 @@
 (run-load "stdlib.scm")
 (run-load "eg/traceback.scm")  ;; Let's default to traceback-on-error
 
+(define (loud-load filename)
+  (newline)
+  (display "-------- ")
+  (display filename)
+  (display " --------")
+  (newline)
+  (run-load filename))
+
 (define (repl)
   (interpret '(repl)))
 ;(repl)
