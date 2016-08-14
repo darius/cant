@@ -25,7 +25,7 @@
          (if (= val my-var) my-val (s .subst val))
          val))
     ({.selfie sink}
-     (format .to sink "<%w: %w>..%w" (list<- my-var my-val s)))))
+     (format .to sink "<%w: %w>..%w" my-var my-val s))))
 
 (define (extend s var val)
   (if (occurs? s var val) #no (extend-unchecked s var val)))
