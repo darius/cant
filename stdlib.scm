@@ -174,7 +174,8 @@
     (call actor (term<- cue arguments))))
 
 (define (write x)                      ;TODO rename
-  (x .print-on out))
+  (out .print x))
+
 (define (print x)                      ;TODO rename
   (write x)
   (newline))

@@ -100,7 +100,7 @@
      (hashmap.values .maps-to? value))
     ({.find-key-for value}
      (unimplemented))                   ;XXX
-    ({.print-on sink}
+    ({.selfie sink}
      (sink .display "#<hash-map (")
      (sink .print hashmap.count)
      (sink .display ")>"))

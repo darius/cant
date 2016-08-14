@@ -47,7 +47,7 @@
     ({.copy! v lo bound}
      (count-check bound)
      (vec.^ .copy! v lo bound))
-    ({.print-on sink}
+    ({.selfie sink}
      (sink .display "#<fillvector (")
      (sink .print fillvector.count)
      (sink .display ")>"))     

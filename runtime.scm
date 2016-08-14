@@ -7,7 +7,7 @@
 ;; no top-level actions.
 
 (make-trait miranda-trait me
-  ({.print-on sink} (sink .write me))  
+  ({.selfie sink} (sink .write me))  
   (message (error "Message not understood" message me)))
 
 (make-trait list-trait list
@@ -77,7 +77,7 @@
   )
 
 (make-trait claim-primitive me
-  ({.print-on sink}
+  ({.selfie sink}
    (sink .display (if me "#yes" "#no")))
   ({.compare a}   (case ((= me a) 0)    ;XXX untested. also, need to check that a is boolean.
                         (me       1)
@@ -117,7 +117,7 @@
   ({.count}       0)
   ((i)            (error "Empty list" 'nth))
   ({.chain a}     a)
-  ({.print-on sink} (sink .display "()"))
+  ({.selfie sink} (sink .display "()"))
   (message        (list-trait me message))) ;XXX use trait syntax instead
 
 (make-trait cons-primitive me
@@ -127,7 +127,7 @@
   ({.count}       (__length me))
   ((i)            (__list-ref me i))    ;XXX just use the trait method? then can e.g. mix lazy and eager list nodes
   ({.chain a}     (__append me a))
-  ({.print-on sink}
+  ({.selfie sink}
    (sink .display "(")
    (sink .print me.first)
    (begin printing ((r me.rest))
@@ -159,7 +159,7 @@
    ;; XXX range-check first
    (for each! ((i (range<- lo bound)))
      (__vector-set! me (- i lo) (v i)))) ;XXX was this what I wanted? I forget.
-  ({.print-on sink}
+  ({.selfie sink}
    (sink .display "#")
    (sink .print (__vector->list me)))
   (message
@@ -183,7 +183,7 @@
    (if ss.empty?
        ss
        (foldr1 (given (x y) (chain x me y)) ss)))
-  ;;XXX below mostly from list-trait, until .print-on
+  ;;XXX below mostly from list-trait, until .selfie
   ({.keys}        (range<- me.count))
   ({.values}      me)
   ({.items}       (enumerate me))
@@ -198,7 +198,7 @@
    (for some ((x list)) (= x value)))
   ({.find-key-for value}
    (unimplemented))                       ;XXX
-  ({.print-on sink}
+  ({.selfie sink}
    (sink .display #\")
    (for each! ((c me))
      (sink .display (match c            ;XXX super slow. We might prefer to use the Gambit built-in.
@@ -224,7 +224,7 @@
 (make-trait box-primitive me
   ({.^}           (__box-value me))
   ({.^= val}      (__box-value-set! me val))
-  ({.print-on sink}
+  ({.selfie sink}
    (sink .display "<box ")
    (sink .print me.^)
    (sink .display ">"))
@@ -233,13 +233,13 @@
 (make-trait sink-primitive me
   ({.display a}   (__display me a))
   ({.write a}     (__write me a))     ;XXX Scheme naming isn't very illuminating here
-  ({.print a}     (a .print-on me))
+  ({.print a}     (a .selfie me))
   )
 
 (make-trait term-primitive me
   ({.tag}         (__term-tag me))
   ({.arguments}   (__term-arguments me))
-  ({.print-on sink}
+  ({.selfie sink}
    (sink .display "{")
    (sink .print me.tag)
    (for each! ((arg me.arguments))
@@ -262,11 +262,11 @@
     ({.empty?}        #yes)
     ({.first}         (error "No more frames" me))
     ({.rest}          (error "No more frames" me))
-    ({.print-on sink} (sink .display "<halt-cont>"))))
+    ({.selfie sink}   (sink .display "<halt-cont>"))))
 
 (make-trait __cont-trait me
   ({.empty?}        #no)
-  ({.print-on sink} (sink .display "<cont>")) ;XXX more
+  ({.selfie sink}   (sink .display "<cont>")) ;XXX more
   (message          (list-trait me message))) ;XXX use trait syntax instead
 
 (define (__call-cont-standin-cont k message)

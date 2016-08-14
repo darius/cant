@@ -15,7 +15,7 @@
 (make empty-subst
   ({.subst val}
    val)
-  ({.print-on sink}
+  ({.selfie sink}
    (sink .display "<>")))
 
 (define (extend-unchecked s my-var my-val)
@@ -24,7 +24,7 @@
      (if (variable? val)
          (if (= val my-var) my-val (s .subst val))
          val))
-    ({.print-on sink}
+    ({.selfie sink}
      (format .to sink "<%w: %w>..%w" (list<- my-var my-val s)))))
 
 (define (extend s var val)

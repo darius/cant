@@ -14,7 +14,7 @@
 
 (define (fail text far i vals)
   (make failure
-    ({.display}                         ;TODO change to .print-on
+    ({.display}                         ;TODO change to .selfie
      (display "failed: ")
      (write (text .slice 0 far))
      (display "/")

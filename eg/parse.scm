@@ -59,7 +59,7 @@
   (make
     ({.lhs} lhs)
     ({.rhs} rhs)
-    ({.print-on sink} (sink .print (cons lhs rhs)))))
+    ({.selfie sink} (sink .print (cons lhs rhs)))))
 
 ;; A parse tree and a remainder.
 (define (parse<- tree remainder)
@@ -68,7 +68,7 @@
     ({.remainder} remainder)
     ({.lhs}       tree.lhs)
     ({.complete?} remainder.empty?)
-    ({.print-on sink}
+    ({.selfie sink}
      (sink .print `((tree: ,tree)
                     (remainder: ,remainder))))))
 

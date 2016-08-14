@@ -16,7 +16,7 @@
     ({.union! other}  (hash-set .add-all! other.keys))
     ({.empty?}        map.empty?)
     ;; XXX fill in rest of set interface (just the map interface, I guess)
-    ({.print-on sink}
+    ({.selfie sink}
      (sink .display "#<set")
      (sink .print map.keys)
      (sink .display ">"))
