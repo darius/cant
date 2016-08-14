@@ -1,0 +1,16 @@
+#!/bin/bash
+set -euo pipefail; shopt -s failglob  # 'Bash strict mode'
+
+# Benchmark runner. Yes, it's absurdly crude.
+
+echo "Reminder:"
+echo "Run on unloaded system -- no web browser."
+echo "Plug in the power."
+echo ""
+date
+echo ""
+echo testme:; ./t testme.scm
+echo ""
+echo euler:;  ./t eulertests.scm
+echo ""
+echo slow:;   ./t slowtests.scm
