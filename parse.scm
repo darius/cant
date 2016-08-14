@@ -99,7 +99,7 @@
              (parse-exp (car (term-parts decl)))
              (map parse-clause clauses)))
     (clauses
-     (term<- 'make name none-exp none-exp (map parse-clause clauses)))))
+     (term<- 'make/cheap name (map parse-clause clauses)))))
 
 (define none-exp (term<- 'constant '#f))
 
@@ -249,7 +249,7 @@
 (define (exp-vars-defined e)
   (let ((parts (term-parts e)))
     (case (term-tag e)
-      ((constant variable make)
+      ((constant variable make make/cheap)
        '())
       ((call do)
        (let ((e1 (car parts)) (e2 (cadr parts)))
