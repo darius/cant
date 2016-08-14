@@ -102,15 +102,6 @@
 (define (filter-false xs)
   (filter identity xs))
 
-(define (zip xs ys)
-  (match `(,xs ,ys)
-    ((() ()) '())
-    (((x @xs1) (y @ys1))
-     `((,x ,y) ,@(zip xs1 ys1)))))
-
-(define (identity x)
-  x)
-
 
 (hide (let g (grid<- 0o610 0o061))
       (tic-tac-toe spock-play spock-play g))

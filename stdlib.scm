@@ -109,14 +109,19 @@
       (and (ok? xs.first)
            (every ok? xs.rest))))
 
-(define (print x)
-  (write x)
-  (newline))
-
 (define (each! f xs)
   (unless xs.empty?
     (f xs.first)
     (each! f xs.rest)))
+
+(define (zip xs ys)
+  (match `(,xs ,ys)
+    ((() ()) '())
+    (((x @xs1) (y @ys1))
+     `((,x ,y) ,@(zip xs1 ys1)))))
+
+(define (identity x)
+  x)
 
 (define ((compose f g) @arguments)
   (f (call g arguments)))
