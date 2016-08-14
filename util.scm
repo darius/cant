@@ -39,6 +39,11 @@
       (and (f (car xs))
            (all f (cdr xs)))))
 
+(define (any f xs)
+  (and (not (null? xs))
+       (or (f (car xs))
+           (any f (cdr xs)))))
+
 (define (flatmap f xs)
   (foldr append '() (map f xs)))
 
