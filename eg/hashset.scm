@@ -1,8 +1,7 @@
-(make set<-             ;XXX this name is better saved for frozen sets
-  ((@vals)
-   (let s (hash-set<-))
-   (s .add-all! vals)
-   s))
+(define (set<- @vals)            ;XXX this name is better saved for frozen sets
+  (let s (hash-set<-))
+  (s .add-all! vals)
+  s)
 
 (define (hash-set<-)
   (let map (map<-)) ;TODO would be nice to avoid storing all the #yes values
