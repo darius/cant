@@ -21,6 +21,7 @@
                        (factorial 10))))
 
 (loud-load "eg/quasiquote-tests.scm")
+(loud-load "eg/test-continuations.scm")
 (loud-load "eg/compact-lambda.scm")
 (loud-load "eg/sicp1.scm")
 (loud-load "eg/sicp2.scm")
