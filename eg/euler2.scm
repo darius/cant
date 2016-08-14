@@ -14,5 +14,5 @@
         (cons a (fibbing b (+ a b)))
         '())))
 
-(print (euler2 10))
-;(print (euler2 4000000))
+;(print (euler2 10))
+(print (euler2 4000000))

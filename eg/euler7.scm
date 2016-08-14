@@ -31,6 +31,7 @@
     ;; XXX override parts of list-trait that need it for laziness
     ))
 
-(print (euler7 5))
+;(print (euler7 5))
+(print (euler7 100))
 ;(print (euler7 10000))
 ;; TODO implement the real sieve

@@ -8,5 +8,6 @@
              i
              0))))
 
-(print (euler1 10))
+;(print (euler1 10))
+(print (euler1 200))
 ;(print (euler1 1000))

@@ -11,5 +11,6 @@
         (cons d (if (= d n) '() (trying d (n .quotient d))))
         (trying (+ d 1) n))))
 
-(print (euler3 13195))
+;(print (euler3 13195))
+(print (euler3 131957))
 ;(print (euler3 600851475143))
