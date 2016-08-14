@@ -95,9 +95,7 @@
     (((: decl term?) . clauses)
      (assert (eq? (term-tag decl) 'extending) "bad syntax" decl)
      (assert (= (length (term-parts decl)) 1) "bad syntax" decl)
-     (term<- 'make
-             name
-             none-exp
+     (term<- 'make name none-exp
              (parse-exp (car (term-parts decl)))
              (map parse-clause clauses)))
     (clauses
@@ -108,7 +106,9 @@
 (define (parse-clause clause)
   (mcase clause
     ((pat . body)
-     `(,(parse-pat pat) ,(parse-exp `(do ,@body))))))
+     (let ((p (parse-pat pat))
+           (e (parse-exp `(do ,@body))))
+       (list p (pat-vars-defined p) (exp-vars-defined e) e)))))
 
 (define (look-up-macro key)
   (mcase key
@@ -221,3 +221,49 @@
            (eqv? (cdr pair) d))
       pair
       (cons a d)))
+
+
+;; Variables defined
+
+(define (pat-vars-defined p)
+  (let ((parts (term-parts p)))
+    (case (term-tag p)
+      ((any-pat constant-pat)
+       '())
+      ((variable-pat)
+       parts)
+      ((term-pat)
+       (let ((p-args (cadr parts)))
+         (flatmap pat-vars-defined p-args)))
+      ((and-pat)
+       (let ((p1 (car parts)) (p2 (cadr parts)))
+         (append (pat-vars-defined p1)
+                 (pat-vars-defined p2))))
+      ((view-pat)
+       (let ((e (car parts)) (p (cadr parts)))
+         (append (exp-vars-defined e)
+                 (pat-vars-defined p))))
+      (else
+       (error "Bad pattern type" p)))))
+
+(define (exp-vars-defined e)
+  (let ((parts (term-parts e)))
+    (case (term-tag e)
+      ((constant variable make)
+       '())
+      ((call do)
+       (let ((e1 (car parts)) (e2 (cadr parts)))
+         (append (exp-vars-defined e1)
+                 (exp-vars-defined e2))))
+      ((let)
+       (let ((p (car parts)) (e (cadr parts)))
+         (append (pat-vars-defined p)
+                 (exp-vars-defined e))))
+      ((term)
+       (let ((es (cadr parts)))
+         (flatmap exp-vars-defined es)))
+      ((list)
+       (let ((es (car parts)))
+         (flatmap exp-vars-defined es)))
+      (else
+       (error "Bad expression type" e)))))

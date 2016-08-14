@@ -156,8 +156,8 @@
   (mcase clauses
     (()
      (delegate (script-trait script) object message k))
-    (((pattern body) . rest-clauses)
-     (let ((pat-r (env-extend-promises datum (pat-vars-defined pattern))))
+    (((pattern pat-vars . body) . rest-clauses)
+     (let ((pat-r (env-extend-promises datum pat-vars)))
        (ev-pat message pattern pat-r
                (cont<- match-clause-cont k pat-r body rest-clauses object script datum message))))))  ;XXX geeeez
 
@@ -316,52 +316,6 @@
 (define uninitialized (object<- (script<- '<uninitialized> #f '()) '*uninitialized*))
 
 
-;; Variables defined
-
-(define (pat-vars-defined p)
-  (let ((parts (term-parts p)))
-    (case (term-tag p)
-      ((any-pat constant-pat)
-       '())
-      ((variable-pat)
-       parts)
-      ((term-pat)
-       (let ((p-args (cadr parts)))
-         (flatmap pat-vars-defined p-args)))
-      ((and-pat)
-       (let ((p1 (car parts)) (p2 (cadr parts)))
-         (append (pat-vars-defined p1)
-                 (pat-vars-defined p2))))
-      ((view-pat)
-       (let ((e (car parts)) (p (cadr parts)))
-         (append (exp-vars-defined e)
-                 (pat-vars-defined p))))
-      (else
-       (error "Bad pattern type" p)))))
-
-(define (exp-vars-defined e)
-  (let ((parts (term-parts e)))
-    (case (term-tag e)
-      ((constant variable make)
-       '())
-      ((call do)
-       (let ((e1 (car parts)) (e2 (cadr parts)))
-         (append (exp-vars-defined e1)
-                 (exp-vars-defined e2))))
-      ((let)
-       (let ((p (car parts)) (e (cadr parts)))
-         (append (pat-vars-defined p)
-                 (exp-vars-defined e))))
-      ((term)
-       (let ((es (cadr parts)))
-         (flatmap exp-vars-defined es)))
-      ((list)
-       (let ((es (car parts)))
-         (flatmap exp-vars-defined es)))
-      (else
-       (error "Bad expression type" e)))))
-
-
 ;; A small-step interpreter
 
 (define (evaluate e r)
@@ -476,8 +430,9 @@
    '__match-clause-cont
    (lambda (matched? k pat-r body rest-clauses object script datum message)
 ;     (dbg `(match-clause-cont))
+     ;; body is now a list (body-vars body-exp)
      (if matched?
-         (ev-exp body (env-extend-promises pat-r (exp-vars-defined body)) k)
+         (ev-exp (cadr body) (env-extend-promises pat-r (car body)) k)
          (matching rest-clauses object script datum message k)))))
 
 (define ev-trait-cont-script
