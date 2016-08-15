@@ -204,6 +204,21 @@
               ((_ e . es)
                (let ((t (gensym)))
                  `(with ((,t ,e)) (if ,t ,t (or ,@es)))))))
+    ('import (mlambda
+              ((_ m . names)
+               (assert (all symbol? names) "bad syntax" names)
+               (let ((map-var (gensym)))
+                 `(let ,names
+                    (hide (let ,map-var ,m)
+                          (',list ,@(map (lambda (name) `(,map-var ',name))
+                                         names))))))))
+    ('export (mlambda
+              ((_ . names)
+               (assert (all symbol? names) "bad syntax" names)
+               (list 'map<-a-list  ;XXX hygiene
+                     (list 'quasiquote
+                           (map (lambda (name) (list name (list 'unquote name)))
+                                names))))))
     ('quasiquote (mlambda
                   ((_ q) (expand-quasiquote q))))
     (_ #f)))

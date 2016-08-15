@@ -20,6 +20,8 @@
                            (_ (n .* (factorial (n .- 1))))))
                        (factorial 10))))
 
+(loud-load "eg/hashmap.scm")
+(loud-load "eg/test-export-import.scm")  ; (requires hashmap)
 (loud-load "eg/quasiquote-tests.scm")
 (loud-load "eg/test-continuations.scm")
 (loud-load "eg/test-pattern-matching.scm")
@@ -34,7 +36,6 @@
 (loud-load "eg/circuitoptimizer.scm")
 (loud-load "eg/fizzbuzz.scm")
 (loud-load "eg/failing.scm")
-(loud-load "eg/hashmap.scm")
 (loud-load "eg/hashset.scm")
 (loud-load "eg/memoize.scm")
 (loud-load "eg/lambdaterp.scm")
