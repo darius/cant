@@ -21,6 +21,7 @@
                        (factorial 10))))
 
 (loud-load "eg/hashmap.scm")
+(loud-load "eg/test-hashmap.scm")
 (loud-load "eg/test-export-import.scm")  ; (requires hashmap)
 (loud-load "eg/test-quasiquote.scm")
 (loud-load "eg/test-continuations.scm")
