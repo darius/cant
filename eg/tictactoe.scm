@@ -103,5 +103,7 @@
   (filter identity xs))
 
 
-(hide (let g (grid<- 0o610 0o061))
-      (tic-tac-toe spock-play spock-play g))
+(hide
+ (let g (grid<- 0o610 0o061))
+ (tic-tac-toe spock-play spock-play g)
+)

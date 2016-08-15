@@ -113,14 +113,16 @@
 
 ;; Smoke test
 
-(define (try grammar sentence)
-  (write sentence) (display ":") (newline)
-  (each! print (grammar .parse sentence))
-  (newline))
+(hide
+ (define (try grammar sentence)
+   (write sentence) (display ":") (newline)
+   (each! print (grammar .parse sentence))
+   (newline))
 
-(try grammar3 '(the table))
-(try grammar3 '(the ball hit the table))
-(try grammar3 '(the noun took the verb))
+ (try grammar3 '(the table))
+ (try grammar3 '(the ball hit the table))
+ (try grammar3 '(the noun took the verb))
 
 ;(try grammar4 '(the man hit the table with the ball))
 ;(try grammar4 '(the orange saw))
+)

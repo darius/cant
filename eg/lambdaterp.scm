@@ -226,23 +226,26 @@
 
 ;; Smoke test
 
-(define (try lexp @commands)
-  (command-queue .^= commands)
-  (let result (interpret lexp))
-  (if result (print (survey result)) 'failed))
+(hide
 
-(try '(lambda (x) x))
-(try '((lambda (x) ((+ x) 2)) 1))
+ (define (try lexp @commands)
+   (command-queue .^= commands)
+   (let result (interpret lexp))
+   (if result (print (survey result)) 'failed))
 
-(try '((lambda (x) ((+ y) 1)) 42))
-(try '((+ (lambda (z) z)) y))
-(try '(((+ 1) y) 2))
+ (try '(lambda (x) x))
+ (try '((lambda (x) ((+ x) 2)) 1))
 
-(try '((lambda (x) ((+ y) 1)) 42)
-     {.value 42}
-     {.continue})
-(try '((lambda (x) ((+ y) 1)) 42)
-     {.value 42}
-     {.hop}
-     {.b}
-     {.hop})
+ (try '((lambda (x) ((+ y) 1)) 42))
+ (try '((+ (lambda (z) z)) y))
+ (try '(((+ 1) y) 2))
+
+ (try '((lambda (x) ((+ y) 1)) 42)
+      {.value 42}
+      {.continue})
+ (try '((lambda (x) ((+ y) 1)) 42)
+      {.value 42}
+      {.hop}
+      {.b}
+      {.hop})
+)

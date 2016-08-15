@@ -30,8 +30,10 @@
 
 ;; Smoke test
 
-(let eg (adjoin<- 5 (adjoin<- 6 empty-set)))
+(hide
+ (let eg (adjoin<- 5 (adjoin<- 6 empty-set)))
 
-(print (has? eg 5))
-(print (has? eg 6))
-(print (has? eg 7))
+ (print (has? eg 5))
+ (print (has? eg 6))
+ (print (has? eg 7))
+)
