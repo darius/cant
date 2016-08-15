@@ -191,14 +191,14 @@
 
 (define (use filename)                  ;TODO a realer module system
   ;; N.B. could sort of just use memoize if that were already loaded.
-  (case ((assoc filename the-modules.^)
-         => (given ((_ mod)) mod))  ;TODO unuglify
-        (else
-         (let code (for with-input-file ((source filename))
-                     `(hide ,@(read-all source))))
-         (let mod (evaluate (parse-exp code) '()))
-         (the-modules .^= `((,filename ,mod) ,@the-modules.^))
-         mod)))
+  (match (assoc filename the-modules.^)
+    ((_ mod) mod)
+    (#no
+     (let code (for with-input-file ((source filename))
+                 `(hide ,@(read-all source))))
+     (let mod (evaluate (parse-exp code) '()))
+     (the-modules .^= `((,filename ,mod) ,@the-modules.^))
+     mod)))
 
 (define (with-input-file fn filename)
   (let source (open-input-file filename))
