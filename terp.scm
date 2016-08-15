@@ -572,7 +572,7 @@
 (define (get-prim name)
   (env-lookup primitive-env name halt-cont))
 
-(run-load "runtime.scm")
+(run-load "lib/runtime.scm")
 
 (define miranda-trait (get-prim 'miranda-trait))
 
