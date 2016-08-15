@@ -38,7 +38,7 @@
         (match op
                ('fetch
                 (let m-val (m .get key))
-                (let a-val (match (assv key a.^)
+                (let a-val (match (assoc key a.^)
                                   (#no #no)
                                   ((k v) v)))
                 (assert (= m-val a-val))
