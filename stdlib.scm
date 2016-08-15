@@ -186,3 +186,20 @@
   (display "sqm> ")
   (print (evaluate (parse-exp (read)) '())) ;XXX reify a proper env object
   (repl))
+
+(define (use filename)                  ;TODO a realer module system
+  (let code (for with-input-file ((source filename))
+              `(hide ,@(read-all source))))
+  (evaluate (parse-exp code) '()))
+
+(define (with-input-file fn filename)
+  (let source (open-input-file filename))
+  (let result (fn source))
+  (source .close)                       ;TODO unwind-protect
+  result)
+
+(define (read-all source)
+  (let thing (read source))
+  (if (eof-object? thing)
+      '()
+      (cons thing (read-all source))))

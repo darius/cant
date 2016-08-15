@@ -35,6 +35,7 @@
 (loud-load "eg/test-quasiquote.scm")
 (loud-load "eg/test-continuations.scm")
 (loud-load "eg/test-pattern-matching.scm")
+(loud-load "eg/test-use.scm")
 
 (loud-load "eg/test-hashmap.scm")
 (loud-load "eg/test-format.scm")

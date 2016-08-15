@@ -137,6 +137,7 @@
                  ((vector? object)      vector-script)
                  ((box? object)         box-script)
                  ((null? object)        nil-script)
+                 ((input-port? object)  source-script)
                  ((output-port? object) sink-script)
                  ((symbol? object)      symbol-script)
                  ((boolean? object)     boolean-script)
@@ -216,7 +217,9 @@
     (string? ,string?)
     (vector? ,vector?)
     (box? ,box?)
+    (source? ,input-port?)
     (sink? ,output-port?)
+    (eof-object? ,eof-object?)
     (box<- ,box<-)
     (symbol<- ,string->symbol)
     (term<- ,make-term)       ;TODO check that arguments arg is a list
@@ -231,6 +234,7 @@
     (panic ,panic)
     (error ,error-prim)
     (evaluate ,evaluate-prim)
+    (open-input-file ,open-input-file)
     (__set-dbg! ,set-dbg!)
 
     ;; These will get high-level definitions later TODO
@@ -243,6 +247,7 @@
     ;; Should use string ports instead:
     (number<-string ,string->number)
     (string<-number ,number->string)
+    (read ,squeam-read)
 
     ;; Primitives only -- TODO seclude in their own env:
     (__hash ,hash)
@@ -293,6 +298,7 @@
     (__box-value-set! ,box-value-set!)
     (__term-tag ,term-tag)
     (__term-arguments ,term-parts)
+    (__close-port ,close-port)
     (__display ,(lambda (sink thing)
                   (display thing sink)))              ;XXX handle non-string/char properly
     (__write ,(lambda (sink thing)
@@ -579,6 +585,7 @@
 (define string-script (get-script 'string-primitive))
 (define vector-script (get-script 'vector-primitive))
 (define box-script    (get-script 'box-primitive))
+(define source-script (get-script 'source-primitive))
 (define sink-script   (get-script 'sink-primitive))
 (define term-script   (get-script 'term-primitive))
 (define procedure-script (get-script 'procedure-primitive))

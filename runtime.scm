@@ -230,6 +230,10 @@
    (sink .display ">"))
   )
 
+(make-trait source-primitive me
+  ({.close}       (__close-port me))
+  )
+
 (make-trait sink-primitive me
   ({.display a}   (__display me a))
   ({.write a}     (__write me a))     ;XXX Scheme naming isn't very illuminating here
