@@ -1,3 +1,7 @@
+(define (report x)
+  (write x)
+  (newline))
+
 (define (starts-with? form tag)
   (and (pair? form) (eq? (car form) tag)))
 

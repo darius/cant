@@ -1,8 +1,5 @@
 ;; The N-queens problem as a BDD.
 
-(import (use "lib/hashmap.scm") map<-)
-(import (use "lib/format.scm") format)
-(import (use "lib/sort.scm") sort)
 (import (use "lib/bdd.scm")
         bdd-and bdd-or satisfy-first
         lit0 lit1 build-choice)

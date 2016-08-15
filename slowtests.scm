@@ -1,5 +1,5 @@
 (load "loadme.scm")
 
-(loud-load "eg/test-nqueens.scm")
+(run-load "eg/test-nqueens.scm")
 
 (report-stats)

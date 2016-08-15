@@ -28,12 +28,6 @@
   (newline)
   (use filename))
 
-(import (loud-load "lib/hashmap.scm")
-        map<- map<-a-list)  ;; Needed globally for (export ...) to work.
-(loud-load "lib/format.scm")
-(loud-load "lib/fillvector.scm")
-(loud-load "lib/sort.scm")
-(loud-load "lib/hashset.scm")
 (loud-load "lib/memoize.scm")
 (loud-load "lib/parson.scm")
 (loud-load "lib/regex.scm")
