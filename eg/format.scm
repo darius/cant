@@ -26,6 +26,3 @@
       ((c @_)
        (sink .display c)
        (scanning s.rest args)))))
-
-(format "Dear %w,\n\nI wish to %d to 100%% of your %w.\n"
-        "Archimedes" "subscribe" 'codices)

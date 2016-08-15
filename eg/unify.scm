@@ -72,12 +72,3 @@
 ;; TODO: consider making a 'failed' subst type instead of #no
 ;; or using 0-or-1-length lists. In fact, the latter meshes
 ;; perfectly with lazy-lists-as-Kanren-results.
-
-(hide
- (let s (unify empty-subst '(a b) '(b 2)))
- (print s)
- (print (s .subst 'a))
- (print (reify s 'a))
- (print (reify s '()))
- (print (reify s '(0 a 1 b)))
- )

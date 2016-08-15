@@ -24,9 +24,3 @@
   (let result set1.diverge)
   (result .union! set2)
   result)
-
-(hide
- (let a (set<-))
- (print ((union (set<- 1) (set<- 3)) .keys))
-)
-
