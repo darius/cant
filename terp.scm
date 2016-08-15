@@ -156,7 +156,13 @@
 (define (error-prim message)
   (let* ((the-box (get-prim 'the-signal-handler-box))
          (handler (call the-box (term<- '.^) halt-cont)))
+    ;; Panic by default if another error occurs during error handling.
+    (call the-box (term<- '.^= panic) halt-cont)
+    ;; OK, up to the handler now.
     (call handler message halt-cont)))
+
+(define (panic k . message)
+  (apply error message))
 
 (define (run-script object script datum message k)
   (matching (script-clauses script) object script datum message k))
@@ -222,8 +228,7 @@
     (display ,display)           ;XXX temp
     (newline ,newline)           ;XXX temp
     (pp ,pp)                     ;XXX obviously shouldn't be primitive
-    (panic ,(lambda (k . message)
-              (apply error message)))
+    (panic ,panic)
     (error ,error-prim)
     (evaluate ,evaluate-prim)
     (__set-dbg! ,set-dbg!)
