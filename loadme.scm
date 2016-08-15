@@ -8,7 +8,7 @@
 (load "terp.scm")
 
 (run-load "stdlib.scm")
-(run-load "eg/traceback.scm")  ;; Let's default to traceback-on-error
+(run-load "lib/traceback.scm")  ;; Let's default to traceback-on-error
 
 (define (loud-load filename)
   (newline)

@@ -1,11 +1,11 @@
 (load "loadme.scm")
 
 ;; Dependencies
-(loud-load "eg/hashmap.scm")
-(loud-load "eg/fillvector.scm")
-(loud-load "eg/format.scm")
-(loud-load "eg/sort.scm")
-(loud-load "eg/bdd.scm")
+(loud-load "lib/hashmap.scm")
+(loud-load "lib/fillvector.scm")
+(loud-load "lib/format.scm")
+(loud-load "lib/sort.scm")
+(loud-load "lib/bdd.scm")
 
 ;; Actual test
 (loud-load "eg/nqueens.scm")
