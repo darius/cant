@@ -22,7 +22,7 @@
 
 (loud-load "eg/hashmap.scm")
 (loud-load "eg/test-export-import.scm")  ; (requires hashmap)
-(loud-load "eg/quasiquote-tests.scm")
+(loud-load "eg/test-quasiquote.scm")
 (loud-load "eg/test-continuations.scm")
 (loud-load "eg/test-pattern-matching.scm")
 (loud-load "eg/compact-lambda.scm")
