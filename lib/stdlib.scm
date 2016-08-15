@@ -203,7 +203,7 @@
 (define (with-input-file fn filename)
   (let source (open-input-file filename))
   (let result (fn source))
-  (source .close)                       ;TODO unwind-protect
+  source.close                       ;TODO unwind-protect
   result)
 
 (define (read-all source)
