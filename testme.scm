@@ -42,7 +42,7 @@
 (loud-load "eg/fillvector.scm")
 (loud-load "eg/format.scm")
 (loud-load "eg/sort.scm")
-(loud-load "eg/nfa.scm")
+(loud-load "eg/regex.scm")
 (loud-load "eg/tictactoe.scm")
 (loud-load "eg/unify.scm")
 
