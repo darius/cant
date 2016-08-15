@@ -1,10 +1,10 @@
+(import (use "lib/regex.scm") parse-regex re-match)
+
 ; TODO more tests
 
-(hide
- (let r ((regex-parser "a(b|c)*d" 0 0 '()) .result))
+(let re (parse-regex "a(b|c)*d"))
 
- (print (re-match r "ad"))
- (print (re-match r "ab"))
- (print (re-match r "abcd"))
- (print (re-match r "B"))
-)
+(print (re-match re "ad"))
+(print (re-match re "ab"))
+(print (re-match re "abcd"))
+(print (re-match re "B"))

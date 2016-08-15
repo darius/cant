@@ -113,3 +113,5 @@
   (for each! (((k v) a-list))
     (m .set! k v))
   m)
+
+(export map<- map<-a-list)

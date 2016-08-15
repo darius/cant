@@ -9,3 +9,5 @@
             (memos .set! arguments computed)
             computed)
         value)))
+
+(export memoize)

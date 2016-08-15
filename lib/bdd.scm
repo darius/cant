@@ -1,5 +1,8 @@
 ;; from ~/git/mccarthy-to-bryant/lua/bdd3.lua
 
+(import (use "lib/fillvector.scm") fillvector<-)
+(import (use "lib/hashmap.scm") map<-)
+
 (define (bdd-and f g) (do-choose g lit0 f)) ;TODO rename do-choose
 (define (bdd-or  f g) (do-choose g f lit1))
 
@@ -101,3 +104,6 @@
                  (else
                   (env .set! (ranks node) 1)
                   (walking (if1s node))))))))
+
+(export satisfy-first build-choice bdd-and bdd-or lit0 lit1 constant<- bdd-evaluate)
+;; TODO export more, rename

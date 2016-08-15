@@ -1,5 +1,12 @@
 ;; The N-queens problem as a BDD.
 
+(import (use "lib/hashmap.scm") map<-)
+(import (use "lib/format.scm") format)
+(import (use "lib/sort.scm") sort)
+(import (use "lib/bdd.scm")
+        bdd-and bdd-or satisfy-first
+        lit0 lit1 build-choice)
+
 ;; TODO design command-line interfacing
 (define (main argv)
   (match argv
@@ -47,7 +54,7 @@
 
   (match-env env))
 
-(define (match-env env)
+(define (match-env env)                 ;TODO move this to bdd.scm?
   ;; Return a BDD that evaluates to 1 just when every variable in env
   ;; has its given value.
   (for foldl ((tree lit1)
@@ -65,3 +72,5 @@
   ;; queen at its position. Row/column numbers start from 0.
   (for each ((r (range<- n)))
     (range<- (+ 2 (* r n)) (+ 2 (* (+ r 1) n)))))
+
+(export queens queens-problem print-board)

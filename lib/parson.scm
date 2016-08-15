@@ -58,11 +58,11 @@
   (foldr1 combine arguments))
 
 (let either
-  (folded<- (define ((either p q) text far i vals)
+  (folded<- (define ((<either> p q) text far i vals)
               ((p text far i vals) .else q text i vals))))
 
 (let then
-  (folded<- (define ((then p q) text far i vals)
+  (folded<- (define ((<then> p q) text far i vals)
               ((p text far i vals) .continue q))))
 
 (define ((feed-list f) text far i vals)
@@ -85,9 +85,6 @@
   (given (text far i vals)
     (p.^ text far i vals)))
 
-(define ((delay thunk) text far i vals)
-  ((thunk) text far i vals))
-
 (define ((skip-1 ok?) text far i vals)
   (if (and (text .maps? i) (ok? (text i)))
       (empty text (max far (+ i 1)) (+ i 1) vals)
@@ -99,7 +96,7 @@
 (define (take-1 ok?)
   (capture (skip-1 ok?)))
 
-(define ((always value) _)
+(define ((always value) _)              ;TODO move to stdlib?
   value)
 
 (let any-1      (take-1 (always #yes)))
@@ -113,3 +110,6 @@
 
 (define (many p)
   (let p* (maybe (then p (delay (given () p*))))))
+
+(export invert capture either then feed-list feed push seclude delay maybe many
+        fail empty skip-1 take-1 any-1 skip-any-1 lit-1)

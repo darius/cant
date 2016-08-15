@@ -26,3 +26,5 @@
       ((c @_)
        (sink .display c)
        (scanning s.rest args)))))
+
+(export format)

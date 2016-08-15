@@ -1,5 +1,7 @@
 ;; TODO: work on terms, not just lists
 
+(import (use "lib/format.scm") format)
+
 (let variable? symbol?)                 ;XXX not really; use stamps
 
 (define (variable<- prefix n)
@@ -72,3 +74,5 @@
 ;; TODO: consider making a 'failed' subst type instead of #no
 ;; or using 0-or-1-length lists. In fact, the latter meshes
 ;; perfectly with lazy-lists-as-Kanren-results.
+
+(export unify empty-subst reify)

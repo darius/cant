@@ -215,13 +215,19 @@
     ('export (mlambda
               ((_ . names)
                (assert (all symbol? names) "bad syntax" names)
-               (list 'map<-a-list  ;XXX hygiene
+;               (list 'map<-a-list  ;XXX hygiene
+               (list `',a-list-map<-  ;XXX temporary
                      (list 'quasiquote
                            (map (lambda (name) (list name (list 'unquote name)))
                                 names))))))
     ('quasiquote (mlambda
                   ((_ q) (expand-quasiquote q))))
     (_ #f)))
+
+(define (a-list-map<- a-list)  ;XXX temporary
+  (lambda (key)
+    (cond ((assoc key a-list) => cadr)
+          (else (error "Missing from a-list" key)))))
 
 (define (parse-bindings bindings receiver)
   (for-each (lambda (binding)

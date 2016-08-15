@@ -24,3 +24,5 @@
   (let result set1.diverge)
   (result .union! set2)
   result)
+
+(export set<- union)

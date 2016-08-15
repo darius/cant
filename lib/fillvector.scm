@@ -7,7 +7,7 @@
 (define (fillvector<-count start-count start-value)
   (fillvector<-vector (vector<-count start-count start-value)))
 
-(define (fillvector<-vector start-vector)   ;; (private)
+(define (fillvector<-vector start-vector)
   (let count (box<- start-vector.count))
   (let vec   (box<- start-vector))
 
@@ -62,3 +62,5 @@
     ({.chain v}        (fillvector.snapshot .chain v))
     ({.slice lo bound} (fillvector.snapshot .slice lo bound))
     ))
+
+(export fillvector<- fillvector<-count)

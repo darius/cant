@@ -1,5 +1,7 @@
 ;; Like nfa_simplest_set.py
-;; with a first straw man of a set datatype.
+;; using a first straw man of a set datatype.
+
+(import (use "lib/hashset.scm") set<- union)
 
 (define (re-match re chars)
   (let ending-states
@@ -24,9 +26,14 @@
 
 ;; Parser
 
+(import (use "lib/parson.scm")
+        delay seclude
+        either then invert feed maybe many
+        empty lit-1 any-1 skip-any-1)
+
 (let regex-parser
   (hide
-   (let primary (delay (define (p)
+   (let primary (delay (define (<primary>)
                          (seclude
                           (either (then (lit-1 #\() exp (lit-1 #\)))
                                   (then (invert (either (lit-1 #\))
@@ -51,3 +58,8 @@
 
 (define (parse-regex string)
   ((regex-parser string 0 0 '()) .result))
+
+
+(export parse-regex re-match
+        regex-parser  ;; TODO could be more abstract
+        lit<- alt<- chain<- star<-)

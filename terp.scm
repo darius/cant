@@ -330,6 +330,7 @@
                                  "Multiple definition" v)
                          (set-car! (cdr pair) value)))
         ((null? r)
+         (assert (not (assq v the-global-env)) "Global redefinition" v)
          (set! the-global-env (cons (list v value) the-global-env)))
         (else (error "Can't happen" v))))
 

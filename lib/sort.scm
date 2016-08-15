@@ -8,7 +8,7 @@
   ;; ...
   )
 
-(define (compare x y)
+(define (compare x y)                   ;TODO move these to stdlib?
   (x .compare y))
 
 (define (compare-reversed x y)
@@ -32,3 +32,5 @@
                     `(,ys.first ,@(merge xs ys.rest))))))
 
   (merge-sort sequence))
+
+(export sort)

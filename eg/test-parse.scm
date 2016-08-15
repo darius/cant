@@ -1,3 +1,5 @@
+(import (use "lib/parse.scm") grammar<-)
+
 ;; Example grammars
 
 (let grammar3

@@ -8,7 +8,10 @@
 (load "terp.scm")
 
 (run-load "lib/stdlib.scm")
-(run-load "lib/traceback.scm")  ;; Let's default to traceback-on-error
+(interpret
+ '(hide ;; Let's default to traceback-on-error.
+   (import (use "lib/traceback.scm") on-error-traceback)
+   (the-signal-handler-box .^= on-error-traceback)))
 
 (define (loud-load filename)
   (newline)

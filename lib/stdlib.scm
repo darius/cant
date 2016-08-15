@@ -182,7 +182,7 @@
 
 (let the-signal-handler-box (box<- panic))
 
-(define (repl)
+(define (repl)                          ;TODO rename
   (display "sqm> ")
   (print (evaluate (parse-exp (read)) '())) ;XXX reify a proper env object
   (repl))

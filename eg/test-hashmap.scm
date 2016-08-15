@@ -1,7 +1,10 @@
+(import (use "lib/hashmap.scm")
+        map<-)
+
 (newline)
 
 (hide
- (let a (hash-map<-))
+ (let a (map<-))
  (print a)
  (print (a .get 42))
  (a .set! 'x "yay")
