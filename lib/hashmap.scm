@@ -30,16 +30,16 @@
                   (walking (- i 1))
                   (cons i (walking (- i 1))))))))
 
-  (define (find key succeed fail)
+  (define (find key)
     (let h    (__hash key))
     (let mask (- keys.^.count 1))
     (let i0   (mask .and h))
     (begin walking ((i i0))
       (let k (keys.^ i))
       (case ((= k none)
-             (fail i))
+             {missing-at i})
             ((= k key)
-             (succeed i))
+             {at i})
             (else
              (let j (mask .and (- i 1)))
              (if (= j i0)
@@ -59,11 +59,9 @@
     (for each! ((i (range<- old-keys.count)))
       (let key (old-keys i))
       (unless (= key none)
-        (find key
-              (given (j) (error "Can't happen"))
-              (given (j)
-                (keys.^ .set! j key)
-                (vals.^ .set! j (old-vals i)))))))
+        (let {missing-at j} (find key))
+        (keys.^ .set! j key)
+        (vals.^ .set! j (old-vals i)))))
                             
   (make hashmap
     ({.keys}   (each keys.^ (occupants))) ;XXX lazy-map
@@ -76,24 +74,28 @@
     ({.empty?} (= count.^ 0))
     ({.count}  count.^)
     ((key)
-     (find key vals.^ (given (_) (error "Missing key" hashmap key))))
+     (match (find key)
+       ({at i} (vals.^ i))
+       (_ (error "Missing key" hashmap key))))
     ({.get key}
      (hashmap .get key #no))
     ({.get key default}
-     (find key vals.^ (given (_) default)))
+     (match (find key)
+       ({at i} (vals.^ i))
+       (_      default)))
     ({.set! key val}
-     (find key
-           (given (i)
-             (vals.^ .set! i val))
-           (given (i)
-             (keys.^ .set! i key)
-             (vals.^ .set! i val)
-             (count .^= (+ count.^ 1))
-             (maybe-grow))))
+     (match (find key)
+       ({at i}
+        (vals.^ .set! i val))
+       ({missing-at i}
+        (keys.^ .set! i key)
+        (vals.^ .set! i val)
+        (count .^= (+ count.^ 1))
+        (maybe-grow))))
     ({.maps? key}
-     (find key
-           (given (_) #yes)
-           (given (_) #no)))
+     (match (find key)
+       ({at _}         #yes)
+       ({missing-at _} #no)))
     ({.maps-to? value}
      (hashmap.values .maps-to? value))
     ({.find-key-for value}
