@@ -61,15 +61,6 @@
         (vals.^ .set! j (old-vals i)))))
                             
   (make hashmap
-    ({.keys}   (each keys.^ (occupants))) ;XXX lazy-map
-    ({.values} (each vals.^ (occupants)))
-    ({.items}
-     (let ks keys.^)
-     (let vs vals.^)
-     (for each ((i (occupants)))
-       `(,(ks i) ,(vs i))))
-    ({.empty?} (= count.^ 0))
-    ({.count}  count.^)
     ((key)
      (match (find key)
        ({at i} (vals.^ i))
@@ -93,6 +84,15 @@
      (match (find key)
        ({at _} #yes)
        (_      #no)))
+    ({.empty?} (= count.^ 0))
+    ({.count}  count.^)
+    ({.keys}   (each keys.^ (occupants))) ;XXX lazy-map
+    ({.values} (each vals.^ (occupants)))
+    ({.items}
+     (let ks keys.^)
+     (let vs vals.^)
+     (for each ((i (occupants)))
+       `(,(ks i) ,(vs i))))
     ({.maps-to? value}
      (hashmap.values .maps-to? value))
     ({.find-key-for value}
