@@ -33,4 +33,4 @@
 
   (merge-sort sequence))
 
-(export sort)
+(export sort sort-by)
