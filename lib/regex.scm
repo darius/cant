@@ -27,8 +27,7 @@
 ;; Parser
 
 (import (use "lib/parson.scm")
-        delay seclude
-        either then invert feed maybe many
+        delay seclude either then invert feed maybe many
         empty lit-1 any-1 skip-any-1)
 
 (let regex-parser
@@ -45,11 +44,11 @@
                 (then primary
                       (maybe (either (then (lit-1 #\*)
                                            (feed star<-)))))))
-   (let term (delay (define (t)
+   (let term (delay (define (<term>)
                       (seclude
                        (then factor (many (then term
                                                 (feed chain<-))))))))
-   (let exp (delay (define (e)
+   (let exp (delay (define (<exp>)
                      (seclude
                       (either (then term (many (then (lit-1 #\|) exp
                                                      (feed alt<-))))
