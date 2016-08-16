@@ -4,7 +4,6 @@
 ;;   nonlinear probing -- how about xor probing?
 ;;   preserving insertion order
 ;;   deletion
-;;   define a special None value like Python?
 ;;   immutable snapshots
 ;;
 ;;   impl without a million boxes
@@ -13,12 +12,12 @@
 ;;   special-case impls for small maps and common-typed maps
 ;;   store hash codes instead of recomputing?
 
-(let vacant (make))  ; (was 'empty', but renamed because global name clash)
+(let none (make))
 
 (define (hash-map<-)
   (let count (box<- 0))
-  (let keys  (box<- (vector<- vacant)))  ;; size a power of 2
-  (let vals  (box<- (vector<- #no)))     ;; same size
+  (let keys  (box<- (vector<- none)))  ;; size a power of 2
+  (let vals  (box<- (vector<- #no)))   ;; same size
 
   (define (capacity) keys.^.count)
 
@@ -27,7 +26,7 @@
       (if (< i 0)
           '()
           (do (let k (keys.^ i))
-              (if (= k vacant)
+              (if (= k none)
                   (walking (- i 1))
                   (cons i (walking (- i 1))))))))
 
@@ -37,7 +36,7 @@
     (let i0   (mask .and h))
     (begin walking ((i i0))
       (let k (keys.^ i))
-      (case ((= k vacant)
+      (case ((= k none)
              (fail i))
             ((= k key)
              (succeed i))
@@ -55,11 +54,11 @@
   (define (resize new-capacity)
     (let old-keys keys.^)
     (let old-vals vals.^)
-    (keys .^= (vector<-count new-capacity vacant))
+    (keys .^= (vector<-count new-capacity none))
     (vals .^= (vector<-count new-capacity))
     (for each! ((i (range<- old-keys.count)))
       (let key (old-keys i))
-      (unless (= key vacant)
+      (unless (= key none)
         (find key
               (given (j) (error "Can't happen"))
               (given (j)
