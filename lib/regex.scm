@@ -27,7 +27,7 @@
 ;; Parser
 
 (import (use "lib/parson.scm")
-        delay seclude either then invert feed maybe many
+        parse delay seclude either then invert feed maybe many
         empty lit-1 any-1 skip-any-1)
 
 (let regex-parser
@@ -56,9 +56,9 @@
    (then exp (invert skip-any-1))))
 
 (define (parse-regex string)
-  ((regex-parser string 0 0 '()) .result))
+  ((parse regex-parser string) .result))
 
 
 (export parse-regex re-match
-        regex-parser  ;; TODO could be more abstract
+        regex-parser
         lit<- alt<- chain<- star<-)

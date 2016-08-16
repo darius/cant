@@ -12,6 +12,9 @@
 ;;  i, j       index into text
 ;;  vals, vs   list of parsed values
 
+(define (parse parser text)
+  (parser text 0 0 '()))
+
 (define (fail text far i vals)
   (make failure
     ({.display}                         ;TODO change to .selfie
@@ -112,4 +115,5 @@
   (let p* (maybe (then p (delay (given () p*))))))
 
 (export invert capture either then feed-list feed push seclude delay maybe many
-        fail empty skip-1 take-1 any-1 skip-any-1 lit-1)
+        fail empty skip-1 take-1 any-1 skip-any-1 lit-1
+        parse)
