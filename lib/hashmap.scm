@@ -35,10 +35,8 @@
     (let i0   (mask .and (__hash key)))
     (begin walking ((i i0))
       (let k (keys.^ i))
-      (case ((= k none)
-             {missing-at i})
-            ((= k key)
-             {at i})
+      (case ((= k none) {missing-at i})
+            ((= k key)  {at i})
             (else
              (let j (mask .and (- i 1)))
              (if (= j i0)
