@@ -32,7 +32,7 @@
      (vec.^ .set! i value))
     ({.push! value}
      (let i count.^)
-     (if (= i vec.^.count) (grow) 'pass)
+     (when (= i vec.^.count) (grow))
      (vec.^ .set! i value)
      (count .^= (+ i 1))
      i)                              ; (should we be returning this?)
