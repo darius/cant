@@ -73,7 +73,7 @@
     ((key)
      (match (find key)
        ({at i} (vals.^ i))
-       (_ (error "Missing key" hashmap key))))
+       (_      (error "Missing key" hashmap key))))
     ({.get key}
      (hashmap .get key #no))
     ({.get key default}
@@ -91,8 +91,8 @@
         (maybe-grow))))
     ({.maps? key}
      (match (find key)
-       ({at _}         #yes)
-       ({missing-at _} #no)))
+       ({at _} #yes)
+       (_      #no)))
     ({.maps-to? value}
      (hashmap.values .maps-to? value))
     ({.find-key-for value}
