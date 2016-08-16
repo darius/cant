@@ -3,6 +3,7 @@
 
 (import (use "lib/hashset.scm") set<- union)
 
+;; Does re match chars? (Anchored matching at both ends.)
 (define (re-match re chars)
   (let ending-states
     (for foldl ((states (re (set<- accept))) (c chars))
@@ -10,11 +11,18 @@
         (union (state c) new-states))))
   (ending-states .maps? accept))
 
+;; A state is a function from char to set of successor states.
 (define (accept c) empty-set)
 (define ((expect ch succs) c) (if (= ch c) succs empty-set))
 
 (let empty-set (set<-))
 
+;; A regex is a function from NFA to NFA. The input NFA represents the
+;; 'rest of' the larger regex that this one is part of; the output NFA
+;; represents this one followed by the rest. An NFA is represented by
+;; a set of states, its start states. The input NFA might not be fully
+;; constructed yet at the time we build the output, because of the
+;; loop for the Kleene star -- so we need a mutable set.
 (define ((lit<- ch) succs)    (set<- (expect ch succs)))
 (define ((alt<- r s) succs)   (union (r succs) (s succs)))
 (define ((chain<- r s) succs) (r (s succs)))
