@@ -12,6 +12,7 @@
     ({.add! key}      (map .set! key #yes))
     ({.add-all! vals} (for each! ((v vals)) (hash-set .add! v)))
     ({.union! other}  (hash-set .add-all! other.keys))
+    ({.union other}   (union hash-set other))
     ({.empty?}        map.empty?)
     ;; XXX fill in rest of set interface (just the map interface, I guess)
     ({.selfie sink}
@@ -20,9 +21,15 @@
      (sink .display ">"))
     ))
 
-(define (union set1 set2)      ;XXX name clash with lambdacompiler.scm
+(define (union set1 set2)
   (let result set1.diverge)
   (result .union! set2)
   result)
 
-(export set<- union)
+(define (union-over sets)
+  (let result (set<-))
+  (for each! ((set sets))
+    (result .union! set))
+  result)
+
+(export set<- union union-over)

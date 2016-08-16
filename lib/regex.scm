@@ -1,14 +1,13 @@
 ;; Like nfa_simplest_set.py
 ;; using a first straw man of a set datatype.
 
-(import (use "lib/hashset.scm") set<- union)
+(import (use "lib/hashset.scm") union-over)
 
 ;; Does re match chars? (Anchored matching at both ends.)
 (define (re-match re chars)
   (let ending-states
     (for foldl ((states (re (set<- accept))) (c chars))
-      (for foldr ((state states.keys) (new-states empty-set))
-        (union (state c) new-states))))
+      (union-over (for each ((state states.keys)) (state c)))))
   (ending-states .maps? accept))
 
 ;; A state is a function from char to set of successor states.
@@ -24,7 +23,7 @@
 ;; fully constructed yet at the time we build the output, because of
 ;; the loop for the Kleene star -- so we need a mutable set.
 (define ((lit<- ch) succs)    (set<- (expect ch succs)))
-(define ((alt<- r s) succs)   (union (r succs) (s succs)))
+(define ((alt<- r s) succs)   ((r succs) .union (s succs)))
 (define ((chain<- r s) succs) (r (s succs)))
 (define ((star<- r) succs)
   (let my-succs succs.diverge)
