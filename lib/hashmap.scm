@@ -31,9 +31,8 @@
                   (cons i (walking (- i 1))))))))
 
   (define (find key)
-    (let h    (__hash key))
     (let mask (- keys.^.count 1))
-    (let i0   (mask .and h))
+    (let i0   (mask .and (__hash key)))
     (begin walking ((i i0))
       (let k (keys.^ i))
       (case ((= k none)
