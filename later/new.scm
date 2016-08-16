@@ -450,7 +450,7 @@
 ;; TODO: mem could also be a typed vector, but neither the vector
 ;; nor the type is as simple...
 
-(define (run program out-port in-port)
+(define (run program sink source)
   (let mem (fillvector<-))         ;TODO: shorter name? flexlist?
   (mem .push! program)
   (let free-list (fillvector<-))
@@ -509,16 +509,16 @@
                         i)))
             (next))
 
-         (9 (mem .set! (reg c) none)
+         (9 (mem .set! (reg c) none)    ;XXX what was 'none' about again?
             (free-list .push! (reg c))
             (next))
 
-         (10 (out-port .write-char (char<- (reg c)))
+         (10 (sink .write-char (char<- (reg c)))
              (next))
 
-         (11 (let s in-port.read-char)
+         (11 (let s source.read-char)
              (reg .set! c
-                  (if (= s none) 0xFFFFFFFF (string<- s)))
+                  (if (eof-object? s) 0xFFFFFFFF (string<- s)))
              (next))
 
          (12 (case ((= (reg b) 0)
@@ -528,17 +528,16 @@
                     (mem .set! 0 new-program)
                     (running new-program (reg c)))))
 
-         (_ (out-port .writeln "Bad opcode")
-            "Error exit"))))))
+         (_ (error "Bad opcode")))))))
 
-(define (read-program in-port)
+(define (read-program source)
   (let program (fillvector<-))
   (begin reading ()
-    (let c3 in-port.read-char)
-    (unless (= c3 none)
-      (let c2 in-port.read-char)
-      (let c1 in-port.read-char)
-      (let c0 in-port.read-char)
+    (let c3 source.read-char)
+    (unless (eof-object? c3)
+      (let c2 source.read-char)
+      (let c1 source.read-char)
+      (let c0 source.read-char)
       ;; TODO: a syntax for int-guard coercion instead?
       (program .push!
                (u32<-bytes c3.code c2.code c1.code c0.code))
