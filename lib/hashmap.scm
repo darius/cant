@@ -6,7 +6,6 @@
 ;;   deletion
 ;;   define a special None value like Python?
 ;;   immutable snapshots
-;;   hash-sets
 ;;
 ;;   impl without a million boxes
 ;;   N.B. impl needs shared closures for efficiency
