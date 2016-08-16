@@ -1,8 +1,5 @@
 ;; from ~/git/mccarthy-to-bryant/lua/bdd3.lua
 
-(import (use "lib/fillvector.scm") fillvector<-)
-(import (use "lib/hashmap.scm") map<-)
-
 (define (bdd-and f g) (do-choose g lit0 f)) ;TODO rename do-choose
 (define (bdd-or  f g) (do-choose g f lit1))
 

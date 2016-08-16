@@ -1,7 +1,5 @@
 ;; TODO: work on terms, not just lists
 
-(import (use "lib/format.scm") format)
-
 (let variable? symbol?)                 ;XXX not really; use stamps
 
 (define (variable<- prefix n)

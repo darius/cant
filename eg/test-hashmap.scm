@@ -1,6 +1,3 @@
-(import (use "lib/hashmap.scm")
-        map<-)
-
 (newline)
 
 (hide

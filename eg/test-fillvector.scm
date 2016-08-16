@@ -1,5 +1,3 @@
-(import (use "lib/fillvector.scm") fillvector<-)
-
 (newline)
 (let v (fillvector<-))
 (print v)

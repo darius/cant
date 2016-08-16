@@ -1,7 +1,5 @@
 ;; tic-tac-toe, as a warmup.
 
-(import (use "lib/format.scm") format)
-
 (define (tic-tac-toe player opponent grid)
   grid.show
   (newline)
