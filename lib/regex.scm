@@ -18,11 +18,11 @@
 (let empty-set (set<-))
 
 ;; A regex is a function from NFA to NFA. The input NFA represents the
-;; 'rest of' the larger regex that this one is part of; the output NFA
-;; represents this one followed by the rest. An NFA is represented by
-;; a set of states, its start states. The input NFA might not be fully
-;; constructed yet at the time we build the output, because of the
-;; loop for the Kleene star -- so we need a mutable set.
+;; 'rest of' the larger regex that this regex is part of; the output
+;; NFA represents this one followed by the rest. An NFA is represented
+;; by a set of states, its start states. The input NFA might not be
+;; fully constructed yet at the time we build the output, because of
+;; the loop for the Kleene star -- so we need a mutable set.
 (define ((lit<- ch) succs)    (set<- (expect ch succs)))
 (define ((alt<- r s) succs)   (union (r succs) (s succs)))
 (define ((chain<- r s) succs) (r (s succs)))
