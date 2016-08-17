@@ -125,6 +125,33 @@
     (((x @xs1) (y @ys1))
      `((,x ,y) ,@(zip xs1 ys1)))))
 
+(define (cons/lazy x thunk)
+  (make lazy-list {extending list-trait}
+    ({.empty?} #no)
+    ({.first}  x)
+    ({.rest}   (thunk))
+    ;; XXX override parts of list-trait that need it for laziness
+    ))
+
+(define (filter/lazy ok? xs)
+  (if (ok? xs.first)
+      (cons/lazy xs.first (given () (filter/lazy ok? xs.rest)))
+      (filter/lazy ok? xs.rest)))
+
+(define (gather/lazy f xs)
+  (for foldr/lazy ((x xs)
+                   (rest-thunk (given () '())))
+    (chain/lazy (f x) rest-thunk)))
+
+(define (chain/lazy xs ys-thunk)
+  (foldr/lazy cons/lazy xs ys-thunk))
+
+(define (foldr/lazy f xs z-thunk)
+  (if xs.empty?
+      (z-thunk)
+      (f xs.first
+         (given () (foldr/lazy f xs.rest z-thunk)))))
+
 (define (identity x)
   x)
 

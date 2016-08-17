@@ -20,14 +20,6 @@
   (begin listing ((k n))
     (cons/lazy k (given () (listing (+ k n))))))
 
-(define (cons/lazy x thunk)
-  (make lazy-list
-    ({.empty?} #no)
-    ({.first}  x)
-    ({.rest}   (thunk))
-    ;; ... XXX use list-trait? except it'd need a rewrite for laziness
-    ))
-
 (print (euler5 (range<- 2 11)))
 ;(print (euler5 (range<- 2 21)))
 ;; XXX way too slow again

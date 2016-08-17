@@ -109,55 +109,6 @@
                       (trying rank (+ value 1) branches.rest))))))))
 
 
-;; kanren.scm
-
-(define (fail s)
-  '())
-
-(define (succeed s)
-  `(,s))
-
-(define ((== val1 val2) s)
-  (match (unify s val1 val2)
-    (#no '())
-    (s1 `(,s1))))
-
-(define ((either goal1 goal2) s)
-  (interleave (goal1 s) (goal2 s)))
-
-;; TODO: probably ought to be lazy in the head as well as the tail
-(define (interleave xs ys)
-  (if xs.empty?
-      ys
-      (cons/lazy xs.first
-                 (given () (interleave ys xs.rest)))))
-
-(define ((both goal1 goal2) s)
-  (gather/lazy goal2 (goal1 s)))
-
-(define (cons/lazy x thunk)
-  (make lazy-list
-    ({.empty?} #no)
-    ({.first} x)
-    ({.rest} (thunk))  ;XXX memoize?
-    ;; ... XXX use list-trait? except it'd need a rewrite for laziness
-    ))
-
-(define (gather/lazy f xs)
-  (for foldr/lazy ((x xs)
-                   (rest-thunk (given () '())))
-    (chain/lazy (f x) rest-thunk)))
-
-(define (chain/lazy xs ys-thunk)
-  (foldr/lazy cons/lazy xs ys-thunk))
-
-(define (foldr/lazy f xs z-thunk)
-  (if xs.empty?
-      (z-thunk)
-      (f xs.first
-         (given () (foldr/lazy f xs.rest z-thunk)))))
-
-
 ;; read.scm
 ;; A Lisp reader.
 ;; Planned extensions:

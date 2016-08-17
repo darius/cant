@@ -18,19 +18,6 @@
                   (filter/lazy (given (k) (not= 0 (k .remainder p)))
                                ns.rest)))))
 
-(define (filter/lazy ok? xs)
-  (if (ok? xs.first)
-      (cons/lazy xs.first (given () (filter/lazy ok? xs.rest)))
-      (filter/lazy ok? xs.rest)))
-
-(define (cons/lazy x thunk)
-  (make lazy-list {extending list-trait}
-    ({.empty?} #no)
-    ({.first}  x)
-    ({.rest}   (thunk))
-    ;; XXX override parts of list-trait that need it for laziness
-    ))
-
 ;(print (euler7 5))
 (print (euler7 100))
 ;(print (euler7 10000))
