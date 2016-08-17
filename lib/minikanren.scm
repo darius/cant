@@ -22,6 +22,6 @@
                  (given () (interleave ys xs.rest)))))
 
 (define ((both goal1 goal2) s)
-  (gather/lazy goal2 (goal1 s)))
+  (gather/lazy goal2 (goal1 s)))        ;XXX add interleaving here too?
 
 (export fail succeed == either both)
