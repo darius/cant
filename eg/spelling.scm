@@ -13,7 +13,7 @@
   (if xs.empty? #no xs))
 
 (define (known words)  ;TODO: iter instead of list? set comprehension?
-  (call set<- (for filter ((w words))
+  (call set<- (for filter ((w words.keys))
                 (NWORDS .maps? w))))
 
 (define (known-edits2 word)
