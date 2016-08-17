@@ -29,6 +29,7 @@
 (define (hash x)
   (cond ((term? x) (hash-term x))
         ((pair? x) (hash-pair x))
+        ((string? x) (hash-string x))
         (else (eqv?-hash x))))
 
 (define (hash-term x)
@@ -36,6 +37,9 @@
 
 (define (hash-pair x)
   (hash-em 2 (list (car x) (cdr x))))
+
+(define (hash-string x)
+  (hash-em 3 (string->list x)))         ;TODO find a built-in string hash fn?
 
 (define (hash-em seed xs)
   (foldl hash-mix seed xs))
@@ -46,6 +50,7 @@
 (define (squeam=? x y)
   (cond ((term? x) (and (term? y) (term=? x y)))
         ((pair? x) (and (pair? y) (pair=? x y)))
+        ((string? x) (and (string? y) (string=? x y)))
         (else (eqv? x y))))
 
 (define (pair=? x y)
