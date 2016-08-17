@@ -169,6 +169,9 @@
 (define (vector<- @elements)
   (vector<-list elements))
 
+(define (string<- @chars)
+  (string<-list chars))
+
 (define (method<- actor cue)
   (given (@arguments)
     (call actor (term<- cue arguments))))

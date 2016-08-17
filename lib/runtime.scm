@@ -234,6 +234,8 @@
                       (cons (s .slice 0 i)
                             (splitting ((s .slice (+ i 1)) .trim-left))))
                      (else (scanning (+ i 1)))))))))
+  ({.lowercase} (string<-list (for each ((c me)) c.lowercase)))
+  ({.uppercase} (string<-list (for each ((c me)) c.uppercase)))
   ({.selfie sink}
    (sink .display #\")
    (for each! ((c me))
@@ -254,6 +256,8 @@
   ({.digit?}      (__char-digit? me))
   ({.whitespace?} (__char-whitespace? me))
   ({.alphanumeric?} (or me.letter? me.digit?))
+  ({.lowercase}   (__char-lowercase me))
+  ({.uppercase}   (__char-uppercase me))
   ({.compare c}   (__char-compare me c)) ;XXX untested
   )
 

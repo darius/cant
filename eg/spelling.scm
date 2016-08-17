@@ -32,12 +32,12 @@
   (let transposes (for each (((a b) (for filter (((a b) splits))
                                       (< 1 b.count))))
                     (chain a (string<- (b 1) (b 0)) (b .slice 2))))
-  (let replaces   (for gather ((a b) splits)
+  (let replaces   (for gather (((a b) splits))
                     (if b.empty?
                         '()
                         (for each ((c alphabet))
                           (chain a (string<- c) (b .slice 1))))))
-  (let inserts    (for gather ((a b) splits)
+  (let inserts    (for gather (((a b) splits))
                     (for each ((c alphabet))
                       (chain a (string<- c) b))))
   (call set<- (chain deletes transposes replaces inserts)))
@@ -54,5 +54,8 @@
 ;;  (re:findall "[a-z]+" string.lowercase))  ;TODO
   string.lowercase.split)
 
-(let NWORDS (train (words<-string (for with-input-file ((source "big.txt"))
-                                    source.read-all))))
+(let NWORDS
+  (train (words<-string (for with-input-file ((source "eg/spelling.train.text"))
+                          source.read-all))))
+
+(each! (compose print correct) (words<-string "I am a lowsy spelur"))

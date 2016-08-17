@@ -297,6 +297,8 @@
     (__char-digit? ,char-numeric?)
     (__char-letter? ,char-alphabetic?)
     (__char-whitespace? ,char-whitespace?)
+    (__char-lowercase ,char-downcase)
+    (__char-uppercase ,char-upcase)
     (__box-value ,box-value)
     (__box-value-set! ,box-value-set!)
     (__term-tag ,term-tag)
