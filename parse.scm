@@ -148,13 +148,17 @@
               ((_ subject . clauses)
                `(call (make _ ,@clauses) ,subject))))
     ('define (mlambda
-              ((_ ((: v symbol?) . params) . body)
-               `(make ,v (,params ,@body)))
-              ((_ (call-form . params) . body)
-               `(define ,call-form (given ,params ,@body))))) ;TODO propagate some kind of name to the given-expression
+              ((_ (head . param-spec) . body)
+               (let ((pattern (mcase param-spec
+                                (((: cue cue?) . rest)
+                                 (make-term cue rest))
+                                (_ param-spec))))
+                 (if (symbol? head)
+                     `(make ,head (,pattern ,@body))
+                     `(define ,head (given ,pattern ,@body)))))))
     ('given  (mlambda
-              ((_ vars . body)
-               `(make (,vars ,@body)))))
+              ((_ p . body)
+               `(make (,p ,@body)))))
     ('with   (mlambda
               ((_ bindings . body)
                (parse-bindings bindings
