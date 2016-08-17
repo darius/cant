@@ -1,10 +1,10 @@
-(import (use "lib/regex.scm") parse-regex re-match)
+(import (use "lib/regex.scm") parse-regex regex-match)
 
 ; TODO more tests
 
 (let re (parse-regex "a(b|c)*d"))
 
-(print (re-match re "ad"))
-(print (re-match re "ab"))
-(print (re-match re "abcd"))
-(print (re-match re "B"))
+(print (regex-match re "ad"))
+(print (regex-match re "ab"))
+(print (regex-match re "abcd"))
+(print (regex-match re "B"))

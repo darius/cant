@@ -3,10 +3,10 @@
 
 (import (use "lib/hashset.scm") union-over)
 
-;; Does re match chars? (Anchored matching at both ends.)
-(define (re-match re chars)
+;; Does regex match chars? (Anchored matching at both ends.)
+(define (regex-match regex chars)
   (let ending-states
-    (for foldl ((states (re (set<- accept))) (c chars))
+    (for foldl ((states (regex (set<- accept))) (c chars))
       (union-over (for each ((state states.keys)) (state c)))))
   (ending-states .maps? accept))
 
@@ -66,6 +66,6 @@
   ((parse regex-parser string) .result))
 
 
-(export parse-regex re-match
-        regex-parser
+(export parse-regex regex-parser
+        regex-match
         lit<- alt<- chain<- star<-)
