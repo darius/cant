@@ -18,8 +18,8 @@
                 (NWORDS .maps? w))))
 
 (define (known-edits2 word)
-  (call set<- (for gather ((e1 (edits1 word)))
-                (for filter ((e2 (edits1 e1)))
+  (call set<- (for gather ((e1 ((edits1 word) .keys))) ;TODO unugh
+                (for filter ((e2 ((edits1 e1) .keys)))
                   (NWORDS .maps? e2)))))
 
 (define (edits1 word)
@@ -58,4 +58,4 @@
   (train (words<-string (for with-input-file ((source "eg/spelling.train.text"))
                           source.read-all))))
 
-(each! (compose print correct) (words<-string "I am a lowsy spelur"))
+(each! (compose print correct) (words<-string "a lowsy spelur zzz"))
