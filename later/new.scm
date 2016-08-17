@@ -27,6 +27,8 @@
 ;; dd.scm
 ;; Decision diagrams
 
+(import (use "lib/memoize.scm") memoize)
+
 (let infinity 999999)  ;; N.B. we don't have floats yet
 
 (define (constant<- value)
