@@ -206,6 +206,7 @@
   `((__as-cons ,as-cons)
     (= ,squeam=?)
     (out ,(current-output-port))
+    (stdin ,(current-input-port))       ;XXX inconsistent
 
     (cons ,cons)
     (null? ,null?)
@@ -223,6 +224,7 @@
     (box<- ,box<-)
     (symbol<- ,string->symbol)
     (term<- ,make-term)       ;TODO check that arguments arg is a list
+    (char<- ,integer->char)
     (string<-list ,list->string)
     (vector<-count ,make-vector)
     (not ,not)
@@ -282,6 +284,7 @@
     (__substring ,(lambda (me lo bound)
                     (substring me lo (min bound (string-length me)))))
     (__vector-append ,vector-append)
+    (__vector-copy ,vector-copy)
     (__vector-length ,vector-length)
     (__vector-maps? ,(lambda (me i)
                        (and (integer? i)
@@ -299,6 +302,8 @@
     (__term-tag ,term-tag)
     (__term-arguments ,term-parts)
     (__close-port ,close-port)
+    (__read-char ,read-char)
+    (__write-char ,write-char)
     (__display ,(lambda (sink thing)
                   (display thing sink)))              ;XXX handle non-string/char properly
     (__write ,(lambda (sink thing)
@@ -310,7 +315,16 @@
                                (else (display "WTF"))))
                        (display ">" sink))
                       (else (write thing sink))))) ;XXX other types specially?
+
+    (__u+ ,(lambda (a b) (bitwise-and mask32 (+ a b)))) ;XXX revisit these definitions
+    (__s+ ,(lambda (a b) (bitwise-and mask32 (+ a b)))) ;XXX I forget what distinction I meant to make
+    (__s* ,(lambda (a b) (bitwise-and mask32 (* a b))))
+    (__u- ,(lambda (a b) (bitwise-and mask32 (- a b))))
+    (__u<< ,(lambda (a b) (bitwise-and mask32 (arithmetic-shift a b))))
+    (__u>> ,(lambda (a b) (bitwise-and mask32 (arithmetic-shift a (- b)))))
     ))
+
+(define mask32 (- 1 (expt 2 32)))
 
 (define (env-lookup r v k)
   (define (succeed pair) (answer k (cadr pair)))

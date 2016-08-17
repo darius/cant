@@ -91,6 +91,7 @@
   ({.+ a}         (__+ me a))
   ({.- a}         (__- me a))
   ({.* a}         (__* me a))
+  ({.compare a}   (__number-compare me a))
   ({.quotient b}  (__quotient me b))
   ({.remainder b} (__remainder me b))
   ({.<< b}        (__bit-<<  me b))
@@ -99,7 +100,13 @@
   ({.and b}       (__bit-and me b))
   ({.or b}        (__bit-or  me b))
   ({.xor b}       (__bit-xor me b))
-  ({.compare a}   (__number-compare me a))
+  ;; XXX sketchy support for 32-bit word ops:
+  ({.u+ a}        (__u+ me a))
+  ({.u/ a}        (__u/ me a))
+  ({.u>> a}       (__u>> me a))
+  ({.u<< a}       (__u<< me a))
+  ({.s+ a}        (__s+ me a))
+  ({.s* a}        (__s* me a))
   )
 
 (make-trait symbol-primitive me
@@ -159,6 +166,7 @@
    ;; XXX range-check first
    (for each! ((i (range<- lo bound)))
      (__vector-set! me (- i lo) (v i)))) ;XXX was this what I wanted? I forget.
+  ({.copy}        (__vector-copy me))
   ({.selfie sink}
    (sink .display "#")
    (sink .print (__vector->list me)))
@@ -231,6 +239,7 @@
   )
 
 (make-trait source-primitive me
+  ({.read-char}   (__read-char me))
   ({.close}       (__close-port me))
   )
 
