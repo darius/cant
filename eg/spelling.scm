@@ -3,11 +3,11 @@
 ;; TODO: try imitating https://en.wikibooks.org/wiki/Clojure_Programming/Examples/Norvig_Spelling_Corrector
 
 (define (correct word)
-  (let candidates (or (if-any (known `(,word)))
+  (let candidates (or (if-any (known (set<- word)))
                       (if-any (known (edits1 word)))
                       (if-any (known-edits2 word))
-                      `(,word)))
-  (arg-max candidates (given (w) (NWORDS .get w 0))))
+                      (set<- word)))
+  (arg-max candidates.keys (given (w) (NWORDS .get w 0))))
 
 (define (if-any xs)
   (if xs.empty? #no xs))
