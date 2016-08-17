@@ -12,6 +12,7 @@
 (define (if-any xs)
   (if xs.empty? #no xs))
 
+;; TODO: NWORDS.keys should be a set, which we just intersect with words.
 (define (known words)  ;TODO: iter instead of list? set comprehension?
   (call set<- (for filter ((w words.keys))
                 (NWORDS .maps? w))))
