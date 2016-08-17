@@ -118,8 +118,9 @@
   `(,s))
 
 (define ((== val1 val2) s)
-  (let s1 (unify s val1 val2))
-  (if s1 `(,s1) '()))
+  (match (unify s val1 val2)
+    (#no '())
+    (s1 `(,s1))))
 
 (define ((either goal1 goal2) s)
   (interleave (goal1 s) (goal2 s)))
@@ -384,7 +385,8 @@
 (define (words<-string string)
   (re:findall "[a-z]+" string.lowercase))  ;TODO
 
-(let NWORDS (train (words<-string (call-with-open-file "big.txt" '.read-all)))) ;TODO
+(let NWORDS (train (words<-string (for with-open-file ((source "big.txt"))
+                                    source.read-all)))) ;TODO
 
 
 ;; star2.scm
