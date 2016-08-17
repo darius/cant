@@ -7,19 +7,19 @@
                       (if-any (known (edits1 word)))
                       (if-any (known-edits2 word))
                       `(,word)))
-  (max-by candidates (given (w) (NWORDS .get w 0))))
+  (arg-max candidates (given (w) (NWORDS .get w 0))))
 
 (define (if-any xs)
   (if xs.empty? #no xs))
 
 (define (known words)  ;TODO: iter instead of list? set comprehension?
-  (set<-list (for filter ((w words))    ;TODO set<-list
-               (NWORDS .maps? w))))
+  (call set<- (for filter ((w words))
+                (NWORDS .maps? w))))
 
 (define (known-edits2 word)
-  (set<-list (for gather ((e1 (edits1 word)))
-               (for filter ((e2 (edits1 e1)))
-                 (NWORDS .maps? e2)))))
+  (call set<- (for gather ((e1 (edits1 word)))
+                (for filter ((e2 (edits1 e1)))
+                  (NWORDS .maps? e2)))))
 
 (define (edits1 word)
   (let splits     (for each ((i (range<- (+ word.count 1))))
@@ -39,7 +39,7 @@
   (let inserts    (for gather ((a b) splits)
                     (for each ((c alphabet))
                       (chain a (string<- c) b))))
-  (set<-list (chain deletes transposes replaces inserts)))
+  (call set<- (chain deletes transposes replaces inserts)))
 
 (let alphabet "abcdefghijklmnopqrstuvwxyz")
 
