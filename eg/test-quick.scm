@@ -36,6 +36,7 @@
 
 (loud-load "eg/test-export-import.scm")
 (loud-load "eg/test-quasiquote.scm")
+(loud-load "eg/test-strings.scm")
 (loud-load "eg/test-continuations.scm")
 (loud-load "eg/test-pattern-matching.scm")
 (loud-load "eg/test-use.scm")

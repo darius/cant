@@ -206,6 +206,34 @@
    (for some ((x list)) (= x value)))
   ({.find-key-for value}
    (unimplemented))                       ;XXX
+  ({.trim-left}
+   (if me.empty?
+       me
+       (do (let c me.first)
+           (if c.whitespace?
+               me.rest.trim-left
+               me))))
+  ({.trim-right}
+   (begin scanning ((i me.count))
+     (if (= i 0)
+         ""
+         (do (let c (me (- i 1)))
+             (if c.whitespace?
+                 (scanning (- i 1))
+                 (me .slice 0 i))))))
+  ({.trim}
+   me.trim-left.trim-right)
+  ({.split}
+   (begin splitting ((s me.trim-left))
+     (if s.empty?
+         '()
+         (do (let limit s.count)
+             (begin scanning ((i 1))
+               (case ((= i limit) `(,s))
+                     (((s i) .whitespace?)
+                      (cons (s .slice 0 i)
+                            (splitting ((s .slice (+ i 1)) .trim-left))))
+                     (else (scanning (+ i 1)))))))))
   ({.selfie sink}
    (sink .display #\")
    (for each! ((c me))
