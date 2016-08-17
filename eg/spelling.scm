@@ -53,5 +53,5 @@
 ;;  (re:findall "[a-z]+" string.lowercase))  ;TODO
   string.lowercase.split)
 
-(let NWORDS (train (words<-string (for with-open-file ((source "big.txt"))
-                                    source.read-all)))) ;TODO
+(let NWORDS (train (words<-string (for with-input-file ((source "big.txt"))
+                                    source.read-all))))

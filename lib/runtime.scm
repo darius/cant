@@ -268,6 +268,7 @@
 
 (make-trait source-primitive me
   ({.read-char}   (__read-char me))
+  ({.read-all}    (__read-all me))
   ({.close}       (__close-port me))
   )
 

@@ -303,6 +303,14 @@
     (__term-arguments ,term-parts)
     (__close-port ,close-port)
     (__read-char ,read-char)
+    (__read-all ,(lambda (port)
+                   (let reading ((cs '()))
+                     (let ((c (read-char port)))
+                       (if (eof-object? c)
+                           (if (null? cs)
+                               c
+                               (list->string (reverse cs)))
+                           (reading (cons c cs)))))))
     (__write-char ,write-char)
     (__display ,(lambda (sink thing)
                   (display thing sink)))              ;XXX handle non-string/char properly
