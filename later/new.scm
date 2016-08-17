@@ -383,7 +383,8 @@
   model)
 
 (define (words<-string string)
-  (re:findall "[a-z]+" string.lowercase))  ;TODO
+;;  (re:findall "[a-z]+" string.lowercase))  ;TODO
+  string.lowercase.split)
 
 (let NWORDS (train (words<-string (for with-open-file ((source "big.txt"))
                                     source.read-all)))) ;TODO
