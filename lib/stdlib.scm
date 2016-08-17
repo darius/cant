@@ -86,9 +86,9 @@
   (for foldr ((x xs) (ys '()))
     (if (ok? x) (cons x ys) ys)))
 
-(define (remove xs x)
-  (for filter ((element xs))
-    (not (= x element))))
+(define (remove xs unwanted)            ;TODO different arg order?
+  (for filter ((x xs))
+    (not= x unwanted)))
 
 (define (list<- @arguments)
   arguments)
