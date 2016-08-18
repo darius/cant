@@ -67,19 +67,15 @@
 (define (valid? node)
   (not (satisfy node 0)))
 
-;; XXX ugly
 (define (satisfy node goal)
   (let env (map<-))
   (begin walking ((node node))
     (if node.constant-value
         (and (= goal node.constant-value)
              env)
-        (begin trying ((value 0)
-                       (branches node.branches))
-          (case (branches.empty?
-                 #no)
-                ((`(#no ,goal) .maps-to? branches.first.constant-value)
-                 (env .set! node.rank value)
-                 (walking branches.first))
-                (else
-                 (trying (+ value 1) branches.rest)))))))
+        (for foldr/lazy (((value branch) (enumerate node.branches))
+                         (try-remaining-branches (given () #no)))
+          (if (`(#no ,goal) .maps-to? branch.constant-value)
+              (do (env .set! node.rank value)
+                  (walking branch))
+              (try-remaining-branches))))))
