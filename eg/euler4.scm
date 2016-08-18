@@ -2,11 +2,10 @@
 ;; The largest palindrome that's the product of two 3-digit numbers.
 
 (define (euler4 lo bound)
-  (maximum
-   (for gather ((i (range<- lo bound)))
-     (for each ((j (range<- i bound)))
-       (let p (* i j))
-       (if (palindrome? p) p 0)))))
+  (call max (for gather ((i (range<- lo bound)))
+              (for each ((j (range<- i bound)))
+                (let p (* i j))
+                (if (palindrome? p) p 0)))))
 
 (define (palindrome? n)
   (let s (string<-number n))      ;TODO use a string port instead

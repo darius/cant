@@ -235,6 +235,7 @@
     (not ,not)
     (assq ,assq)  ;; TODO replace with 'real' hashmaps
     (assoc ,assoc)  ;; TODO replace with 'real' hashmaps
+    (sqrt ,sqrt)
     (display ,display)           ;XXX temp
     (newline ,newline)           ;XXX temp
     (pp ,pp)                     ;XXX obviously shouldn't be primitive

@@ -40,7 +40,7 @@
       -1
       (match grid.successors
         (() 0)
-        (succs (- (minimum (each spock-value succs)))))))
+        (succs (- (call min (each spock-value succs)))))))
 
 (define (average numbers)
   (/ (sum numbers) numbers.count))   ;TODO floats
