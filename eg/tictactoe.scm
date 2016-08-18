@@ -1,14 +1,14 @@
 ;; tic-tac-toe, as a warmup.
 
 (define (tic-tac-toe player opponent grid)
-  grid.show
+  (show grid)
   (newline)
-  (case (grid.won?   (format "%d wins.\n" grid.last-to-move))
-        (grid.drawn? (format "A draw.\n"))
+  (case ((won? grid)   (format "%d wins.\n" (last-to-move grid)))
+        ((drawn? grid) (format "A draw.\n"))
         (else
          (unless (`(,player ,opponent) .maps-to? human-play)
            (format "%w to move %d. (Press a key.)\n"
-                   player grid.whose-move)
+                   player (whose-move grid))
 ;           (get-key)                    ;XXX
            )
          (tic-tac-toe opponent player (player grid)))))
@@ -18,83 +18,84 @@
   XXX)
 
 (define (drunk-play grid)
-  (arg-min grid.successors drunk-value))
+  (arg-min (successors grid) drunk-value))
 
 (define (spock-play grid)
-  (arg-min grid.successors spock-value))
+  (arg-min (successors grid) spock-value))
 
 (define (max-play grid)
-  (arg-min grid.successors
+  (arg-min (successors grid)
            (given (succ) `(,(spock-value succ) ,(drunk-value succ)))))
 
 ;; TODO: memoize
 (define (drunk-value grid)
-  (if grid.won?
+  (if (won? grid)
       -1
-      (match grid.successors
+      (match (successors grid)
         (() 0)
         (succs (- (average (each drunk-value succs)))))))
 
 (define (spock-value grid)
-  (if grid.won?
+  (if (won? grid)
       -1
-      (match grid.successors
+      (match (successors grid)
         (() 0)
         (succs (- (call min (each spock-value succs)))))))
 
 (define (average numbers)
-  (/ (sum numbers) numbers.count))   ;TODO floats
+  (/ (sum numbers) numbers.count))
 
 
-(define (grid<- p q)
+(define (player-marks {grid p q})
+  (if (= (sum (player-bits p))
+         (sum (player-bits q)))
+      "XO"
+      "OX"))
 
-  (define (player-marks)
-    (if (= (sum (player-bits p))
-           (sum (player-bits q)))
-        "XO"
-        "OX"))
+(define (player-bits bits)
+  (for each ((i (range<- 9)))
+    (1 .and (bits .>> i))))
 
-  (define (player-bits bits)
-    (for each ((i (range<- 9)))
-      (1 .and (bits .>> i))))
+(define (won? {grid p q})
+  (for some ((way ways-to-win))
+    (= way (way .and q))))
 
-  (make grid
-    ({.won?}
-     (for some ((way ways-to-win))
-       (= way (way .and q))))
-    ({.drawn?}
-     grid.successors.empty?)
-    ({.successors}
-     (filter-false                      ;TODO better name
-      (for each ((move (range<- 9)))
-        (grid .move move))))
-    ({.move move}
-     (let bit (1 .<< move))
-     (and (= 0 (bit .and (p .or q)))
-          (grid<- q (p .or bit))))
-    ({.whose-move}
-     ((player-marks) 0))
-    ({.last-to-move}
-     ((player-marks) 1))
-    ({.show}
-     (let marks (player-marks))
-     (let values (for each ((pair (zip (player-bits p)
-                                       (player-bits q))))
-                   (match pair
-                     ((1 0) (marks 0))
-                     ((0 1) (marks 1))
-                     ((0 0) #\.))))
-     ;;XXX this writes instead of returning a string
-     (call format `(,grid-format ,@(reverse values)))
-     (newline))
-    ))
+(define (drawn? grid)
+  ((successors grid) .empty?))
+
+(define (successors grid)
+  (filter-false                      ;TODO better name
+   (for each ((move (range<- 9)))
+     (apply-move grid move))))
+
+(define (apply-move {grid p q} move)
+  (let bit (1 .<< move))
+  (and (= 0 (bit .and (p .or q)))
+       {grid q (p .or bit)}))
+
+(define (whose-move grid)
+  ((player-marks grid) 0))
+
+(define (last-to-move grid)
+  ((player-marks grid) 1))
+
+(define (show {grid p q})
+   (let marks (player-marks {grid p q}))
+   (let values (for each ((pair (zip (player-bits p)
+                                     (player-bits q))))
+                 (match pair
+                   ((1 0) (marks 0))
+                   ((0 1) (marks 1))
+                   ((0 0) #\.))))
+   (call format `(,grid-format ,@(reverse values)))
+   (newline))
 
 (let grid-format ("\n" .join (for each ((_ (range<- 3)))
                                " %d %d %d")))
 
 (let ways-to-win '(0o700 0o070 0o007 0o444 0o222 0o111 0o421 0o124))
 
-(let empty-grid (grid<- 0 0))
+(let empty-grid {grid 0 0})
 
 (define (move<-human-numbered n)
   (- 9 n))
@@ -104,6 +105,6 @@
 
 
 (hide
- (let g (grid<- 0o610 0o061))
+ (let g {grid 0o610 0o061})
  (tic-tac-toe spock-play spock-play g)
 )
