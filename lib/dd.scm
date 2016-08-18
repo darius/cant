@@ -11,6 +11,8 @@
 (make none)  ;; Disjoint from all the values of constants.
 
 (define (constant<- value)
+  (assert (not= value none) "That can't be a constant value -- it's reserved")
+  ;; XXX that assert wouldn't be needed if .constant-value were private
   (make
     ({.rank}           infinity)
     ({.constant-value} value)
