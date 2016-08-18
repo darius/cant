@@ -1,5 +1,7 @@
 ;; tic-tac-toe, as a warmup.
 
+(import (use "lib/memoize.scm") memoize)
+
 (define (tic-tac-toe player opponent grid)
   (show grid)
   (newline)
@@ -27,20 +29,21 @@
   (arg-min (successors grid)
            (given (succ) `(,(spock-value succ) ,(drunk-value succ)))))
 
-;; TODO: memoize
-(define (drunk-value grid)
-  (if (won? grid)
-      -1
-      (match (successors grid)
-        (() 0)
-        (succs (- (average (each drunk-value succs)))))))
+(let drunk-value
+  (memoize (given (grid)
+             (if (won? grid)
+                 -1
+                 (match (successors grid)
+                   (() 0)
+                   (succs (- (average (each drunk-value succs)))))))))
 
-(define (spock-value grid)
-  (if (won? grid)
-      -1
-      (match (successors grid)
-        (() 0)
-        (succs (- (call min (each spock-value succs)))))))
+(let spock-value
+  (memoize (given (grid)
+             (if (won? grid)
+                 -1
+                 (match (successors grid)
+                   (() 0)
+                   (succs (- (call min (each spock-value succs)))))))))
 
 (define (average numbers)
   (/ (sum numbers) numbers.count))
