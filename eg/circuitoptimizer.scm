@@ -30,7 +30,7 @@
   (define (print-formula L-input R-input)
     (let v-name (chain ("ABCDEF" .slice 0 n-inputs)
                        ("abcdefghijklmnopqrstuvwxyz" .slice n-inputs)))
-    (for each! ((i (range<- L-input.count)))
+    (for each! ((i L-input.keys))
       (let g (v-name (+ i n-inputs)))
       (let L (v-name (L-input i)))
       (let R (v-name (R-input i)))

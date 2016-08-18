@@ -27,7 +27,7 @@
      (case ((all-same? nodes)
             (nodes 0))
            ((= (each '.constant-value nodes)
-               (as-list (range<- nodes.count))) ;XXX clumsy
+               (as-list nodes.keys))
             choice)
            (else
             (memo-choice choice nodes))))))
