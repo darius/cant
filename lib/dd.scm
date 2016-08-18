@@ -8,8 +8,9 @@
 
 (let infinity 999999)  ;; N.B. we don't have floats yet
 
+(make none)  ;; Disjoint from all the values of constants.
+
 (define (constant<- value)
-  (assert value "You can't use #no as a constant value -- it's reserved") ;XXX well, fix it
   (make
     ({.rank}           infinity)
     ({.constant-value} value)
@@ -24,7 +25,7 @@
   (assert (< rank infinity))
   (make choice
     ({.rank}           rank)
-    ({.constant-value} #no) ; The reason for the above reserving of #no.
+    ({.constant-value} none)
     ({.evaluate env}   ((branches (env rank)) .evaluate env))
     ({.branches}       branches)
     ({.choose nodes}   (case ((all-same? nodes)
@@ -70,12 +71,14 @@
 (define (satisfy node goal)
   (let env (map<-))
   (begin walking ((node node))
-    (if node.constant-value
+    (if (not= none node.constant-value)
         (and (= goal node.constant-value)
              env)
         (for foldr/lazy (((value branch) node.branches.items)
                          (try-remaining-branches (given () #no)))
-          (if (`(#no ,goal) .maps-to? branch.constant-value)
+          (if (`(,none ,goal) .maps-to? branch.constant-value)
               (do (env .set! node.rank value)
                   (walking branch))
               (try-remaining-branches))))))
+
+(export constant<- variable<- satisfy valid?)
