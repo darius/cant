@@ -187,7 +187,7 @@
        '()
        (make enumeration {extending list-trait}
          ({.empty?} #no)
-         ({.first}  `(,xs.first ,i))    ;XXX shouldn't this be (,i ,xs.first)?
+         ({.first}  `(,i ,xs.first))
          ({.rest}   (enumerate xs.rest (+ i 1)))))))
 
 (define (sum ns)

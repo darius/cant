@@ -73,7 +73,7 @@
     (if node.constant-value
         (and (= goal node.constant-value)
              env)
-        (for foldr/lazy (((value branch) (enumerate node.branches))
+        (for foldr/lazy (((value branch) node.branches.items)
                          (try-remaining-branches (given () #no)))
           (if (`(#no ,goal) .maps-to? branch.constant-value)
               (do (env .set! node.rank value)
