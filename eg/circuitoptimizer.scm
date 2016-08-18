@@ -34,7 +34,7 @@
       (let g (v-name (+ i n-inputs)))
       (let L (v-name (L-input i)))
       (let R (v-name (R-input i)))
-      (say g " = " L " ~& " R "; "))
+      (say g " = " L " ~& " R "; "))    ;TODO use format
     (newline))
 
   (define (find-for-n n-gates)
