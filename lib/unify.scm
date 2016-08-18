@@ -1,9 +1,12 @@
 ;; TODO: work on terms, not just lists
 
-(let variable? symbol?)                 ;XXX not really; use stamps
+(let variable? vector?) ;TODO make a disjoint type instead with stamps
 
 (define (variable<- prefix n)
-  (symbol<- (chain prefix "." (string<-number n))))
+  (vector<- (symbol<- (chain prefix "." (string<-number n)))))
+
+(define (variable-name var)
+  (var 0))
 
 ;; XXX seems clumsy:
 (define (apply s val)                   ;XXX rename
@@ -25,7 +28,7 @@
          (if (= val my-var) my-val (s .subst val))
          val))
     ({.selfie sink}
-     (format .to sink "<%w: %w>..%w" my-var my-val s))))
+     (format .to sink "<%d: %w>..%w" (variable-name my-var) my-val s))))
 
 (define (extend s var val)
   (if (occurs? s var val) #no (extend-unchecked s var val)))
@@ -73,4 +76,4 @@
 ;; or using 0-or-1-length lists. In fact, the latter meshes
 ;; perfectly with lazy-lists-as-Kanren-results.
 
-(export unify empty-subst reify)
+(export variable? variable<- unify empty-subst reify)
