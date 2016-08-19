@@ -49,15 +49,15 @@
      (vec.^ .copy! v lo bound))
     ({.selfie sink}
      (sink .display "#<fillvector (")
-     (sink .print fillvector.count)
+     (sink .print count.^)
      (sink .display ")>"))     
 
     ;; XXX should be vector trait... with the rest of the map interface too.
-    ({.empty?}         (= 0 fillvector.count))
+    ({.empty?}         (= 0 count.^))
     ({.first}          (fillvector 0))
     ({.rest}           (fillvector .slice 1))
     ({.copy! v}        (fillvector .copy! v 0 v.count))
-    ({.slice lo}       (fillvector .slice lo fillvector.count))
+    ({.slice lo}       (fillvector .slice lo count.^))
     ;; inefficient:
     ({.chain v}        (fillvector.snapshot .chain v))
     ({.slice lo bound} (fillvector.snapshot .slice lo bound))
