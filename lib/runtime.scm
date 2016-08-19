@@ -297,7 +297,7 @@
   )
 
 (make-trait void-primitive me
-  ;; A Gambit type some operations return.
+  ;; A Gambit type returned by some of the Gambit operations.
   )
 
 

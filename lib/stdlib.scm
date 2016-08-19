@@ -2,7 +2,7 @@
 
 (define (assert ok? @arguments)
   (unless ok?
-    (call error (if (null? arguments) '("Assertion failed") arguments))))
+    (call error (if arguments.empty? '("Assertion failed") arguments))))
 
 (define (not= x y)
   (not (= x y)))
