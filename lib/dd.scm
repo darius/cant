@@ -17,7 +17,7 @@
     ({.rank}           infinity)
     ({.constant-value} value)
     ({.evaluate env}   value)
-    ({.choose nodes}   (nodes value))))
+    ((@nodes)          (nodes value))))
 
 (define (all-same? xs)
   (let set (call set<- xs))
@@ -30,7 +30,7 @@
     ({.constant-value} none)
     ({.evaluate env}   ((branches (env rank)) .evaluate env))
     ({.branches}       branches)
-    ({.choose nodes}   (case ((all-same? nodes)
+    ((@nodes)          (case ((all-same? nodes)
                               nodes.first)
                              ((= (each '.constant-value nodes)
                                  (as-list nodes.keys))
@@ -50,7 +50,7 @@
      (let rank top.rank)
      (make-node rank
                 (for each ((c top.branches.keys))
-                  ((subst rank c node) .choose (subst-each rank c branches)))))))
+                  (call (subst rank c node) (subst-each rank c branches)))))))
 
 (define (make-node rank branches)
   (if (all-same? branches)

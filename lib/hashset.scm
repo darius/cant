@@ -14,6 +14,7 @@
     ({.union! other}  (hash-set .add-all! other.keys))
     ({.union other}   (union hash-set other))
     ({.empty?}        map.empty?)
+    ({.count}         map.count)
     ;; XXX fill in rest of set interface (just the map interface, I guess)
     ({.selfie sink}
      (sink .display "#<set")
