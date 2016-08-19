@@ -98,7 +98,7 @@
      (unimplemented))                   ;XXX
     ({.selfie sink}
      (sink .display "#<hash-map (")
-     (sink .print hashmap.count)
+     (sink .print count.^)
      (sink .display ")>"))
     ))
 
