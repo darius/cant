@@ -27,7 +27,7 @@
   (define (merge xs ys)
     (case (xs.empty? ys)
           (ys.empty? xs)
-          (else (if (<= (cmp xs.first ys.first) 0)
+          (else (if (<= (cmp xs.first ys.first) 0) ;TODO error if cmp result is not in -1..1?
                     `(,xs.first ,@(merge xs.rest ys))
                     `(,ys.first ,@(merge xs ys.rest))))))
 
