@@ -11,6 +11,8 @@
     (#no '())
     (s1 `(,s1))))
 
+;; XXX either and both are not quite Kanrenish
+
 (define ((either goal1 goal2) s)
   (interleave (goal1 s) (goal2 s)))
 
