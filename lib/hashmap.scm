@@ -94,7 +94,7 @@
        `(,(ks i) ,(vs i))))
     ({.find? value}
      (hashmap.values .find? value))
-    ({.find-key-for value}
+    ({.find value}
      (unimplemented))                   ;XXX
     ({.selfie sink}
      (sink .display "#<hash-map (")

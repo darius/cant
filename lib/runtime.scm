@@ -203,7 +203,7 @@
        default))
   ({.maps? key}
    (and (integer? key) (<= 0 key) (< key me.count)))
-  ({.find-key-for value}
+  ({.find value}
    (unimplemented))                       ;XXX
   ({.trim-left}
    (if me.empty?
