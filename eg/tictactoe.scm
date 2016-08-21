@@ -8,7 +8,7 @@
   (case ((won? grid)   (format "%d wins.\n" (last-to-move grid)))
         ((drawn? grid) (format "A draw.\n"))
         (else
-         (unless (`(,player ,opponent) .maps-to? human-play)
+         (unless (`(,player ,opponent) .find? human-play)
            (format "%w to move %d. (Press a key.)\n"
                    player (whose-move grid))
 ;           (get-key)                    ;XXX

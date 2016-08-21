@@ -92,8 +92,8 @@
      (let vs vals.^)
      (for each ((i (occupants)))
        `(,(ks i) ,(vs i))))
-    ({.maps-to? value}
-     (hashmap.values .maps-to? value))
+    ({.find? value}
+     (hashmap.values .find? value))
     ({.find-key-for value}
      (unimplemented))                   ;XXX
     ({.selfie sink}

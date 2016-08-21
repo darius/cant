@@ -78,7 +78,7 @@
              env)
         (for foldr/lazy (((value branch) node.branches.items)
                          (try-remaining-branches (given () #no)))
-          (if (`(,none ,goal) .maps-to? branch.constant-value)
+          (if (`(,none ,goal) .find? branch.constant-value)
               (do (env .set! node.rank value)
                   (walking branch))
               (try-remaining-branches))))))

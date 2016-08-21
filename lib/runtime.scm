@@ -68,12 +68,13 @@
         (or (= 0 key)
             (and (< 0 key)
                  (list.rest .maps? (- key 1))))))
-  ({.maps-to? value}
+  ({.find? value}
    (for some ((x list)) (= x value)))
-  ({.find-key-for value}                  ;XXX name?
-   (case (list.empty? (error "Missing key" value))
-         ((= value list.first) 0)
-         (else (+ 1 (list.rest .find-key-for value)))))
+  ({.find value}                  ;XXX name?
+   (begin looking ((i 0) (values list))
+      (case (values.empty? (error "Missing key" value))
+            ((= value values.first) i)
+            (else (looking (+ i 1) values.rest)))))
   )
 
 (make-trait claim-primitive me
@@ -202,8 +203,6 @@
        default))
   ({.maps? key}
    (and (integer? key) (<= 0 key) (< key me.count)))
-  ({.maps-to? value}
-   (for some ((x list)) (= x value)))
   ({.find-key-for value}
    (unimplemented))                       ;XXX
   ({.trim-left}
