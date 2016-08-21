@@ -218,6 +218,7 @@
     (cons? ,pair?)
     (list? ,(lambda (x) (or (null? x) (pair? x))))
     (number? ,number?)
+    (integer? ,integer?)
     (symbol? ,symbol?)
     (claim? ,boolean?)
     (char? ,char?)

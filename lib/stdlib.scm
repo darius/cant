@@ -166,13 +166,16 @@
          ({.rest}   (range<- (+ first 1) limit))
          ({.count}  (- limit first))
          ((i)
-          (let j (+ first i))
-          (if (and (<= first j) (< j limit)) ;XXX also, integer?
-              j
-              (error "Out of range" range i)))
+          (if (not (integer? i))
+              (error "Key error" range i)
+              (do (let j (+ first i))
+                  (if (and (<= first j) (< j limit))
+                      j
+                      (error "Out of range" range i)))))
          ({.maps? i}
-          (let j (+ first i))
-          (and (<= first j) (< j limit))) ;XXX also, integer?
+          (and (integer? i)
+               (do (let j (+ first i))
+                   (and (<= first j) (< j limit)))))
          ))))
 
 (make enumerate
