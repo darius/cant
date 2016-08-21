@@ -2,7 +2,6 @@
 ;; Choice nodes select a branch by the value of a variable, from 0 to
 ;; #branches-1. Each variable is also represented by a number, its 'rank'
 ;; -- lower rank numbers are placed nearer the root of the tree.
-;; XXX untested
 
 (import (use "lib/memoize.scm") memoize)
 
@@ -12,7 +11,6 @@
 
 (define (constant<- value)
   (assert (not= value none) "That can't be a constant value -- it's reserved")
-  ;; XXX that assert wouldn't be needed if .constant-value were private
   (make
     ({.rank}           infinity)
     ({.constant-value} value)
