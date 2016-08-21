@@ -219,6 +219,7 @@
     (list? ,(lambda (x) (or (null? x) (pair? x))))
     (number? ,number?)
     (symbol? ,symbol?)
+    (claim? ,boolean?)
     (char? ,char?)
     (string? ,string?)
     (vector? ,vector?)

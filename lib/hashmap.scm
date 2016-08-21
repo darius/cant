@@ -95,7 +95,11 @@
     ({.find? value}
      (hashmap.values .find? value))
     ({.find value}
-     (unimplemented))                   ;XXX
+     (let vs vals.^)
+     (begin searching ((js (occupants)))  ;XXX should be lazy
+       (case (js.empty? (error "Missing key" value))
+             ((= value (vs js.first)) js.first)
+             (else (searching js.rest)))))
     ({.selfie sink}
      (sink .display "#<hash-map (")
      (sink .print count.^)

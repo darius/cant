@@ -80,9 +80,11 @@
 (make-trait claim-primitive me
   ({.selfie sink}
    (sink .display (if me "#yes" "#no")))
-  ({.compare a}   (case ((= me a) 0)    ;XXX untested. also, need to check that a is boolean.
-                        (me       1)
-                        (_       -1)))
+  ({.compare a}
+   (and (claim? a)
+        (case ((= me a) 0)
+              (me       1)
+              (_       -1))))
   )
 
 (make-trait procedure-primitive me
@@ -204,7 +206,14 @@
   ({.maps? key}
    (and (integer? key) (<= 0 key) (< key me.count)))
   ({.find value}
-   (unimplemented))                       ;XXX
+   (assert (char? value) "Tried to find a non-char in a string")
+   ;; Not sure the above check is on the whole wanted. It makes
+   ;; the string interface narrower than the sequence one, which
+   ;; has pluses and minuses.
+   (begin searching ((js me.keys))
+     (case (js.empty? (error "Missing key" value))
+           ((= value (me js.first)) js.first)
+           (else (searching js.rest)))))
   ({.trim-left}
    (if me.empty?
        me
