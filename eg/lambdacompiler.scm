@@ -3,13 +3,10 @@
 
 (define (parse lexp)
   (match lexp
-    ((: symbol?)
-     (var-ref<- lexp))
-    (('lambda (v) body)
-     (abstraction<- v (parse body)))
-    ((operator operand)
-     (call<- (parse operator)
-             (parse operand)))))
+    ((: symbol?)        (var-ref<- lexp))
+    (('lambda (v) body) (abstraction<- v (parse body)))
+    ((operator operand) (call<- (parse operator)
+                                (parse operand)))))
 
 ;; Variable reference
 (define (var-ref<- v)
