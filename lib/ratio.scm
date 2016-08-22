@@ -27,19 +27,19 @@
   {ratio (n .quotient g)
          (d .quotient g)})
 
-(define (f* {ratio n1 d1} {ratio n2 d2})
+(define (r* {ratio n1 d1} {ratio n2 d2})
   (lowest-terms (* n1 n2)
                 (* d1 d2)))
 
-(define (f/ {ratio n1 d1} {ratio n2 d2})
+(define (r/ {ratio n1 d1} {ratio n2 d2})
   (reduce (* n1 d2)
           (* d1 n2)))
 
-(define (f+ {ratio n1 d1} {ratio n2 d2})
+(define (r+ {ratio n1 d1} {ratio n2 d2})
   (lowest-terms (+ (* n1 d2) (* n2 d1))
                 (* d1 d2)))
 
-(define (f- {ratio n1 d1} {ratio n2 d2})
+(define (r- {ratio n1 d1} {ratio n2 d2})
   (lowest-terms (- (* n1 d2) (* n2 d1))
                 (* d1 d2)))
 
@@ -51,10 +51,10 @@
 
 (map<-a-list `(
                (ratio<- ,ratio<-)
-               (+ ,f+)
-               (- ,f-)
-               (* ,f*)
-               (/ ,f/)
+               (+ ,r+)
+               (- ,r-)
+               (* ,r*)
+               (/ ,r/)
                (compare ,compare)
                (as-float ,as-float)
                ))
