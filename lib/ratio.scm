@@ -28,20 +28,20 @@
          (d .quotient g)})
 
 (define (f* {ratio n1 d1} {ratio n2 d2})
-  (reduce (* n1 n2)
-          (* d1 n2)))
+  (lowest-terms (* n1 n2)
+                (* d1 d2)))
 
 (define (f/ {ratio n1 d1} {ratio n2 d2})
   (reduce (* n1 d2)
           (* d1 n2)))
 
 (define (f+ {ratio n1 d1} {ratio n2 d2})
-  (reduce (+ (* n1 d2) (* n2 d1))
-          (* d1 d2)))
+  (lowest-terms (+ (* n1 d2) (* n2 d1))
+                (* d1 d2)))
 
 (define (f- {ratio n1 d1} {ratio n2 d2})
-  (reduce (- (* n1 d2) (* n2 d1))
-          (* d1 d2)))
+  (lowest-terms (- (* n1 d2) (* n2 d1))
+                (* d1 d2)))
 
 (define (compare {ratio n1 d1} {ratio n2 d2})
   ((* n1 d2) .compare (* n2 d1)))
