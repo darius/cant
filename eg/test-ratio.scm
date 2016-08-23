@@ -10,4 +10,9 @@
       (each/lazy - (rationalize (- float)))
       XXX))
 
-(print (r/ (ratio<- 355) (ratio<- 113)))
+(let pi (r/ (ratio<- 355) (ratio<- 113)))
+(let tau (r+ pi pi))
+(print pi)
+(print tau)
+(print (r/ tau pi))
+(print (r- (ratio<- 1 2) (ratio<- 1 3)))
