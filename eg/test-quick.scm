@@ -53,6 +53,7 @@
 (loud-load "eg/test-unify.scm")
 (loud-load "eg/test-complex.scm")
 (loud-load "eg/test-dd.scm")
+(loud-load "eg/test-ratio.scm")
 
 (loud-load "eg/compact-lambda.scm")
 (loud-load "eg/sicp1.scm")

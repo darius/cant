@@ -249,6 +249,7 @@
 
     ;; These will get high-level definitions later TODO
     (/ ,/)
+    (gcd ,gcd)
     (vector<-list ,list->vector)
     (read ,squeam-read)
     (parse-exp ,parse-exp)
