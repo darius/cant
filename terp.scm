@@ -234,6 +234,7 @@
     (char<- ,integer->char)
     (string<-list ,list->string)
     (vector<-count ,make-vector)
+    (exact->inexact ,exact->inexact)  ;XXX rename or something
     (not ,not)
     (assq ,assq)  ;; TODO replace with 'real' hashmaps
     (assoc ,assoc)  ;; TODO replace with 'real' hashmaps

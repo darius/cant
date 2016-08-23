@@ -13,6 +13,7 @@
 (let pi (r/ (ratio<- 355) (ratio<- 113)))
 (let tau (r+ pi pi))
 (print pi)
+(print (as-float pi))
 (print tau)
 (print (r/ tau pi))
 (print (r- (ratio<- 1 2) (ratio<- 1 3)))
