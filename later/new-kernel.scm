@@ -71,6 +71,9 @@
               (matching rest))))))
     ({.verify alleged-stamp}
      ;;XXX this is probably crap; figure it out
+     ;; So, can we implement stamp-checking as message-passing?
+     ;; The checker calls on the checkee and then decides?
+     ;; Was this what __optSealedDispatch was about? I doubt it.
      (= stamp alleged-stamp))))
 
 (define (delegate trait self message)
