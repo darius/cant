@@ -1,30 +1,32 @@
 ;; microKanren streams.
 
-(define (unit value)
-  (prepend value nothing))
+(define (unit state)
+  (prepend state nothing))
 
 (make nothing
   ({.+ m}    m)
   ({.>>= g}  nothing)
   ({.stream} '()))
 
-(define (prepend value m)
-  (make _
-    ({.+ m1}   (prepend value (m .+ m1)))
-    ({.>>= g}  ((g value) .+ (m .>>= g)))
-    ({.stream} (cons-lazy value (given () (m .stream))))))
+(define (prepend state m)
+  (make prepended
+    ({.+ m1}   (prepend state (m .+ m1)))
+    ({.>>= g}  ((g state) .+ (m .>>= g)))
+    ({.stream} (cons-lazy state (given () m.stream)))))
+;;XXX isn't .stream a dumb bag on the side of it?
+;; But it seems needed to ever force a value out of a lull.
 
-(define (lull thunk)
-  (make _
-    ({.+ m}    (lull (given () (m .+ (thunk)))))  ;; Note interleaving m before thunk.
-    ({.>>= g}  (lull (given () ((thunk) .>>= g))))
+(define (lull<- thunk)
+  (make lull
+    ({.+ m}    (lull<- (given () (m .+ (thunk)))))  ;; Note interleaving m before thunk.
+    ({.>>= g}  (lull<- (given () ((thunk) .>>= g))))
     ({.stream} ((thunk) .stream))))
 
-(define ((disjoin g1 g2) s/c)
-  ((g1 s/c) .+ (g2 s/c)))
+(define ((either<- g1 g2) state)
+  ((g1 state) .+ (g2 state)))
 
-(define ((conjoin g1 g2) s/c)
-  ((g1 s/c) .>>= g2))
+(define ((both<- g1 g2) state)
+  ((g1 state) .>>= g2))
 
 
 
@@ -37,18 +39,20 @@
 
 (make nothing
   ({.+ m}    m)
-  ({.>>= g}  nothing))
+  ({.>>= g}  nothing)
+  ({.stream} '()))
 
 (define (unit value)
   (make just-1
     ({.+ m}    (catenate just-1 m))
-    ({.>>= g}  (g value))))
+    ({.>>= g}  (g value))
+    ({.stream} `(,value))))
 
 (define (catenate m1 m2)
   (make catenation
-    ({.+ m3}  (catenate catenation m3))
-    ({.>>= g} ((m1 .>>= g) .+ (m2 .>>= g)))))
-
+    ({.+ m3}   (catenate catenation m3))
+    ({.>>= g}  ((m1 .>>= g) .+ (m2 .>>= g)))
+    ({.stream} (chain/lazy m1.stream (given () m2.stream)))))
 
 
 
