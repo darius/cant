@@ -14,12 +14,12 @@ $ gsi testme.scm
 
 I gave up waiting for so much of what I enjoyed in
 [E](http://erights.org/) to appear again together in a popular
-language. But E is a big language and here I'm building up only some
-of the simplest aspects, unfaithfully, to start; but along the way I
+language. E is a big language, and here, to start, I'm building up
+only some of the simplest aspects, unfaithfully; but along the way I
 can also cater to some of my own idiosyncrasies. I want to make it a
-whole system, in the Smalltalk style, with meta-access for debugging,
+whole system in the Smalltalk style, with meta-access for debugging,
 etc. That and just getting together a language I can program in are
-overriding any actual security so far. Despite the inspiration, there
+overriding any actual security so far: despite the inspiration, there
 is no security, and no distribution, not even an event loop.
 
 It ought to remain a simpler language than E even when developed: an
@@ -34,5 +34,5 @@ better (idiosyncrasies, remember).
 
 The goal of Smalltalkiness motivated the incredibly slow
 implementation strategy to start with, where the interpreter internals
-are reified into meta-objects all the time with no optimization, and
-even primitive objects execute via high-level scripts. 
+always appear as meta-objects with no optimization, and even primitive
+objects execute via high-level scripts (in lib/runtime.scm).
