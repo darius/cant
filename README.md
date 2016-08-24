@@ -27,6 +27,10 @@ object is a thing that pattern-matches on the messages it
 receives. There are fewer kinds of syntactic forms. It's a personal
 artisanal hipster language.
 
+Another goal: to be pithier than Scheme. Much of how Python beat
+Scheme out for me in practice was the concise use of convenient
+collection types.
+
 The goal of Smalltalkiness is behind the incredibly slow
 implementation strategy to start with, where the interpreter internals
 are reified into meta-objects all the time with no optimization, and
