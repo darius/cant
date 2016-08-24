@@ -29,7 +29,8 @@ artisanal hipster language.
 
 Another goal: to be pithier than Scheme. Much of how Python beat
 Scheme out for me in practice was the concise use of convenient
-collection types.
+collection types. Along the way I renamed many Scheme forms to flow
+better (idiosyncrasies, remember).
 
 The goal of Smalltalkiness is behind the incredibly slow
 implementation strategy to start with, where the interpreter internals
