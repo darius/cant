@@ -22,6 +22,7 @@
                 (for filter ((e2 ((edits1 e1) .keys)))
                   (NWORDS .maps? e2)))))
 
+;; TODO real list comprehensions would be nice to have.
 (define (edits1 word)
   (let splits     (for each ((i (range<- (+ word.count 1))))
                     `(,(word .slice 0 i)

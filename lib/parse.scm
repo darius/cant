@@ -1,3 +1,4 @@
+;; Parse with a context-free grammar and a chart.
 ;; Ported from PAIP chapter 9
 
 (define (grammar<-rules rules)

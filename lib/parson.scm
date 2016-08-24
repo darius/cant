@@ -1,4 +1,5 @@
 ;; PEG parsing
+;; from https://github.com/darius/parson, but incomplete
 
 ;; TODO: fuller error reporting
 ;; TODO: memoize

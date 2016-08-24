@@ -1,3 +1,5 @@
+;; Return a memoized version of a function
+
 (make not-yet)
 
 (define (memoize f)

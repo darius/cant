@@ -1,3 +1,5 @@
+;; Compile cbv lambda calculus to a machine with flat closures.
+
 (define (compile lexp)
   ((parse lexp) .compile global-static-env '(halt)))
 

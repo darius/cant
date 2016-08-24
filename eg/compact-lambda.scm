@@ -1,3 +1,5 @@
+;; 'Compile' cbv lambda calculus without changing much.
+
 (define (compile lexp)
   ((parse lexp) .compile '(HALT)))
 

@@ -1,3 +1,5 @@
+;; Sets via hashtable
+
 (define (set<- @vals)            ;XXX this name is better saved for frozen sets
   (let s (hash-set<-))
   (s .add-all! vals)

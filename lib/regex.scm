@@ -1,5 +1,5 @@
-;; Like nfa_simplest_set.py
-;; using a first straw man of a set datatype.
+;; Regular expressions.
+;; Like nfa_simplest_set.py using a first straw man of a set datatype.
 
 (import (use "lib/hashset.scm") union-over)
 

@@ -1,3 +1,4 @@
+;; Binary decision diagrams
 ;; from ~/git/mccarthy-to-bryant/lua/bdd3.lua
 
 (define (bdd-and f g) (do-choose g lit0 f)) ;TODO rename do-choose

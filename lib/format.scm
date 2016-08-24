@@ -1,3 +1,5 @@
+;; printf-ish thing. TODO do something completely different?
+
 (make format
   ((format-string @arguments)
    (really-format out format-string arguments))

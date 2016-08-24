@@ -1,3 +1,5 @@
+;; The embedded logic language. XXX unfinished untested
+
 (import (use "lib/unify.scm") unify)
 
 (define (fail s)

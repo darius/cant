@@ -1,3 +1,5 @@
+;; Prolog-style unification
+
 ;; TODO: work on terms, not just lists
 
 (let variable? vector?) ;TODO make a disjoint type instead with stamps

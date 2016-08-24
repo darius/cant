@@ -1,4 +1,4 @@
-;; growable mutable vectors (have a better name?)
+;; Growable mutable vectors (have a better name?)
 ;; TODO: shrink capacity sometimes
 
 (define (fillvector<- @arguments)
