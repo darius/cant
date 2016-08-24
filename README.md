@@ -32,7 +32,7 @@ Scheme out for me in practice was the concise use of convenient
 collection types. Along the way I renamed many Scheme forms to flow
 better (idiosyncrasies, remember).
 
-The goal of Smalltalkiness is behind the incredibly slow
+The goal of Smalltalkiness motivated the incredibly slow
 implementation strategy to start with, where the interpreter internals
 are reified into meta-objects all the time with no optimization, and
 even primitive objects execute via high-level scripts. 
