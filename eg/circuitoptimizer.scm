@@ -1,3 +1,4 @@
+;; Find a smallest combinational circuit in NANDs for a boolean function.
 ;; From https://github.com/darius/superbench
 ;; Ultimately based on Kragen Sitaker's in C, but vectorized and
 ;; not doing don't-cares.
