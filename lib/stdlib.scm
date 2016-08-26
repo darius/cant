@@ -223,11 +223,14 @@
   (match (assoc filename the-modules.^)
     ((_ mod) mod)
     (#no
-     (let code (for with-input-file ((source filename))
-                 `(hide ,@(read-all source))))
-     (let mod (evaluate (parse-exp code) '()))
+     (let mod (load filename))
      (the-modules .^= `((,filename ,mod) ,@the-modules.^))
      mod)))
+
+(define (load filename)
+  (let code (for with-input-file ((source filename))
+              `(hide ,@(read-all source))))
+  (evaluate (parse-exp code) '()))
 
 (define (with-input-file fn filename)
   (let source (open-input-file filename))
