@@ -66,3 +66,4 @@
 (loud-load "eg/failing.scm")
 (loud-load "eg/lambdaterp.scm")
 (loud-load "eg/tictactoe.scm")
+(loud-load "eg/max-path-sum.scm")
