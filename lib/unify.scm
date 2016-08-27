@@ -1,4 +1,5 @@
 ;; Prolog-style unification
+;; XXX needs a lot of work.
 
 ;; TODO: work on terms, not just lists
 
