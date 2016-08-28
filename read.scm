@@ -61,7 +61,7 @@
                (read-char port)
                (let ((c (peek-char port)))
                  (if (not (symbol-constituent? c))
-                     (error "Symbol ending in '.'"))
+                     (error 'read "Symbol ending in '.'"))
                  (loop prefix (list (read-char port)) 1))))
             ((symbol-terminator? c)
              (combine prefix (atomize L len)))
@@ -88,7 +88,8 @@
 (define squeam-read
   (let ()
 
-    (define read-error error)
+    (define (read-error plaint . irritants)
+      (apply error 'read plaint irritants))
 
     (define (unknown-char port c)
       (read-error "Unknown read syntax" c))

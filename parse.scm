@@ -1,20 +1,18 @@
 ;; Like elaborate.scm for the new scheme
 
-(include "gambit-macros.scm")
-
 (define (parse-exp e)
   (cond
     ((and (pair? e) (look-up-macro (car e)))
      => (lambda (expand) (parse-exp (expand e))))
     (else
      (mcase e
-       ((: _ symbol?)
+       ((: __ symbol?)
         (term<- 'variable e))
        (('quote datum)
         (term<- 'constant datum))
-       ((: _ self-evaluating?)
+       ((: __ self-evaluating?)
         (term<- 'constant e))
-       ((: _ term?)
+       ((: __ term?)
         (term<- 'term
                 (term-tag e)
                 (map parse-exp (term-parts e))))
@@ -42,7 +40,7 @@
         (term<- 'call
                 (parse-exp addressee)
                 (term<- 'list (map parse-exp operands))))
-       ((: _ term?)
+       ((: __ term?)
         (term<- 'term
                 (cons (term-tag e)
                       (map parse-exp (term-parts e)))))
@@ -53,9 +51,9 @@
   (mcase p
     ('_
      (term<- 'any-pat))
-    ((: _ symbol?)
+    ((: __ symbol?)
      (term<- 'variable-pat p))
-    ((: _ self-evaluating?)
+    ((: __ self-evaluating?)
      (term<- 'constant-pat p))
     (('quote datum)
      (term<- 'constant-pat datum))
@@ -64,14 +62,14 @@
     ((': p1 e)
      (term<- 'and-pat (parse-pat p1)
               (term<- 'view-pat (parse-exp e) (term<- 'constant-pat #t))))
-    (('@ _)                      ;XXX make @vars be some disjoint type
+    (('@ __)                      ;XXX make @vars be some disjoint type
      (error "An @-pattern must be at the end of a list" p))
-    ((: _ list?)
+    ((: __ list?)
      (parse-list-pat p))
-    ((: _ term?)
+    ((: __ term?)
      (let ((tag (term-tag p))
            (parts (term-parts p)))
-       (if (any (mlambda (('@ _) #t) (_ #f)) parts)  ;XXX really only need to check the last one
+       (if (any (mlambda (('@ __) #t) (__ #f)) parts)  ;XXX really only need to check the last one
            (term<- 'view-pat
                    explode-term-exp
                    (term<- 'term-pat 'term (list (term<- 'constant-pat tag)
@@ -131,85 +129,85 @@
 (define (look-up-macro key)
   (mcase key
     ('hide   (mlambda
-              ((_ . es)
+              ((__ . es)
                `((given _ ,@es)))))
     ('include (mlambda             ;temporary
-               ((_ (: filename string?))
+               ((__ (: filename string?))
                 `(do ,@(snarf filename squeam-read)))))
     ('make-trait
              (mlambda
-              ((_ (: v symbol?) (: self symbol?) . clauses) ;XXX allow other patterns?
+              ((__ (: v symbol?) (: self symbol?) . clauses) ;XXX allow other patterns?
                (let ((msg (gensym)))
                  `(define (,v ,self ,msg)
                     (match ,msg
                       ,@clauses
                       (_ (miranda-trait ,self ,msg)))))))) ;XXX hygiene, and XXX make it overridable
     ('match  (mlambda
-              ((_ subject . clauses)
+              ((__ subject . clauses)
                `(call (make _ ,@clauses) ,subject))))
     ('define (mlambda
-              ((_ (head . param-spec) . body)
+              ((__ (head . param-spec) . body)
                (let ((pattern (mcase param-spec
                                 (((: cue cue?) . rest)
                                  (make-term cue rest))
-                                (_ param-spec))))
+                                (__ param-spec))))
                  (if (symbol? head)
                      `(make ,head (,pattern ,@body))
                      `(define ,head (given ,pattern ,@body)))))))
     ('given  (mlambda
-              ((_ p . body)
+              ((__ p . body)
                `(make (,p ,@body)))))
     ('with   (mlambda
-              ((_ bindings . body)
+              ((__ bindings . body)
                (parse-bindings bindings
                  (lambda (ps es)
                    `((given ,ps ,@body) ,@es))))))
     ('for    (mlambda
-              ((_ fn bindings . body)
+              ((__ fn bindings . body)
                (parse-bindings bindings
                  (lambda (ps es)
                    `(,fn (given ,ps ,@body) ,@es))))))
     ('begin  (mlambda
-              ((_ (: proc symbol?) bindings . body)
+              ((__ (: proc symbol?) bindings . body)
                (parse-bindings bindings
                  (lambda (ps es)
                    `((hide (define (,proc ,@ps) ,@body))
                      ,@es))))))
     ('if     (mlambda
-              ((_ test if-so if-not)
+              ((__ test if-so if-not)
                `(match ,test
                   (#f ,if-not)
                   (_ ,if-so)))))
     ('when   (mlambda
-              ((_ test . body)
+              ((__ test . body)
                `(if ,test (do ,@body) #f))))
     ('unless (mlambda
-              ((_ test . body)
+              ((__ test . body)
                `(if ,test #f (do ,@body)))))
     ('case   (mlambda
-              ((_) #f)                 ;TODO: generate an error-raising?
-              ((_ ('else . es)) `(do ,@es))
-              ((_ (e) . clauses) `(or ,e (case ,@clauses)))
-              ((_ (e1 '=> e2) . clauses)
+              ((__) #f)                 ;TODO: generate an error-raising?
+              ((__ ('else . es)) `(do ,@es))
+              ((__ (e) . clauses) `(or ,e (case ,@clauses)))
+              ((__ (e1 '=> e2) . clauses)
                (let ((test-var (gensym)))
                  `(with ((,test-var ,e1))
                     (if ,test-var
                         (,e2 ,test-var)
                         (case ,@clauses)))))
-              ((_ (e . es) . clauses)
+              ((__ (e . es) . clauses)
                `(if ,e (do ,@es) (case ,@clauses)))))
     ('and    (mlambda
-              ((_) #t)
-              ((_ e) e)
-              ((_ e . es) `(if ,e (and ,@es) #f))))
+              ((__) #t)
+              ((__ e) e)
+              ((__ e . es) `(if ,e (and ,@es) #f))))
     ('or     (mlambda
-              ((_) #f)
-              ((_ e) e)
-              ((_ e . es)
+              ((__) #f)
+              ((__ e) e)
+              ((__ e . es)
                (let ((t (gensym)))
                  `(with ((,t ,e)) (if ,t ,t (or ,@es)))))))
     ('import (mlambda
-              ((_ m . names)
+              ((__ m . names)
                (assert (all symbol? names) "bad syntax" names)
                (let ((map-var (gensym)))
                  `(let ,names
@@ -217,7 +215,7 @@
                           (',list ,@(map (lambda (name) `(,map-var ',name))
                                          names))))))))
     ('export (mlambda
-              ((_ . names)
+              ((__ . names)
                (assert (all symbol? names) "bad syntax" names)
 ;               (list 'map<-a-list  ;XXX hygiene
                (list `',a-list-map<-  ;XXX temporary
@@ -225,8 +223,8 @@
                            (map (lambda (name) (list name (list 'unquote name)))
                                 names))))))
     ('quasiquote (mlambda
-                  ((_ q) (expand-quasiquote q))))
-    (_ #f)))
+                  ((__ q) (expand-quasiquote q))))
+    (__ #f)))
 
 (define (a-list-map<- a-list)  ;XXX temporary
   (lambda (key)
@@ -236,7 +234,7 @@
 (define (parse-bindings bindings receiver)
   (for-each (lambda (binding)
               (mcase binding
-                ((_ _)   ; (used to check here for a variable, but now can be any pattern)
+                ((__ __)   ; (used to check here for a variable, but now can be any pattern)
                  'ok)))
             bindings)
   (receiver (map car bindings) (map cadr bindings)))
@@ -259,7 +257,7 @@
         (parts (term-parts term)))
     (let ((tag-e (expand-quasiquote tag)))
       (if (or (not (qq-constant? tag-e))
-              (any (mlambda (('unquote-splicing _) #t) (_ #f))
+              (any (mlambda (('unquote-splicing __) #t) (__ #f))
                    parts))
           `(term<- ,tag-e ,(expand-quasiquote parts)) ;XXX hygiene
           (let ((part-es (map expand-quasiquote parts)))
@@ -268,13 +266,13 @@
                 (make-term tag part-es)))))))
 
 (define qq-constant?
-  (mlambda (('quote _) #t) (_ #f)))
+  (mlambda (('quote __) #t) (__ #f)))
 
 (define (qq-cons pair qq-car qq-cdr)
   (mcase `(,qq-car ,qq-cdr)
     ((('quote a) ('quote d))
      `',(reuse-cons pair a d))
-    (_ `(',cons ,qq-car ,qq-cdr))))
+    (__ `(',cons ,qq-car ,qq-cdr))))
 
 (define (reuse-cons pair a d)
   (if (and (eqv? (car pair) a)

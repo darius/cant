@@ -21,7 +21,7 @@
 
 (define (assert ok? plaint irritant)
   (if (not ok?)
-      (error plaint irritant)))
+      (error 'assert plaint irritant)))
 
 (define (should= x expected)
   (assert (equal? x expected) "Expected" expected))
@@ -122,11 +122,12 @@
     (foldr expand-clause `(%match-error ,subject) clauses)))
 
 (define (%match-error subject)
-  (error "Match failure" subject))
+  (error 'mcase "Match failure" subject))
 
 ;; XXX better name? record? struct? row? tagged tuple? glom? functor? (hah)
-(define-structure term tag parts)
-
+;(define-structure term tag parts)
+(define-record-type term (fields tag parts))
+  
 (define (term<-list list)
   (make-term (car list) (cdr list)))
 

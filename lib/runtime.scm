@@ -118,6 +118,7 @@
   ({.name}        (__symbol->string me))
   ({.compare a}   (and (symbol? a)
                        (me.name .compare a.name)))
+  ({.selfie sink} (sink .display me.name))
   )
 
 (make-trait nil-primitive me

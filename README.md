@@ -4,13 +4,13 @@ Yes, another Scheme dialect;
 or, lambda: the germinal object.  
 So object-oriented, it'll turn your stomach!  
 
-Running, for the moment, on Gambit-Scheme.
+Running, for the moment, on [Chez Scheme](https://github.com/cisco/ChezScheme).
 You can try it out with:
 
-$ gsi testme.scm
+$ scheme --script testme.scm
 
 
-## The motivation, roughly
+## The motive, roughly
 
 I gave up waiting for so much of what I enjoyed in
 [E](http://erights.org/) to appear again together in a popular

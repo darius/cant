@@ -1,11 +1,10 @@
 ;; Interpreter
 
-(include "gambit-macros.scm")
-
 (define (run-load filename)
-  (interpret `(do ,@(snarf filename squeam-read))))
+  (let ((forms (snarf filename squeam-read)))
+    (squeam-interpret `(do ,@forms))))
 
-(define (interpret e)
+(define (squeam-interpret e)
   (evaluate (parse-exp e) repl-env))
 
 (define repl-env '())
@@ -26,20 +25,24 @@
 ;; operation for which squeam=? would check if script and datum are
 ;; eq?, and hashing would also have to look at both.
 
+;; XXX above comments irrelevant since switch from Gambit to Chez.
+;; needs a radical overhaul to use Chez's eq? hashtables
+
 (define (hash x)
-  (cond ((term? x) (hash-term x))
-        ((pair? x) (hash-pair x))
-        ((string? x) (hash-string x))
-        (else (eqv?-hash x))))
+  (equal-hash x))        ;XXX semantically wrong for Squeam. quick hack to try out Chez.
+;  (cond ((term? x) (hash-term x))
+;        ((pair? x) (hash-pair x))
+;        ((string? x) (hash-string x))
+;        (else (equal-hash x)))) 
 
 (define (hash-term x)
-  (hash-em 1 (cons (term-tag x) (term-parts x))))
+  1) ;(hash-em 1 (cons (term-tag x) (term-parts x))))
 
 (define (hash-pair x)
-  (hash-em 2 (list (car x) (cdr x))))
+  2) ;(hash-em 2 (list (car x) (cdr x))))
 
 (define (hash-string x)
-  (hash-em 3 (string->list x)))         ;TODO find a built-in string hash fn?
+  3) ; (hash-em 3 (string->list x)))         ;TODO find a built-in string hash fn?
 
 (define (hash-em seed xs)
   (foldl hash-mix seed xs))
@@ -91,10 +94,10 @@
 
 ;; Objects, calling, and answering
 
-(define-structure object script datum)   ; Nonprimitive objects, that is.
+(define-record-type object (fields script datum))   ; Nonprimitive objects, that is.
 (define object<- make-object)
 
-(define-structure script name trait clauses)
+(define-record-type script (fields name trait clauses))
 (define script<- make-script)
 
 (define (answer k value)
@@ -108,8 +111,8 @@
             (apply (cont-script-answerer script)
                    value
                    (object-datum k))
-            (error "Answering to a non-cont" k)))
-      (error "Answering to a non-cont" k)))
+            (error 'answer "Answering to a non-cont" k)))
+      (error 'answer "Answering to a non-cont" k)))
 
 (define (call object message k)
 ;  (dbg `(call))
@@ -132,7 +135,7 @@
                              (cons (car (term-parts message)) datum))
                       (call-cont-standin script datum message k)))
                  (else
-                  (error "Not a script" script datum)))))
+                  (error 'call "Not a script" script datum)))))
         (else
          (let ((script
                 (cond
@@ -149,7 +152,7 @@
                  ((char? object)        char-script)
                  ((term? object)        term-script)
                  ((eq? object (void))   void-script)
-                 (else (error "Non-object" object)))))
+                 (else (error 'call "Non-object" object)))))
            (run-script object script object message k)))))
 
 ;; XXX This is a hack.
@@ -161,7 +164,7 @@
 
 (define (error-prim message)
   (let* ((the-box (get-prim 'the-signal-handler-box))
-         (handler (call the-box (term<- '.^) halt-cont)))
+         (handler (unbox the-box)))
     ;; Panic by default if another error occurs during error handling.
     (call the-box (term<- '.^= panic) halt-cont)
     ;; OK, up to the handler now.
@@ -187,7 +190,7 @@
 ;  (dbg `(delegate))
   (let ((handler (cond ((object? trait) trait)
                        ((not trait) miranda-trait)
-                       (else (error "Unknown script type" script)))))
+                       (else (error 'delegating "Unknown trait type" trait)))))
     (call handler (list object message) k)))
 
 (define (signal k plaint . values)
@@ -198,14 +201,36 @@
   (and (pair? x)
        (term<- 'cons (car x) (cdr x))))
 
-(define-structure box value)
-(define box<- make-box)
+(define box<- box)
       
 (define (evaluate-prim message k)
   (apply ev-exp `(,@message ,k)))
 
 
 ;; Environments
+
+(define (random-integer high-bound)
+  (inexact->exact (floor (* (random-real) high-bound))))
+
+(define (vector-append v1 v2)
+  (let ((n1 (vector-length v1))
+        (n2 (vector-length v2)))
+    (let ((result (make-vector (+ n1 n2))))
+      (copy-range! result  0 v1 0 n1)
+      (copy-range! result n1 v2 0 n2)
+      result)))
+
+(define (subvector v lo hi)
+  (let ((n (max 0 (- hi lo))))
+    (let ((result (make-vector n)))
+      (copy-range! result 0 v lo n)
+      result)))
+  
+(define (copy-range! dest d source s n)
+  (do ((i (- n 1) (- i 1)))
+      ((< i 0))
+    (vector-set! dest (+ d i)
+                 (vector-ref source (+ s i)))))
 
 (define the-global-env
   `((__as-cons ,as-cons)
@@ -241,7 +266,7 @@
     (sqrt ,sqrt)
     (display ,display)           ;XXX temp
     (newline ,newline)           ;XXX temp
-    (pp ,pp)                     ;XXX obviously shouldn't be primitive
+;    (pp ,pp)                     ;XXX obviously shouldn't be primitive
     (panic ,panic)
     (error ,error-prim)
     (evaluate ,evaluate-prim)
@@ -271,12 +296,12 @@
     (__quotient ,quotient)
     (__remainder ,remainder)
 ;    (__number-compare
-    (__bit-<< ,arithmetic-shift)
-    (__bit->> ,(lambda (x y) (arithmetic-shift x (- y))))
-    (__bit-not ,bitwise-not)
-    (__bit-and ,bitwise-and)
-    (__bit-or  ,bitwise-ior)
-    (__bit-xor ,bitwise-xor)
+    (__bit-<< ,ash)
+    (__bit->> ,(lambda (x y) (ash x (- y))))
+    (__bit-not ,lognot)
+    (__bit-and ,logand)
+    (__bit-or  ,logior)
+    (__bit-xor ,logxor)
     (__car ,car)
     (__cdr ,cdr)
     (__append ,append)
@@ -309,8 +334,8 @@
     (__char-whitespace? ,char-whitespace?)
     (__char-lowercase ,char-downcase)
     (__char-uppercase ,char-upcase)
-    (__box-value ,box-value)
-    (__box-value-set! ,box-value-set!)
+    (__box-value ,unbox)
+    (__box-value-set! ,set-box!)
     (__term-tag ,term-tag)
     (__term-arguments ,term-parts)
     (__close-port ,close-port)
@@ -336,12 +361,12 @@
                        (display ">" sink))
                       (else (write thing sink))))) ;XXX other types specially?
 
-    (__u+ ,(lambda (a b) (bitwise-and mask32 (+ a b)))) ;XXX revisit these definitions
-    (__s+ ,(lambda (a b) (bitwise-and mask32 (+ a b)))) ;XXX I forget what distinction I meant to make
-    (__s* ,(lambda (a b) (bitwise-and mask32 (* a b))))
-    (__u- ,(lambda (a b) (bitwise-and mask32 (- a b))))
-    (__u<< ,(lambda (a b) (bitwise-and mask32 (arithmetic-shift a b))))
-    (__u>> ,(lambda (a b) (bitwise-and mask32 (arithmetic-shift a (- b)))))
+    (__u+ ,(lambda (a b) (logand mask32 (+ a b)))) ;XXX revisit these definitions
+    (__s+ ,(lambda (a b) (logand mask32 (+ a b)))) ;XXX I forget what distinction I meant to make
+    (__s* ,(lambda (a b) (logand mask32 (* a b))))
+    (__u- ,(lambda (a b) (logand mask32 (- a b))))
+    (__u<< ,(lambda (a b) (logand mask32 (ash a b))))
+    (__u>> ,(lambda (a b) (logand mask32 (ash a (- b)))))
     ))
 
 (define mask32 (- 1 (expt 2 32)))
@@ -366,7 +391,7 @@
         ((null? r)
          (assert (not (assq v the-global-env)) "Global redefinition" v)
          (set! the-global-env (cons (list v value) the-global-env)))
-        (else (error "Can't happen" v))))
+        (else (error 'env-resolve! "Can't happen" v))))
 
 (define uninitialized (object<- (script<- '<uninitialized> #f '()) '*uninitialized*))
 
@@ -413,7 +438,7 @@
        (let ((es (car parts)))
          (ev-args es r '() k)))
       (else
-       (error "Bad exp type" e)))))
+       (error 'ev-exp "Bad exp type" e)))))
 
 (define (ev-args es r vals k)
   (if (null? es)
@@ -449,7 +474,7 @@
          (ev-exp e r
                  (cont<- ev-view-call-cont k r subject p))))
       (else
-       (error "Bad pattern type" p)))))
+       (error 'ev-pat "Bad pattern type" p)))))
 
 (define (ev-match-all subjects ps r k)
   (cond ((null? ps)
@@ -468,7 +493,7 @@
 ;; for each continuation type, a separate primitive procedure to do
 ;; the actual answering -- and those'd have to be a special kind of
 ;; primitive that doesn't need a continuation, too.
-(define-structure cont-script name answerer)
+(define-record-type cont-script (fields name answerer))
 
 (define halt-cont
   (object<- (make-cont-script '__halt-cont (lambda (value) value))
