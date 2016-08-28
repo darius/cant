@@ -27,7 +27,7 @@
 
 ;; TODO transitive multi-arg
 (define (<   a b)      (= (a .compare b) -1))
-(define (<=  a b) (not (= (a .compare b)  1)))
+(define (<=  a b) (not (= (a .compare b)  1))) ;XXX error if comparison result is wrong type
 (define (<=> a b)      (= (a .compare b)  0)) ; XXX better name?
 (define (>=  a b) (not (= (a .compare b) -1)))
 (define (>   a b)      (= (a .compare b)  1))
