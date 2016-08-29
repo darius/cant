@@ -106,6 +106,8 @@
 (let any-1      (take-1 (always #yes)))
 (let skip-any-1 (skip-1 (always #yes)))
 
+(let end (invert skip-any-1))
+
 (define (lit-1 my-char)
   (skip-1 (given (char) (= my-char char))))
 
@@ -128,5 +130,5 @@
    (then p (many (then separator p)))))
 
 (export invert capture either then feed-list feed push seclude delay maybe many at-least-1
-        fail empty skip-1 take-1 any-1 skip-any-1 lit-1 lit
+        fail empty end skip-1 take-1 any-1 skip-any-1 lit-1 lit
         parse)

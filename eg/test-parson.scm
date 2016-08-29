@@ -25,7 +25,7 @@
 
 (try (many (lit-1 #\space)) "  hey")
 
-(let hug (feed-list (given (vals) vals)))
+(let hug (feed-list identity))
 
 (let sexpr
   (hide
