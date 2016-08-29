@@ -18,29 +18,25 @@
 
 (define (fail text far i vals)
   (make failure
+    ({.continue _}       failure)
+    ({.else p j vs}      (p text far j vs))
+    ({.invert}           empty)
+    ({.capture-from _}   failure)
+    ({.prefix _}         failure)
+    ({.leftovers}        (error "Parsing failed" failure))
+    ({.opt-results}      #no)
+    ({.result}           (error "Parsing failed" failure))
     ({.display}                         ;TODO change to .selfie
      (display "failed: ")
      (write (text .slice 0 far))
      (display "/")
-     (write (text .slice far)))
-    ({.invert}           empty)
-    ({.else p text j vs} (p text far j vs))
-    ({.continue p}       failure)
-    ({.capture-from j}   failure)
-    ({.prefix pre-vals}  failure)
-    ({.leftovers}        (error "Parsing failed" failure))
-    ({.opt-results}      #no)
-    ({.result}           (error "Parsing failed" failure))))
+     (write (text .slice far)))))
 
 (define (empty text far i vals)
   (make success
-    ({.display} 
-     (write (text .slice i))
-     (display " ")
-     (write vals))
-    ({.invert}           fail)
-    ({.else p text j vs} success)
     ({.continue p}       (p text far i vals))
+    ({.else _ _ _}       success)
+    ({.invert}           fail)
     ({.capture-from j}   (empty text far i `(,@vals ,(text .slice j i))))
     ({.prefix pre-vals}  (empty text far i `(,@pre-vals ,@vals)))
     ({.leftovers}        i)
@@ -48,22 +44,24 @@
     ({.result}
      (if (= 1 vals.count)
          vals.first
-         (error "Wrong # of results" vals)))))
+         (error "Wrong # of results" vals)))
+    ({.display}
+     (write (text .slice i))
+     (display " ")
+     (write vals))))
 
 (define ((invert p) text far i vals)
-  (let p-result (p text far i vals))
-  (p-result.invert text far i vals))
+  (((p text far i vals) .invert) text far i vals))
 
 (define ((capture p) text far i vals)
-  (let p-result (p text far i vals))
-  (p-result .capture-from i))
+  ((p text far i vals) .capture-from i))
 
 (define ((folded<- combine) @arguments)
   (foldr1 combine arguments))
 
 (let either
   (folded<- (define ((<either> p q) text far i vals)
-              ((p text far i vals) .else q text i vals))))
+              ((p text far i vals) .else q i vals))))
 
 (let then
   (folded<- (define ((<then> p q) text far i vals)
