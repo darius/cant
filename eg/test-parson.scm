@@ -1,6 +1,6 @@
 (import (use "lib/parson.scm")
-        invert capture either then feed-list feed push seclude delay maybe many
-        fail empty skip-1 take-1 any-1 skip-any-1 lit-1)
+        invert capture either then feed-list feed push seclude delay maybe many at-least-1
+        fail empty skip-1 take-1 any-1 skip-any-1 lit-1 lit)
 
 (define (try p text)
   (write text)
@@ -16,7 +16,7 @@
 (let bal (hide
           (let sub-bal (delay (given () bal)))
           (maybe
-           (then (lit-1 #\() sub-bal (lit-1 #\)) sub-bal))))
+           (then (lit "(") sub-bal (lit ")") sub-bal))))
 
 (try bal "(abc")
 (try bal "()xyz")

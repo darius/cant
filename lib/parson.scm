@@ -109,12 +109,24 @@
 (define (lit-1 my-char)
   (skip-1 (given (char) (= my-char char))))
 
+(define (lit string)
+  (foldr then (each lit-1 string) empty))
+
 (define (maybe p)
   (either p empty))
 
-(define (many p)
-  (let p* (maybe (then p (delay (given () p*))))))
+(make many
+  ((p)
+   (let p* (maybe (then p (delay (given () p*))))))
+  ((p separator)
+   (maybe (then p (many (then separator p))))))
 
-(export invert capture either then feed-list feed push seclude delay maybe many
-        fail empty skip-1 take-1 any-1 skip-any-1 lit-1
+(make at-least-1
+  ((p)
+   (let p+ (then p (maybe (delay (given () p+))))))
+  ((p separator)
+   (then p (many (then separator p)))))
+
+(export invert capture either then feed-list feed push seclude delay maybe many at-least-1
+        fail empty skip-1 take-1 any-1 skip-any-1 lit-1 lit
         parse)
