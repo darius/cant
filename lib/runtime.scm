@@ -68,13 +68,19 @@
         (or (= 0 key)
             (and (< 0 key)
                  (list.rest .maps? (- key 1))))))
-  ({.find? value}
-   (for some ((x list)) (= x value)))
-  ({.find value}                  ;XXX name?
+  ({.find value default}    ;; XXX update the other collections to have this too
    (begin looking ((i 0) (values list))
-      (case (values.empty? (error "Missing key" value))
+      (case (values.empty? default)
             ((= value values.first) i)
-            (else (looking (+ i 1) values.rest)))))
+            (else (looking (+ i 1) values.rest)))))   
+  ({.find value}
+   (match (list .find value #no)
+     (#no (error "Missing value" value))
+     (key key)))
+  ({.find? value}
+   (match (list .find value #no)
+     (#no #no)
+     (_ #yes)))
   )
 
 (make-trait claim-primitive me
@@ -206,15 +212,6 @@
        default))
   ({.maps? key}
    (and (integer? key) (<= 0 key) (< key me.count)))
-  ({.find value}
-   (assert (char? value) "Tried to find a non-char in a string")
-   ;; Not sure the above check is on the whole wanted. It makes
-   ;; the string interface narrower than the sequence one, which
-   ;; has pluses and minuses.
-   (begin searching ((js me.keys))
-     (case (js.empty? (error "Missing key" value))
-           ((= value (me js.first)) js.first)
-           (else (searching js.rest)))))
   ({.trim-left}
    (if me.empty?
        me
