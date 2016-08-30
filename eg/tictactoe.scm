@@ -83,18 +83,18 @@
   ((player-marks grid) 1))
 
 (define (show {grid p q})
-   (let marks (player-marks {grid p q}))
-   (let values (for each ((pair (zip (player-bits p)
+  (let marks (player-marks {grid p q}))
+  (let values (for each ((pair (zip (player-bits p)
                                      (player-bits q))))
                  (match pair
                    ((1 0) (marks 0))
                    ((0 1) (marks 1))
                    ((0 0) #\.))))
-   (call format `(,grid-format ,@(reverse values)))
-   (newline))
+  (call format `(,grid-format ,@(reverse values)))
+  (newline))
 
 (let grid-format ("\n" .join (for each ((_ (range<- 3)))
-                               " %d %d %d")))
+                                 " %d %d %d")))
 
 (let ways-to-win '(0o700 0o070 0o007 0o444 0o222 0o111 0o421 0o124))
 
