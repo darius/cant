@@ -110,4 +110,5 @@
 (hide
  (let g {grid 0o610 0o061})
  (tic-tac-toe spock-play spock-play g)
+;; (tic-tac-toe spock-play drunk-play {grid 0o400 0o020})
 )

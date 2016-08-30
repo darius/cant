@@ -18,7 +18,7 @@
 
 ;; A regex is a function from NFA to NFA. The input NFA represents the
 ;; 'rest of' the larger regex that this regex is part of; the output
-;; NFA represents this one followed by the rest. An NFA is represented
+;; NFA represents this regex followed by the rest. An NFA is represented
 ;; by a set of states, its start states. The input NFA might not be
 ;; fully constructed yet at the time we build the output, because of
 ;; the loop for the Kleene star -- so we need a mutable set.
