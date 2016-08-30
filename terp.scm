@@ -250,6 +250,7 @@
     (string? ,string?)
     (vector? ,vector?)
     (box? ,box?)
+    (term? ,term?)
     (source? ,input-port?)
     (sink? ,output-port?)
     (eof-object? ,eof-object?)
