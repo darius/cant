@@ -67,3 +67,4 @@
 (loud-load "eg/lambdaterp.scm")
 (loud-load "eg/tictactoe.scm")
 (loud-load "eg/max-path-sum.scm")
+(loud-load "eg/test-metaterp.scm")

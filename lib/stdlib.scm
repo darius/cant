@@ -212,9 +212,15 @@
 (let the-signal-handler-box (box<- panic))
 
 (define (repl)                          ;TODO rename
-  (display "sqm> ")
-  (print (evaluate (parse-exp (read)) '())) ;XXX reify a proper env object
-  (repl))
+  (import (use "lib/traceback.scm") on-error-traceback)
+  (begin interacting ()
+    (the-signal-handler-box .^= (define (on-error-repl k @evil)
+                                  (call on-error-traceback `(,k ,@evil))
+                                  ;; TODO save k for inspecting/resuming
+                                  (interacting)))
+    (display "squeam> ")
+    (print (evaluate (parse-exp (read)) '())) ;XXX reify a proper env object
+    (interacting)))
 
 (let the-modules (box<- '()))
 
