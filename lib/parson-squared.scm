@@ -3,7 +3,7 @@
 ;; XXX leaving out regexes, fnord, anonymous start
 ;; XXX need to parameterize by semantics
 
-(import (use "lib/hashset.scm") union)
+(import (use "lib/hashset.scm") union-over)
 (import (use "lib/parson.scm")
         invert capture either then feed-list feed push seclude delay maybe many at-least-1
         fail empty end skip-1 take-1 any-1 skip-any-1 lit-1 lit
@@ -23,7 +23,7 @@
 (define (lift peg-op)
   (feed-list
    (given (lifted)
-     (list<- (call union (for each (((refs _) lifted))
+     (list<- (union-over (for each (((refs _) lifted))
                            refs))
              (given (builder rules subs)
                (call peg-op (for each (((_ f) lifted))
