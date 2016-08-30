@@ -52,15 +52,13 @@
      (sink .print count.^)
      (sink .display ")>"))     
 
-    ;; XXX should be vector trait... with the rest of the map interface too.
-    ({.empty?}         (= 0 count.^))
-    ({.first}          (fillvector 0))
-    ({.rest}           (fillvector .slice 1))
     ({.copy! v}        (fillvector .copy! v 0 v.count))
     ({.slice lo}       (fillvector .slice lo count.^))
     ;; inefficient:
     ({.chain v}        (fillvector.snapshot .chain v))
     ({.slice lo bound} (fillvector.snapshot .slice lo bound))
-    ))
+
+    ;; TODO there should be a vector trait
+    (message           (list-trait fillvector message))))
 
 (export fillvector<- fillvector<-count)
