@@ -8,11 +8,8 @@
   ;; ...
   )
 
-(define (compare x y)                   ;TODO move these to stdlib?
-  (x .compare y))
-
 (define (compare-reversed x y)
-  (y .compare x))
+  (compare y x))
 
 (define (sort-by sequence cmp)
 
