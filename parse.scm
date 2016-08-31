@@ -259,7 +259,7 @@
       (if (or (not (qq-constant? tag-e))
               (any (mlambda (('unquote-splicing __) #t) (__ #f))
                    parts))
-          `(term<- ,tag-e ,(expand-quasiquote parts)) ;XXX hygiene
+          `(',make-term ,tag-e ,(expand-quasiquote parts))
           (let ((part-es (map expand-quasiquote parts)))
             (if (all qq-constant? part-es)
                 `',term
