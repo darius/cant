@@ -26,11 +26,22 @@
   ((a b @arguments) (foldl '.- (a .- b) arguments)))
 
 ;; TODO transitive multi-arg
-(define (<   a b)      (= (a .compare b) -1))
-(define (<=  a b) (not (= (a .compare b)  1))) ;XXX error if comparison result is wrong type
-(define (<=> a b)      (= (a .compare b)  0)) ; XXX better name?
-(define (>=  a b) (not (= (a .compare b) -1)))
-(define (>   a b)      (= (a .compare b)  1))
+(define (<   a b)      (= (compare a b) -1))
+(define (<=  a b) (not (= (compare a b)  1)))
+(define (<=> a b)      (= (compare a b)  0)) ; XXX better name?
+(define (>=  a b) (not (= (compare a b) -1)))
+(define (>   a b)      (= (compare a b)  1))
+
+(define (compare a b)
+  (let result (a .compare b))
+  (if (comparison? result) result (error "Incomparable" a b)))
+
+(define (comparison? x)
+  (match x
+    (-1 #yes)
+    ( 0 #yes)
+    (+1 #yes)
+    (_  #no)))
 
 ;; XXX float contagion
 (make min
