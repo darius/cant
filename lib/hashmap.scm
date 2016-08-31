@@ -30,7 +30,7 @@
                   (walking (- i 1))
                   (cons i (walking (- i 1))))))))
 
-  (define (find key)
+  (define (place key)
     (let mask (- keys.^.count 1))
     (let i0   (mask .and (__hash key)))
     (begin walking ((i i0))
@@ -55,23 +55,23 @@
     (vals .^= (vector<-count new-capacity))
     (for each! (((i key) old-keys.items))
       (unless (= key none)
-        (let {missing-at j} (find key))
+        (let {missing-at j} (place key))
         (keys.^ .set! j key)
         (vals.^ .set! j (old-vals i)))))
                             
   (make hashmap
     ((key)
-     (match (find key)
+     (match (place key)
        ({at i} (vals.^ i))
        (_      (error "Missing key" hashmap key))))
     ({.get key}
      (hashmap .get key #no))
     ({.get key default}
-     (match (find key)
+     (match (place key)
        ({at i} (vals.^ i))
        (_      default)))
     ({.set! key val}
-     (match (find key)
+     (match (place key)
        ({at i}
         (vals.^ .set! i val))
        ({missing-at i}
@@ -80,7 +80,7 @@
         (count .^= (+ count.^ 1))
         (maybe-grow))))
     ({.maps? key}
-     (match (find key)
+     (match (place key)
        ({at _} #yes)
        (_      #no)))
     ({.empty?} (= count.^ 0))
@@ -94,10 +94,10 @@
        `(,(ks i) ,(vs i))))
     ({.find? value}
      (hashmap.values .find? value))
-    ({.find value}
+    ({.find value default}
      (let vs vals.^)
      (begin searching ((js (occupants)))  ;XXX should be lazy
-       (case (js.empty? (error "Missing key" value))
+       (case (js.empty? default)
              ((= value (vs js.first)) (keys.^ js.first))
              (else (searching js.rest)))))
     ({.selfie sink}
