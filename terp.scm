@@ -276,6 +276,7 @@
 
     ;; These will get high-level definitions later TODO
     (/ ,/)
+    (expt ,expt)
     (gcd ,gcd)
     (vector<-list ,list->vector)
     (read ,squeam-read)
