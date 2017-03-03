@@ -31,7 +31,8 @@
   (c* c1 (reciprocal c2)))
 
 (define (reciprocal c)
-  (r*c (/ 1 (c-abs^2 c)) (conjugate c)))
+  (r*c (/ 1 (c-abs^2 c))
+       (conjugate c)))
 
 ;; TODO fancier syntax for 'export' to handle this. Or just plain map literals.
 (map<-a-list `(

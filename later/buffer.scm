@@ -48,7 +48,7 @@
                                 point.^
                                 has-point?))
             (let rendering (render text origin.^ point.^))
-            (case ((== origin.^ point.^)
+            (case ((= origin.^ point.^)
                    (origin .^= 0) ; Couldn't center it.
                    (render text origin.^ point.^))
                   (else rendering)))))
