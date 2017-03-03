@@ -55,7 +55,7 @@
     ({.source} `(& ,v ,body.source))
     ({.eval-step r k} (debugging (value-step<- abstraction r k)))
     ({.evaluate r k}
-     (k .take (make
+     (k .take (make _
                 ({.survey} `(,v -> <body>))
                 ({.call arg k2}
                  (body .evaluate (extend r v arg) k2))
@@ -107,7 +107,7 @@
    XXX)
   ({.call arg1 k1}
    (if (number? arg1)
-       (k1 .take (make
+       (k1 .take (make _
                    ({.survey} `(+ ,(survey arg1)))
                    ({.call-step arg2 k2}
                     XXX)
@@ -218,7 +218,7 @@
 (define (debugger-trap-cont<- k)
   (if (= k halt)
       k
-      (make
+      (make _
         ({.take value} (debugging (out-step<- k value)))
         ;; XXX (.inject ...) ?
         (else message (call k message)))))

@@ -1,8 +1,8 @@
 ;; The N-queens problem as a BDD.
 
 (import (use "lib/bdd.scm")
-        bdd-and bdd-or satisfy-first
-        lit0 lit1 build-choice)
+  bdd-and bdd-or satisfy-first
+  lit0 lit1 build-choice)
 
 ;; TODO design command-line interfacing
 (define (main argv)

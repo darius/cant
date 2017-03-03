@@ -82,4 +82,4 @@
 
 (superopt "0110" 3)
 (superopt "1011" 3)
-;(superopt "0110" 4)
+;;(superopt "0110" 4)

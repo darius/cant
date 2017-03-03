@@ -52,7 +52,7 @@
   model)
 
 (define (words<-string string)
-;;  (re:findall "[a-z]+" string.lowercase))  ;TODO
+  ;;  (re:findall "[a-z]+" string.lowercase))  ;TODO
   string.lowercase.split)
 
 (let NWORDS

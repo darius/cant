@@ -85,11 +85,11 @@
 (define (show {grid p q})
   (let marks (player-marks {grid p q}))
   (let values (for each ((pair (zip (player-bits p)
-                                     (player-bits q))))
-                 (match pair
-                   ((1 0) (marks 0))
-                   ((0 1) (marks 1))
-                   ((0 0) #\.))))
+                                    (player-bits q))))
+                (match pair
+                  ((1 0) (marks 0))
+                  ((0 1) (marks 1))
+                  ((0 0) #\.))))
   (call format `(,grid-format ,@(reverse values)))
   (newline))
 
