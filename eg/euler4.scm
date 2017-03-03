@@ -13,7 +13,7 @@
 
 (print (euler4 10 30))
 ;(print (euler4 10 100))
-;(print (euler4 (range<- 100 1000)))
+;(print (euler4 100 1000))
 
 ;; This code'd be adequate on a nice fast Squeam system; but
 ;; it's absurdly too slow right now. Need a cleverer algorithm.
