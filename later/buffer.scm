@@ -5,7 +5,7 @@
 (import (use "charset.scm") charset<-)
 (import (use "display.scm") render rows cols)   ; XXX rename to num-rows or something
 (import (use "keymap.scm")  keymap<-)
-(import (use "text.scm")    text<-)
+(import (use "text.scm")    text<- backward forward)
 
 ;; Return the smallest i in [lo..hi) where ok(i), if any; else hi.
 ;; Pre: lo and hi are ints, lo < hi
@@ -57,17 +57,17 @@
      ;; TODO: preserve goal column; respect formatting, such as tabs;
      ;; treat long lines as defined by display
    (define (previous-line)
-     (let start      (find-line point.^ -1))
+     (let start      (find-line point.^ backward))
      (let offset     (- point.^ start))
-     (let prev-start (find-line (- start 1) -1))
+     (let prev-start (find-line (- start 1) backward))
      (point .^= (min (+ prev-start offset)
                      (text.clip (- start 1)))))
 
    (define (next-line)
-     (let start      (find-line point.^ -1))
+     (let start      (find-line point.^ backward))
      (let offset     (- point.^ start))
-     (let next-start (find-line start 1))
-     (let next-end   (find-line next-start 1))
+     (let next-start (find-line start forward))
+     (let next-end   (find-line next-start forward))
      (point .^= (min (+ next-start offset)
                      (text.clip (- next-end 1)))))
    ;; XXX this can wrap around since text.clip moves `nowhere` to 0.
@@ -83,16 +83,16 @@
 
      ({.backward-delete-char}
       (text.delete (- point.^ 1) 1)
-      (move-char -1))
+      (move-char backward))
 
      ({.forward-delete-char}
       (text.delete point.^ 1))
 
      ({.beginning-of-line}
-      (point .^= (find-line point.^ -1)))
+      (point .^= (find-line point.^ backward)))
 
      ({.end-of-line}
-      (point .^= (text.clip (- (find-line point.^ 1) 1))))
+      (point .^= (text.clip (- (find-line point.^ forward) 1))))
 
      ({.insert ch}
       (insert ch))
