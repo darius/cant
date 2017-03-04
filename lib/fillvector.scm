@@ -51,6 +51,8 @@
      (sink .display "#<fillvector (")
      (sink .print count.^)
      (sink .display ")>"))     
+    ({.resize! n}
+     unimplemented) ;XXX
 
     ({.copy! v}        (fillvector .copy! v 0 v.count))
     ({.slice lo}       (fillvector .slice lo count.^))

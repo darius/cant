@@ -56,6 +56,9 @@
     (let (p span) (clip-range p0 span0))
     (string<-list (each get-char-after (range<- p (+ p span)))))
 
+  (define (grow n)
+    (+ n (n .quotient 2)))
+
   ;; Replace the `span` characters after `p` by `replacement`.
   ;; TODO this code is hard to follow
   ;; XXX check/correct this for 0-based vectors
@@ -75,11 +78,12 @@
     ;; Grow the array so `replacement` fits in the gap.
     (let r-size replacement.size)
     (when (< gap.^ r-size)
-      (let tail (- size.^ head.^))
-      (let sz   (+ size.^ gap.^))   ;; TODO rename
-      (let sz2  (+ sz (sz .quotient 2) r-size))
-      (t .move! (- sz2 tail) (+ head.^ gap.^) tail)
-      (gap .^= (- sz2 size.^)))
+      (let tail (- size.^ head.^)) ;XXX shouldn't this subtract the gap too?
+      (let sz   (+ (grow (+ size.^ gap.^))   ;; TODO rename
+                   r-size))
+      (t .resize! sz)
+      (t .move! (- sz tail) (+ head.^ gap.^) tail)
+      (gap .^= (- sz size.^)))
 
     ;; Insert `replacement`.
     ;; (t .copy! head.^ replacement 0 r-size)   TODO no such method
