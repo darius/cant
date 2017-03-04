@@ -41,11 +41,9 @@
             (origin .^= (search (text .clip (- point.^ screen-size))
                                 point.^
                                 has-point?))
-            (let rendering (render text origin.^ point.^))
-            (case ((= origin.^ point.^)
-                   (origin .^= 0) ; Couldn't center it.
-                   (render text origin.^ point.^))
-                  (else rendering)))))
+            (when (= origin.^ point.^)
+              (origin .^= 0)) ; Couldn't center it.
+            (render text origin.^ point.^))))
 
    (define (insert ch)                  ;XXX change to expect char instead of string?
      (text.insert point.^ ch)
