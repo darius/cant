@@ -74,11 +74,12 @@
    
    (let keymap (keymap<- insert))
 
-   (make _
+   (make buffer
 
      ({.clear}
       text.clear
-      (point .^= 0))                    ;TODO origin too?
+      (point .^= 0)
+      (origin .^= 0))
 
      ({.backward-delete-char}
       (text.delete (- point.^ 1) 1)
@@ -123,6 +124,7 @@
       rendering.show)
 
      ({.visit filename}
+      buffer.clear
       (let contents (with-input-file read-into-string filename))
       (text .insert 0 contents))))
 
