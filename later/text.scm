@@ -84,7 +84,7 @@
     ;; Insert `replacement`.
     ;; (t .copy! head.^ replacement 0 r-size)   TODO no such method
     (for each! ((i (range<- r-size)))
-      (me .set! (+ i head.^) (replacement i)))
+      (t .set! (+ i head.^) (replacement i)))
     (head .^= (+ head.^ r-size))
     (gap  .^= (- gap.^ r-size))
     (size .^= (+ size.^ r-size)))
