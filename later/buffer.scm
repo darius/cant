@@ -54,6 +54,24 @@
    (define (find-line p dir)
      (text.clip (text.find-char-set p dir newline)))
 
+     ;; TODO: preserve goal column; respect formatting, such as tabs;
+     ;; treat long lines as defined by display
+   (define (previous-line)
+     (let start      (find-line point.^ -1))
+     (let offset     (- point.^ start))
+     (let prev-start (find-line (- start 1) -1))
+     (point .^= (min (+ prev-start offset)
+                     (text.clip (- start 1)))))
+
+   (define (next-line)
+     (let start      (find-line point.^ -1))
+     (let offset     (- point.^ start))
+     (let next-start (find-line start 1))
+     (let next-end   (find-line next-start 1))
+     (point .^= (min (+ next-start offset)
+                     (text.clip (- next-end 1)))))
+   ;; XXX this can wrap around since text.clip moves `nowhere` to 0.
+   
    (let keymap (keymap<- insert))
 
    (make _
@@ -84,24 +102,9 @@
      ({.move-char offset}
       (point .^= (text.clip (+ point.^ offset))))
 
-     ;; TODO: preserve goal column; respect formatting, such as tabs;
-     ;; treat long lines as defined by display
-     ({.previous-line}
-      (let start      (find-line point.^ -1))
-      (let offset     (- point.^ start))
-      (let prev-start (find-line (- start 1) -1))
-      (point .^= (min (+ prev-start offset)
-                      (text.clip (- start 1)))))
+     ({.previous-line} (previous-line))
+     ({.next-line}     (next-line))
 
-     ({.next-line}
-      (let start      (find-line point.^ -1))
-      (let offset     (- point.^ start))
-      (let next-start (find-line start 1))
-      (let next-end   (find-line next-start 1))
-      (point .^= (min (+ next-start offset)
-                      (text.clip (- next-end 1)))))
-     ;; XXX this can wrap around since text.clip moves `nowhere` to 0.
-   
      ;; TODO: more reasonable/emacsy behavior. This interacts quite badly
      ;; with the dumb update-origin() logic.
      ({.previous-page}
