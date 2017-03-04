@@ -22,20 +22,14 @@
                     (searching L mid)
                     (searching mid H)))))))
 
+(let newline (charset<- #\newline))
+
 ;; Return a new buffer.
 (define (buffer<-)
 
    (let text (text<-))
    (let point (box<- 0))              ; TODO: make this a mark
    (let origin (box<- 0))     ; display origin. XXX keep in a window object?
-
-   (define (clear)
-      text.clear
-      (point .^= 0))
-
-   (define (visit filename)
-     (let contents (with-input-file read-into-string filename))
-     (text .insert 0 contents))
 
    (define (update-origin)
      (let rendering (render text origin.^ point.^))
@@ -53,82 +47,81 @@
                    (render text origin.^ point.^))
                   (else rendering)))))
 
-   (define (redisplay)
-     (let rendering (update-origin))
-     (assert rendering.point-is-visible?)
-     rendering.show)
-
    (define (insert ch)                  ;XXX change to expect char instead of string?
      (text.insert point.^ ch)
      (point .^= (+ point.^ ch.size)))
 
-   (define (move-char offset)
-     (point .^= (text.clip (+ point.^ offset))))
-
-   (define (backward-delete-char)
-     (text.delete (- point.^ 1) 1)
-     (move-char -1))
-
-   (define (forward-delete-char)
-     (text.delete point.^ 1))
-
-   (let newline (charset<- #\newline))
-
    (define (find-line p dir)
      (text.clip (text.find-char-set p dir newline)))
 
-   (define (beginning-of-line)
-     (point .^= (find-line point.^ -1)))
-
-   (define (end-of-line)
-     (point .^= (text.clip (- (find-line point.^ 1) 1))))
-
-   ;; TODO: preserve goal column; respect formatting, such as tabs;
-   ;; treat long lines as defined by display
-   (define (previous-line)
-     (let start      (find-line point.^ -1))
-     (let offset     (- point.^ start))
-     (let prev-start (find-line (- start 1) -1))
-     (point .^= (min (+ prev-start offset)
-                     (text.clip (- start 1)))))
-
-   (define (next-line)
-     (let start      (find-line point.^ -1))
-     (let offset     (- point.^ start))
-     (let next-start (find-line start 1))
-     (let next-end   (find-line next-start 1))
-     (point .^= (min (+ next-start offset)
-                     (text.clip (- next-end 1)))))
-   ;; XXX this can wrap around since text.clip moves `nowhere` to 0.
-   
-   ;; TODO: more reasonable/emacsy behavior. This interacts quite badly
-   ;; with the dumb update-origin() logic.
-   (define (previous-page)
-     ;; (update-origin)
-     ;; point .^= origin
-     (each! previous-line (range<- rows)))
-
-   (define (next-page)
-     ;; (update-origin)
-     ;; point .^= origin
-     (each! next-line (range<- rows)))
-
    (let keymap (keymap<- insert))
 
-   (export 
-     backward-delete-char
-     beginning-of-line
-     end-of-line
-     forward-delete-char
-     insert
-     keymap
-     move-char
-     next-line
-     previous-line
-     next-page
-     previous-page
-     redisplay
-     visit))
+   (make _
+
+     ({.clear}
+      text.clear
+      (point .^= 0))                    ;TODO origin too?
+
+     ({.backward-delete-char}
+      (text.delete (- point.^ 1) 1)
+      (move-char -1))
+
+     ({.forward-delete-char}
+      (text.delete point.^ 1))
+
+     ({.beginning-of-line}
+      (point .^= (find-line point.^ -1)))
+
+     ({.end-of-line}
+      (point .^= (text.clip (- (find-line point.^ 1) 1))))
+
+     ({.insert ch}
+      (insert ch))
+
+     ({.keymap}
+      keymap)
+
+     ({.move-char offset}
+      (point .^= (text.clip (+ point.^ offset))))
+
+     ;; TODO: preserve goal column; respect formatting, such as tabs;
+     ;; treat long lines as defined by display
+     ({.previous-line}
+      (let start      (find-line point.^ -1))
+      (let offset     (- point.^ start))
+      (let prev-start (find-line (- start 1) -1))
+      (point .^= (min (+ prev-start offset)
+                      (text.clip (- start 1)))))
+
+     ({.next-line}
+      (let start      (find-line point.^ -1))
+      (let offset     (- point.^ start))
+      (let next-start (find-line start 1))
+      (let next-end   (find-line next-start 1))
+      (point .^= (min (+ next-start offset)
+                      (text.clip (- next-end 1)))))
+     ;; XXX this can wrap around since text.clip moves `nowhere` to 0.
+   
+     ;; TODO: more reasonable/emacsy behavior. This interacts quite badly
+     ;; with the dumb update-origin() logic.
+     ({.previous-page}
+      ;; (update-origin)
+      ;; point .^= origin
+      (each! previous-line (range<- rows)))
+
+     ({.next-page}
+      ;; (update-origin)
+      ;; point .^= origin
+      (each! next-line (range<- rows)))
+
+     ({.redisplay}
+      (let rendering (update-origin))
+      (assert rendering.point-is-visible?)
+      rendering.show)
+
+     ({.visit filename}
+      (let contents (with-input-file read-into-string filename))
+      (text .insert 0 contents))))
 
 (export
   buffer<-)

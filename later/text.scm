@@ -89,11 +89,17 @@
     (gap  .^= (- gap.^ r-size))
     (size .^= (+ size.^ r-size)))
 
-   (export
-     clip
-     get
-;;     size                               ;XXX bind to (given () size.^)
-     replace))
+  (make _
+    ({.clear}
+     (head .^= 0)
+     (gap  .^= 0)
+     (size .^= 0))
+    ({.clip p}             (clip p))
+    ({.delete p span}      (replace p span ""))
+    ({.get p span}         (get p span))
+    ({.insert p str}       (replace p 0 str))
+    ({.replace p span str} (replace p span str))
+    ({.size}               size.^)))
 
 (export
   backward
