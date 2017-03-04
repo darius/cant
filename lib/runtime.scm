@@ -216,7 +216,7 @@
    (if (me .maps? key)
        (me key)
        default))
-  ({.maps? key}
+  ({.maps? key}                         ;XXX duplicate, see above
    (and (integer? key) (<= 0 key) (< key me.count)))
   ({.trim-left}
    (if me.empty?
@@ -259,6 +259,8 @@
                       (#\return  "\\r")
                       (_ c))))
    (sink .display #\"))
+  ({.replace pattern replacement}
+   unimplemented)  ;XXX
   (message
    (list-trait me message))) ;XXX use trait syntax instead
 
