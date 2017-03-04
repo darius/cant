@@ -177,6 +177,12 @@
    (for each! ((i (range<- lo bound)))
      (__vector-set! me (- i lo) (v i)))) ;XXX was this what I wanted? I forget.
   ({.copy}        (__vector-copy me))
+  ({.move! dest src len}                ;XXX untested
+   (for each! ((i (if (<= dest src)
+                      (range<- len)
+                      (reverse (range<- len)))))  ;TODO inefficient
+     (me .set! (+ dest i)
+         (me (+ src i)))))
   ({.selfie sink}
    (sink .display "#!")
    (sink .print (__vector->list me)))

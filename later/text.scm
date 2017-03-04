@@ -51,15 +51,43 @@
   (define (get-char-after p)
     (t (if (< p head.^) p (+ p gap.^))))
 
-   ;; Return the `span` characters after `p0` as a string.
-   (define (get p0 span0)
-     (let (p span) (clip-range p0 span0))
-     (string<-list (each get-char-after (range<- p (+ p span)))))
+  ;; Return the `span` characters after `p0` as a string.
+  (define (get p0 span0)
+    (let (p span) (clip-range p0 span0))
+    (string<-list (each get-char-after (range<- p (+ p span)))))
 
-   ;; Replace the `span` characters after `p` by `replacement`.
-   (define (replace p0 span0 replacement)
-     (let (p span) (clip-range p0 span0))
-     XXX)
+  ;; Replace the `span` characters after `p` by `replacement`.
+  ;; TODO this code is hard to follow
+  ;; XXX check/correct this for 0-based vectors
+  (define (replace p0 span0 replacement)
+    (let (p span) (clip-range p0 span0))
+     
+    ;; Make position p start the tail.
+    (if (<= p head.^)
+        (t .move! (+ gap.^ p)  p                 (- head.^ p))
+        (t .move! head.^       (+ gap.^ head.^)  (- p head.^)))
+    (head .^= p)
+
+    ;; Delete the next `span` characters.
+    (gap .^= (+ gap.^ span))
+    (size .^= (- size.^ span))
+
+    ;; Grow the array so `replacement` fits in the gap.
+    (let r-size replacement.size)
+    (when (< gap.^ r-size)
+      (let tail (- size.^ head.^))
+      (let sz   (+ size.^ gap.^))   ;; TODO rename
+      (let sz2  (+ sz (sz .quotient 2) r-size))
+      (t .move! (- sz2 tail) (+ head.^ gap.^) tail)
+      (gap .^= (- sz2 size.^)))
+
+    ;; Insert `replacement`.
+    ;; (t .copy! head.^ replacement 0 r-size)   TODO no such method
+    (for each! ((i (range<- r-size)))
+      (me .set! (+ i head.^) (replacement i)))
+    (head .^= (+ head.^ r-size))
+    (gap  .^= (- gap.^ r-size))
+    (size .^= (+ size.^ r-size)))
 
    (export
      clip
