@@ -247,6 +247,18 @@
                       (cons (s .slice 0 i)
                             (splitting ((s .slice (+ i 1)) .trim-left))))
                      (else (scanning (+ i 1)))))))))
+  ({.split delimiter}
+   ;; TODO deduplicate code
+   (begin splitting ((s me))
+     (if s.empty?
+         '()
+         (do (let limit s.count)
+             (begin scanning ((i 0))
+               (case ((= i limit) `(,s))
+                     ((= delimiter (s .slice i (+ i delimiter.count)))
+                      (cons (s .slice 0 i)
+                            (splitting (s .slice (+ i delimiter.count)))))
+                     (else (scanning (+ i 1)))))))))
   ({.lowercase} (string<-list (for each ((c me)) c.lowercase)))
   ({.uppercase} (string<-list (for each ((c me)) c.uppercase)))
   ({.selfie sink}
@@ -260,6 +272,8 @@
                       (#\return  "\\r")
                       (_ c))))
    (sink .display #\"))
+  ({.starts-with? s}
+   (= (me .slice 0 s.count) s))   ;TODO more efficient
   ({.replace pattern replacement}
    unimplemented)  ;XXX
   (message
