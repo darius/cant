@@ -103,6 +103,7 @@
   ({.compare a}   (__number-compare me a))
   ({.quotient b}  (__quotient me b))
   ({.remainder b} (__remainder me b))
+  ({.modulo b}    (__modulo me b))
   ({.<< b}        (__bit-<<  me b))
   ({.>> b}        (__bit->>  me b))
   ({.not}         (__bit-not me))

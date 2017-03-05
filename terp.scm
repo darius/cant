@@ -297,6 +297,7 @@
     (__* ,*)
     (__quotient ,quotient)
     (__remainder ,remainder)
+    (__modulo ,modulo)
 ;    (__number-compare
     (__bit-<< ,ash)
     (__bit->> ,(lambda (x y) (ash x (- y))))

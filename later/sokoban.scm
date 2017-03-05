@@ -36,30 +36,14 @@
   (main collection name))
 
 (define (main level-collection name)
-  (let grids (each parse (level-collection .split "\n\n")))  ;XXX .split
+  (let grids (for each ((initial-config (level-collection .split "\n\n")))  ;XXX .split
+               (sokoban-grid<- (parse initial-config))))
   (for cbreak-mode ()
     (play grids name 0)))
 
-;; We represent a grid as a mutable vector of characters, including
-;; the newlines, with every line the same length (which we call the
-;; width of the grid). Thus moving up or down from some square means a
-;; displacement by that same width, whatever the starting square.
-
-(define (parse grid-string)
-  (let lines grid-string.split-lines)
-  (assert (for every ((line lines))
-            (= line.size ((lines 0) .size))))
-  (vector<-list grid-string))
-
-(define (unparse grid)
-  ((" " .join grid) .replace "\n " "\n"))
-
-(define (up    width)  (- width))
-(define (down  width)  width)
-(define (left  width)  -1)
-(define (right width)   1)
-(let directions (map<-a-list `((h    ,left) (j    ,down) (k  ,up) (l     ,right)
-                               (left ,left) (down ,down) (up ,up) (right ,right))))
+(let directions (map<-a-list
+                 `((h    left) (j    down) (k  up) (l     right)
+                   (left left) (down down) (up up) (right right))))
 
 ;; The UI to a sequence of Sokoban levels.
 (define (play grids name level)
@@ -72,15 +56,14 @@
     (let trail (trails level))
 
     (define (view-grid)
-      (for each ((ch (unparse grid)))
+      (for each ((ch grid.unparse))
         (let c1 (if ("iI" .find? ch) green unstyled))
         (let c2 (if (".I@" .find? ch) (compose bold c1) c1))
         (color c2)))
 
-    (render
-     `(,(heading .format (+ level 1) name trail.size)
-       ,(view-grid)
-       ,@(if (won? grid) '("\n\nDone!") '())))
+    (render `(,(heading .format (+ level 1) name trail.size)
+              ,(view-grid)
+              ,@(if grid.won? '("\n\nDone!") '())))
 
     (let key ((get-key) .lowercase))
     (match key
@@ -93,38 +76,61 @@
        (playing level))
       (_
        (when (directions .maps? key)
-         (let previously grid.copy)
-         (push grid (directions key))
-         (unless (= (unparse grid) (unparse previously)) ;XXX clumsy
+         (let previously grid.copy)     ;XXX
+         (grid .push (directions key))
+         (unless (= grid.unparse previously.unparse) ;XXX clumsy
            (trail .push! previously)))
        (playing level)))))
 
-(define (won? grid)
-  (not (grid .find? #\o)))
+(define (parse initial-config)
+  (let lines initial-config.split-lines)
+  (assert (for every ((line lines))
+            (= line.size ((lines 0) .size))))
+  (vector<-list initial-config))
 
-;; Update grid, trying to move the player in the direction.
-(define (push grid direction)
-  (let i (grid .find (if (grid .find? #\i) #\i #\I)))
+(define (sokoban-grid<- grid)
+  ;; We represent a grid as a mutable vector of characters, including
+  ;; the newlines, with every line the same length (which we call the
+  ;; width of the grid). Thus moving up or down from some square means a
+  ;; displacement by that same width, whatever the starting square.
   (let width (+ (grid .find #\newline) 1))
-  (let d (direction width))
-  (move grid "o@" (+ i d) (+ i d d))
-  (move grid "iI" i (+ i d)))
+  (let directions
+    (map<-a-list `((left -1) (right 1) (down ,width) (up ,(- width)))))
 
-;; Move thing from here to there if possible.
-(define (move grid thing here there)
-  ;; N.B. `there` is always in bounds when `grid[here] in thing`
-  ;; because our grids have '#'-borders, while `thing` is never a '#'.
-  (when (and (thing .find? (grid here))
-             (" ." .find? (grid there)))
-    (lift grid here)
-    (drop grid there thing)))
+  (define (find-player)
+    (or (grid .find #\i #no)
+        (grid .find #\I)))
 
-;; Remove any thing (crate or player) from position i.
-(define (lift grid i)
-  (let dot? (".@I" .find? (grid i)))
-  (grid .set! i (" ." (if dot? 1 0))))
+  ;; Move thing from here to there if possible.
+  (define (move! thing here there)
+    (when (and (thing .find? (grid here))
+               (" ." .find? (grid there)))
+      (clear! here)
+      (drop! thing there)))
 
-;; Into a clear square, put thing.
-(define (drop grid i thing)
-  (let dot? (= #\. (grid i)))
-  (grid .set! i (thing (if dot? 1 0))))
+  ;; Remove any thing (crate or player) from pos.
+  (define (clear! pos)
+    (let target? (".@I" .find? (grid pos)))
+    (grid .set! pos (if target? #\. #\space)))
+
+  ;; Into a clear square, put thing.
+  (define (drop! thing pos)
+    (let target? (= #\. (grid pos)))
+    (grid .set! pos (thing (if target? 1 0))))
+
+  (make _
+    ({.unparse}
+     ((" " .join grid) .replace "\n " "\n"))
+
+    ({.copy}
+     (sokoban-grid<- grid.copy))
+
+    ({.won?}
+     (not (grid .find? #\o)))
+
+    ;; Try to move the player in the direction.
+    ({.push dir}
+     (let d (directions dir))
+     (let p (find-player))
+     (move! "o@" (+ p d) (+ p d d))
+     (move! "iI" p (+ p d)))))
