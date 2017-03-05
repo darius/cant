@@ -37,7 +37,7 @@
   (let (name collection)
     (for with-input-file ((f filename))
       `(,(f.readline .rstrip "\n")    ;XXX
-        ,f.read)))                    ;XXX
+        ,f.read-all)))
   (main collection name))
 
 (define (main level-collection name)
