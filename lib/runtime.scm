@@ -274,8 +274,20 @@
    (sink .display #\"))
   ({.starts-with? s}
    (= (me .slice 0 s.count) s))   ;TODO more efficient
-  ({.replace pattern replacement}
-   unimplemented)  ;XXX
+  ({.replace pattern replacement} ;TODO more efficient
+   ;; TODO unify the cases?
+   (case (pattern.empty?
+          (for foldr ((ch me) (rest replacement))
+            (chain replacement (string<- ch) rest)))
+         (else
+          (let limit me.count)
+          (string<-list
+           (begin scanning ((i 0))
+             (case ((= i limit) '())
+                   ((= pattern (me .slice i (+ i pattern.count)))
+                    (chain (list<-string replacement)
+                           (scanning (+ i pattern.count))))
+                   (else (cons (me i) (scanning (+ i 1))))))))))
   (message
    (list-trait me message))) ;XXX use trait syntax instead
 

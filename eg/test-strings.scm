@@ -17,3 +17,10 @@
 (print ("hey||there||" .split "||"))
 (print ("hey||th|ere|||whee" .split "||"))
 (print ("hey||th|ere||||whee" .split "||"))
+
+(print ("hey there" .replace "x" "123"))
+(print ("hey" .replace "" "X"))
+(print ("hey-yo-dude" .replace "-" "=="))
+(print ("-hey-yo--dude-" .replace "-" "=="))
+(print ("-hey-yo--dude-" .replace "-" ""))
+(print ("-hey->yo->dude-" .replace "->" "(())"))

@@ -286,6 +286,7 @@
     ;; Should use string ports instead:
     (number<-string ,string->number)
     (string<-number ,number->string)
+    (list<-string ,string->list)
     (read ,squeam-read)
 
     ;; Primitives only -- TODO seclude in their own env:
