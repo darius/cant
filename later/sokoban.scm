@@ -1,16 +1,21 @@
 ;; Sokoban game, ported from github.com/darius/sturm.
 
-;; You move yourself (shown as 'i' or 'I') around a 2-d grid. You can
-;; push one crate at a time (each shown as 'o' or '@'). You win when
-;; every crate is on a target square: an empty target appears as '.',
-;; while one with a crate on it is '@'. (You are shown as 'I' when on a
-;; target yourself.) Nothing can move through a wall ('#'). These simple
-;; rules yield an elegant game with scope for a tremendous variety of
+;; In this game you live in a 2-d grid world containing crates, target
+;; squares, and impassable walls. You need to push all the crates onto
+;; targets. You can only push one crate at once. These simple rules
+;; yield an elegant game with scope for a tremendous variety of
 ;; puzzles, from easy to AI-complete.
 
+;; A square with     is this symbol     or this symbol, when at a target
+;; -------------     --------------     --------------------------------
+;; Yourself          i                  I
+;; A crate           o                  @
+;; Nothing                              .
+;; A wall            #                  N/A (never a target)
+
 ;; Other console Sokobans display the game a little differently: with
-;; different symbols and a squeezed aspect ratio. I insert spaces between
-;; squares to make them more nearly, y'know, square.
+;; different symbols and a squeezed aspect ratio. I insert spaces
+;; between squares to make them more nearly, y'know, square.
 
 ;; Some other Sokoban implementations you might enjoy:
 ;; http://eloquentjavascript.net/chapter13.html (by Marijn Haverbeke)
@@ -25,7 +30,7 @@
 
 (define (do-command-line argv)
   (let filename
-    (match argv.as-list                   ;XXX
+    (match (chain argv '())                   ;XXX clumsy
       ((_) "sokoban/microban")
       ((_ fname) fname)
       (_ (error "Usage: XXX"))))
