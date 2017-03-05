@@ -72,8 +72,8 @@
 
     (define (view-grid)
       (for each ((ch (unparse grid)))
-        (let c1 (if ("iI" .has? ch) green unstyled)) ;XXX .has?
-        (let c2 (if (".I@" .has? ch) (compose bold c1) c1))
+        (let c1 (if ("iI" .maps-to? ch) green unstyled))
+        (let c2 (if (".I@" .maps-to? ch) (compose bold c1) c1))
         (color c2)))
 
     (render
@@ -91,7 +91,7 @@
          (grids .set! level trail.pop!))
        (playing level))
       (_
-       (when (directions .has? key)
+       (when (directions .maps? key)
          (let previously grid.copy)
          (push grid (directions key))
          (unless (= (unparse grid) (unparse previously)) ;XXX clumsy
@@ -99,11 +99,11 @@
        (playing level)))))
 
 (define (won? grid)
-  (not (grid .has? #\o)))
+  (not (grid .maps-to? #\o)))
 
 ;; Update grid, trying to move the player in the direction.
 (define (push grid direction)
-  (let i (grid .find (if (grid .has? #\i) #\i #\I))) ;XXX .find
+  (let i (grid .find (if (grid .maps-to? #\i) #\i #\I))) ;XXX .find, .maps-to?
   (let width (+ (grid .find #\newline) 1))
   (let d (direction width))
   (move grid "o@" (+ i d) (+ i d d))
@@ -113,14 +113,14 @@
 (define (move grid thing here there)
   ;; N.B. `there` is always in bounds when `grid[here] in thing`
   ;; because our grids have '#'-borders, while `thing` is never a '#'.
-  (when (and (thing .has? (grid here))
-             (" ." .has? (grid there)))
+  (when (and (thing .maps-to? (grid here))
+             (" ." .maps-to? (grid there)))
     (lift grid here)
     (drop grid there thing)))
 
 ;; Remove any thing (crate or player) from position i.
 (define (lift grid i)
-  (let dot? (".@I" .has? (grid i)))
+  (let dot? (".@I" .maps-to? (grid i)))
   (grid .set! i (" ." (if dot? 1 0))))
 
 ;; Into a clear square, put thing.
