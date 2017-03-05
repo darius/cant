@@ -5,6 +5,10 @@
 ;;   p pattern
 ;;   r environment
 
+(define (actor<- script r)
+  (make actor
+    (message
+     (script .receive message actor r))))
 
 (define (script<- trait clauses)
   (make script
@@ -18,11 +22,6 @@
           (if (eval-match message pattern pat-r)
               (eval body (env-extend pat-r body-vars))
               (matching rest))))))))
-
-(define (actor<- script r)
-  (make actor
-    (message
-     (script .receive message actor r))))
 
 (define (eval e r)
   (match e
