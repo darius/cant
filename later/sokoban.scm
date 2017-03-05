@@ -76,7 +76,7 @@
        (playing level))
       (_
        (when (directions .maps? key)
-         (let previously grid.copy)     ;XXX
+         (let previously grid.copy)
          (grid .push (directions key))
          (unless (= grid.unparse previously.unparse) ;XXX clumsy
            (trail .push! previously)))
