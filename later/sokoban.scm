@@ -36,7 +36,7 @@
   (main collection name))
 
 (define (main level-collection name)
-  (let grids (each parse (level-collection .split "\n\n")))
+  (let grids (each parse (level-collection .split "\n\n")))  ;XXX .split
   (for cbreak-mode ()
     (play grids name 0)))
 
@@ -46,8 +46,9 @@
 ;; displacement by that same width, whatever the starting square.
 
 (define (parse grid-string)
-  (assert (for every ((line grid-string.split-lines))
-            (= line.size ((line 0) .size))))
+  (let lines grid-string.split-lines)
+  (assert (for every ((line lines))
+            (= line.size ((lines 0) .size))))
   (vector<-list grid-string))
 
 (define (unparse grid)
