@@ -1,4 +1,4 @@
-;; Sokoban game, ported from github.com/darius/sturm.
+;; Sokoban, ported from github.com/darius/sturm.
 
 ;; In this game you live in a 2-d grid world containing crates, target
 ;; squares, and impassable walls. You need to push all the crates onto
