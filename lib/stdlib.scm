@@ -223,7 +223,7 @@
 (let the-signal-handler-box (box<- panic))
 
 (define (repl)                          ;TODO rename
-  (import (use "lib/traceback.scm") on-error-traceback)
+  (import (use "lib/traceback") on-error-traceback)
   (begin interacting ()
     (the-signal-handler-box .^= (define (on-error-repl k @evil)
                                   (call on-error-traceback `(,k ,@evil))
@@ -235,13 +235,13 @@
 
 (let the-modules (box<- '()))
 
-(define (use filename)                  ;TODO a realer module system
+(define (use file-stem)                  ;TODO a realer module system
   ;; N.B. could sort of just use memoize if that were already loaded.
-  (match (assoc filename the-modules.^)
+  (match (assoc file-stem the-modules.^)
     ((_ mod) mod)
     (#no
-     (let mod (load filename))
-     (the-modules .^= `((,filename ,mod) ,@the-modules.^))
+     (let mod (load (chain file-stem ".scm")))
+     (the-modules .^= `((,file-stem ,mod) ,@the-modules.^))
      mod)))
 
 (define (load filename)

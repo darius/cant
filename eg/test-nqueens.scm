@@ -1,3 +1,3 @@
-(import (use "eg/nqueens.scm") queens)
+(import (use "eg/nqueens") queens)
 
 (queens 4)

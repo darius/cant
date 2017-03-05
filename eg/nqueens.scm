@@ -1,6 +1,6 @@
 ;; The N-queens problem as a BDD.
 
-(import (use "lib/bdd.scm")
+(import (use "lib/bdd")
   bdd-and bdd-or satisfy-first
   lit0 lit1 build-choice)
 

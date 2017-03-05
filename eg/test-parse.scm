@@ -1,4 +1,4 @@
-(import (use "lib/parse.scm") grammar<-)
+(import (use "lib/parse") grammar<-)
 
 ;; Example grammars
 

@@ -1,6 +1,6 @@
 ;; TODO test with both dd and bdd (parameterized)
 
-(import (use "lib/dd.scm") constant<- variable<- satisfy valid?)
+(import (use "lib/dd") constant<- variable<- satisfy valid?)
 
 (let lit0 (constant<- 0))
 (let lit1 (constant<- 1))

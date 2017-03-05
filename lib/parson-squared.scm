@@ -3,11 +3,12 @@
 ;; XXX leaving out regexes, fnord, anonymous start
 ;; XXX need to parameterize by semantics
 
-(import (use "lib/hashset.scm") union-over)
-(import (use "lib/parson.scm")
-        invert capture either then feed-list feed push seclude delay maybe many at-least-1
-        fail empty end skip-1 take-1 any-1 skip-any-1 lit-1 lit
-        parse)
+(import (use "lib/hashset")
+  union-over)
+(import (use "lib/parson")
+  invert capture either then feed-list feed push seclude delay maybe many at-least-1
+  fail empty end skip-1 take-1 any-1 skip-any-1 lit-1 lit
+  parse)
 
 (let hug (feed-list identity))
 

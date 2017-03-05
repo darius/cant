@@ -1,7 +1,7 @@
 ;; Regular expressions.
 ;; Like nfa_simplest_set.py using a first straw man of a set datatype.
 
-(import (use "lib/hashset.scm") union-over)
+(import (use "lib/hashset") union-over)
 
 ;; Does regex match chars? (Anchored matching at both ends.)
 (define (regex-match regex chars)
@@ -33,9 +33,9 @@
 
 ;; Parser
 
-(import (use "lib/parson.scm")
-        parse delay seclude either then invert feed maybe many
-        empty lit-1 any-1 skip-any-1)
+(import (use "lib/parson")
+  parse delay seclude either then invert feed maybe many
+  empty lit-1 any-1 skip-any-1)
 
 (let regex-parser
   (hide

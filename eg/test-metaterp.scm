@@ -1,4 +1,4 @@
-(import (use "eg/kernel.scm") eval global-env)
+(import (use "eg/kernel") eval global-env)
 
 
 (define (run e)

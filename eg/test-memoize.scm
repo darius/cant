@@ -1,4 +1,4 @@
-(import (use "lib/memoize.scm") memoize)
+(import (use "lib/memoize") memoize)
 
 (let fib (memoize
           (given (n)

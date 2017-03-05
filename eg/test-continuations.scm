@@ -1,6 +1,6 @@
 ;; Get a continuation from an error signal, and invoke it.
 
-(import (use "lib/traceback.scm") on-error-traceback)
+(import (use "lib/traceback") on-error-traceback)
 
 (define (on-error-have-fun k plaint @values)
   (the-signal-handler-box .^= on-error-traceback) ;; Restore the usual handler.

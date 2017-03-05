@@ -1,4 +1,4 @@
-(let ratio (use "lib/ratio.scm"))
+(let ratio (use "lib/ratio"))
 
 (import ratio ratio<- as-float)
 (let (r+ r- r* r/ r-compare) (each ratio '(+ - * / compare)))

@@ -2,10 +2,10 @@
 ;; A buffer is a text with a current point of editing, a display, and
 ;; a keymap.
 
-(import (use "charset.scm") charset<-)
-(import (use "display.scm") render rows cols)   ; XXX rename to num-rows or something
-(import (use "keymap.scm")  keymap<-)
-(import (use "text.scm")    text<- backward forward)
+(import (use "charset") charset<-)
+(import (use "display") render rows cols)   ; XXX rename to num-rows or something
+(import (use "keymap")  keymap<-)
+(import (use "text")    text<- backward forward)
 
 ;; Return the smallest i in [lo..hi) where ok(i), if any; else hi.
 ;; Pre: lo and hi are ints, lo < hi

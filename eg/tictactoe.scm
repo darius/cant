@@ -1,6 +1,6 @@
 ;; tic-tac-toe, as a warmup.
 
-(import (use "lib/memoize.scm") memoize)
+(import (use "lib/memoize") memoize)
 
 (define (tic-tac-toe player opponent grid)
   (show grid)

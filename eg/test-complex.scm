@@ -1,6 +1,6 @@
 ;; Complex numbers
 
-(let cnum (use "lib/complex.scm"))
+(let cnum (use "lib/complex"))
 (let (c+ c- c* c/ c-abs) (each cnum '(+ - * / abs)))
 
 (let z {complex 0 0})

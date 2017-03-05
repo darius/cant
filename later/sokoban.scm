@@ -18,7 +18,7 @@
 ;; http://code.google.com/p/cleese/source/browse/trunk/experimental/necco/kernel/soko.py
 ;; (runs without a regular OS, by Dave Long)
 
-(import (use "sturm.scm")
+(import (use "sturm")
   cbreak-mode
   get-key render
   color green compose bold unstyled)
