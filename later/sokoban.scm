@@ -36,8 +36,7 @@
       (_ (error "Usage: XXX"))))
   (let (name collection)
     (for with-input-file ((f filename))
-      `(,(f.readline .rstrip "\n")    ;XXX
-        ,f.read-all)))
+      `(,f.read-line ,f.read-all)))
   (main collection name))
 
 (define (main level-collection name)
@@ -54,7 +53,11 @@
 (define (play grids name level)
   (let trails (vector<-list (for each ((_ grids))
                               (fillvector<-))))
-  (let heading "XXX fill in a working format string")
+  (let heading
+    "Move with the arrow keys or HJKL. U to undo.
+N/P for next/previous level; Q to quit.
+
+Level %w %d Move %w")
 
   (begin playing ((level level))
     (let grid  (grids level))
@@ -66,7 +69,7 @@
         (let c2 (if (".I@" .find? ch) (compose bold c1) c1))
         (color c2)))
 
-    (render `(,(heading .format (+ level 1) name trail.count)
+    (render `(,(heading .format (+ level 1) (name .center 50) trail.count) ;XXX string .format, .center
               ,(view-grid)
               ,@(if grid.won? '("\n\nDone!") '())))
 

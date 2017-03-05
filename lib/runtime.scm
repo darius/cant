@@ -315,6 +315,14 @@
   ({.read-char}   (__read-char me))
   ({.read-all}    (__read-all me))
   ({.close}       (__close-port me))
+  ({.read-line}
+   ;; XXX return eof-object when at eof, right?
+   (string<-list
+    (begin reading ()
+      (let ch me.read-char)
+      (if (or (eof-object? ch) (= ch #\newline))
+          '()
+          (cons ch (reading))))))
   )
 
 (make-trait sink-primitive me
