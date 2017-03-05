@@ -36,7 +36,7 @@
   (main collection name))
 
 (define (main level-collection name)
-  (let grids (for each ((initial-config (level-collection .split "\n\n")))  ;XXX .split
+  (let grids (for each ((initial-config (level-collection .split "\n\n")))
                (sokoban-grid<- (parse initial-config))))
   (for cbreak-mode ()
     (play grids name 0)))
@@ -61,15 +61,15 @@
         (let c2 (if (".I@" .find? ch) (compose bold c1) c1))
         (color c2)))
 
-    (render `(,(heading .format (+ level 1) name trail.size)
+    (render `(,(heading .format (+ level 1) name trail.count)
               ,(view-grid)
               ,@(if grid.won? '("\n\nDone!") '())))
 
     (let key ((get-key) .lowercase))
     (match key
       (#\q  'done)
-      (#\n  (playing ((+ level 1) .modulo grids.size)))
-      (#\p  (playing ((- level 1) .modulo grids.size)))
+      (#\n  (playing ((+ level 1) .modulo grids.count)))
+      (#\p  (playing ((- level 1) .modulo grids.count)))
       (#\u
        (unless trail.empty?
          (grids .set! level trail.pop!))
@@ -85,7 +85,7 @@
 (define (parse initial-config)
   (let lines initial-config.split-lines)
   (assert (for every ((line lines))
-            (= line.size ((lines 0) .size))))
+            (= line.count ((lines 0) .count))))
   (vector<-list initial-config))
 
 (define (sokoban-grid<- grid)
