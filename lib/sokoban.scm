@@ -74,6 +74,7 @@ Level %w %d Move %w")
         (c2 ch)))
 
     (render `(,(heading .format (+ level 1) (name .center 50) trail.count)
+              "\n\n"
               ,(view-grid)
               ,@(if grid.won? '("\n\nDone!") '())))
 

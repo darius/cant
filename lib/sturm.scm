@@ -32,8 +32,8 @@
 
 (let cursor-pos-save    (seq "s"))
 (let cursor-pos-restore (seq "u"))
-(let cursor-show        (seq (string<- (char<- 25) #\h)))
-(let cursor-hide        (seq (string<- (char<- 25) #\l)))
+(let cursor-show        (seq "?25h"))
+(let cursor-hide        (seq "?25l"))
 
 ;(let (black red green yellow blue magenta cyan white)
 ;  (chain (range<- 8) '()))              ;TODO ugly
@@ -59,10 +59,15 @@
   (begin rendering ((v view))
     ;; TODO actual terminal codes
     ;; TODO replace newlines
-    (case ((string? v) (display v))
-          ((char? v)   (display v))
-          ((list? v)   (each! rendering v))
-          (else (error "Can't render" v))))
+    (case ((string? v)
+           (for each! ((ch v))
+             (display (if (= ch #\newline) crlf ch))))
+          ((char? v)
+           (display (if (= v #\newline) crlf v)))
+          ((list? v)
+           (each! rendering v))
+          (else
+           (error "Can't render" v))))
   (display clear-to-bottom)
   ;; TODO check if cursor seen
   (display restore-and-show)
