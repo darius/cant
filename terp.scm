@@ -288,6 +288,8 @@
     (string<-number ,number->string)
     (list<-string ,string->list)
     (read ,squeam-read)
+    (string-sink<- ,open-output-string)
+    (__get-output-string ,get-output-string)
 
     ;; Primitives only -- TODO seclude in their own env:
     (__hash ,hash)

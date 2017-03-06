@@ -341,6 +341,8 @@
   ({.display a}   (__display me a))
   ({.write a}     (__write me a))     ;XXX Scheme naming isn't very illuminating here
   ({.print a}     (a .selfie me))
+  ({.output-string}                 ;XXX for string-sink only
+   (__get-output-string me))
   )
 
 (make-trait term-primitive me
