@@ -23,7 +23,7 @@
 ;; http://code.google.com/p/cleese/source/browse/trunk/experimental/necco/kernel/soko.py
 ;; (runs without a regular OS, by Dave Long)
 
-(import (use "sturm")
+(import (use "later/sturm")
   cbreak-mode
   get-key render
   color green compose bold unstyled)
@@ -31,17 +31,21 @@
 (define (do-command-line args)
   (let filename
     (match args
-      ((_) "sokoban/microban")
+      ((_) "later/microban")
       ((_ fname) fname)
       (_ (error "Usage: %d [filename]" (args 0)))))
+  (let (grids name) (load-collection filename))
+  (main grids name))
+
+(define (load-collection filename)
   (let (name levels-str)
     (for with-input-file ((f filename))
       `(,f.read-line ,f.read-all)))
-  (main levels-str name))
-
-(define (main levels-str name)
   (let grids (for each ((initial-config (levels-str .split "\n\n")))
                (sokoban-grid<- (parse initial-config))))
+  `(,grids ,name))
+
+(define (main grids name)
   (for cbreak-mode ()
     (play grids name 0)))
 
@@ -94,7 +98,7 @@ Level %w %d Move %w")
   (let lines initial-config.split-lines)
   (assert (for every ((line lines))
             (= line.count ((lines 0) .count))))
-  (vector<-list initial-config))
+  (vector<-list (list<-string initial-config))) ;XXX list<-string shouldn't be needed
 
 (define (sokoban-grid<- grid)
   ;; We represent a grid as a mutable vector of characters, including
@@ -128,7 +132,7 @@ Level %w %d Move %w")
 
   (make _
     ({.unparse}
-     ((" " .join grid) .replace "\n " "\n"))
+     ((" " .join (each string<- grid)) .replace "\n " "\n"))
 
     ({.copy}
      (sokoban-grid<- grid.copy))
@@ -142,3 +146,8 @@ Level %w %d Move %w")
      (let p (find-player))
      (move! "o@" (+ p d) (+ p d d))
      (move! "iI" p (+ p d)))))
+
+(export
+  do-command-line load-collection
+  main play
+  sokoban-grid<- parse)

@@ -293,6 +293,8 @@
    (let sink (string-sink<-))
    (call format `{.to ,sink ,me ,@arguments})
    sink.output-string)
+  ({.split-lines}
+   (me .split "\n"))
   ({.selfie sink}
    (sink .display #\")
    (for each! ((c me))
@@ -302,6 +304,7 @@
                       (#\newline "\\n")
                       (#\tab     "\\t")
                       (#\return  "\\r")
+                      ;; XXX escape the control chars
                       (_ c))))
    (sink .display #\"))
   (message
