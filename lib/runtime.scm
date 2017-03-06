@@ -261,17 +261,6 @@
                      (else (scanning (+ i 1)))))))))
   ({.lowercase} (string<-list (for each ((c me)) c.lowercase)))
   ({.uppercase} (string<-list (for each ((c me)) c.uppercase)))
-  ({.selfie sink}
-   (sink .display #\")
-   (for each! ((c me))
-     (sink .display (match c            ;XXX super slow. We might prefer to use the Gambit built-in.
-                      (#\\ "\\\\")
-                      (#\" "\\\"")
-                      (#\newline "\\n")
-                      (#\tab     "\\t")
-                      (#\return  "\\r")
-                      (_ c))))
-   (sink .display #\"))
   ({.starts-with? s}
    (= (me .slice 0 s.count) s))   ;TODO more efficient
   ({.replace pattern replacement} ;TODO more efficient
@@ -288,6 +277,29 @@
                     (chain (list<-string replacement)
                            (scanning (+ i pattern.count))))
                    (else (cons (me i) (scanning (+ i 1))))))))))
+  ({.center n}
+   (let pad (- n me.count))
+   (if (<= pad 0)
+       me
+       (do (let half (pad .quotient 2))
+           (chain (" " .repeat (- pad half))
+                  me
+                  (" " .repeat half)))))
+  ({.repeat n}
+   ;; XXX what if n=0
+   (call chain (for each ((_ (range<- n)))
+                 me)))
+  ({.selfie sink}
+   (sink .display #\")
+   (for each! ((c me))
+     (sink .display (match c            ;XXX super slow. We might prefer to use the Gambit built-in.
+                      (#\\ "\\\\")
+                      (#\" "\\\"")
+                      (#\newline "\\n")
+                      (#\tab     "\\t")
+                      (#\return  "\\r")
+                      (_ c))))
+   (sink .display #\"))
   (message
    (list-trait me message))) ;XXX use trait syntax instead
 
