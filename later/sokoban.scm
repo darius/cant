@@ -71,7 +71,7 @@ Level %w %d Move %w")
       (for each ((ch grid.unparse))
         (let c1 (if ("iI" .find? ch) green unstyled))
         (let c2 (if (".I@" .find? ch) (compose bold c1) c1))
-        (color c2)))
+        (c2 ch)))
 
     (render `(,(heading .format (+ level 1) (name .center 50) trail.count)
               ,(view-grid)

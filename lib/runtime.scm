@@ -133,7 +133,7 @@
   ({.first}       (error "Empty list" '.first))
   ({.rest}        (error "Empty list" '.rest))
   ({.count}       0)
-  ((i)            (error "Empty list" 'nth))
+  ((i)            (error "Empty list" 'nth i))
   ({.chain a}     a)
   ({.selfie sink} (sink .display "()"))
   (message        (list-trait me message))) ;XXX use trait syntax instead
