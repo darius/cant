@@ -69,7 +69,7 @@ Level %w %d Move %w")
         (let c2 (if (".I@" .find? ch) (compose bold c1) c1))
         (color c2)))
 
-    (render `(,(heading .format (+ level 1) (name .center 50) trail.count) ;XXX string .format
+    (render `(,(heading .format (+ level 1) (name .center 50) trail.count)
               ,(view-grid)
               ,@(if grid.won? '("\n\nDone!") '())))
 
