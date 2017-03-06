@@ -283,6 +283,7 @@
     (parse-exp ,parse-exp)
     (parse-pat ,parse-pat)
     (random-integer ,random-integer)
+    (system ,system)
     ;; Should use string ports instead:
     (number<-string ,string->number)
     (string<-number ,number->string)
