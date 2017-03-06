@@ -23,7 +23,7 @@
 ;; http://code.google.com/p/cleese/source/browse/trunk/experimental/necco/kernel/soko.py
 ;; (runs without a regular OS, by Dave Long)
 
-(import (use "later/sturm")
+(import (use "lib/sturm")
   cbreak-mode
   get-key render
   color green compose bold unstyled)
@@ -31,7 +31,7 @@
 (define (do-command-line args)
   (let filename
     (match args
-      ((_) "later/microban")
+      ((_) "lib/microban")
       ((_ fname) fname)
       (_ (error "Usage: %d [filename]" (args 0)))))
   (let (grids name) (load-collection filename))
