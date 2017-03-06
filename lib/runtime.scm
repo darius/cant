@@ -289,6 +289,10 @@
    ;; XXX what if n=0
    (call chain (for each ((_ (range<- n)))
                  me)))
+  ({.format @arguments}
+   (let sink (string-sink<-))
+   (call format `{.to ,sink ,me ,@arguments})
+   sink.output-string)
   ({.selfie sink}
    (sink .display #\")
    (for each! ((c me))

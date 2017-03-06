@@ -28,9 +28,9 @@
   get-key render
   color green compose bold unstyled)
 
-(define (do-command-line argv)
+(define (do-command-line args)
   (let filename
-    (match (chain argv '())                   ;XXX clumsy
+    (match args
       ((_) "sokoban/microban")
       ((_ fname) fname)
       (_ (error "Usage: XXX"))))
