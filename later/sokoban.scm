@@ -33,7 +33,7 @@
     (match args
       ((_) "sokoban/microban")
       ((_ fname) fname)
-      (_ (error "Usage: XXX"))))
+      (_ (error "Usage: %d [filename]" (args 0)))))
   (let (name collection)
     (for with-input-file ((f filename))
       `(,f.read-line ,f.read-all)))
