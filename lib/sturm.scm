@@ -83,8 +83,6 @@
 (define (green str) str)
 
 (define (color c) c)
-(define ((compose style-1 style-2) c)
-  c)
 (define (bold c) c)
 (define (unstyled c) c)
 
@@ -98,4 +96,4 @@
 (export
   raw-mode cbreak-mode
   get-key render cursor
-  color green compose bold unstyled)
+  color green bold unstyled)

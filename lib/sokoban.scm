@@ -26,7 +26,7 @@
 (import (use "lib/sturm")
   cbreak-mode
   get-key render
-  color green compose bold unstyled)
+  color green bold unstyled)
 
 (define (do-command-line args)
   (let filename
