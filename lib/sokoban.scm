@@ -43,7 +43,8 @@
       `(,f.read-line ,f.read-all)))
   (let grids (for each ((initial-config (levels-str .split "\n\n")))
                (sokoban-grid<- (parse initial-config))))
-  `(,grids ,name))
+  `(,(vector<-list grids)               ;XXX shouldn't be needed
+    ,name))
 
 (define (main grids name)
   (for cbreak-mode ()
