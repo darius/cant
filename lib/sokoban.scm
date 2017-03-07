@@ -34,8 +34,7 @@
       ((_) "lib/microban")
       ((_ fname) fname)
       (_ (error "Usage: %d [filename]" (args 0)))))
-  (let (grids name) (load-collection filename))
-  (main grids name))
+  (call main (load-collection filename)))
 
 (define (load-collection filename)
   (let (name levels-str)
@@ -43,8 +42,7 @@
       `(,f.read-line ,f.read-all)))
   (let grids (for each ((initial-config (levels-str .split "\n\n")))
                (sokoban-grid<- (parse initial-config))))
-  `(,(vector<-list grids)               ;XXX shouldn't be needed
-    ,name))
+  `(,grids ,name))
 
 (define (main grids name)
   (for cbreak-mode ()
@@ -56,8 +54,8 @@
 
 ;; The UI to a sequence of Sokoban levels.
 (define (play grids name level)
-  (let trails (vector<-list (for each ((_ grids))
-                              (fillvector<-))))
+  (let trails (vector<-list (each fillvector<- grids)))
+
   (let heading
     "Move with the arrow keys or HJKL. U to undo.
 N/P for next/previous level; Q to quit.
@@ -65,8 +63,8 @@ N/P for next/previous level; Q to quit.
 Level %w %d Move %w")
 
   (begin playing ((level level))
-    (let grid  (grids level))
     (let trail (trails level))
+    (let grid  trail.last)
 
     (define (view-grid)
       (for each ((ch grid.unparse))
@@ -82,18 +80,18 @@ Level %w %d Move %w")
     (let key ((get-key) .lowercase))
     (match key
       (#\q  'done)
-      (#\n  (playing ((+ level 1) .modulo grids.count)))
-      (#\p  (playing ((- level 1) .modulo grids.count)))
+      (#\n  (playing ((+ level 1) .modulo trails.count)))
+      (#\p  (playing ((- level 1) .modulo trails.count)))
       (#\u
        (unless trail.empty?
-         (grids .set! level trail.pop!))
+         trail.pop!)
        (playing level))
       (_
        (when (directions .maps? key)
-         (let previously grid.copy)
-         (grid .push (directions key))
-         (unless (= grid.unparse previously.unparse) ;XXX clumsy
-           (trail .push! previously)))
+         (let after grid.copy)
+         (after .push (directions key))
+         (unless (= grid.unparse after.unparse) ;XXX clumsy
+           (trail .push! after)))
        (playing level)))))
 
 (define (parse initial-config)

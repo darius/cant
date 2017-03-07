@@ -81,6 +81,9 @@
    (match (list .find value #no)
      (#no #no)
      (_ #yes)))
+  ({.last}
+   (let rest list.rest)
+   (if rest.empty? list.first rest.last))
   )
 
 (make-trait claim-primitive me
@@ -184,6 +187,8 @@
                       (reverse (range<- len)))))  ;TODO inefficient
      (me .set! (+ dest i)
          (me (+ src i)))))
+  ({.last}
+   (me (- me.count 1)))
   ({.selfie sink}
    (sink .display "#!")
    (sink .print (__vector->list me)))
