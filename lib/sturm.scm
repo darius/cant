@@ -42,7 +42,7 @@
   (+ 60 color))
 
 (define (sgr num)
-  (seq (string<-number num) "m")) ;TODO format to string
+  (seq ("%wm" .format num)))
 
 (define (set-foreground color) (sgr (+ 30 color)))
 (define (set-background color) (sgr (+ 40 color)))
