@@ -54,11 +54,13 @@
 (let restore-and-show (chain cursor-pos-restore cursor-show))
 (let crlf             (chain clear-to-right "\r\n"))
 
+(make cursor)
+
 (define (render view)
+  (let cursor-seen? (box<- #no))
   (display home-and-hide)
   (begin rendering ((v view))
     ;; TODO actual terminal codes
-    ;; TODO replace newlines
     (case ((string? v)
            (for each! ((ch v))
              (display (if (= ch #\newline) crlf ch))))
@@ -66,11 +68,14 @@
            (display (if (= v #\newline) crlf v)))
           ((list? v)
            (each! rendering v))
+          ((= v cursor)
+           (display cursor-save)
+           (cursor-seen? .^= #yes))
           (else
            (error "Can't render" v))))
   (display clear-to-bottom)
-  ;; TODO check if cursor seen
-  (display restore-and-show)
+  (when cursor-seen?.^
+    (display restore-and-show))
   ;; TODO do we need to flush the output?
   )
 
@@ -92,5 +97,5 @@
 
 (export
   raw-mode cbreak-mode
-  get-key render
+  get-key render cursor
   color green compose bold unstyled)
