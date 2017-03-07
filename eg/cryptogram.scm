@@ -5,13 +5,13 @@
   cbreak-mode get-key render cursor)
 
 (define (main args)
-  (let make-cryptogram
+  (let cryptogram
     (match args.rest
-      (()    (given () (random-encrypt (run-fortune))))
-      ((str) (given () str))
+      (()    (random-encrypt (run-fortune)))
+      ((str) str)
       (_     (error ("Usage: %d [cryptogram]" .format (args 0))))))
   (for cbreak-mode ()
-    (puzzle (make-cryptogram))))
+    (puzzle cryptogram)))
 
 (let alphabet (each char<- (range<- 97 122))) ;XXX clumsy
 
