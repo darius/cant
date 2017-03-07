@@ -32,4 +32,25 @@
   )
 
 (define (puzzle cryptogram)
+  (let code (for filter ((ch cryptogram)) ch.letter?))
+  (assert (not code.empty?))
+  (let decoder
+    (map<-a-list (for each ((ch ((call set<- code) .keys))) ;XXX clumsy
+                   `(,ch #\space))))
+  (let lines (each clean cryptogram.split-lines))
+  (let cursor-at (box<- 0))
+
+  (define (jot letter)
+    (decoder .set! (code cursor-at.^) letter))
+
+  (define (shift-by offset)
+    (cursor-at .^= ((+ cursor-at.^ offset) .modulo code.count)))
+
+  (define (shift-to-space)
+    (when (decoder.values .find? #\space) ;XXX probably won't work yet
+      (begin shifting ()
+        (shift-by 1)
+        (unless (= #\space (decoder (code cursor-at.^)))
+          (shifting)))))
+
   XXX)
