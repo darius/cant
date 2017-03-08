@@ -64,10 +64,10 @@
     (map<-a-list (for each ((ch ((call set<- code) .keys))) ;XXX clumsy
                    `(,ch #\space))))
   (let lines (each clean cryptogram.split-lines))
-  (let cursor-at (box<- 0))
+  (let point (box<- 0))                ; Index in `code` of the cursor
 
   (define (shift-by offset)
-    (cursor-at .^= ((+ cursor-at.^ offset) .modulo code.count)))
+    (point .^= ((+ point.^ offset) .modulo code.count)))
 
   (define (line-number pos)
     (let items
@@ -82,27 +82,27 @@
 
   (make _
     ({.jot letter}
-     (decoder .set! (code cursor-at.^) letter))
+     (decoder .set! (code point.^) letter))
 
     ({.go-to-start}
-     (cursor-at .^= 0))
+     (point .^= 0))
 
     ({.go-to-end}
-     (cursor-at .^= (- code.count 1)))
+     (point .^= (- code.count 1)))
 
     ({.shift-by n}
      (shift-by n))
 
     ({.shift-line offset}
-     (let line-num ((+ (line-number cursor-at.^) offset)
+     (let line-num ((+ (line-number point.^) offset)
                     .modulo lines.count))
-     (cursor .^= (line-starts line-num)))
+     (point .^= (line-starts line-num)))
 
     ({.shift-to-space}
      (when (decoder.values .find? #\space) ;XXX probably won't work yet
        (begin shifting ()
          (shift-by 1)
-         (unless (= #\space (decoder (code cursor-at.^)))
+         (unless (= #\space (decoder (code point.^)))
            (shifting)))))
 
     ({.view show-cursor?}
@@ -123,7 +123,7 @@
        (emit #\newline)
        (for each! ((ch line))
          (when (and show-cursor? ch.letter?)
-           (when (= pos.^ cursor-at.^)
+           (when (= pos.^ point.^)
              (emit cursor))
            (pos .^= (+ pos.^ 1)))         ;XXX clumsier
          (emit (decoder .get ch ch)))
@@ -133,7 +133,7 @@
        (emit #\newline)
        (for each! ((ch line))
          (let color (case ((clashes .maps? (decoder .get ch)) red)
-                          ((= ch (code cursor-at.^))          green)
+                          ((= ch (code point.^))              green)
                           (else                               unstyled)))
          (emit (color ch)))
        (emit #\newline))
