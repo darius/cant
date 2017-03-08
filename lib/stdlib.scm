@@ -127,10 +127,13 @@
       (cons seq.first (as-list seq.rest))))
 
 (define (zip xs ys)
-  (match `(,xs ,ys)
-    ((() ()) '())
-    (((x @xs1) (y @ys1))
-     `((,x ,y) ,@(zip xs1 ys1)))))
+  (define (mismatch)
+    (error "zip: mismatched arguments" xs ys))
+  (begin zipping ((xs xs) (ys ys))
+    (case (xs.empty? (if ys.empty? '() (mismatch)))
+          (ys.empty? (mismatch))
+          (else (cons `(,xs.first ,ys.first)
+                      (zipping xs.rest ys.rest))))))
 
 (define (cons/lazy x thunk)
   (make lazy-list {extending list-trait}

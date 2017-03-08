@@ -20,19 +20,29 @@
 
 (define (random-encrypt text)
   (let values (vector<-list alphabet))
-  (random-shuffle! values)               ;XXX
-  (let code (call map<- (zip alphabet values))) ;XXX
-  (string<-list (for each ((ch text.lower))
+  (random-shuffle! values)
+  (let code (map<-a-list (zip alphabet values)))
+  (string<-list (for each ((ch text.lowercase))
                   (code .get ch ch))))
+
+(define (random-shuffle! vec)           ;XXX should be in `random` library
+  (let n vec.count)
+  (for each! ((i (range<- n)))
+    (swap! vec i (+ i (random-integer (- n i))))))
+
+(define (swap! vec i j)
+  (let t (vec i))
+  (vec .set! i (vec j))
+  (vec .set! j t))
 
 (define (run-fortune)
   ;; XXX ensure fits in num-cols
-  ((shell-run "fortune") .split-lines))
+  ((shell-run "exec fortune") .split-lines))
 
 (define (shell-run command)
-  (system command)
-  ;; XXX get the output
-  )
+  (let (from-stdout to-stdin pid) (open-subprocess command))
+  ;; TODO do we have to wait for it to terminate?
+  from-stdout.read-all)
 
 (define (puzzle cryptogram)
   (let cv (cryptoview<- cryptogram))

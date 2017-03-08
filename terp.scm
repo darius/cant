@@ -226,9 +226,6 @@
 
 ;; Environments
 
-(define (random-integer high-bound)
-  (inexact->exact (floor (* (random-real) high-bound))))
-
 (define (vector-append v1 v2)
   (let ((n1 (vector-length v1))
         (n2 (vector-length v2)))
@@ -299,7 +296,7 @@
     (read ,squeam-read)
     (parse-exp ,parse-exp)
     (parse-pat ,parse-pat)
-    (random-integer ,random-integer)
+    (random-integer ,random)
     (system ,system)
     ;; Should use string ports instead:
     (number<-string ,string->number)
@@ -308,6 +305,7 @@
     (read ,squeam-read)
     (string-sink<- ,open-output-string)
     (__get-output-string ,get-output-string)
+    (open-subprocess ,process)
 
     ;; Primitives only -- TODO seclude in their own env:
     (__hash ,hash)
