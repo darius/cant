@@ -37,8 +37,17 @@
 (let cursor-show        (seq "?25h"))
 (let cursor-hide        (seq "?25l"))
 
-;(let (black red green yellow blue magenta cyan white)
-;  (chain (range<- 8) '()))              ;TODO ugly
+(define ((make-color code) str)
+  str)                                  ;XXX fill in
+
+(let black   (make-color 0))
+(let red     (make-color 1))
+(let green   (make-color 2))
+(let yellow  (make-color 3))
+(let blue    (make-color 4))
+(let magenta (make-color 5))
+(let cyan    (make-color 6))
+(let white   (make-color 7))
 
 (define (bright color)
   (+ 60 color))
@@ -82,9 +91,6 @@
   )
 
 ;; TODO actual terminal codes
-(define (green str) str)
-
-(define (color c) c)
 (define (bold c) c)
 (define (unstyled c) c)
 
@@ -150,5 +156,7 @@
 
 (export
   raw-mode cbreak-mode
-  get-key render cursor
-  color green bold unstyled)
+  get-key
+  render cursor
+  bold unstyled
+  black red green yellow blue magenta cyan white)
