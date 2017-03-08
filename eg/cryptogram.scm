@@ -16,12 +16,12 @@
   (for cbreak-mode ()
     (puzzle cryptogram)))
 
-(let alphabet (each char<- (range<- 97 122))) ;XXX clumsy
+(let alphabet (each char<- (range<- (#\a .code) (+ (#\z .code) 1)))) ;XXX clumsy
 
 (define (random-encrypt text)
   (let values (vector<-list alphabet))
   (random-shuffle! values)
-  (let code (map<-a-list (zip alphabet values)))
+  (let code (map<-a-list (zip alphabet values.values))) ;XXX why .values needed?
   (string<-list (for each ((ch text.lowercase))
                   (code .get ch ch))))
 
@@ -36,8 +36,8 @@
   (vec .set! j t))
 
 (define (run-fortune)
-  ;; XXX ensure fits in num-cols
-  ((shell-run "exec fortune") .split-lines))
+  ;; XXX ensure fits in sturm's width
+  (shell-run "exec fortune"))
 
 (define (shell-run command)
   (let (from-stdout to-stdin pid) (open-subprocess command))
