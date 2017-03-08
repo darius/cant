@@ -51,7 +51,7 @@
       ('backspace (cv .shift-by -1)    (cv .jot #\space)    (playing))
       ('del       (cv .jot #\space)    (cv .shift-by 1)     (playing))
       (_
-       (when (or key.whitespace? (alphabet .find? key))
+       (when (or (= key #\space) (alphabet .find? key))
          (cv .jot key)
          (cv .shift-by 1))
        (playing)))))
