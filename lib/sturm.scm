@@ -71,7 +71,7 @@
           ((list? v)
            (each! rendering v))
           ((= v cursor)
-           (display cursor-save)
+           (display cursor-pos-save)
            (cursor-seen? .^= #yes))
           (else
            (error "Can't render" v))))
@@ -131,7 +131,7 @@
 (define (get-key-unmapped)
   (if key-stack.empty?
       (do (let ch stdin.read-char)
-          (assert (not (eof-object? ch))) ;shouldn't ever happen in raw/cbreak modes
+          (surely (not (eof-object? ch))) ;shouldn't ever happen in raw/cbreak modes
           ch)
       key-stack.pop!))
 
