@@ -211,7 +211,7 @@
        (list-trait me {.compare s})))   ; but is this what we really want? (<=> "a" '(#\a))
   ({.join ss}   ;should this be a function, not a method?
    (if ss.empty?
-       ss
+       ""
        (foldr1 (given (x y) (chain x me y)) ss)))
   ;;XXX below mostly from list-trait, until .selfie
   ({.keys}        (range<- me.count))
