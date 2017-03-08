@@ -94,12 +94,33 @@
 
 (let key-map
   (map<-a-list `((,(string<- (char<- 127)) backspace)
-                 (,(chain esc "[A")        up)
-                 (,(chain esc "[B")        down)
-                 (,(chain esc "[C")        right)
-                 (,(chain esc "[D")        left)
-                 ;; TODO more mappings
+
+                 (,(chain esc "[1~")  home)
+                 (,(chain esc "[2~")  ins)
+                 (,(chain esc "[3~")  del)
+                 (,(chain esc "[4~")  end)
+                 (,(chain esc "[5~")  pg-up)
+                 (,(chain esc "[6~")  pg-dn)
+                 (,(chain esc "[11~") f1)
+                 (,(chain esc "[12~") f2)
+                 (,(chain esc "[13~") f3)
+                 (,(chain esc "[14~") f4)
+                 (,(chain esc "[15~") f5)
+                 (,(chain esc "[17~") f6)
+                 (,(chain esc "[18~") f7)
+                 (,(chain esc "[19~") f8)
+                 (,(chain esc "[20~") f9)
+                 (,(chain esc "[21~") f10)
+                 (,(chain esc "[23~") f11)
+                 (,(chain esc "[24~") f12)
+                 (,(chain esc "[Z")   shift-tab)
+
+                 (,(chain esc "[A") up)     (,(chain esc "[OA") up)
+                 (,(chain esc "[B") down)   (,(chain esc "[OB") down)
+                 (,(chain esc "[C") right)  (,(chain esc "[OC") right)
+                 (,(chain esc "[D") left)   (,(chain esc "[OD") left)
                  )))
+
 (let key-map-prefixes
   (call set<- (for gather ((full-key key-map.keys))
                 (for each ((i (range<- 1 full-key.count)))
