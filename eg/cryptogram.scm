@@ -51,7 +51,7 @@
       ('backspace (cv .shift-by -1)    (cv .jot #\space)    (playing))
       ('del       (cv .jot #\space)    (cv .shift-by 1)     (playing))
       (_
-       (when (or key.space? (alphabet .find? key))
+       (when (or key.whitespace? (alphabet .find? key))
          (cv .jot key)
          (cv .shift-by 1))
        (playing)))))
@@ -125,7 +125,7 @@
          (when (and show-cursor? ch.letter?)
            (when (= pos.^ cursor-at.^)
              (emit cursor))
-           (pos .^= (+ pos 1))))         ;XXX clumsier
+           (pos .^= (+ pos.^ 1))))         ;XXX clumsier
        (emit #\newline)
        (for each! ((ch line))
          (emit (if ch.letter? #\- #\space)))
