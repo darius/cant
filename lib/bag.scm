@@ -8,6 +8,8 @@
 (define (hash-bag<-)
   (let map (map<-))
   (make bag
+    ({.empty?}        map.empty?)
+    ({.count}         map.count)
     ({.keys}          map.keys)
     ({.values}        map.values)
     ({.items}         map.items)
@@ -15,8 +17,6 @@
     ({.add! key}      (map .set! key
                            (+ (map .get key 0) 1)))
     ({.add-all! vals} (for each! ((v vals)) (bag .add! v)))
-    ({.empty?}        map.empty?)
-    ({.count}         map.count)
     ;; XXX fill in rest of bag interface (just the map interface, I guess)
     ({.selfie sink}
      (sink .display "#<bag (")
