@@ -77,8 +77,8 @@ Level %w %d Move %w")
               ,(view-grid)
               ,@(if grid.won? '("\n\nDone!") '())))
 
-    (let key ((get-key) .lowercase))
-    (match key
+    (let key (get-key))
+    (match (if (char? key) key.lowercase key) ;XXX clumsy
       (#\q  'done)
       (#\n  (playing ((+ level 1) .modulo trails.count)))
       (#\p  (playing ((- level 1) .modulo trails.count)))

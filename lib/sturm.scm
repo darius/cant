@@ -21,7 +21,9 @@
 
 ;; ANSI terminal escape codes
 
-(let prefix (string<- (char<- 27) #\[ )) ;TODO more string escapes
+(let esc (string<- (char<- 27))) ;TODO support more escapes in string literals
+
+(let prefix (chain esc "["))
 
 (define (seq string) (chain prefix string))
 
@@ -88,10 +90,42 @@
 
 
 ;; Keyboard input
+;; TODO optional timeout
+
+(let key-map
+  (map<-a-list `((,(string<- (char<- 127)) backspace)
+                 (,(chain esc "[A")        up)
+                 (,(chain esc "[B")        down)
+                 (,(chain esc "[C")        right)
+                 (,(chain esc "[D")        left)
+                 ;; TODO more mappings
+                 )))
+(let key-map-prefixes
+  (call set<- (for gather ((full-key key-map.keys))
+                (for each ((i (range<- 1 full-key.count)))
+                  (full-key .slice 0 i)))))
+
+(let key-stack (fillvector<-))
+
+(define (get-key-unmapped)
+  (if key-stack.empty?
+      (do (let ch stdin.read-char)
+          (assert (not (eof-object? ch))) ;shouldn't ever happen in raw/cbreak modes
+          ch)
+      key-stack.pop!))
 
 (define (get-key)
-  (__read-char))                        ;TODO parse escape codes, etc.
-
+  (let keys (fillvector<- (get-key-unmapped)))
+  (begin matching ()
+    (let s (string<-list (as-list keys))) ;XXX clumsy
+    (or (key-map .get s)
+        (case ((key-map-prefixes .maps? s)
+               (let next-key (get-key-unmapped))
+               (keys .push! next-key)
+               (matching))
+              (else
+               (key-stack .extend! (reverse keys))
+               key-stack.pop!)))))
 
 (export
   raw-mode cbreak-mode
