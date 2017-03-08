@@ -98,8 +98,13 @@
 ;; Keyboard input
 ;; TODO optional timeout
 
+(define (ctrl ch)
+  (let code ch.uppercase.code)
+  (char<- (- code 64)))
+
 (let key-map
-  (map<-a-list `((,(string<- (char<- 127)) backspace)
+  (map<-a-list `((,(string<- (ctrl #\X))   esc) ;XXX a hack until the timeout works
+                 (,(string<- (char<- 127)) backspace)
 
                  (,(chain esc "[1~")  home)   (,(chain esc "[H") home)
                  (,(chain esc "[2~")  ins)
@@ -156,7 +161,7 @@
 
 (export
   raw-mode cbreak-mode
-  get-key
+  get-key ctrl
   render cursor
   bold unstyled
   black red green yellow blue magenta cyan white)
