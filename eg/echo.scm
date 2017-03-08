@@ -5,7 +5,7 @@
 (import (use "lib/sturm")
   cbreak-mode get-key render cursor)
 
-(define (main)
+(define (main _)
   (cbreak-mode run))
 
 (define (run)

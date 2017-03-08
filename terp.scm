@@ -378,6 +378,12 @@
 
 (define mask32 (- 1 (expt 2 32)))
 
+(define (env-defined? r v)
+  (define (succeed pair) #t)  ; (not (eq? (cadr pair) uninitialized)))
+  (cond ((assq v r) => succeed)
+        ((assq v the-global-env) => succeed)
+        (else #f)))
+
 (define (env-lookup r v k)
   (define (succeed pair) (answer k (cadr pair)))
   (cond ((assq v r) => succeed)

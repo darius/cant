@@ -28,13 +28,13 @@
   get-key render
   color green bold unstyled)
 
-(define (do-command-line args)
+(define (main args)
   (let filename
     (match args
       ((_) "eg/microban")
       ((_ fname) fname)
       (_ (error "Usage: %d [filename]" (args 0)))))
-  (call main (load-collection filename)))
+  (call start (load-collection filename)))
 
 (define (load-collection filename)
   (let (name levels-str)
@@ -44,7 +44,7 @@
                (sokoban-grid<- (parse initial-config))))
   `(,grids ,name))
 
-(define (main grids name)
+(define (start grids name)
   (for cbreak-mode ()
     (play grids name 0)))
 
@@ -148,6 +148,6 @@ Level %w %d Move %w")
      (move! "iI" p (+ p d)))))
 
 (export
-  do-command-line load-collection
-  main play
+  main load-collection
+  start play
   sokoban-grid<- parse)

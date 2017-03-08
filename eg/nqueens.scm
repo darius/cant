@@ -4,9 +4,8 @@
   bdd-and bdd-or satisfy-first
   lit0 lit1 build-choice)
 
-;; TODO design command-line interfacing
-(define (main argv)
-  (match argv
+(define (main args)
+  (match args
     ((_ n) (queens (number<-string n)))
     ((prog @_) (format "Usage: %d board-size" prog))))
 
