@@ -120,7 +120,24 @@
          (if (or (pair? message) (null? message))
              (cond ((eq? object error-prim) (error-prim (cons k message)))
                    ((eq? object evaluate-prim) (evaluate-prim message k))
-                   (else (answer k (apply object message))))
+                   (else
+                    ;; Intercept Scheme-level errors:
+                    (call/cc
+                     (lambda (scheme-cont)
+                       (answer
+                        k
+                        (with-exception-handler
+                         (lambda (exc)
+                           (scheme-cont
+                            (if (condition? exc)
+                                (let ((plaint
+                                       (with-output-to-string
+                                         (lambda () (display-condition exc)))))
+                                  (signal k plaint object message))
+                                (signal k "Primitive error" exc object message))))
+                         (lambda ()
+                           ;; Do the Scheme call in this error-handling context.
+                           (apply object message))))))))
              (run-script object procedure-script object message k)))
         ((object? object)
          (let ((script (object-script object))
