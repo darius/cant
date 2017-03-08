@@ -125,7 +125,8 @@
          (when (and show-cursor? ch.letter?)
            (when (= pos.^ cursor-at.^)
              (emit cursor))
-           (pos .^= (+ pos.^ 1))))         ;XXX clumsier
+           (pos .^= (+ pos.^ 1)))         ;XXX clumsier
+         (emit (decoder .get ch ch)))
        (emit #\newline)
        (for each! ((ch line))
          (emit (if ch.letter? #\- #\space)))
