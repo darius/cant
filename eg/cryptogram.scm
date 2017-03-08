@@ -32,6 +32,28 @@
   )
 
 (define (puzzle cryptogram)
+  (let cv (cryptoview<- cryptogram))
+  (begin playing ()
+    (render (cv .view #yes))
+    (let key (get-key))
+    (match key
+      ('esc       (render (cv .view #no)))
+      ('home      cv.go-to-start                            (playing))
+      ('end       cv.go-to-end                              (playing))
+      ('left      (cv .shift-by -1)                         (playing))
+      ('right     (cv .shift-by  1)                         (playing))
+      ('up        (cv .shift-line -1)                       (playing))
+      ('down      (cv .shift-line  1)                       (playing))
+      (#\tab      cv.shift-to-space                         (playing))
+      ('backspace (cv .shift-by -1)    (cv .jot #\space)    (playing))
+      ('del       (cv .jot #\space)    (cv .shift-by 1)     (playing))
+      (_
+       (when (or key.space? (alphabet .find? key))
+         (cv .jot key)
+         (cv .shift-by 1))
+       (playing)))))
+
+(define (cryptoview<- cryptogram)
 
   (let code (for filter ((ch cryptogram)) ch.letter?))
   (assert (not code.empty?))
@@ -41,23 +63,8 @@
   (let lines (each clean cryptogram.split-lines))
   (let cursor-at (box<- 0))
 
-  (define (jot letter)
-    (decoder .set! (code cursor-at.^) letter))
-
   (define (shift-by offset)
     (cursor-at .^= ((+ cursor-at.^ offset) .modulo code.count)))
-
-  (define (shift-to-space)
-    (when (decoder.values .find? #\space) ;XXX probably won't work yet
-      (begin shifting ()
-        (shift-by 1)
-        (unless (= #\space (decoder (code cursor-at.^)))
-          (shifting)))))
-
-  (define (shift-line offset)
-    (let next-line ((+ (line-number cursor-at.^) offset)
-                    .modulo lines.count))
-    (cursor .^= (line-starts next-line)))
 
   (define (line-number pos)
     (let items
@@ -70,28 +77,35 @@
     (running-sum (for each ((line lines))
                    ((filter '.letter? line) .count))))
 
-  (define (view show-cursor?)
-    XXX)
+  (make _
+    ({.jot letter}
+     (decoder .set! (code cursor-at.^) letter))
 
-  (begin playing ()
-    (render (view #yes))
-    (let key (get-key))
-    (match key
-      ('esc       (render (view #no)))
-      ('home      (cursor-at .^= 0)                 (playing))
-      ('end       (cursor-at .^= (- code.count 1))  (playing))
-      ('left      (shift-by -1)                     (playing))
-      ('right     (shift-by  1)                     (playing))
-      ('up        (shift-line -1)                   (playing))
-      ('down      (shift-line  1)                   (playing))
-      (#\tab      (shift-to-space)                  (playing))
-      ('backspace (shift-by -1)    (jot #\space)    (playing))
-      ('del       (jot #\space)    (shift-by 1)     (playing))
-      (_
-       (when (printables .maps? key)
-         (jot key)
-         (shift-by 1))
-       (playing)))))
+    ({.go-to-start}
+     (cursor-at .^= 0))
+
+    ({.go-to-end}
+     (cursor-at .^= (- code.count 1)))
+
+    ({.shift-by n}
+     (shift-by n))
+
+    ({.shift-line offset}
+     (let line-num ((+ (line-number cursor-at.^) offset)
+                    .modulo lines.count))
+     (cursor .^= (line-starts line-num)))
+
+    ({.shift-to-space}
+     (when (decoder.values .find? #\space) ;XXX probably won't work yet
+       (begin shifting ()
+         (shift-by 1)
+         (unless (= #\space (decoder (code cursor-at.^)))
+           (shifting)))))
+
+    ({.view show-cursor?}
+     XXX)
+))
+
 
 ;; Expand tabs; blank out other control characters.
 (define (clean str)
