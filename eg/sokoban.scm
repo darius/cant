@@ -31,7 +31,7 @@
 (define (do-command-line args)
   (let filename
     (match args
-      ((_) "lib/microban")
+      ((_) "eg/microban")
       ((_ fname) fname)
       (_ (error "Usage: %d [filename]" (args 0)))))
   (call main (load-collection filename)))
