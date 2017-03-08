@@ -58,7 +58,7 @@
 
 (define (cryptoview<- cryptogram)
 
-  (let code (for filter ((ch cryptogram)) ch.letter?))
+  (let code (filter '.letter? cryptogram))
   (surely (not code.empty?))
   (let decoder
     (map<-a-list (for each ((ch ((call set<- code) .keys))) ;XXX clumsy
@@ -106,7 +106,7 @@
            (shifting)))))
 
     ({.view show-cursor?}
-     (let counts (call bag<- (for filter ((v decoder.values)) ;XXX bag<-
+     (let counts (call bag<- (for filter ((v decoder.values))
                                (not= v #\space))))
      (let letters-left (for each ((ch alphabet))
                          (if (counts .maps? ch) #\space ch)))
