@@ -2,7 +2,8 @@
 ;; Ported from github.com/darius/sturm.
 
 (import (use "lib/sturm")
-  cbreak-mode get-key render cursor)
+  cbreak-mode get-key render
+  cursor green red unstyled)
 
 (define (main args)
   (let cryptogram
@@ -103,9 +104,38 @@
            (shifting)))))
 
     ({.view show-cursor?}
-     XXX)
-))
+     (let counts (call bag<- (for filter ((v decoder.values)) ;XXX bag<-
+                               (not= v #\space))))
+     (let letters-left (for each ((ch alphabet))
+                         (if (counts .maps? ch) #\space ch)))
+     (let clashes (call set<- (for gather (((v n) counts.items))
+                                (if (< 1 n) `(,v) '()))))
 
+     (let pos (box<- 0))
+
+     (let view (fillvector<-))
+     (define (emit x) (view .push! x))
+
+     (emit (green `("Free: " ,letters-left #\newline)))
+     (for each! ((line lines))
+       (emit #\newline)
+       (for each! ((ch line))
+         (when (and show-cursor? ch.letter?)
+           (when (= pos.^ cursor-at.^)
+             (emit cursor))
+           (pos .^= (+ pos 1))))         ;XXX clumsier
+       (emit #\newline)
+       (for each! ((ch line))
+         (emit (if ch.letter? #\- #\space)))
+       (emit #\newline)
+       (for each! ((ch line))
+         (let color (case ((clashes .maps? (decoder .get ch)) red)
+                          ((= ch (code cursor-at.^))          green)
+                          (else                               unstyled)))
+         (emit (color ch)))
+       (emit #\newline))
+
+     (as-list view))))
 
 ;; Expand tabs; blank out other control characters.
 (define (clean str)
@@ -127,3 +157,5 @@
   (for each! ((n numbers))
     (sums .push! (+ sums.last n)))
   sums)
+
+(export main)
