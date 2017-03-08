@@ -95,10 +95,10 @@
 (let key-map
   (map<-a-list `((,(string<- (char<- 127)) backspace)
 
-                 (,(chain esc "[1~")  home)
+                 (,(chain esc "[1~")  home)   (,(chain esc "[H") home)
                  (,(chain esc "[2~")  ins)
                  (,(chain esc "[3~")  del)
-                 (,(chain esc "[4~")  end)
+                 (,(chain esc "[4~")  end)    (,(chain esc "[F") end)
                  (,(chain esc "[5~")  pg-up)
                  (,(chain esc "[6~")  pg-dn)
                  (,(chain esc "[11~") f1)
@@ -115,10 +115,10 @@
                  (,(chain esc "[24~") f12)
                  (,(chain esc "[Z")   shift-tab)
 
-                 (,(chain esc "[A") up)     (,(chain esc "[OA") up)
-                 (,(chain esc "[B") down)   (,(chain esc "[OB") down)
-                 (,(chain esc "[C") right)  (,(chain esc "[OC") right)
-                 (,(chain esc "[D") left)   (,(chain esc "[OD") left)
+                 (,(chain esc "[A") up)       (,(chain esc "[OA") up)
+                 (,(chain esc "[B") down)     (,(chain esc "[OB") down)
+                 (,(chain esc "[C") right)    (,(chain esc "[OC") right)
+                 (,(chain esc "[D") left)     (,(chain esc "[OD") left)
                  )))
 
 (let key-map-prefixes
