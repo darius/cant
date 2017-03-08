@@ -10,7 +10,7 @@
 (make none)  ;; Disjoint from all the values of constants.
 
 (define (constant<- value)
-  (assert (not= value none) "That can't be a constant value -- it's reserved")
+  (surely (not= value none) "That can't be a constant value -- it's reserved")
   (make
     ({.rank}           infinity)
     ({.constant-value} value)
@@ -22,7 +22,7 @@
   (= 1 set.count))
 
 (define (choice<- rank branches)
-  (assert (< rank infinity))
+  (surely (< rank infinity))
   (make choice
     ({.rank}           rank)
     ({.constant-value} none)

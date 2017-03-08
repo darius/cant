@@ -9,11 +9,11 @@
 
 (make ratio<-
   ((n)
-   (assert (integer? n))
+   (surely (integer? n))
    {ratio n 1})
   ((n d)
-   (assert (integer? n))
-   (assert (integer? d))
+   (surely (integer? n))
+   (surely (integer? d))
    (reduce n d)))
     
 (define (reduce n d)

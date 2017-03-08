@@ -96,7 +96,7 @@ Level %w %d Move %w")
 
 (define (parse initial-config)
   (let lines initial-config.split-lines)
-  (assert (for every ((line lines))
+  (surely (for every ((line lines))
             (= line.count ((lines 0) .count))))
   (vector<-list (list<-string initial-config))) ;XXX list<-string shouldn't be needed
 

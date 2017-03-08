@@ -5,4 +5,4 @@
 (print (left-pad "  I am pretty padded.   "))
 
 (let again (use "eg/test-module-for-use")) ; Shouldn't print that it's loading again.
-(assert (= again left-pad-module))
+(surely (= again left-pad-module))

@@ -1,6 +1,6 @@
 ;; stdlib
 
-(define (assert ok? @arguments)
+(define (surely ok? @arguments)
   (unless ok?
     (call error (if arguments.empty? '("Assertion failed") arguments))))
 

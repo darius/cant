@@ -54,8 +54,8 @@
 ;; OK, so the interpreter now looks like:
 
 (define (script<- stamp trait clauses)
-  (when stamp (assert (stamp? stamp)))
-;  (assert (trait? trait))
+  (when stamp (surely (stamp? stamp)))
+;  (surely (trait? trait))
   (make script
     ({.receive message parent-r}
      (begin matching ((clauses clauses))

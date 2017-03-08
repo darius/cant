@@ -118,7 +118,7 @@
 
     ({.redisplay}
      (let rendering (update-origin))
-     (assert rendering.point-is-visible?)
+     (surely rendering.point-is-visible?)
      rendering.show)
 
     ({.visit filename}

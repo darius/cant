@@ -8,7 +8,7 @@
 (let lit1 1)
 
 (define (constant<- value)
-  (assert (or (= value lit0) (= value lit1))
+  (surely (or (= value lit0) (= value lit1))
           "Not binary" value)
   value)
 
@@ -33,7 +33,7 @@
 (define (build-choice rank if0 if1)
   (let (already memo-table) (dedup choice-memo rank if0 if1))
   (or already
-      (do (assert (< rank infinite-rank))
+      (do (surely (< rank infinite-rank))
           (let index (ranks .push! rank))
           (if0s .push! if0)
           (if1s .push! if1)
@@ -76,7 +76,7 @@
 (define (choose node if0 if1)
   (let (already memo-table) (dedup choose-memo node if0 if1))
   (or already
-      (do (assert (< lit1 node))
+      (do (surely (< lit1 node))
           (let top (min (ranks node) (ranks if0) (ranks if1)))
           (let on0 (do-choose (subst top lit0 node)
                               (subst top lit0 if0)

@@ -13,7 +13,7 @@
   (begin running ()
     (let lines (text-wrap (" " .join strokes)     ;XXX does this work
                           num-cols))
-    (render '("Hit some keys; or hit capital Q to quit.\n\n"
+    (render `("Hit some keys; or hit capital Q to quit.\n\n"
               ,("\n" .join lines)
               ,cursor))
     (let key (get-key))

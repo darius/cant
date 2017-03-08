@@ -26,12 +26,12 @@
        0
        (+ 1 list.rest.count)))          ;TODO tail recursion
   ({.slice i}
-   (assert (<= 0 i))
+   (surely (<= 0 i))
    (if (= i 0)
        list
        (list.rest .slice (- i 1))))
   ({.slice i bound}     ;XXX result is a cons-list; be more generic?
-   (assert (<= 0 i))
+   (surely (<= 0 i))
    (case (list.empty? list)
          ((<= bound i) '())
          ((= i 0) (cons list.first (list.rest .slice 0 (- bound 1))))

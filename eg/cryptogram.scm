@@ -57,7 +57,7 @@
 (define (cryptoview<- cryptogram)
 
   (let code (for filter ((ch cryptogram)) ch.letter?))
-  (assert (not code.empty?))
+  (surely (not code.empty?))
   (let decoder
     (map<-a-list (for each ((ch ((call set<- code) .keys))) ;XXX clumsy
                    `(,ch #\space))))
