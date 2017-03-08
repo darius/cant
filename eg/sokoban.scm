@@ -83,7 +83,7 @@ Level %w %d Move %w")
       (#\n  (playing ((+ level 1) .modulo trails.count)))
       (#\p  (playing ((- level 1) .modulo trails.count)))
       (#\u
-       (unless trail.empty?
+       (when (< 1 trail.count)
          trail.pop!)
        (playing level))
       (_
