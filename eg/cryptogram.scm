@@ -150,7 +150,7 @@
            (r .push! #\space))
           (else
            (r .push! ch))))
-  (string<-list r))
+  (string<-list (as-list r)))           ;XXX clumsy
 
 (define (running-sum numbers)
   (let sums (fillvector<- 0))
