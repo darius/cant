@@ -4,6 +4,8 @@
 (import (use "lib/sturm")
   cbreak-mode get-key render
   cursor green red unstyled)
+(import (use "lib/bag")
+  bag<-)
 
 (define (main args)
   (let cryptogram
