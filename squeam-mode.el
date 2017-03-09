@@ -31,7 +31,10 @@
         (append scheme-font-lock-keywords-2
                 (eval-when-compile
                   (list
-                   (regexp-opt '("export" "for" "given" "hide" "import" "make" "make-trait" "match" "unless" "with" "when") 'symbols)
+                   (regexp-opt
+                    '("export" "for" "given" "hide" "import" "make"
+                      "make-trait" "match" "to" "unless" "with" "when")
+                    'symbols)
                    ))))
   (setq font-lock-defaults
         `((scheme-font-lock-keywords
