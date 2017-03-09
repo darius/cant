@@ -17,6 +17,6 @@
   (newline))
 
 (to (print-traceback k)
-  (each! print k))
+  (each! print (reverse k)))
 
 (export on-error-traceback print-error-traceback print-plaint print-traceback)
