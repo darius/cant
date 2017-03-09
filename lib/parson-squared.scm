@@ -49,25 +49,25 @@
   (or c.alphanumeric? (= c #\_)))       ;right?
 
 (let eat-line
-    (delay (given ()
-             (either (lit-1 #\newline)
-                     (then skip-any-1 eat-line)
-                     empty))))
+  (delay (given ()
+           (either (lit-1 #\newline)
+                   (then skip-any-1 eat-line)
+                   empty))))
 
 (let whitespace
-    (at-least-1 (either (skip-1 '.whitespace?)
-                        (then (lit-1 #\#) eat-line))))
+  (at-least-1 (either (skip-1 '.whitespace?)
+                      (then (lit-1 #\#) eat-line))))
 
 (let __ (maybe whitespace))
 
 (let name 
-    (then (capture (then (skip-1 (given (c) (or c.alphabetic? (= c #\_))))
-                         (many (skip-1 word-char?))))
-          __))
+  (then (capture (then (skip-1 (given (c) (or c.alphabetic? (= c #\_))))
+                       (many (skip-1 word-char?))))
+        __))
 
 (let word
-    (then (capture (many (skip-1 word-char?)))
-          __))
+  (then (capture (many (skip-1 word-char?)))
+        __))
 
 (to (string-quoted-by q-char)
   (let q (lit-1 q-char))
@@ -83,49 +83,49 @@
 (let dqstring (string-quoted-by #\"))
 
 (let pe
-    (delay (given ()
-             (seclude
-              (either (then term (maybe (then (lit "|") __ pe (lift either))))
-                      (lift (given () empty)))))))
+  (delay (given ()
+           (seclude
+            (either (then term (maybe (then (lit "|") __ pe (lift either))))
+                    (lift (given () empty)))))))
 
 (let term
-    (delay (given ()
-             (seclude
-              (then factor (maybe (then term (lift chain))))))))
+  (delay (given ()
+           (seclude
+            (then factor (maybe (then term (lift chain))))))))
 
 (let factor
-    (delay (given ()
-             (seclude
-              (either (then (lit "!") __ factor (lift invert))
-                      (then primary
-                            (either (then (lit "**") __ primary (lift many))
-                                    (then (lit "++") __ primary (lift at-least-1))
-                                    (then (lit "*") __ (lift many))
-                                    (then (lit "+") __ (lift at-least-1))
-                                    (then (lit "?") __ (lift maybe))
-                                    empty)))))))
+  (delay (given ()
+           (seclude
+            (either (then (lit "!") __ factor (lift invert))
+                    (then primary
+                          (either (then (lit "**") __ primary (lift many))
+                                  (then (lit "++") __ primary (lift at-least-1))
+                                  (then (lit "*") __ (lift many))
+                                  (then (lit "+") __ (lift at-least-1))
+                                  (then (lit "?") __ (lift maybe))
+                                  empty)))))))
 
 (let primary
-    (seclude
-     (either (then (lit "(") __ pe (lit ")") __)
-             (then (lit "[") __ pe (lit "]") __   (lift seclude))
-             (then (lit "{") __ pe (lit "}") __   (lift capture))
-             (then qstring (feed literal<-))
-             (then dqstring (feed keyword<-))
-             (then (lit ":") (either (then word    (feed unquote<-))
-                                     (then qstring (feed push-lit<-))))
-             (then name (feed rule-ref<-)))))
+  (seclude
+   (either (then (lit "(") __ pe (lit ")") __)
+           (then (lit "[") __ pe (lit "]") __   (lift seclude))
+           (then (lit "{") __ pe (lit "}") __   (lift capture))
+           (then qstring (feed literal<-))
+           (then dqstring (feed keyword<-))
+           (then (lit ":") (either (then word    (feed unquote<-))
+                                   (then qstring (feed push-lit<-))))
+           (then name (feed rule-ref<-)))))
 
 (let rule
-    (seclude
-     (then name
-           (either (then (lit "=") __ pe)
-                   (then (lit ":") whitespace
-                         (seclude (then pe (lift seclude)))))
-           (lit ".") __
-           hug)))
+  (seclude
+   (then name
+         (either (then (lit "=") __ pe)
+                 (then (lit ":") whitespace
+                       (seclude (then pe (lift seclude)))))
+         (lit ".") __
+         hug)))
 
 (let grammar
-    (then (at-least-1 rule) end))
+  (then (at-least-1 rule) end))
 
 (export grammar)
