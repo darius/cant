@@ -8,15 +8,18 @@
 
 (define (mode name fn)
   ;; TODO note screen size
-  (match (system ("stty %d -echo" .format name))
-    (0 'ok))
+  (system/must-succeed ("stty %d -echo" .format name))
   (display home)
   (display clear-to-bottom)
   (fn)                                  ;TODO unwind-protect
   (display cursor-show)
   (display #\newline)
-  (match (system "stty sane")           ;XXX save & restore instead
-    (0 'ok)))
+  (system/must-succeed "stty sane"))    ;TODO save & restore instead
+
+;;TODO useful elsewhere too
+(define (system/must-succeed command)
+  (unless (= 0 (system command))
+    (error "Failed system command" command)))
 
 
 ;; ANSI terminal escape codes
@@ -36,14 +39,6 @@
 (let cursor-pos-restore (seq "u"))
 (let cursor-show        (seq "?25h"))
 (let cursor-hide        (seq "?25l"))
-
-(define (make-color code) 
-  (let setter (set-foreground code))
-  (given (str)
-    `(,setter ,str)))
-
-(define (set-foreground color) (sgr (+ 30 color)))
-(define (set-background color) (sgr (+ 40 color)))
 
 (define (sgr num)
   (seq ("%wm" .format num)))
