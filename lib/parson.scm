@@ -127,6 +127,7 @@
   ((p separator)
    (then p (many (then separator p)))))
 
-(export invert capture either then feed-list feed push seclude delay maybe many at-least-1
+(export invert capture either then feed-list feed push seclude delay
+        maybe many at-least-1
         fail empty end skip-1 take-1 any-1 skip-any-1 lit-1 lit
         parse)
