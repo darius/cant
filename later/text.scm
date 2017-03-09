@@ -31,7 +31,7 @@
 (let backward -1)
 (let forward   1)
 
-(define (text<-)
+(to (text<-)
 
   (let t    (fillvector<-))
   (let head (box<- 0))
@@ -39,30 +39,30 @@
   (let size (box<- 0))
 
   ;; Return coordinate p clipped to the text's actual range.
-  (define (clip p)
+  (to (clip p)
     (max 0 (min p size.^)))
 
-  (define (clip-range p span)
+  (to (clip-range p span)
     (let q (clip p))
     (let h (clip (+ q (max 0 span))))
     `(,q ,(- h q)))
 
   ;; Pre: p is in [0..size).
-  (define (get-char-after p)
+  (to (get-char-after p)
     (t (if (< p head.^) p (+ p gap.^))))
 
   ;; Return the `span` characters after `p0` as a string.
-  (define (get p0 span0)
+  (to (get p0 span0)
     (let (p span) (clip-range p0 span0))
     (string<-list (each get-char-after (range<- p (+ p span)))))
 
-  (define (grow n)
+  (to (grow n)
     (+ n (n .quotient 2)))
 
   ;; Replace the `span` characters after `p` by `replacement`.
   ;; TODO this code is hard to follow
   ;; XXX check/correct this for 0-based vectors
-  (define (replace p0 span0 replacement)
+  (to (replace p0 span0 replacement)
     (let (p span) (clip-range p0 span0))
      
     ;; Make position p start the tail.

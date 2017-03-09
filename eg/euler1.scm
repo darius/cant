@@ -1,7 +1,7 @@
 ;; https://projecteuler.net/problem=1
 ;; Find the sum of all the multiples of 3 or 5 below 1000.
 
-(define (euler1 n)
+(to (euler1 n)
   (sum (for each ((i (range<- 3 n)))
          (if (or (= 0 (i .remainder 3))
                  (= 0 (i .remainder 5)))

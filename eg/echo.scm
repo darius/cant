@@ -7,10 +7,10 @@
 (import (use "lib/text-wrap")
   fill)
 
-(define (main _)
+(to (main _)
   (cbreak-mode run))
 
-(define (run)
+(to (run)
   (let strokes (fillvector<-))
   (begin running ()
     (let echoes (fill (" " .join strokes) screen-width))

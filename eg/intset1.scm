@@ -7,7 +7,7 @@
   ({.adjoin k} (adjoin<- k empty-set))
   ({.merge s}  s))
 
-(define (adjoin<- n s)
+(to (adjoin<- n s)
   (if (s .has? n)
       s
       (make extension
@@ -16,7 +16,7 @@
         ({.adjoin k} (adjoin<- k extension))
         ({.merge s}  (merge<- extension s)))))
 
-(define (merge<- s1 s2)
+(to (merge<- s1 s2)
   (make meld
     ({.empty?}   (and s1.empty? s2.empty?))
     ({.has? k}   (or (s1 .has? k) (s2 .has? k)))

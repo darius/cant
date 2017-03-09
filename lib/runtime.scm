@@ -378,7 +378,7 @@
 
 ;; Continuations
 
-(define (__halt-cont)
+(to (__halt-cont)
   (make me {extending list-trait}
     ({.empty?}        #yes)
     ({.first}         (error "No more frames" me))
@@ -390,81 +390,81 @@
   ({.selfie sink}   (sink .display "<cont>")) ;XXX more
   (message          (list-trait me message))) ;XXX use trait syntax instead
 
-(define (__call-cont-standin-cont k message)
+(to (__call-cont-standin-cont k message)
   (make {extending __cont-trait}
     ({.rest} k)
     ({.first} '("XXX still a hack"))))
 
-(define (__match-clause-cont k pat-r body rest-clauses object script datum message)
+(to (__match-clause-cont k pat-r body rest-clauses object script datum message)
   (make {extending __cont-trait}
     ({.rest} k)
     ({.first} `((^ ,body) ,@rest-clauses))))
 
-(define (__ev-trait-cont k r name trait clauses)
+(to (__ev-trait-cont k r name trait clauses)
   (make {extending __cont-trait}
     ({.rest} k)
     ({.first} `(make ,name ,trait ^
                  ,@clauses))))
 
-(define (__ev-make-cont k name stamp-val r clauses)
+(to (__ev-make-cont k name stamp-val r clauses)
   (make {extending __cont-trait}
     ({.rest} k)
     ({.first} `(make ,name ^ #no   ; XXX as above
                  ,@clauses))))
 
-(define (__ev-do-rest-cont k r e2)
+(to (__ev-do-rest-cont k r e2)
   (make {extending __cont-trait}
     ({.rest} k)
     ({.first} e2)))
 
-(define (__ev-let-match-cont k r p)
+(to (__ev-let-match-cont k r p)
   (make {extending __cont-trait}
     ({.rest} k)
     ({.first} `(<match> ,p))))          ;XXX lousy presentation
 
-(define (__ev-let-check-cont k val)
+(to (__ev-let-check-cont k val)
   (make {extending __cont-trait}
     ({.rest} k)
     ({.first} `(<assert-matched-then> ',val))))
 
-(define (__ev-arg-cont k r e2)
+(to (__ev-arg-cont k r e2)
   (make {extending __cont-trait}
     ({.rest} k)
     ({.first} `(^ ,e2))))
 
-(define (__ev-call-cont k receiver)
+(to (__ev-call-cont k receiver)
   (make {extending __cont-trait}
     ({.rest} k)
     ({.first} `(call ',receiver ^))))
 
-(define (__ev-rest-args-cont k es r vals)
+(to (__ev-rest-args-cont k es r vals)
   (make {extending __cont-trait}
     ({.rest} k)
     ({.first}
-     (define (quotify v) `',v)
+     (to (quotify v) `',v)
      `(,@(each quotify (reverse vals)) ^ ,@es))))
 
-(define (__ev-tag-cont k tag)
+(to (__ev-tag-cont k tag)
   (make {extending __cont-trait}
     ({.rest} k)
     ({.first} `{,tag ^^^})))
 
-(define (__ev-and-pat-cont k r subject p2)
+(to (__ev-and-pat-cont k r subject p2)
   (make {extending __cont-trait}
     ({.rest} k)
     ({.first} `(<and-match?> ,p2))))
 
-(define (__ev-view-call-cont k r subject p)
+(to (__ev-view-call-cont k r subject p)
   (make {extending __cont-trait}
     ({.rest} k)
     ({.first} `(: _ ^ ,p))))
 
-(define (__ev-view-match-cont k r p)
+(to (__ev-view-match-cont k r p)
   (make {extending __cont-trait}
     ({.rest} k)
     ({.first} p)))
 
-(define (__ev-match-rest-cont k r subjects ps)
+(to (__ev-match-rest-cont k r subjects ps)
   (make {extending __cont-trait}
     ({.rest} k)
     ({.first} `(<all-match?> ,@ps))))

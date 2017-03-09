@@ -21,7 +21,7 @@
   ((_)
    #yes))                       ;XXX don't we care about deep balance?
 
-(define (torque {branch length structure})
+(to (torque {branch length structure})
   (* length (weight structure)))
 
 (make weight

@@ -1,11 +1,11 @@
 ;; A bag is a multiset, i.e. a map from a key to a count of its occurrences.
 
-(define (bag<- @vals)
+(to (bag<- @vals)
   (let bag (hash-bag<-))
   (bag .add-all! vals)
   bag)
 
-(define (hash-bag<-)
+(to (hash-bag<-)
   (let map (map<-))
   (make bag
     ({.empty?}        map.empty?)

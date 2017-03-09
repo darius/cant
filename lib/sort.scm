@@ -8,12 +8,12 @@
   ;; ...
   )
 
-(define (compare-reversed x y)
+(to (compare-reversed x y)
   (compare y x))
 
-(define (sort-by sequence cmp)
+(to (sort-by sequence cmp)
 
-  (define (merge-sort seq)
+  (to (merge-sort seq)
     (begin splitting ((seq seq) (xs '()) (ys '()))
       (if seq.empty?
           (if xs.empty?
@@ -21,7 +21,7 @@
               (merge (merge-sort xs) (merge-sort ys)))
           (splitting seq.rest ys (cons seq.first xs)))))
 
-  (define (merge xs ys)
+  (to (merge xs ys)
     (case (xs.empty? ys)
           (ys.empty? xs)
           (else (if (<= (cmp xs.first ys.first) 0) ;TODO error if cmp result is not in -1..1?

@@ -1,23 +1,23 @@
 ;; Like Python's textwrap.
 ;; TODO try using Parson
 
-(define (fill text width)
+(to (fill text width)
   ("\n" .join (wrap text width)))
 
-(define (wrap text width)
+(to (wrap text width)
   (surely (< 0 width))  ;TODO 'require' or something, for preconditions
 
-  (define (wrapping text)
+  (to (wrapping text)
     (if text.empty?
         '()
         (start-line (fillvector<-) text.first text.rest)))
 
-  (define (start-line line ch rest)
+  (to (start-line line ch rest)
 
-    (define (end-line)
+    (to (end-line)
       (string<-list (as-list line))) ;XXX clumsy
 
-    (define (eating ch rest)
+    (to (eating ch rest)
       (case ((= ch #\newline)
              (cons (end-line) (wrapping rest)))
             (ch.whitespace?
@@ -30,7 +30,7 @@
             (else
              (start-word ch rest))))
 
-    (define (start-word ch rest)
+    (to (start-word ch rest)
       (let word (fillvector<- ch))
       (let limit (- width line.count))
       (begin nibbling ((rest rest))
@@ -53,7 +53,7 @@
 
   (wrapping text))
 
-(define (main args)                     ;just for a quick test
+(to (main args)                     ;just for a quick test
   (print (wrap (" " .join args) 40)))
 
 (export fill wrap)

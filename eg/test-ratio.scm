@@ -5,7 +5,7 @@
 
 ;; Generate good rational approximations of float in order of
 ;; increasing denominator.
-(define (rationalize float)
+(to (rationalize float)
   (if (< float 0)
       (each/lazy - (rationalize (- float)))
       XXX))

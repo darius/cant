@@ -41,7 +41,7 @@
 ;; Smoke test
 
 (hide
- (define (try grammar sentence)
+ (to (try grammar sentence)
    (write sentence) (display ":") (newline)
    (each! print (grammar .parse sentence))
    (newline))

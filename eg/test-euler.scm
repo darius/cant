@@ -1,4 +1,4 @@
-(define (loud-load filename)
+(to (loud-load filename)
   (newline)
   (display "-------- ")
   (display filename)

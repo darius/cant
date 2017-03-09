@@ -11,7 +11,7 @@
 ;; Pre: lo and hi are ints, lo < hi
 ;; and not ok(j) for j in [lo..i)
 ;; and     ok(j) for j in [i..hi)  (for some i in [lo..hi]).
-(define (search lo hi ok?)
+(to (search lo hi ok?)
   (if (ok? lo)
       lo
       (begin searching ((L lo) (H hi))
@@ -25,17 +25,17 @@
 (let newline (charset<- #\newline))
 
 ;; Return a new buffer.
-(define (buffer<-)
+(to (buffer<-)
 
   (let text (text<-))
   (let point (box<- 0))              ; TODO: make this a mark
   (let origin (box<- 0))     ; display origin. XXX keep in a window object?
 
-  (define (update-origin)
+  (to (update-origin)
     (let rendering (render text origin.^ point.^))
     (case (rendering.point-is-visible? rendering)
           (else
-           (define (has-point? o)
+           (to (has-point? o)
              ((render text o point.^) .point-is-centered?))
            (let screen-size (* rows cols))
            (origin .^= (search (text .clip (- point.^ screen-size))
@@ -45,23 +45,23 @@
              (origin .^= 0)) ; Couldn't center it.
            (render text origin.^ point.^))))
 
-  (define (insert ch)                  ;XXX change to expect char instead of string?
+  (to (insert ch)                  ;XXX change to expect char instead of string?
     (text.insert point.^ ch)
     (point .^= (+ point.^ ch.size)))
 
-  (define (find-line p dir)
+  (to (find-line p dir)
     (text.clip (text.find-char-set p dir newline)))
 
   ;; TODO: preserve goal column; respect formatting, such as tabs;
   ;; treat long lines as defined by display
-  (define (previous-line)
+  (to (previous-line)
     (let start      (find-line point.^ backward))
     (let offset     (- point.^ start))
     (let prev-start (find-line (- start 1) backward))
     (point .^= (min (+ prev-start offset)
                     (text.clip (- start 1)))))
 
-  (define (next-line)
+  (to (next-line)
     (let start      (find-line point.^ backward))
     (let offset     (- point.^ start))
     (let next-start (find-line start forward))

@@ -4,35 +4,35 @@
   bdd-and bdd-or satisfy-first
   lit0 lit1 build-choice)
 
-(define (main args)
+(to (main args)
   (match args
     ((_ n) (queens (number<-string n)))
     ((prog @_) (format "Usage: %d board-size" prog))))
 
-(define (queens n)
+(to (queens n)
   (match (satisfy-first (queens-problem n) 1)
     (#no (display "none\n"))
     (env (print-board n env))))
 
-(define (print-board n env)
-  (for each! ((row (make-board n)))
+(to (print-board n env)
+  (for each! ((row (board<- n)))
     (for each! ((var row))
       (format "%d " (".Q" (env var))))
     (newline)))
 
-(define (queens-problem n)
+(to (queens-problem n)
   (conjoin (for each ((r (range<- n)))
              (disjoin (for each ((c (range<- n)))
                         (place-queen n r c))))))
 
-(define (conjoin nodes) (foldr1 bdd-and nodes))
-(define (disjoin nodes) (foldr1 bdd-or  nodes))
+(to (conjoin nodes) (foldr1 bdd-and nodes))
+(to (disjoin nodes) (foldr1 bdd-or  nodes))
 
-(define (place-queen n r c)
+(to (place-queen n r c)
 
   (let env (map<-))
 
-  (define (exclude rr cc)
+  (to (exclude rr cc)
     (when (and (<= 0 rr) (< rr n)
                (<= 0 cc) (< cc n))
       (env .set! (queen n rr cc) #no)))
@@ -50,7 +50,7 @@
 
   (match-env env))
 
-(define (match-env env)                 ;TODO move this to bdd.scm?
+(to (match-env env)                 ;TODO move this to bdd.scm?
   ;; Return a BDD that evaluates to 1 just when every variable in env
   ;; has its given value.
   (for foldl ((tree lit1)
@@ -59,11 +59,11 @@
         (build-choice var lit0 tree)
         (build-choice var tree lit0))))
 
-(define (queen n r c)
+(to (queen n r c)
   ;; The variable for a queen at (row r, column c) in an n*n board.
   (+ 2 (* n r) c))  ;; vars must be >= 2, to not clash with lits.
 
-(define (make-board n)
+(to (board<- n)
   ;; Return a 2-d array of distinct variables: each means there's a
   ;; queen at its position. Row/column numbers start from 0.
   (for each ((r (range<- n)))

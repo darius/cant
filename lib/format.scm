@@ -6,7 +6,7 @@
   ({.to sink format-string @arguments}
    (really-format sink format-string arguments)))
 
-(define (really-format sink format-string arguments)
+(to (really-format sink format-string arguments)
   (begin scanning ((s format-string)
                    (args arguments))
     ;; XXX Maybe just make list patterns handle generic seqs.

@@ -12,16 +12,16 @@
 
 (let hug (feed-list identity))
 
-(define (rule-ref<- name)
+(to (rule-ref<- name)
   (list<- (set<- name)
           (given (_ rules _)
             (delay (given () (rules name))))))
 
-(define (constant<- p)
+(to (constant<- p)
   (list<- (set<-)
           (given (_ _ _) p)))
 
-(define (lift peg-op)
+(to (lift peg-op)
   (feed-list
    (given (lifted)
      (list<- (union-over (for each (((refs _) lifted))
@@ -30,22 +30,22 @@
                (call peg-op (for each (((_ f) lifted))
                               (f builder rules subs))))))))
 
-(define (literal<- string)
+(to (literal<- string)
   (list<- (set<-)
           (given (builder _ _) (builder .literal string))))
 
-(define (keyword<- string)
+(to (keyword<- string)
   (list<- (set<-)
           (given (builder _ _) (builder .keyword string))))
 
-(define (unquote<- name)
+(to (unquote<- name)
   (list<- (set<-)
           (given (_ rules subs) (subs name))))
 
-(define (push-lit<- string)
+(to (push-lit<- string)
   (constant<- (push string)))
 
-(define (word-char? c)
+(to (word-char? c)
   (or c.alphanumeric? (= c #\_)))       ;right?
 
 (let eat-line
@@ -69,7 +69,7 @@
     (then (capture (many (skip-1 word-char?)))
           __))
 
-(define (string-quoted-by q-char)
+(to (string-quoted-by q-char)
   (let q (lit-1 q-char))
   (let quoted-char
     (either (then (lit-1 #\\) any-1)

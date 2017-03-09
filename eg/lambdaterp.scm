@@ -10,7 +10,7 @@
 ;;  k       continuation
 ;;  others  an AST or a value
 
-(define (parse lexp)
+(to (parse lexp)
   (match lexp
     ((: symbol?)
      (var-ref<- lexp))
@@ -22,7 +22,7 @@
      (call<- (parse operator)
              (parse operand)))))
 
-(define (interpret lexp)
+(to (interpret lexp)
   ((parse lexp) .evaluate global-env halt))
 
 
@@ -36,21 +36,21 @@
 
 
 ;; Constant
-(define (constant<- c)
+(to (constant<- c)
   (make constant
     ({.source} c)
     ({.eval-step r k} (debugging (value-step<- constant r k)))
     ({.evaluate r k} (k .take c))))
 
 ;; Variable reference
-(define (var-ref<- v)
+(to (var-ref<- v)
   (make var-ref
     ({.source} v)
     ({.eval-step r k} (debugging (value-step<- var-ref r k)))
     ({.evaluate r k} (lookup r v k))))
 
 ;; Lambda expression
-(define (abstraction<- v body)
+(to (abstraction<- v body)
   (make abstraction
     ({.source} `(& ,v ,body.source))
     ({.eval-step r k} (debugging (value-step<- abstraction r k)))
@@ -63,7 +63,7 @@
                  (body .eval-step (extend r v arg) k2)))))))
 
 ;; Application
-(define (call<- operator operand)
+(to (call<- operator operand)
   (make app
     ({.source} `(,operator.source ,operand.source))
     ({.eval-step r k}
@@ -71,7 +71,7 @@
     ({.evaluate r k}
      (operator .evaluate r (ev-arg-cont<- operand r k)))))
 
-(define (ev-arg-cont<- operand r k)
+(to (ev-arg-cont<- operand r k)
   (make ({.empty?} #no)
         ({.rest} k)
         ({.first} `(^ ,operand.source))
@@ -82,7 +82,7 @@
          (operand .eval-step r (call-cont<- fn k)))
         ))
 
-(define (call-cont<- fn k)
+(to (call-cont<- fn k)
   (make ({.empty?} #no)
         ({.rest} k)
         ({.first} `(,(survey fn) ^))
@@ -96,7 +96,7 @@
 
 ;; Built-in values
 
-(define (survey value)
+(to (survey value)
   (if (or (number? value) (symbol? value))
       value
       value.survey))
@@ -124,10 +124,10 @@
 (let global-env
   `((+ ,prim+)))
 
-(define (extend r v val)
+(to (extend r v val)
   `((,v ,val) ,@r))
 
-(define (lookup r v k)
+(to (lookup r v k)
   (case ((assq v r) => (given (record) (k .take (record 1))))
         (else (debug k "Unbound var" v))))
 
@@ -138,7 +138,7 @@
 
 (let command-queue (box<- '()))
 
-(define (next-command)
+(to (next-command)
   (display "debug> ")
   (match command-queue.^
     (()
@@ -149,26 +149,26 @@
      (command-queue .^= rest)
      first)))
 
-(define (debug k plaint irritant)
+(to (debug k plaint irritant)
   (complain plaint irritant)
   (traceback k)
   (debugging (out-step<- k 'default-error-value)))
 
-(define (complain plaint irritant)
+(to (complain plaint irritant)
   (display "Lambdaterp error: ")
   (write plaint)
   (display ": ")
   (write irritant)
   (newline))
 
-(define (traceback k)
+(to (traceback k)
   (each! print k))
 
-(define (debugging state)
+(to (debugging state)
   (let cmd (next-command))
   (if cmd (call state cmd) #no))
 
-(define (value-step<- e r k)
+(to (value-step<- e r k)
   (make value-step
     ({.show}
      (display "ev-> ") (print e.source))
@@ -183,7 +183,7 @@
      value-step.hop)
     ))
 
-(define (subeval-step<- e r k)
+(to (subeval-step<- e r k)
   (make subeval-step
     ({.show}
      (display "ev-> ") (print e.source))
@@ -198,7 +198,7 @@
      (e .eval-step r k))
     ))
 
-(define (out-step<- k value)
+(to (out-step<- k value)
   (make out-step
     ({.show}
      (display "<-ret ") (print (survey value)))
@@ -215,7 +215,7 @@
      (debugging (out-step<- k new-value)))
     ))
 
-(define (debugger-trap-cont<- k)
+(to (debugger-trap-cont<- k)
   (if (= k halt)
       k
       (make _
@@ -228,7 +228,7 @@
 
 (hide
 
- (define (try lexp @commands)
+ (to (try lexp @commands)
    (command-queue .^= commands)
    (let result (interpret lexp))
    (if result (print (survey result)) 'failed))

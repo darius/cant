@@ -9,7 +9,7 @@
 
 (make none)  ;; Disjoint from all the values of constants.
 
-(define (constant<- value)
+(to (constant<- value)
   (surely (not= value none) "That can't be a constant value -- it's reserved")
   (make
     ({.rank}           infinity)
@@ -17,11 +17,11 @@
     ({.evaluate env}   value)
     ((@nodes)          (nodes value))))
 
-(define (all-same? xs)
+(to (all-same? xs)
   (let set (call set<- xs))
   (= 1 set.count))
 
-(define (choice<- rank branches)
+(to (choice<- rank branches)
   (surely (< rank infinity))
   (make choice
     ({.rank}           rank)
@@ -38,7 +38,7 @@
 
 (let memo-node (memoize choice<-))
 
-(define (variable<- rank arity)
+(to (variable<- rank arity)
   (memo-node rank (each constant<- (range<- arity))))
 
 (let memo-choice
@@ -50,25 +50,25 @@
                 (for each ((c top.branches.keys))
                   (call (subst rank c node) (subst-each rank c branches)))))))
 
-(define (make-node rank branches)
+(to (make-node rank branches)
   (if (all-same? branches)
       branches.first
       (memo-node rank branches)))
 
-(define (subst-each rank value nodes)
+(to (subst-each rank value nodes)
   (for each ((e nodes)) (subst rank value e)))
 
-(define (subst rank value node)
+(to (subst rank value node)
   (match (rank .compare node.rank)
     (-1 node) ; N.B. node must be a constant, iff we arrived here (XXX why?)
     ( 0 (node.branches value))
     (+1 (make-node node.rank
                    (subst-each rank value node.branches)))))
 
-(define (valid? node)
+(to (valid? node)
   (not (satisfy node 0)))
 
-(define (satisfy node goal)
+(to (satisfy node goal)
   (let env (map<-))
   (begin walking ((node node))
     (if (not= none node.constant-value)

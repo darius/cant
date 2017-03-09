@@ -3,20 +3,20 @@
 
 ;; OO version
 
-(define (mobile<- left right)
+(to (mobile<- left right)
   (make _
     ({.weight}    (+ left.weight right.weight))
     ({.balanced?} (and left.balanced?
                        right.balanced?
                        (= left.torque right.torque)))))
 
-(define (branch<- length submobile)
+(to (branch<- length submobile)
   (let structure (if (number? submobile) (weight<- submobile) submobile))
   (make _
     ({.torque}    (* length structure.weight))
     (msg          (call structure msg))))
 
-(define (weight<- value)
+(to (weight<- value)
   (make _
     ({.weight}    value)
     ({.balanced?} #yes)))

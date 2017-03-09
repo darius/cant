@@ -1,11 +1,11 @@
 ;; Sets via hashtable
 
-(define (set<- @vals)            ;XXX this name is better saved for frozen sets
+(to (set<- @vals)            ;XXX this name is better saved for frozen sets
   (let s (hash-set<-))
   (s .add-all! vals)
   s)
 
-(define (hash-set<-)
+(to (hash-set<-)
   (let map (map<-)) ;TODO would be nice to avoid storing all the #yes values
   (make hash-set
     ({.keys}          map.keys)
@@ -24,12 +24,12 @@
      (sink .display ">"))
     ))
 
-(define (union set1 set2)
+(to (union set1 set2)
   (let result set1.diverge)
   (result .union! set2)
   result)
 
-(define (union-over sets)
+(to (union-over sets)
   (let result (set<-))
   (for each! ((set sets))
     (result .union! set))

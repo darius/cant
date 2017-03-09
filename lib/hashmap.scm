@@ -14,14 +14,14 @@
 
 (let none (make))
 
-(define (hash-map<-)
+(to (hash-map<-)
   (let count (box<- 0))
   (let keys  (box<- (vector<- none)))  ;; size a power of 2
   (let vals  (box<- (vector<- #no)))   ;; same size
 
-  (define (capacity) keys.^.count)
+  (to (capacity) keys.^.count)
 
-  (define (occupants)
+  (to (occupants)
     (begin walking ((i (- (capacity) 1)))
       (if (< i 0)
           '()
@@ -30,7 +30,7 @@
                   (walking (- i 1))
                   (cons i (walking (- i 1))))))))
 
-  (define (place key)
+  (to (place key)
     (let mask (- keys.^.count 1))
     (let i0   (mask .and (__hash key)))
     (begin walking ((i i0))
@@ -43,12 +43,12 @@
                  (error "Can't happen")
                  (walking j))))))
 
-  (define (maybe-grow)
+  (to (maybe-grow)
     (when (< (* 2 (capacity))
              (* 3 count.^))
       (resize (* 2 (capacity)))))
 
-  (define (resize new-capacity)
+  (to (resize new-capacity)
     (let old-keys keys.^)
     (let old-vals vals.^)
     (keys .^= (vector<-count new-capacity none))
@@ -108,7 +108,7 @@
 
 (let map<- hash-map<-)
 
-(define (map<-a-list a-list) ;TODO invent a concise constructor; frozen by default
+(to (map<-a-list a-list) ;TODO invent a concise constructor; frozen by default
   (let m (map<-))
   (for each! (((k v) a-list))
     (m .set! k v))

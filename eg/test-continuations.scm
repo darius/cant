@@ -2,7 +2,7 @@
 
 (import (use "lib/traceback") on-error-traceback)
 
-(define (on-error-have-fun k plaint @values)
+(to (on-error-have-fun k plaint @values)
   (the-signal-handler-box .^= on-error-traceback) ;; Restore the usual handler.
   (call on-error-traceback `(,k ,plaint ,@values))
   (display "Now continuing with 42") (newline)

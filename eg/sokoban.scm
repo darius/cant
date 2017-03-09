@@ -28,7 +28,7 @@
   get-key render
   green bold unstyled)
 
-(define (main args)
+(to (main args)
   (let filename
     (match args
       ((_) "eg/microban")
@@ -36,7 +36,7 @@
       (_ (error "Usage: %d [filename]" (args 0)))))
   (call start (load-collection filename)))
 
-(define (load-collection filename)
+(to (load-collection filename)
   (let (name levels-str)
     (for with-input-file ((f filename))
       `(,f.read-line ,f.read-all)))
@@ -44,7 +44,7 @@
                (sokoban-grid<- (parse initial-config))))
   `(,grids ,name))
 
-(define (start grids name)
+(to (start grids name)
   (for cbreak-mode ()
     (play grids name 0)))
 
@@ -53,7 +53,7 @@
                    (left left) (up  up) (down down) (right right))))
 
 ;; The UI to a sequence of Sokoban levels.
-(define (play grids name level)
+(to (play grids name level)
   (let trails (vector<-list (each fillvector<- grids)))
 
   (let heading
@@ -66,7 +66,7 @@ Level %w %d Move %w")
     (let trail (trails level))
     (let grid  trail.last)
 
-    (define (view-grid)
+    (to (view-grid)
       (for each ((ch grid.unparse))
         (let c1 (if ("iI" .find? ch) green unstyled))
         (let c2 (if (".I@" .find? ch) (compose bold c1) c1))
@@ -94,13 +94,13 @@ Level %w %d Move %w")
            (trail .push! after)))
        (playing level)))))
 
-(define (parse initial-config)
+(to (parse initial-config)
   (let lines initial-config.split-lines)
   (surely (for every ((line lines))
             (= line.count ((lines 0) .count))))
   (vector<-list (list<-string initial-config))) ;XXX list<-string shouldn't be needed
 
-(define (sokoban-grid<- grid)
+(to (sokoban-grid<- grid)
   ;; We represent a grid as a mutable vector of characters, including
   ;; the newlines, with every line the same length (which we call the
   ;; width of the grid). Thus moving up or down from some square means a
@@ -109,24 +109,24 @@ Level %w %d Move %w")
   (let directions
     (map<-a-list `((left -1) (right 1) (down ,width) (up ,(- width)))))
 
-  (define (find-player)
+  (to (find-player)
     (or (grid .find #\i #no)
         (grid .find #\I)))
 
   ;; Move thing from here to there if possible.
-  (define (move! thing here there)
+  (to (move! thing here there)
     (when (and (thing .find? (grid here))
                (" ." .find? (grid there)))
       (clear! here)
       (drop! thing there)))
 
   ;; Remove any thing (crate or player) from pos.
-  (define (clear! pos)
+  (to (clear! pos)
     (let target? (".@I" .find? (grid pos)))
     (grid .set! pos (if target? #\. #\space)))
 
   ;; Into a clear square, put thing.
-  (define (drop! thing pos)
+  (to (drop! thing pos)
     (let target? (= #\. (grid pos)))
     (grid .set! pos (thing (if target? 1 0))))
 

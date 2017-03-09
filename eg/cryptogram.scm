@@ -7,7 +7,7 @@
 (import (use "lib/bag")
   bag<-)
 
-(define (main args)
+(to (main args)
   (let cryptogram
     (match args.rest
       (()    (random-encrypt (run-fortune)))
@@ -18,33 +18,33 @@
 
 (let alphabet (each char<- (range<- (#\a .code) (+ (#\z .code) 1)))) ;XXX clumsy
 
-(define (random-encrypt text)
+(to (random-encrypt text)
   (let values (vector<-list alphabet))
   (random-shuffle! values)
   (let code (map<-a-list (zip alphabet values.values))) ;XXX why .values needed?
   (string<-list (for each ((ch text.lowercase))
                   (code .get ch ch))))
 
-(define (random-shuffle! vec)           ;XXX should be in `random` library
+(to (random-shuffle! vec)           ;XXX should be in `random` library
   (let n vec.count)
   (for each! ((i (range<- n)))
     (swap! vec i (+ i (random-integer (- n i))))))
 
-(define (swap! vec i j)
+(to (swap! vec i j)
   (let t (vec i))
   (vec .set! i (vec j))
   (vec .set! j t))
 
-(define (run-fortune)
+(to (run-fortune)
   ;; XXX ensure fits in sturm's width
   (shell-run "exec fortune"))
 
-(define (shell-run command)
+(to (shell-run command)
   (let (from-stdout to-stdin pid) (open-subprocess command))
   ;; TODO do we have to wait for it to terminate?
   from-stdout.read-all)
 
-(define (puzzle cryptogram)
+(to (puzzle cryptogram)
   (let cv (cryptoview<- cryptogram))
   (begin playing ()
     (render (cv .view #yes))
@@ -66,7 +66,7 @@
          (cv .shift-by 1))
        (playing)))))
 
-(define (cryptoview<- cryptogram)
+(to (cryptoview<- cryptogram)
 
   (let code (filter '.letter? cryptogram))
   (surely (not code.empty?))
@@ -76,10 +76,10 @@
   (let lines (each clean cryptogram.split-lines))
   (let point (box<- 0))                ; Index in `code` of the cursor
 
-  (define (shift-by offset)
+  (to (shift-by offset)
     (point .^= ((+ point.^ offset) .modulo code.count)))
 
-  (define (line-number pos)
+  (to (line-number pos)
     (let items
       (for filter (((i start) line-starts.items))
         (and (<= start pos) (< pos (line-starts (+ i 1))))))
@@ -126,7 +126,7 @@
      (let pos (box<- 0))
 
      (let view (fillvector<-))
-     (define (emit x) (view .push! x))
+     (to (emit x) (view .push! x))
 
      (emit (green `("Free: " ,letters-left #\newline)))
      (for each! ((line lines))
@@ -151,7 +151,7 @@
      (as-list view))))
 
 ;; Expand tabs; blank out other control characters.
-(define (clean str)
+(to (clean str)
   (let r (fillvector<-))
   (for each! ((ch str))
     (case ((= ch #\tab)
@@ -165,7 +165,7 @@
            (r .push! ch))))
   (string<-list (as-list r)))           ;XXX clumsy
 
-(define (running-sum numbers)
+(to (running-sum numbers)
   (let sums (fillvector<- 0))
   (for each! ((n numbers))
     (sums .push! (+ sums.last n)))

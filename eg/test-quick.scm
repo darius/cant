@@ -12,15 +12,15 @@
 (print `(hello ,(if #yes 'yes 'no)))
 (print (2 .+ 3))
 (print (hide (let x 55)))
-(print (hide (define (f) 136) (f)))
+(print (hide (to (f) 136) (f)))
 (print (hide
-        (define (factorial n)
+        (to (factorial n)
           (match n
             (0 1)
             (_ (n .* (factorial (n .- 1))))))
         (factorial 10)))
 
-(define (loud-load filename)
+(to (loud-load filename)
   (newline)
   (display "-------- ")
   (display filename)

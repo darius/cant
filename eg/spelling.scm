@@ -2,28 +2,28 @@
 ;; http://norvig.com/spell-correct.html
 ;; TODO: try imitating https://en.wikibooks.org/wiki/Clojure_Programming/Examples/Norvig_Spelling_Corrector
 
-(define (correct word)
+(to (correct word)
   (let candidates (or (if-any (known (set<- word)))
                       (if-any (known (edits1 word)))
                       (if-any (known-edits2 word))
                       (set<- word)))
   (arg-max candidates.keys (given (w) (NWORDS .get w 0))))
 
-(define (if-any xs)
+(to (if-any xs)
   (if xs.empty? #no xs))
 
 ;; TODO: NWORDS.keys should be a set, which we just intersect with words.
-(define (known words)  ;TODO: iter instead of list? set comprehension?
+(to (known words)  ;TODO: iter instead of list? set comprehension?
   (call set<- (for filter ((w words.keys))
                 (NWORDS .maps? w))))
 
-(define (known-edits2 word)
+(to (known-edits2 word)
   (call set<- (for gather ((e1 ((edits1 word) .keys))) ;TODO unugh
                 (for filter ((e2 ((edits1 e1) .keys)))
                   (NWORDS .maps? e2)))))
 
 ;; TODO real list comprehensions would be nice to have.
-(define (edits1 word)
+(to (edits1 word)
   (let splits     (for each ((i (range<- (+ word.count 1))))
                     `(,(word .slice 0 i)
                       ,(word .slice i))))
@@ -45,13 +45,13 @@
 
 (let alphabet "abcdefghijklmnopqrstuvwxyz")
 
-(define (train features)
+(to (train features)
   (let model (map<-))
   (for each! ((f features))
     (model .set! f (+ 1 (model .get f 1))))
   model)
 
-(define (words<-string string)
+(to (words<-string string)
   ;;  (re:findall "[a-z]+" string.lowercase))  ;TODO
   string.lowercase.split)
 

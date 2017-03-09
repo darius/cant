@@ -13,15 +13,15 @@
 
 (make eof)
 
-(define (read-atom port char)
+(to (read-atom port char)
   XXX)
 
 (let the-readtable (vector<-count 256 read-atom))
 
-(define (set-read-macro char reader)
+(to (set-read-macro char reader)
   (.set! the-readtable (.code char) reader))
 
-(define (read port)
+(to (read port)
   (let char (.read-char port))
   (if (is? char eof)
       eof
@@ -29,7 +29,7 @@
 
 ;; '(' tree* ')' -- where we've just eaten the '('.
 ;; XXX the extra must-read is ugly
-(define (read-list port _)
+(to (read-list port _)
   (recurse read-rest ()
     (skip-blanks port)
     (let peek (.peek-char port))
@@ -41,13 +41,13 @@
           (else 
            (cons (must-read port) (read-rest))))))
 
-(define (skip-blanks port) ;; and comments too
+(to (skip-blanks port) ;; and comments too
   XXX)
 
-(define (read-number port radix)
+(to (read-number port radix)
   XXX)
 
-(define (read-error port plaint)
+(to (read-error port plaint)
   (error (chain "Read error: " plaint)))
 
 ;; White space
@@ -118,7 +118,7 @@
   (given (port _)
     `',(must-read port)))
     
-(define (must-read port)
+(to (must-read port)
   (let tree (read port))
   (when (is? tree eof)
     (read-error port "Unexpected EOF"))

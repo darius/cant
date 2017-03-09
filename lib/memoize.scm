@@ -2,9 +2,9 @@
 
 (make not-yet)
 
-(define (memoize f)
+(to (memoize f)
   (let memos (map<-))
-  (define (memoized @arguments)
+  (to (memoized @arguments)
     (let recalled (memos .get arguments not-yet))
     (if (= recalled not-yet)
         (do (let computed (call f arguments))

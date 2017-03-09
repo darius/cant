@@ -1,13 +1,13 @@
 ;; https://projecteuler.net/problem=4
 ;; The largest palindrome that's the product of two 3-digit numbers.
 
-(define (euler4 lo bound)
+(to (euler4 lo bound)
   (call max (for gather ((i (range<- lo bound)))
               (for each ((j (range<- i bound)))
                 (let p (* i j))
                 (if (palindrome? p) p 0)))))
 
-(define (palindrome? n)
+(to (palindrome? n)
   (let s (string<-number n))      ;TODO use a string port instead
   (<=> s (reverse s)))
 

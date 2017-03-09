@@ -1,13 +1,13 @@
 ;; Binary decision diagrams
 ;; from ~/git/mccarthy-to-bryant/lua/bdd3.lua
 
-(define (bdd-and f g) (do-choose g lit0 f)) ;TODO rename do-choose
-(define (bdd-or  f g) (do-choose g f lit1))
+(to (bdd-and f g) (do-choose g lit0 f)) ;TODO rename do-choose
+(to (bdd-or  f g) (do-choose g f lit1))
 
 (let lit0 0)
 (let lit1 1)
 
-(define (constant<- value)
+(to (constant<- value)
   (surely (or (= value lit0) (= value lit1))
           "Not binary" value)
   value)
@@ -18,8 +18,8 @@
 (let if1s  (fillvector<- lit0 lit1))
 (let ifs   (vector<- if0s if1s))
 
-(define (dedup memo k1 k2 k3)
-  (define (enter map key)
+(to (dedup memo k1 k2 k3)
+  (to (enter map key)
     (or (map .get key)
         (do (let v (map<-))
             (map .set! key v)
@@ -30,7 +30,7 @@
 
 (let choice-memo (map<-))
 
-(define (build-choice rank if0 if1)
+(to (build-choice rank if0 if1)
   (let (already memo-table) (dedup choice-memo rank if0 if1))
   (or already
       (do (surely (< rank infinite-rank))
@@ -40,18 +40,18 @@
           (memo-table .set! if1 index)
           index)))
 
-(define (make-choice rank if0 if1)
+(to (make-choice rank if0 if1)
   (if (= if0 if1)
       if0
       (build-choice rank if0 if1)))
 
-(define (bdd-evaluate node env)
+(to (bdd-evaluate node env)
   (case ((<= node lit1) node)
         (else
          (let value (env (ranks node)))
          (bdd-evaluate ((ifs value) node) env))))
 
-(define (do-choose node if0 if1)
+(to (do-choose node if0 if1)
   (case ((<= node lit1)
          (match node
            (0 if0)                      ;N.B. 0 == lit0
@@ -63,7 +63,7 @@
         (else
          (choose node if0 if1))))
 
-(define (subst rank replacement node)
+(to (subst rank replacement node)
   (match (rank .compare (ranks node))
     (-1 node)
     ( 0 (do-choose replacement (if0s node) (if1s node)))
@@ -73,7 +73,7 @@
 
 (let choose-memo (map<-))
 
-(define (choose node if0 if1)
+(to (choose node if0 if1)
   (let (already memo-table) (dedup choose-memo node if0 if1))
   (or already
       (do (surely (< lit1 node))
@@ -88,7 +88,7 @@
           (memo-table .set! if1 result)
           result)))
 
-(define (satisfy-first node goal)
+(to (satisfy-first node goal)
   (let goal-node (constant<- goal))
   (let env (map<-))
   (begin walking ((node node))

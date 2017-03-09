@@ -12,7 +12,7 @@
 ;; TODO: mem could also be a typed vector, but neither the vector
 ;; nor the type is as simple...
 
-(define (run program sink source)
+(to (run program sink source)
   (let mem (fillvector<-))         ;TODO: shorter name? flexlist?
   (mem .push! program)
   (let free-list (fillvector<-))
@@ -20,7 +20,7 @@
 
   (begin running ((program program) (pc 0))
 
-    (define (next)
+    (to (next)
       (running program (pc .u+ 1)))
 
     (let inst (program pc))
@@ -92,7 +92,7 @@
 
          (_ (error "Bad opcode" opcode)))))))
 
-(define (read-program source)
+(to (read-program source)
   (let program (fillvector<-))
   (begin reading ()
     (let c3 source.read-char)
@@ -106,14 +106,14 @@
       (reading)))
   program)                              ;TODO: snapshot it
 
-(define (u32<-bytes b3 b2 b1 b0)
+(to (u32<-bytes b3 b2 b1 b0)
   (append-byte (append-byte (append-byte b3 b2) b1) b0))
 
-(define (append-byte u byte)
+(to (append-byte u byte)
   (byte .u+ (u .u<< 8)))
 
 (hide
- (define (testme)
+ (to (testme)
    (let program (with-input-file read-program "sandmark.umz"))
    (run program out stdin))   
  (testme))

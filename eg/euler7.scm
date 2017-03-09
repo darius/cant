@@ -2,16 +2,16 @@
 ;; The 10,001st prime number.
 ;; TODO this lazy-list code is clumsy
 
-(define (euler7 n)
+(to (euler7 n)
   ((primes) n))
 
-(define (primes)
+(to (primes)
   (cons/lazy 2 (given () (filter-prime (odd-integers 3)))))
 
-(define (odd-integers n)
+(to (odd-integers n)
   (cons/lazy n (given () (odd-integers (+ n 2)))))
 
-(define (filter-prime ns) 
+(to (filter-prime ns) 
   (let p ns.first)
   (cons/lazy p (given ()
                  (filter-prime

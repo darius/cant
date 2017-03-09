@@ -5,17 +5,17 @@
 (let lit0 (constant<- 0))
 (let lit1 (constant<- 1))
 
-(define (claim<- rank) (variable<- rank 2))
+(to (claim<- rank) (variable<- rank 2))
 
 (let (x y) (each claim<- '(8 9)))
 
-(define (dd-not e)    (e lit1 lit0))
-(define (dd-and e f)  (e lit0 f))
-(define (implies e f) (e lit1 f))
-(define (== e f)      (e (dd-not f) f))
-(define (xor e f)     (e f (dd-not f)))
+(to (dd-not e)    (e lit1 lit0))
+(to (dd-and e f)  (e lit0 f))
+(to (implies e f) (e lit1 f))
+(to (== e f)      (e (dd-not f) f))
+(to (xor e f)     (e f (dd-not f)))
 
-(define (show result)
+(to (show result)
   (print (and result result.items)))
 
 (print (each valid? `(,lit0 ,lit1 ,x)))

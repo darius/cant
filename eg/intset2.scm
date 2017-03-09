@@ -6,23 +6,23 @@
 
 (let empty-set {empty})
 
-(define (adjoin<- n s)
+(to (adjoin<- n s)
   (if (has? s n)
       s
       {extension n s}))
 
-(define (merge<- s1 s2)
+(to (merge<- s1 s2)
   (match s1
     ({empty} s2)
     (_ {meld s1 s2})))
 
-(define (empty? s)
+(to (empty? s)
   (match s
     ({empty}         #yes)
     ({extension _ _} #no)
     ({meld s1 s2}    (and (empty? s1) (empty? s2)))))
 
-(define (has? s n)
+(to (has? s n)
   (match s
     ({empty}           #no)
     ({extension n1 s1} (or (= n n1) (has? s1 n)))

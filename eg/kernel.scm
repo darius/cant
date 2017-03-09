@@ -5,12 +5,12 @@
 ;;   p pattern
 ;;   r environment
 
-(define (actor<- script r)
+(to (actor<- script r)
   (make actor
     (message
      (script .receive message actor r))))
 
-(define (script<- trait clauses)
+(to (script<- trait clauses)
   (make script
     ({.receive message actor parent-r}
      (begin matching ((clauses clauses))
@@ -23,7 +23,7 @@
               (eval body (env-extend pat-r body-vars))
               (matching rest))))))))
 
-(define (eval e r)
+(to (eval e r)
   (match e
     ({constant value}
      value)
@@ -50,7 +50,7 @@
      (for each ((e1 es))
        (eval e1 r)))))
 
-(define (eval-match subject p r)
+(to (eval-match subject p r)
   (match p
     ({any-pat}
      #yes)
@@ -70,7 +70,7 @@
      (eval-match (call (eval e r) `(,subject))
                  p r))))
 
-(define (match-all values pats r)
+(to (match-all values pats r)
   (case (values.empty? pats.empty?)
         (pats.empty? #no)
         (else (and (eval-match values.first pats.first r)
@@ -81,7 +81,7 @@
 
 (make *uninitialized*)
 
-(define (env-extend parent-r vars)
+(to (env-extend parent-r vars)
   (let vals (vector<-list (for each ((_ vars)) *uninitialized*)))
   (make env
     ((key)
@@ -94,7 +94,7 @@
        (error "Re-binding" var))
      (vals .set! i val))))
 
-(define (env<-map map)
+(to (env<-map map)
   (make env
     ((key)
      (map key))

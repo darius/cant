@@ -1,6 +1,6 @@
 ;; microKanren streams.
 
-(define (unit state)
+(to (unit state)
   (prepend state nothing))
 
 (make nothing
@@ -8,7 +8,7 @@
   ({.>>= g}  nothing)
   ({.stream} '()))
 
-(define (prepend state m)
+(to (prepend state m)
   (make prepended
     ({.+ m1}   (prepend state (m .+ m1)))
     ({.>>= g}  ((g state) .+ (m .>>= g)))
@@ -16,16 +16,16 @@
 ;;XXX isn't .stream a dumb bag on the side of it?
 ;; But it seems needed to ever force a value out of a lull.
 
-(define (lull<- thunk)
+(to (lull<- thunk)
   (make lull
     ({.+ m}    (lull<- (given () (m .+ (thunk)))))  ;; Note interleaving m before thunk.
     ({.>>= g}  (lull<- (given () ((thunk) .>>= g))))
     ({.stream} ((thunk) .stream))))
 
-(define ((either<- g1 g2) state)
+(to ((either<- g1 g2) state)
   ((g1 state) .+ (g2 state)))
 
-(define ((both<- g1 g2) state)
+(to ((both<- g1 g2) state)
   ((g1 state) .>>= g2))
 
 
@@ -34,7 +34,7 @@
 ;; prepend with a unit constructor plus catenation constructor:
 ;; (plus lulls and interleaving as above, not shown)
 
-(define (prepend value m)
+(to (prepend value m)
   (catenate (unit value) m))
 
 (make nothing
@@ -42,13 +42,13 @@
   ({.>>= g}  nothing)
   ({.stream} '()))
 
-(define (unit value)
+(to (unit value)
   (make just-1
     ({.+ m}    (catenate just-1 m))
     ({.>>= g}  (g value))
     ({.stream} `(,value))))
 
-(define (catenate m1 m2)
+(to (catenate m1 m2)
   (make catenation
     ({.+ m3}   (catenate catenation m3))
     ({.>>= g}  ((m1 .>>= g) .+ (m2 .>>= g)))

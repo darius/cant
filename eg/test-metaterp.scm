@@ -1,7 +1,7 @@
 (import (use "eg/kernel") eval global-env)
 
 
-(define (run e)
+(to (run e)
   (print `(evaluating ,e))
   (print (eval (parse-exp e) global-env)))
 
@@ -17,9 +17,9 @@
 (run '`(hello ,(if #yes 'yes 'no)))
 (run '(2 .+ 3))
 (run '(hide (let x 55)))
-(run '(hide (define (f) 136) (f)))
+(run '(hide (to (f) 136) (f)))
 (run '(hide
-        (define (factorial n)
+        (to (factorial n)
           (match n
             (0 1)
             (_ (n .* (factorial (- n 1))))))

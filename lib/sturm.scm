@@ -3,10 +3,10 @@
 
 ;; I/O modes -- Unix specific, not ANSI
 
-(define (raw-mode fn)    (mode "raw" fn))
-(define (cbreak-mode fn) (mode "cbreak" fn))
+(to (raw-mode fn)    (mode "raw" fn))
+(to (cbreak-mode fn) (mode "cbreak" fn))
 
-(define (mode name fn)
+(to (mode name fn)
   (system/must-succeed ("stty %d -echo" .format name))
   (display home)
   (display clear-to-bottom)
@@ -16,7 +16,7 @@
   (system/must-succeed "stty sane"))    ;TODO save & restore instead
 
 ;;TODO useful elsewhere too
-(define (system/must-succeed command)
+(to (system/must-succeed command)
   (unless (= 0 (system command))
     (error "Failed system command" command)))
 
@@ -27,7 +27,7 @@
 
 (let prefix (chain esc "["))
 
-(define (seq string) (chain prefix string))
+(to (seq string) (chain prefix string))
 
 (let home               (seq "H"))
 (let clear-to-bottom    (seq "J"))
@@ -39,7 +39,7 @@
 (let cursor-show        (seq "?25h"))
 (let cursor-hide        (seq "?25l"))
 
-(define (sgr num)
+(to (sgr num)
   (seq ("%wm" .format num)))
 
 (let (screen-height screen-width) '(25 80)) ;TODO find out for real
@@ -47,7 +47,7 @@
 
 ;; Rendering
 
-(define (render scene)
+(to (render scene)
   (let cursor-seen? (box<- #no))
   (display home-and-hide)
   (paint cursor-seen? default-state scene)
@@ -62,7 +62,7 @@
 (let restore-and-show (chain cursor-pos-restore cursor-show))
 (let cr-lf            (chain clear-to-right "\r\n"))
 
-(define (state<- fg bg styles)
+(to (state<- fg bg styles)
   (make state
     ({.reveal}         `(,fg ,bg ,styles))
     ({.set-fg code}    (state<- code bg   styles))
@@ -71,7 +71,7 @@
 
 (let default-state (state<- 39 49 0))
 
-(define (screen-state<-)
+(to (screen-state<-)
   (let fg     (box<- 39))
   (let bg     (box<- 49))
   (let styles (box<- 0))
@@ -95,7 +95,7 @@
 
 (let screen-state (screen-state<-))
 
-(define (paint cursor-seen? wanted-state scene)
+(to (paint cursor-seen? wanted-state scene)
   ;; TODO: skip any terminal codes in the scene's strings/chars
   (case ((string? scene)
          (screen-state .establish! wanted-state)
@@ -115,21 +115,21 @@
    (display cursor-pos-save)
    (cursor-seen? .^= #yes)))
 
-(define (foreground-color<- code)
-  (define (foreground-color subscene)
+(to (foreground-color<- code)
+  (to (foreground-color subscene)
     (make fg-painter
       ({.paint cursor-seen? wanted-state}
        (paint cursor-seen? (wanted-state .set-fg code) subscene)))))
 
-(define (background-color<- code)
-  (define (background-color subscene)
+(to (background-color<- code)
+  (to (background-color subscene)
     (make bg-painter
       ({.paint cursor-seen? wanted-state}
        (paint cursor-seen? (wanted-state .set-bg code) subscene)))))
 
-(define (style<- code)
+(to (style<- code)
   (let mask (1 .<< code))
-  (define (style subscene)
+  (to (style subscene)
     (make style-painter
       ({.paint cursor-seen? wanted-state}
        (paint cursor-seen? (wanted-state .add-style mask) subscene)))))
@@ -145,13 +145,13 @@
 (let blinking   (style<- 5))
 (let inverted   (style<- 7))
 
-(define (unstyled scene) scene)
+(to (unstyled scene) scene)
     
 
 ;; Keyboard input
 ;; TODO optional timeout
 
-(define (ctrl ch)
+(to (ctrl ch)
   (let code ch.uppercase.code)
   (char<- (- code 64)))
 
@@ -192,14 +192,14 @@
 
 (let key-stack (fillvector<-))
 
-(define (get-key-unmapped)
+(to (get-key-unmapped)
   (if key-stack.empty?
       (do (let ch stdin.read-char)
           (surely (not (eof-object? ch))) ;shouldn't ever happen in raw/cbreak modes
           ch)
       key-stack.pop!))
 
-(define (get-key)
+(to (get-key)
   (let keys (fillvector<- (get-key-unmapped)))
   (begin matching ()
     (let s (string<-list (as-list keys))) ;XXX clumsy

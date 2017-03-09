@@ -15,6 +15,7 @@
 (put 'make 'scheme-indent-function 1)
 (put 'make-trait 'scheme-indent-function 2)
 (put 'match 'scheme-indent-function 1)
+(put 'to 'scheme-indent-function 1)
 (put 'unless 'scheme-indent-function 1)
 (put 'with 'scheme-indent-function 1)
 (put 'when 'scheme-indent-function 1)

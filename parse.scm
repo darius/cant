@@ -138,14 +138,14 @@
              (mlambda
               ((__ (: v symbol?) (: self symbol?) . clauses) ;XXX allow other patterns?
                (let ((msg (gensym)))
-                 `(define (,v ,self ,msg)
+                 `(to (,v ,self ,msg)
                     (match ,msg
                       ,@clauses
                       (_ (miranda-trait ,self ,msg)))))))) ;XXX hygiene, and XXX make it overridable
     ('match  (mlambda
               ((__ subject . clauses)
                `(call (make _ ,@clauses) ,subject))))
-    ('define (mlambda
+    ('to     (mlambda
               ((__ (head . param-spec) . body)
                (let ((pattern (mcase param-spec
                                 (((: cue cue?) . rest)
@@ -153,7 +153,7 @@
                                 (__ param-spec))))
                  (if (symbol? head)
                      `(make ,head (,pattern ,@body))
-                     `(define ,head (given ,pattern ,@body)))))))
+                     `(to ,head (given ,pattern ,@body)))))))
     ('given  (mlambda
               ((__ p . body)
                `(make (,p ,@body)))))
@@ -171,7 +171,7 @@
               ((__ (: proc symbol?) bindings . body)
                (parse-bindings bindings
                  (lambda (ps es)
-                   `((hide (define (,proc ,@ps) ,@body))
+                   `((hide (to (,proc ,@ps) ,@body))
                      ,@es))))))
     ('if     (mlambda
               ((__ test if-so if-not)

@@ -22,7 +22,7 @@
 
  ;; TODO more tests
 
- (define (random-tests n-trials)
+ (to (random-tests n-trials)
    (for each! ((_ (range<- n-trials)))
      (exercise-em (for each ((value (range<- 50)))
                     (let key (random-integer 16))
@@ -31,7 +31,7 @@
                                  value))
                     `(,key ,op)))))
 
- (define (exercise-em pairs)
+ (to (exercise-em pairs)
    (let m (map<-))     ;; The hashmap under test.
    (let a (box<- '())) ;; An a-list that should be equivalent.
    (for each! (((key op) pairs))

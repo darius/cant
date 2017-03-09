@@ -3,11 +3,11 @@
 ;; Ultimately based on Kragen Sitaker's in C, but vectorized and
 ;; not doing don't-cares.
 
-(define (superopt truth-table max-gates)
+(to (superopt truth-table max-gates)
   (let n-inputs (int-log2 truth-table.count))
   (find-circuits (number<-string truth-table 2) n-inputs max-gates))
 
-(define (int-log2 n)
+(to (int-log2 n)
   ;; XXX ugly
   (match n
     (1  0)
@@ -18,17 +18,17 @@
     (32 5)
     (_ (error "Bad argument" n))))
 
-(define (say @arguments)
+(to (say @arguments)
   (each! display arguments))
 
-(define (pow2 n)
+(to (pow2 n)
   (1 .<< n))
 
-(define (find-circuits wanted n-inputs max-gates)
+(to (find-circuits wanted n-inputs max-gates)
   (let inputs (vector<-list (tabulate-inputs n-inputs)))
   (let mask (- (pow2 (pow2 n-inputs)) 1))
 
-  (define (print-formula L-input R-input)
+  (to (print-formula L-input R-input)
     (let v-name (chain ("ABCDEF" .slice 0 n-inputs)
                        ("abcdefghijklmnopqrstuvwxyz" .slice n-inputs)))
     (for each! ((i L-input.keys))
@@ -38,7 +38,7 @@
       (say g " = " L " ~& " R "; "))    ;TODO use format
     (newline))
 
-  (define (find-for-n n-gates)
+  (to (find-for-n n-gates)
     (say "Trying " n-gates " gates..." #\newline)
     (let n-wires (+ n-inputs n-gates))
     (let L-input (vector<-count n-gates #no))
@@ -62,10 +62,10 @@
 
   (some find-for-n (range<- 1 (+ max-gates 1))))
 
-(define (nand x y)
+(to (nand x y)
   ((x .and y) .not))     ;XXX why bitwise not here? only 1 bit, right?
 
-(define (tabulate-inputs n-inputs)
+(to (tabulate-inputs n-inputs)
   ;; An inputs vector is a vector of n-inputs bitvectors. It holds all
   ;; possible input patterns 'transposed': that is, the kth test case
   ;; can be formed out of bit #k of each the list's elements, one

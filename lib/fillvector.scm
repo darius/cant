@@ -1,23 +1,23 @@
 ;; Growable mutable vectors (have a better name?)
 ;; TODO: shrink capacity sometimes
 
-(define (fillvector<- @arguments)
+(to (fillvector<- @arguments)
   (fillvector<-vector (call vector<- arguments)))
 
-(define (fillvector<-count start-count start-value)
+(to (fillvector<-count start-count start-value)
   (fillvector<-vector (vector<-count start-count start-value)))
 
-(define (fillvector<-vector start-vector)
+(to (fillvector<-vector start-vector)
   (let count (box<- start-vector.count))
   (let vec   (box<- start-vector))
 
-  (define (grow)
+  (to (grow)
     (let old vec.^)
     (let n old.count)
     (vec .^= (vector<-count (if (= 0 n) 1 (* 2 n))))
     (vec.^ .copy! old))
 
-  (define (count-check i)
+  (to (count-check i)
     (unless (< i count.^)
       (error "Bad index" fillvector i)))
 
