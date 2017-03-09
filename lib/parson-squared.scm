@@ -41,13 +41,13 @@
 
 (to (unquote<- name)
   (list<- (set<-)
-          (given (_ rules subs) (subs name))))
+          (given (_ _ subs) (subs name))))
 
 (to (push-lit<- string)
   (constant<- (push string)))
 
-(to (word-char? c)
-  (or c.alphanumeric? (= c #\_)))       ;right?
+(to (name-char? ch) (or ch.letter? (= ch #\_)))
+(to (word-char? ch) (or ch.letter? (= ch #\_))) ;XXX I think this should be broader
 
 (let eat-line
   (delay (given ()
@@ -62,7 +62,7 @@
 (let __ (maybe whitespace))
 
 (let name 
-  (then (capture (then (skip-1 (given (c) (or c.alphabetic? (= c #\_))))
+  (then (capture (then (skip-1 name-char?)
                        (many (skip-1 word-char?))))
         __))
 
@@ -73,12 +73,11 @@
 (to (string-quoted-by q-char)
   (let q (lit-1 q-char))
   (let quoted-char
-    (either (then (lit-1 #\\) any-1)
-            (then (invert q) any-1)))
+    (then (either (lit-1 #\\) (invert q))
+          any-1))
   (seclude
-   (then q (many quoted-char) q
-         __
-         (feed-list string<-list))))
+   (then q (many quoted-char) q __
+         (feed-list chain))))           ;XXX if empty, you'll get () instead of ""
 
 (let qstring  (string-quoted-by #\'))
 (let dqstring (string-quoted-by #\"))
@@ -127,6 +126,20 @@
          hug)))
 
 (let grammar
-  (then (at-least-1 rule) end))
+  (then __ (at-least-1 rule) end))
+
+(to (main _)                            ;smoke test
+  (let text "
+main: r*.
+r: .
+s: 'hey' r.
+")
+  (let result (parse grammar text))
+  (print (not (not result.opt-results)))
+  (when result.opt-results
+    (for each! (((name (refs semantics)) result.opt-results))
+      (format "%d: %w\n" name refs))
+    (let defns (map<-a-list result.opt-results))
+    ))
 
 (export grammar)
