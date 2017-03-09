@@ -192,6 +192,9 @@ B     :  'b' S
 
   (let g (grammar<- text))
   (let parser (g (map<-)))
+  (let S (parser "S"))
+  (let outcome (parse S input))
+  outcome.display (newline)
   'ok
   )
 
