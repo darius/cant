@@ -6,12 +6,9 @@
   (print-error-traceback k plaint values))
 
 (to (print-error-traceback k plaint values)
-  (print-plaint plaint values)
-  (print-traceback k))
-
-(to (print-plaint plaint values)
-  (display "Error! ")
-  (write plaint)
+  (display "Error! Traceback:\n")
+  (print-traceback k)
+  (display plaint)
   (display ": ")
   (write values)
   (newline))
@@ -19,4 +16,4 @@
 (to (print-traceback k)
   (each! print (reverse k)))
 
-(export on-error-traceback print-error-traceback print-plaint print-traceback)
+(export on-error-traceback print-error-traceback print-traceback)
