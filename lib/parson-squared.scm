@@ -93,7 +93,7 @@
 (let term
   (delay (given ()
            (seclude
-            (then factor (maybe (then term (lift chain))))))))
+            (then factor (maybe (then term (lift then))))))))
 
 (let factor
   (delay (given ()
@@ -167,15 +167,32 @@
   skeletons)
 
 (to (main _)                            ;smoke test
-  (let text "
+  (let junk "
 main: r*.
 r: .
 s: 'hey' r.
 ")
+  (let text "
+S     :  'a' B
+      |  'b' A
+      |  .
+
+A     :  'a' S
+      |  'b' A A.
+
+B     :  'b' S
+      |  'a' B B.
+")
+  (let input "abaabbbbaa")
+
   (let skeletons (parse-grammar text))
   (for each! (((name (refs semantics)) skeletons))
     (format "%d: %w\n" name refs))
-  (let defns (map<-a-list skeletons))
+  ; (let defns (map<-a-list skeletons))
+
+  (let g (grammar<- text))
+  (let parser (g (map<-)))
+  'ok
   )
 
 (export grammar)
