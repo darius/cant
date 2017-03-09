@@ -37,63 +37,120 @@
 (let cursor-show        (seq "?25h"))
 (let cursor-hide        (seq "?25l"))
 
-(define ((make-color code) str)
-  str)                                  ;XXX fill in
-
-(let black   (make-color 0))
-(let red     (make-color 1))
-(let green   (make-color 2))
-(let yellow  (make-color 3))
-(let blue    (make-color 4))
-(let magenta (make-color 5))
-(let cyan    (make-color 6))
-(let white   (make-color 7))
-
-(define (bright color)
-  (+ 60 color))
-
-(define (sgr num)
-  (seq ("%wm" .format num)))
+(define (make-color code) 
+  (let setter (set-foreground code))
+  (given (str)
+    `(,setter ,str)))
 
 (define (set-foreground color) (sgr (+ 30 color)))
 (define (set-background color) (sgr (+ 40 color)))
 
+(define (sgr num)
+  (seq ("%wm" .format num)))
+
 
 ;; Rendering
 
-(let home-and-hide    (chain home cursor-pos-save cursor-hide))
-(let restore-and-show (chain cursor-pos-restore cursor-show))
-(let crlf             (chain clear-to-right "\r\n"))
-
-(make cursor)
-
-(define (render view)
+(define (render scene)
   (let cursor-seen? (box<- #no))
   (display home-and-hide)
-  (begin rendering ((v view))
-    ;; TODO actual terminal codes
-    (case ((string? v)
-           (for each! ((ch v))
-             (display (if (= ch #\newline) crlf ch))))
-          ((char? v)
-           (display (if (= v #\newline) crlf v)))
-          ((list? v)
-           (each! rendering v))
-          ((= v cursor)
-           (display cursor-pos-save)
-           (cursor-seen? .^= #yes))
-          (else
-           (error "Can't render" v))))
+  (paint cursor-seen? default-state scene)
   (display clear-to-bottom)
   (when cursor-seen?.^
     (display restore-and-show))
   ;; TODO do we need to flush the output?
+  ;; TODO need to reset styles so they go away on program exit?
   )
 
-;; TODO actual terminal codes
-(define (bold c) c)
-(define (unstyled c) c)
+(let home-and-hide    (chain home cursor-pos-save cursor-hide))
+(let restore-and-show (chain cursor-pos-restore cursor-show))
+(let cr-lf            (chain clear-to-right "\r\n"))
 
+(define (state<- fg bg styles)
+  (make state
+    ({.reveal}         `(,fg ,bg ,styles))
+    ({.set-fg code}    (state<- code bg   styles))
+    ({.set-bg code}    (state<- fg   code styles))
+    ({.add-style code} (state<- fg   bg   (styles .or code)))))
+
+(let default-state (state<- 39 49 0))
+
+(define (screen-state<-)
+  (let fg     (box<- 39))
+  (let bg     (box<- 49))
+  (let styles (box<- 0))
+  (make _
+    ({.establish! state}
+     (let (want-fg want-bg want-styles) state.reveal)
+     (unless (= styles.^ want-styles)
+       (display (sgr 0))
+       (fg .^= 39)
+       (bg .^= 49)
+       (for each! ((s '(1 4 5 7)))
+         (unless (= 0 (want-styles .and (1 .<< s)))
+           (display (sgr s))))
+       (styles .^= want-styles))
+     (unless (= want-fg fg.^)
+       (display (sgr want-fg))
+       (fg .^= want-fg))
+     (unless (= want-bg bg.^)
+       (display (sgr want-bg))
+       (bg .^= want-bg)))))
+
+(let screen-state (screen-state<-))
+
+(define (paint cursor-seen? wanted-state scene)
+  ;; TODO: skip any terminal codes in the scene's strings/chars
+  (case ((string? scene)
+         (screen-state .establish! wanted-state)
+         (for each! ((ch scene))
+           (display (if (= ch #\newline) cr-lf ch))))
+        ((char? scene)
+         (screen-state .establish! wanted-state)
+         (display (if (= scene #\newline) cr-lf scene)))
+        ((list? scene)
+         (for each! ((subscene scene))
+           (paint cursor-seen? wanted-state subscene)))
+        (else
+         (scene .paint cursor-seen? wanted-state))))
+
+(make cursor
+  ({.paint cursor-seen? _}
+   (display cursor-pos-save)
+   (cursor-seen? .^= #yes)))
+
+(define (foreground-color<- code)
+  (define (foreground-color subscene)
+    (make fg-painter
+      ({.paint cursor-seen? wanted-state}
+       (paint cursor-seen? (wanted-state .set-fg code) subscene)))))
+
+(define (background-color<- code)
+  (define (background-color subscene)
+    (make bg-painter
+      ({.paint cursor-seen? wanted-state}
+       (paint cursor-seen? (wanted-state .set-bg code) subscene)))))
+
+(define (style<- code)
+  (let mask (1 .<< code))
+  (define (style subscene)
+    (make style-painter
+      ({.paint cursor-seen? wanted-state}
+       (paint cursor-seen? (wanted-state .add-style mask) subscene)))))
+
+(let (black red green yellow blue magenta cyan white)
+  (each foreground-color<- (range<- 30 38)))
+
+(let (on-black on-red on-green on-yellow on-blue on-magenta on-cyan on-white)
+  (each background-color<- (range<- 40 48)))
+
+(let bold       (style<- 1))
+(let underlined (style<- 4))
+(let blinking   (style<- 5))
+(let inverted   (style<- 7))
+
+(define (unstyled scene) scene)
+    
 
 ;; Keyboard input
 ;; TODO optional timeout
@@ -162,6 +219,8 @@
 (export
   raw-mode cbreak-mode
   get-key ctrl
-  render cursor
-  bold unstyled
-  black red green yellow blue magenta cyan white)
+  render
+  cursor
+  bold underlined blinking inverted unstyled
+  black red green yellow blue magenta cyan white
+  on-black on-red on-green on-yellow on-blue on-magenta on-cyan on-white)
