@@ -8,6 +8,8 @@
 (to (hash-set<-)
   (let map (map<-)) ;TODO would be nice to avoid storing all the #yes values
   (make hash-set
+    ({.empty?}        map.empty?)
+    ({.count}         map.count)
     ({.keys}          map.keys)
     ({.maps? key}     (map .maps? key))
     ({.diverge}       (call set<- map.keys)) ;TODO tune
@@ -15,8 +17,12 @@
     ({.add-all! vals} (for each! ((v vals)) (hash-set .add! v)))
     ({.union! other}  (hash-set .add-all! other.keys))
     ({.union other}   (union hash-set other))
-    ({.empty?}        map.empty?)
-    ({.count}         map.count)
+    ({.difference other}
+     (let result (set<-))
+     (for each! ((x map.keys))
+       (unless (other .maps? x)
+         (result .add! x)))
+     result)
     ;; XXX fill in rest of set interface (just the map interface, I guess)
     ({.selfie sink}
      (sink .display "#<set")

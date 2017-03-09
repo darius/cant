@@ -3,6 +3,8 @@
 ;; XXX leaving out regexes, fnord, anonymous start
 ;; XXX need to parameterize by semantics
 
+(import (use "lib/bag")
+  bag<-)
 (import (use "lib/hashset")
   union-over)
 (import (use "lib/parson")
@@ -128,18 +130,52 @@
 (let grammar
   (then __ (at-least-1 rule) end))
 
+(to (grammar<- text)
+  (let skeletons (parse-grammar text))
+  (let builder default-builder)         ;TODO parameterize
+  (given (subs)
+    (let rules (map<-a-list (for each (((name (refs f)) skeletons)) ;XXX better name than f
+                              `(,name ,(delay (given () (rules name)))))))
+    (for each! (((name (refs f)) skeletons))
+      (let peg (f builder rules subs))
+      (rules .set! name peg))
+    rules))
+
+(make default-builder
+  ({.literal string} (lit string))
+  ({.keyword string} (lit string))      ;XXX then word_boundary
+  ({.match regex-string} (surely #no))  ;TODO
+  )
+
+(to (parse-grammar text)
+  (let outcome (parse grammar text))
+  (let skeletons outcome.opt-results)
+  (unless skeletons
+    outcome.display (newline)
+    (error "Ungrammatical grammar"))
+  (let lhses (each '.first skeletons))
+  (let all-refs (union-over (for each (((_ (refs _)) skeletons))
+                              refs)))
+  (let undefined (all-refs .difference (call set<- lhses)))
+  (unless undefined.empty?
+    (error "Undefined rules" (sort undefined.keys)))
+  (let counts (call bag<- lhses))
+  (let dups (for filter (((lhs n) counts.items))
+              (< 1 n)))
+  (unless dups.empty?
+    (error "Multiply-defined rules" (sort dups)))
+  skeletons)
+
 (to (main _)                            ;smoke test
   (let text "
 main: r*.
 r: .
 s: 'hey' r.
 ")
-  (let result (parse grammar text))
-  (print (not (not result.opt-results)))
-  (when result.opt-results
-    (for each! (((name (refs semantics)) result.opt-results))
-      (format "%d: %w\n" name refs))
-    (let defns (map<-a-list result.opt-results))
-    ))
+  (let skeletons (parse-grammar text))
+  (for each! (((name (refs semantics)) skeletons))
+    (format "%d: %w\n" name refs))
+  (let defns (map<-a-list skeletons))
+  )
 
 (export grammar)

@@ -4,6 +4,7 @@
 ;; TODO: fuller error reporting
 ;; TODO: memoize
 ;; TODO: delay semantic actions until final success
+;; TODO: a top-level fn that raises an error on failure
 
 ;; Glossary:
 ;;  p, q       parsing expression
