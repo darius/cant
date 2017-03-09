@@ -3,7 +3,9 @@
 ;; unmapped keys with escape sequences.
 
 (import (use "lib/sturm")
-  cbreak-mode get-key render cursor)
+  cbreak-mode get-key render cursor screen-width)
+(import (use "lib/text-wrap")
+  fill)
 
 (define (main _)
   (cbreak-mode run))
@@ -11,19 +13,12 @@
 (define (run)
   (let strokes (fillvector<-))
   (begin running ()
-    (let lines (text-wrap (" " .join strokes)     ;XXX does this work
-                          num-cols))
+    (let echoes (fill (" " .join strokes) screen-width))
     (render `("Hit some keys; or hit capital Q to quit.\n\n"
-              ,("\n" .join lines)
-              ,cursor))
+              ,echoes ,cursor))
     (let key (get-key))
     (unless (= key #\Q)
       (strokes .push! ("%w" .format key))
       (running))))
-
-;;XXX stubs
-(let num-cols 80)
-(define (text-wrap str width)
-  `(,str))      
 
 (export main run)

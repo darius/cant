@@ -7,7 +7,6 @@
 (define (cbreak-mode fn) (mode "cbreak" fn))
 
 (define (mode name fn)
-  ;; TODO note screen size
   (system/must-succeed ("stty %d -echo" .format name))
   (display home)
   (display clear-to-bottom)
@@ -42,6 +41,8 @@
 
 (define (sgr num)
   (seq ("%wm" .format num)))
+
+(let (screen-height screen-width) '(25 80)) ;TODO find out for real
 
 
 ;; Rendering
@@ -213,6 +214,7 @@
 
 (export
   raw-mode cbreak-mode
+  screen-height screen-width
   get-key ctrl
   render
   cursor
