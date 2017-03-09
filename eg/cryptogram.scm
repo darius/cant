@@ -109,7 +109,7 @@
      (point .^= (line-starts line-num)))
 
     ({.shift-to-space}
-     (when (decoder.values .find? #\space) ;XXX probably won't work yet
+     (when (decoder.values .find? #\space)
        (begin shifting ()
          (shift-by 1)
          (unless (= #\space (decoder (code point.^)))
