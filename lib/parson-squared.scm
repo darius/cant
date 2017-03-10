@@ -130,16 +130,36 @@
 (let grammar
   (then __ (at-least-1 rule) end))
 
+(make none)
+
+(to (union-map<- map backup)
+  (given (key)
+    ;; TODO: rest of map interface?
+    (let value (map .get key none))
+    (if (= value none)
+        (backup key)
+        value)))
+
 (to (grammar<- text)
   (let skeletons (parse-grammar text))
   (let builder default-builder)         ;TODO parameterize
   (given (subs)
+    (let full-subs (union-map<- subs default-subs))
     (let rules (map<-a-list (for each (((name (refs f)) skeletons)) ;XXX better name than f
                               `(,name ,(delay (given () (rules name)))))))
     (for each! (((name (refs f)) skeletons))
-      (let peg (f builder rules subs))
+      (let peg (f builder rules full-subs))
       (rules .set! name peg))
     rules))
+
+(let default-subs
+  (map<-a-list `(("anyone" ,any-1)
+                 ("end" ,end)
+                 ("hug" ,hug)
+                 ("join" ,(feed chain))
+                 ("whitespace" ,(skip-1 '.whitespace?))
+                 ;; TODO: more
+                 )))
 
 (make default-builder
   ({.literal string} (lit string))
@@ -198,9 +218,6 @@ p      :  :whitespace.
 
   (let g (grammar<- text))
   (let subs (map<-))
-  (subs .set! "anyone" any-1)
-  (subs .set! "whitespace" (skip-1 '.whitespace?))
-  (subs .set! "join" (feed chain))
   (let parser (g subs))
   (let S (parser "split"))
 
