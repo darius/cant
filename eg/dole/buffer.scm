@@ -2,10 +2,10 @@
 ;; A buffer is a text with a current point of editing, a display, and
 ;; a keymap.
 
-(import (use "charset") charset<-)
-(import (use "display") render rows cols)   ; XXX rename to num-rows or something
-(import (use "keymap")  keymap<-)
-(import (use "text")    text<- backward forward)
+(import (use "lib/text")         text<- backward forward)
+(import (use "eg/dole/char-set") char-set<-)
+(import (use "eg/dole/display")  render rows cols)   ; XXX rename to num-rows or something
+(import (use "eg/dole/keymap")   keymap<-)
 
 ;; Return the smallest i in [lo..hi) where ok(i), if any; else hi.
 ;; Pre: lo and hi are ints, lo < hi
@@ -22,7 +22,7 @@
                     (searching L mid)
                     (searching mid H)))))))
 
-(let newline (charset<- #\newline))
+(let newline (char-set<- #\newline))
 
 ;; Return a new buffer.
 (to (buffer<-)
