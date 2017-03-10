@@ -214,6 +214,16 @@ p      :  :whitespace.
 ")
   (let input "hello a world  is    nice    ")
 
+  ;; TODO try this one out
+  (let regex-grammar "
+primary :  '(' exp ')'
+        |  !(')' | '|' | '*') anyone :literal<-.
+factor  :  primary ('*' :star<-)?.
+term    :  factor (term :chain<-)*.
+exp     :  term ('|' exp :alt<-)*
+        |  .
+")
+
   (let skeletons (parse-grammar text))
   (for each! (((name (refs semantics)) skeletons))
     (format "%d: %w\n" name refs))
