@@ -60,7 +60,6 @@
 
   ;; Replace the `span` characters after `p` by `replacement`.
   ;; TODO this code is hard to follow
-  ;; XXX check/correct this for 0-based vectors
   (to (replace p0 span0 replacement)
     (let (p span) (clip-range p0 span0))
      
