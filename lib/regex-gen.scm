@@ -3,7 +3,7 @@
 
 ;; Return the strings matching regex whose length is in Ns.
 (to (generate regex Ns)
-  (sort-by-key ((parse regex) Ns)       ;XXX sort-by-key
+  (sort-by-key (regex Ns)       ;XXX sort-by-key
                (given (s) `(,s.count ,s))))
 
 (let none   (set<-))
@@ -53,6 +53,7 @@
 (let empty   (literal ""))
 (to (plus x) (then x (star x)))
 
-(let parse 'XXX)
-
-(export generate)
+(export
+  empty literal then either star plus maybe
+  one-of dot nonempty
+  generate)
