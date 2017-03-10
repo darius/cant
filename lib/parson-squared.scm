@@ -49,7 +49,9 @@
   (constant<- (push string)))
 
 (to (name-char? ch) (or ch.letter? (= ch #\_)))
-(to (word-char? ch) (or ch.letter? (= ch #\_))) ;XXX I think this should be broader
+(to (word-char? ch) (or ch.alphanumeric? (= ch #\_)))
+
+(let word-boundary (invert (skip-1 word-char?)))
 
 (let eat-line
   (delay (given ()
@@ -163,7 +165,7 @@
 
 (make default-builder
   ({.literal string} (lit string))
-  ({.keyword string} (lit string))      ;XXX then word_boundary
+  ({.keyword string} (then (lit string) word-boundary))
   ({.match regex-string} (surely #no))  ;TODO
   )
 
