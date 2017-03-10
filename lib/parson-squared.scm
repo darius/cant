@@ -129,7 +129,7 @@
          (lit ".") __
          hug)))
 
-(let grammar
+(let parson-grammar
   (then __ (at-least-1 rule) end))
 
 (make none)
@@ -170,7 +170,7 @@
   )
 
 (to (parse-grammar text)
-  (let outcome (parse grammar text))
+  (let outcome (parse parson-grammar text))
   (let skeletons outcome.opt-results)
   (unless skeletons
     outcome.display (newline)
@@ -238,4 +238,4 @@ exp     :  term ('|' exp :alt)*
   'ok
   )
 
-(export grammar)
+(export parson-grammar)
