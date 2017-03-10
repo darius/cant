@@ -172,7 +172,7 @@ main: r*.
 r: .
 s: 'hey' r.
 ")
-  (let text "
+  (let junk2 "
 S     :  'a' B
       |  'b' A
       |  .
@@ -183,16 +183,27 @@ A     :  'a' S
 B     :  'b' S
       |  'a' B B.
 ")
-  (let input "abaabbbbaa")
+  (let input2 "abaabbbbaa")
+  (let text "
+split  :  (p | chunk :join) split | .  # XXX why not a *?
+chunk  :  p
+       |  :anyone chunk.
+p      :  :whitespace.
+")
+  (let input "hello a world  is    nice    ")
 
   (let skeletons (parse-grammar text))
   (for each! (((name (refs semantics)) skeletons))
     (format "%d: %w\n" name refs))
-  ; (let defns (map<-a-list skeletons))
 
   (let g (grammar<- text))
-  (let parser (g (map<-)))
-  (let S (parser "S"))
+  (let subs (map<-))
+  (subs .set! "anyone" any-1)
+  (subs .set! "whitespace" (skip-1 '.whitespace?))
+  (subs .set! "join" (feed chain))
+  (let parser (g subs))
+  (let S (parser "split"))
+
   (let outcome (parse S input))
   outcome.display (newline)
   'ok
