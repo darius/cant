@@ -3,7 +3,7 @@
 
 ;; Return the strings matching regex whose length is in Ns.
 (to (generate regex Ns)
-  (sort-by-key (regex Ns)       ;XXX sort-by-key
+  (sort-by-key (regex Ns)
                (given (s) `(,s.count ,s))))
 
 (let none   (set<-))
