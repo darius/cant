@@ -30,4 +30,10 @@
 
   (merge-sort sequence))
 
-(export sort sort-by)
+(to (sort-by-key sequence get-key)
+  (to (cmp x y)
+    (compare (get-key x) (get-key y)))
+  (sort-by sequence cmp))
+
+(export
+  sort sort-by sort-by-key)

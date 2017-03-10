@@ -22,13 +22,13 @@
 
 (to (maybe x) (either empty x))
 
+(to ((nonempty x) Ns) (x (Ns .difference just-0)))
+(to ((either x y) Ns) ((x Ns) .union (y Ns)))
+
 (to (one-of chars)
   (let set (call set<- chars))
   (given (Ns)
     (if (Ns .maps? 1) set null)))
-
-(to ((nonempty x) Ns) (x (Ns .difference just-0)))
-(to ((either x y) Ns) ((x Ns) .union (y Ns)))
 
 (to ((then x y) Ns)
   ;; Return the set of matches to xy whose total length is in Ns. We
