@@ -5,7 +5,7 @@
 (import (use "lib/text")         text<- backward forward)
 (import (use "eg/dole/char-set") char-set<-)
 (import (use "eg/dole/display")  render rows cols)   ; XXX rename to num-rows or something
-(import (use "eg/dole/keymap")   keymap<-)
+(import (use "eg/dole/key-map")  key-map<-)
 
 ;; Return the smallest i in [lo..hi) where ok(i), if any; else hi.
 ;; Pre: lo and hi are ints, lo < hi
@@ -47,7 +47,7 @@
 
   (to (insert ch)                  ;XXX change to expect char instead of string?
     (text.insert point.^ ch)
-    (point .^= (+ point.^ ch.size)))
+    (point .^= (+ point.^ ch.count)))
 
   (to (find-line p dir)
     (text.clip (text.find-char-set p dir newline)))
@@ -70,7 +70,7 @@
                     (text.clip (- next-end 1)))))
   ;; XXX this can wrap around since text.clip moves `nowhere` to 0.
    
-  (let keymap (keymap<- insert))
+  (let key-map (key-map<- insert))
 
   (make buffer
 
@@ -95,8 +95,8 @@
     ({.insert ch}
      (insert ch))
 
-    ({.keymap}
-     keymap)
+    ({.key-map}
+     key-map)
 
     ({.move-char offset}
      (point .^= (text.clip (+ point.^ offset))))
