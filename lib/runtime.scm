@@ -164,6 +164,20 @@
   (message
    (list-trait me message))) ;XXX use trait syntax instead
 
+(make-trait vector-trait me
+  ({.last}
+   (me (- me.count 1)))
+  ({.copy! v}
+   (me .copy! v 0 v.count))
+  ({.move! dest src len}                ;XXX untested
+   (for each! ((i (if (<= dest src)
+                      (range<- len)
+                      (reverse (range<- len)))))  ;TODO inefficient
+     (me .set! (+ dest i)
+         (me (+ src i)))))
+  (message
+   (list-trait me message))) ;XXX use trait syntax instead
+
 (make-trait vector-primitive me
   ({.empty?}      (= 0 me.count))
   ({.first}       (me 0))
@@ -175,25 +189,16 @@
   ({.slice i}     (__subvector me i me.count))
   ({.slice i j}   (__subvector me i j))
   ({.set! i val}  (__vector-set! me i val))
-  ({.copy! v}     (me .copy! v 0 v.count))
   ({.copy! v lo bound}
    ;; XXX range-check first
    (for each! ((i (range<- lo bound)))
      (__vector-set! me (- i lo) (v i)))) ;XXX was this what I wanted? I forget.
   ({.copy}        (__vector-copy me))
-  ({.move! dest src len}                ;XXX untested
-   (for each! ((i (if (<= dest src)
-                      (range<- len)
-                      (reverse (range<- len)))))  ;TODO inefficient
-     (me .set! (+ dest i)
-         (me (+ src i)))))
-  ({.last}
-   (me (- me.count 1)))
   ({.selfie sink}
    (sink .display "#!")
    (sink .print (__vector->list me)))
   (message
-   (list-trait me message))) ;XXX use trait syntax instead
+   (vector-trait me message))) ;XXX use trait syntax instead
 
 (make-trait string-primitive me
   ({.empty?}      (= 0 me.count))

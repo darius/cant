@@ -55,7 +55,12 @@
      (sink .print count.^)
      (sink .display ")>"))     
     ({.resize! n}
-     unimplemented) ;XXX
+     (let old vec.^)
+     (when (< old.count n) ;; TODO maybe we should always change the physical size
+       (let new (vector<-count n))
+       (new .copy! old 0 (min old.count n))
+       (vec .^= new))
+     (count .^= n))
 
     ({.copy! v}        (fillvector .copy! v 0 v.count))
     ({.slice lo}       (fillvector .slice lo count.^))
@@ -63,7 +68,6 @@
     ({.chain v}        (fillvector.snapshot .chain v))
     ({.slice lo bound} (fillvector.snapshot .slice lo bound))
 
-    ;; TODO there should be a vector trait
-    (message           (list-trait fillvector message))))
+    (message           (vector-trait fillvector message))))
 
 (export fillvector<- fillvector<-count)

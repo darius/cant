@@ -5,22 +5,21 @@
 ;;   dir direction
 ;;   cs  charset
 
-;; A text is a sequence of characters. We say the characters are at
-;; positions 1..size, but coordinates denote the spaces *between*
-;; character positions, in [0..size]. The coordinate before the
-;; first character is 0, then after the first character and before the
-;; second is 1, and so on, until the coordinate after the last
-;; character is `size`.
+;; A text is a sequence of characters. Coordinates denote the spaces
+;; *between* character positions (or before or after them, at the
+;; ends), in [0..size]. The coordinate before the first character is
+;; 0, then after the first character and before the second is 1, and
+;; so on, until the coordinate after the last character is `size`.
 ;; 
-;; We store the characters at integer indices in a fillvector (starting
-;; at index 0) in two chunks which we call the head and the tail,
-;; separated by the gap. The fields `head` and `gap` (and `tail` if it
-;; weren't implicit) denote the lengths of these spans.  `size`
+;; We store the characters at integer indices in a fillvector
+;; (starting at index 0) in two chunks which we call the head and the
+;; tail, separated by the gap. The fields `head` and `gap` (and `tail`
+;; if it weren't implicit) denote the lengths of these spans. `size`
 ;; denotes head+tail, i.e. the total length of text. The whole array
 ;; is of size size+gap, i.e. head+gap+tail.
 ;; 
-;; (The gap lets us insert or delete text by moving the gap instead
-;; of the whole tail; if there's locality, this will be cheaper.)
+;; The gap lets us insert or delete text by moving the gap instead
+;; of the whole tail; if there's locality, this will be cheaper.
 
 
 ;; A coordinate that's never an actual text position. We'll use
@@ -76,7 +75,7 @@
     (size .^= (- size.^ span))
 
     ;; Grow the array so `replacement` fits in the gap.
-    (let r-size replacement.size)
+    (let r-size replacement.count)
     (when (< gap.^ r-size)
       (let tail (- size.^ head.^)) ;XXX shouldn't this subtract the gap too?
       (let sz   (+ (grow (+ size.^ gap.^))   ;; TODO rename
@@ -99,11 +98,20 @@
      (gap  .^= 0)
      (size .^= 0))
     ({.clip p}             (clip p))
-    ({.delete p span}      (replace p span ""))
     ({.get p span}         (get p span))
+    ({.delete p span}      (replace p span ""))
     ({.insert p str}       (replace p 0 str))
     ({.replace p span str} (replace p span str))
-    ({.size}               size.^)))
+    ({.count}              size.^)
+    ;; TODO: delegate to a string trait? but strings are immutable...
+    ))
+
+(to (main _)
+  (let t (text<-))
+  (print (t .get 0 10))
+  (t .replace 0 0 "hello")
+  (print (t .get 0 10))
+  )
 
 (export
   backward
