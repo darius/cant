@@ -3,7 +3,7 @@
 (import (use "lib/parson")
   parse delay seclude either then invert feed maybe many
   empty lit-1 any-1 skip-any-1)
-(import (use "lib/regex")
+(import (use "lib/regex-match")
   lit<- alt<- chain<- star<-)
 
 (let regex-parser

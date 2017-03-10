@@ -1,4 +1,4 @@
-(import (use "lib/regex")       regex-match)
+(import (use "lib/regex-match") regex-match)
 (import (use "lib/regex-parse") parse-regex)
 
 ; TODO more tests

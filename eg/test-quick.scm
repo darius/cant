@@ -30,7 +30,7 @@
 
 (loud-load "lib/memoize")
 (loud-load "lib/parson")
-(loud-load "lib/regex")
+(loud-load "lib/regex-match")
 (loud-load "lib/parse")
 (loud-load "lib/unify")
 
