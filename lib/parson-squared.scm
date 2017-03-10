@@ -217,10 +217,10 @@ p      :  :whitespace.
   ;; TODO try this one out
   (let regex-grammar "
 primary :  '(' exp ')'
-        |  !(')' | '|' | '*') anyone :literal<-.
-factor  :  primary ('*' :star<-)?.
-term    :  factor (term :chain<-)*.
-exp     :  term ('|' exp :alt<-)*
+        |  !(')' | '|' | '*') anyone :literal.
+factor  :  primary ('*' :star)?.
+term    :  factor (term :chain)*.
+exp     :  term ('|' exp :alt)*
         |  .
 ")
 
