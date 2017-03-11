@@ -34,8 +34,8 @@ c    :  !('(' | ')') :anyone
 ")
 (try balanced 'c (map<-) `("(())"))
 
-;; XXX needs :end
 (let a-and-b-equal-counts "
+start :  S :end.
 S     :  'a' B
       |  'b' A
       |  .
@@ -47,7 +47,7 @@ B     :  'b' S
       |  'a' B B.
 ")
 (let input2 "abaabbbbaa")
-(try a-and-b-equal-counts 'S (map<-) `(,input2)) ;XXX wrong result
+(try a-and-b-equal-counts 'start (map<-) `(,input2)) ;XXX wrong result
 
 (let text "
 split  :  (p | chunk :join) split | .  # XXX why not a *?

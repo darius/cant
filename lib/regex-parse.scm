@@ -9,6 +9,7 @@
   ((parse regex-parser string) .result))
 
 (let regex-grammar "
+regex   :  exp :end.
 exp     :  term ('|' exp :alt)*
 #        |  :empty
         .
@@ -25,7 +26,6 @@ primary :  '(' exp ')'
                           ("star"    ,(feed star<-))
                           ("chain"   ,(feed chain<-))
                           ("alt"     ,(feed alt<-))))))
-(let exp (rp "exp"))           ;XXX needs :end too
-(let regex-parser exp)
+(let regex-parser (rp "regex"))
 
 (export parse-regex)
