@@ -12,8 +12,7 @@
 (let regex-grammar "
 regex   :  exp :end.
 exp     :  term ('|' exp :alt)*
-        |  :empty
-        .
+        |  :empty.
 term    :  factor (term :chain)*.
 factor  :  primary ('*' :star)?.
 primary :  '(' exp ')'
