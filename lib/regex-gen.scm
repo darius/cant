@@ -29,7 +29,7 @@
 (to ((either r s) Ns) ((r Ns) .union (s Ns)))
 
 (to (one-of chars)
-  (let set (call set<- chars))
+  (let set (call set<- (as-list chars)))
   (given (Ns)
     (if (Ns .maps? 1) set null)))
 
