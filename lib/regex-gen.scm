@@ -20,10 +20,8 @@
 (to (star r)
   (let r1 (nonempty r))
   (begin r1* ()
-    (given (Ns)
-      ((maybe (then r1 (r1*))) Ns))))
-
-(to (maybe r) (either empty r))
+    (given (Ns) ((either empty (then r1 (r1*)))
+                 Ns))))
 
 (to ((nonempty r) Ns) (r (Ns .difference just-0)))
 (to ((either r s) Ns) ((r Ns) .union (s Ns)))
@@ -52,9 +50,10 @@
                              `(,(chain m1 m2))
                              '())))))))
 
-(let dot     (one-of "?"))
-(let empty   (literal ""))
-(to (plus r) (then r (star r)))
+(let dot      (one-of "?"))
+(let empty    (literal ""))
+(to (maybe r) (either empty r))
+(to (plus r)  (then r (star r)))
 
 (export
   empty literal then either star plus maybe
