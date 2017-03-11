@@ -81,7 +81,7 @@
           any-1))
   (seclude
    (then q (many quoted-char) q __
-         (feed-list chain))))           ;XXX if empty, you'll get () instead of ""
+         (feed chain))))           ;XXX if empty, you'll get () instead of ""
 
 (let qstring  (string-quoted-by #\'))
 (let dqstring (string-quoted-by #\"))
@@ -135,8 +135,8 @@
 (make none)
 
 (to (union-map<- map backup)
+  ;; TODO: rest of map interface?
   (given (key)
-    ;; TODO: rest of map interface?
     (let value (map .get key none))
     (if (= value none)
         (backup key)
