@@ -44,12 +44,9 @@
                (case (glyphs.empty? (rendering pp x y))
                      (else
                       (lines .set! y (chain (lines y) (string<- glyphs.first))) ;XXX quadratic
-                      (case ((< (+ x 1) cols)
-                             (appending glyphs.rest (+ x 1) y))
-                            ((< (+ y 1) rows)
-                             (appending glyphs.rest (+ x 1) (+ y 1)))
-                            (else
-                             'done)))))))))
+                      (case ((< (+ x 1) cols) (appending glyphs.rest (+ x 1) y))
+                            ((< (+ y 1) rows) (appending glyphs.rest 0 (+ y 1)))
+                            (else 'done)))))))))
   (make _
     ({.point-visible?}  (not (not point-y.^)))
     ;; XXX doesn't mean 'is centered' any more:
