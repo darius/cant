@@ -46,8 +46,7 @@ A     :  'a' S
 B     :  'b' S
       |  'a' B B.
 ")
-(let input2 "abaabbbbaa")
-(try a-and-b-equal-counts 'start (map<-) `(,input2))
+(try a-and-b-equal-counts 'start (map<-) '("abaabbbbaa"))
 
 (let text "
 split  :  (p | chunk :join) split | .  # XXX why not a *?
