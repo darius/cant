@@ -9,16 +9,6 @@
     (let outcome (parse start input))
     outcome.display (newline) (newline)))
 
-(when #no
-  (let g (grammar<- text))
-  (let subs (map<-))
-  (let parser (g subs))
-  (let S (parser "split"))
-  
-  (let outcome (parse S input))
-  outcome.display (newline) (newline)
-  )
-
 (let junk "
 main: r*.
 r: .
