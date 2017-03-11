@@ -4,10 +4,16 @@
 (to (try grammar-text start-symbol subs inputs)
   (let parser ((grammar<- grammar-text) subs))
   (let start (parser start-symbol.name))
+  (format "trying %d: %w\n" start-symbol start)
   (for each! ((input inputs))
     (print input)
     (let outcome (parse start input))
     outcome.display (newline) (newline)))
+
+(let trivial "
+trivial  :  'x'.
+")
+(try trivial 'trivial (map<-) `("x"))
 
 (let junk "
 main: r*.
@@ -15,6 +21,18 @@ r: .
 s: 'hey' r.
 ")
 (try junk 'main (map<-) '())
+
+(let bal "
+bal  :  ('(' bal ')' bal)?.
+")
+(try bal 'bal (map<-) `("()"))
+
+(let balanced "
+bal  :  '(' c* ')'.
+c    :  !('(' | ')') :anyone
+     |  bal.
+")
+(try balanced 'c (map<-) `("(())"))
 
 ;; XXX needs :end
 (let a-and-b-equal-counts "

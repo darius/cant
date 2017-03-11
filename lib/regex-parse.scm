@@ -1,38 +1,57 @@
-;; Parser
+;; Parse regular expressions
 
-(import (use "lib/parson")
-  parse delay seclude either then invert feed maybe many
-  empty lit-1 any-1 skip-any-1)
-(import (use "lib/regex-match")
+(import (use "lib/parson") feed parse)
+(import (use "lib/parson-squared") grammar<-)
+(import (use "lib/regex-match") regex-match
   lit<- alt<- chain<- star<-)
-
-(let regex-parser
-  (hide
-   (let primary (delay (to (<primary>)
-                         (seclude
-                          (either (then (lit-1 #\() exp (lit-1 #\)))
-                                  (then (invert (either (lit-1 #\))
-                                                        (lit-1 #\|)
-                                                        (lit-1 #\*)))
-                                        any-1
-                                        (feed (given (s) (lit<- (s 0))))))))))
-   (let factor (seclude
-                (then primary
-                      (maybe (either (then (lit-1 #\*)
-                                           (feed star<-)))))))
-   (let term (delay (to (<term>)
-                      (seclude
-                       (then factor (many (then term
-                                                (feed chain<-))))))))
-   (let exp (delay (to (<exp>)
-                     (seclude
-                      (either (then term (many (then (lit-1 #\|) exp
-                                                     (feed alt<-))))
-                              empty)))))
-   (then exp (invert skip-any-1))))
 
 (to (parse-regex string)
   ((parse regex-parser string) .result))
 
+(let regex-grammar "
+primary :  '(' exp ')'
+        |  !(')' | '|' | '*') :anyone :literal.
+factor  :  primary ('*' :star)?.
+term    :  factor (term :chain)*.
+exp     :  term ('|' exp :alt)*
+#        |  :empty
+        .
+")
 
-(export parse-regex regex-parser)
+(to (literal str) (lit<- str.first))
+
+(let g (grammar<- regex-grammar))
+(let rp (g (map<-a-list `(("literal" ,(feed literal))
+                          ("star"    ,(feed star<-))
+                          ("chain"   ,(feed chain<-))
+                          ("alt"     ,(feed alt<-))))))
+(let exp (rp "exp"))           ;XXX needs :end too
+(let regex-parser exp)         ;XXX
+
+(to (main _)
+  (let match-X (parse-regex "X"))
+  (print (regex-match match-X "hey"))
+  (print (regex-match match-X "X"))
+  (newline)
+
+  (let match-XY (parse-regex "XY"))
+  (print (regex-match match-XY "hey"))
+  (print (regex-match match-XY "X"))
+  (print (regex-match match-XY "XY"))
+  (print (regex-match match-XY "XYZ"))
+  (newline)
+
+  (let match-or (parse-regex "X|Y"))
+  (print (regex-match match-or "hey"))
+  (print (regex-match match-or "X"))
+  (print (regex-match match-or "Y"))
+  (print (regex-match match-or "Z"))
+  (newline)
+
+  (let match-X* (parse-regex "X*"))
+  (print (regex-match match-X* ""))
+  (print (regex-match match-X* "X"))
+  (print (regex-match match-X* "XX"))
+  (print (regex-match match-X* "hey")))
+
+(export parse-regex)
