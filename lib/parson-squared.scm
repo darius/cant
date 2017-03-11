@@ -182,60 +182,15 @@
   (unless undefined.empty?
     (error "Undefined rules" (sort undefined.keys)))
   (let counts (call bag<- lhses))
-  (let dups (for filter (((lhs n) counts.items))
+  (let dups (for filter (((lhs n) counts.items)) ;XXX for gather?
               (< 1 n)))
   (unless dups.empty?
     (error "Multiply-defined rules" (sort dups)))
   skeletons)
 
-(to (main _)                            ;smoke test
-  (let junk "
-main: r*.
-r: .
-s: 'hey' r.
-")
-  (let junk2 "
-S     :  'a' B
-      |  'b' A
-      |  .
-
-A     :  'a' S
-      |  'b' A A.
-
-B     :  'b' S
-      |  'a' B B.
-")
-  (let input2 "abaabbbbaa")
-  (let text "
-split  :  (p | chunk :join) split | .  # XXX why not a *?
-chunk  :  p
-       |  :anyone chunk.
-p      :  :whitespace.
-")
-  (let input "hello a world  is    nice    ")
-
-  ;; TODO try this one out
-  (let regex-grammar "
-primary :  '(' exp ')'
-        |  !(')' | '|' | '*') anyone :literal.
-factor  :  primary ('*' :star)?.
-term    :  factor (term :chain)*.
-exp     :  term ('|' exp :alt)*
-        |  .
-")
-
+(when #no
   (let skeletons (parse-grammar text))
-  (for each! (((name (refs semantics)) skeletons))
-    (format "%d: %w\n" name refs))
+  (for each! (((name (refs _)) skeletons))
+    (format "%d: %w\n" name refs)))
 
-  (let g (grammar<- text))
-  (let subs (map<-))
-  (let parser (g subs))
-  (let S (parser "split"))
-
-  (let outcome (parse S input))
-  outcome.display (newline)
-  'ok
-  )
-
-(export parson-grammar)
+(export grammar<-)
