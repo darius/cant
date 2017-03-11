@@ -49,6 +49,7 @@
 (loud-load "eg/test-memoize")
 (loud-load "eg/test-regex")
 (loud-load "eg/test-parson")
+(loud-load "eg/test-parson-squared")
 (loud-load "eg/test-parse")
 (loud-load "eg/test-unify")
 (loud-load "eg/test-complex")
