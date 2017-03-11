@@ -22,6 +22,7 @@
 ;; by a set of states, its start states. The input NFA might not be
 ;; fully constructed yet at the time we build the output, because of
 ;; the loop for the Kleene star -- so we need a mutable set.
+(to (empty succs)         succs)
 (to ((lit<- ch) succs)    (set<- (expect ch succs)))
 (to ((alt<- r s) succs)   ((r succs) .union (s succs)))
 (to ((chain<- r s) succs) (r (s succs)))
@@ -32,4 +33,4 @@
 
 (export
   regex-match
-  lit<- alt<- chain<- star<-)
+  empty lit<- alt<- chain<- star<-)

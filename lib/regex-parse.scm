@@ -2,8 +2,9 @@
 
 (import (use "lib/parson") feed parse)
 (import (use "lib/parson-squared") grammar<-)
-(import (use "lib/regex-match") regex-match
-  lit<- alt<- chain<- star<-)
+(import (use "lib/regex-match")
+  regex-match
+  empty lit<- alt<- chain<- star<-)
 
 (to (parse-regex string)
   ((parse regex-parser string) .result))
@@ -11,7 +12,7 @@
 (let regex-grammar "
 regex   :  exp :end.
 exp     :  term ('|' exp :alt)*
-#        |  :empty
+        |  :empty
         .
 term    :  factor (term :chain)*.
 factor  :  primary ('*' :star)?.
@@ -22,7 +23,8 @@ primary :  '(' exp ')'
 (to (literal str) (lit<- str.first))
 
 (let g (grammar<- regex-grammar))
-(let rp (g (map<-a-list `(("literal" ,(feed literal))
+(let rp (g (map<-a-list `(("empty"   ,empty)
+                          ("literal" ,(feed literal))
                           ("star"    ,(feed star<-))
                           ("chain"   ,(feed chain<-))
                           ("alt"     ,(feed alt<-))))))
