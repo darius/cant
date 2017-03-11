@@ -9,13 +9,13 @@
   ((parse regex-parser string) .result))
 
 (let regex-grammar "
-primary :  '(' exp ')'
-        |  !(')' | '|' | '*') :anyone :literal.
-factor  :  primary ('*' :star)?.
-term    :  factor (term :chain)*.
 exp     :  term ('|' exp :alt)*
 #        |  :empty
         .
+term    :  factor (term :chain)*.
+factor  :  primary ('*' :star)?.
+primary :  '(' exp ')'
+        |  !(')' | '|' | '*') :anyone :literal.
 ")
 
 (to (literal str) (lit<- str.first))
