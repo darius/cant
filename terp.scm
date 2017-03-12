@@ -154,23 +154,29 @@
                  (else
                   (error 'call "Not a script" script datum)))))
         (else
-         (let ((script
-                (cond
-                 ((number? object)      number-script)
-                 ((string? object)      string-script)
-                 ((pair? object)        pair-script)
-                 ((vector? object)      vector-script)
-                 ((box? object)         box-script)
-                 ((null? object)        nil-script)
-                 ((input-port? object)  source-script)
-                 ((output-port? object) sink-script)
-                 ((symbol? object)      symbol-script)
-                 ((boolean? object)     boolean-script)
-                 ((char? object)        char-script)
-                 ((term? object)        term-script)
-                 ((eq? object (void))   void-script)
-                 (else (error 'call "Non-object" object)))))
+         (let ((script (extract-script object)))
            (run-script object script object message k)))))
+
+(define (extract-script object)
+  (cond
+   ((number? object)      number-script)
+   ((string? object)      string-script)
+   ((pair? object)        pair-script)
+   ((vector? object)      vector-script)
+   ((box? object)         box-script)
+   ((null? object)        nil-script)
+   ((input-port? object)  source-script)
+   ((output-port? object) sink-script)
+   ((symbol? object)      symbol-script)
+   ((boolean? object)     boolean-script)
+   ((char? object)        char-script)
+   ((term? object)        term-script)
+   ((eq? object (void))   void-script)
+   ((script? object)      script-script)
+   ;; TODO: cont-script? too
+   ((procedure? object)   procedure-script)
+   ((object? object)      (object-script object))
+   (else (error 'call "Non-object" object))))
 
 ;; XXX This is a hack.
 (define (call-cont-standin script datum message k)
@@ -307,6 +313,7 @@
     (__get-output-string ,get-output-string)
     (open-subprocess ,process)
 ;    (get-global-env ,(lambda () the-global-env))
+    (extract-script ,extract-script)
 
     ;; Primitives only -- TODO seclude in their own env:
     (__hash ,hash)
@@ -390,6 +397,10 @@
     (__u- ,(lambda (a b) (logand mask32 (- a b))))
     (__u<< ,(lambda (a b) (logand mask32 (ash a b))))
     (__u>> ,(lambda (a b) (logand mask32 (ash a (- b)))))
+
+    (__script-name ,script-name)
+    (__script-trait ,script-trait)
+    (__script-clauses ,script-clauses)
     ))
 
 (define mask32 (- 1 (expt 2 32)))
@@ -681,6 +692,7 @@
 (define term-script   (get-script 'term-primitive))
 (define procedure-script (get-script 'procedure-primitive))
 (define void-script   (get-script 'void-primitive))
+(define script-script (get-script 'script-primitive))
 
 
 ;; For tuning later.

@@ -385,6 +385,16 @@
   ;; A Gambit type returned by some of the Gambit operations.
   )
 
+(make-trait script-primitive me
+  ({.name}    (__script-name me))
+  ({.trait}   (__script-trait me))
+  ({.clauses} (__script-clauses me))
+  ({.selfie sink}
+   (sink .display "<script ")
+   (sink .display me.name)
+   (sink .display ">"))
+  )
+
 
 ;; Continuations
 
