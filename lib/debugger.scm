@@ -5,8 +5,8 @@
 
   (to (help)
     (for each! (((short full text) vocab))
-      (format "%d %d - %d\n" ;XXX format should be able to do the padding
-              short (pad-right full.name 9) text)))
+      (format "%d %d - %d\n" ;XXX format should be able to do the justify
+              short (full.name .left-justify 9) text)))
 
   (let vocab
     '((? help      "this message")
@@ -64,11 +64,5 @@
 
 (to (show-env env)
   (print (each '.first env)))
-
-(to (pad-right str n)                  ;XXX make this a string method?
-   (let pad (- n str.count))
-   (if (<= pad 0)
-       str
-       (chain str (" " .repeat pad))))
 
 (export inspect-cont)

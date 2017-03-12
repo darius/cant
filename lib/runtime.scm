@@ -287,6 +287,11 @@
                     (chain (list<-string replacement)
                            (scanning (+ i pattern.count))))
                    (else (cons (me i) (scanning (+ i 1))))))))))
+  ({.left-justify n}
+   (let pad (- n me.count))
+   (if (<= pad 0)
+       me
+       (chain me (" " .repeat pad))))
   ({.center n}
    (let pad (- n me.count))
    (if (<= pad 0)
