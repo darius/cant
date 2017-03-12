@@ -19,12 +19,12 @@ primary :  '(' exp ')'
         |  !(')' | '|' | '*') :anyone :literal.
 ")
 
-(let g (grammar<- regex-grammar))
-(let rp (g (map<-a-list `(("empty"   ,empty)
-                          ("literal" ,(feed (given (str) (literal str.first))))
-                          ("star"    ,(feed star))
-                          ("then"    ,(feed then))
-                          ("either"  ,(feed either))))))
+(let rp ((grammar<- regex-grammar)
+         (map<-a-list `(("empty"   ,empty)
+                        ("literal" ,(feed (given (str) (literal str.first))))
+                        ("star"    ,(feed star))
+                        ("then"    ,(feed then))
+                        ("either"  ,(feed either))))))
 (let regex-parser (rp "regex"))
 
 (export parse-regex)
