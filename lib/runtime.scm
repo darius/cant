@@ -449,7 +449,7 @@
   (make {extending __cont-trait}
     ({.rest} k)
     ({.first} `(call ',receiver ^))
-    ({.env} r)))
+    ({.env} '())))
 
 (to (__ev-rest-args-cont k es r vals)
   (make {extending __cont-trait}

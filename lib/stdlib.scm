@@ -224,17 +224,27 @@
   (newline))
 
 (let the-signal-handler-box (box<- panic))
+(let the-last-error (box<- #no))
 
 (to (repl)                          ;TODO rename
   (import (use "lib/traceback") on-error-traceback)
   (begin interacting ()
     (the-signal-handler-box .^= (to (on-error-repl k @evil)
+                                  (the-last-error .^= (cons k evil))
                                   (call on-error-traceback `(,k ,@evil))
-                                  ;; TODO save k for inspecting/resuming
+                                  (display "Enter (debug) for more.\n")
                                   (interacting)))
-    (display "squeam> ")
-    (print (evaluate (parse-exp (read)) '())) ;XXX reify a proper env object
-    (interacting)))
+    (display "sqm> ")
+    (let sexpr (read))
+    (unless (eof-object? sexpr)
+      (print (evaluate (parse-exp sexpr) '())) ;XXX reify a proper env object
+      (interacting))))
+
+(to (debug)
+  (import (use "lib/debugger") inspect-cont)
+  (match the-last-error.^
+    ((k @evil) (inspect-cont k))
+    (_ (display "No error to debug.\n"))))
 
 (let the-modules (box<- '()))
 

@@ -6,8 +6,7 @@
   (to (help)
     (for each! (((short full text) vocab))
       (format "%d %d - %d\n" ;XXX format should be able to do the padding
-              short (pad-right full.name 8) text))
-    (say ""))
+              short (pad-right full.name 9) text)))
 
   (let vocab
     '((? help      "this message")
@@ -22,8 +21,7 @@
     (map<-a-list (for each (((short full _) vocab))
                    `(,short ,full))))
 
-  
-
+  (say "Enter ? for help.")
   (begin interacting ((frame k) (callees '()))
 
     (to (continue @messages)
@@ -57,7 +55,12 @@
        (print-traceback frame)
        (continue))
       (_
-       (continue "Huh? Enter `help` for help.")))))
+       (unless (eof-object? input)
+         (continue "Huh? Enter 'help' for help."))))))
+
+(to (say message)
+  (display message)
+  (newline))
 
 (to (show-env env)
   (print (each '.first env)))
@@ -68,24 +71,4 @@
        str
        (chain str (" " .repeat pad))))
 
-(to (say message)
-  (display message)
-  (newline))
-
-(to (main _)
-  (to (on-error k plaint @values)
-    (the-signal-handler-box .^= default-handler)
-    (print-error plaint values)
-    (inspect-cont k))
-  (to (print-error plaint values)
-    (display "Error! ")
-    (display plaint)
-    (display ": ")
-    (write values)
-    (newline))
-  (let default-handler the-signal-handler-box.^)
-  (the-signal-handler-box .^= on-error)
-  (factorial 5))
-
-(to (factorial n)
-  (if (= n 0) oops (* n (factorial (- n 1)))))
+(export inspect-cont)
