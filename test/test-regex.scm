@@ -1,37 +1,20 @@
 (import (use "lib/regex-match") regex-match)
 (import (use "lib/regex-parse") parse-regex)
 
-(let match-X (parse-regex "X"))
-(print (regex-match match-X "hey"))
-(print (regex-match match-X "X"))
-(newline)
+(to (test regex inputs)
+  (let r (parse-regex regex))
+  (for each! ((str inputs))
+    (print (regex-match r str)))
+  (newline))
 
-(let match-XY (parse-regex "XY"))
-(print (regex-match match-XY "hey"))
-(print (regex-match match-XY "X"))
-(print (regex-match match-XY "XY"))
-(print (regex-match match-XY "XYZ"))
-(newline)
+(test "X" '("hey" "X"))
 
-(let match-or (parse-regex "X|Y"))
-(print (regex-match match-or "hey"))
-(print (regex-match match-or "X"))
-(print (regex-match match-or "Y"))
-(print (regex-match match-or "Z"))
-(newline)
+(test "XY" '("hey" "X" "XY" "XYZ"))
 
-(let match-X* (parse-regex "X*"))
-(print (regex-match match-X* ""))
-(print (regex-match match-X* "X"))
-(print (regex-match match-X* "XX"))
-(print (regex-match match-X* "hey"))
-(newline)
+(test "X|Y" '("hey" "X" "Y" "Z"))
 
-(let re (parse-regex "a(b|c)*d"))
-(print (regex-match re "ad"))
-(print (regex-match re "ab"))
-(print (regex-match re "abcd"))
-(print (regex-match re "B"))
-(newline)
+(test "X*" '("" "X" "XX" "hey"))
+
+(test "a(b|c)*d" '("ad" "ab" "abcd" "B"))
 
 ; TODO more tests
