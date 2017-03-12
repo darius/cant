@@ -18,9 +18,6 @@
     (32 5)
     (_ (error "Bad argument" n))))
 
-(to (say @arguments)
-  (each! display arguments))
-
 (to (pow2 n)
   (1 .<< n))
 
@@ -35,11 +32,11 @@
       (let g (v-name (+ i n-inputs)))
       (let L (v-name (L-input i)))
       (let R (v-name (R-input i)))
-      (say g " = " L " ~& " R "; "))    ;TODO use format
+      (format "~d = ~d ~~& ~d; " g L R))
     (newline))
 
   (to (find-for-n n-gates)
-    (say "Trying " n-gates " gates..." #\newline)
+    (format "Trying ~d gates...\n" n-gates)
     (let n-wires (+ n-inputs n-gates))
     (let L-input (vector<-count n-gates #no))
     (let R-input (vector<-count n-gates #no))
