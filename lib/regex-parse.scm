@@ -4,29 +4,27 @@
 (import (use "lib/parson-squared") grammar<-)
 (import (use "lib/regex-match")
   regex-match
-  empty lit<- alt<- chain<- star<-)
+  empty literal either then star)
 
 (to (parse-regex string)
   ((parse regex-parser string) .result))
 
 (let regex-grammar "
 regex   :  exp :end.
-exp     :  term ('|' exp :alt)*
+exp     :  term ('|' exp :either)*
         |  :empty.
-term    :  factor (term :chain)*.
+term    :  factor (term :then)*.
 factor  :  primary ('*' :star)?.
 primary :  '(' exp ')'
         |  !(')' | '|' | '*') :anyone :literal.
 ")
 
-(to (literal str) (lit<- str.first))
-
 (let g (grammar<- regex-grammar))
 (let rp (g (map<-a-list `(("empty"   ,empty)
-                          ("literal" ,(feed literal))
-                          ("star"    ,(feed star<-))
-                          ("chain"   ,(feed chain<-))
-                          ("alt"     ,(feed alt<-))))))
+                          ("literal" ,(feed (given (str) (literal str.first))))
+                          ("star"    ,(feed star))
+                          ("then"    ,(feed then))
+                          ("either"  ,(feed either))))))
 (let regex-parser (rp "regex"))
 
 (export parse-regex)

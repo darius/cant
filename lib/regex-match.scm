@@ -11,7 +11,7 @@
   (ending-states .maps? accept))
 
 ;; A state is a function from char to set of successor states.
-(to (accept c) empty-set)
+(to (accept c)            empty-set)
 (to ((expect ch succs) c) (if (= ch c) succs empty-set))
 
 (let empty-set (set<-))
@@ -22,15 +22,15 @@
 ;; by a set of states, its start states. The input NFA might not be
 ;; fully constructed yet at the time we build the output, because of
 ;; the loop for the Kleene star -- so we need a mutable set.
-(to (empty succs)         succs)
-(to ((lit<- ch) succs)    (set<- (expect ch succs)))
-(to ((alt<- r s) succs)   ((r succs) .union (s succs)))
-(to ((chain<- r s) succs) (r (s succs)))
-(to ((star<- r) succs)
+(to (empty succs)        succs)
+(to ((literal ch) succs) (set<- (expect ch succs)))
+(to ((either r s) succs) ((r succs) .union (s succs)))
+(to ((then r s) succs)   (r (s succs)))
+(to ((star r) succs)
   (let my-succs succs.diverge)
   (my-succs .union! (r my-succs))
   my-succs)
 
 (export
   regex-match
-  empty lit<- alt<- chain<- star<-)
+  empty literal either then star)
