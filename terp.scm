@@ -306,6 +306,7 @@
     (string-sink<- ,open-output-string)
     (__get-output-string ,get-output-string)
     (open-subprocess ,process)
+;    (get-global-env ,(lambda () the-global-env))
 
     ;; Primitives only -- TODO seclude in their own env:
     (__hash ,hash)

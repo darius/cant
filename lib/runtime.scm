@@ -398,78 +398,93 @@
 (to (__call-cont-standin-cont k message)
   (make {extending __cont-trait}
     ({.rest} k)
-    ({.first} '("XXX still a hack"))))
+    ({.first} '("XXX still a hack"))
+    ({.env} '())))
 
 (to (__match-clause-cont k pat-r body rest-clauses object script datum message)
   (make {extending __cont-trait}
     ({.rest} k)
-    ({.first} `((^ ,body) ,@rest-clauses))))
+    ({.first} `((^ ,body) ,@rest-clauses))
+    ({.env} pat-r)))
 
 (to (__ev-trait-cont k r name trait clauses)
   (make {extending __cont-trait}
     ({.rest} k)
     ({.first} `(make ,name ,trait ^
-                 ,@clauses))))
+                 ,@clauses))
+    ({.env} r)))
 
 (to (__ev-make-cont k name stamp-val r clauses)
   (make {extending __cont-trait}
     ({.rest} k)
     ({.first} `(make ,name ^ #no   ; XXX as above
-                 ,@clauses))))
+                 ,@clauses))
+    ({.env} r)))
 
 (to (__ev-do-rest-cont k r e2)
   (make {extending __cont-trait}
     ({.rest} k)
-    ({.first} e2)))
+    ({.first} e2)
+    ({.env} r)))
 
 (to (__ev-let-match-cont k r p)
   (make {extending __cont-trait}
     ({.rest} k)
-    ({.first} `(<match> ,p))))          ;XXX lousy presentation
+    ({.first} `(<match> ,p))          ;XXX lousy presentation
+    ({.env} r)))
 
 (to (__ev-let-check-cont k val)
   (make {extending __cont-trait}
     ({.rest} k)
-    ({.first} `(<assert-matched-then> ',val))))
+    ({.first} `(<assert-matched-then> ',val))
+    ({.env} '())))
 
 (to (__ev-arg-cont k r e2)
   (make {extending __cont-trait}
     ({.rest} k)
-    ({.first} `(^ ,e2))))
+    ({.first} `(^ ,e2))
+    ({.env} r)))
 
 (to (__ev-call-cont k receiver)
   (make {extending __cont-trait}
     ({.rest} k)
-    ({.first} `(call ',receiver ^))))
+    ({.first} `(call ',receiver ^))
+    ({.env} r)))
 
 (to (__ev-rest-args-cont k es r vals)
   (make {extending __cont-trait}
     ({.rest} k)
     ({.first}
      (to (quotify v) `',v)
-     `(,@(each quotify (reverse vals)) ^ ,@es))))
+     `(,@(each quotify (reverse vals)) ^ ,@es))
+    ({.env} r)))
 
 (to (__ev-tag-cont k tag)
   (make {extending __cont-trait}
     ({.rest} k)
-    ({.first} `{,tag ^^^})))
+    ({.first} `{,tag ^^^})
+    ({.env} '())))
 
 (to (__ev-and-pat-cont k r subject p2)
   (make {extending __cont-trait}
     ({.rest} k)
-    ({.first} `(<and-match?> ,p2))))
+    ({.first} `(<and-match?> ,p2))
+    ({.env} r)))
 
 (to (__ev-view-call-cont k r subject p)
   (make {extending __cont-trait}
     ({.rest} k)
-    ({.first} `(: _ ^ ,p))))
+    ({.first} `(: _ ^ ,p))
+    ({.env} r)))
 
 (to (__ev-view-match-cont k r p)
   (make {extending __cont-trait}
     ({.rest} k)
-    ({.first} p)))
+    ({.first} p)
+    ({.env} r)))
 
 (to (__ev-match-rest-cont k r subjects ps)
   (make {extending __cont-trait}
     ({.rest} k)
-    ({.first} `(<all-match?> ,@ps))))
+    ({.first} `(<all-match?> ,@ps))
+    ({.env} r)))
