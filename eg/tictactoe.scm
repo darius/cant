@@ -5,11 +5,11 @@
 (to (tic-tac-toe player opponent grid)
   (show grid)
   (newline)
-  (case ((won? grid)   (format "%d wins.\n" (last-to-move grid)))
+  (case ((won? grid)   (format "~d wins.\n" (last-to-move grid)))
         ((drawn? grid) (format "A draw.\n"))
         (else
          (unless (`(,player ,opponent) .find? human-play)
-           (format "%w to move %d. (Press a key.)\n"
+           (format "~w to move ~d. (Press a key.)\n"
                    player (whose-move grid))
 ;           (get-key)                    ;XXX
            )
@@ -94,7 +94,7 @@
   (newline))
 
 (let grid-format ("\n" .join (for each ((_ (range<- 3)))
-                                 " %d %d %d")))
+                                 " ~d ~d ~d")))
 
 (let ways-to-win '(0o700 0o070 0o007 0o444 0o222 0o111 0o421 0o124))
 

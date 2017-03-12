@@ -7,7 +7,7 @@
 (to (cbreak-mode fn) (mode "cbreak" fn))
 
 (to (mode name fn)
-  (system/must-succeed ("stty %d -echo" .format name))
+  (system/must-succeed ("stty ~d -echo" .format name))
   (display home)
   (display clear-to-bottom)
   (fn)                                  ;TODO unwind-protect
@@ -40,7 +40,7 @@
 (let cursor-hide        (seq "?25l"))
 
 (to (sgr num)
-  (seq ("%wm" .format num)))
+  (seq ("~wm" .format num)))
 
 (let (screen-height screen-width) '(25 80)) ;TODO find out for real
 

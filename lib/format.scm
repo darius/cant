@@ -14,16 +14,16 @@
       (()
        (unless args.empty?
          (error "Leftover arguments" args)))
-      ((#\% #\w)             ;XXX actually design the format language
+      ((#\~ #\w)             ;XXX actually design the format language
        (sink .print args.first)
        (scanning (s .slice 2) args.rest))
-      ((#\% #\d)
+      ((#\~ #\d)
        (sink .display args.first)
        (scanning (s .slice 2) args.rest))
-      ((#\% #\%)
-       (sink .display "%")
+      ((#\~ #\~)
+       (sink .display "~")
        (scanning (s .slice 2) args))
-      ((#\% @_)
+      ((#\~ @_)
        (error "Bad format string" s))
       ((c @_)
        (sink .display c)

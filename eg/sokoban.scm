@@ -33,7 +33,7 @@
     (match args
       ((_) "eg/microban")
       ((_ fname) fname)
-      (_ (error "Usage: %d [filename]" (args 0)))))
+      (_ (error "Usage: ~d [filename]" (args 0)))))
   (call start (load-collection filename)))
 
 (to (load-collection filename)
@@ -60,7 +60,7 @@
     "Move with the arrow keys or HJKL. U to undo.
 N/P for next/previous level; Q to quit.
 
-Level %w %d Move %w")
+Level ~w ~d Move ~w")
 
   (begin playing ((level level))
     (let trail (trails level))

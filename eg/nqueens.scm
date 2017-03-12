@@ -7,7 +7,7 @@
 (to (main args)
   (match args
     ((_ n) (queens (number<-string n)))
-    ((prog @_) (format "Usage: %d board-size" prog))))
+    ((prog @_) (format "Usage: ~d board-size" prog))))
 
 (to (queens n)
   (match (satisfy-first (queens-problem n) 1)
@@ -17,7 +17,7 @@
 (to (print-board n env)
   (for each! ((row (board<- n)))
     (for each! ((var row))
-      (format "%d " (".Q" (env var))))
+      (format "~d " (".Q" (env var))))
     (newline)))
 
 (to (queens-problem n)

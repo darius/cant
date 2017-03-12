@@ -191,6 +191,6 @@
 (when #no
   (let skeletons (parse-grammar text))
   (for each! (((name (refs _)) skeletons))
-    (format "%d: %w\n" name refs)))
+    (format "~d: ~w\n" name refs)))
 
 (export grammar<-)

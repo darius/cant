@@ -18,7 +18,7 @@
               ,echoes ,cursor))
     (let key (get-key))
     (unless (= key #\Q)
-      (strokes .push! ("%w" .format key))
+      (strokes .push! ("~w" .format key))
       (running))))
 
 (export main run)

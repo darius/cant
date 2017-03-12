@@ -31,7 +31,7 @@
          (if (= val my-var) my-val (s .subst val))
          val))
     ({.selfie sink}
-     (format .to sink "<%d: %w>..%w" (variable-name my-var) my-val s))))
+     (format .to sink "<~d: ~w>..~w" (variable-name my-var) my-val s))))
 
 (to (extend s var val)
   (if (occurs? s var val) #no (extend-unchecked s var val)))

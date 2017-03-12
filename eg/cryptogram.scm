@@ -12,7 +12,7 @@
     (match args.rest
       (()    (random-encrypt (run-fortune)))
       ((str) str)
-      (_     (error ("Usage: %d [cryptogram]" .format (args 0))))))
+      (_     (error ("Usage: ~d [cryptogram]" .format (args 0))))))
   (for cbreak-mode ()
     (puzzle cryptogram)))
 
