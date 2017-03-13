@@ -6,13 +6,17 @@
 ;; Does regex match chars? (Anchored matching at both ends.)
 (to (regex-match regex chars)
   (let ending-states
-    (for foldl ((states (regex (set<- accept))) (c chars))
-      (union-over (for each ((state states.keys)) (state c)))))
+    (for foldl ((states (regex (set<- accept)))
+                (c chars))
+      (union-over (for each ((state states.keys))
+                    (state c)))))
   (ending-states .maps? accept))
 
 ;; A state is a function from char to set of successor states.
 (to (accept c)            empty-set)
-(to ((expect ch succs) c) (if (= ch c) succs empty-set))
+(to ((shift succs) c)     succs)
+(to ((expect ch succs) c)         (if (= ch c)       succs empty-set))
+(to ((expect-any-of chs succs) c) (if (chs .maps? c) succs empty-set))
 
 (let empty-set (set<-))
 
@@ -31,6 +35,18 @@
   (my-succs .union! (r my-succs))
   my-succs)
 
+;; Extras
+
+(to (anyone succs) (set<- (shift succs)))
+(to (one-of str)
+  (let char-set (call set<- (as-list str)))
+  (given (succs)
+    (set<- (expect-any-of char-set succs))))
+
+(to (maybe r) (either empty r))
+(to (plus r)  (then r (star r)))
+
 (export
   regex-match
-  empty literal either then star)
+  empty literal either then star
+  plus maybe one-of anyone)
