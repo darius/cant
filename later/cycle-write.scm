@@ -38,7 +38,7 @@
             (tags .set! thing 0)
             (buffer .push! (given (sink)
                              (let id (tags thing))
-                             (when (< 0 id)
+                             (unless (= 0 id)
                                (format .to sink "#~w=" id))))
             (thing .selfie cycle-sink))
            (else
