@@ -48,6 +48,7 @@
 
 
 ;; Basic gens
+;; TODO maybe name like <claim> etc.
 
 (to (a-claim g)
   (match (g .natural 2)

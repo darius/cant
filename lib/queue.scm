@@ -26,6 +26,17 @@
         (else
          `(,h.first {queue ,h.rest ,t}))))
 
+;; TODO come back to this:
+;; Maybe a nicer accessor would look like:
+(to (access {queue h t})
+  (case ((and h.empty? t.empty?)
+         {empty})
+        (h.empty?
+         (let seq (reverse t))
+         {nonempty seq.first {queue seq.rest '()}))
+        (else
+         {nonempty h.first {queue h.rest t}))))
+
 (export
   empty empty?
   push extend
