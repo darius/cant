@@ -147,21 +147,21 @@
   (let builder default-builder)         ;TODO parameterize
   (given (subs)
     (let full-subs (union-map<- subs default-subs))
-    (let rules (map<-a-list (for each (((name (refs f)) skeletons)) ;XXX better name than f
-                              `(,name ,(delay (given () (rules name)))))))
+    (let rules (map<- (for each (((name (refs f)) skeletons)) ;XXX better name than f
+                        `(,name ,(delay (given () (rules name)))))))
     (for each! (((name (refs f)) skeletons))
       (let peg (f builder rules full-subs))
       (rules .set! name peg))
     rules))
 
 (let default-subs
-  (map<-a-list `(("anyone" ,any-1)
-                 ("end" ,end)
-                 ("hug" ,hug)
-                 ("join" ,(feed chain))
-                 ("whitespace" ,(skip-1 '.whitespace?))
-                 ;; TODO: more
-                 )))
+  (map<- `(("anyone" ,any-1)
+           ("end" ,end)
+           ("hug" ,hug)
+           ("join" ,(feed chain))
+           ("whitespace" ,(skip-1 '.whitespace?))
+           ;; TODO: more
+           )))
 
 (make default-builder
   ({.literal string} (lit string))

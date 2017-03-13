@@ -217,7 +217,6 @@
     ('export (mlambda
               ((__ . names)
                (assert (all symbol? names) "bad syntax" names)
-;               (list 'map<-a-list  ;XXX hygiene
                (list `',a-list-map<-  ;XXX temporary
                      (list 'quasiquote
                            (map (lambda (name) (list name (list 'unquote name)))

@@ -21,7 +21,7 @@
 (to (random-encrypt text)
   (let values (vector<-list alphabet))
   (random-shuffle! values)
-  (let code (map<-a-list (zip alphabet values.values))) ;XXX why .values needed?
+  (let code (map<- (zip alphabet values.values))) ;XXX why .values needed?
   (string<-list (for each ((ch text.lowercase))
                   (code .get ch ch))))
 
@@ -71,8 +71,8 @@
   (let code (those '.letter? cryptogram))
   (surely (not code.empty?))
   (let decoder
-    (map<-a-list (for each ((ch ((call set<- code) .keys))) ;XXX clumsy
-                   `(,ch #\space))))
+    (map<- (for each ((ch ((call set<- code) .keys))) ;XXX clumsy
+             `(,ch #\space))))
   (let lines (each clean cryptogram.split-lines))
   (let point (box<- 0))                ; Index in `code` of the cursor
 

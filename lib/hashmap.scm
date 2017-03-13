@@ -114,6 +114,4 @@
      (m .set! k v))
    m))
 
-(let map<-a-list map<-)
-
-(export map<- map<-a-list)
+(export map<-)

@@ -18,8 +18,8 @@
       (b backtrace "show all of the stack up from here")))
 
   (let abbrevs
-    (map<-a-list (for each (((short full _) vocab))
-                   `(,short ,full))))
+    (map<- (for each (((short full _) vocab))
+             `(,short ,full))))
 
   (say "Enter ? for help.")
   (begin interacting ((frame k) (callees '()))

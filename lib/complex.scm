@@ -35,12 +35,12 @@
        (conjugate c)))
 
 ;; TODO fancier syntax for 'export' to handle this. Or just plain map literals.
-(map<-a-list `(
-               (conjugate ,conjugate)
-               (abs^2 ,c-abs^2)
-               (abs ,c-abs)
-               (+ ,c+)
-               (- ,c-)
-               (* ,c*)
-               (/ ,c/)
-               ))
+(map<- `(
+         (conjugate ,conjugate)
+         (abs^2 ,c-abs^2)
+         (abs ,c-abs)
+         (+ ,c+)
+         (- ,c-)
+         (* ,c*)
+         (/ ,c/)
+         ))

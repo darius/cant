@@ -49,12 +49,12 @@
 (to (as-float {ratio n d})
   (/ (exact->inexact n) d))
 
-(map<-a-list `(
-               (ratio<- ,ratio<-)
-               (+ ,r+)
-               (- ,r-)
-               (* ,r*)
-               (/ ,r/)
-               (compare ,compare)
-               (as-float ,as-float)
-               ))
+(map<- `(
+         (ratio<- ,ratio<-)
+         (+ ,r+)
+         (- ,r-)
+         (* ,r*)
+         (/ ,r/)
+         (compare ,compare)
+         (as-float ,as-float)
+         ))
