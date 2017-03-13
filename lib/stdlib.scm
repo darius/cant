@@ -93,7 +93,10 @@
   (for foldr ((x xs) (ys '()))
     (if (ok? x) (cons x ys) ys)))
 
-(to (remove xs unwanted)            ;TODO different arg order?
+(to (filter f xs)             ;TODO is this worth defining? good name?
+  (those identity (each f xs)))
+
+(to (remove xs unwanted) ;TODO different arg order? N.B. almost unused
   (for those ((x xs))
     (not= x unwanted)))
 

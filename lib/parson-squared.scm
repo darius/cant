@@ -182,13 +182,20 @@
   (unless undefined.empty?
     (error "Undefined rules" (sort undefined.keys)))
   (let counts (call bag<- lhses))
-  (let dups (for those (((lhs n) counts.items)) ;XXX for gather?
-              (< 1 n)))
+  (let dups (for filter (((lhs n) counts.items))
+              (and (< 1 n) lhs)))
   (unless dups.empty?
     (error "Multiply-defined rules" (sort dups)))
   skeletons)
 
 (when #no
+  (let text "
+r: 'yo'.
+r: 'dude'.
+s: .
+s: r.
+t: .
+")
   (let skeletons (parse-grammar text))
   (for each! (((name (refs _)) skeletons))
     (format "~d: ~w\n" name refs)))

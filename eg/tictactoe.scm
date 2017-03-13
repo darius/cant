@@ -67,9 +67,8 @@
   ((successors grid) .empty?))
 
 (to (successors grid)
-  (filter-false                      ;TODO better name
-   (for each ((move (range<- 9)))
-     (apply-move grid move))))
+  (for filter ((move (range<- 9)))
+    (apply-move grid move)))
 
 (to (apply-move {grid p q} move)
   (let bit (1 .<< move))
@@ -102,9 +101,6 @@
 
 (to (move<-human-numbered n)
   (- 9 n))
-
-(to (filter-false xs)
-  (those identity xs))
 
 
 (hide
