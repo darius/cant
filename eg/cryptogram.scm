@@ -120,8 +120,8 @@
                                (not= v #\space))))
      (let letters-left (for each ((ch alphabet))
                          (if (counts .maps? ch) #\space ch)))
-     (let clashes (call set<- (for gather (((v n) counts.items))
-                                (if (< 1 n) `(,v) '()))))
+     (let clashes (call set<- (for filter (((v n) counts.items))
+                                (and (< 1 n) v))))
 
      (let pos (box<- 0))
 
