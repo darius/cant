@@ -14,104 +14,106 @@
 
 (let none (make))
 
-(to (hash-map<-)
-  (let count (box<- 0))
-  (let keys  (box<- (vector<- none)))  ;; size a power of 2
-  (let vals  (box<- (vector<- #no)))   ;; same size
+(make map<-
 
-  (to (capacity) keys.^.count)
+  (()
+   (let count (box<- 0))
+   (let keys  (box<- (vector<- none)))  ;; size a power of 2
+   (let vals  (box<- (vector<- #no)))   ;; same size
 
-  (to (occupants)
-    (begin walking ((i (- (capacity) 1)))
-      (if (< i 0)
-          '()
-          (do (let k (keys.^ i))
-              (if (= k none)
-                  (walking (- i 1))
-                  (cons i (walking (- i 1))))))))
+   (to (capacity) keys.^.count)
 
-  (to (place key)
-    (let mask (- keys.^.count 1))
-    (let i0   (mask .and (__hash key)))
-    (begin walking ((i i0))
-      (let k (keys.^ i))
-      (case ((= k none) {missing-at i})
-            ((= k key)  {at i})
-            (else
-             (let j (mask .and (- i 1)))
-             (if (= j i0)
-                 (error "Can't happen")
-                 (walking j))))))
+   (to (occupants)
+     (begin walking ((i (- (capacity) 1)))
+       (if (< i 0)
+           '()
+           (do (let k (keys.^ i))
+               (if (= k none)
+                   (walking (- i 1))
+                   (cons i (walking (- i 1))))))))
 
-  (to (maybe-grow)
-    (when (< (* 2 (capacity))
-             (* 3 count.^))
-      (resize (* 2 (capacity)))))
+   (to (place key)
+     (let mask (- keys.^.count 1))
+     (let i0   (mask .and (__hash key)))
+     (begin walking ((i i0))
+       (let k (keys.^ i))
+       (case ((= k none) {missing-at i})
+             ((= k key)  {at i})
+             (else
+              (let j (mask .and (- i 1)))
+              (if (= j i0)
+                  (error "Can't happen")
+                  (walking j))))))
 
-  (to (resize new-capacity)
-    (let old-keys keys.^)
-    (let old-vals vals.^)
-    (keys .^= (vector<-count new-capacity none))
-    (vals .^= (vector<-count new-capacity))
-    (for each! (((i key) old-keys.items))
-      (unless (= key none)
-        (let {missing-at j} (place key))
-        (keys.^ .set! j key)
-        (vals.^ .set! j (old-vals i)))))
-                            
-  (make hashmap
-    ((key)
-     (match (place key)
-       ({at i} (vals.^ i))
-       (_      (error "Missing key" hashmap key))))
-    ({.get key}
-     (hashmap .get key #no))
-    ({.get key default}
-     (match (place key)
-       ({at i} (vals.^ i))
-       (_      default)))
-    ({.set! key val}
-     (match (place key)
-       ({at i}
-        (vals.^ .set! i val))
-       ({missing-at i}
-        (keys.^ .set! i key)
-        (vals.^ .set! i val)
-        (count .^= (+ count.^ 1))
-        (maybe-grow))))
-    ({.maps? key}
-     (match (place key)
-       ({at _} #yes)
-       (_      #no)))
-    ({.empty?} (= count.^ 0))
-    ({.count}  count.^)
-    ({.keys}   (each keys.^ (occupants))) ;XXX lazy-map
-    ({.values} (each vals.^ (occupants)))
-    ({.items}
-     (let ks keys.^)
-     (let vs vals.^)
-     (for each ((i (occupants)))
-       `(,(ks i) ,(vs i))))
-    ({.find? value}
-     (hashmap.values .find? value))
-    ({.find value default}
-     (let vs vals.^)
-     (begin searching ((js (occupants)))  ;XXX should be lazy
-       (case (js.empty? default)
-             ((= value (vs js.first)) (keys.^ js.first))
-             (else (searching js.rest)))))
-    ({.selfie sink}
-     (sink .display "#<hash-map (")
-     (sink .print count.^)
-     (sink .display ")>"))
-    ))
+   (to (maybe-grow)
+     (when (< (* 2 (capacity))
+              (* 3 count.^))
+       (resize (* 2 (capacity)))))
 
-(let map<- hash-map<-)
+   (to (resize new-capacity)
+     (let old-keys keys.^)
+     (let old-vals vals.^)
+     (keys .^= (vector<-count new-capacity none))
+     (vals .^= (vector<-count new-capacity))
+     (for each! (((i key) old-keys.items))
+       (unless (= key none)
+         (let {missing-at j} (place key))
+         (keys.^ .set! j key)
+         (vals.^ .set! j (old-vals i)))))
+   
+   (make hashmap
+     ((key)
+      (match (place key)
+        ({at i} (vals.^ i))
+        (_      (error "Missing key" hashmap key))))
+     ({.get key}
+      (hashmap .get key #no))
+     ({.get key default}
+      (match (place key)
+        ({at i} (vals.^ i))
+        (_      default)))
+     ({.set! key val}
+      (match (place key)
+        ({at i}
+         (vals.^ .set! i val))
+        ({missing-at i}
+         (keys.^ .set! i key)
+         (vals.^ .set! i val)
+         (count .^= (+ count.^ 1))
+         (maybe-grow))))
+     ({.maps? key}
+      (match (place key)
+        ({at _} #yes)
+        (_      #no)))
+     ({.empty?} (= count.^ 0))
+     ({.count}  count.^)
+     ({.keys}   (each keys.^ (occupants))) ;XXX lazy-map
+     ({.values} (each vals.^ (occupants)))
+     ({.items}
+      (let ks keys.^)
+      (let vs vals.^)
+      (for each ((i (occupants)))
+        `(,(ks i) ,(vs i))))
+     ({.find? value}
+      (hashmap.values .find? value))
+     ({.find value default}
+      (let vs vals.^)
+      (begin searching ((js (occupants)))  ;XXX should be lazy
+        (case (js.empty? default)
+              ((= value (vs js.first)) (keys.^ js.first))
+              (else (searching js.rest)))))
+     ({.selfie sink}
+      (sink .display "#<hash-map (")
+      (sink .print count.^)
+      (sink .display ")>"))
+     ))
 
-(to (map<-a-list a-list) ;TODO invent a concise constructor; frozen by default
-  (let m (map<-))
-  (for each! (((k v) a-list))
-    (m .set! k v))
-  m)
+  ((a-list) ;TODO invent a concise constructor; frozen by default
+   (let m (map<-))
+   (for each! (((k v) a-list))
+     (m .set! k v))
+   m))
+
+(let map<-a-list map<-)
 
 (export map<- map<-a-list)
