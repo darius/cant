@@ -265,6 +265,7 @@
     (number? ,number?)
     (integer? ,integer?)
     (symbol? ,symbol?)
+    (cue? ,cue?)
     (claim? ,boolean?)
     (char? ,char?)
     (string? ,string?)
