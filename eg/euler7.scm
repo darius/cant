@@ -15,7 +15,7 @@
   (let p ns.first)
   (cons/lazy p (given ()
                  (filter-prime
-                  (for filter/lazy ((k ns.rest))
+                  (for those/lazy ((k ns.rest))
                     (not= 0 (k .remainder p)))))))
 
 ;(print (euler7 5))

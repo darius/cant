@@ -182,7 +182,7 @@
   (unless undefined.empty?
     (error "Undefined rules" (sort undefined.keys)))
   (let counts (call bag<- lhses))
-  (let dups (for filter (((lhs n) counts.items)) ;XXX for gather?
+  (let dups (for those (((lhs n) counts.items)) ;XXX for gather?
               (< 1 n)))
   (unless dups.empty?
     (error "Multiply-defined rules" (sort dups)))

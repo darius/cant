@@ -68,7 +68,7 @@
 
 (to (cryptoview<- cryptogram)
 
-  (let code (filter '.letter? cryptogram))
+  (let code (those '.letter? cryptogram))
   (surely (not code.empty?))
   (let decoder
     (map<-a-list (for each ((ch ((call set<- code) .keys))) ;XXX clumsy
@@ -81,14 +81,14 @@
 
   (to (line-number pos)
     (let items
-      (for filter (((i start) line-starts.items))
+      (for those (((i start) line-starts.items))
         (and (<= start pos) (< pos (line-starts (+ i 1))))))
     (match items.first                  ;TODO should be lazy
       ((i _) i)))
 
   (let line-starts
     (running-sum (for each ((line lines))
-                   ((filter '.letter? line) .count))))
+                   ((those '.letter? line) .count))))
 
   (make _
     ({.jot letter}
@@ -116,7 +116,7 @@
            (shifting)))))
 
     ({.view show-cursor?}
-     (let counts (call bag<- (for filter ((v decoder.values))
+     (let counts (call bag<- (for those ((v decoder.values))
                                (not= v #\space))))
      (let letters-left (for each ((ch alphabet))
                          (if (counts .maps? ch) #\space ch)))

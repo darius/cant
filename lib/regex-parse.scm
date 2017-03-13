@@ -33,6 +33,7 @@ char     :  '\\\\' :anyone
 ")
 
 (let rp ((grammar<- regex-grammar)
+         ;; TODO this is a pain:
          (map<-a-list `(("empty"   ,(push empty))
                         ("literal" ,(feed (given (str) (literal str.first))))
                         ("star"    ,(feed star))

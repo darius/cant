@@ -89,12 +89,12 @@
   (for foldr ((x xs) (ys '()))
     (chain (f x) ys)))
 
-(to (filter ok? xs)
+(to (those ok? xs)
   (for foldr ((x xs) (ys '()))
     (if (ok? x) (cons x ys) ys)))
 
 (to (remove xs unwanted)            ;TODO different arg order?
-  (for filter ((x xs))
+  (for those ((x xs))
     (not= x unwanted)))
 
 (to (list<- @arguments)
@@ -143,10 +143,10 @@
     ;; XXX override parts of list-trait that need it for laziness
     ))
 
-(to (filter/lazy ok? xs)
+(to (those/lazy ok? xs)
   (if (ok? xs.first)
-      (cons/lazy xs.first (given () (filter/lazy ok? xs.rest)))
-      (filter/lazy ok? xs.rest)))
+      (cons/lazy xs.first (given () (those/lazy ok? xs.rest)))
+      (those/lazy ok? xs.rest)))
 
 (to (gather/lazy f xs)
   (for foldr/lazy ((x xs)

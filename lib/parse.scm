@@ -5,12 +5,12 @@
 
   ;; Return a list of those rules with word on the rhs.
   (to (lexical-rules word)
-    (for filter ((rule rules))
+    (for those ((rule rules))
       (= rule.rhs word)))
 
   ;; Return a list of those rules where cat starts the rhs.
   (to (rules-starting-with cat)
-    (for filter ((rule rules))
+    (for those ((rule rules))
       (rule .starts-with? cat)))
 
   ;; Look for the categories needed to complete the parse.
@@ -34,7 +34,7 @@
 
     ;; Return all complete parses of a list of words.
     ({.parse words}
-     (each '.tree (filter '.complete? (grammar .parse-prefixes words))))
+     (each '.tree (those '.complete? (grammar .parse-prefixes words))))
 
     ;; Return all parses of any prefix of words (working bottom-up).
     ({.parse-prefixes words}

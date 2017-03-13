@@ -104,7 +104,7 @@
   (- 9 n))
 
 (to (filter-false xs)
-  (filter identity xs))
+  (those identity xs))
 
 
 (hide

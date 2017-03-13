@@ -3,7 +3,7 @@
 ;; values do not exceed four million.
 
 (to (euler2 n)
-  (sum (filter even? (fibs n))))
+  (sum (those even? (fibs n))))
 
 (to (even? n)
   (= 0 (n .remainder 2)))
