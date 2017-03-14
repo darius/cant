@@ -12,7 +12,7 @@
     ({.count}         map.count)
     ({.keys}          map.keys)
     ({.maps? key}     (map .maps? key))
-    ({.diverge}       (call set<- map.keys)) ;TODO tune
+    ({.copy}          (call set<- map.keys)) ;TODO tune
     ({.add! key}      (map .set! key #yes))
     ({.add-all! vals} (for each! ((v vals)) (hash-set .add! v)))
     ({.union! other}  (hash-set .add-all! other.keys))
@@ -31,7 +31,7 @@
     ))
 
 (to (union set1 set2)
-  (let result set1.diverge)
+  (let result set1.copy)
   (result .union! set2)
   result)
 

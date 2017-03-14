@@ -13,8 +13,8 @@
   (ending-states .maps? accept))
 
 ;; A state is a function from char to set of successor states.
-(to (accept c)            empty-set)
-(to ((shift succs) c)     succs)
+(to (accept c)                    empty-set)
+(to ((shift succs) c)             succs)
 (to ((expect ch succs) c)         (if (= ch c)       succs empty-set))
 (to ((expect-any-of chs succs) c) (if (chs .maps? c) succs empty-set))
 
@@ -31,7 +31,7 @@
 (to ((either r s) succs) ((r succs) .union (s succs)))
 (to ((then r s) succs)   (r (s succs)))
 (to ((star r) succs)
-  (let my-succs succs.diverge)
+  (let my-succs succs.copy)
   (my-succs .union! (r my-succs))
   my-succs)
 
