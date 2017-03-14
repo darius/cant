@@ -16,7 +16,6 @@
      `(let ,(unparse-pat p) ,(unparse-exp e)))
     ({call operator {list operands}}
      `(,(unparse-exp operator) ,@(each unparse-exp operands)))
-     )
     ({call operator {term (: cue cue?) operands}}
      `(,(unparse-exp operator) cue ,@(each unparse-exp operands)))
     ({call e1 e2}
@@ -26,7 +25,7 @@
     ({list es}
      `(list<- ,@(each unparse-exp es))) ;XXX unhygienic
     (_
-     (error "Unknown expression type" exp)))
+     (error "Unknown expression type" exp))))
 
 (to (unparse-do {do e1 e2})
   (let es
@@ -36,9 +35,9 @@
         (_ `(,tail)))))
   `(do ,(each unparse-exp (cons e1 es))))
 
-(to (unparse-make {make name #no extras-term clauses})
+(to (unparse-make {make name {constant #no} extras-term clauses})
   (match extras-term
-    (#no
+    ({constant #no}
      `(make ,name
         ,@(each unparse-clause clauses)))
     ({extending trait-e}
