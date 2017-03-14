@@ -419,33 +419,33 @@
 (to (__match-clause-cont k pat-r body rest-clauses object script datum message)
   (make {extending __cont-trait}
     ({.rest} k)
-    ({.first} `((^ ,body) ,@rest-clauses))
+    ({.first} `((^ ,body) ,@(each unparse-clause rest-clauses)))
     ({.env} pat-r)))
 
 (to (__ev-trait-cont k r name trait clauses)
   (make {extending __cont-trait}
     ({.rest} k)
     ({.first} `(make ,name ,trait ^
-                 ,@clauses))
+                 ,@(each unparse-clause clauses)))
     ({.env} r)))
 
 (to (__ev-make-cont k name stamp-val r clauses)
   (make {extending __cont-trait}
     ({.rest} k)
     ({.first} `(make ,name ^ #no   ; XXX as above
-                 ,@clauses))
+                 ,@(each unparse-clause clauses)))
     ({.env} r)))
 
 (to (__ev-do-rest-cont k r e2)
   (make {extending __cont-trait}
     ({.rest} k)
-    ({.first} e2)
+    ({.first} (unparse-exp e2))
     ({.env} r)))
 
 (to (__ev-let-match-cont k r p)
   (make {extending __cont-trait}
     ({.rest} k)
-    ({.first} `(<match> ,p))          ;XXX lousy presentation
+    ({.first} `(<match> ,(unparse-pat p)))          ;XXX lousy presentation
     ({.env} r)))
 
 (to (__ev-let-check-cont k val)
@@ -457,7 +457,7 @@
 (to (__ev-arg-cont k r e2)
   (make {extending __cont-trait}
     ({.rest} k)
-    ({.first} `(^ ,e2))
+    ({.first} `(^ ,(unparse-exp e2)))
     ({.env} r)))
 
 (to (__ev-call-cont k receiver)
@@ -471,7 +471,7 @@
     ({.rest} k)
     ({.first}
      (to (quotify v) `',v)
-     `(,@(each quotify (reverse vals)) ^ ,@es))
+     `(,@(each quotify (reverse vals)) ^ ,@(each unparse-exp es)))
     ({.env} r)))
 
 (to (__ev-tag-cont k tag)
@@ -483,23 +483,23 @@
 (to (__ev-and-pat-cont k r subject p2)
   (make {extending __cont-trait}
     ({.rest} k)
-    ({.first} `(<and-match?> ,p2))
+    ({.first} `(<and-match?> ,(unparse-pat p2)))
     ({.env} r)))
 
 (to (__ev-view-call-cont k r subject p)
   (make {extending __cont-trait}
     ({.rest} k)
-    ({.first} `(: _ ^ ,p))
+    ({.first} `(: _ ^ ,(unparse-pat p)))
     ({.env} r)))
 
 (to (__ev-view-match-cont k r p)
   (make {extending __cont-trait}
     ({.rest} k)
-    ({.first} p)
+    ({.first} (unparse-pat p))
     ({.env} r)))
 
 (to (__ev-match-rest-cont k r subjects ps)
   (make {extending __cont-trait}
     ({.rest} k)
-    ({.first} `(<all-match?> ,@ps))
+    ({.first} `(<all-match?> ,@(each unparse-pat ps)))
     ({.env} r)))
