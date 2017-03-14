@@ -33,7 +33,7 @@
       (match tail
         ({do e3 e4} (cons e3 (unparsing e4)))
         (_ `(,tail)))))
-  `(do ,(each unparse-exp (cons e1 es))))
+  `(do ,@(each unparse-exp (cons e1 es))))
 
 (to (unparse-make {make name {constant #no} extras-term clauses})
   (match extras-term
