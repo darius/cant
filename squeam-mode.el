@@ -9,7 +9,7 @@
 (put 'export 'scheme-indent-function 0)
 (put 'for 'scheme-indent-function 2)
 (put 'given 'scheme-indent-function 1)
-(put 'hide 'scheme-indent-function nil)  ; or 0)
+(put 'hide 'scheme-indent-function 0)  ; or nil)
 (put 'import 'scheme-indent-function 1)
 (put 'let 'scheme-indent-function 1)
 (put 'make 'scheme-indent-function 1)
