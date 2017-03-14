@@ -14,6 +14,9 @@
     ({.values}        map.values)
     ({.items}         map.items)
     ({.maps? key}     (map .maps? key))
+    ((key)            (map key))
+    ({.get key default} (map .get key default))
+    ({.get key}       (map .get key))
     ({.add! key}      (map .set! key
                            (+ (map .get key 0) 1)))
     ({.add-all! vals} (for each! ((v vals)) (bag .add! v)))
