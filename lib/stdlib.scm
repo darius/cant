@@ -260,9 +260,9 @@
       (interacting))))
 
 (to (debug)
-  (import (use "lib/debugger") inspect-cont)
+  (import (use "lib/debugger") inspect-continuation)
   (match the-last-error.^
-    ((k @evil) (inspect-cont k))
+    ((k @evil) (inspect-continuation k))
     (_ (display "No error to debug.\n"))))
 
 (let the-modules (box<- '()))

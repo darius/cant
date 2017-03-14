@@ -178,6 +178,12 @@
    ((object? object)      (object-script object))
    (else (error 'call "Non-object" object))))
 
+(define (extract-datum object)
+  (cond
+   ((object? object)      (object-datum object))
+   ;; TODO: script and cont-script too?
+   (else                  object)))
+
 ;; XXX This is a hack.
 (define (call-cont-standin script datum message k)
 ;  (pp `(making standin ,(cont-script-name script)))
@@ -315,6 +321,7 @@
     (open-subprocess ,process)
 ;    (get-global-env ,(lambda () the-global-env))
     (extract-script ,extract-script)
+    (extract-datum ,extract-datum)
 
     ;; Primitives only -- TODO seclude in their own env:
     (__hash ,hash)
