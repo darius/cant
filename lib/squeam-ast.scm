@@ -17,7 +17,7 @@
     ({call operator {list operands}}
      `(,(unparse-exp operator) ,@(each unparse-exp operands)))
     ({call operator {term (: cue cue?) operands}}
-     `(,(unparse-exp operator) cue ,@(each unparse-exp operands)))
+     `(,(unparse-exp operator) ,cue ,@(each unparse-exp operands)))
     ({call e1 e2}
      `(call ,(unparse-exp e1) ,(unparse-exp e2)))
     ({term tag es}
