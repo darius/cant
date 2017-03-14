@@ -232,9 +232,9 @@
 (to (repl)                          ;TODO rename
   (import (use "lib/traceback") on-error-traceback)
   (begin interacting ()
-    (the-signal-handler-box .^= (to (on-error-repl k @evil)
-                                  (the-last-error .^= (cons k evil))
-                                  (call on-error-traceback `(,k ,@evil))
+    (the-signal-handler-box .^= (to (on-error-repl @evil)
+                                  (the-last-error .^= evil)
+                                  (call on-error-traceback evil)
                                   (display "Enter (debug) for more.\n")
                                   (interacting)))
     (display "sqm> ")
