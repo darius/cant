@@ -281,6 +281,14 @@
               `(hide ,@(read-all source))))
   (evaluate (parse-exp code) '()))
 
+;; To make it possible to reload a module by calling (use file-stem)
+;; again afterward. N.B. that won't mutate the existing module object.
+;; This is not very useful, though, because we still can't redefine
+;; variables at the repl.
+(to (unuse file-stem)                   ;TODO better name
+  (the-modules .^= (for those (((stem mod) the-modules.^))
+                     (not= stem file-stem))))
+
 (to (with-input-file fn filename)
   (let source (open-input-file filename))
   (let result (fn source))
