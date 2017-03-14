@@ -71,4 +71,4 @@
     (_
      (error "Unknown pattern type" pat))))
 
-(export unparse-exp unparse-pat)
+(export unparse-exp unparse-pat unparse-clause)

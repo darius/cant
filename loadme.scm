@@ -13,6 +13,7 @@
       (import (use "lib/fillvector") fillvector<-)
       (import (use "lib/sort")       sort)
       (import (use "lib/hashset")    set<-)
+      (import (use "lib/squeam-ast") unparse-exp unparse-pat unparse-clause)
       ))
 (squeam-interpret
  '(hide ;; Let's default to traceback-on-error.
