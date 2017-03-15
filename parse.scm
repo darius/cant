@@ -131,9 +131,6 @@
     ('hide   (mlambda
               ((__ . es)
                `((given _ ,@es)))))
-    ('include (mlambda             ;temporary
-               ((__ (: filename string?))
-                `(do ,@(snarf filename squeam-read)))))
     ('make-trait
              (mlambda
               ((__ (: v symbol?) (: self symbol?) . clauses) ;XXX allow other patterns?
