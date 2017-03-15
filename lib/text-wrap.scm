@@ -1,5 +1,6 @@
 ;; Like Python's textwrap.
 ;; TODO try using Parson
+;; XXX output lines include trailing spaces
 
 (to (fill text width)
   ("\n" .join (wrap text width)))
