@@ -154,11 +154,6 @@
     ('given  (mlambda
               ((__ p . body)
                `(make (,p ,@body)))))
-    ('with   (mlambda
-              ((__ bindings . body)
-               (parse-bindings bindings
-                 (lambda (ps es)
-                   `((given ,ps ,@body) ,@es))))))
     ('for    (mlambda
               ((__ fn bindings . body)
                (parse-bindings bindings
@@ -184,13 +179,7 @@
     ('case   (mlambda
               ((__) #f)                 ;TODO: generate an error-raising?
               ((__ ('else . es)) `(do ,@es))
-              ((__ (e) . clauses) `(or ,e (case ,@clauses)))
-              ((__ (e1 '=> e2) . clauses)
-               (let ((test-var (gensym)))
-                 `(with ((,test-var ,e1))
-                    (if ,test-var
-                        (,e2 ,test-var)
-                        (case ,@clauses)))))
+              ((__ (e) . clauses) `(or ,e (case ,@clauses))) ;TODO: do I ever use this?
               ((__ (e . es) . clauses)
                `(if ,e (do ,@es) (case ,@clauses)))))
     ('and    (mlambda
@@ -202,7 +191,8 @@
               ((__ e) e)
               ((__ e . es)
                (let ((t (gensym)))
-                 `(with ((,t ,e)) (if ,t ,t (or ,@es)))))))
+                 `((given (,t) (if ,t ,t (or ,@es)))
+                   ,e)))))
     ('import (mlambda
               ((__ m . names)
                (assert (all symbol? names) "bad syntax" names)

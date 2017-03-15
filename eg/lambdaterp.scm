@@ -128,8 +128,9 @@
   `((,v ,val) ,@r))
 
 (to (lookup r v k)
-  (case ((assq v r) => (given (record) (k .take (record 1))))
-        (else (debug k "Unbound var" v))))
+  (match (assq v r)
+    (#no (debug k "Unbound var" v))
+    (record (k .take (record 1)))))
 
 
 ;; Debugger
