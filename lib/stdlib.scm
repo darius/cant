@@ -237,11 +237,10 @@
 
 (to (with-fallback-signal-handler act)
   (let parent-handler the-signal-handler.^)
-  (the-signal-handler
-   .^= (given (k @evil)
-         (display "Error within error!\n")
-         (each! print evil)
-         (os-exit 1)))
+  (the-signal-handler .^= (given (k @evil)
+                            (display "Error within error!\n")
+                            (each! print evil)
+                            (os-exit 1)))
   (act)
   (the-signal-handler .^= parent-handler))
 
