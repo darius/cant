@@ -47,7 +47,7 @@
   (export qe qp))
 
 (to (qualify-name context name)
-  (let parts (reverse (add-make-context context name)))
+  (let parts (add-make-context context name))
   (symbol<- (":" .join parts)))
 
 (to (add-pat-context context p)
