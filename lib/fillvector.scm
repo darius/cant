@@ -21,7 +21,7 @@
     (unless (< i count.^)
       (error "Bad index" fillvector i)))
 
-  (make fillvector
+  (make fillvector {extending vector-trait}
     ((i)
      (count-check i)
      (vec.^ i))
@@ -67,7 +67,6 @@
     ;; inefficient:
     ({.chain v}        (fillvector.snapshot .chain v))
     ({.slice lo bound} (fillvector.snapshot .slice lo bound))
-
-    (message           (vector-trait fillvector message))))
+    ))
 
 (export fillvector<- fillvector<-count)
