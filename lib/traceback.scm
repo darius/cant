@@ -1,7 +1,7 @@
 ;; An error handler that prints a (crude) traceback.
 
 ;; Install this via 
-;; (the-signal-handler-box .^= on-error-traceback)
+;; (the-signal-handler .^= on-error-traceback)
 (to (on-error-traceback k plaint @values)
   (print-error-traceback k plaint values))
 

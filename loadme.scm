@@ -18,7 +18,7 @@
 (squeam-interpret
  '(hide ;; Let's default to traceback-on-error.
    (import (use "lib/traceback") on-error-traceback)
-   (the-signal-handler-box .^= on-error-traceback)))
+   (the-signal-handler .^= on-error-traceback)))
 
 (define (repl)
   (squeam-interpret '(repl)))

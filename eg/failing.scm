@@ -11,8 +11,8 @@
 (to (on-error-complain-and-continue k @evil) ;TODO 'k' is too abbreviated
   (call on-error-traceback `(,k ,@evil))
   (display "About to continue with 10") (newline)
-  (the-signal-handler-box .^= on-error-traceback) ;; Restore the usual handler.
+  (the-signal-handler .^= on-error-traceback) ;; Restore the usual handler.
   (k .answer 10))
 
-(the-signal-handler-box .^= on-error-complain-and-continue)
+(the-signal-handler .^= on-error-complain-and-continue)
 (print (factorial 5))

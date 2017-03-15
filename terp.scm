@@ -192,7 +192,7 @@
           (cont<- call-cont-standin-cont k message))))
 
 (define (error-prim message)
-  (let* ((the-box (get-prim 'the-signal-handler-box))
+  (let* ((the-box (get-prim 'the-signal-handler))
          (handler (unbox the-box)))
     ;; Panic by default if another error occurs during error handling.
     (call the-box (term<- '.^= panic) halt-cont)

@@ -226,33 +226,33 @@
   (write x)
   (newline))
 
-(let the-signal-handler-box (box<- panic))
+(let the-signal-handler (box<- panic))
 (let the-last-error (box<- #no))
 
 (to (install-signal-handler handler)
-  (let parent-handler the-signal-handler-box.^)
-  (the-signal-handler-box .^= (given (@evil)
-                                (the-signal-handler-box .^= parent-handler)
-                                (call handler evil))))
-                                
+  (let parent-handler the-signal-handler.^)
+  (the-signal-handler .^= (given (@evil)
+                            (the-signal-handler .^= parent-handler)
+                            (call handler evil))))
+
 (to (with-fallback-signal-handler act)
-  (let parent-handler the-signal-handler-box.^)
-  (the-signal-handler-box
+  (let parent-handler the-signal-handler.^)
+  (the-signal-handler
    .^= (given (k @evil)
          (display "Error within error!\n")
          (each! print evil)
          (os-exit 1)))
   (act)
-  (the-signal-handler-box .^= parent-handler))
+  (the-signal-handler .^= parent-handler))
 
 (to (repl)                          ;TODO rename
   (import (use "lib/traceback") on-error-traceback)
   (begin interacting ()
-    (the-signal-handler-box .^= (given (@evil)
-                                  (the-last-error .^= evil)
-                                  (call on-error-traceback evil)
-                                  (display "Enter (debug) for more.\n")
-                                  (interacting)))
+    (the-signal-handler .^= (given (@evil)
+                              (the-last-error .^= evil)
+                              (call on-error-traceback evil)
+                              (display "Enter (debug) for more.\n")
+                              (interacting)))
     (display "sqm> ")
     (let sexpr (read))
     (unless (eof-object? sexpr)
