@@ -8,15 +8,11 @@
   (find-circuits (number<-string truth-table 2) n-inputs max-gates))
 
 (to (int-log2 n)
-  ;; XXX ugly
-  (match n
-    (1  0)
-    (2  1)
-    (4  2)
-    (8  3)
-    (16 4)
-    (32 5)
-    (_ (error "Bad argument" n))))
+  (begin searching ((p 0) (two**p 1))
+    (match (compare two**p n)
+      (-1 (searching (+ p 1) (* 2 two**p)))
+      ( 0 p)
+      (+1 (error "Not a power of 2" n)))))
 
 (to (pow2 n)
   (1 .<< n))
