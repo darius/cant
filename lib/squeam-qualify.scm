@@ -29,11 +29,11 @@
           (match extras-term
             ({constant #no} extras-term)
             ({extending trait-e} {extending (qe trait-e)}))
-          (hide (let inner-context (add-make-context context name))
-                (to (qualify-clause (p p-vars e-vars e))
-                  ;; XXX use inner-context
-                  `(,(qp p) p-vars e-vars ,(qe e)))
-                (each qualify-clause clauses))})
+          (hide
+            (import (qualifier<- (add-make-context context name))
+              qe qp)
+            (for each (((p p-vars e-vars e) clauses))
+              `(,(qp p) ,p-vars ,e-vars ,(qe e))))})
 
   (to (qp pat)
     (match pat
@@ -51,10 +51,10 @@
   (symbol<- (":" .join parts)))
 
 (to (add-pat-context context p)
-  context)  ;XXX
+  context)  ;TODO add info from p, in the cases where it helps
 
 (to (add-make-context context name)
   ;; TODO make sure name is a symbol, or convert it
-  (cons name.name context))
+  `(,name.name ,@context))
 
 (export qualify-exp qualify-pat)
