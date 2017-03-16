@@ -62,8 +62,6 @@
        (vec .^= new))
      (count .^= n))
 
-    ({.copy! v}        (fillvector .copy! v 0 v.count))
-    ({.slice lo}       (fillvector .slice lo count.^))
     ;; inefficient:
     ({.chain v}        (fillvector.snapshot .chain v))
     ({.slice lo bound} (fillvector.snapshot .slice lo bound))
