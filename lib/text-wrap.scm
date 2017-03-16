@@ -48,7 +48,9 @@
 
 
 (to (main (_ width-str @words))         ;just for a quick test
-  (print (wrap (" " .join words)
-               (number<-string width-str))))
+  (let lines (wrap (" " .join words)
+                   (number<-string width-str)))
+  (for each! ((line lines))
+    (format "~w\n" line)))
 
 (export fill wrap)
