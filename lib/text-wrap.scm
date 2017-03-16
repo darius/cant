@@ -47,7 +47,8 @@
                        (wrap-into new-line tokens.rest width)))))))))
 
 
-(to (main args)                     ;just for a quick test
-  (print (wrap (" " .join args.rest) 10)))
+(to (main (_ width-str @words))         ;just for a quick test
+  (print (wrap (" " .join words)
+               (number<-string width-str))))
 
 (export fill wrap)
