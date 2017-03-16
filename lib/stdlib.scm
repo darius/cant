@@ -244,9 +244,64 @@
   (act)
   (the-signal-handler .^= parent-handler))
 
+(import
+    (hide
+      (to (qualify-exp context exp)
+        (import (qualifier<- context) qe)
+        (qe exp))
+      
+      (to (qualify-pat context pat)
+        (import (qualifier<- context) qp)
+        (qp exp))
+
+      (to (qualifier<- context)
+
+        (to (qe exp)
+          (match exp
+            ({constant _}   exp)
+            ({variable _}   exp)
+            ({make _ _ _ _} (qualify-make exp))
+            ({do e1 e2}     {do (qe e1) (qe e2)})
+            ({let p e}      {let (qp p) (qe e)})
+            ({call e1 e2}   {call (qe e1) (qe e2)})
+            ({term tag es}  {term tag (each qe es)})
+            ({list es}      {list (each qe es)})))
+
+        (to (qualify-make {make name stamp-exp trait-exp clauses})
+          {make (qualify-name context name) (qe stamp-exp) (qe trait-exp)
+                (hide
+                  (import (qualifier<- (add-make-context context name))
+                    qe qp)
+                  (for each (((p p-vars e-vars e) clauses))
+                    `(,(qp p) ,p-vars ,e-vars ,(qe e))))})
+
+        (to (qp pat)
+          (match pat
+            ({any-pat}         pat)
+            ({variable-pat v}  pat)
+            ({constant-pat c}  pat)
+            ({view-pat e p}    {view-pat (qe e) (qp p)})
+            ({and-pat p1 p2}   {and-pat (qp p1) (qp p2)})
+            ({term-pat tag ps} {term-pat tag (each qp ps)})))
+
+        (export qe qp))
+
+      (to (qualify-name context name)
+        (let parts (add-make-context context name))
+        (let joined (":" .join parts))
+        (let s (symbol<- joined))
+        s)
+
+      (to (add-make-context context name)
+        ;; TODO make sure name is a symbol, or convert it
+        `(,name.name ,@context))
+
+      (export qualify-exp qualify-pat))
+
+  qualify-exp qualify-pat)
+
 (to (repl)                          ;TODO rename
   (import (use "lib/traceback") on-error-traceback)
-  (import (use "lib/squeam-qualify") qualify-exp)
   (begin interacting ()
     (the-signal-handler .^= (given (@evil)
                               (the-last-error .^= evil)
@@ -282,14 +337,19 @@
   (match (assoc file-stem the-modules.^)
     ((_ mod) mod)
     (#no
-     (let mod (load (chain file-stem ".scm")))
+     (let mod (load (chain file-stem ".scm") `(,file-stem)))
      (the-modules .^= `((,file-stem ,mod) ,@the-modules.^))
      mod)))
 
-(to (load filename)
-  (let code (for with-input-file ((source filename))
-              `(hide ,@(read-all source))))
-  (evaluate (parse-exp code) '()))
+(make load
+  ((filename)
+   (load filename '()))
+  ((filename context)
+   (let code (for with-input-file ((source filename))
+               `(hide ,@(read-all source))))
+   (let code1 (parse-exp code))
+   (let code2 (qualify-exp context code1))
+   (evaluate code2 '())))
 
 (to (with-input-file fn filename)
   (let source (open-input-file filename))
@@ -302,23 +362,3 @@
   (if (eof-object? thing)
       '()
       (cons thing (read-all source))))
-
-
-;; XXX temporary
-;; like (use file-stem), but make all names in the loaded code be fully qualified
-
-(to (q-use file-stem)                  ;TODO a realer module system
-  ;; N.B. could sort of just use memoize if that were already loaded.
-  (match (assoc file-stem the-modules.^)
-    ((_ mod) mod)
-    (#no
-     (let mod (q-load file-stem (chain file-stem ".scm")))
-     (the-modules .^= `((,file-stem ,mod) ,@the-modules.^))
-     mod)))
-
-(to (q-load stem filename)
-  (import (use "lib/squeam-qualify") qualify-exp)
-  (let code (for with-input-file ((source filename))
-              `(hide ,@(read-all source))))
-  (let parsed (parse-exp code))
-  (evaluate (qualify-exp `(,stem) parsed) '()))
