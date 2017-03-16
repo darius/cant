@@ -299,3 +299,23 @@
   (if (eof-object? thing)
       '()
       (cons thing (read-all source))))
+
+
+;; XXX temporary
+;; like (use file-stem), but make all names in the loaded code be fully qualified
+
+(to (q-use file-stem)                  ;TODO a realer module system
+  ;; N.B. could sort of just use memoize if that were already loaded.
+  (match (assoc file-stem the-modules.^)
+    ((_ mod) mod)
+    (#no
+     (let mod (q-load file-stem (chain file-stem ".scm")))
+     (the-modules .^= `((,file-stem ,mod) ,@the-modules.^))
+     mod)))
+
+(to (q-load stem filename)
+  (import (use "lib/squeam-qualify") qualify-exp)
+  (let code (for with-input-file ((source filename))
+              `(hide ,@(read-all source))))
+  (let parsed (parse-exp code))
+  (evaluate (qualify-exp `(,stem) parsed) '()))
