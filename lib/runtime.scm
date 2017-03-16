@@ -165,6 +165,13 @@
    (list-trait me message))) ;XXX use trait syntax instead
 
 (make-trait vector-trait me
+  ({.slice i}
+   (me .slice i me.count))
+  ({.slice i bound}
+   (let v (vector<-count (- bound i)))
+   (for each! ((j bound))
+     (v .set! j (me (+ i j))))
+   v)
   ({.last}
    (me (- me.count 1)))
   ({.copy! v}
@@ -175,6 +182,12 @@
                       (reverse (range<- len)))))  ;TODO inefficient
      (me .set! (+ dest i)
          (me (+ src i)))))
+  ({.values}
+   (for each ((i (range<- me.count)))   ;TODO cheaper to represent by self -- when can we get away with that?
+     (me i)))
+  ({.items}
+   (for each ((i (range<- me.count)))
+     `(,i ,(me i))))
   (message
    (list-trait me message))) ;XXX use trait syntax instead
 
