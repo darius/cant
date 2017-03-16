@@ -1,60 +1,53 @@
 ;; Like Python's textwrap.
 ;; TODO try using Parson
-;; XXX output lines include trailing spaces
+;; TODO the Python names are pretty arbitrary
 
 (to (fill text width)
-  ("\n" .join (wrap text width)))
+  ("\n" .join (old-wrap text width)))
 
 (to (wrap text width)
   (surely (< 0 width))  ;TODO 'require' or something, for preconditions
+  (wrap-into (fillvector<-) (parse-tokens text) width))
 
-  (to (wrapping text)
-    (if text.empty?
-        '()
-        (start-line (fillvector<-) text.first text.rest)))
+(to (flush buffer)
+  (string<-list (as-list buffer))) ;XXX clumsy
 
-  (to (start-line line ch rest)
+(to (parse-tokens text)
+  (if text.empty?
+      '()
+      (do (match text.first
+            (#\newline `({break} ,@(parse-tokens text.rest)))
+            (#\space   `({space} ,@(parse-tokens text.rest)))
+            ((: '.whitespace?)
+             (error "I don't know how to fill whitespace like" ch))
+            (_ (let word (fillvector<- text.first))
+               (begin eating ((text text.rest))
+                 (if (or text.empty? text.first.whitespace?)
+                     `({word ,(flush word)} ,@(parse-tokens text))
+                     (do (word .push! text.first)
+                         (eating text.rest)))))))))
 
-    (to (end-line)
-      (string<-list (as-list line))) ;XXX clumsy
+(to (wrap-into line tokens width)
+  (begin scanning ((spaces 0) (tokens tokens))
+    (if tokens.empty?
+        (if line.empty? '() `(,(flush line)))
+        (match tokens.first
+          ({break}
+           (cons (flush line) (wrap-into (fillvector<-) tokens.rest width)))
+          ({space}
+           (scanning (+ spaces 1) tokens.rest))
+          ({word s}
+           (if (<= (+ line.count spaces s.count) width)
+               (do (line .extend! (chain (" " .repeat spaces) s))
+                   (scanning 0 tokens.rest))
+               (cons (flush line)
+                     (hide
+                       (let new-line (fillvector<-))
+                       (new-line .extend! s)
+                       (wrap-into new-line tokens.rest width)))))))))
 
-    (to (eating ch rest)
-      (case ((= ch #\newline)
-             (cons (end-line) (wrapping rest)))
-            (ch.whitespace?
-             (line .push! ch)
-             (if (= width line.count)
-                 (cons (end-line) (wrapping rest))
-                 (if rest.empty?   ;XXX ugly!
-                     (cons (end-line) '())
-                     (eating rest.first rest.rest))))
-            (else
-             (start-word ch rest))))
-
-    (to (start-word ch rest)
-      (let word (fillvector<- ch))
-      (let limit (- width line.count))
-      (begin nibbling ((rest rest))
-        (case ((or rest.empty? rest.first.whitespace?)
-               (case ((<= word.count limit)
-                      (line .extend! word)
-                      (if rest.empty?   ;XXX ugly!
-                          (cons (end-line) '())
-                          (eating rest.first rest.rest)))
-                     (else
-                      (cons (end-line)
-                            (if rest.empty?   ;XXX ugly!
-                                `(,(string<-list (as-list word)))
-                                (start-line word rest.first rest.rest))))))
-              (else
-               (word .push! rest.first)
-               (nibbling rest.rest)))))
-
-    (eating ch rest))
-
-  (wrapping text))
 
 (to (main args)                     ;just for a quick test
-  (print (wrap (" " .join args) 40)))
+  (print (wrap (" " .join args.rest) 10)))
 
 (export fill wrap)
