@@ -50,7 +50,6 @@
 (to (main (_ width-str @words))         ;just for a quick test
   (let lines (wrap (" " .join words)
                    (number<-string width-str)))
-  (for each! ((line lines))
-    (format "~w\n" line)))
+  (each! print lines))
 
 (export fill wrap)
