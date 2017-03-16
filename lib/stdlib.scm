@@ -246,6 +246,7 @@
 
 (to (repl)                          ;TODO rename
   (import (use "lib/traceback") on-error-traceback)
+  (import (use "lib/squeam-qualify") qualify-exp)
   (begin interacting ()
     (the-signal-handler .^= (given (@evil)
                               (the-last-error .^= evil)
@@ -255,7 +256,9 @@
     (display "sqm> ")
     (let sexpr (read))
     (unless (eof-object? sexpr)
-      (print (evaluate (parse-exp sexpr) '())) ;XXX reify a proper env object
+      (let parsed (parse-exp sexpr))
+      (let e (qualify-exp '() parsed))  ;TODO reverse the order of args
+      (print (evaluate e '())) ;XXX reify a proper env object
       (interacting))))
 
 (to (debug)
