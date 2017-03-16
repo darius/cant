@@ -3,7 +3,7 @@
 ;; TODO the Python names are pretty arbitrary
 
 (to (fill text width)
-  ("\n" .join (old-wrap text width)))
+  ("\n" .join (wrap text width)))
 
 (to (wrap text width)
   (surely (< 0 width))  ;TODO 'require' or something, for preconditions
