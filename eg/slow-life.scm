@@ -24,13 +24,13 @@
     (+ (* C r) c))
 
   (to (update i)
-    (let n (sum (for each ((d `(,NW ,N ,NE
+    (match (sum (for each ((d `(,NW ,N ,NE
                                  ,W    ,E
                                 ,SW ,S ,SE)))
-                  (G (+ i d)))))
-    (case ((= n 2) (G i))
-          ((= n 3) 1)
-          (else    0)))
+                  (G (+ i d))))
+      (2 (G i))
+      (3 1)
+      (_ 0)))
 
   (make life-grid
     ((r c)
