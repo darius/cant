@@ -11,7 +11,7 @@
                  ((n-str) (number<-string n-str))
                  (_ (error ("Usage: ~d [#steps]" .format prog)))))
   (let grid (grid<- 24 39))
-  (paint grid 10 18 '(" **"
+  (paint grid 10 18 '(" **"             ;TODO: read in a pattern
                       "** "
                       " * "))
   (for cbreak-mode ()
