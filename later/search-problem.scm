@@ -62,9 +62,19 @@ p .combine states states -> p
 (to (eg3)
   (let goal 12)
   (let prototype (binary-tree-prototype<- goal))
-  (let maker (best-problem-maker<-
+  (let maker (best-problem-maker<-      ;XXX actually, best-beam-problem, in PAIP
               (make _
                 ({.cost-fn} (given (state) (abs (- state goal))))
                 (message (call prototype message)))))
   (let p3 (maker '(1)))
+  ;; XXX best-beam-problem doesn't fit, because the .combine method in
+  ;; best-problem calls best-problem<- itself, so we can't cleanly
+  ;; delegate-then-modify the answer. I mean, we could go like
+  ;; (beam-problem<- ((my-best-problem .combine old new) .states))
+  ;; but that's kind of ugh. Maybe we should try and fix both this
+  ;; problem and the above duplication to factor out, together.
   (print (search p3)))
+
+(to (eg4)
+  ;; TODO trip-problem
+  )
