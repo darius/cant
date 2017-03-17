@@ -304,6 +304,7 @@
     ;; These will get high-level definitions later TODO
     (/ ,/)
     (expt ,expt)
+    (abs ,abs)
     (gcd ,gcd)
     (vector<-list ,list->vector)
     (read ,squeam-read)
