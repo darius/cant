@@ -1,5 +1,40 @@
 ;; Game of Life
 
+(import (use "lib/sturm")
+  cbreak-mode)
+(import (use "later/ansi-term")
+  home clear-screen)
+
+(to (main (prog @args))
+  (let n-steps (match args
+                 (() 20)
+                 ((n-str) (number<-string n-str))
+                 (_ (error ("Usage: ~d [#steps]" .format prog)))))
+  (let grid (grid<- 24 39))
+  (paint grid 10 18 '(" **"
+                      "** "
+                      " * "))
+  (for cbreak-mode ()
+    (begin running ((grid grid) (step 0))
+      (display clear-screen)
+      (display home)
+      (show grid)
+      (when (< step n-steps)
+        (running grid.next (+ step 1))))))
+
+(to (paint grid top left lines)
+  (for each! (((i line) lines.items))
+    (for each! (((j ch) line.items))
+      (grid .set! (+ top i) (+ left j)
+            (if ch.whitespace? 0 1)))))
+
+(to (show grid)
+  (for each! ((row grid.view))
+    (for each! ((value row))
+      (display (" O" value))
+      (display " "))
+    (newline)))
+
 (to (grid<- n-rows n-cols)
 
   ;; G is an array storing, for each Life grid cell, its value and
@@ -25,7 +60,7 @@
 
   (to (update i)
     (match (sum (for each ((d `(,NW ,N ,NE
-                                 ,W    ,E
+                                 ,W     ,E
                                 ,SW ,S ,SE)))
                   (G (+ i d))))
       (2 (G i))
@@ -42,7 +77,7 @@
      (for each ((r (range<- 1 (+ n-rows 1))))
        (for each ((c (range<- 1 (+ n-cols 1))))
          (G (at r c)))))
-    ({.step}
+    ({.next}
      ;; TODO: toroidal world
      (let new (grid<- n-rows n-cols))
      (for each ((r (range<- 1 (+ n-rows 1))))
@@ -50,28 +85,5 @@
          (new .set! r c (update (at r c)))))
      new)
     ))
-
-(to (paint grid top left lines)
-  (for each! (((i line) lines.items))
-    (for each! (((j ch) line.items))
-      (grid .set! (+ top i) (+ left j)
-            (if ch.whitespace? 0 1)))))
-
-(to (show grid)
-  (for each! ((row grid.view))
-    (for each! ((value row))
-      (display (" O" value))
-      (display " "))
-    (newline)))
-
-(to (main _)
-  (let grid (grid<- 10 10))
-  (paint grid 4 4 '(" **"
-                    "** "
-                    " * "))
-  (begin running ((grid grid) (step 0))
-    (show grid)
-    (when (< step 10)
-      (running grid.step (+ step 1)))))
 
 (export grid<- paint show)
