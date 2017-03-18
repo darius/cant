@@ -24,7 +24,7 @@
   (define (symbol-terminator? c)
     (or (eof-object? c)
 	(char-whitespace? c)
-	(memv c '(#\( #\) #\; #\" #\` #\, #\@ #\{ #\}))))
+	(memv c '(#\( #\) #\; #\" #\' #\` #\, #\@ #\{ #\}))))
 
   (define (atomize L len)
     (let ((s (make-string len #\space)))
