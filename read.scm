@@ -88,11 +88,11 @@
 (define squeam-read
   (let ()
 
-    (define (read-error plaint . irritants)
+    (define (read-error port plaint . irritants)
       (apply error 'read plaint irritants))
 
     (define (unknown-char port c)
-      (read-error "Unknown read syntax" c))
+      (read-error port "Unknown read syntax" c))
 
     (define the-readtable (make-vector 128 unknown-char))
 
@@ -110,7 +110,7 @@
     (define (must-read port)
       (let ((result (read port)))
         (if (eof-object? result)
-            (read-error "Unexpected EOF"))
+            (read-error port "Unexpected EOF"))
         result))
 
     ;; list ::= '(' expr* ')'
@@ -122,7 +122,7 @@
         (skip-blanks port)
         (let ((c (peek-char port)))
           (cond ((eof-object? c) 
-                 (read-error "Unexpected EOF before" close-paren))
+                 (read-error port "Unexpected EOF before" close-paren))
                 ((char=? c close-paren)
                  (read-char port)
                  '())
@@ -157,13 +157,13 @@
 
     (install-read-macro #\)
       (lambda (port c)
-	(read-error port "Unbalanced parentheses")))
+	(read-error port "Too many ')'")))
 
     (install-read-macro #\{ read-term)
 
     (install-read-macro #\}
       (lambda (port c)
-	(read-error port "Unbalanced {}")))
+	(read-error port "Too many '}'")))
 
     (install-read-macro #\.
       (lambda (port c)
@@ -172,12 +172,12 @@
           (if (symbol-constituent? c)
               (let ((atom (read-atom port (read-char port))))
                 (cond ((number? atom)
-                       (read-error "Floating-point literals unimplemented"))
+                       (read-error port "Floating-point literals unimplemented"))
                       ((symbol? atom)
                        (cue<- atom))
                       (else
-                       (read-error "Bad syntax after '.'" atom))))
-              (read-error "Lone '.'" c)))))
+                       (read-error port "Bad syntax after '.'" atom))))
+              (read-error port "Lone '.'" c)))))
 
     (install-read-macro #\#
       (lambda (port c)
