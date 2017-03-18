@@ -68,13 +68,16 @@
   ;; Make the world toroidal by copying the edges of the array so that
   ;; row #1 effectively neighbors row #n-rows, and likewise for the
   ;; columns.
-  ;; XXX wrong on top edge, at least
   (to (copy-edges)
     (for each! ((r (range<- 1 (+ n-rows 1))))
       (G .set! (at r 0)       (G (at r n-cols)))
       (G .set! (at r (- C 1)) (G (at r 1))))
-    (G .copy! (at 0 0)       (at n-rows 0) C)
-    (G .copy! (at (- R 1) 0) (at 1 0)      C))
+    (copy! (at 0 0)       (at n-rows 0) C)
+    (copy! (at (- R 1) 0) (at 1 0)      C))
+
+  (to (copy! dest lo n)  ;TODO wanted a similar method in lib/text.scm
+   (for each! ((i (range<- n)))
+     (G .set! (+ dest i) (G (+ lo i)))))
 
   (make life-grid
     ((r c)
