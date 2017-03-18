@@ -4,9 +4,11 @@
 ;;    r, s   regex (i.e. a thing built by the constructors below)
 ;;    Ns     set of nonnegative integers (i.e. lengths)
 
+(import (use "lib/sort") sort-by-key)
+
 ;; Return the strings matching r whose length is in Ns.
 (to (generate r Ns)
-  (sort-by-key (r Ns)
+  (sort-by-key ((r Ns) .keys)
                (given (str) `(,str.count ,str))))
 
 (let none   (set<-))
@@ -37,19 +39,19 @@
   ;; 0..max(Ns). (And we call neither r nor s if there are no Ns.)
   (case (Ns.empty? none)
         (else
-         (let r-matches (r (call set<- (range<- (+ (call max Ns) 1)))))
-         (let Ns-r (call set<- (each '.count r-matches)))
+         ;; TODO wow this is pretty horrible
+         (let r-matches (r (call set<- (as-list (range<- (+ (call max Ns.keys) 1))))))
+         (let Ns-r (call set<- (each '.count r-matches.keys)))
          (let Ns-s (call set<- (for gather ((n Ns.keys))
                                  (for filter ((m Ns-r.keys))
-                                   (let r (- n m))
-                                   (and (<= 0 r) r)))))
+                                   (and (<= m n) (- n m))))))
          (let s-matches (s Ns-s))
-         (call set<- (for gather ((m1 r-matches))
-                       (for filter ((m2 s-matches))
+         (call set<- (for gather ((m1 r-matches.keys))
+                       (for filter ((m2 s-matches.keys))
                          (and (Ns .maps? (+ m1.count m2.count))
                               (chain m1 m2))))))))
 
-(let dot      (one-of "?"))
+(let dot      (literal "?"))
 (let empty    (literal ""))
 (to (maybe r) (either empty r))
 (to (plus r)  (then r (star r)))
