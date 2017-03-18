@@ -135,14 +135,14 @@
              (mlambda
               ((__ (: v symbol?) (: self symbol?) . clauses) ;XXX allow other patterns?
                (let ((msg (gensym)))
-                 `(define (,v ,self ,msg)
+                 `(to (,v ,self ,msg)
                     (match ,msg
                       ,@clauses
                       (_ (miranda-trait ,self ,msg)))))))) ;XXX hygiene, and XXX make it overridable
     ('match  (mlambda
               ((__ subject . clauses)
                `(call (make _ ,@clauses) ,subject))))
-    ('define (mlambda
+    ('to     (mlambda
               ((__ (head . param-spec) . body)
                (let ((pattern (mcase param-spec
                                 (((: cue cue?) . rest)
@@ -150,15 +150,10 @@
                                 (__ param-spec))))
                  (if (symbol? head)
                      `(make ,head (,pattern ,@body))
-                     `(define ,head (given ,pattern ,@body)))))))
+                     `(to ,head (given ,pattern ,@body)))))))
     ('given  (mlambda
               ((__ p . body)
                `(make (,p ,@body)))))
-    ('with   (mlambda
-              ((__ bindings . body)
-               (parse-bindings bindings
-                 (lambda (ps es)
-                   `((given ,ps ,@body) ,@es))))))
     ('for    (mlambda
               ((__ fn bindings . body)
                (parse-bindings bindings
@@ -168,7 +163,7 @@
               ((__ (: proc symbol?) bindings . body)
                (parse-bindings bindings
                  (lambda (ps es)
-                   `((hide (define (,proc ,@ps) ,@body))
+                   `((hide (to (,proc ,@ps) ,@body))
                      ,@es))))))
     ('if     (mlambda
               ((__ test if-so if-not)
@@ -184,13 +179,7 @@
     ('case   (mlambda
               ((__) #f)                 ;TODO: generate an error-raising?
               ((__ ('else . es)) `(do ,@es))
-              ((__ (e) . clauses) `(or ,e (case ,@clauses)))
-              ((__ (e1 '=> e2) . clauses)
-               (let ((test-var (gensym)))
-                 `(with ((,test-var ,e1))
-                    (if ,test-var
-                        (,e2 ,test-var)
-                        (case ,@clauses)))))
+              ((__ (e) . clauses) `(or ,e (case ,@clauses))) ;TODO: do I ever use this?
               ((__ (e . es) . clauses)
                `(if ,e (do ,@es) (case ,@clauses)))))
     ('and    (mlambda
@@ -202,7 +191,8 @@
               ((__ e) e)
               ((__ e . es)
                (let ((t (gensym)))
-                 `(with ((,t ,e)) (if ,t ,t (or ,@es)))))))
+                 `((given (,t) (if ,t ,t (or ,@es)))
+                   ,e)))))
     ('import (mlambda
               ((__ m . names)
                (assert (all symbol? names) "bad syntax" names)
@@ -214,7 +204,6 @@
     ('export (mlambda
               ((__ . names)
                (assert (all symbol? names) "bad syntax" names)
-;               (list 'map<-a-list  ;XXX hygiene
                (list `',a-list-map<-  ;XXX temporary
                      (list 'quasiquote
                            (map (lambda (name) (list name (list 'unquote name)))

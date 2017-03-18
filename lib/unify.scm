@@ -5,14 +5,14 @@
 
 (let variable? vector?) ;TODO make a disjoint type instead with stamps
 
-(define (variable<- prefix n)
+(to (variable<- prefix n)
   (vector<- (symbol<- (chain prefix "." (string<-number n)))))
 
-(define (variable-name var)
+(to (variable-name var)
   (var 0))
 
 ;; XXX seems clumsy:
-(define (apply s val)                   ;XXX rename
+(to (apply s val)                   ;XXX rename
   (let v (s .subst val))
   (if (variable? v)
       (if (= v val) v (apply s v))
@@ -24,26 +24,26 @@
   ({.selfie sink}
    (sink .display "<>")))
 
-(define (extend-unchecked s my-var my-val)
+(to (extend-unchecked s my-var my-val)
   (make extended-subst
     ({.subst val}
      (if (variable? val)
          (if (= val my-var) my-val (s .subst val))
          val))
     ({.selfie sink}
-     (format .to sink "<%d: %w>..%w" (variable-name my-var) my-val s))))
+     (format .to sink "<~d: ~w>..~w" (variable-name my-var) my-val s))))
 
-(define (extend s var val)
+(to (extend s var val)
   (if (occurs? s var val) #no (extend-unchecked s var val)))
 
-(define (occurs? s var val)
+(to (occurs? s var val)
   (let val1 (s .subst val))
   (or (= var val1)
       (and (list? val1)
            (for some ((item val1))
              (occurs? s var item)))))
 
-(define (unify s val1 val2)
+(to (unify s val1 val2)
   (let u (s .subst val1))
   (let v (s .subst val2))
   (case ((variable? u)
@@ -61,7 +61,7 @@
         (else
          (and (= u v) s))))
 
-(define (reify s val)
+(to (reify s val)
   (let free-vars (map<-))
   (begin reifying ((val-in val))
     (let val (apply s val-in))

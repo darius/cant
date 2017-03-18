@@ -4,6 +4,7 @@
 ;; TODO: fuller error reporting
 ;; TODO: memoize
 ;; TODO: delay semantic actions until final success
+;; TODO: a top-level fn that raises an error on failure
 
 ;; Glossary:
 ;;  p, q       parsing expression
@@ -13,10 +14,10 @@
 ;;  i, j       index into text
 ;;  vals, vs   list of parsed values
 
-(define (parse parser text)
+(to (parse parser text)
   (parser text 0 0 '()))
 
-(define (fail text far i vals)
+(to (fail text far i vals)
   (make failure
     ({.continue _}       failure)
     ({.else p j vs}      (p text far j vs))
@@ -32,7 +33,7 @@
      (display "/")
      (write (text .slice far)))))
 
-(define (empty text far i vals)
+(to (empty text far i vals)
   (make success
     ({.continue p}       (p text far i vals))
     ({.else _ _ _}       success)
@@ -50,44 +51,44 @@
      (display " ")
      (write vals))))
 
-(define ((invert p) text far i vals)
+(to ((invert p) text far i vals)
   (((p text far i vals) .invert) text far i vals))
 
-(define ((capture p) text far i vals)
+(to ((capture p) text far i vals)
   ((p text far i vals) .capture-from i))
 
-(define ((folded<- combine) @arguments)
+(to ((folded<- combine) @arguments)
   (foldr1 combine arguments))
 
 (let either
-  (folded<- (define ((<either> p q) text far i vals)
+  (folded<- (to ((<either> p q) text far i vals)
               ((p text far i vals) .else q i vals))))
 
 (let then
-  (folded<- (define ((<then> p q) text far i vals)
+  (folded<- (to ((<then> p q) text far i vals)
               ((p text far i vals) .continue q))))
 
-(define ((feed-list f) text far i vals)
+(to ((feed-list f) text far i vals)
   (empty text far i `(,(f vals))))
 
-(define (feed f)
+(to (feed f)
   (feed-list (given (vals) (call f vals))))
 
-(define ((push constant) text far i vals)
+(to ((push constant) text far i vals)
   (empty text far i `(,@vals ,constant)))
 
-(define ((seclude p) text far i vals)
+(to ((seclude p) text far i vals)
   ((p text far i '()) .prefix vals))
 
 ;;TODO: implement promises instead
-(define (delay thunk)
+(to (delay thunk)
   (let p (box<- (given (text far i vals)
                   (p .^= (thunk))
                   (p.^ text far i vals))))
   (given (text far i vals)
     (p.^ text far i vals)))
 
-(define ((skip-1 ok?) text far i vals)
+(to ((skip-1 ok?) text far i vals)
   (if (and (text .maps? i) (ok? (text i)))
       (empty text (max far (+ i 1)) (+ i 1) vals)
       (fail text far i vals)))
@@ -95,10 +96,10 @@
 
 ;; Derived combinators
 
-(define (take-1 ok?)
+(to (take-1 ok?)
   (capture (skip-1 ok?)))
 
-(define ((always value) _)              ;TODO move to stdlib?
+(to ((always value) _)              ;TODO move to stdlib?
   value)
 
 (let any-1      (take-1 (always #yes)))
@@ -106,13 +107,13 @@
 
 (let end (invert skip-any-1))
 
-(define (lit-1 my-char)
+(to (lit-1 my-char)
   (skip-1 (given (char) (= my-char char))))
 
-(define (lit string)
+(to (lit string)
   (foldr then (each lit-1 string) empty))
 
-(define (maybe p)
+(to (maybe p)
   (either p empty))
 
 (make many
@@ -127,6 +128,7 @@
   ((p separator)
    (then p (many (then separator p)))))
 
-(export invert capture either then feed-list feed push seclude delay maybe many at-least-1
+(export invert capture either then feed-list feed push seclude delay
+        maybe many at-least-1
         fail empty end skip-1 take-1 any-1 skip-any-1 lit-1 lit
         parse)

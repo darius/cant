@@ -1,11 +1,11 @@
 ;; Maximum sum of values along any path in a binary tree.
 ;; tree ::= {leaf} | {branch value tree tree}
 
-(define (max-path-sum tree)
+(to (max-path-sum tree)
   (let (best best-to-root) (solve tree))
   best)
 
-(define (solve tree)
+(to (solve tree)
   (match tree
     ({leaf}
      '(0 0))

@@ -1,10 +1,10 @@
 ;; stdlib
 
-(define (assert ok? @arguments)
+(to (surely ok? @arguments)
   (unless ok?
     (call error (if arguments.empty? '("Assertion failed") arguments))))
 
-(define (not= x y)
+(to (not= x y)
   (not (= x y)))
 
 (make +
@@ -26,17 +26,17 @@
   ((a b @arguments) (foldl '.- (a .- b) arguments)))
 
 ;; TODO transitive multi-arg
-(define (<   a b)      (= (compare a b) -1))
-(define (<=  a b) (not (= (compare a b)  1)))
-(define (<=> a b)      (= (compare a b)  0)) ; XXX better name?
-(define (>=  a b) (not (= (compare a b) -1)))
-(define (>   a b)      (= (compare a b)  1))
+(to (<   a b)      (= (compare a b) -1))
+(to (<=  a b) (not (= (compare a b)  1)))
+(to (<=> a b)      (= (compare a b)  0)) ; XXX better name?
+(to (>=  a b) (not (= (compare a b) -1)))
+(to (>   a b)      (= (compare a b)  1))
 
-(define (compare a b)
+(to (compare a b)
   (let result (a .compare b))
   (if (comparison? result) result (error "Incomparable" a b)))
 
-(define (comparison? x)
+(to (comparison? x)
   (match x
     (-1 #yes)
     ( 0 #yes)
@@ -53,51 +53,54 @@
   ((a b) (if (< a b) b a))
   ((a b @rest) (call max `(,(max a b) ,@rest))))
 
-(define (arg-min xs key) (foldr1 (given (x y) (if (< (key x) (key y)) x y))
-                                 xs))
-(define (arg-max xs key) (foldr1 (given (x y) (if (> (key x) (key y)) x y))
-                                 xs))
+(to (arg-min xs key) (foldr1 (given (x y) (if (< (key x) (key y)) x y))
+                             xs))
+(to (arg-max xs key) (foldr1 (given (x y) (if (> (key x) (key y)) x y))
+                             xs))
 
 
 ;;XXX so should some of these be in list-trait?
 
-(define (reverse xs)
+(to (reverse xs)
   (for foldl ((ys '()) (x xs))
     (cons x ys)))
 
-(define (foldl f z xs)
+(to (foldl f z xs)
   (if xs.empty?
       z
       (foldl f (f z xs.first) xs.rest)))
 
-(define (foldr f xs z)
+(to (foldr f xs z)
   (if xs.empty?
       z
       (f xs.first (foldr f xs.rest z))))
 
-(define (foldr1 f xs)
+(to (foldr1 f xs)
   (let tail xs.rest)
   (if tail.empty?
       xs.first
       (f xs.first (foldr1 f tail))))
 
-(define (each f xs)
+(to (each f xs)
   (for foldr ((x xs) (ys '()))
     (cons (f x) ys)))
 
-(define (gather f xs)
+(to (gather f xs)
   (for foldr ((x xs) (ys '()))
     (chain (f x) ys)))
 
-(define (filter ok? xs)
+(to (those ok? xs)
   (for foldr ((x xs) (ys '()))
     (if (ok? x) (cons x ys) ys)))
 
-(define (remove xs unwanted)            ;TODO different arg order?
-  (for filter ((x xs))
+(to (filter f xs)             ;TODO is this worth defining? good name?
+  (those identity (each f xs)))
+
+(to (remove xs unwanted) ;TODO different arg order? N.B. almost unused
+  (for those ((x xs))
     (not= x unwanted)))
 
-(define (list<- @arguments)
+(to (list<- @arguments)
   arguments)
 
 (make chain
@@ -106,33 +109,36 @@
   ((xs ys) (xs .chain ys))
   ((@arguments) (foldr1 '.chain arguments)))
 
-(define (some ok? xs)
+(to (some ok? xs)
   (and (not xs.empty?)
        (or (ok? xs.first)
            (some ok? xs.rest))))
 
-(define (every ok? xs)
+(to (every ok? xs)
   (or xs.empty?
       (and (ok? xs.first)
            (every ok? xs.rest))))
 
-(define (each! f xs)
+(to (each! f xs)
   (unless xs.empty?
     (f xs.first)
     (each! f xs.rest)))
 
-(define (as-list seq)            ;XXX naming convention for coercions?
+(to (as-list seq)            ;XXX naming convention for coercions?
   (if seq.empty?
       '()
       (cons seq.first (as-list seq.rest))))
 
-(define (zip xs ys)
-  (match `(,xs ,ys)
-    ((() ()) '())
-    (((x @xs1) (y @ys1))
-     `((,x ,y) ,@(zip xs1 ys1)))))
+(to (zip xs ys)
+  (to (mismatch)
+    (error "zip: mismatched arguments" xs ys))
+  (begin zipping ((xs xs) (ys ys))
+    (case (xs.empty? (if ys.empty? '() (mismatch)))
+          (ys.empty? (mismatch))
+          (else (cons `(,xs.first ,ys.first)
+                      (zipping xs.rest ys.rest))))))
 
-(define (cons/lazy x thunk)
+(to (cons/lazy x thunk)
   (make lazy-list {extending list-trait}
     ({.empty?} #no)
     ({.first}  x)
@@ -140,29 +146,29 @@
     ;; XXX override parts of list-trait that need it for laziness
     ))
 
-(define (filter/lazy ok? xs)
+(to (those/lazy ok? xs)
   (if (ok? xs.first)
-      (cons/lazy xs.first (given () (filter/lazy ok? xs.rest)))
-      (filter/lazy ok? xs.rest)))
+      (cons/lazy xs.first (given () (those/lazy ok? xs.rest)))
+      (those/lazy ok? xs.rest)))
 
-(define (gather/lazy f xs)
+(to (gather/lazy f xs)
   (for foldr/lazy ((x xs)
                    (rest-thunk (given () '())))
     (chain/lazy (f x) rest-thunk)))
 
-(define (chain/lazy xs ys-thunk)
+(to (chain/lazy xs ys-thunk)
   (foldr/lazy cons/lazy xs ys-thunk))
 
-(define (foldr/lazy f xs z-thunk)
+(to (foldr/lazy f xs z-thunk)
   (if xs.empty?
       (z-thunk)
       (f xs.first
          (given () (foldr/lazy f xs.rest z-thunk)))))
 
-(define (identity x)
+(to (identity x)
   x)
 
-(define ((compose f g) @arguments)
+(to ((compose f g) @arguments)
   (f (call g arguments)))
 
 (make range<-
@@ -200,62 +206,158 @@
          ({.first}  `(,i ,xs.first))
          ({.rest}   (enumerate xs.rest (+ i 1)))))))
 
-(define (sum ns)
+(to (sum ns)
   (foldl + 0 ns))
 
-(define (vector<- @elements)
+(to (vector<- @elements)
   (vector<-list elements))
 
-(define (string<- @chars)
+(to (string<- @chars)
   (string<-list chars))
 
-(define (method<- actor cue)
+(to (method<- actor cue)
   (given (@arguments)
     (call actor (term<- cue arguments))))
 
-(define (write x)                      ;TODO rename
+(to (write x)                      ;TODO rename
   (out .print x))
 
-(define (print x)                      ;TODO rename
+(to (print x)                      ;TODO rename
   (write x)
   (newline))
 
-(let the-signal-handler-box (box<- panic))
+(let the-signal-handler (box<- panic))
+(let the-last-error (box<- #no))
 
-(define (repl)                          ;TODO rename
-  (import (use "lib/traceback.scm") on-error-traceback)
+(to (install-signal-handler handler)
+  (let parent-handler the-signal-handler.^)
+  (the-signal-handler .^= (given (@evil)
+                            (the-signal-handler .^= parent-handler)
+                            (call handler evil))))
+
+(to (with-fallback-signal-handler act)
+  (let parent-handler the-signal-handler.^)
+  (the-signal-handler .^= (given (k @evil)
+                            (display "Error within error!\n")
+                            (each! print evil)
+                            (os-exit 1)))
+  (act)
+  (the-signal-handler .^= parent-handler))
+
+(import
+    (hide
+      (to (qualify-exp context exp)
+        (import (qualifier<- context) qe)
+        (qe exp))
+      
+      (to (qualify-pat context pat)
+        (import (qualifier<- context) qp)
+        (qp exp))
+
+      (to (qualifier<- context)
+
+        (to (qe exp)
+          (match exp
+            ({constant _}   exp)
+            ({variable _}   exp)
+            ({make _ _ _ _} (qualify-make exp))
+            ({do e1 e2}     {do (qe e1) (qe e2)})
+            ({let p e}      {let (qp p) (qe e)})
+            ({call e1 e2}   {call (qe e1) (qe e2)})
+            ({term tag es}  {term tag (each qe es)})
+            ({list es}      {list (each qe es)})))
+
+        (to (qualify-make {make name stamp-exp trait-exp clauses})
+          {make (qualify-name context name) (qe stamp-exp) (qe trait-exp)
+                (hide
+                  (import (qualifier<- (add-make-context context name))
+                    qe qp)
+                  (for each (((p p-vars e-vars e) clauses))
+                    `(,(qp p) ,p-vars ,e-vars ,(qe e))))})
+
+        (to (qp pat)
+          (match pat
+            ({any-pat}         pat)
+            ({variable-pat v}  pat)
+            ({constant-pat c}  pat)
+            ({view-pat e p}    {view-pat (qe e) (qp p)})
+            ({and-pat p1 p2}   {and-pat (qp p1) (qp p2)})
+            ({term-pat tag ps} {term-pat tag (each qp ps)})))
+
+        (export qe qp))
+
+      (to (qualify-name context name)
+        (let parts (add-make-context context name))
+        (let joined (":" .join parts))
+        (let s (symbol<- joined))
+        s)
+
+      (to (add-make-context context name)
+        ;; TODO make sure name is a symbol, or convert it
+        `(,name.name ,@context))
+
+      (export qualify-exp qualify-pat))
+
+  qualify-exp qualify-pat)
+
+(to (repl)                          ;TODO rename
+  (import (use "lib/traceback") on-error-traceback)
   (begin interacting ()
-    (the-signal-handler-box .^= (define (on-error-repl k @evil)
-                                  (call on-error-traceback `(,k ,@evil))
-                                  ;; TODO save k for inspecting/resuming
-                                  (interacting)))
-    (display "squeam> ")
-    (print (evaluate (parse-exp (read)) '())) ;XXX reify a proper env object
-    (interacting)))
+    (the-signal-handler .^= (given (@evil)
+                              (the-last-error .^= evil)
+                              (call on-error-traceback evil)
+                              (display "Enter (debug) for more.\n")
+                              (interacting)))
+    (display "sqm> ")
+    (let sexpr (read))
+    (unless (eof-object? sexpr)
+      (let parsed (parse-exp sexpr))
+      (let e (qualify-exp '() parsed))  ;TODO reverse the order of args
+      (print (evaluate e '())) ;XXX reify a proper env object
+      (interacting))))
+
+(to (debug)
+  (import (use "lib/debugger") inspect-continuation)
+  (match the-last-error.^
+    ((k @evil) (inspect-continuation k))
+    (_ (display "No error to debug.\n"))))
 
 (let the-modules (box<- '()))
 
-(define (use filename)                  ;TODO a realer module system
+;; To make it possible to reload a module by calling (use file-stem)
+;; again afterward. N.B. that won't mutate the existing module object.
+;; This is not very useful, though, because we still can't redefine
+;; variables at the repl.
+(to (unuse file-stem)                   ;TODO better name
+  (the-modules .^= (for those (((stem mod) the-modules.^))
+                     (not= stem file-stem))))
+
+(to (use file-stem)                  ;TODO a realer module system
   ;; N.B. could sort of just use memoize if that were already loaded.
-  (match (assoc filename the-modules.^)
+  (match (assoc file-stem the-modules.^)
     ((_ mod) mod)
     (#no
-     (let mod (load filename))
-     (the-modules .^= `((,filename ,mod) ,@the-modules.^))
+     (let mod (load (chain file-stem ".scm") `(,file-stem)))
+     (the-modules .^= `((,file-stem ,mod) ,@the-modules.^))
      mod)))
 
-(define (load filename)
-  (let code (for with-input-file ((source filename))
-              `(hide ,@(read-all source))))
-  (evaluate (parse-exp code) '()))
+(make load
+  ((filename)
+   (load filename '()))
+  ((filename context)
+   (let code (for with-input-file ((source filename))
+               `(hide ,@(read-all source))))
+   (let code1 (parse-exp code))
+   (let code2 (qualify-exp context code1))
+   (evaluate code2 '())))
 
-(define (with-input-file fn filename)
+(to (with-input-file fn filename)
   (let source (open-input-file filename))
   (let result (fn source))
   source.close                       ;TODO unwind-protect
   result)
 
-(define (read-all source)
+(to (read-all source)
   (let thing (read source))
   (if (eof-object? thing)
       '()

@@ -26,12 +26,12 @@
        0
        (+ 1 list.rest.count)))          ;TODO tail recursion
   ({.slice i}
-   (assert (<= 0 i))
+   (surely (<= 0 i))
    (if (= i 0)
        list
        (list.rest .slice (- i 1))))
   ({.slice i bound}     ;XXX result is a cons-list; be more generic?
-   (assert (<= 0 i))
+   (surely (<= 0 i))
    (case (list.empty? list)
          ((<= bound i) '())
          ((= i 0) (cons list.first (list.rest .slice 0 (- bound 1))))
@@ -81,6 +81,9 @@
    (match (list .find value #no)
      (#no #no)
      (_ #yes)))
+  ({.last}
+   (let rest list.rest)
+   (if rest.empty? list.first rest.last))
   )
 
 (make-trait claim-primitive me
@@ -103,6 +106,7 @@
   ({.compare a}   (__number-compare me a))
   ({.quotient b}  (__quotient me b))
   ({.remainder b} (__remainder me b))
+  ({.modulo b}    (__modulo me b))
   ({.<< b}        (__bit-<<  me b))
   ({.>> b}        (__bit->>  me b))
   ({.not}         (__bit-not me))
@@ -132,7 +136,7 @@
   ({.first}       (error "Empty list" '.first))
   ({.rest}        (error "Empty list" '.rest))
   ({.count}       0)
-  ((i)            (error "Empty list" 'nth))
+  ((i)            (error "Empty list" 'nth i))
   ({.chain a}     a)
   ({.selfie sink} (sink .display "()"))
   (message        (list-trait me message))) ;XXX use trait syntax instead
@@ -160,6 +164,33 @@
   (message
    (list-trait me message))) ;XXX use trait syntax instead
 
+(make-trait vector-trait me
+  ({.slice i}
+   (me .slice i me.count))
+  ({.slice i bound}
+   (let v (vector<-count (- bound i)))
+   (for each! ((j bound))
+     (v .set! j (me (+ i j))))
+   v)
+  ({.last}
+   (me (- me.count 1)))
+  ({.copy! v}
+   (me .copy! v 0 v.count))
+  ({.move! dest src len}                ;XXX untested
+   (for each! ((i (if (<= dest src)
+                      (range<- len)
+                      (reverse (range<- len)))))  ;TODO inefficient
+     (me .set! (+ dest i)
+         (me (+ src i)))))
+  ({.values}
+   (for each ((i (range<- me.count)))   ;TODO cheaper to represent by self -- when can we get away with that?
+     (me i)))
+  ({.items}
+   (for each ((i (range<- me.count)))
+     `(,i ,(me i))))
+  (message
+   (list-trait me message))) ;XXX use trait syntax instead
+
 (make-trait vector-primitive me
   ({.empty?}      (= 0 me.count))
   ({.first}       (me 0))
@@ -171,7 +202,6 @@
   ({.slice i}     (__subvector me i me.count))
   ({.slice i j}   (__subvector me i j))
   ({.set! i val}  (__vector-set! me i val))
-  ({.copy! v}     (me .copy! v 0 v.count))
   ({.copy! v lo bound}
    ;; XXX range-check first
    (for each! ((i (range<- lo bound)))
@@ -181,7 +211,7 @@
    (sink .display "#!")
    (sink .print (__vector->list me)))
   (message
-   (list-trait me message))) ;XXX use trait syntax instead
+   (vector-trait me message))) ;XXX use trait syntax instead
 
 (make-trait string-primitive me
   ({.empty?}      (= 0 me.count))
@@ -199,7 +229,7 @@
        (list-trait me {.compare s})))   ; but is this what we really want? (<=> "a" '(#\a))
   ({.join ss}   ;should this be a function, not a method?
    (if ss.empty?
-       ss
+       ""
        (foldr1 (given (x y) (chain x me y)) ss)))
   ;;XXX below mostly from list-trait, until .selfie
   ({.keys}        (range<- me.count))
@@ -210,7 +240,7 @@
    (if (me .maps? key)
        (me key)
        default))
-  ({.maps? key}
+  ({.maps? key}                         ;XXX duplicate, see above
    (and (integer? key) (<= 0 key) (< key me.count)))
   ({.trim-left}
    (if me.empty?
@@ -240,8 +270,59 @@
                       (cons (s .slice 0 i)
                             (splitting ((s .slice (+ i 1)) .trim-left))))
                      (else (scanning (+ i 1)))))))))
+  ({.split delimiter}
+   ;; TODO deduplicate code
+   (begin splitting ((s me))
+     (if s.empty?
+         '()
+         (do (let limit s.count)
+             (begin scanning ((i 0))
+               (case ((= i limit) `(,s))
+                     ((= delimiter (s .slice i (+ i delimiter.count)))
+                      (cons (s .slice 0 i)
+                            (splitting (s .slice (+ i delimiter.count)))))
+                     (else (scanning (+ i 1)))))))))
   ({.lowercase} (string<-list (for each ((c me)) c.lowercase)))
   ({.uppercase} (string<-list (for each ((c me)) c.uppercase)))
+  ({.starts-with? s}
+   (= (me .slice 0 s.count) s))   ;TODO more efficient
+  ({.replace pattern replacement} ;TODO more efficient
+   ;; TODO unify the cases?
+   (case (pattern.empty?
+          (for foldr ((ch me) (rest replacement))
+            (chain replacement (string<- ch) rest)))
+         (else
+          (let limit me.count)
+          (string<-list
+           (begin scanning ((i 0))
+             (case ((= i limit) '())
+                   ((= pattern (me .slice i (+ i pattern.count)))
+                    (chain (list<-string replacement)
+                           (scanning (+ i pattern.count))))
+                   (else (cons (me i) (scanning (+ i 1))))))))))
+  ({.left-justify n}
+   (let pad (- n me.count))
+   (if (<= pad 0)
+       me
+       (chain me (" " .repeat pad))))
+  ({.center n}
+   (let pad (- n me.count))
+   (if (<= pad 0)
+       me
+       (do (let half (pad .quotient 2))
+           (chain (" " .repeat (- pad half))
+                  me
+                  (" " .repeat half)))))
+  ({.repeat n}
+   ;; XXX what if n=0
+   (call chain (for each ((_ (range<- n)))
+                 me)))
+  ({.format @arguments}
+   (let sink (string-sink<-))
+   (call format `{.to ,sink ,me ,@arguments})
+   sink.output-string)
+  ({.split-lines}
+   (me .split "\n"))
   ({.selfie sink}
    (sink .display #\")
    (for each! ((c me))
@@ -251,6 +332,7 @@
                       (#\newline "\\n")
                       (#\tab     "\\t")
                       (#\return  "\\r")
+                      ;; XXX escape the control chars
                       (_ c))))
    (sink .display #\"))
   (message
@@ -280,12 +362,22 @@
   ({.read-char}   (__read-char me))
   ({.read-all}    (__read-all me))
   ({.close}       (__close-port me))
+  ({.read-line}
+   ;; XXX return eof-object when at eof, right?
+   (string<-list
+    (begin reading ()
+      (let ch me.read-char)
+      (if (or (eof-object? ch) (= ch #\newline))
+          '()
+          (cons ch (reading))))))
   )
 
 (make-trait sink-primitive me
   ({.display a}   (__display me a))
   ({.write a}     (__write me a))     ;XXX Scheme naming isn't very illuminating here
   ({.print a}     (a .selfie me))
+  ({.output-string}                 ;XXX for string-sink only
+   (__get-output-string me))
   )
 
 (make-trait term-primitive me
@@ -306,10 +398,20 @@
   ;; A Gambit type returned by some of the Gambit operations.
   )
 
+(make-trait script-primitive me
+  ({.name}    (__script-name me))
+  ({.trait}   (__script-trait me))
+  ({.clauses} (__script-clauses me))
+  ({.selfie sink}
+   (sink .display "<script ")
+   (sink .display me.name)
+   (sink .display ">"))
+  )
+
 
 ;; Continuations
 
-(define (__halt-cont)
+(to (__halt-cont)
   (make me {extending list-trait}
     ({.empty?}        #yes)
     ({.first}         (error "No more frames" me))
@@ -321,81 +423,96 @@
   ({.selfie sink}   (sink .display "<cont>")) ;XXX more
   (message          (list-trait me message))) ;XXX use trait syntax instead
 
-(define (__call-cont-standin-cont k message)
+(to (__call-cont-standin-cont k message)
   (make {extending __cont-trait}
     ({.rest} k)
-    ({.first} '("XXX still a hack"))))
+    ({.first} '("XXX still a hack"))
+    ({.env} '())))
 
-(define (__match-clause-cont k pat-r body rest-clauses object script datum message)
+(to (__match-clause-cont k pat-r body rest-clauses object script datum message)
   (make {extending __cont-trait}
     ({.rest} k)
-    ({.first} `((^ ,body) ,@rest-clauses))))
+    ({.first} `((^ ,body) ,@(each unparse-clause rest-clauses)))
+    ({.env} pat-r)))
 
-(define (__ev-trait-cont k r name trait clauses)
+(to (__ev-trait-cont k r name trait clauses)
   (make {extending __cont-trait}
     ({.rest} k)
     ({.first} `(make ,name ,trait ^
-                 ,@clauses))))
+                 ,@(each unparse-clause clauses)))
+    ({.env} r)))
 
-(define (__ev-make-cont k name stamp-val r clauses)
+(to (__ev-make-cont k name stamp-val r clauses)
   (make {extending __cont-trait}
     ({.rest} k)
     ({.first} `(make ,name ^ #no   ; XXX as above
-                 ,@clauses))))
+                 ,@(each unparse-clause clauses)))
+    ({.env} r)))
 
-(define (__ev-do-rest-cont k r e2)
+(to (__ev-do-rest-cont k r e2)
   (make {extending __cont-trait}
     ({.rest} k)
-    ({.first} e2)))
+    ({.first} (unparse-exp e2))
+    ({.env} r)))
 
-(define (__ev-let-match-cont k r p)
+(to (__ev-let-match-cont k r p)
   (make {extending __cont-trait}
     ({.rest} k)
-    ({.first} `(<match> ,p))))          ;XXX lousy presentation
+    ({.first} `(<match> ,(unparse-pat p)))          ;XXX lousy presentation
+    ({.env} r)))
 
-(define (__ev-let-check-cont k val)
+(to (__ev-let-check-cont k val)
   (make {extending __cont-trait}
     ({.rest} k)
-    ({.first} `(<assert-matched-then> ',val))))
+    ({.first} `(<assert-matched-then> ',val))
+    ({.env} '())))
 
-(define (__ev-arg-cont k r e2)
+(to (__ev-arg-cont k r e2)
   (make {extending __cont-trait}
     ({.rest} k)
-    ({.first} `(^ ,e2))))
+    ({.first} `(^ ,(unparse-exp e2)))
+    ({.env} r)))
 
-(define (__ev-call-cont k receiver)
+(to (__ev-call-cont k receiver)
   (make {extending __cont-trait}
     ({.rest} k)
-    ({.first} `(call ',receiver ^))))
+    ({.first} `(call ',receiver ^))
+    ({.env} '())))
 
-(define (__ev-rest-args-cont k es r vals)
+(to (__ev-rest-args-cont k es r vals)
   (make {extending __cont-trait}
     ({.rest} k)
     ({.first}
-     (define (quotify v) `',v)
-     `(,@(each quotify (reverse vals)) ^ ,@es))))
+     (to (quotify v) `',v)
+     `(,@(each quotify (reverse vals)) ^ ,@(each unparse-exp es)))
+    ({.env} r)))
 
-(define (__ev-tag-cont k tag)
+(to (__ev-tag-cont k tag)
   (make {extending __cont-trait}
     ({.rest} k)
-    ({.first} `{,tag ^^^})))
+    ({.first} `{,tag ^^^})
+    ({.env} '())))
 
-(define (__ev-and-pat-cont k r subject p2)
+(to (__ev-and-pat-cont k r subject p2)
   (make {extending __cont-trait}
     ({.rest} k)
-    ({.first} `(<and-match?> ,p2))))
+    ({.first} `(<and-match?> ,(unparse-pat p2)))
+    ({.env} r)))
 
-(define (__ev-view-call-cont k r subject p)
+(to (__ev-view-call-cont k r subject p)
   (make {extending __cont-trait}
     ({.rest} k)
-    ({.first} `(: _ ^ ,p))))
+    ({.first} `(: _ ^ ,(unparse-pat p)))
+    ({.env} r)))
 
-(define (__ev-view-match-cont k r p)
+(to (__ev-view-match-cont k r p)
   (make {extending __cont-trait}
     ({.rest} k)
-    ({.first} p)))
+    ({.first} (unparse-pat p))
+    ({.env} r)))
 
-(define (__ev-match-rest-cont k r subjects ps)
+(to (__ev-match-rest-cont k r subjects ps)
   (make {extending __cont-trait}
     ({.rest} k)
-    ({.first} `(<all-match?> ,@ps))))
+    ({.first} `(<all-match?> ,@(each unparse-pat ps)))
+    ({.env} r)))

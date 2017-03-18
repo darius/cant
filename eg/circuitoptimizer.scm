@@ -3,43 +3,36 @@
 ;; Ultimately based on Kragen Sitaker's in C, but vectorized and
 ;; not doing don't-cares.
 
-(define (superopt truth-table max-gates)
+(to (superopt truth-table max-gates)
   (let n-inputs (int-log2 truth-table.count))
   (find-circuits (number<-string truth-table 2) n-inputs max-gates))
 
-(define (int-log2 n)
-  ;; XXX ugly
-  (match n
-    (1  0)
-    (2  1)
-    (4  2)
-    (8  3)
-    (16 4)
-    (32 5)
-    (_ (error "Bad argument" n))))
+(to (int-log2 n)
+  (begin searching ((p 0) (two**p 1))
+    (match (compare two**p n)
+      (-1 (searching (+ p 1) (* 2 two**p)))
+      ( 0 p)
+      (+1 (error "Not a power of 2" n)))))
 
-(define (say @arguments)
-  (each! display arguments))
-
-(define (pow2 n)
+(to (pow2 n)
   (1 .<< n))
 
-(define (find-circuits wanted n-inputs max-gates)
+(to (find-circuits wanted n-inputs max-gates)
   (let inputs (vector<-list (tabulate-inputs n-inputs)))
   (let mask (- (pow2 (pow2 n-inputs)) 1))
 
-  (define (print-formula L-input R-input)
+  (to (print-formula L-input R-input)
     (let v-name (chain ("ABCDEF" .slice 0 n-inputs)
                        ("abcdefghijklmnopqrstuvwxyz" .slice n-inputs)))
     (for each! ((i L-input.keys))
       (let g (v-name (+ i n-inputs)))
       (let L (v-name (L-input i)))
       (let R (v-name (R-input i)))
-      (say g " = " L " ~& " R "; "))    ;TODO use format
+      (format "~d = ~d ~~& ~d; " g L R))
     (newline))
 
-  (define (find-for-n n-gates)
-    (say "Trying " n-gates " gates..." #\newline)
+  (to (find-for-n n-gates)
+    (format "Trying ~d gates...\n" n-gates)
     (let n-wires (+ n-inputs n-gates))
     (let L-input (vector<-count n-gates #no))
     (let R-input (vector<-count n-gates #no))
@@ -62,10 +55,10 @@
 
   (some find-for-n (range<- 1 (+ max-gates 1))))
 
-(define (nand x y)
+(to (nand x y)
   ((x .and y) .not))     ;XXX why bitwise not here? only 1 bit, right?
 
-(define (tabulate-inputs n-inputs)
+(to (tabulate-inputs n-inputs)
   ;; An inputs vector is a vector of n-inputs bitvectors. It holds all
   ;; possible input patterns 'transposed': that is, the kth test case
   ;; can be formed out of bit #k of each the list's elements, one
@@ -82,4 +75,4 @@
 
 (superopt "0110" 3)
 (superopt "1011" 3)
-;(superopt "0110" 4)
+;;(superopt "0110" 4)

@@ -1,11 +1,11 @@
 ;; https://projecteuler.net/problem=3
 ;; The largest prime factor of 600851475143.
 
-(define (euler3 n)
+(to (euler3 n)
   (let factors (factor n))
   (factors (- factors.count 1)))
 
-(define (factor n)
+(to (factor n)
   (begin trying ((d 2) (n n))
     (if (= 0 (n .remainder d))
         (cons d (if (= d n) '() (trying d (n .quotient d))))

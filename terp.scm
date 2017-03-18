@@ -120,7 +120,24 @@
          (if (or (pair? message) (null? message))
              (cond ((eq? object error-prim) (error-prim (cons k message)))
                    ((eq? object evaluate-prim) (evaluate-prim message k))
-                   (else (answer k (apply object message))))
+                   (else
+                    ;; Intercept Scheme-level errors:
+                    (call/cc
+                     (lambda (scheme-cont)
+                       (answer
+                        k
+                        (with-exception-handler
+                         (lambda (exc)
+                           (scheme-cont
+                            (if (condition? exc)
+                                (let ((plaint
+                                       (with-output-to-string
+                                         (lambda () (display-condition exc)))))
+                                  (signal k plaint object message))
+                                (signal k "Primitive error" exc object message))))
+                         (lambda ()
+                           ;; Do the Scheme call in this error-handling context.
+                           (apply object message))))))))
              (run-script object procedure-script object message k)))
         ((object? object)
          (let ((script (object-script object))
@@ -137,23 +154,35 @@
                  (else
                   (error 'call "Not a script" script datum)))))
         (else
-         (let ((script
-                (cond
-                 ((number? object)      number-script)
-                 ((string? object)      string-script)
-                 ((pair? object)        pair-script)
-                 ((vector? object)      vector-script)
-                 ((box? object)         box-script)
-                 ((null? object)        nil-script)
-                 ((input-port? object)  source-script)
-                 ((output-port? object) sink-script)
-                 ((symbol? object)      symbol-script)
-                 ((boolean? object)     boolean-script)
-                 ((char? object)        char-script)
-                 ((term? object)        term-script)
-                 ((eq? object (void))   void-script)
-                 (else (error 'call "Non-object" object)))))
+         (let ((script (extract-script object)))
            (run-script object script object message k)))))
+
+(define (extract-script object)
+  (cond
+   ((number? object)      number-script)
+   ((string? object)      string-script)
+   ((pair? object)        pair-script)
+   ((vector? object)      vector-script)
+   ((box? object)         box-script)
+   ((null? object)        nil-script)
+   ((input-port? object)  source-script)
+   ((output-port? object) sink-script)
+   ((symbol? object)      symbol-script)
+   ((boolean? object)     boolean-script)
+   ((char? object)        char-script)
+   ((term? object)        term-script)
+   ((eq? object (void))   void-script)
+   ((script? object)      script-script)
+   ;; TODO: cont-script? too
+   ((procedure? object)   procedure-script)
+   ((object? object)      (object-script object))
+   (else (error 'call "Non-object" object))))
+
+(define (extract-datum object)
+  (cond
+   ((object? object)      (object-datum object))
+   ;; TODO: script and cont-script too?
+   (else                  object)))
 
 ;; XXX This is a hack.
 (define (call-cont-standin script datum message k)
@@ -163,7 +192,7 @@
           (cont<- call-cont-standin-cont k message))))
 
 (define (error-prim message)
-  (let* ((the-box (get-prim 'the-signal-handler-box))
+  (let* ((the-box (get-prim 'the-signal-handler))
          (handler (unbox the-box)))
     ;; Panic by default if another error occurs during error handling.
     (call the-box (term<- '.^= panic) halt-cont)
@@ -209,9 +238,6 @@
 
 ;; Environments
 
-(define (random-integer high-bound)
-  (inexact->exact (floor (* (random-real) high-bound))))
-
 (define (vector-append v1 v2)
   (let ((n1 (vector-length v1))
         (n2 (vector-length v2)))
@@ -245,6 +271,7 @@
     (number? ,number?)
     (integer? ,integer?)
     (symbol? ,symbol?)
+    (cue? ,cue?)
     (claim? ,boolean?)
     (char? ,char?)
     (string? ,string?)
@@ -276,16 +303,26 @@
 
     ;; These will get high-level definitions later TODO
     (/ ,/)
+    (expt ,expt)
+    (abs ,abs)
     (gcd ,gcd)
     (vector<-list ,list->vector)
     (read ,squeam-read)
     (parse-exp ,parse-exp)
     (parse-pat ,parse-pat)
-    (random-integer ,random-integer)
+    (random-integer ,random)
+    (system ,system)
     ;; Should use string ports instead:
     (number<-string ,string->number)
     (string<-number ,number->string)
+    (list<-string ,string->list)
     (read ,squeam-read)
+    (string-sink<- ,open-output-string)
+    (__get-output-string ,get-output-string)
+    (open-subprocess ,process)
+;    (get-global-env ,(lambda () the-global-env))
+    (extract-script ,extract-script)
+    (extract-datum ,extract-datum)
 
     ;; Primitives only -- TODO seclude in their own env:
     (__hash ,hash)
@@ -296,6 +333,7 @@
     (__* ,*)
     (__quotient ,quotient)
     (__remainder ,remainder)
+    (__modulo ,modulo)
 ;    (__number-compare
     (__bit-<< ,ash)
     (__bit->> ,(lambda (x y) (ash x (- y))))
@@ -368,9 +406,19 @@
     (__u- ,(lambda (a b) (logand mask32 (- a b))))
     (__u<< ,(lambda (a b) (logand mask32 (ash a b))))
     (__u>> ,(lambda (a b) (logand mask32 (ash a (- b)))))
+
+    (__script-name ,script-name)
+    (__script-trait ,script-trait)
+    (__script-clauses ,script-clauses)
     ))
 
 (define mask32 (- 1 (expt 2 32)))
+
+(define (env-defined? r v)
+  (define (succeed pair) #t)  ; (not (eq? (cadr pair) uninitialized)))
+  (cond ((assq v r) => succeed)
+        ((assq v the-global-env) => succeed)
+        (else #f)))
 
 (define (env-lookup r v k)
   (define (succeed pair) (answer k (cadr pair)))
@@ -653,6 +701,7 @@
 (define term-script   (get-script 'term-primitive))
 (define procedure-script (get-script 'procedure-primitive))
 (define void-script   (get-script 'void-primitive))
+(define script-script (get-script 'script-primitive))
 
 
 ;; For tuning later.

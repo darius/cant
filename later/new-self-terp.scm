@@ -4,8 +4,8 @@
 ;; r environment
 
 (define (script<- stamp trait clauses)
-  (when stamp (assert (stamp? stamp)))
-  (assert (trait? trait))
+  (when stamp (surely (stamp? stamp)))
+  (surely (trait? trait))
   (make script
     ({.receive message parent-r}
      (begin matching ((clauses clauses))
@@ -65,10 +65,10 @@
 (define (parent-only r)
   (make _
     ((name)
-     (assert (not (r .inner? name)))
+     (surely (not (r .inner? name)))
      (r name))
     ({.bind name value}
-     (assert #no))
+     (surely #no))
     ({.inner? name}
      #no)                               ;I guess
     (message (call r message))))

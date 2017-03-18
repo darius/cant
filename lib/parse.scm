@@ -1,20 +1,20 @@
 ;; Parse with a context-free grammar and a chart.
 ;; Ported from PAIP chapter 9
 
-(define (grammar<-rules rules)
+(to (grammar<-rules rules)
 
   ;; Return a list of those rules with word on the rhs.
-  (define (lexical-rules word)
-    (for filter ((rule rules))
+  (to (lexical-rules word)
+    (for those ((rule rules))
       (= rule.rhs word)))
 
   ;; Return a list of those rules where cat starts the rhs.
-  (define (rules-starting-with cat)
-    (for filter ((rule rules))
+  (to (rules-starting-with cat)
+    (for those ((rule rules))
       (rule .starts-with? cat)))
 
   ;; Look for the categories needed to complete the parse.
-  (define (extend-parse lhs rhs rest needed)
+  (to (extend-parse lhs rhs rest needed)
     (case (needed.empty?
            ;; Return parse and upward extensions.
            (let tree (tree<- lhs rhs))
@@ -34,7 +34,7 @@
 
     ;; Return all complete parses of a list of words.
     ({.parse words}
-     (each '.tree (filter '.complete? (grammar .parse-prefixes words))))
+     (each '.tree (those '.complete? (grammar .parse-prefixes words))))
 
     ;; Return all parses of any prefix of words (working bottom-up).
     ({.parse-prefixes words}
@@ -43,11 +43,11 @@
          (for gather ((rule (lexical-rules words.first)))
            (extend-parse rule.lhs `(,words.first) words.rest '()))))))
 
-(define (grammar<- sexprs)
+(to (grammar<- sexprs)
   (grammar<-rules (for each (((lhs '-> rhs) sexprs))
                     (rule<- lhs rhs))))
 
-(define (rule<- lhs rhs)
+(to (rule<- lhs rhs)
   (make
     ({.lhs} lhs)
     ({.rhs} rhs)
@@ -56,14 +56,14 @@
        ((first @_) (= first cat))
        (_ #no)))))
 
-(define (tree<- lhs rhs)
+(to (tree<- lhs rhs)
   (make
     ({.lhs} lhs)
     ({.rhs} rhs)
     ({.selfie sink} (sink .print (cons lhs rhs)))))
 
 ;; A parse tree and a remainder.
-(define (parse<- tree remainder)
+(to (parse<- tree remainder)
   (make
     ({.tree}      tree)
     ({.remainder} remainder)

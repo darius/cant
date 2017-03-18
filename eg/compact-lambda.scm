@@ -1,6 +1,6 @@
 ;; 'Compile' cbv lambda calculus without changing much.
 
-(define (compile lexp)
+(to (compile lexp)
   ((parse lexp) .compile '(HALT)))
 
 (make parse
@@ -10,18 +10,18 @@
                                 (parse operand))))
 
 ;; Variable reference
-(define (var-ref<- v)
+(to (var-ref<- v)
   (given {.compile k}
     `(VAR ,v ,@k)))
 
 ;; Lambda expression
-(define (abstraction<- v body)
+(to (abstraction<- v body)
   (given {.compile k}
     (let code (body .compile '(RET)))
     `(LAM ,v ,code.count ,@code ,@k)))
 
 ;; Application
-(define (call<- operator operand)
+(to (call<- operator operand)
   (given {.compile k}
     (let code (operator .compile (operand .compile '(CALL))))
     (match k
