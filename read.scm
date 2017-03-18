@@ -122,7 +122,7 @@
         (skip-blanks port)
         (let ((c (peek-char port)))
           (cond ((eof-object? c) 
-                 (read-error port "Unexpected EOF before" close-paren))
+                 (read-error "Unexpected EOF before" close-paren))
                 ((char=? c close-paren)
                  (read-char port)
                  '())
