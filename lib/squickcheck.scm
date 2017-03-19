@@ -66,7 +66,7 @@
   (char<- (g .natural 256)))
 
 (to (a-printable-char g)
-  (char<- (g.natural 32 126)))
+  (char<- (g .natural 32 126)))
 
 (to ((a-list-of gen) g)
   (for each ((_ (range<- g.a-size)))
@@ -83,7 +83,7 @@
     (gen g)))
 
 (to ((a-choice @gens) g)
-  ((g.choose gens) g))
+  ((g .choose gens) g))
 
 
 ;; Helpers for gens
