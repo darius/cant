@@ -22,6 +22,7 @@
        (#yes (display "."))
        (_ (display "X")
           (failures .push! `(,outcome ,inputs)))))
+   (newline)
    (unless failures.empty?
      (format "Failures for ~w:\n" property)
      (for each! (((outcome inputs) failures))
@@ -65,7 +66,7 @@
   (char<- (g .natural 256)))
 
 (to (a-printable-char g)
-  (char<- (+ 32 (g .natural 0 94))))
+  (char<- (g.natural 32 126)))
 
 (to ((a-list-of gen) g)
   (for each ((_ (range<- g.a-size)))
