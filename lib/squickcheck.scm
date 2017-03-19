@@ -9,9 +9,9 @@
 ;; TODO make and report deterministic seeds
 ;; TODO catch errors
 ;; TODO better names
-(make check
+(make all
   ((property @gens)
-   (check .run (context<- random-integer) 40 property gens))
+   (all .run (context<- random-integer) 40 property gens))
   ({.run g n-times property gens}
    (let failures (fillvector<-))
    (for each! ((_ (range<- n-times)))
@@ -101,5 +101,5 @@
 (export
   a-claim a-nat an-int a-char a-printable-char a-printable-string a-list-of a-tuple a-choice
   weighted-choice
-  check should
+  all should
   )
