@@ -17,7 +17,7 @@
 (to (render-glyph ch x)
    (let b ch.code)
    (if (and (<= 32 b) (< b 127))
-       ch
+       (string<- ch)
        ("\\~w" .format b)))             ;XXX make it octal, width 3
 
 ;; Compute how to show `text` from coordinate `start` with cursor at
