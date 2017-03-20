@@ -705,6 +705,8 @@
 (define void-script   (get-script 'void-primitive))
 (define script-script (get-script 'script-primitive))
 
+(define the-map<- (get-prim 'map<-))
+
 
 ;; For tuning later.
 

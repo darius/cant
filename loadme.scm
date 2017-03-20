@@ -8,8 +8,7 @@
 
 (run-load "lib/stdlib.scm")
 (squeam-interpret
- '(do (import (use "lib/hashmap")    map<-)
-      (import (use "lib/format")     format)
+ '(do (import (use "lib/format")     format)
       (import (use "lib/fillvector") fillvector<-)
       (import (use "lib/sort")       sort)
       (import (use "lib/hashset")    set<-)
