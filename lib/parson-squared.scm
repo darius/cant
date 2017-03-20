@@ -155,7 +155,8 @@
     rules))
 
 (let default-subs
-  (map<- `(("anyone" ,any-1)
+  (map<- `(("anyone" ,any-1)            ;XXX should probably skip instead of capture
+           ("letter" ,(take-1 '.letter?))
            ("end" ,end)
            ("hug" ,hug)
            ("join" ,(feed chain))
