@@ -24,8 +24,8 @@
     (case (("Qq" .find? key) 'quitting)
           (("Uu" .find? key)
            (if history.empty?
-               (playing history.pop! #yes)
-               (continue)))
+               (continue)
+               (playing history.pop! #yes)))
           ((arrows .maps? key)
            (let sliding ((arrows key) board))
            (case (sliding.empty? (continue))
@@ -72,7 +72,7 @@
 
 (to (lost? rows)
   (for every ((move arrows.values))
-    ((move board) .empty?)))
+    ((move rows) .empty?)))
 
 (to (random-empty-square rows)
   (random-choice (for gather (((r row) rows.items))
@@ -140,3 +140,7 @@
                    (0 0 0 0)
                    (0 0 0 0)
                    (0 0 0 0)))
+
+(export 
+  main
+  play starting-board<-)
