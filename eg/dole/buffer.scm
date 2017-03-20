@@ -68,7 +68,7 @@
     (let next-end   (find-line next-start forward))
     (point .^= (min (+ next-start offset)
                     (text .clip (- next-end 1)))))
-  ;; XXX this can wrap around since text.clip moves `nowhere` to 0.
+  ;; XXX this can wrap around since text .clip moves `nowhere` to 0.
    
   (let key-map (key-map<- (given (ch) (insert (string<- ch)))))
 
