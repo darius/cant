@@ -114,4 +114,7 @@
      (m .set! k v))
    m))
 
-(export map<-)
+;; I want to define 'export' in terms of 'map<-', so let's taboo
+;; (export map<-)
+;; and expand it by hand:
+(map<- `((map<- ,map<-)))
