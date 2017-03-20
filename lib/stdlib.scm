@@ -135,8 +135,8 @@
   (begin zipping ((xs xs) (ys ys))
     (case (xs.empty? (if ys.empty? '() (mismatch)))
           (ys.empty? (mismatch))
-          (else (cons `(,xs.first ,ys.first)
-                      (zipping xs.rest ys.rest))))))
+          (else `((,xs.first ,ys.first)
+                  ,@(zipping xs.rest ys.rest))))))
 
 (to (cons/lazy x thunk)
   (make lazy-list {extending list-trait}

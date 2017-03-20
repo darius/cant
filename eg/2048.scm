@@ -6,8 +6,9 @@
   render)
 
 (to (main _)
-  (for cbreak-mode ()
-    (play (starting-board<-))))
+;  (for cbreak-mode ()
+    (play (starting-board<-)))
+;)
 
 (to (play board)
   (let history (fillvector<-))
@@ -71,7 +72,7 @@
 
 (to (lost? rows)
   (for every ((move arrows.values))
-    ((move board) .empty?)))         ;XXX or #no?
+    ((move board) .empty?)))
 
 (to (random-empty-square rows)
   (random-choice (for gather (((r row) rows.items))
@@ -86,28 +87,52 @@
     (for each (((c v) row.items))
       (if (= at `(,r ,c)) new-value v))))
 
+;; Try to slide the board leftward; return a list of boards to
+;; animate the move -- an empty list if there's no move leftward.
 (to (left rows)
+  ;; TODO could probably be simpler
   (begin sliding ((states (for each ((row rows))
                             (slide 0 row))))
-    (if (for every ((lo states.values))
-          ...)
-        ...
-        ...)))
+    (if (for every (((lo _) states))
+          (<= 4 lo))
+        '()
+        (cons (for each (((_ row) states))
+                row)
+              (sliding (for each (((lo row) states))
+                         (slide lo row)))))))
 
 ;; Slide row one place leftward, leaving fixed any places left of lo.
 ;; Advance lo past merging or completion.
 (to (slide lo row)
-  XXX)
+  ;; TODO could probably be clearer too
+  (begin checking ((i (+ lo 1)))
+    (if (= i 4)
+        `(4 ,row)
+        (do (let same? (= (row (- i 1)) (row i)))
+            (if (not= same? (= (row (- i 1)) 0))
+                `(,(if same? i lo)
+                  (,@(row .slice 0 (- i 1))
+                   ,(+ (row (- i 1)) (row i))
+                   ,@(row .slice (+ i 1))
+                   0))
+                (checking (+ i 1)))))))
 
 (to (right rows) (each flip-h (left (flip-h rows))))
 (to (up rows)    (each flip-d (left (flip-d rows))))
 (to (down rows)  (each flip-d (right (flip-d rows))))
 
-(to (flip-d rows)
-  xxx)
+(to (flip-h rows)                       ; horizontal flip
+  (each reverse rows))
 
-(to (flip-h rows)
-  xxx)
+(to (flip-d rows)                       ; diagonal flip
+  (transpose rows))
+
+;; TODO: name it (zip @rows) instead, like Python?
+(to (transpose rows)
+  (if (every '.empty? rows)   ; and make it (some '.empty? rows)?
+      '()
+      `(,(each '.first rows)
+        ,@(transpose (each '.rest rows)))))
 
 (let arrows (export left right up down))
 
