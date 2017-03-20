@@ -50,7 +50,7 @@
     (point .^= (+ point.^ str.count)))
 
   (to (find-line p dir)
-    (text.clip (text.find-char-set p dir newline)))
+    (text .clip (text .find-char-set p dir newline)))
 
   ;; TODO: preserve goal column; respect formatting, such as tabs;
   ;; treat long lines as defined by display
@@ -59,7 +59,7 @@
     (let offset     (- point.^ start))
     (let prev-start (find-line (- start 1) backward))
     (point .^= (min (+ prev-start offset)
-                    (text.clip (- start 1)))))
+                    (text .clip (- start 1)))))
 
   (to (next-line)
     (let start      (find-line point.^ backward))
@@ -67,7 +67,7 @@
     (let next-start (find-line start forward))
     (let next-end   (find-line next-start forward))
     (point .^= (min (+ next-start offset)
-                    (text.clip (- next-end 1)))))
+                    (text .clip (- next-end 1)))))
   ;; XXX this can wrap around since text.clip moves `nowhere` to 0.
    
   (let key-map (key-map<- (given (ch) (insert (string<- ch)))))
@@ -80,17 +80,17 @@
      (origin .^= 0))
 
     ({.backward-delete-char}
-     (text.delete (- point.^ 1) 1)
+     (text .delete (- point.^ 1) 1)
      (move-char backward))
 
     ({.forward-delete-char}
-     (text.delete point.^ 1))
+     (text .delete point.^ 1))
 
     ({.beginning-of-line}
      (point .^= (find-line point.^ backward)))
 
     ({.end-of-line}
-     (point .^= (text.clip (- (find-line point.^ forward) 1))))
+     (point .^= (text .clip (- (find-line point.^ forward) 1))))
 
     ({.insert str}
      (surely (string? str))
@@ -100,7 +100,7 @@
      key-map)
 
     ({.move-char offset}
-     (point .^= (text.clip (+ point.^ offset))))
+     (point .^= (text .clip (+ point.^ offset))))
 
     ({.previous-line} (previous-line))
     ({.next-line}     (next-line))
