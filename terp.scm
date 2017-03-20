@@ -197,6 +197,8 @@
     ;; Panic by default if another error occurs during error handling.
     (call the-box (term<- '.^= panic) halt-cont)
     ;; OK, up to the handler now.
+    ;; TODO always install a backup error handler? so that, e.g.
+    ;;  if the hardler fails to match the message, we're not stuck.
     (call handler message halt-cont)))
 
 (define (panic k . message)

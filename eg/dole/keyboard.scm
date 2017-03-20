@@ -1,6 +1,6 @@
 ;; Read the keyboard
 
-(use (import "lib/sturm") get-key)
+(import (use "lib/sturm") get-key)
 
 (let read-key get-key)
 

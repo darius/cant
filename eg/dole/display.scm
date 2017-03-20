@@ -1,7 +1,7 @@
 ;; Update what's shown on the screen.
 
 (import (use "later/ansi-term") 
-  hide-cursor show-cursor home clear-to-right goto)
+  cursor-hide cursor-show home clear-to-right goto)
 
 ;; The screen size.
 (let (rows cols) '(25 80))              ;XXX
@@ -52,7 +52,7 @@
     ;; XXX doesn't mean 'is centered' any more:
     ({.point-centered?} (and point-y.^ (<= point-y.^ (rows .quotient 2))))
     ({.show}
-     (display hide-cursor)
+     (display cursor-hide)
      (display home)
      (for each! (((i line) lines.items))
        (unless (= line (showing i))
@@ -60,7 +60,7 @@
          (display line)
          (display clear-to-right)
          (showing .set! i line)))
-     (display show-cursor)
+     (display cursor-show)
      (display (goto point-x.^ point-y.^)))))
 
 (export

@@ -1,6 +1,6 @@
 ;; (Ported from github.com/darius/dole)
 ;; A buffer is a text with a current point of editing, a display, and
-;; a keymap.
+;; a key-map.
 
 (import (use "lib/text")         text<- backward forward)
 (import (use "eg/dole/char-set") char-set<-)
@@ -33,10 +33,10 @@
 
   (to (update-origin)
     (let rendering (render text origin.^ point.^))
-    (case (rendering.point-is-visible? rendering)
+    (case (rendering.point-visible? rendering)
           (else
            (to (has-point? o)
-             ((render text o point.^) .point-is-centered?))
+             ((render text o point.^) .point-centered?))
            (let screen-size (* rows cols))
            (origin .^= (search (text .clip (- point.^ screen-size))
                                point.^
@@ -45,9 +45,9 @@
              (origin .^= 0)) ; Couldn't center it.
            (render text origin.^ point.^))))
 
-  (to (insert ch)                  ;XXX change to expect char instead of string?
-    (text.insert point.^ ch)
-    (point .^= (+ point.^ ch.count)))
+  (to (insert str)
+    (text .insert point.^ str)
+    (point .^= (+ point.^ str.count)))
 
   (to (find-line p dir)
     (text.clip (text.find-char-set p dir newline)))
@@ -70,7 +70,7 @@
                     (text.clip (- next-end 1)))))
   ;; XXX this can wrap around since text.clip moves `nowhere` to 0.
    
-  (let key-map (key-map<- insert))
+  (let key-map (key-map<- (given (ch) (insert (string<- ch)))))
 
   (make buffer
 
@@ -92,8 +92,9 @@
     ({.end-of-line}
      (point .^= (text.clip (- (find-line point.^ forward) 1))))
 
-    ({.insert ch}
-     (insert ch))
+    ({.insert str}
+     (surely (string? str))
+     (insert str))
 
     ({.key-map}
      key-map)
@@ -118,7 +119,7 @@
 
     ({.redisplay}
      (let rendering (update-origin))
-     (surely rendering.point-is-visible?)
+     (surely rendering.point-visible?)
      rendering.show)
 
     ({.visit filename}

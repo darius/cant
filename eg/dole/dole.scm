@@ -1,6 +1,6 @@
 ;; Main program
 
-(import (use "editor") dole)
+(import (use "eg/dole/editor") dole)
 
 (to (main args)
   (match args.rest

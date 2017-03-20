@@ -8,10 +8,10 @@
 (let home               (seq "H"))
 (let clear-to-bottom    (seq "J"))
 (let clear-screen       (chain prefix "2J" home))
-(let clear-to-eol       (seq "K"))
+(let clear-to-right     (seq "K"))
 
-(let save-cursor-pos    (seq "s"))
-(let restore-cursor-pos (seq "u"))
+(let cursor-pos-save    (seq "s"))
+(let cursor-pos-restore (seq "u"))
 
 (let cursor-show        (seq "?25h"))
 (let cursor-hide        (seq "?25l"))
@@ -37,9 +37,9 @@
   home
   clear-to-bottom
   clear-screen
-  clear-to-eol
-  save-cursor-pos
-  restore-cursor-pos
+  clear-to-right
+  cursor-pos-save
+  cursor-pos-restore
   cursor-show
   cursor-hide
   goto 
