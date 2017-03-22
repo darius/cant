@@ -33,7 +33,7 @@
     (match args
       ((_) "eg/microban")
       ((_ fname) fname)
-      (_ (error "Usage: ~d [filename]" (args 0)))))
+      (_ (error "Usage: ~d [filename]" (args 0))))) ;XXX missing .format
   (call start (load-collection filename)))
 
 (to (load-collection filename)

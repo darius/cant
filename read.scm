@@ -49,7 +49,7 @@
   (define (combine prefix atom)
     (cond (prefix
            (if (not (symbol? atom))
-               (error "Floating-point literals unimplemented" prefix atom))
+               (error 'read "Floating-point literals unimplemented" prefix atom))
            (list prefix (cue<- atom)))
           (else
            atom)))
@@ -83,7 +83,7 @@
 (define (optional-arg arg-list default-value)
   (cond ((null? arg-list) default-value)
         ((null? (cdr arg-list)) (car arg-list))
-        (else (error "Too many arguments to procedure" arg-list))))
+        (else (error 'optional-arg "Too many arguments to procedure" arg-list))))
 
 (define squeam-read
   (let ()

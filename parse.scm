@@ -63,7 +63,7 @@
      (term<- 'and-pat (parse-pat p1)
               (term<- 'view-pat (parse-exp e) (term<- 'constant-pat #t))))
     (('@ __)                      ;XXX make @vars be some disjoint type
-     (error "An @-pattern must be at the end of a list" p))
+     (error 'parse "An @-pattern must be at the end of a list" p))
     ((: __ list?)
      (parse-list-pat p))
     ((: __ term?)
@@ -83,17 +83,19 @@
                            (term<- 'term (term-tag thing) (term-parts thing))))))
 
 (define (parse-list-pat ps)
-  (mcase ps
-    (()
-     (term<- 'constant-pat '()))
-    ((('@ v))
-     (term<- 'and-pat list?-pat (parse-pat v)))
-    ((head . tail)
-     ;; TODO: special case if both head and tail are constant
-     (term<- 'view-pat
-             (term<- 'variable '__as-cons)
-             (term<- 'term-pat 'cons (list (parse-pat head)
-                                           (parse-list-pat tail)))))))
+  (if (all (mlambda (('@ __) #f) (__ #t)) ps)
+      (term<- 'list-pat (map parse-pat ps)) ; Special-cased just for speed
+      (mcase ps
+        (()
+         (term<- 'constant-pat '()))
+        ((('@ v))
+         (term<- 'and-pat list?-pat (parse-pat v)))
+        ((head . tail)
+         ;; TODO: special case if both head and tail are constant
+         (term<- 'view-pat
+                 (term<- 'variable '__as-cons)
+                 (term<- 'term-pat 'cons (list (parse-pat head)
+                                               (parse-list-pat tail))))))))
 
 (define list?-pat (term<- 'view-pat
                           (term<- 'constant list?) ;XXX just check pair?/null?
@@ -271,6 +273,9 @@
        '())
       ((variable-pat)
        parts)
+      ((list-pat)
+       (let ((p-args (car parts)))
+         (flatmap pat-vars-defined p-args)))
       ((term-pat)
        (let ((p-args (cadr parts)))
          (flatmap pat-vars-defined p-args)))
@@ -283,7 +288,7 @@
          (append (exp-vars-defined e)
                  (pat-vars-defined p))))
       (else
-       (error "Bad pattern type" p)))))
+       (error 'parse "Bad pattern type" p)))))
 
 (define (exp-vars-defined e)
   (let ((parts (term-parts e)))
@@ -305,4 +310,4 @@
        (let ((es (car parts)))
          (flatmap exp-vars-defined es)))
       (else
-       (error "Bad expression type" e)))))
+       (error 'parse "Bad expression type" e)))))

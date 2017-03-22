@@ -61,12 +61,14 @@
      v)
     ({constant-pat c}
      (if (self-evaluating? c) c `',c))
+    ({list-pat ps}
+     (each unparse-pat ps))
+    ({term-pat tag ps}
+     (term<- tag (each unparse-pat ps)))
     ({view-pat e p}
      `(<view-pat> ,(unparse-exp e) ,(unparse-pat p))) ;XXX need a genuine view-pat syntax
     ({and-pat p1 p2}
      `(<and-pat> ,(unparse-pat p1) ,(unparse-pat p2))) ;XXX need a genuine and-pat syntax
-    ({term-pat tag ps}
-     (term<- tag (each unparse-pat ps)))
     (_
      (error "Unknown pattern type" pat))))
 

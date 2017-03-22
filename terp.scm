@@ -202,7 +202,11 @@
     (call handler message halt-cont)))
 
 (define (panic k . message)
-  (apply error message))
+  (let ((message-for-chez ;Chez Scheme is picky about arguments to (error).
+         (if (and (pair? message) (string? (car message)))
+             message
+             (cons "Error" message))))
+    (apply error 'panic message-for-chez)))
 
 (define (run-script object script datum message k)
   (matching (script-clauses script) object script datum message k))
@@ -512,6 +516,13 @@
       ((variable-pat)
        (let ((name (car parts)))
          (env-resolve! r name subject k)))
+      ((list-pat)
+       (let ((p-args (car parts)))
+         (if (or (and (pair? p-args) (pair? subject)
+                      (= (length p-args) (length subject))) ;TODO move this into ev-match-all
+                 (and (null? p-args) (null? subject)))
+             (ev-match-all subject p-args r k)
+             (answer k #f))))
       ((term-pat)
        (let ((tag (car parts)) (p-args (cadr parts)))
          (if (not (and (term? subject)

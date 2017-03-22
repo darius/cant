@@ -280,9 +280,10 @@
             ({any-pat}         pat)
             ({variable-pat v}  pat)
             ({constant-pat c}  pat)
+            ({list-pat ps}     {list-pat (each qp ps)})
+            ({term-pat tag ps} {term-pat tag (each qp ps)})
             ({view-pat e p}    {view-pat (qe e) (qp p)})
-            ({and-pat p1 p2}   {and-pat (qp p1) (qp p2)})
-            ({term-pat tag ps} {term-pat tag (each qp ps)})))
+            ({and-pat p1 p2}   {and-pat (qp p1) (qp p2)})))
 
         (export qe qp))
 

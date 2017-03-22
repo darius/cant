@@ -59,6 +59,9 @@
      #yes)
     ({constant-pat value}
      (= subject value))
+    ({list-pat p-args}
+     (and (list? subject)
+          (match-all subject p-args r)))
     ({term-pat tag p-args}
      (and (term? subject)
           (= subject.tag tag) ;; N.B. it'd be nice for efficiency to bundle the arity in at desugar time
