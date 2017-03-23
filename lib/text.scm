@@ -150,16 +150,6 @@
     ;; TODO: delegate to a string trait? but strings are immutable...
     ))
 
-(to (main _)
-  (let t (text<-))
-  (print (t .get 0 10))
-  (t .replace 0 0 "hello")
-  (print (t .get 0 10))
-  (t .replace 1 2 "GOOBER")
-  (print (t .get 0 20))
-  (print (t .get 3 3))
-  )
-
 (export
   backward
   forward
