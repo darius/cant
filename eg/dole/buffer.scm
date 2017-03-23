@@ -71,7 +71,10 @@
                     (text .clip (- next-end 1)))))
   ;; XXX this can wrap around since text .clip moves `nowhere` to 0.
    
-  (let key-map (key-map<- (given (ch) (insert (string<- ch)))))
+  (let key-map (key-map<- (given (ch)
+                            (if (char? ch)
+                                (insert (string<- ch))
+                                (log "Not a char: ~w" ch)))))
 
   (make buffer
 
@@ -111,12 +114,14 @@
     ({.previous-page}
      ;; (update-origin)
      ;; point .^= origin
-     (each! previous-line (range<- rows)))
+     (for each! ((_ (range<- rows)))
+       (previous-line)))
 
     ({.next-page}
      ;; (update-origin)
      ;; point .^= origin
-     (each! next-line (range<- rows)))
+     (for each! ((_ (range<- rows)))
+       (next-line)))
 
     ({.redisplay}
      (let rendering (update-origin))
