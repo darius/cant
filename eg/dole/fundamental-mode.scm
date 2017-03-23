@@ -9,8 +9,8 @@
 (to (fundamental-mode<-)
   (let buffer (buffer<-))
 
-   (to (backward-char _) (buffer .move_char -1))
-   (to (forward-char _)  (buffer .move_char  1))
+   (to (backward-char _) (buffer .move-char -1))
+   (to (forward-char _)  (buffer .move-char  1))
 
    (let bindings
      `((,(C #\B)  ,backward-char)
