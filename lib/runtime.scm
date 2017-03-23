@@ -303,10 +303,19 @@
                            (scanning (+ i pattern.count))))
                    (else (cons (me i) (scanning (+ i 1))))))))))
   ({.left-justify n}
+   (me .left-justify n #\space))
+  ({.left-justify n pad-char}
    (let pad (- n me.count))
    (if (<= pad 0)
        me
-       (chain me (" " .repeat pad))))
+       (chain me ((string<- pad-char) .repeat pad))))
+  ({.right-justify n}
+   (me .right-justify n #\space))
+  ({.right-justify n pad-char}
+   (let pad (- n me.count))
+   (if (<= pad 0)
+       me
+       (chain ((string<- pad-char) .repeat pad) me)))
   ({.center n}
    (let pad (- n me.count))
    (if (<= pad 0)

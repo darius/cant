@@ -21,7 +21,8 @@
    (let b ch.code)
    (if (and (<= 32 b) (< b 127))
        (string<- ch)
-       ("\\~w" .format b)))             ;XXX make it octal, width 3
+       ("\\~d" .format
+               ((string<-number b 8) .right-justify 3 #\0)))) ;XXX format should do this stuff
 
 ;; Compute how to show `text` from coordinate `start` with cursor at
 ;; `point`. Return an object that can say whether the cursor is visible
