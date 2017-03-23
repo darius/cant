@@ -6,6 +6,7 @@
 (import (use "eg/dole/char-set") char-set<-)
 (import (use "eg/dole/display")  render rows cols)   ; XXX rename to num-rows or something
 (import (use "eg/dole/key-map")  key-map<-)
+(import (use "eg/dole/console")  log)
 
 ;; Return the smallest i in [lo..hi) where ok(i), if any; else hi.
 ;; Pre: lo and hi are ints, lo < hi

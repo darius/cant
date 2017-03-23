@@ -2,7 +2,6 @@
 
 (import (use "eg/dole/buffer")  buffer<-)
 (import (use "eg/dole/key-map") ctrl)
-(import (use "eg/dole/console") log)
 
 (let C ctrl)
 

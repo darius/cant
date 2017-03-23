@@ -148,6 +148,7 @@
     ({.find-char-set p dir char-set}
      (find-char-set p dir char-set))
     ;; TODO: delegate to a string trait? but strings are immutable...
+    ({.keys}  (range<- size.^))
     ))
 
 (export
