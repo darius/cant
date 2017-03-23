@@ -60,8 +60,8 @@
          (display line)
          (display clear-to-right)
          (showing .set! i line)))
-     (display cursor-show)
-     (display (goto point-x.^ point-y.^)))))
+     (display (goto point-x.^ point-y.^))
+     (display cursor-show))))
 
 (export
   cols rows
