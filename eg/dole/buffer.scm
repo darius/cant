@@ -81,7 +81,7 @@
 
     ({.backward-delete-char}
      (text .delete (- point.^ 1) 1)
-     (move-char backward))
+     (buffer .move-char backward))
 
     ({.forward-delete-char}
      (text .delete point.^ 1))

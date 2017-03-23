@@ -21,7 +21,7 @@
        (,(C #\P)  ,(given (_) (buffer .previous-line)))
        (up        ,(given (_) (buffer .previous-line)))
        (,(C #\Q)  exit)
-       (#\newline ,(given (_) (buffer .insert "\n")))
+       (,(C #\M)  ,(given (_) (buffer .insert "\n")))
        (backspace ,(given (_) (buffer .backward-delete-char)))
        (del       ,(given (_) (buffer .forward-delete-char)))
        (end       ,(given (_) (buffer .end-of-line)))
