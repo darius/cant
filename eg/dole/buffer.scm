@@ -64,7 +64,7 @@
   (to (next-line)
     (let start      (find-line point.^ backward))
     (let offset     (- point.^ start))
-    (let next-start (find-line start forward))
+    (let next-start (find-line start forward)) ;XXX why not start from point?
     (let next-end   (find-line next-start forward))
     (point .^= (min (+ next-start offset)
                     (text .clip (- next-end 1)))))

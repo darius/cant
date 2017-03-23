@@ -55,6 +55,49 @@
     (let (p span) (clip-range p0 span0))
     (string<-list (each get-char-after (range<- p (+ p span)))))
 
+  ;; Return the position after the character in the text that is in
+  ;; char-set and that comes up first in searching from p in
+  ;; direction dir. If none, return nowhere or -nowhere.
+  ;; XXX untested, probably broken
+  (to (find-char-set p dir char-set)
+    ((if (= dir forward)
+         find-char-set-forward
+         find-char-set-backward)
+     (clip p)
+     char-set))
+
+  (to (find-char-set-forward p char-set)
+    (let H head.^)
+    (begin searching ((p p))
+      (if (< p H)
+          (if (char-set .maps? (t p))
+              (+ p 1)
+              (searching (+ p 1)))
+          (do
+            (let G gap.^)
+            (let S size.^)
+            (begin persevering ((p p))
+              (if (< p S)
+                  (if (char-set .maps? (t (+ G p)))
+                      (+ p 1)
+                      (persevering (+ p 1)))
+                  nowhere))))))
+
+  (to (find-char-set-backward p char-set)
+    (let H head.^)
+    (let G gap.^)
+    (begin searching ((p p))
+      (if (< H p)
+          (if (char-set .maps? (t (+ G p -1)))
+              p
+              (searching (- p 1)))
+          (begin persevering ((p p))
+            (if (< 0 p)
+                (if (char-set .maps? (t (- p 1)))
+                    p
+                    (persevering (- p 1)))
+                (- nowhere))))))
+
   (to (grow n)
     (+ n (n .quotient 2)))
 
@@ -102,6 +145,8 @@
     ({.insert p str}       (replace p 0 str))
     ({.replace p span str} (replace p span str))
     ({.count}              size.^)
+    ({.find-char-set p dir char-set}
+     (find-char-set p dir char-set))
     ;; TODO: delegate to a string trait? but strings are immutable...
     ))
 
