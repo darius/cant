@@ -2,6 +2,7 @@
 
 (import (use "eg/dole/buffer")  buffer<-)
 (import (use "eg/dole/key-map") ctrl)
+(import (use "eg/dole/console") log)
 
 (let C ctrl)
 
@@ -29,7 +30,7 @@
        (pgup      ,(given (_) (buffer .previous-page)))
        (pgdn      ,(given (_) (buffer .next-page)))))
 
-   (for each! (((key command) bindings))
+   (for each! (((key command) bindings)) ;TODO should be a key-map method
      (buffer.key-map .set! key command))
       
    buffer)

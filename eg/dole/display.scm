@@ -2,9 +2,12 @@
 
 (import (use "later/ansi-term") 
   cursor-hide cursor-show home clear-to-right goto)
+(import (use "eg/dole/console")
+  logs)
 
 ;; The screen size.
-(let (rows cols) '(25 80))              ;XXX
+(let (rows cols) '(18 80))              ;XXX
+(let console-rows 5) ; #rows extra, reserved for the debugging console
 
 ;; An array of strings, one per screen row.
 (to (display-buffer<-)
@@ -60,6 +63,12 @@
          (display line)
          (display clear-to-right)
          (showing .set! i line)))
+     ;; TODO: styling for the logs
+     (display (goto 0 rows))
+     (for each! ((message (logs.^ .slice 0 console-rows)))
+       (display (message .slice 0 cols))
+       (display clear-to-right)
+       (display "\r\n"))
      (display (goto point-x.^ point-y.^))
      (display cursor-show))))
 
