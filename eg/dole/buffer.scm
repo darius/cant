@@ -125,7 +125,7 @@
 
     ({.visit filename}
      buffer.clear
-     (let contents (with-input-file read-into-string filename))
+     (let contents (with-input-file '.read-all filename))
      (text .insert 0 contents))))
 
 (export
