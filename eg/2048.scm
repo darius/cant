@@ -60,7 +60,8 @@
 (to (view rows)
   (for each ((row rows))
     `(,(for each ((v row))
-         (" ~d" .format v))          ;TODO justify and style
+         (let s (if (= v 0) "." ("~w" .format v)))
+         (" ~d" .format (s .center 4)))
       "\n\n")))
 
 (to (won? rows)
