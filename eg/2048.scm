@@ -1,9 +1,11 @@
 ;; Ported from github.com/darius/sturm
 
 (import (use "lib/sturm")
-  cbreak-mode
-  get-key
-  render)
+  cbreak-mode get-key render
+  ;;XXX import is finally a pain:
+  bold underlined blinking inverted unstyled
+  black red green yellow blue magenta cyan white
+  on-black on-red on-green on-yellow on-blue on-magenta on-cyan on-white)
 
 (to (main _)
   (for cbreak-mode ()
@@ -56,9 +58,23 @@
 (to (view rows)
   (for each ((row rows))
     `(,(for each ((v row))
-         (let s (if (= v 0) "." ("~w" .format v)))
-         (" ~d" .format (s .center 4)))
+         `(" " ,(or (tiles .get v)
+                    (bold ("~w" .format v)))))
       "\n\n")))
+
+(let tiles
+  (map<- `((   0                                      "  . ")
+           (   2 ,(on-blue (white                     "  2 ")))
+           (   4 ,(on-red (black                      "  4 ")))
+           (   8 ,(white (on-magenta                  "  8 ")))
+           (  16 ,(black (on-cyan                     " 16 ")))
+           (  32 ,(black (on-green                    " 32 ")))
+           (  64 ,(black (on-yellow                   " 64 ")))
+           ( 128 ,(black (on-white                    "128 ")))
+           ( 256 ,(bold (blue (on-black               "256 "))))
+           ( 512 ,(bold (magenta (on-black            "512 "))))
+           (1024 ,(underlined (bold (red (on-black    "1024")))))
+           (2048 ,(underlined (bold (yellow (on-black "2048"))))))))
 
 (to (won? rows)
   (for some ((row rows))
