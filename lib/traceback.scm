@@ -1,19 +1,27 @@
 ;; An error handler that prints a (crude) traceback.
 
+;; We try to call on less of the library than usual, to work better
+;; when the system is borked.
+
 ;; Install this via 
 ;; (the-signal-handler .^= on-error-traceback)
-(to (on-error-traceback k plaint @values)
-  (print-error-traceback k plaint values))
-
-(to (print-error-traceback k plaint values)
+(to (on-error-traceback k @evil)
   (display "Error! Traceback:\n")
   (print-traceback k)
-  (display plaint)
-  (display ": ")
-  (write values)
-  (newline))
+  (call complain evil))
 
 (to (print-traceback k)
   (each! print (reverse k)))
 
-(export on-error-traceback print-error-traceback print-traceback)
+(to (complain @evil)
+  (match evil
+    (((: plaint string?) @values)
+     (display plaint)
+     (display ": ")
+     (write values))
+    (_
+     (display "Nonstandard evil: ")
+     (write evil)))
+  (newline))
+
+(export on-error-traceback complain print-traceback)
