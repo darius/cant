@@ -56,6 +56,7 @@
 (loud-use "test/test-dd")
 (loud-use "test/test-ratio")
 (loud-use "test/test-text")
+(loud-use "test/test-huffman")
 
 (loud-use "eg/compact-lambda")
 (loud-use "eg/sicp1")
