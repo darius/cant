@@ -1,4 +1,4 @@
-(import (use "eg/huffman") build-tree show-tree)
+(import (use "eg/huffman") build-tree show-tree encoder<- encode decode)
 
 (let eg1
   '((9 #\z)
@@ -28,4 +28,10 @@
     (959 #\t)
     (1231 #\e)))
 
-(show-tree (build-tree eg1))
+(let t1 (build-tree eg1))
+(show-tree t1)
+
+(let enc1 (encoder<- t1))
+(let hello (encode enc1 "hello"))
+(print hello)
+(print (string<-list (decode t1 hello)))

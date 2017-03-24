@@ -19,13 +19,38 @@
          `(,x ,@xs)
          `(,hd ,@(insert x tl))))))
 
-(to (show-tree tree)
+(to (walk tree visit)
   (begin walking ((path '()) (tree tree))
     (match tree
       ({leaf symbol}
-       (format "~d ~d\n" symbol (string<-list (reverse path))))
+       (visit symbol (reverse path)))
       ({branch on-0 on-1}
-       (walking `(#\0 ,@path) on-0)
-       (walking `(#\1 ,@path) on-1)))))
+       (walking `(0 ,@path) on-0)
+       (walking `(1 ,@path) on-1)))))
 
-(export build-tree show-tree)
+(to (show-tree tree)
+  (walk tree (given (symbol encoding)
+               (format "~d ~d\n" symbol (string<-list (each "01" encoding))))))
+
+(to (encoder<- tree)
+  (let encoder (map<-))
+  (walk tree (given (symbol encoding)
+               (encoder .set! symbol encoding)))
+  encoder)
+
+(to (encode encoder symbols)
+  (gather encoder symbols))
+
+(to (decode tree bits)
+  (begin stepping ((subtree tree) (bits bits))
+    (match subtree
+      ({leaf symbol}
+       `(,symbol ,@(if bits.empty?
+                       '()
+                       (stepping tree bits))))
+      ({branch @branches}
+       (if bits.empty?
+           '()       ;TODO: check that we're at the root?
+           (stepping (branches bits.first) bits.rest))))))
+
+(export build-tree show-tree encoder<- encode decode)
