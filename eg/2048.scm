@@ -53,10 +53,6 @@
 (to (plop board value)
   (update board (random-empty-square board) value))
 
-;; XXX this object doesn't really buy us anything
-;; we could just use the list this time
-
-
 (to (view rows)
   (for each ((row rows))
     `(,(for each ((v row))

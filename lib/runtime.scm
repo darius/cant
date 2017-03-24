@@ -325,9 +325,10 @@
                   me
                   (" " .repeat half)))))
   ({.repeat n}
-   ;; XXX what if n=0
-   (call chain (for each ((_ (range<- n)))
-                 me)))
+   (match n
+     (0 "")
+     (_ (call chain (for each ((_ (range<- n)))
+                      me)))))
   ({.format @arguments}
    (let sink (string-sink<-))
    (call format `{.to ,sink ,me ,@arguments})
