@@ -329,6 +329,11 @@
 ;    (get-global-env ,(lambda () the-global-env))
     (extract-script ,extract-script)
     (extract-datum ,extract-datum)
+    (nanosleep ,(lambda (nsec)
+                  ;; XXX untested
+                  (let* ((n (modulo nsec 1000000000))
+                         (nsec (- nsec n)))
+                    (sleep (make-time 'time-duration n (quotient nsec 1000000000))))))
 
     ;; Primitives only -- TODO seclude in their own env:
     (__hash ,hash)

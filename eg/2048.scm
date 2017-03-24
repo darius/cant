@@ -45,8 +45,7 @@
 (to (animate boards score)
   (for each! ((board boards))
     (frame board score)
-    ; XXX (sleep 0.1)
-    ))
+    (nanosleep (expt 10 8))))
 
 (to (starting-board<-)
   (plop (plop empty-board 2) 2))
