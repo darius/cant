@@ -10,6 +10,10 @@
   (print-traceback k)
   (call complain evil))
 
+(to (on-error-complain k @evil)
+  (display "Error!\n")
+  (call complain evil))
+
 (to (print-traceback k)
   (each! print (reverse k)))
 
@@ -24,4 +28,4 @@
      (write evil)))
   (newline))
 
-(export on-error-traceback complain print-traceback)
+(export on-error-traceback on-error-complain complain print-traceback)
