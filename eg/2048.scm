@@ -6,9 +6,8 @@
   render)
 
 (to (main _)
-;  (for cbreak-mode ()
-    (play (starting-board<-)))
-;)
+  (for cbreak-mode ()
+    (play (starting-board<-))))
 
 (to (play board)
   (let history (fillvector<-))
@@ -106,7 +105,7 @@
 (to (slide lo row)
   ;; TODO could probably be clearer too
   (begin checking ((i (+ lo 1)))
-    (if (= i 4)
+    (if (<= 4 i)
         `(4 ,row)
         (do (let same? (= (row (- i 1)) (row i)))
             (if (not= same? (= (row (- i 1)) 0))
@@ -143,4 +142,4 @@
 
 (export 
   main
-  play starting-board<-)
+  play starting-board<- lost? won? left right up down)
