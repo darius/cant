@@ -400,7 +400,10 @@
                            (reading (cons c cs)))))))
     (__write-char ,write-char)
     (__display ,(lambda (sink thing)
-                  (display thing sink)))              ;XXX handle non-string/char properly
+                  (cond ((or (char? thing) (string? thing) (symbol? thing) (number? thing))
+                         (display thing sink))
+                        (else
+                         (display "#<XXX non-basic display>" sink))))) ;TODO
     (__write ,(lambda (sink thing)
                 (cond ((object? thing)
                        (display "#<" sink)
