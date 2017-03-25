@@ -29,26 +29,26 @@
      (surely (string? r))
      (r .replace "\n" (chain "\n" (" " .repeat n))))))
 
-;; OK, so this is gonna suck.
 (to (pp sexpr)
   (match sexpr
-    (()
-     (text "()"))
-    (((: s symbol?) sx2 @rest)
-     (nest 1 (<> (text "(") (text s.name) (text " ")
-                 (nest (+ s.name.count 1)
-                       (<> (pp sx2)
-                           (call <> (for each ((sx rest))
-                                      (<> line (pp sx))))))
-                 (text ")"))))
-    ((first @rest)
-     (nest 1 (<> (text "(")
-                 (pp first)
-                 (call <> (for each ((arg rest))
-                            (<> line (pp arg))))
-                 (text ")"))))
+    (((: s symbol?) _ @rest)
+     (<> (text "(")
+         (nest 1 (<> (text s.name) (text " ")
+                     (nest (+ s.name.count 1)
+                           (call <> (intersperse line (each pp sexpr.rest))))))
+         (text ")")))
+    ((: list?)
+     (<> (text "(")
+         (nest 1 (call <> (intersperse line (each pp sexpr))))
+         (text ")")))
     (_ (text ("~w" .format sexpr)))))
-;; Yup, that was ugly.
+
+(to (intersperse between elements)
+  (if elements.empty?
+      elements
+      `(,elements.first
+        ,@(for gather ((x elements.rest))
+            `(,between ,x)))))
 
 (let eg1
   '(to (fact n)
