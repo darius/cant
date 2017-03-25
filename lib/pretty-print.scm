@@ -2,32 +2,28 @@
 ;; Let's start by trying out Wadler's "A prettier printer".
 
 ;; Document datatypes
-;; (@docs)
-;; {line}
-;; {text string}
-;; {nest n doc}
+;; ()
+;; (string @doc)
+;; (int @doc)
 
-(to (<> @docs) docs)
-(let nil '())
-(let line {line})
-(to (text str) {text str})
-(to (nest n doc) {nest n doc})
+(let nil       '())
+(to (text str) `(,str))
+(let line      '(0))
+(to (<> @docs) (call chain docs))
+
+(to (nest i doc)
+  (match doc
+    (()                     '())
+    (((: s string?) @rest)  `(,s ,@(nest i rest)))
+    (((: j integer?) @rest) `(,(+ i j) ,@(nest i rest)))))
 
 (to (lay-out doc)
   (match doc
-    ((@docs)
-     (let r (foldr chain (each lay-out docs) ""))
-     (surely (string? r))
-     r)
-    ({line}
-     "\n")
-    ({text str}
-     (surely (string? str))
-     str)
-    ({nest n doc1}
-     (let r (lay-out doc1))
-     (surely (string? r))
-     (r .replace "\n" (chain "\n" (" " .repeat n))))))
+    (() "")
+    (((: s string?) @rest)
+     (chain s (lay-out rest)))
+    (((: i integer?) @rest)
+     (chain "\n" (" " .repeat i) (lay-out rest)))))
 
 (to (pp sexpr)
   (match sexpr
