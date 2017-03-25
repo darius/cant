@@ -39,7 +39,7 @@
          (text ")")))
     (_ (text ("~w" .format sexpr)))))
 
-(to (intercalate between elements)
+(to (intercalate between elements)      ;TODO unify with .join in stdlib
   (if elements.empty?
       elements
       `(,elements.first
