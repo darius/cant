@@ -31,15 +31,15 @@
      (<> (text "(")
          (nest 1 (<> (text s.name) (text " ")
                      (nest (+ s.name.count 1)
-                           (call <> (intersperse line (each pp sexpr.rest))))))
+                           (call <> (intercalate line (each pp sexpr.rest))))))
          (text ")")))
     ((: list?)
      (<> (text "(")
-         (nest 1 (call <> (intersperse line (each pp sexpr))))
+         (nest 1 (call <> (intercalate line (each pp sexpr))))
          (text ")")))
     (_ (text ("~w" .format sexpr)))))
 
-(to (intersperse between elements)
+(to (intercalate between elements)
   (if elements.empty?
       elements
       `(,elements.first
