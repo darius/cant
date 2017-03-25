@@ -399,20 +399,22 @@
                                (list->string (reverse cs)))
                            (reading (cons c cs)))))))
     (__write-char ,write-char)
-    (__display ,(lambda (sink thing)
-                  (cond ((or (char? thing) (string? thing) (symbol? thing) (number? thing))
-                         (display thing sink))
+    (__display ,(lambda (sink x)
+                  (cond ((or (char? x) (string? x) (symbol? x) (number? x))
+                         (display x sink))
+                        ((boolean? x) ;just for completeness -- not sure I want this
+                         (display (if x "#yes" "#no") sink))
                         (else
                          (display "#<XXX non-basic display>" sink))))) ;TODO
-    (__write ,(lambda (sink thing)
-                (cond ((object? thing)
+    (__write ,(lambda (sink x)
+                (cond ((object? x)
                        (display "#<" sink)
-                       (let ((script (object-script thing)))
+                       (let ((script (object-script x)))
                          (cond ((script? script) (write (script-name script)))
                                ((cont-script? script) (write (cont-script-name script)))
                                (else (display "WTF"))))
                        (display ">" sink))
-                      (else (write thing sink))))) ;XXX other types specially?
+                      (else (write x sink))))) ;XXX other types specially?
 
     (__u+ ,(lambda (a b) (logand mask32 (+ a b)))) ;XXX revisit these definitions
     (__s+ ,(lambda (a b) (logand mask32 (+ a b)))) ;XXX I forget what distinction I meant to make
