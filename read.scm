@@ -24,7 +24,7 @@
   (define (symbol-terminator? c)
     (or (eof-object? c)
 	(char-whitespace? c)
-	(memv c '(#\( #\) #\; #\" #\' #\` #\, #\@ #\{ #\}))))
+	(memv c '(#\| #\( #\) #\; #\" #\' #\` #\, #\@ #\{ #\}))))
 
   (define (atomize L len)
     (let ((s (make-string len #\space)))
@@ -79,6 +79,10 @@
       (cond ((eof-object? c))
 	    ((char=? c #\newline))
 	    (else (loop))))))
+
+(define (like-port-position-or-whatever port)
+  (and (port-has-port-position? port)
+       (port-position port)))
 
 (define (optional-arg arg-list default-value)
   (cond ((null? arg-list) default-value)
@@ -152,6 +156,19 @@
       (lambda (port c)
 	(flush-input-line port)
 	(read port)))
+
+    (install-read-macro #\|
+      (lambda (port c)
+        (let ((start (like-port-position-or-whatever port)))
+          (flush-input-line port)
+          (let scanning ((end (like-port-position-or-whatever port)))
+            (skip-blanks port)
+            (cond ((equal? #\| (peek-char port))
+                   (read-char port)
+                   (flush-input-line port)
+                   (scanning (port-position port)))
+                  (else
+                   `(XXX-halp-spot ,start ,end)))))))
 
     (install-read-macro #\( read-list)
 
