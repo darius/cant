@@ -32,7 +32,7 @@
     (newline))
 
   (to (find-for-n n-gates)
-    (format "Trying ~d gates...\n" n-gates)
+    (format "Trying ~w gates...\n" n-gates)
     (let n-wires (+ n-inputs n-gates))
     (let L-input (vector<-count n-gates #no))
     (let R-input (vector<-count n-gates #no))
