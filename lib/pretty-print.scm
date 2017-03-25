@@ -7,6 +7,12 @@
 ;; {text string}
 ;; {nest n doc}
 
+(to (<> @docs) docs)
+(let nil '())
+(let line {line})
+(to (text str) {text str})
+(to (nest n doc) {nest n doc})
+
 (to (lay-out doc)
   (match doc
     ((@docs)
@@ -27,21 +33,21 @@
 (to (pp sexpr)
   (match sexpr
     (()
-     {text "()"})
+     (text "()"))
     (((: s symbol?) sx2 @rest)
-     {nest 1 `({text "("} {text ,s.name} {text " "}
-               {nest ,(+ s.name.count 1)
-                     (,(pp sx2)
-                      ,(for each ((sx rest))
-                         `({line} ,(pp sx))))}
-               {text ")"})})
+     (nest 1 (<> (text "(") (text s.name) (text " ")
+                 (nest (+ s.name.count 1)
+                       (<> (pp sx2)
+                           (call <> (for each ((sx rest))
+                                      (<> line (pp sx))))))
+                 (text ")"))))
     ((first @rest)
-     {nest 1 `({text "("}
-               ,(pp first)
-               ,(for each ((arg rest))
-                  `({line} ,(pp arg)))
-               {text ")"})})
-    (_ {text ("~w" .format sexpr)})))
+     (nest 1 (<> (text "(")
+                 (pp first)
+                 (call <> (for each ((arg rest))
+                            (<> line (pp arg))))
+                 (text ")"))))
+    (_ (text ("~w" .format sexpr)))))
 ;; Yup, that was ugly.
 
 (let eg1
