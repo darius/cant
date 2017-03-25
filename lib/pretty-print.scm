@@ -27,7 +27,7 @@
 
 (to (pp sexpr)
   (match sexpr
-    (((: s symbol?) _ @rest)
+    (((: s symbol?) _ @_)
      (<> (text "(")
          (nest 1 (<> (text s.name) (text " ")
                      (nest (+ s.name.count 1)
