@@ -2,11 +2,13 @@
 ;; Let's start by trying out Wadler's "A prettier printer".
 ;; TODO more efficient (with laziness, etc.)
 
-;; Document datatypes
-;; ()
-;; {text s doc}     was ((: string?) @doc)
-;; {line i doc}     was ((: integer?) @doc)
-;; {union doc1 doc2}  Invariant: (doc1, doc2) flatten the same, and doc2 is "no flatter"
+;; Document datatypes:
+;; ()                 Empty document
+;; {text s doc}       String s followed by doc
+;; {line i doc}       (Newline, then i spaces) or 1 space if flattened; then doc
+;; {union doc1 doc2}  Any layout described by either doc1 or doc2.
+;;                    Invariant: (doc1, doc2) are equal after flattening,
+;;                               and doc2 is "no flatter".
 
 (let nil       '())
 (to (text str) {text str '()})
