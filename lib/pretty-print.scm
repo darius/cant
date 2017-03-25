@@ -54,4 +54,6 @@
   (display (lay-out (pp eg1)))
   (newline))
 
-(export lay-out)
+(export
+  lay-out nil <> text line nest
+  pp)
