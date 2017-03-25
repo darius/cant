@@ -27,10 +27,10 @@
 
 (to (pp sexpr)
   (match sexpr
-    (((: s symbol?) _ @_)
+    (((: first symbol?) _ @_)
      (<> (text "(")
-         (nest 1 (<> (text s.name) (text " ")
-                     (nest (+ s.name.count 1)
+         (nest 1 (<> (text first.name) (text " ")
+                     (nest (+ first.name.count 1)
                            (call <> (intercalate line (each pp sexpr.rest))))))
          (text ")")))
     ((: list?)
