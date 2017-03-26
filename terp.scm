@@ -410,7 +410,7 @@
                          (display (if x "#yes" "#no") sink))
                         (else
                          (display "#<XXX non-basic display>" sink))))) ;TODO
-    (__write ,(lambda (sink x)
+    (__write ,(lambda (x sink)
                 (cond ((object? x)
                        (display "#<" sink)
                        (let ((script (object-script x)))

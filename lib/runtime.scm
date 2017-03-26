@@ -9,7 +9,7 @@
 ;; There's also a definition of map<-, needed to implement (export ...).
 
 (make-trait miranda-trait me
-  ({.selfie sink} (sink .write me))  
+  ({.selfie sink} (__write me sink))
   (message (error "Message not understood" message me)))
 
 (make-trait list-trait list
@@ -386,7 +386,6 @@
 
 (make-trait sink-primitive me
   ({.display a}   (__display me a))
-  ({.write a}     (__write me a))     ;XXX Scheme naming isn't very illuminating here
   ({.print a}     (a .selfie me))
   ({.output-string}                 ;XXX for string-sink only
    (__get-output-string me))

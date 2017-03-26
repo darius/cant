@@ -6,7 +6,7 @@
 ;; #1=<box #1>
 
 ;; XXX just a sketch, untested too
-;; TODO exclude known-to-be-acyclic types from the occurs table
+;; TODO exclude known-to-be-acyclic types from the tags table
 
 (make cycle-write
   ((thing)
@@ -15,8 +15,8 @@
    (let tags (map<-))
    (let buffer (fillvector<-))
    (let cycle-sink (cycle-sink<- tags buffer)) ;XXX better name?
-   (format "thing ~w\n" thing)
-   (cycle-sink .write thing)
+;   (format "thing ~w\n" thing)
+   (cycle-sink .print thing)
    (for each! ((writer buffer.values))
      (writer sink))))
 
@@ -30,11 +30,9 @@
 (to (cycle-sink<- tags buffer)
   (let counter (box<- 0))
   (make cycle-sink
-    ({.display str}                     ;XXX I guess? Is this the sink protocol?
-     (buffer .push! (given (sink) (sink .display str))))
-    ({.write thing}                     ;XXX  .print, .write, I'm confused
-     (format ".write ~w\n" thing))
-    ({.print thing}                     ;XXX or should this be .write?
+    ({.display atom}
+     (buffer .push! (given (sink) (sink .display atom))))
+    ({.print thing}
      (let tag (tags .get thing #no))
      (case ((not tag)
             ;; First visit.
@@ -59,6 +57,13 @@
     ))
 
 (to (main _)
-  (cycle-write '(a b c)))
+  (cp '(a b c))
+  (let a (box<- 42))
+  (cp a)
+)
+
+(to (cp x)
+  (cycle-write x)
+  (newline))
 
 (export cycle-write)
