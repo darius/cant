@@ -6,7 +6,7 @@
 ;; #1=<box #1>
 
 ;; XXX just a sketch, untested too
-;; TODO exclude known-to-be-acyclic types from the tags table
+;; TODO exclude known-to-be-acyclic types from the tags map
 
 (make cycle-write
   ((thing)
@@ -15,14 +15,13 @@
    (let tags (map<-))
    (let buffer (fillvector<-))
    (let cycle-sink (cycle-sink<- tags buffer)) ;XXX better name?
-;   (format "thing ~w\n" thing)
    (cycle-sink .print thing)
    (for each! ((writer buffer.values))
      (writer sink))))
 
-;; The tags table keeps a tag for each object the cycle sink
-;; visits. The tag is 0 after the first visit; then, on the second and
-;; thereafter, a positive integer identifying the object.
+;; The tags map keeps a tag for each object the cycle sink visits. The
+;; tag is 0 after the first visit; then, on the second and thereafter,
+;; a positive integer identifying the object.
 
 ;; The buffer accumulates a sequence of procedures to send the final
 ;; formatted text to the destination sink.
@@ -31,7 +30,8 @@
   (let counter (box<- 0))
   (make cycle-sink
     ({.display atom}
-     (buffer .push! (given (sink) (sink .display atom))))
+     (buffer .push! (given (sink)
+                      (sink .display atom))))
     ({.print thing}
      (let tag (tags .get thing #no))
      (case ((not tag)
@@ -52,15 +52,15 @@
                            ;; Thereafter.
                            tag)))
             (buffer .push! (given (sink)
-                             (format .to sink "#~w" id))))))
-    ;; XXX .print?
-    ))
+                             (format .to sink "#~w" id))))))))
 
 (to (main _)
   (cp '(a b c))
-  (let a (box<- 42))
-  (cp a)
-)
+
+  (let box (box<- 42))
+  (let root `(a ,box c))
+  (box .^= root)
+  (cp root))
 
 (to (cp x)
   (cycle-write x)
