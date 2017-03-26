@@ -28,7 +28,7 @@
 
 ;; TODO come back to this:
 ;; Maybe a nicer accessor would look like:
-(to (access {queue h t})
+(to (peek {queue h t})
   (case ((and h.empty? t.empty?)
          {empty})
         (h.empty?
@@ -40,4 +40,4 @@
 (export
   empty empty?
   push extend
-  dequeue access)
+  dequeue peek)
