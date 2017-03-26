@@ -26,6 +26,9 @@
         (parse-make '_ clauses))
        (('do e1)
         (parse-exp e1))
+       (('do e1 ('XXX-halp-spot start end) . es)
+        (term<- 'do (parse-exp `(__halp-log ,start ,end ,e1))  ;XXX hygiene
+                (parse-exp `(do ,@es))))
        (('do e1 . es)
         (term<- 'do (parse-exp e1) (parse-exp `(do ,@es))))
        (('do)

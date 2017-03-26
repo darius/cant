@@ -329,6 +329,10 @@
 ;    (get-global-env ,(lambda () the-global-env))
     (extract-script ,extract-script)
     (extract-datum ,extract-datum)
+    (__halp-log ,(lambda (start end result)
+                   (format #t "Halp ~w..~w: ~w\n" start end result) ;TODO actual format
+                   result))
+
     (nanosleep ,(lambda (nsec)
                   ;; XXX untested
                   (let* ((n (modulo nsec 1000000000))
