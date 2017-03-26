@@ -15,6 +15,7 @@
    (let tags (map<-))
    (let buffer (fillvector<-))
    (let cycle-sink (cycle-sink<- tags buffer)) ;XXX better name?
+   (format "thing ~w\n" thing)
    (cycle-sink .write thing)
    (for each! ((writer buffer.values))
      (writer sink))))
@@ -30,8 +31,10 @@
   (let counter (box<- 0))
   (make cycle-sink
     ({.display str}                     ;XXX I guess? Is this the sink protocol?
-     (buffer .push! (given (sink) (sink .display str)))
-    ({.write thing}                     ;XXX or should this be .print?
+     (buffer .push! (given (sink) (sink .display str))))
+    ({.write thing}                     ;XXX  .print, .write, I'm confused
+     (format ".write ~w\n" thing))
+    ({.print thing}                     ;XXX or should this be .write?
      (let tag (tags .get thing #no))
      (case ((not tag)
             ;; First visit.
@@ -53,6 +56,9 @@
             (buffer .push! (given (sink)
                              (format .to sink "#~w" id))))))
     ;; XXX .print?
-    )))
+    ))
+
+(to (main _)
+  (cycle-write '(a b c)))
 
 (export cycle-write)
