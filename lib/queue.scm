@@ -33,11 +33,11 @@
          {empty})
         (h.empty?
          (let seq (reverse t))
-         {nonempty seq.first {queue seq.rest '()}))
+         {nonempty seq.first {queue seq.rest '()}})
         (else
-         {nonempty h.first {queue h.rest t}))))
+         {nonempty h.first {queue h.rest t}})))
 
 (export
   empty empty?
   push extend
-  dequeue)
+  dequeue access)
