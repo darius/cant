@@ -5,7 +5,6 @@
 ;; > (cycle-write a)
 ;; #1=<box #1>
 
-;; XXX just a sketch, untested too
 ;; TODO exclude known-to-be-acyclic types from the tags map
 
 (make cycle-write
