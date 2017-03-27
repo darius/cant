@@ -110,29 +110,25 @@
         (else
          (scene .paint cursor-seen? wanted-state))))
 
-(make cursor
-  ({.paint cursor-seen? _}
-   (display cursor-pos-save)
-   (cursor-seen? .^= #yes)))
+(to (cursor .paint cursor-seen? _)
+  (display cursor-pos-save)
+  (cursor-seen? .^= #yes))
 
 (to (foreground-color<- code)
   (to (foreground-color subscene)
-    (make fg-painter
-      ({.paint cursor-seen? wanted-state}
-       (paint cursor-seen? (wanted-state .set-fg code) subscene)))))
+    (to (fg-painter .paint cursor-seen? wanted-state)
+      (paint cursor-seen? (wanted-state .set-fg code) subscene))))
 
 (to (background-color<- code)
   (to (background-color subscene)
-    (make bg-painter
-      ({.paint cursor-seen? wanted-state}
-       (paint cursor-seen? (wanted-state .set-bg code) subscene)))))
+    (to (bg-painter .paint cursor-seen? wanted-state)
+      (paint cursor-seen? (wanted-state .set-bg code) subscene))))
 
 (to (style<- code)
   (let mask (1 .<< code))
   (to (style subscene)
-    (make style-painter
-      ({.paint cursor-seen? wanted-state}
-       (paint cursor-seen? (wanted-state .add-style mask) subscene)))))
+    (to (style-painter .paint cursor-seen? wanted-state)
+      (paint cursor-seen? (wanted-state .add-style mask) subscene))))
 
 (let (black red green yellow blue magenta cyan white)
   (each foreground-color<- (range<- 30 38)))
