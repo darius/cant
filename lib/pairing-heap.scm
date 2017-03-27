@@ -18,7 +18,6 @@
 
 ;; Ported from my old Scheme code.
 
-;; XXX test it
 ;; XXX use (compare x y)
 ;; TODO compatible interface with fifo queues?
 
