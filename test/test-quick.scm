@@ -60,6 +60,7 @@
 (loud-use "test/test-pairing-heap")
 (loud-use "test/test-2048")
 (loud-use "test/test-kernel")
+(loud-use "test/test-cycle-write")
 
 (loud-use "eg/compact-lambda")
 (loud-use "eg/sicp1")

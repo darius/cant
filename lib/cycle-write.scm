@@ -54,16 +54,4 @@
             (buffer .push! (given (sink)
                              (format .to sink "#~w" id))))))))
 
-(to (main _)
-  (cp '(a b c))
-
-  (let box (box<- 42))
-  (let root `(a ,box c))
-  (box .^= root)
-  (cp root))
-
-(to (cp x)
-  (cycle-write x)
-  (newline))
-
 (export cycle-write)
