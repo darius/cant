@@ -3,8 +3,8 @@
 ;; In this game you live in a 2-d grid world containing crates, target
 ;; squares, and impassable walls. You need to push all the crates onto
 ;; targets. You can only push one crate at once. These simple rules
-;; yield an elegant game with scope for a tremendous variety of
-;; puzzles, from easy to AI-complete.
+;; yield an elegant game with scope for a great variety of puzzles,
+;; from easy to AI-complete.
 
 ;; A square with     is this symbol     or this symbol, when at a target
 ;; -------------     --------------     --------------------------------
