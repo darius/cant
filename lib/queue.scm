@@ -16,18 +16,6 @@
 (to (extend {queue h t} elements)
   {queue h `(,@(reverse elements) ,@t)}) ;TODO chain-reverse
 
-;; Return two values, `(,head ,rest-of-queue).
-(to (dequeue {queue h t})               ;TODO rename to pop-front or something?
-  (case (h.empty?
-         (when t.empty?
-           (error "Dequeue of empty queue"))
-         (let seq (reverse t))
-         `(,seq.first {queue ,seq.rest ()}))
-        (else
-         `(,h.first {queue ,h.rest ,t}))))
-
-;; TODO come back to this:
-;; Maybe a nicer accessor would look like:
 (to (peek {queue h t})
   (case ((and h.empty? t.empty?)
          {empty})
@@ -40,4 +28,4 @@
 (export
   empty empty?
   push extend
-  dequeue peek)
+  peek)

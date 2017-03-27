@@ -8,7 +8,7 @@
 (import (use "lib/queue")
   empty empty?
   push extend
-  dequeue)
+  peek)
 
 (let ratio-m (use "lib/ratio"))
 (import ratio-m ratio<-)
@@ -25,8 +25,8 @@
   (begin solving ((inconsistent? #no) ; Noticed a contradiction yet?
                   (progress? #no)     ; Any progress since the last assessment?
                   (agenda (push (extend empty equations) 'assessment)))
-    (match (dequeue agenda)
-      ((task pending)
+    (match (peek agenda)
+      ({nonempty task pending}
        (match task
          ('assessment
           (if progress?
