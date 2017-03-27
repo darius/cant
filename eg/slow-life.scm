@@ -24,6 +24,16 @@
         (running grid.next (+ step 1))))
     (display cursor-show)))
 
+(to (smoke-test)
+  (let grid (grid<- 8 8))
+  (paint grid 3 3 '(" **"
+                    "** "
+                    " * "))
+  (show grid)
+  (let gen1 grid.next)
+  (show gen1)
+  (show gen1.next))
+
 (to (paint grid top left lines)
   (for each! (((i line) lines.items))
     (for each! (((j ch) line.items))
@@ -98,4 +108,4 @@
      new)
     ))
 
-(export grid<- paint show)
+(export grid<- paint show smoke-test)
