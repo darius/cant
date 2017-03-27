@@ -20,50 +20,49 @@
 
 ;; XXX test it
 ;; XXX use (compare x y)
-;; TODO wrap in an object, holding the comparison fn?
 ;; TODO compatible interface with fifo queues?
 
-;; The priority queue with no elements.
-(let empty-pq {pq})
+(to (priority-queues<- <=?)
 
-;; True iff PQ is empty.
-(to (pq-empty? pq)
-  (= pq empty-pq))
+  ;; The priority queue with no elements.
+  (let empty-pq {pq})
 
-;; Return the minimum element of PQ.
-;; Signals an error if PQ is empty.
-(to ((pq-min <=?) pq)
-  (match pq
-    ({pq}        (error "pq-min of an empty pq"))
-    ({pq elem _} elem)))
+  ;; True iff PQ is empty.
+  (to (pq-empty? pq)
+    (= pq empty-pq))
 
-;; Return a priority queue with a single element, ELEM.
-(to ((unit-pq <=?) elem)
-  {pq elem '()})
+  ;; Return the minimum element of PQ.
+  ;; Signals an error if PQ is empty.
+  (to (pq-min pq)
+    (match pq
+      ({pq}        (error "pq-min of an empty pq"))
+      ({pq elem _} elem)))
 
-;; Return a priority queue combining the elements of PQ1 and PQ2.
-(to ((pq-merge <=?) pq1 pq2)
-  (case ((pq-empty? pq1) pq2)
-        ((pq-empty? pq2) pq1)
-        (else (let {pq min1 rest1} pq1)
-              (let {pq min2 rest2} pq2)
-              (if (<=? min1 min2)
-                  {pq min1 `(,pq2 ,@rest1)}
-                  {pq min2 `(,pq1 ,@rest2)}))))
+  ;; Return a priority queue with a single element, ELEM.
+  (to (unit-pq elem)
+    {pq elem '()})
 
-;; Return PQ with ELEM inserted.
-(to ((pq-insert <=?) pq elem)
-  (match pq
-    ({pq}            {pq elem '()})
-    ({pq min1 rest1} (if (<=? min1 elem)
-                         {pq min1 `({pq ,elem ()} ,@rest1)}
-                         {pq elem `(,pq)}))))
+  ;; Return a priority queue combining the elements of PQ1 and PQ2.
+  (to (pq-merge pq1 pq2)
+    (case ((pq-empty? pq1) pq2)
+          ((pq-empty? pq2) pq1)
+          (else (let {pq min1 rest1} pq1)
+                (let {pq min2 rest2} pq2)
+                (if (<=? min1 min2)
+                    {pq min1 `(,pq2 ,@rest1)}
+                    {pq min2 `(,pq1 ,@rest2)}))))
 
-;; Return PQ with its minimum element removed.
-;; Signals an error if PQ is empty.
-(to (pq-remove-min <=?)
-  (let merge (pq-merge <=?))
-  (given (pq)
+  ;; Return PQ with ELEM inserted.
+  (to (pq-insert pq elem)
+    (match pq
+      ({pq}            {pq elem '()})
+      ({pq min1 rest1} (if (<=? min1 elem)
+                           {pq min1 `({pq ,elem ()} ,@rest1)}
+                           {pq elem `(,pq)}))))
+
+  ;; Return PQ with its minimum element removed.
+  ;; Signals an error if PQ is empty.
+  (to (pq-remove-min pq)
     (match pq
       ({pq} (error "pq-remove-min of empty-pq"))
       ({pq _ pqs}
@@ -74,11 +73,14 @@
            ((pq1 pq2 @rest)
             (let {pq min1 rest1} pq1)
             (let {pq min2 rest2} pq2)
-            (merge (if (<=? min1 min2)
-                       {pq min1 `(,pq2 ,@rest1)}
-                       {pq min2 `(,pq1 ,@rest2)})
-                   (merging rest)))))))))
+            (pq-merge (if (<=? min1 min2)
+                          {pq min1 `(,pq2 ,@rest1)}
+                          {pq min2 `(,pq1 ,@rest2)})
+                      (merging rest))))))))
 
-(export
-  pq-empty? pq-min
-  empty-pq unit-pq pq-insert pq-remove-min)
+  (export
+    pq-empty? pq-min
+    empty-pq unit-pq pq-insert pq-remove-min))
+
+(export 
+  priority-queues<-)

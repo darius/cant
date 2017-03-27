@@ -1,12 +1,10 @@
 ;; Ported from my old Scheme code.
 
-(import (use "lib/pairing-heap")
+(import (use "lib/pairing-heap") priority-queues<-)
+
+(import (priority-queues<- <=)
   pq-empty? pq-min
   empty-pq unit-pq pq-insert pq-remove-min)
-
-(let int-min        (pq-min <=))
-(let int-insert     (pq-insert <=))
-(let int-remove-min (pq-remove-min <=))
 
 (to (grow-and-shrink numbers empty empty? get-min really-insert really-remove-min)
 
@@ -49,7 +47,7 @@
 
   (let history-1
     (grow-and-shrink numbers 
-                     empty-pq pq-empty? int-min int-insert int-remove-min))
+                     empty-pq pq-empty? pq-min pq-insert pq-remove-min))
   (let history-2
     (grow-and-shrink numbers 
                      '() null? '.first insert-sorted '.rest))
