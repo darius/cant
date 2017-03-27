@@ -17,7 +17,7 @@
           (expand token probability))))
 
 (let grammar (grammar<- "
-phrase: (word | :anyone)+.
+phrase: (word | :anyone)*.
 word:   :letter+ {'!'}? :join.
 "))
 (let parser ((grammar (map<-)) "phrase"))
@@ -54,3 +54,5 @@ word:   :letter+ {'!'}? :join.
      ("gnocchi" "garlic noodles over crisp cheese, heated immediately")
      ("garlic" "green and red lasagne in cheese")
      )))
+
+(export expand-text expand)
