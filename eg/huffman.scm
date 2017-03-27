@@ -1,23 +1,24 @@
 ;; Huffman coding
 
-(to (build-tree freqs)
-  (let leaves (sort (for each (((frequency symbol) freqs))
-                      `(,frequency {leaf ,symbol}))))
-  ;; TODO use pairing-heap
-  (begin building ((trees leaves))
-    (match trees
-      (((_ t1)) t1)
-      (((f1 t1) (f2 t2) @rest)
-       (building (insert `(,(+ f1 f2) {branch ,t1 ,t2})
-                         rest))))))
+(import (use "lib/pairing-heap") priority-queues<-)
 
-(to (insert x xs)
-  (match xs
-    (() `(,x))
-    ((hd @tl)
-     (if (<= x hd)
-         `(,x ,@xs)
-         `(,hd ,@(insert x tl))))))
+(import (priority-queues<- <=)
+  pq-empty? pq-min
+  empty-pq unit-pq pq-merge pq-insert pq-remove-min)
+
+(to (build-tree freqs)
+  (let leaves (for each (((frequency symbol) freqs))
+                `(,frequency {leaf ,symbol})))
+  ;; TODO? define pq-merge-many or something
+  (begin building ((pq (foldr pq-merge (each unit-pq leaves) empty-pq)))
+    (let (f1 t1) (pq-min pq))
+    (let rest (pq-remove-min pq))
+    (if (pq-empty? rest)
+        t1
+        (do (let (f2 t2) (pq-min rest))
+            (let combo `(,(+ f1 f2) {branch ,t1 ,t2}))
+            ;; TODO? define pq-replace-min
+            (building (pq-insert (pq-remove-min rest) combo))))))
 
 (to (walk tree visit)
   (begin walking ((path '()) (tree tree))
