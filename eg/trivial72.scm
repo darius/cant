@@ -200,3 +200,5 @@
 (to (lookup r name)
   (let (_ value) (assq name r))
   value)
+
+(export main)
