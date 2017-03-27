@@ -58,6 +58,7 @@
 (loud-use "test/test-text")
 (loud-use "test/test-huffman")
 (loud-use "test/test-pairing-heap")
+(loud-use "test/test-2048")
 
 (loud-use "eg/compact-lambda")
 (loud-use "eg/sicp1")
