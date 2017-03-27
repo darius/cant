@@ -52,7 +52,7 @@
                      empty-pq pq-empty? int-min int-insert int-remove-min))
   (let history-2 
     (grow-and-shrink numbers 
-                     '() null? __car insert-sorted __cdr)) ;XXX
+                     '() null? '.first insert-sorted '.rest))
   (if (= history-1 history-2)
       history-1
       (error "Test failed" `(,history-1 ,history-2))))
