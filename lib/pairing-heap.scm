@@ -80,7 +80,7 @@
 
   (export
     pq-empty? pq-min
-    empty-pq unit-pq pq-insert pq-remove-min))
+    empty-pq unit-pq pq-merge pq-insert pq-remove-min))
 
 (export 
   priority-queues<-)
