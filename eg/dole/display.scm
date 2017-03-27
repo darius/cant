@@ -1,6 +1,6 @@
 ;; Update what's shown on the screen.
 
-(import (use "later/ansi-term") 
+(import (use "lib/ansi-term") 
   cursor-hide cursor-show home clear-to-right goto)
 (import (use "eg/dole/console")
   logs)

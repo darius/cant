@@ -2,7 +2,7 @@
 
 (import (use "lib/sturm")
   cbreak-mode)
-(import (use "later/ansi-term")
+(import (use "lib/ansi-term")
   home clear-screen cursor-show cursor-hide)
 
 (to (main (prog @args))

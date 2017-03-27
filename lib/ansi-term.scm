@@ -1,5 +1,5 @@
 ;; ANSI terminal control
-;; XXX untested
+;; TODO factor wrt sturm
 
 (let prefix (string<- (char<- 27) #\[)) ;TODO more string escapes
 
