@@ -55,4 +55,4 @@ word:   :letter+ {'!'}? :join.
      ("garlic" "green and red lasagne in cheese")
      )))
 
-(export expand-text expand)
+(export main expand-text expand)
