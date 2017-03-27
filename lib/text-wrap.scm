@@ -15,17 +15,17 @@
 (to (parse-tokens text)
   (if text.empty?
       '()
-      (do (match text.first
-            (#\newline `({break} ,@(parse-tokens text.rest)))
-            (#\space   `({space} ,@(parse-tokens text.rest)))
-            ((: '.whitespace?)
-             (error "I don't know how to fill whitespace like" ch))
-            (_ (let word (fillvector<- text.first))
-               (begin eating ((text text.rest))
-                 (if (or text.empty? text.first.whitespace?)
-                     `({word ,(flush word)} ,@(parse-tokens text))
-                     (do (word .push! text.first)
-                         (eating text.rest)))))))))
+      (match text.first
+        (#\newline `({break} ,@(parse-tokens text.rest)))
+        (#\space   `({space} ,@(parse-tokens text.rest)))
+        ((: '.whitespace?)
+         (error "I don't know how to fill whitespace like" ch))
+        (_ (let word (fillvector<- text.first))
+           (begin eating ((text text.rest))
+             (if (or text.empty? text.first.whitespace?)
+                 `({word ,(flush word)} ,@(parse-tokens text))
+                 (do (word .push! text.first)
+                     (eating text.rest))))))))
 
 (to (wrap-into line tokens width)
   (begin scanning ((spaces 0) (tokens tokens))
@@ -47,7 +47,7 @@
                        (wrap-into new-line tokens.rest width)))))))))
 
 
-(to (main (_ width-str @words))         ;just for a quick test
+(to (main (_ width-str @words))
   (let lines (wrap (" " .join words)
                    (number<-string width-str)))
   (each! print lines))
