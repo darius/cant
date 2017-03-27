@@ -34,12 +34,11 @@
       ((_) "eg/microban")
       ((_ fname) fname)
       (_ (error ("Usage: ~d [filename]" .format (args 0))))))
-  (call start (load-collection filename)))
+  (call start (with-input-file read-collection filename)))
 
-(to (load-collection filename)
-  (let (name levels-str)
-    (for with-input-file ((f filename))
-      `(,f.read-line ,f.read-all)))
+(to (read-collection source)
+  (let name source.read-line)
+  (let levels-str source.read-all)
   (let grids (for each ((initial-config (levels-str .split "\n\n")))
                (sokoban-grid<- (parse initial-config))))
   `(,grids ,name))
@@ -147,6 +146,6 @@ Level ~w ~d Move ~w")
      (move! "iI" p (+ p d)))))
 
 (export
-  main load-collection
+  main read-collection
   start play
   sokoban-grid<- parse)

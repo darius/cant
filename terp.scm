@@ -323,6 +323,7 @@
     (string<-number ,number->string)
     (list<-string ,string->list)
     (read ,squeam-read)
+    (string-source<- ,open-input-string)
     (string-sink<- ,open-output-string)
     (__get-output-string ,get-output-string)
     (open-subprocess ,process)
