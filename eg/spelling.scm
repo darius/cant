@@ -56,7 +56,6 @@
   string.lowercase.split)
 
 (let NWORDS
-  (train (words<-string (for with-input-file ((source "eg/spelling.train.text"))
-                          source.read-all))))
+  (train (words<-string (with-input-file '.read-all "eg/spelling.train.text"))))
 
 (each! (compose print correct) (words<-string "a lowsy spelur zzz"))
