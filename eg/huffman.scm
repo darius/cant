@@ -11,6 +11,7 @@
                 `(,frequency {leaf ,symbol})))
   ;; TODO? define pq-merge-many or something
   (begin building ((pq (foldr pq-merge (each unit-pq leaves) empty-pq)))
+    ;; TODO? define pq-dequeue or something
     (let (f1 t1) (pq-min pq))
     (let rest (pq-remove-min pq))
     (if (pq-empty? rest)
