@@ -7,21 +7,33 @@
   (display (call pretty-print `(,(doc<-sx sexpr) ,@opt-width)))
   (newline))
 
-(to (doc<-sx sexpr)
-  (match sexpr
+(to (doc<-sx x)
+  (match x
+    (('quote y)
+     (group (<> (text "'") (doc<-sx y))))
+    (('quasiquote y)
+     (group (<> (text "`") (doc<-sx y))))
+    (('unquote y)
+     (group (<> (text ",") (doc<-sx y))))
+    (('unquote-splicing y)
+     (group (<> (text ",@") (doc<-sx y))))
     (((: first symbol?) _ @_)
      (group
-      (<> (text "(")
-          (nest 1 (<> (text first.name) (text " ")
-                      (nest (+ first.name.count 1)
-                            (call <> (intercalate line (each doc<-sx
-                                                             sexpr.rest))))))
-          (text ")"))))
+      (<> (text "(") (nest 1 (doc<-tagged first.name x.rest)) (text ")"))))
     ((: list?)
-     (group (<> (text "(")
-                (nest 1 (call <> (intercalate line (each doc<-sx sexpr))))
-                (text ")"))))
-    (_ (text ("~w" .format sexpr)))))
+     (group (<> (text "(") (nest 1 (docs<- x)) (text ")"))))
+    ((: term?)
+     (group (<> (text "{")
+                (nest 1 (doc<-tagged x.tag.name x.arguments))
+                (text "}"))))
+    (_ (text ("~w" .format x)))))
+
+(to (doc<-tagged tag-name arguments)
+  (<> (text tag-name) (text " ")
+      (nest (+ tag-name.count 1) (docs<- arguments))))
+
+(to (docs<- sexprs)
+  (call <> (intercalate line (each doc<-sx sexprs))))
 
 (export
   pp doc<-sx)
