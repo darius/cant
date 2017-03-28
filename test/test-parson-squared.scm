@@ -1,4 +1,4 @@
-(import (use "lib/parson")         parse)
+(import (use "lib/parson-core")         parse)
 (import (use "lib/parson-squared") grammar<-)
 
 (to (try grammar-text start-symbol subs inputs)

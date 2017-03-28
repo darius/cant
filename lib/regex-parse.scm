@@ -1,6 +1,6 @@
 ;; Parse regular expressions
 
-(import (use "lib/parson") feed push parse)
+(import (use "lib/parson-core") feed push parse)
 (import (use "lib/parson-squared") grammar<-)
 (import (use "lib/regex-match")
   regex-match

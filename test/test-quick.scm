@@ -29,7 +29,7 @@
   (use filename))
 
 (loud-use "lib/memoize")
-(loud-use "lib/parson")
+(loud-use "lib/parson-core")
 (loud-use "lib/regex-match")
 (loud-use "lib/parse")
 (loud-use "lib/unify")

@@ -3,7 +3,7 @@
 ;; N.B. expressing probabilities as a fraction of 1000, since we don't yet
 ;; do floating point numbers.
 
-(import (use "lib/parson")         parse)
+(import (use "lib/parson-core")         parse)
 (import (use "lib/parson-squared") grammar<-)
 (import (use "lib/text-wrap")      fill)
 
