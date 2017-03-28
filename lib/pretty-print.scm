@@ -28,6 +28,8 @@
                 (text "}"))))
     ((: vector?)
      (group (<> (text "#(") (nest 2 (docs<- x)) (text ")"))))
+    ((: box?)
+     (group (<> (text "#<box ") (nest 6 (doc<-sx x.^)) (text ">"))))
     (_ (text ("~w" .format x)))))
 
 (to (doc<-tagged tag-name arguments)
