@@ -26,6 +26,8 @@
      (group (<> (text "{")
                 (nest 1 (doc<-tagged x.tag.name x.arguments))
                 (text "}"))))
+    ((: vector?)
+     (group (<> (text "#(") (nest 2 (docs<- x)) (text ")"))))
     (_ (text ("~w" .format x)))))
 
 (to (doc<-tagged tag-name arguments)

@@ -17,3 +17,5 @@
           (walking `(1 ,@path) on-1))))))
 
 (pp eg2 50)
+
+;(pp '#(a b) 10)
