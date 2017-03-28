@@ -18,9 +18,14 @@
 (to (<>2 y z)
   (match y
     (()          z)
-    ({text s x}  {text s (<>2 x z)})
+    ({text s x}  (text<> s (<>2 x z)))
     ({line i x}  {line i (<>2 x z)})
     ({union w x} {union (<>2 w z) (<>2 x z)})))
+
+(to (text<> s x) ; Just a performance hack for {text s x}; maybe not worthwhile.
+  (match x
+    ({text t y} {text (chain s t) y})
+    (_          {text s x})))
 
 (to (nest i doc)
   (match doc
@@ -39,8 +44,8 @@
 (to (flatten doc)
   (match doc
     (()          '())
-    ({text s x}  {text s (flatten x)})
-    ({line _ x}  {text " " (flatten x)})
+    ({text s x}  (text<> s (flatten x)))
+    ({line _ x}  (text<> " " (flatten x)))
     ({union x _} (flatten x))))
 
 ;; Formatting
