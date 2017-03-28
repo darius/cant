@@ -101,32 +101,32 @@
 ;; Try to slide the board leftward; return a list of boards to
 ;; animate the move -- an empty list if there's no move leftward.
 (to (left rows)
-  ;; TODO could probably be simpler
   (begin sliding ((states (for each ((row rows))
-                            (slide 0 row))))
-    (if (for every (((lo _) states))
+                            (slide `(0 ,row)))))
+    (let (lows board) (transpose states))
+    (if (for every ((lo lows))
           (<= 4 lo))
         '()
-        (cons (for each (((_ row) states))
-                row)
-              (sliding (for each (((lo row) states))
-                         (slide lo row)))))))
+        `(,board ,@(sliding (each slide states))))))
 
-;; Slide row one place leftward, leaving fixed any places left of lo.
-;; Advance lo past merging or completion.
-(to (slide lo row)
-  ;; TODO could probably be clearer too
-  (begin checking ((i (+ lo 1)))
-    (if (<= 4 i)
-        `(4 ,row)
-        (do (let same? (= (row (- i 1)) (row i)))
-            (if (not= same? (= (row (- i 1)) 0))
-                `(,(if same? i lo)
-                  (,@(row .slice 0 (- i 1))
-                   ,(+ (row (- i 1)) (row i))
-                   ,@(row .slice (+ i 1))
-                   0))
-                (checking (+ i 1)))))))
+;; Slide row one place leftward, leaving fixed any places left of the
+;; position at `low`. Advance low past merging or completion. Return
+;; the updated (low row) state.
+(to (slide (low row))
+  (begin checking ((i low))
+    (let j (+ i 1))
+    (if (<= 4 j)
+        `(4 ,row) ; There was no space or coincidence to slide into.
+        (do (let same? (= (row i) (row j)))
+            (case ((= same? (= (row i) 0))
+                   (checking j))
+                  (else
+                   (let slid ; Found one, let's slide.
+                     `(,@(row .slice 0 i)
+                       ,(+ (row i) (row j))
+                       ,@(row .slice (+ j 1))
+                       0))
+                   `(,(if same? j low) ,slid)))))))
 
 (to (right rows) (each flip-h (left (flip-h rows))))
 (to (up rows)    (each flip-d (left (flip-d rows))))

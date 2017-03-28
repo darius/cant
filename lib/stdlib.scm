@@ -138,6 +138,10 @@
           (else `((,xs.first ,ys.first)
                   ,@(zipping xs.rest ys.rest))))))
 
+(to (zip-with fn xs ys)
+  (for each (((x y) (zip xs ys)))
+    (fn x y)))
+
 (to (cons/lazy x thunk)
   (make lazy-list {extending list-trait}
     ({.empty?} #no)
