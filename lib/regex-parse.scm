@@ -1,7 +1,7 @@
 ;; Parse regular expressions
 
 (import (use "lib/parson-core") feed push parse)
-(import (use "lib/parson-squared") grammar<-)
+(import (use "lib/parson") grammar<-)
 (import (use "lib/regex-match")
   regex-match
   empty literal either then star

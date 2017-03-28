@@ -4,7 +4,7 @@
 ;; do floating point numbers.
 
 (import (use "lib/parson-core")         parse)
-(import (use "lib/parson-squared") grammar<-)
+(import (use "lib/parson") grammar<-)
 (import (use "lib/text-wrap")      fill)
 
 (to (main (_ @words))
