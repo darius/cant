@@ -24,7 +24,9 @@
      (group (<> (text "(") (nest 1 (docs<- x)) (text ")"))))
     ((: term?)
      (group (<> (text "{")
-                (nest 1 (doc<-tagged x.tag.name x.arguments))
+                (if x.arguments.empty?
+                    (text x.tag.name)
+                    (nest 1 (doc<-tagged x.tag.name x.arguments)))
                 (text "}"))))
     ((: vector?)
      (group (<> (text "#(") (nest 2 (docs<- x)) (text ")"))))
