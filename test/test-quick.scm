@@ -64,6 +64,7 @@
 (loud-use "test/test-sokoban")
 (loud-use "test/test-pretty-print")
 (loud-use "test/test-bag")
+(loud-use "test/test-text-wrap")
 
 (loud-use "eg/compact-lambda")
 (loud-use "eg/sicp1")
