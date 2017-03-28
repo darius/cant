@@ -23,14 +23,5 @@
                 (text ")"))))
     (_ (text ("~w" .format sexpr)))))
 
-;; Smoke test
-
-(let eg1
-  '(to (fact n)
-     (if (= n 0) 1 (* n (fact (- n 1))))))
-
-(to (main _)
-  (pp eg1 30))
-
 (export
   pp doc<-sx)
