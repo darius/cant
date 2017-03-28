@@ -142,6 +142,13 @@
   (for each (((x y) (zip xs ys)))
     (fn x y)))
 
+(to (intercalate between elements)      ;TODO unify with .join
+  (if elements.empty?
+      elements
+      `(,elements.first
+        ,@(for gather ((x elements.rest)) ;TODO more efficient
+            `(,between ,x)))))
+
 (to (cons/lazy x thunk)
   (make lazy-list {extending list-trait}
     ({.empty?} #no)

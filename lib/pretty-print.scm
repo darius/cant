@@ -93,13 +93,6 @@
                 (text ")"))))
     (_ (text ("~w" .format sexpr)))))
 
-(to (intercalate between elements)      ;TODO unify with .join in stdlib
-  (if elements.empty?
-      elements
-      `(,elements.first
-        ,@(for gather ((x elements.rest)) ;TODO more efficient
-            `(,between ,x)))))
-
 ;; Smoke test
 
 (let eg1
