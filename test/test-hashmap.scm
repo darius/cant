@@ -22,7 +22,7 @@
 
  ;; TODO more tests
 
- (to (random-tests n-trials)
+ (to (random-tests n-trials)            ;TODO use squickcheck
    (for each! ((_ (range<- n-trials)))
      (exercise-em (for each ((value (range<- 50)))
                     (let key (random-integer 16))
@@ -42,7 +42,7 @@
                      (#no #no)
                      ((k v) v)))
         (surely (= m-val a-val))
-        (print `(,key ,m-val))
+;        (print `(,key ,m-val))
         )
        (value
         (m .set! key value)
@@ -50,5 +50,5 @@
         ;; TODO test equivalence here
         ))))
 
- ;;(random-tests 400)
+ (random-tests 18)
  )
