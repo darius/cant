@@ -385,7 +385,7 @@
   )
 
 (make-trait sink-primitive me
-  ({.display a}   (__display me a))
+  ({.display a}   (__display a me))
   ({.print a}     (a .selfie me))
   ({.output-string}                 ;XXX for string-sink only
    (__get-output-string me))

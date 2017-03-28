@@ -264,6 +264,40 @@
     (vector-set! dest (+ d i)
                  (vector-ref source (+ s i)))))
 
+(define (prim-display x . opt-sink)
+  (let ((sink (cond ((null? opt-sink) (current-output-port))
+                    ((null? (cdr opt-sink)) (car opt-sink))
+                    (else (error 'prim-display "Too many arguments" `(,x ,@opt-sink))))))
+    (cond ((or (char? x) (string? x) (symbol? x) (number? x))
+           (display x sink))
+          ((boolean? x) ;just for completeness -- not sure I want this
+           (display (if x "#yes" "#no") sink))
+          (else
+           (display "#<XXX non-basic display>" sink))))) ;TODO
+
+(define (prim-write x sink)
+  (let ((s (depict x)))
+    (cond ((output-port? sink)
+           (display s sink))
+          (else
+           ;;XXX shouldn't call Squeam from a Scheme primitive
+           (call sink (term<- '.display s) halt-cont)))))
+
+(define (depict x)
+  (cond ((object? x)
+         (string-append "#<"
+                        (let ((script (object-script x)))
+                          (cond ((script? script)
+                                 (symbol->string (script-name script)))
+                                ((cont-script? script)
+                                 (symbol->string (cont-script-name script)))
+                                (else "XXX-WTF")))
+                        ">"))
+        (else
+         ;;XXX other types specially? booleans at least?
+         (call-with-string-output-port
+          (lambda (p) (put-datum p x))))))
+
 (define the-global-env
   `((__as-cons ,as-cons)
     (= ,squeam=?)
@@ -298,7 +332,7 @@
     (assq ,assq)  ;; TODO replace with 'real' hashmaps
     (assoc ,assoc)  ;; TODO replace with 'real' hashmaps
     (sqrt ,sqrt)
-    (display ,display)           ;XXX temp
+    (display ,prim-display)
     (newline ,newline)           ;XXX temp
 ;    (pp ,pp)                     ;XXX obviously shouldn't be primitive
     (panic ,panic)
@@ -404,20 +438,8 @@
                                (list->string (reverse cs)))
                            (reading (cons c cs)))))))
     (__write-char ,write-char)
-    (__display ,(lambda (sink x)
-                  (cond ((or (char? x) (string? x) (symbol? x) (number? x))
-                         (display x sink))
-                        ((boolean? x) ;just for completeness -- not sure I want this
-                         (display (if x "#yes" "#no") sink))
-                        (else
-                         (display "#<XXX non-basic display>" sink))))) ;TODO
-    (__write ,(lambda (x sink)
-                (let ((s (depict x)))
-                  (cond ((output-port? sink)
-                         (display s sink))
-                        (else
-                         ;;XXX shouldn't call Squeam from a Scheme primitive
-                         (call sink (term<- '.display s) halt-cont))))))
+    (__display ,prim-display)
+    (__write ,prim-write)
 
     (__u+ ,(lambda (a b) (logand mask32 (+ a b)))) ;XXX revisit these definitions
     (__s+ ,(lambda (a b) (logand mask32 (+ a b)))) ;XXX I forget what distinction I meant to make
@@ -432,21 +454,6 @@
     ))
 
 (define mask32 (- 1 (expt 2 32)))
-
-(define (depict x)
-  (cond ((object? x)
-         (string-append "#<"
-                        (let ((script (object-script x)))
-                          (cond ((script? script)
-                                 (symbol->string (script-name script)))
-                                ((cont-script? script)
-                                 (symbol->string (cont-script-name script)))
-                                (else "XXX-WTF")))
-                        ">"))
-        (else
-         ;;XXX other types specially? booleans at least?
-         (call-with-string-output-port
-          (lambda (p) (put-datum p x))))))
 
 (define (env-defined? r v)
   (define (succeed pair) #t)  ;XXX or (not (eq? (cadr pair) uninitialized)))
