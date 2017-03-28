@@ -1,7 +1,7 @@
 ;; Pretty printing s-expressions
 
 (import (use "lib/pretty-layout")
-  pretty-print lay-out nil <> text line nest group)
+  pretty-print <> text line nest group)
 
 (to (pp sexpr @opt-width)
   (display (call pretty-print `(,(doc<-sx sexpr) ,@opt-width)))
