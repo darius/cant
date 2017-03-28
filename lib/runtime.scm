@@ -375,13 +375,14 @@
   ({.read-all}    (__read-all me))
   ({.close}       (__close-port me))
   ({.read-line}
-   ;; XXX return eof-object when at eof, right?
-   (string<-list
-    (begin reading ()
-      (let ch me.read-char)
-      (if (or (eof-object? ch) (= ch #\newline))
-          '()
-          (cons ch (reading))))))
+   (let ch me.read-char)
+   (if (eof-object? ch)
+       ch
+       (string<-list
+        (begin reading ((ch ch))
+          (if (or (eof-object? ch) (= ch #\newline))
+              '()
+              (cons ch (reading me.read-char)))))))
   )
 
 (make-trait sink-primitive me
