@@ -25,12 +25,19 @@
   ((a b) (a .- b))
   ((a b @arguments) (foldl '.- (a .- b) arguments)))
 
-;; TODO transitive multi-arg
-(to (<   a b)      (= (compare a b) -1))
-(to (<=  a b) (not (= (compare a b)  1)))
-(to (<=> a b)      (= (compare a b)  0)) ; XXX better name?
-(to (>=  a b) (not (= (compare a b) -1)))
-(to (>   a b)      (= (compare a b)  1))
+(make-trait transitive-comparison compare?
+  ((x @xs)
+   (begin comparing ((x0 x) (xs xs))
+     (match xs
+       (() #yes)
+       ((x1 @rest) (and (compare? x0 x1)
+                        (comparing x1 rest)))))))
+
+(make <   {extending transitive-comparison} ((a b)      (= (compare a b) -1)))
+(make <=  {extending transitive-comparison} ((a b) (not (= (compare a b)  1))))
+(make <=> {extending transitive-comparison} ((a b)      (= (compare a b)  0))) ; XXX better name?
+(make >=  {extending transitive-comparison} ((a b) (not (= (compare a b) -1))))
+(make >   {extending transitive-comparison} ((a b)      (= (compare a b)  1)))
 
 (to (compare a b)
   (let result (a .compare b))
