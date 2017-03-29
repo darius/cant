@@ -47,7 +47,7 @@
 (loud-use "test/test-sort")
 (loud-use "test/test-hashset")
 (loud-use "test/test-memoize")
-(loud-use "test/test-regex")
+(loud-use "test/test-regex-match")
 (loud-use "test/test-parson")
 (loud-use "test/test-parson-squared")
 (loud-use "test/test-parse")
