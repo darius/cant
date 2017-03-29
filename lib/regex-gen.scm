@@ -7,7 +7,7 @@
 (import (use "lib/sort") sort-by-key)
 
 ;; Return the strings matching r whose length is in Ns.
-(to (generate r Ns)
+(to (regex-generate r Ns)
   (sort-by-key ((r Ns) .keys)
                (given (str) `(,str.count ,str))))
 
@@ -51,12 +51,22 @@
                          (and (Ns .maps? (+ m1.count m2.count))
                               (chain m1 m2))))))))
 
-(let dot      (literal "?"))
+;; Extras
+
+(let anyone   (literal "?"))
 (let empty    (literal ""))
 (to (maybe r) (either empty r))
 (to (plus r)  (then r (star r)))
 
+;; Concrete syntax
+
+(import (use "lib/regex-parse") regex-parser<-)
+
+(let regex-parse
+  (regex-parser<- (export
+                    empty literal star then either plus maybe one-of anyone)))
+
 (export
   empty literal then either star plus maybe
-  one-of dot nonempty
-  generate)
+  one-of anyone nonempty
+  regex-generate regex-parse)

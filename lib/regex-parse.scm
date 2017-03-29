@@ -1,16 +1,9 @@
 ;; Parse regular expressions
 
 (import (use "lib/parson") feed push parse grammar<-)
-(import (use "lib/regex-match")
-  regex-match
-  empty literal either then star
-  plus maybe one-of anyone)
-
-(to (parse-regex string)
-  ((parse regex-parser string) .result))
 
 ;; TODO: something like Python's raw string literals. \\\\ is awful.
-(let regex-grammar "
+(let grammar (grammar<- "
 regex    :  exp :end.
 exp      :  term ('|' exp     :either)*
          |                    :empty.
@@ -22,27 +15,28 @@ factor   :  primary (  '*'    :star
 primary  :  '(' exp ')'
          |  '[' char* ']'     :join :oneof
          |  '.'               :dot
-         |  '\\\\' :anyone      :literal
+         |  '\\\\' :anyone    :literal
          |  !( '.' | '(' | ')'
              | '*' | '+' | '?'
              | '|' | '[' | ']')
             :anyone           :literal.
 char     :  '\\\\' :anyone
          |  !']' :anyone.
-")
+"))
 
-(let rp ((grammar<- regex-grammar)
-         ;; TODO this is a pain:
-         (map<- `(("empty"   ,(push empty))
-                  ("literal" ,(feed (given (str) (literal str.first))))
-                  ("star"    ,(feed star))
-                  ("then"    ,(feed then))
-                  ("either"  ,(feed either))
-                  ("plus"    ,(feed plus))
-                  ("maybe"   ,(feed maybe))
-                  ("oneof"   ,(feed one-of))
-                  ("dot"     ,(push anyone))
-                  ))))
-(let regex-parser (rp "regex"))
+(to (regex-parser<- builder)
+  (let semantics
+    (map<- `(("empty"   ,(push (builder 'empty)))
+             ("literal" ,(feed (builder 'literal)))
+             ("star"    ,(feed (builder 'star)))
+             ("then"    ,(feed (builder 'then)))
+             ("either"  ,(feed (builder 'either)))
+             ("plus"    ,(feed (builder 'plus)))
+             ("maybe"   ,(feed (builder 'maybe)))
+             ("oneof"   ,(feed (builder 'one-of)))
+             ("dot"     ,(push (builder 'anyone))))))
+  (let parser ((grammar semantics) "regex"))
+  (to (parse-regex string)
+    ((parse parser string) .result)))
 
-(export parse-regex)
+(export regex-parser<-)

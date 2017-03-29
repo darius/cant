@@ -26,10 +26,10 @@
 ;; by a set of states, its start states. The input NFA might not be
 ;; fully constructed yet at the time we build the output, because of
 ;; the loop for the Kleene star -- so we need a mutable set.
-(to (empty succs)        succs)
-(to ((literal ch) succs) (set<- (expect ch succs)))
-(to ((either r s) succs) ((r succs) .union (s succs)))
-(to ((then r s) succs)   (r (s succs)))
+(to (empty succs)         succs)
+(to ((lit-char ch) succs) (set<- (expect ch succs)))
+(to ((either r s) succs)  ((r succs) .union (s succs)))
+(to ((then r s) succs)    (r (s succs)))
 (to ((star r) succs)
   (let my-succs succs.copy)
   (my-succs .union! (r my-succs))
@@ -46,7 +46,18 @@
 (to (maybe r) (either empty r))
 (to (plus r)  (then r (star r)))
 
+(to (literal string)
+  (foldr then (each lit-char string) empty))
+
+;; Concrete syntax
+
+(import (use "lib/regex-parse") regex-parser<-)
+
+(let regex-parse
+  (regex-parser<- (export
+                    empty literal star then either plus maybe one-of anyone)))
+
 (export
-  regex-match
-  empty literal either then star
+  regex-match regex-parse
+  empty lit-char literal either then star
   plus maybe one-of anyone)
