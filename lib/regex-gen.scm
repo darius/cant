@@ -29,9 +29,9 @@
 (to ((either r s) Ns) ((r Ns) .union (s Ns)))
 
 (to (one-of chars)
-  (let set (call set<- (as-list chars)))
+  (let set (call set<- (each string<- chars)))
   (given (Ns)
-    (if (Ns .maps? 1) set null)))
+    (if (Ns .maps? 1) set none)))
 
 (to ((then r s) Ns)
   ;; Return the set of matches to rs whose total length is in Ns. We
