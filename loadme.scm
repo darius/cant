@@ -1,10 +1,10 @@
 ;; The Squeam interpreter and global environment.
 
-(load "util.scm")
-(load "macros.scm")
-(load "read.scm")
-(load "parse.scm")
-(load "terp.scm")
+(load "terp/util.scm")
+(load "terp/macros.scm")
+(load "terp/read.scm")
+(load "terp/parse.scm")
+(load "terp/terp.scm")
 
 (run-load "lib/stdlib.scm")
 (squeam-interpret
