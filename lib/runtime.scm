@@ -210,7 +210,7 @@
      (__vector-set! me (- i lo) (v i)))) ;XXX was this what I wanted? I forget.
   ({.copy}        (__vector-copy me))
   ({.selfie sink}
-   (sink .display "#!")
+   (sink .display "#")
    (sink .print (__vector->list me)))
   (message
    (vector-trait me message))) ;XXX use trait syntax instead
