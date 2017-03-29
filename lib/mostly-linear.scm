@@ -1,9 +1,10 @@
-;; Solve almost-linear systems of equations, a la Van Wyk's IDEAL.
+;; Solve mostly-linear systems of equations, a la Van Wyk's IDEAL.
 
 ;; Constraints are equations between expressions. We represent one as
 ;; an expression, with '=0' implicit. We try to reduce each expression
 ;; to a linear combination of variables plus a constant, then
-;; eliminate one of the variables, and continue.
+;; eliminate one of the variables, and continue. Nonlinear expressions
+;; get put off to try again later.
 
 (import (use "lib/queue")
   empty empty?
