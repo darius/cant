@@ -14,9 +14,11 @@
 (test "X" 2)
 (test "XY" 3)
 (test "X|Y" 2)
-(test "X*" 3)
+(test "X+" 3)
 (test "a(b|c)*d" 4)
 (test "a.*d" 5)
 (test "a[bc]*d" 4)
+(test "a[x]+z()*|c.hi" 5)
 
-; TODO more tests
+;; Suppressed for faster testing for now
+;;(test "(Chloe|Yvette), a( precocious)? (toddler|writer)" 28)
