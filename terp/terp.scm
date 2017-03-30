@@ -368,6 +368,10 @@
                    (format #t "Halp ~w..~w: ~w\n" start end result) ;TODO actual format
                    result))
 
+    (nano-now ,(lambda ()
+                 (let ((t (current-time)))
+                   (+ (* 1000000000 (time-second t))
+                      (time-nanosecond t)))))
     (nanosleep ,(lambda (nsec)
                   ;; XXX untested
                   (let* ((n (modulo nsec 1000000000))
