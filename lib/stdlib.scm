@@ -360,14 +360,12 @@
      (the-modules .^= `((,file-stem ,mod) ,@the-modules.^))
      mod)))
 
-(make load
-  ((filename)
-   (load filename '()))
-  ((filename context)
-   (let code `(hide ,@(with-input-file read-all filename)))
-   (let code1 (parse-exp code))
-   (let code2 (qualify-exp context code1))
-   (evaluate code2 '())))
+(to (load filename @(optional context-arg))
+  (let context (or context-arg '()))
+  (let code `(hide ,@(with-input-file read-all filename)))
+  (let code1 (parse-exp code))
+  (let code2 (qualify-exp context code1))
+  (evaluate code2 '()))
 
 (to (with-input-file fn filename)
   (let source (open-input-file filename))

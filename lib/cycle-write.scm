@@ -7,16 +7,14 @@
 
 ;; TODO exclude known-to-be-acyclic types from the tags map
 
-(make cycle-write
-  ((thing)
-   (cycle-write thing out))
-  ((thing sink)
-   (let tags (map<-))
-   (let buffer (fillvector<-))
-   (let cycle-sink (cycle-sink<- tags buffer)) ;XXX better name?
-   (cycle-sink .print thing)
-   (for each! ((writer buffer.values))
-     (writer sink))))
+(to (cycle-write thing @(optional sink-arg))
+  (let sink (or sink-arg out))          ;TODO fancier (optional ...)
+  (let tags (map<-))
+  (let buffer (fillvector<-))
+  (let cycle-sink (cycle-sink<- tags buffer)) ;XXX better name?
+  (cycle-sink .print thing)
+  (for each! ((writer buffer.values))
+    (writer sink)))
 
 ;; The tags map keeps a tag for each object the cycle sink visits. The
 ;; tag is 0 after the first visit; then, on the second and thereafter,

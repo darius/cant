@@ -3,11 +3,12 @@
 (to (compile lexp)
   ((parse lexp) .compile '(HALT)))
 
-(make parse
-  (((: v symbol?))      (var-ref<- v))
-  ((('lambda (v) body)) (abstraction<- v (parse body)))
-  (((operator operand)) (call<- (parse operator)
-                                (parse operand))))
+(to (parse lexp)
+  (match lexp
+    ((: v symbol?)      (var-ref<- v))
+    (('lambda (v) body) (abstraction<- v (parse body)))
+    ((operator operand) (call<- (parse operator)
+                                (parse operand)))))
 
 ;; Variable reference
 (to (var-ref<- v)

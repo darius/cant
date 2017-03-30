@@ -67,6 +67,9 @@
               (term<- 'view-pat (parse-exp e) (term<- 'constant-pat #t))))
     (('@ __)                      ;XXX make @vars be some disjoint type
      (error 'parse "An @-pattern must be at the end of a list" p))
+    (('optional p1)                      ;TODO fancier
+     (let ((p1-pat (parse-pat p1)))
+       (term<- 'view-pat optional-match-exp (term<- 'term-pat 'ok (list p1-pat)))))
     ((: __ list?)
      (parse-list-pat p))
     ((: __ term?)
@@ -80,6 +83,15 @@
            (term<- 'term-pat tag (map parse-pat parts)))))
     ))
 
+(define optional-match-exp
+  (term<- 'constant (lambda (x)
+                      (cond ((null? x)
+                             (term<- 'ok #f))
+                            ((and (pair? x) (null? (cdr x)))
+                             (term<- 'ok (car x)))
+                            (else
+                             #f)))))
+  
 (define explode-term-exp
   (term<- 'constant (lambda (thing)
                       (and (term? thing)

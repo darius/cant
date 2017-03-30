@@ -29,20 +29,17 @@ insn:    {'1'+} {'#' '#'? '#'? '#'? '#'?} :make_insn.
 (to (regs<- @strings)
   (vector<-list `(#no ,@strings)))
 
-(make run
-  ((insns regs)
-   (run insns regs #no))
-  ((insns regs loud?)
-   (begin stepping ((pc 0))
-     (when (< pc insns.count)
-       (when loud?
-         (show insns pc regs)
-         (newline))
-       (let (fn n) (insns pc))
-       (let d (fn n regs))
-       (surely (not= d 0))
-       (stepping (+ pc d))))
-   regs))
+(to (run insns regs @(optional loud?))
+  (begin stepping ((pc 0))
+    (when (< pc insns.count)
+      (when loud?
+        (show insns pc regs)
+        (newline))
+      (let (fn n) (insns pc))
+      (let d (fn n regs))
+      (surely (not= d 0))
+      (stepping (+ pc d))))
+  regs)
 
 (let insn-table
   (vector<-
@@ -78,7 +75,7 @@ insn:    {'1'+} {'#' '#'? '#'? '#'? '#'?} :make_insn.
 
 (make show
   ((insns)
-   (show insns 0 (regs<-)))
+   (show insns 0 (regs<-)))             ;TODO fancier (optional ...)
   ((insns pc regs)
    (let left
      (for each (((addr (fn n)) insns.items))
