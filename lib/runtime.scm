@@ -374,6 +374,7 @@
   ({.read-char}   (__read-char me))
   ({.read-all}    (__read-all me))
   ({.close}       (__close-port me))
+  ({.ready?}      (__char-ready? me))
   ({.read-line}
    (let ch me.read-char)
    (if (eof-object? ch)

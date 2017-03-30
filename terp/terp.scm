@@ -429,6 +429,7 @@
     (__term-arguments ,term-parts)
     (__close-port ,close-port)
     (__read-char ,read-char)
+    (__char-ready? ,char-ready?)
     (__read-all ,(lambda (port)
                    (let reading ((cs '()))
                      (let ((c (read-char port)))
