@@ -158,7 +158,12 @@
                       (_ (miranda-trait ,self ,msg)))))))) ;XXX hygiene, and XXX make it overridable
     ('match  (mlambda
               ((__ subject . clauses)
-               `(call (make _ ,@clauses) ,subject))))
+               `((make _ ,@(map (lambda (clause)
+                                  (assert (pair? clause)
+                                          "invalid clause" clause)
+                                  `((,(car clause)) ,@(cdr clause)))
+                                clauses))
+                 ,subject))))
     ('to     (mlambda
               ((__ (head . param-spec) . body)
                (let ((pattern (mcase param-spec
