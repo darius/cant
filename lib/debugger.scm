@@ -4,8 +4,8 @@
 
 (to (help vocab)
   (for each! (((short full text) vocab))
-    (format "~d ~d - ~d\n" ;XXX format should be able to do the justify
-            short (full.name .left-justify 9) text)))
+    (format "~d ~-9d - ~d\n"
+            short full.name text)))
 
 (to (collect-abbrevs vocab)
   (map<- (for each (((short full _) vocab))

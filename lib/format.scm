@@ -14,38 +14,49 @@
         (error "Leftover arguments" args))
       (match s.first
         (#\~
-         (parsing sink s.rest #no args))
+         (let ss s.rest)
+         (if (ss .starts-with? "-")
+             (parse sink ss.rest -1 #no args)
+             (parse sink ss #no #no args)))
         (ch
          (sink .display ch)
          (scanning sink s.rest args)))))
 
-(to (parsing sink s width args)
+(to (parse sink s sign width args)
+  (if (s .starts-with? "0")
+      (parsing sink s.rest #\0     sign width args)
+      (parsing sink s      #\space sign width args)))
+
+(to (parsing sink s pad sign width args)
   (when s.empty?
     (error "Incomplete format" format-string))
   (match s.first
     (#\w
-     (maybe-pad sink {.print args.first} width)
+     (maybe-pad sink pad sign width {.print args.first})
      (scanning sink s.rest args.rest))
     (#\d
-     (maybe-pad sink {.display args.first} width)
+     (maybe-pad sink pad sign width {.display args.first})
      (scanning sink s.rest args.rest))
     (#\~
      (sink .display "~")
      (scanning sink s.rest args))
     ((: ch '.digit?)
      (let digit (- ch.code 48))
-     (parsing sink
-              s.rest
+     (parsing sink s.rest pad sign      ;TODO testme with a multidigit width
               (+ (if width (* 10 width) 0)
                  digit)
               args))
     (_
      (error "Bad format string" s))))
 
-(to (maybe-pad sink message width)
-  (if width
-      (sink .display ((with-output-string (given (o) (call o message)))
-                      .justify width)) ;TODO left/right
-      (call sink message)))
+(to (maybe-pad sink pad sign width message)
+  (case (width
+         (sink .display ((with-output-string (given (o) (call o message)))
+                         .justify (if sign (* sign width) width)
+                                  pad)))
+        (sign
+         (error "Missing width in format string"))
+        (else
+         (call sink message))))
 
 (export format)
