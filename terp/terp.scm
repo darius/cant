@@ -361,7 +361,7 @@
     (string-sink<- ,open-output-string)
     (__get-output-string ,get-output-string)
     (open-subprocess ,process)
-;    (get-global-env ,(lambda () the-global-env))
+    (list-globals ,(lambda () (map car the-global-env)))
     (extract-script ,extract-script)
     (extract-datum ,extract-datum)
     (__halp-log ,(lambda (start end result)

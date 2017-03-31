@@ -264,11 +264,11 @@
 
 (import
     (hide
-      (to (qualify-exp context exp)
+      (to (qualify-exp exp context)
         (import (qualifier<- context) qe)
         (qe exp))
       
-      (to (qualify-pat context pat)
+      (to (qualify-pat pat context)
         (import (qualifier<- context) qp)
         (qp exp))
 
@@ -286,9 +286,9 @@
             ({list es}      {list (each qe es)})))
 
         (to (qualify-make {make name stamp-exp trait-exp clauses})
-          {make (qualify-name context name) (qe stamp-exp) (qe trait-exp)
+          {make (qualify-name name context) (qe stamp-exp) (qe trait-exp)
                 (hide
-                  (import (qualifier<- (add-make-context context name))
+                  (import (qualifier<- (add-make-context name context))
                     qe qp)
                   (for each (((p p-vars e-vars e) clauses))
                     `(,(qp p) ,p-vars ,e-vars ,(qe e))))})
@@ -305,13 +305,13 @@
 
         (export qe qp))
 
-      (to (qualify-name context name)
-        (let parts (add-make-context context name))
+      (to (qualify-name name context)
+        (let parts (add-make-context name context))
         (let joined (":" .join parts))
         (let s (symbol<- joined))
         s)
 
-      (to (add-make-context context name)
+      (to (add-make-context name context)
         ;; TODO make sure name is a symbol, or convert it
         `(,name.name ,@context))
 
@@ -331,7 +331,7 @@
     (let sexpr (read))
     (unless (eof-object? sexpr)
       (let parsed (parse-exp sexpr))
-      (let e (qualify-exp '() parsed))  ;TODO reverse the order of args
+      (let e (qualify-exp parsed '()))
       (print (evaluate e '())) ;XXX reify a proper env object
       (interacting))))
 
@@ -364,7 +364,7 @@
   (let context (or context-arg '()))
   (let code `(hide ,@(with-input-file read-all filename)))
   (let code1 (parse-exp code))
-  (let code2 (qualify-exp context code1))
+  (let code2 (qualify-exp code1 context))
   (evaluate code2 '()))
 
 (to (with-input-file fn filename)
