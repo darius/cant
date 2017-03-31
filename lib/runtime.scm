@@ -303,6 +303,10 @@
                     (chain (list<-string replacement)
                            (scanning (+ i pattern.count))))
                    (else (cons (me i) (scanning (+ i 1))))))))))
+  ({.justify n}
+   (if (< n 0)
+       (me .left-justify (- n))
+       (me .right-justify n)))
   ({.left-justify n}
    (me .left-justify n #\space))
   ({.left-justify n pad-char}
