@@ -258,14 +258,26 @@
                             (the-signal-handler .^= parent-handler)
                             (call handler evil))))
 
-(to (with-fallback-signal-handler act)
+(to (with-fallback-signal-handler try)
   (let parent-handler the-signal-handler.^)
   (the-signal-handler .^= (given (k @evil)
                             (display "Error within error!\n")
                             (each! print evil)
                             (os-exit 1)))
-  (act)
-  (the-signal-handler .^= parent-handler))
+  (let result (try))
+  (the-signal-handler .^= parent-handler)
+  result)
+
+(to (unwind-protect try finally)     ;TODO better name
+  (let parent-handler the-signal-handler.^)
+  (the-signal-handler .^= (given (@evil)
+                            (the-signal-handler .^= parent-handler)
+                            (finally)
+                            (call parent-handler evil)))
+  (let result (try))
+  (finally)
+  (the-signal-handler .^= parent-handler)
+  result)
 
 (import
     (hide
@@ -327,17 +339,6 @@
 (to (system/must-succeed command)
   (unless (= 0 (system command))
     (error "Failed system command" command)))
-
-(to (unwind-protect try finally)     ;TODO better name
-  (let parent-handler the-signal-handler.^)
-  (the-signal-handler .^= (given (@evil)
-                            (the-signal-handler .^= parent-handler)
-                            (finally)
-                            (call parent-handler evil)))
-  (let result (try))
-  (finally)
-  (the-signal-handler .^= parent-handler)
-  result)
 
 (to (repl)                          ;TODO rename
   (import (use "lib/traceback") on-error-traceback)
