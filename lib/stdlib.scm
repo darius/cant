@@ -319,6 +319,21 @@
 
   qualify-exp qualify-pat)
 
+(to (system/must-succeed command)
+  (unless (= 0 (system command))
+    (error "Failed system command" command)))
+
+(to (unwind-protect try finally)     ;TODO better name
+  (let parent-handler the-signal-handler.^)
+  (the-signal-handler .^= (given (@evil)
+                            (the-signal-handler .^= parent-handler)
+                            (finally)
+                            (call parent-handler evil)))
+  (let result (try))
+  (finally)
+  (the-signal-handler .^= parent-handler)
+  result)
+
 (to (repl)                          ;TODO rename
   (import (use "lib/traceback") on-error-traceback)
   (begin interacting ()

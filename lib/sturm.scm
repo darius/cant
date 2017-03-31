@@ -8,17 +8,15 @@
 
 (to (mode name fn)
   (system/must-succeed ("stty ~d -echo" .format name))
-  (display home)
-  (display clear-to-bottom)
-  (fn)                                  ;TODO unwind-protect
-  (display cursor-show)
-  (display #\newline)
-  (system/must-succeed "stty sane"))    ;TODO save & restore instead
-
-;;TODO useful elsewhere too
-(to (system/must-succeed command)
-  (unless (= 0 (system command))
-    (error "Failed system command" command)))
+  (unwind-protect
+   (given ()
+     (display home)
+     (display clear-to-bottom)
+     (fn)
+     (display cursor-show)
+     (display #\newline))
+   (given ()
+     (system/must-succeed "stty sane"))))    ;TODO save & restore instead
 
 
 ;; ANSI terminal escape codes
