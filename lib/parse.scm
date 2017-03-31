@@ -60,7 +60,7 @@
   (make
     ({.lhs} lhs)
     ({.rhs} rhs)
-    ({.selfie sink} (sink .print (cons lhs rhs)))))
+    ({.selfie sink} (sink .print `(,lhs ,@rhs)))))
 
 ;; A parse tree and a remainder.
 (to (parse<- tree remainder)
