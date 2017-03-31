@@ -57,7 +57,8 @@
       ('right     (cv .shift-by  1)                         (playing))
       ('up        (cv .shift-line -1)                       (playing))
       ('down      (cv .shift-line  1)                       (playing))
-      (#\tab      cv.shift-to-space                         (playing))
+      ('shift-tab (cv .shift-to-space -1)                   (playing))
+      (#\tab      (cv .shift-to-space  1)                   (playing))
       ('backspace (cv .shift-by -1)    (cv .jot #\space)    (playing))
       ('del       (cv .jot #\space)    (cv .shift-by 1)     (playing))
       (_
@@ -76,19 +77,17 @@
   (let lines (each clean cryptogram.split-lines))
   (let point (box<- 0))                ; Index in `code` of the cursor
 
-  (to (shift-by offset)
-    (point .^= ((+ point.^ offset) .modulo code.count)))
-
-  (to (line-number pos)
-    (let items
-      (for those (((i start) line-starts.items))
-        (and (<= start pos) (< pos (line-starts (+ i 1))))))
-    (match items.first                  ;TODO should be lazy
-      ((i _) i)))
-
   (let line-starts
     (running-sum (for each ((line lines))
                    ((those '.letter? line) .count))))
+
+  (to (shift-by offset)
+    (point .^= ((+ point.^ offset) .modulo code.count)))
+
+  (to (shift-till offset stop?)
+    (shift-by offset)
+    (unless (stop?)
+      (shift-till offset stop?)))
 
   (make _
     ({.jot letter}
@@ -100,20 +99,15 @@
     ({.go-to-end}
      (point .^= (- code.count 1)))
 
-    ({.shift-by n}
-     (shift-by n))
+    ({.shift-by offset}
+     (shift-by offset))
 
     ({.shift-line offset}
-     (let line-num ((+ (line-number point.^) offset)
-                    .modulo lines.count))
-     (point .^= (line-starts line-num)))
+     (shift-till offset (given () (line-starts .find? point.^))))
 
-    ({.shift-to-space}
+    ({.shift-to-space offset}
      (when (decoder.values .find? #\space)
-       (begin shifting ()
-         (shift-by 1)
-         (unless (= #\space (decoder (code point.^)))
-           (shifting)))))
+       (shift-till offset (given () (= #\space (decoder (code point.^)))))))
 
     ({.view show-cursor?}
      (let counts (call bag<- (for those ((v decoder.values))
