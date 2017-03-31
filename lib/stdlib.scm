@@ -244,6 +244,11 @@
   (write x)
   (newline))
 
+(to (with-output-string take-sink)             ;TODO rename
+  (let sink (string-sink<-))
+  (take-sink sink)
+  sink.output-string)
+
 (let the-signal-handler (box<- panic))
 (let the-last-error (box<- #no))
 
