@@ -10,7 +10,7 @@
 
 (make-trait miranda-trait me
   ({.selfie sink} (__write me sink))
-  (message (error "Message not understood" message me)))
+  (message (error "Match failure" me message)))
 
 (make-trait list-trait list
   ((i)
@@ -59,10 +59,10 @@
   ({.get key}
    (list .get key #no))
   ({.get key default}
-   (if (and (integer? key) (<= 0 key) (not list.empty?))
-       (begin walking ((k key) (xs rest))
-         (case ((= k 0) xs.first)
-               (xs.empty? default)
+   (if (and (integer? key) (<= 0 key))
+       (begin walking ((k key) (xs list))
+         (case (xs.empty? default)
+               ((= k 0) xs.first)
                (else (walking (- k 1) xs.rest))))
        default))
   ({.maps? key}
@@ -190,6 +190,7 @@
   ({.items}
    (for each ((i (range<- me.count)))
      `(,i ,(me i))))
+;  ({.get key default}  TODO custom impl
   (message
    (list-trait me message))) ;XXX use trait syntax instead
 

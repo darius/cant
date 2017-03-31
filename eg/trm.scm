@@ -63,8 +63,8 @@ insn:    {'1'+} {'#' '#'? '#'? '#'? '#'?} :make_insn.
    (make _
      ({.name} "case")
      ((n regs)
-      (match (regs .get n)
-        (#no 1)
+      (match (regs .get n "")           ;TODO how about just (regs n)?
+        ("" 1)
         (str (regs .set! n str.rest)
              (match str.first
                (#\1 2)
@@ -109,11 +109,12 @@ insn:    {'1'+} {'#' '#'? '#'? '#'? '#'?} :make_insn.
 (to (main _)
   (show (trm-parse "1#111##"))
   (newline)
+
   (let move-r2-r1 (trm-parse "11#####111111###111###1##1111####1#111111####"))
   (let regs (regs<- "" "1#1#11##"))
   (show move-r2-r1 0 regs)
-  (print (run move-r2-r1 regs))
-  )
+  (run move-r2-r1 regs)
+  (print regs.rest))
 
 
 (export trm-parse regs<- run show)
