@@ -304,9 +304,11 @@
                            (scanning (+ i pattern.count))))
                    (else (cons (me i) (scanning (+ i 1))))))))))
   ({.justify n}
+   (me .justify n #\space))
+  ({.justify n pad}
    (if (< n 0)
-       (me .left-justify (- n))
-       (me .right-justify n)))
+       (me .left-justify (- n) pad)
+       (me .right-justify n    pad)))
   ({.left-justify n}
    (me .left-justify n #\space))
   ({.left-justify n pad-char}
