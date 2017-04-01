@@ -6,7 +6,7 @@
   logs)
 
 ;; The screen size.
-(let (rows cols) '(18 80))              ;XXX
+(let `(,rows ,cols) '(18 80))              ;XXX
 (let console-rows 5) ; #rows extra, reserved for the debugging console
 
 ;; An array of strings, one per screen row.

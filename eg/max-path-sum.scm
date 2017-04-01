@@ -10,8 +10,8 @@
     ({leaf}
      '(0 0))
     ({branch value L R}
-     (let (best-L best-to-root-L) (solve L))
-     (let (best-R best-to-root-R) (solve R))
+     (let `(,best-L ,best-to-root-L) (solve L))
+     (let `(,best-R ,best-to-root-R) (solve R))
      (let best-through-root (+ best-to-root-L value best-to-root-R))
      (let best-to-root (+ value (max best-to-root-L best-to-root-R)))
      (list<- (max best-L best-R best-through-root)
