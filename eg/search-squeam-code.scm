@@ -30,7 +30,7 @@
       ({list es}
        (some walk-exp es))))
 
-  (to (walk-clause (p p-vars e-vars e))
+  (to (walk-clause `(,p ,p-vars ,e-vars ,e))
     (or (walk-pat p) (walk-exp e)))
 
   (to (walk-pat pat)
