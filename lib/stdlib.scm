@@ -350,7 +350,7 @@
                               (interacting)))
     (display "sqm> ")
     (let sexpr (read))
-    (unless (eof-object? sexpr)
+    (unless (eof? sexpr)
       (let parsed (parse-exp sexpr))
       (let e (qualify-exp parsed '()))
       (print (evaluate e '())) ;XXX reify a proper env object
@@ -396,6 +396,6 @@
 
 (to (read-all source)
   (let thing (read source))
-  (if (eof-object? thing)
+  (if (eof? thing)
       '()
       (cons thing (read-all source))))

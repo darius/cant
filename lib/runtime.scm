@@ -385,11 +385,11 @@
   ({.ready?}      (__char-ready? me))
   ({.read-line}
    (let ch me.read-char)
-   (if (eof-object? ch)
+   (if (eof? ch)
        ch
        (string<-list
         (begin reading ((ch ch))
-          (if (or (eof-object? ch) (= ch #\newline))
+          (if (or (eof? ch) (= ch #\newline))
               '()
               (cons ch (reading me.read-char)))))))
   )

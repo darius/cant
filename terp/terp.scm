@@ -320,7 +320,7 @@
     (term? ,term?)
     (source? ,input-port?)
     (sink? ,output-port?)
-    (eof-object? ,eof-object?)
+    (eof? ,eof-object?)
     (box<- ,box<-)
     (symbol<- ,string->symbol)
     (term<- ,make-term)       ;TODO check that arguments arg is a list

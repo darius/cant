@@ -80,7 +80,7 @@
 
          (11 (let s source.read-char)
              (reg .set! c
-                  (if (eof-object? s) 0xFFFFFFFF (string<- s)))
+                  (if (eof? s) 0xFFFFFFFF (string<- s)))
              (next))
 
          (12 (case ((= (reg b) 0)
@@ -96,7 +96,7 @@
   (let program (fillvector<-))
   (begin reading ()
     (let c3 source.read-char)
-    (unless (eof-object? c3)
+    (unless (eof? c3)
       (let c2 source.read-char)
       (let c1 source.read-char)
       (let c0 source.read-char)

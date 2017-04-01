@@ -189,7 +189,7 @@
 (to (get-key-unmapped)
   (if key-stack.empty?
       (do (let ch stdin.read-char)
-          (surely (not (eof-object? ch))) ;shouldn't ever happen in raw/cbreak modes
+          (surely (not (eof? ch))) ;shouldn't ever happen in raw/cbreak modes
           ch)
       key-stack.pop!))
 

@@ -15,7 +15,7 @@
     ({.set! key command}
      (bindings .set! key command))
     ((key)
-     (if (eof-object? key)
+     (if (eof? key)
          'exit
          (bindings .get key default-command)))
     ))

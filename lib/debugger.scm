@@ -59,7 +59,7 @@
        (print (evaluate (parse-exp (read)) env))
        (continue))
       (_
-       (case ((eof-object? input) 'ok)
+       (case ((eof? input) 'ok)
              ((integer? input) (push (focus input))) ;TODO handle negative
              (else (continue "Huh? Enter 'help' for help.")))))))
 
@@ -110,7 +110,7 @@
        (print-traceback frame)
        (continue))
       (_
-       (unless (eof-object? input)
+       (unless (eof? input)
          (continue "Huh? Enter 'help' for help.\n"))))))
 
 (to (show-env env)
