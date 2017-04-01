@@ -36,3 +36,5 @@ The goal of Smalltalkiness motivated the incredibly slow
 implementation strategy to start with, where the interpreter internals
 always appear as meta-objects with no optimization, and even primitive
 objects execute via high-level scripts (in lib/runtime.scm).
+
+Thanks to Kragen Sitaker for early discussions about the language.
