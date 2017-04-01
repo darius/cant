@@ -86,16 +86,16 @@
     ((move rows) .empty?)))
 
 (to (random-empty-square rows)
-  (random-choice (for gather (((r row) rows.items))
-                   (for filter (((c v) row.items))
+  (random-choice (for gather ((`(,r ,row) rows.items))
+                   (for filter ((`(,c ,v) row.items))
                      (and (= v 0) `(,r ,c))))))
 
 (to (random-choice xs)       ;XXX should be in lib or standard methods
   (xs (random-integer xs.count)))
 
 (to (update rows at new-value)
-  (for each (((r row) rows.items))
-    (for each (((c v) row.items))
+  (for each ((`(,r ,row) rows.items))
+    (for each ((`(,c ,v) row.items))
       (if (= at `(,r ,c)) new-value v))))
 
 ;; Try to slide the board leftward; return a list of boards to
