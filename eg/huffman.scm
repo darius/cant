@@ -7,16 +7,16 @@
   empty-pq unit-pq pq-merge pq-insert pq-remove-min)
 
 (to (build-tree freqs)
-  (let leaves (for each (((frequency symbol) freqs))
+  (let leaves (for each ((`(,frequency ,symbol) freqs))
                 `(,frequency {leaf ,symbol})))
   ;; TODO? define pq-merge-many or something
   (begin building ((pq (foldr pq-merge (each unit-pq leaves) empty-pq)))
     ;; TODO? define pq-dequeue or something
-    (let (f1 t1) (pq-min pq))
+    (let `(,f1 ,t1) (pq-min pq))
     (let rest (pq-remove-min pq))
     (if (pq-empty? rest)
         t1
-        (do (let (f2 t2) (pq-min rest))
+        (do (let `(,f2 ,t2) (pq-min rest))
             (let combo `(,(+ f1 f2) {branch ,t1 ,t2}))
             ;; TODO? define pq-replace-min
             (building (pq-insert (pq-remove-min rest) combo))))))

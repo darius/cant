@@ -57,7 +57,7 @@
     ({.show}
      (display cursor-hide)
      (display home)
-     (for each! (((i line) lines.items))
+     (for each! ((`(,i ,line) lines.items))
        (unless (= line (showing i))
          (display (goto 0 i))
          (display line)

@@ -5,10 +5,10 @@
 (import (use "lib/ansi-term")
   home clear-screen cursor-show cursor-hide)
 
-(to (main (prog @args))
+(to (main `(,prog ,@args))
   (let n-steps (match args
-                 (() 20)
-                 ((n-str) (number<-string n-str))
+                 ('() 20)
+                 (`(,n-str) (number<-string n-str))
                  (_ (error ("Usage: ~d [#steps]" .format prog)))))
   (let grid (grid<- 24 39))
   (paint grid 10 18 '(" **"             ;TODO: read in a pattern
@@ -35,8 +35,8 @@
   (show gen1.next))
 
 (to (paint grid top left lines)
-  (for each! (((i line) lines.items))
-    (for each! (((j ch) line.items))
+  (for each! ((`(,i ,line) lines.items))
+    (for each! ((`(,j ,ch) line.items))
       (grid .set! (+ top i) (+ left j)
             (if ch.whitespace? 0 1)))))
 
@@ -90,7 +90,7 @@
      (G .set! (+ dest i) (G (+ lo i)))))
 
   (make life-grid
-    ((r c)
+    (`(,r ,c)
      (G (at r c)))
     ({.set! r c value}
      (surely ('(0 1) .find? value))

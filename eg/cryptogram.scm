@@ -10,9 +10,9 @@
 (to (main args)
   (let cryptogram
     (match args.rest
-      (()    (random-encrypt (run-fortune)))
-      ((str) str)
-      (_     (error ("Usage: ~d [cryptogram]" .format (args 0))))))
+      ('()     (random-encrypt (run-fortune)))
+      (`(,str) str)
+      (_       (error ("Usage: ~d [cryptogram]" .format (args 0))))))
   (for cbreak-mode ()
     (puzzle cryptogram)))
 
@@ -40,7 +40,7 @@
   (shell-run "exec fortune"))
 
 (to (shell-run command)
-  (let (from-stdout to-stdin pid) (open-subprocess command))
+  (let `(,from-stdout ,to-stdin ,pid) (open-subprocess command))
   ;; TODO do we have to wait for it to terminate?
   from-stdout.read-all)
 
@@ -114,7 +114,7 @@
                                (not= v #\space))))
      (let letters-left (for each ((ch alphabet))
                          (if (counts .maps? ch) #\space ch)))
-     (let clashes (call set<- (for filter (((v n) counts.items))
+     (let clashes (call set<- (for filter ((`(,v ,n) counts.items))
                                 (and (< 1 n) v))))
 
      (let pos (box<- 0))

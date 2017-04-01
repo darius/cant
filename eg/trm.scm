@@ -9,8 +9,6 @@
 
 (import (use "lib/parson") parse grammar<- feed)
 
-(let loud? (box<- #no))
-
 (to (trm-parse program)
   (vector<-list ((parse parser program) .opt-results)))
 
@@ -35,7 +33,7 @@ insn:    {'1'+} {'#' '#'? '#'? '#'? '#'?} :make_insn.
       (when loud?
         (show insns pc regs)
         (newline))
-      (let (fn n) (insns pc))
+      (let `(,fn ,n) (insns pc))
       (let d (fn n regs))
       (surely (not= d 0))
       (stepping (+ pc d))))
@@ -46,23 +44,23 @@ insn:    {'1'+} {'#' '#'? '#'? '#'? '#'?} :make_insn.
    'illegal-insn
    (make _
      ({.name} "add-1")
-     ((n regs)
+     (`(,n ,regs)
       (regs .set! n (chain (regs n) "1"))
       1))
    (make _
      ({.name} "add-#")
-     ((n regs)
+     (`(,n ,regs)
       (regs .set! n (chain (regs n) "#"))
       1))
    (make _
      ({.name} "forward")
-     ((n regs) n))
+     (`(,n ,regs) n))
    (make _
      ({.name} "backward")
-     ((n regs) (- n)))
+     (`(,n ,regs) (- n)))
    (make _
      ({.name} "case")
-     ((n regs)
+     (`(,n ,regs)
       (match (regs .get n "")           ;TODO how about just (regs n)?
         ("" 1)
         (str (regs .set! n str.rest)
@@ -74,16 +72,16 @@ insn:    {'1'+} {'#' '#'? '#'? '#'? '#'?} :make_insn.
 ;;XXX use me
 
 (make show
-  ((insns)
+  (`(,insns)
    (show insns 0 (regs<-)))             ;TODO fancier (optional ...)
-  ((insns pc regs)
+  (`(,insns ,pc ,regs)
    (let left
-     (for each (((addr (fn n)) insns.items))
+     (for each ((`(,addr (,fn ,n)) insns.items))
        (let show-addr (if (= addr pc)
                           "   "
                           ("~3w" .format (abs (- pc addr)))))
        ("~d ~d ~w" .format show-addr fn.name n)))
-   (let right (for each (((i str) regs.items.rest))
+   (let right (for each ((`(,i ,str) regs.items.rest))
                 ("\tr~w: ~d" .format i str)))
    (for each! ((line (abut left right)))
      (format "~d\n" line))))

@@ -29,7 +29,7 @@
        (pg-up     ,(given (_) (buffer .previous-page)))
        (pg-dn     ,(given (_) (buffer .next-page)))))
 
-   (for each! (((key command) bindings)) ;TODO should be a key-map method
+   (for each! ((`(,key ,command) bindings)) ;TODO should be a key-map method
      (buffer.key-map .set! key command))
       
    buffer)

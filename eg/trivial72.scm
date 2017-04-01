@@ -100,14 +100,14 @@
 (to (terp e r k)
   (trace `(terp ,e ,r ,k))
   (match e
-    ('$                          (prim-$ k))
-    ((: symbol?)                 (return k (lookup r e)))
-    ((': @rest)                  (return k (make-definition rest r)))
-    (('% pattern @rest)          (terp-% pattern (nest rest r k)))
-    (('let variable val-e @rest) (terp val-e r `(let ,variable ,rest ,r ,k)))
-    ((first @rest)               (terp first r (nest rest r k)))
-    (() (error "empty expression"))
-    (_                           (return k e))))
+    ('$                             (prim-$ k))
+    ((: symbol?)                    (return k (lookup r e)))
+    (`(: ,@rest)                    (return k (make-definition rest r)))
+    (`(% ,pattern ,@rest)           (terp-% pattern (nest rest r k)))
+    (`(let ,variable ,val-e ,@rest) (terp val-e r `(let ,variable ,rest ,r ,k)))
+    (`(,first ,@rest)               (terp first r (nest rest r k)))
+    ('()                            (error "empty expression"))
+    (_                              (return k e))))
 
 (to (nest es r k)
   (if es.empty? k `(nest ,es ,r ,k)))
@@ -119,15 +119,15 @@
 
 (to (return k value)
   (match k
-    (('nest @_)
+    (`(nest ,@_)
      (send value k))
-    (('message @_) ;XXX I don't know what I'm doing. This clause wasn't in the Scheme version.
+    (`(message ,@_) ;XXX I don't know what I'm doing. This clause wasn't in the Scheme version.
      (send value k))
-    (('let variable rest r2 k2)
+    (`(let ,variable ,rest ,r2 ,k2)
      (terp rest `((,variable ,value) ,@r2) k2))
-    (('number-+ self k2)
+    (`(number-+ ,self ,k2)
      (return k2 (+ self value)))
-    (('halt)
+    ('(halt)
      value)
     (_ (error "Unknown continuation type" k))))
 
@@ -137,35 +137,35 @@
   (match object
     ((: number?) (send-number object k))
     ((: claim?)  (send-claim object k))
-    ((tag e r)
+    (`(,tag ,e ,r)
      (surely (= tag tag-definition))
      (terp e r k))
     (_ (error "Unknown object type" object))))
 
 (to (to-message k)
   (match k
-    (('nest @rest) `(message ,@rest))
-    (('message @_) k)                   ;I guess?
+    (`(nest ,@rest) `(message ,@rest))
+    (`(message ,@_) k)                   ;I guess?
     (_ (error "Unexpected cont type" k))))
 
 (to (send-number self k)
   (match k
-    (('message e2 r2 k2)
+    (`(message ,e2 ,r2 ,k2)
      (match e2
-       (('+ e3 @rest)
+       (`(+ ,e3 ,@rest)
         (terp e3 r2
               `(number-+ ,self ,(nest rest r2 k2))))))))
 
 (to (send-claim self k)
   (match k
-    (('message e2 r2 k2)
+    (`(message ,e2 ,r2 ,k2)
      (match e2
-       (('>> then @rest) (terp (if self then rest) r2 k2))))))
+       (`(>> ,then ,@rest) (terp (if self then rest) r2 k2))))))
 
   
 
 (to (prim-$ k)
-  (extract-message k (given (replace (e @es) r2 k2)
+  (extract-message k (given (replace `(,e ,@es) r2 k2)
                        (terp e r2
                              (replace (make-message es r2 k2))))))
 
@@ -179,15 +179,15 @@
 (to (extract-message k take-message)
   (begin walking ((k k) (replace identity))
     (match k
-      (('message e2 r2 k2)
+      (`(message ,e2 ,r2 ,k2)
        (take-message replace e2 r2 k2))
       (_ (walking k.last (given (k-prime)
                            (chain (but-last k) `(,k-prime))))))))
 
 (to (but-last xs)
   (match xs
-    ((_) '())
-    ((x @rest) `(,x ,@(but-last rest)))))
+    (`(,_) '())
+    (`(,x ,@rest) `(,x ,@(but-last rest)))))
 
 ;; N.B. that'd be easier if we kept the k in the *first* slot
 
@@ -198,7 +198,7 @@
 (make tag-definition)
 
 (to (lookup r name)
-  (let (_ value) (assq name r))
+  (let `(,_ ,value) (assq name r))
   value)
 
 (export main)

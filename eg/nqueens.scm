@@ -6,8 +6,8 @@
 
 (to (main args)
   (match args
-    ((_ n) (queens (number<-string n)))
-    ((prog @_) (format "Usage: ~d board-size" prog))))
+    (`(,_ ,n) (queens (number<-string n)))
+    (`(,prog ,@_) (format "Usage: ~d board-size" prog))))
 
 (to (queens n)
   (match (satisfy-first (queens-problem n) 1)
@@ -54,7 +54,7 @@
   ;; Return a BDD that evaluates to 1 just when every variable in env
   ;; has its given value.
   (for foldl ((tree lit1)
-              ((var value) (sort env.items {reverse})))
+              (`(,var ,value) (sort env.items {reverse})))
     (if value
         (build-choice var lit0 tree)
         (build-choice var tree lit0))))

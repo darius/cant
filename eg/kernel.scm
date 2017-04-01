@@ -87,7 +87,7 @@
 (to (env-extend parent-r vars)
   (let vals (vector<-list (for each ((_ vars)) *uninitialized*)))
   (make env
-    ((key)
+    (`(,key)
      (match (vars .find key #no)
        (#no (parent-r key))
        (i (vals i))))
@@ -99,7 +99,7 @@
 
 (to (env<-map map)
   (make env
-    ((key)
+    (`(,key)
      (map key))
     ({.bind var val}
      (error "Tried to change immutable env" var))))

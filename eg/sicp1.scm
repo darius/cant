@@ -13,25 +13,27 @@
           {branch 1 {mobile {branch 3 40}
                             {branch 4 30}}}})
 
-(make balanced?
-  (({mobile left right})
-   (and (balanced? left)
-        (balanced? right)
-        (= (torque left) (torque right))))
-  ((_)
-   #yes))                       ;XXX don't we care about deep balance?
+(to (balanced? tree)
+  (match tree
+    ({mobile left right}
+     (and (balanced? left)
+          (balanced? right)
+          (= (torque left) (torque right))))
+    (_
+     #yes)))                       ;XXX don't we care about deep balance?
 
 (to (torque {branch length structure})
   (* length (weight structure)))
 
-(make weight
-  (({mobile left right})
-   (+ (weight left) (weight right)))
-  (((: number number?))
-   number)
+(to (weight tree)
+  (match tree
+    ({mobile left right}
+     (+ (weight left) (weight right)))
+    ((: number number?)
+     number)
 ;; XXX this was missing -- go look up the problem again:
-  (({branch _ thing})
-   (weight thing)))
+    ({branch _ thing}
+     (weight thing))))
 
 (print (balanced? test-mobile))
 (print (balanced? test-balanced-mobile))

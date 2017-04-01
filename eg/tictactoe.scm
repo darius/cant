@@ -34,7 +34,7 @@
              (if (won? grid)
                  -1
                  (match (successors grid)
-                   (() 0)
+                   ('() 0)
                    (succs (- (average (each drunk-value succs)))))))))
 
 (let spock-value
@@ -42,7 +42,7 @@
              (if (won? grid)
                  -1
                  (match (successors grid)
-                   (() 0)
+                   ('() 0)
                    (succs (- (call min (each spock-value succs)))))))))
 
 (to (average numbers)
@@ -86,9 +86,9 @@
   (let values (for each ((pair (zip (player-bits p)
                                     (player-bits q))))
                 (match pair
-                  ((1 0) (marks 0))
-                  ((0 1) (marks 1))
-                  ((0 0) #\.))))
+                  ('(1 0) (marks 0))
+                  ('(0 1) (marks 1))
+                  ('(0 0) #\.))))
   (call format `(,grid-format ,@(reverse values)))
   (newline))
 

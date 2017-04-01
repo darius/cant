@@ -103,7 +103,7 @@
 (to (left rows)
   (begin sliding ((states (for each ((row rows))
                             (slide `(0 ,row)))))
-    (let (lows board) (transpose states))
+    (let `(,lows ,board) (transpose states))
     (if (for every ((lo lows))
           (<= 4 lo))
         '()

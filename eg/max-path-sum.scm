@@ -2,7 +2,7 @@
 ;; tree ::= {leaf} | {branch value tree tree}
 
 (to (max-path-sum tree)
-  (let (best best-to-root) (solve tree))
+  (let `(,best ,best-to-root) (solve tree))
   best)
 
 (to (solve tree)

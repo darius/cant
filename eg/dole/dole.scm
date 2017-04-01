@@ -4,5 +4,5 @@
 
 (to (main args)
   (match args.rest
-    (()         (dole #no))
-    ((filename) (dole filename))))
+    ('()          (dole #no))
+    (`(,filename) (dole filename))))
