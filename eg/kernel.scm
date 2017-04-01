@@ -15,9 +15,9 @@
     ({.receive message actor parent-r}
      (begin matching ((clauses clauses))
        (match clauses
-         (()
+         ('()
           (trait actor message))
-         (((pattern pat-vars body-vars body) @rest)
+         (`((,pattern ,pat-vars ,body-vars ,body) ,@rest)
           (let pat-r (env-extend parent-r pat-vars))
           (if (eval-match message pattern pat-r)
               (eval body (env-extend pat-r body-vars))
