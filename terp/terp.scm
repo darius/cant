@@ -388,6 +388,8 @@
     (__quotient ,quotient)
     (__remainder ,remainder)
     (__modulo ,modulo)
+    (__*/mod ,(lambda (n1 n2 d)
+                (call-with-values (lambda () (div-and-mod (* n1 n2) d)) list)))
 ;    (__number-compare
     (__bit-<< ,ash)
     (__bit->> ,(lambda (x y) (ash x (- y))))

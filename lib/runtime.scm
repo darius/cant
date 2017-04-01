@@ -109,6 +109,7 @@
   ({.quotient b}  (__quotient me b))
   ({.remainder b} (__remainder me b))
   ({.modulo b}    (__modulo me b))
+  ({.*/mod m d}   (__*/mod me m d))
   ({.<< b}        (__bit-<<  me b))
   ({.>> b}        (__bit->>  me b))
   ({.not}         (__bit-not me))
