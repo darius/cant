@@ -72,6 +72,7 @@
        (term<- 'view-pat optional-match-exp (term<- 'term-pat 'ok (list p1-pat)))))
     (('quasiquote quoted)
      (parse-quasiquote-pat quoted))
+    ;; XXX complain if you see a bare , or ,@. but this will fall out of disallowing defaulty lists.
     ((: __ list?)
      (parse-list-pat p))
     ((: __ term?)

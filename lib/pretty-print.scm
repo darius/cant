@@ -9,15 +9,15 @@
 
 (to (doc<-sx x)
   (match x
-    (('quote y)
+    (`(quote ,y)
      (group (<> (text "'") (doc<-sx y))))
-    (('quasiquote y)
+    (('quasiquote y)                    ;XXX
      (group (<> (text "`") (doc<-sx y))))
-    (('unquote y)
+    (('unquote y)                       ;XXX
      (group (<> (text ",") (doc<-sx y))))
-    (('unquote-splicing y)
+    (('unquote-splicing y)              ;XXX
      (group (<> (text ",@") (doc<-sx y))))
-    (((: first symbol?) _ @_)
+    (`(,(: first symbol?) ,_ ,@_)
      (group
       (<> (text "(") (nest 1 (doc<-tagged first.name x.rest)) (text ")"))))
     ((: list?)

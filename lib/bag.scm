@@ -14,7 +14,7 @@
     ({.values}        map.values)
     ({.items}         map.items)
     ({.maps? key}     (map .maps? key))
-    ((key)            (map key)) ;TODO mayyybe instead: (map .get key 0)
+    (`(,key)          (map key)) ;TODO mayyybe instead: (map .get key 0)
     ({.get key default} (map .get key default))
     ({.get key}       (map .get key))
     ({.add! key}      (map .set! key

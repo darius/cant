@@ -25,7 +25,7 @@
    (newline)
    (unless failures.empty?
      (format "Failures for ~w:\n" property)
-     (for each! (((outcome inputs) failures))
+     (for each! ((`(,outcome ,inputs) failures))
        (format "~w: ~w\n" outcome inputs)))
    failures.empty?))
 
@@ -89,11 +89,10 @@
 ;; Helpers for gens
 
 (to (weighted-choice choices)
-  (let total (sum (for each (((weight _) choices))
-                    weight)))
+  (let total (sum (each '.first choices)))
   (given (g)
     (begin scanning ((i (g .natural total))
-                     (((weight choice) @rest) choices))
+                     (`((,weight ,choice) ,@rest) choices))
       (if (< i weight)
           choice
           (scanning (- i weight) rest)))))

@@ -44,7 +44,7 @@
            (extend-parse rule.lhs `(,words.first) words.rest '()))))))
 
 (to (grammar<- sexprs)
-  (grammar<-rules (for each (((lhs '-> rhs) sexprs))
+  (grammar<-rules (for each ((`(,lhs -> ,rhs) sexprs))
                     (rule<- lhs rhs))))
 
 (to (rule<- lhs rhs)
@@ -53,7 +53,7 @@
     ({.rhs} rhs)
     ({.starts-with? cat}
      (match rhs
-       ((first @_) (= first cat))
+       (`(,first ,@_) (= first cat))
        (_ #no)))))
 
 (to (tree<- lhs rhs)

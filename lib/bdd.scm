@@ -31,7 +31,7 @@
 (let choice-memo (map<-))
 
 (to (build-choice rank if0 if1)
-  (let (already memo-table) (dedup choice-memo rank if0 if1))
+  (let `(,already ,memo-table) (dedup choice-memo rank if0 if1))
   (or already
       (do (surely (< rank infinite-rank))
           (let index (ranks .push! rank))
@@ -74,7 +74,7 @@
 (let choose-memo (map<-))
 
 (to (choose node if0 if1)
-  (let (already memo-table) (dedup choose-memo node if0 if1))
+  (let `(,already ,memo-table) (dedup choose-memo node if0 if1))
   (or already
       (do (surely (< lit1 node))
           (let top (min (ranks node) (ranks if0) (ranks if1)))

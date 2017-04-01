@@ -67,9 +67,9 @@
       ({pq _ pqs}
        (begin merging ((pqs pqs))
          (match pqs
-           (() empty-pq)
-           ((elem) elem)
-           ((pq1 pq2 @rest)
+           ('() empty-pq)
+           (`(,elem) elem)
+           (`(,pq1 ,pq2 ,@rest)
             (let {pq min1 rest1} pq1)
             (let {pq min2 rest2} pq2)
             (pq-merge (if (<=? min1 min2)

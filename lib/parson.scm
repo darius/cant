@@ -27,10 +27,10 @@
 (to (lift peg-op)
   (feed-list
    (given (lifted)
-     (list<- (union-over (for each (((refs _) lifted))
+     (list<- (union-over (for each ((`(,refs ,_) lifted))
                            refs))
              (given (builder rules subs)
-               (call peg-op (for each (((_ f) lifted))
+               (call peg-op (for each ((`(,_ ,f) lifted))
                               (f builder rules subs))))))))
 
 (to (literal<- string)
@@ -147,9 +147,9 @@
   (let builder default-builder)         ;TODO parameterize
   (given (subs)
     (let full-subs (union-map<- subs default-subs))
-    (let rules (map<- (for each (((name (refs f)) skeletons)) ;XXX better name than f
+    (let rules (map<- (for each ((`(,name (,refs ,f)) skeletons)) ;XXX better name than f
                         `(,name ,(delay (given () (rules name)))))))
-    (for each! (((name (refs f)) skeletons))
+    (for each! ((`(,name (,refs ,f)) skeletons))
       (let peg (f builder rules full-subs))
       (rules .set! name peg))
     rules))
@@ -177,13 +177,13 @@
     outcome.display (newline)
     (error "Ungrammatical grammar"))
   (let lhses (each '.first skeletons))
-  (let all-refs (union-over (for each (((_ (refs _)) skeletons))
+  (let all-refs (union-over (for each ((`(,_ (,refs ,_)) skeletons))
                               refs)))
   (let undefined (all-refs .difference (call set<- lhses)))
   (unless undefined.empty?
     (error "Undefined rules" (sort undefined.keys)))
   (let counts (call bag<- lhses))
-  (let dups (for filter (((lhs n) counts.items))
+  (let dups (for filter ((`(,lhs ,n) counts.items))
               (and (< 1 n) lhs)))
   (unless dups.empty?
     (error "Multiply-defined rules" (sort dups)))
@@ -198,7 +198,7 @@ s: r.
 t: .
 ")
   (let skeletons (parse-grammar text))
-  (for each! (((name (refs _)) skeletons))
+  (for each! ((`(,name (,refs ,_)) skeletons))
     (format "~d: ~w\n" name refs)))
 
 (export grammar<- parse feed push)

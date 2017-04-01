@@ -13,7 +13,7 @@
   (message (error "Match failure" me message)))
 
 (make-trait list-trait list
-  ((i)
+  (`(,i)
    (if (= i 0)
        list.first
        (list.rest (- i 1))))
@@ -126,7 +126,7 @@
   )
 
 (make-trait symbol-primitive me
-  ((actor @arguments)
+  (`(,actor ,@arguments)
    (call actor (term<- me arguments)))
   ({.name}        (__symbol->string me))
   ({.compare a}   (and (symbol? a)
@@ -139,7 +139,7 @@
   ({.first}       (error "Empty list" '.first))
   ({.rest}        (error "Empty list" '.rest))
   ({.count}       0)
-  ((i)            (error "Empty list" 'nth i))
+  (`(,i)          (error "Empty list" 'nth i))
   ({.chain a}     a)
   ({.selfie sink} (sink .display "()"))
   (message        (list-trait me message))) ;XXX use trait syntax instead
@@ -149,7 +149,7 @@
   ({.first}       (__car me))
   ({.rest}        (__cdr me))
   ({.count}       (__length me))
-  ((i)            (__list-ref me i))    ;XXX just use the trait method? then can e.g. mix lazy and eager list nodes
+  (`(,i)          (__list-ref me i))    ;XXX just use the trait method? then can e.g. mix lazy and eager list nodes
   ({.chain a}     (__append me a))
   ({.selfie sink}
    (sink .display "(")
@@ -200,7 +200,7 @@
   ({.first}       (me 0))
   ({.rest}        (me .slice 1))
   ({.count}       (__vector-length me))
-  ((i)            (__vector-ref me i))
+  (`(,i)          (__vector-ref me i))
   ({.maps? i}     (__vector-maps? me i))
   ({.chain v}     (__vector-append me v))
   ({.slice i}     (__subvector me i me.count))
@@ -222,7 +222,7 @@
   ({.first}       (me 0))
   ({.rest}        (me .slice 1))
   ({.count}       (__string-length me))
-  ((i)            (__string-ref me i))
+  (`(,i)          (__string-ref me i))
   ({.maps? i}     (__string-maps? me i))
   ({.chain s}     (__string-append me s))
   ({.slice i}     (__substring me i me.count))
@@ -564,7 +564,7 @@
 
     (make map<-
 
-      (()
+      ('()
        (let count (box<- 0))
        (let keys  (box<- (vector<- none)))  ;; size a power of 2
        (let vals  (box<- (vector<- #no)))   ;; same size
@@ -603,14 +603,14 @@
          (let old-vals vals.^)
          (keys .^= (vector<-count new-capacity none))
          (vals .^= (vector<-count new-capacity))
-         (for each! (((i key) old-keys.items))
+         (for each! ((`(,i ,key) old-keys.items))
            (unless (= key none)
              (let {missing-at j} (place key))
              (keys.^ .set! j key)
              (vals.^ .set! j (old-vals i)))))
        
        (make hashmap
-         ((key)
+         (`(,key)
           (match (place key)
             ({at i} (vals.^ i))
             (_      (error "Missing key" hashmap key))))
@@ -656,8 +656,8 @@
           (sink .display ")>"))
          ))
 
-      ((a-list) ;TODO invent a concise constructor; frozen by default
+      (`(,a-list) ;TODO invent a concise constructor; frozen by default
        (let m (map<-))
-       (for each! (((k v) a-list))
+       (for each! ((`(,k ,v) a-list))
          (m .set! k v))
        m))))

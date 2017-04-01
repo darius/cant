@@ -8,10 +8,10 @@
 ;; the same invariant.
 
 (make ratio<-
-  ((n)
+  (`(,n)
    (surely (integer? n))
    {ratio n 1})
-  ((n d)
+  (`(,n ,d)
    (surely (integer? n))
    (surely (integer? d))
    (reduce n d)))

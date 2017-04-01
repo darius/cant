@@ -40,7 +40,7 @@
 (to (sgr num)
   (seq ("~wm" .format num)))
 
-(let (screen-height screen-width) '(25 80)) ;TODO find out for real
+(let `(,screen-height ,screen-width) '(25 80)) ;TODO find out for real
 
 
 ;; Rendering
@@ -75,7 +75,7 @@
   (let styles (box<- 0))
   (make _
     ({.establish! state}
-     (let (want-fg want-bg want-styles) state.reveal)
+     (let `(,want-fg ,want-bg ,want-styles) state.reveal)
      (unless (= styles.^ want-styles)
        (display (sgr 0))
        (fg .^= 39)
@@ -128,10 +128,10 @@
     (to (style-painter .paint cursor-seen? wanted-state)
       (paint cursor-seen? (wanted-state .add-style mask) subscene))))
 
-(let (black red green yellow blue magenta cyan white)
+(let `(,black ,red ,green ,yellow ,blue ,magenta ,cyan ,white)
   (each foreground-color<- (range<- 30 38)))
 
-(let (on-black on-red on-green on-yellow on-blue on-magenta on-cyan on-white)
+(let `(,on-black ,on-red ,on-green ,on-yellow ,on-blue ,on-magenta ,on-cyan ,on-white)
   (each background-color<- (range<- 40 48)))
 
 (let bold       (style<- 1))

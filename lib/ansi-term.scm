@@ -21,8 +21,8 @@
          (string<-number (+ y 1)) ";"
          (string<-number (+ x 1)) "H"))
 
-(let (black red green yellow blue magenta cyan white)
-  (chain (range<- 8) '()))              ;TODO ugly
+(let `(,black ,red ,green ,yellow ,blue ,magenta ,cyan ,white)
+  (as-list (range<- 8)))              ;TODO ugly
 
 (to (bright color)
   (+ 60 color))

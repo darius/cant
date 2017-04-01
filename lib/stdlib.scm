@@ -8,36 +8,36 @@
   (not (= x y)))
 
 (make +
-  (() 0)
-  ((a) a)
-  ((a b) (a .+ b))
-  ((a b @arguments) (foldl '.+ (a .+ b) arguments)))
+  (`() 0)
+  (`(,a) a)
+  (`(,a ,b) (a .+ b))
+  (`(,a ,b ,@arguments) (foldl '.+ (a .+ b) arguments)))
 
 (make *
-  (() 1)
-  ((a) a)
-  ((a b) (a .* b))
-  ((a b @arguments) (foldl '.* (a .* b) arguments)))
+  (`() 1)
+  (`(,a) a)
+  (`(,a ,b) (a .* b))
+  (`(,a ,b ,@arguments) (foldl '.* (a .* b) arguments)))
 
 (make -
-  (() (error "Bad arity"))
-  ((a) (0 .- a))
-  ((a b) (a .- b))
-  ((a b @arguments) (foldl '.- (a .- b) arguments)))
+  (`() (error "Bad arity"))
+  (`(,a) (0 .- a))
+  (`(,a ,b) (a .- b))
+  (`(,a ,b ,@arguments) (foldl '.- (a .- b) arguments)))
 
 (make-trait transitive-comparison compare?
-  ((x @xs)
+  (`(,x ,@xs)
    (begin comparing ((x0 x) (xs xs))
      (match xs
-       (() #yes)
-       ((x1 @rest) (and (compare? x0 x1)
-                        (comparing x1 rest)))))))
+       (`() #yes)
+       (`(,x1 ,@rest) (and (compare? x0 x1)
+                           (comparing x1 rest)))))))
 
-(make <   {extending transitive-comparison} ((a b)      (= (compare a b) -1)))
-(make <=  {extending transitive-comparison} ((a b) (not (= (compare a b)  1))))
-(make <=> {extending transitive-comparison} ((a b)      (= (compare a b)  0))) ; XXX better name?
-(make >=  {extending transitive-comparison} ((a b) (not (= (compare a b) -1))))
-(make >   {extending transitive-comparison} ((a b)      (= (compare a b)  1)))
+(make <   {extending transitive-comparison} (`(,a ,b)      (= (compare a b) -1)))
+(make <=  {extending transitive-comparison} (`(,a ,b) (not (= (compare a b)  1))))
+(make <=> {extending transitive-comparison} (`(,a ,b)      (= (compare a b)  0))) ; XXX better name?
+(make >=  {extending transitive-comparison} (`(,a ,b) (not (= (compare a b) -1))))
+(make >   {extending transitive-comparison} (`(,a ,b)      (= (compare a b)  1)))
 
 (to (compare a b)
   (let result (a .compare b))
@@ -52,13 +52,13 @@
 
 ;; XXX float contagion
 (make min
-  ((a) a)
-  ((a b) (if (< a b) a b))
-  ((a b @rest) (call min `(,(min a b) ,@rest))))
+  (`(,a) a)
+  (`(,a ,b) (if (< a b) a b))
+  (`(,a ,b ,@rest) (call min `(,(min a b) ,@rest))))
 (make max
-  ((a) a)
-  ((a b) (if (< a b) b a))
-  ((a b @rest) (call max `(,(max a b) ,@rest))))
+  (`(,a) a)
+  (`(,a ,b) (if (< a b) b a))
+  (`(,a ,b ,@rest) (call max `(,(max a b) ,@rest))))
 
 (to (arg-min xs key) (foldr1 (given (x y) (if (< (key x) (key y)) x y))
                              xs))
@@ -111,10 +111,10 @@
   arguments)
 
 (make chain
-  (() '())
-  ((xs) xs)
-  ((xs ys) (xs .chain ys))
-  ((@arguments) (foldr1 '.chain arguments)))
+  (`() '())
+  (`(,xs) xs)
+  (`(,xs ,ys) (xs .chain ys))
+  (`(,@arguments) (foldr1 '.chain arguments)))
 
 (to (some ok? xs)
   (and (not xs.empty?)
@@ -146,7 +146,7 @@
                   ,@(zipping xs.rest ys.rest))))))
 
 (to (zip-with fn xs ys)
-  (for each (((x y) (zip xs ys)))
+  (for each ((`(,x ,y) (zip xs ys)))
     (fn x y)))
 
 (to (intercalate between elements)      ;TODO unify with .join
@@ -190,9 +190,9 @@
   (f (call g arguments)))
 
 (make range<-
-  ((limit)
+  (`(,limit)
    (range<- 0 limit))
-  ((first limit)
+  (`(,first ,limit)
    (if (<= limit first)
        '()
        (make range {extending list-trait}
@@ -200,7 +200,7 @@
          ({.first}  first)
          ({.rest}   (range<- (+ first 1) limit))
          ({.count}  (- limit first))
-         ((i)
+         (`(,i)
           (if (not (integer? i))
               (error "Key error" range i)
               (do (let j (+ first i))
@@ -214,9 +214,9 @@
          ))))
 
 (make enumerate
-  ((xs)
+  (`(,xs)
    (enumerate xs 0))
-  ((xs i)
+  (`(,xs ,i)
    (if xs.empty?
        '()
        (make enumeration {extending list-trait}
@@ -307,7 +307,7 @@
                 (hide
                   (import (qualifier<- (add-make-context name context))
                     qe qp)
-                  (for each (((p p-vars e-vars e) clauses))
+                  (for each ((`(,p ,p-vars ,e-vars ,e) clauses))
                     `(,(qp p) ,p-vars ,e-vars ,(qe e))))})
 
         (to (qp pat)
@@ -359,7 +359,7 @@
 (to (debug)
   (import (use "lib/debugger") inspect-continuation)
   (match the-last-error.^
-    ((k @evil) (inspect-continuation k))
+    (`(,k ,@evil) (inspect-continuation k))
     (_ (display "No error to debug.\n"))))
 
 (let the-modules (box<- '()))
@@ -369,13 +369,13 @@
 ;; This is not very useful, though, because we still can't redefine
 ;; variables at the repl.
 (to (unuse file-stem)                   ;TODO better name
-  (the-modules .^= (for those (((stem mod) the-modules.^))
+  (the-modules .^= (for those ((`(,stem ,mod) the-modules.^))
                      (not= stem file-stem))))
 
 (to (use file-stem)                  ;TODO a realer module system
   ;; N.B. could sort of just use memoize if that were already loaded.
   (match (assoc file-stem the-modules.^)
-    ((_ mod) mod)
+    (`(,_ ,mod) mod)
     (#no
      (let mod (load (chain file-stem ".scm") `(,file-stem)))
      (the-modules .^= `((,file-stem ,mod) ,@the-modules.^))

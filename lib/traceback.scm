@@ -19,7 +19,7 @@
 
 (to (complain @evil)
   (match evil
-    (((: plaint string?) @values)
+    (`(,(: plaint string?) ,@values)
      (display plaint)
      (display ": ")
      (write values))

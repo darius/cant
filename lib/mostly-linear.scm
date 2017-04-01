@@ -14,7 +14,7 @@
 (let ratio-m (use "lib/ratio"))
 (import ratio-m ratio<-)
 
-(let (r+ r- r* r/) (each ratio-m '(+ - * /)))
+(let `(,r+ ,r- ,r* ,r/) (each ratio-m '(+ - * /)))
 (let r-cmp (ratio-m 'compare))
 
 ;; Try to determine as many variables as we can by elimination.
@@ -37,7 +37,7 @@
                     (else             'stuck))))
          ({equation defaulty? expr}
           (match (eval-expr expr)       ;XXX better name?
-            ('nonlinear
+            ('nonlinear                 ;TODO call it #no instead?
              (solving inconsistent? progress? (push pending task)))
             (combo
              (let terms (expand combo))

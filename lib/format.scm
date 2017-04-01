@@ -1,7 +1,7 @@
 ;; printf-ish thing. TODO do something completely different?
 
 (make format
-  ((format-string @arguments)
+  (`(,format-string ,@arguments)
    (scanning out format-string arguments))
   ({.to sink format-string @arguments}
    (scanning sink format-string arguments)))

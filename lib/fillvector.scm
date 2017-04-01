@@ -22,7 +22,7 @@
       (error "Bad index" fillvector i)))
 
   (make fillvector {extending vector-trait}
-    ((i)
+    (`(,i)
      (count-check i)
      (vec.^ i))
     ({.count}

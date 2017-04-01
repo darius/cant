@@ -3,12 +3,12 @@
 (import (use "lib/traceback") print-traceback)
 
 (to (help vocab)
-  (for each! (((short full text) vocab))
+  (for each! ((`(,short ,full ,text) vocab))
     (format "~d ~-9d - ~d\n"
             short full.name text)))
 
 (to (collect-abbrevs vocab)
-  (map<- (for each (((short full _) vocab))
+  (map<- (for each ((`(,short ,full ,_) vocab))
            `(,short ,full))))
 
 ;; TODO unify with inspect-continuation
