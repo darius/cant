@@ -116,4 +116,4 @@ insn:    {'1'+} {'#' '#'? '#'? '#'? '#'?} :make_insn.
   (print regs.rest))
 
 
-(export trm-parse regs<- run show)
+(export trm-parse regs<- run show main)
