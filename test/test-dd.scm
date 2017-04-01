@@ -7,7 +7,7 @@
 
 (to (claim<- rank) (variable<- rank 2))
 
-(let (x y) (each claim<- '(8 9)))
+(let `(,x ,y) (each claim<- '(8 9)))
 
 (to (dd-not e)    (e lit1 lit0))
 (to (dd-and e f)  (e lit0 f))
@@ -39,7 +39,7 @@
 
 (display "\nMcCarthy identities:\n")
 
-(let (a b c d p q r) (each claim<- (range<- 7)))
+(let `(,a ,b ,c ,d ,p ,q ,r) (each claim<- (range<- 7)))
 
 (print (valid? (== a (lit0 a b))))
 (print (valid? (== b (lit1 a b))))

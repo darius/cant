@@ -31,7 +31,7 @@
 (to (exercise-em pairs)
   (let m (map<-))     ;; The hashmap under test.
   (let a (box<- '())) ;; An a-list that should be equivalent.
-  (for each! (((key op) pairs))
+  (for each! ((`(,key ,op) pairs))
     (match op
       ('fetch
        (let m-val (m .get key))

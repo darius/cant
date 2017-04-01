@@ -1,7 +1,7 @@
 ;; Complex numbers
 
 (let cnum (use "lib/complex"))
-(let (c+ c- c* c/ c-abs) (each cnum '(+ - * / abs)))
+(let `(,c+ ,c- ,c* ,c/ ,c-abs) (each cnum '(+ - * / abs)))
 
 (let z {complex 0 0})
 (let l {complex 1 0})
