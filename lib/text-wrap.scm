@@ -47,7 +47,7 @@
                        (wrap-into new-line tokens.rest width)))))))))
 
 
-(to (main (_ width-str @words))
+(to (main `(,_ ,width-str ,@words))
   (let lines (wrap (" " .join words)
                    (number<-string width-str)))
   (each! print lines))

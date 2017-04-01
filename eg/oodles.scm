@@ -6,7 +6,7 @@
 (import (use "lib/parson")    parse grammar<-)
 (import (use "lib/text-wrap") fill)
 
-(to (main (_ @words))
+(to (main `(,_ ,@words))
   (let expanded (expand-text (" " .join words) 1000))
   (format "~d\n" (fill expanded 72)))
 
