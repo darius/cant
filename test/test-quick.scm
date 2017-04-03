@@ -33,6 +33,7 @@
 (loud-use "lib/regex-match")
 (loud-use "lib/parse")
 (loud-use "lib/unify")
+(((loud-use "lib/roman") 'main) '(_ "mcmlxix" "1969" "i" "0"))
 
 (loud-use "test/test-export-import")
 (loud-use "test/test-quasiquote")

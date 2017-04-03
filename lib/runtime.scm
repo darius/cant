@@ -116,6 +116,7 @@
   ({.remainder b} (__remainder me b))
   ({.modulo b}    (__modulo me b))
   ({.*/mod m d}   (__*/mod me m d))
+  ({./mod d}      (__*/mod me 1 d))
   ({.<< b}        (__bit-<<  me b))
   ({.>> b}        (__bit->>  me b))
   ({.not}         (__bit-not me))
