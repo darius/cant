@@ -227,6 +227,16 @@
 (to (sum ns)
   (foldl + 0 ns))
 
+;; Split xs at its first element where split-point? is true.
+;; That is, return `(,head ,tail), where (chain head tail) = xs,
+;; and either tail is () or (split-point? tail.first) is true
+;; at the first possible place.
+(to (split-on split-point? xs)
+  (begin scanning ((r-head '()) (xs xs))
+    (if (or xs.empty? (split-point? xs.first))
+        `(,(reverse r-head) ,xs)
+        (scanning `(,xs.first ,@r-head) xs.rest))))
+
 (to (vector<- @elements)
   (vector<-list elements))
 
