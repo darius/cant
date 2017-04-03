@@ -83,6 +83,6 @@
 (((loud-use "eg/oodles") 'main) '(_ "garlic"))
 (((loud-use "eg/trivial72") 'main) '(_))
 (((loud-use "eg/trm") 'main) '(_))
-(((loud-use "eg/tusl") 'main) '("tusl"))
+(((loud-use "eg/tusl") 'main) '(_))
 
 (loud-use "test/test-metaterp")
