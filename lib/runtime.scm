@@ -86,6 +86,12 @@
   ({.last}
    (let rest list.rest)
    (if rest.empty? list.first rest.last))
+  ({.repeat n}
+   ;;TODO a method to get an empty seq of my type; and then factor out duplicate code
+   (match n
+     (0 '())             
+     (_ (call chain (for each ((_ (range<- n)))
+                      list)))))
   )
 
 (make-trait claim-primitive me
