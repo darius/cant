@@ -28,12 +28,6 @@
            (/ ,(stack-op-2-1<- /))
            )))
 
-(to (trivi-compile tokens)
-  (for each ((t tokens))
-    (if (number? t)
-        (push<- t)
-        (dictionary t))))
-
 (to (compile tokens)
   (let code (fillvector<-))
   (begin compiling ((frames '()) (tokens tokens))
