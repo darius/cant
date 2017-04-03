@@ -138,13 +138,6 @@
 (to (flip-d rows)                       ; diagonal flip
   (transpose rows))
 
-;; TODO: name it (zip @rows) instead, like Python?
-(to (transpose rows)
-  (if (every '.empty? rows)   ; and make it (some '.empty? rows)?
-      '()
-      `(,(each '.first rows)
-        ,@(transpose (each '.rest rows)))))
-
 (let arrows (export left right up down))
 
 (let empty-board '((0 0 0 0)   ;XXX crude

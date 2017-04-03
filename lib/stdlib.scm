@@ -149,6 +149,13 @@
   (for each ((`(,x ,y) (zip xs ys)))
     (fn x y)))
 
+;; TODO: name it (zip @rows) instead, like Python?
+(to (transpose rows)
+  (if (every '.empty? rows)   ; and make it (some '.empty? rows)?
+      '()
+      `(,(each '.first rows)
+        ,@(transpose (each '.rest rows)))))
+
 (to (intercalate between elements)      ;TODO unify with .join
   (if elements.empty?
       elements
