@@ -26,4 +26,4 @@
 (to (bad-patt? patt)
   (or (and (cons? patt)
            (not ('(quote quasiquote : @ optional) .find? patt.first)))
-      (bad-part? (patt-subparts expr))))
+      (bad-part? (patt-subparts patt))))
