@@ -67,6 +67,7 @@
 (loud-use "test/test-bag")
 (loud-use "test/test-text-wrap")
 (loud-use "test/test-regex-gen")
+(loud-use "test/test-random")
 
 (loud-use "eg/compact-lambda")
 (loud-use "eg/sicp1")
