@@ -43,10 +43,6 @@
         (term<- 'call
                 (parse-exp addressee)
                 (term<- 'list (map parse-exp operands))))
-       ((: __ term?)
-        (term<- 'term
-                (cons (term-tag e)
-                      (map parse-exp (term-parts e)))))
        ))))
 
 ;; what's the syntax for a macro in pattern context?
