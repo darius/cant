@@ -359,6 +359,8 @@
     (string-source<- ,open-input-string)
     (string-sink<- ,open-output-string)
     (__get-output-string ,get-output-string)
+    (self-evaluating? ,self-evaluating?)
+    (maybe-macroexpand-expr ,look-up-macro)
     (open-subprocess ,process)
     (list-globals ,(lambda () (map car the-global-env)))
     (extract-script ,extract-script)
