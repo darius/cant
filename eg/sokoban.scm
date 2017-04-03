@@ -94,7 +94,7 @@ Level ~w ~d Move ~w")
 
 (to (parse initial-config)
   (let lines initial-config.split-lines)
-  (surely (for every ((line lines))
+  (surely (for every ((line lines))     ;XXX require
             (= line.count ((lines 0) .count))))
   (vector<-list (list<-string initial-config))) ;XXX list<-string shouldn't be needed
 

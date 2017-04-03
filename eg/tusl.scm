@@ -32,7 +32,7 @@
   (let code (fillvector<-))
   (begin compiling ((frames '()) (tokens tokens))
     (case (tokens.empty?
-           (surely frames.empty?))
+           (surely frames.empty?))      ;XXX require
           (else
            (match tokens.first
              ((: n number?)
@@ -46,7 +46,7 @@
               (compiling `(,(reverse locals) ,@frames)
                          tail.rest))
              ('>>
-              (surely (not frames.empty?))
+              (surely (not frames.empty?)) ;XXX require
               (code .push! (ungrab<- frames.first.count))
               (compiling frames.rest tokens.rest))
              ((: word symbol?)

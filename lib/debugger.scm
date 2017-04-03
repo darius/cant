@@ -64,7 +64,7 @@
              (else (continue "Huh? Enter 'help' for help.")))))))
 
 (to (inspect-continuation k)
-  (surely (not k.empty?))
+  (surely (not k.empty?))               ;XXX require
 
   (let vocab
     '((? help      "this message")

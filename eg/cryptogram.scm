@@ -70,7 +70,7 @@
 (to (cryptoview<- cryptogram)
 
   (let code (those '.letter? cryptogram))
-  (surely (not code.empty?))
+  (surely (not code.empty?))            ;XXX 'require' or something
   (let decoder
     (map<- (for each ((ch ((call set<- code) .keys))) ;XXX clumsy
              `(,ch #\space))))
