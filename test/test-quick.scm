@@ -81,6 +81,7 @@
 (loud-use "eg/lambdaterp")
 (loud-use "eg/tictactoe")
 (loud-use "eg/max-path-sum")
+(loud-use "eg/squickcheck-examples")
 (((loud-use "eg/slow-life") 'smoke-test))
 (((loud-use "eg/oodles") 'main) '(_ "garlic"))
 (((loud-use "eg/trivial72") 'main) '(_))

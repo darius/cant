@@ -199,6 +199,10 @@
    (for each ((i (range<- me.count)))
      `(,i ,(me i))))
 ;  ({.get key default}  TODO custom impl
+  ({.swap! i j}
+   (let t (me i))
+   (me .set! i (me j))
+   (me .set! j t))
   (message
    (list-trait me message))) ;XXX use trait syntax instead
 

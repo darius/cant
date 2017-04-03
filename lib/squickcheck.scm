@@ -2,8 +2,11 @@
 ;; Based on clickcheck/peckcheck.
 
 ;; Glossary:
-;;    g    generator context: includes a PRNG and a size
+;;    g    generator context: includes an RNG and a size
 ;;    gen  generates a value of a type, given a g
+
+(import (use "lib/random") rng<-)
+(let default-rng (rng<- 1234567))    ;TODO don't use this all the time
 
 ;; TODO report which property failed
 ;; TODO make and report deterministic seeds
@@ -11,7 +14,7 @@
 ;; TODO better names
 (make all
   ((property @gens)
-   (all .run (context<- random-integer) 40 property gens))
+   (all .run (context<- default-rng) 40 property gens))
   ({.run g n-times property gens}
    (let failures (fillvector<-))
    (for each! ((_ (range<- n-times)))
@@ -36,16 +39,16 @@
 ;; Generator context
 
 (make context<-
-  ((prng)
-   (context<- prng 20))             ; TODO: is 20 a good default size?
-  ((prng size)
+  (`(,rng)
+   (context<- rng 20))             ; TODO: is 20 a good default size?
+  (`(,rng ,size)
    ;; TODO better method names
    (make gen
      ({.size}        size)
-     ({.natural n}   (prng n))
-     ({.range lo hi} (+ lo (prng (- hi lo))))
-     ({.a-size}      (prng size))
-     ({.choose xs}   (xs (prng xs.count))))))
+     ({.natural n}   (rng .random-integer n))
+     ({.range lo hi} (rng .random-range lo hi))
+     ({.a-size}      (rng .random-integer size))
+     ({.choose xs}   (rng .pick xs)))))
 
 
 ;; Basic gens

@@ -6,6 +6,8 @@
 (import (use "lib/parson")    parse grammar<-)
 (import (use "lib/text-wrap") fill)
 
+(import (use "lib/random") rng)         ;TODO pass it in
+
 (to (main `(,_ ,@words))
   (let expanded (expand-text (" " .join words) 1000))
   (format "~d\n" (fill expanded 72)))
@@ -22,7 +24,7 @@ word:   :letter+ {'!'}? :join.
 (let parser ((grammar (map<-)) "phrase"))
 
 (to (expand token probability)
-  (if (and (menu .maps? token) (< (random-integer 1000) probability))
+  (if (and (menu .maps? token) (< (rng .random-integer 1000) probability))
       (expand-text (menu token) (/ (* probability 4) 5))
       token))
 

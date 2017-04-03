@@ -19,11 +19,13 @@
 
 ;; TODO more tests
 
+(import (use "lib/random") rng)
+
 (to (random-tests n-trials)            ;TODO use squickcheck
   (for each! ((_ (range<- n-trials)))
     (exercise-em (for each ((value (range<- 50)))
-                   (let key (random-integer 16))
-                   (let op  (if (< (random-integer 10) 3)
+                   (let key (rng .random-integer 16))
+                   (let op  (if (< (rng .random-integer 10) 3)
                                 'fetch
                                 value))
                    `(,key ,op)))))

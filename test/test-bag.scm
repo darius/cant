@@ -23,10 +23,14 @@
 
 ;; TODO more tests
 
+(import (use "lib/random") rng<-)
+
+(let rng (rng<- 1234567))
+
 (to (random-tests n-trials)            ;TODO use squickcheck
   (for each! ((_ (range<- n-trials)))
     (exercise-em (for each ((value (range<- 50)))
-                   (random-integer 5)))))
+                   (rng .random-integer 5)))))
 
 (to (exercise-em keys)
   (let m (bag<-))     ;; The bag under test.

@@ -6,11 +6,13 @@
   cursor green red unstyled)
 (import (use "lib/bag")
   bag<-)
+(import (use "lib/random")
+  random-rng<-)
 
 (to (main args)
   (let cryptogram
     (match args.rest
-      ('()     (random-encrypt (run-fortune)))
+      ('()     (random-encrypt (random-rng<-) (run-fortune)))
       (`(,str) str)
       (_       (error ("Usage: ~d [cryptogram]" .format (args 0))))))
   (for cbreak-mode ()
@@ -18,25 +20,15 @@
 
 (let alphabet (each char<- (range<- (#\a .code) (+ (#\z .code) 1)))) ;XXX clumsy
 
-(to (random-encrypt text)
+(to (random-encrypt rng text)
   (let values (vector<-list alphabet))
-  (random-shuffle! values)
+  (rng .shuffle! values)
   (let code (map<- (zip alphabet values.values))) ;XXX why .values needed?
   (string<-list (for each ((ch text.lowercase))
                   (code .get ch ch))))
 
-(to (random-shuffle! vec)           ;XXX should be in `random` library
-  (let n vec.count)
-  (for each! ((i (range<- n)))
-    (swap! vec i (+ i (random-integer (- n i))))))
-
-(to (swap! vec i j)
-  (let t (vec i))
-  (vec .set! i (vec j))
-  (vec .set! j t))
-
 (to (run-fortune)
-  ;; XXX ensure fits in sturm's width
+  ;; TODO ensure fits in sturm's width
   (shell-run "exec fortune"))
 
 (to (shell-run command)

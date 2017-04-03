@@ -2,13 +2,13 @@
 ;; TODO: port a better one
 
 ;; (random-seed<-) -> seed (From system randomness.)
-;; (prng<- seed) -> prng
-;; (prng .random-integer n) -> int
+;; (rng<- seed) -> rng
+;; (rng .random-integer n) -> int
 
 (let D 2147483647)
 
 ;; Multiplicative congruential
-(to (park-miller-prng<- seed)
+(to (park-miller-rng<- seed)
   (surely (< 0 seed))
   (let state (box<- seed))
 
@@ -17,13 +17,24 @@
     (state .^= r)
     r)
 
-  (make prng
+  (make rng
     ({.random-integer n}
      ((next) .modulo n))                ;XXX could be better
+    ({.random-range lo hi}
+     (+ lo (rng .random-integer (- hi lo))))
+    ({.pick xs}
+     (xs (rng .random-integer xs.count)))
+    ({.shuffle! vec}
+     (let n vec.count)
+     (for each! ((i (range<- n)))
+       (vec .swap! i (+ i (rng .random-integer (- n i))))))
     ))
 
-(let prng<- park-miller-prng<-)
-(let rng (prng<- 1234567))
+(let rng<- park-miller-rng<-)
+(let rng (rng<- 1234567))
+
+(to (random-rng<-)
+  (rng<- (random-seed<-)))
 
 (to (random-seed<-)
   (for with-input-file ((source "/dev/urandom"))
@@ -39,4 +50,4 @@
     (+ (n .<< 8)
        source.read-char.code)))
 
-(export prng<- rng random-seed<-)
+(export rng<- rng random-rng<- random-seed<-)

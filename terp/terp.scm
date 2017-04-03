@@ -350,7 +350,6 @@
     (read ,squeam-read)
     (parse-exp ,parse-exp)
     (parse-pat ,parse-pat)
-    (random-integer ,random)
     (system ,system)
     ;; Should use string ports instead:
     (number<-string ,string->number)

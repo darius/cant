@@ -1,5 +1,7 @@
 ;; Ported from github.com/darius/sturm
 
+(import (use "lib/random")
+  rng<- random-seed<-)
 (import (use "lib/sturm")
   cbreak-mode get-key render
   ;;XXX import is finally a pain:
@@ -8,10 +10,11 @@
   on-black on-red on-green on-yellow on-blue on-magenta on-cyan on-white)
 
 (to (main _)
+  (let rng (rng<- (random-seed<-)))
   (for cbreak-mode ()
-    (play (starting-board<-))))
+    (play (starting-board<- rng) rng)))
 
-(to (play board)
+(to (play board rng)
   (let history (fillvector<-))
   (begin playing ((board board) (forfeit? #no))
     (to (continue)
@@ -33,8 +36,8 @@
                  (else
                   (history .push! board)
                   (animate sliding score)
-                  (let next-board (plop sliding.last
-                                        (if (< (random-integer 10) 9) 2 4)))
+                  (let small? (< (rng .random-integer 10) 9))
+                  (let next-board (plop rng sliding.last (if small? 2 4)))
                   (playing next-board forfeit?))))
           (else
            (continue)))))
@@ -49,11 +52,11 @@
     (frame board score)
     (nanosleep 40000000)))
 
-(to (starting-board<-)
-  (plop (plop empty-board 2) 2))
+(to (starting-board<- rng)
+  (plop rng (plop rng empty-board 2) 2))
 
-(to (plop board value)
-  (update board (random-empty-square board) value))
+(to (plop rng board value)
+  (update board (random-empty-square rng board) value))
 
 (to (view rows)
   (for each ((row rows))
@@ -85,13 +88,10 @@
   (for every ((move arrows.values))
     ((move rows) .empty?)))
 
-(to (random-empty-square rows)
-  (random-choice (for gather ((`(,r ,row) rows.items))
-                   (for filter ((`(,c ,v) row.items))
-                     (and (= v 0) `(,r ,c))))))
-
-(to (random-choice xs)       ;XXX should be in lib or standard methods
-  (xs (random-integer xs.count)))
+(to (random-empty-square rng rows)
+  (rng .pick (for gather ((`(,r ,row) rows.items))
+               (for filter ((`(,c ,v) row.items))
+                 (and (= v 0) `(,r ,c))))))
 
 (to (update rows at new-value)
   (for each ((`(,r ,row) rows.items))
