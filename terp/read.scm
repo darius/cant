@@ -19,6 +19,11 @@
 	     (flush-input-line port)
 	     (loop))))))
 
+(define (blank? c)
+  (or (eof-object? c)
+      (char-whitespace? c)
+      (char=? c #\;)))
+
 (define (read-atom port c)
 
   (define (symbol-terminator? c)
@@ -276,7 +281,9 @@
 
     (install-read-macro #\@
       (lambda (port c)
-        (list '@ (must-read port))))    ;XXX for now
+        (if (blank? (peek-char port))
+            '@
+            (list '@ (must-read port)))))    ;XXX for now
 
     (lambda opt:in-port
       (read (optional-arg opt:in-port (current-input-port))))))
