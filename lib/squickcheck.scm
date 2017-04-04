@@ -13,7 +13,7 @@
 ;; TODO catch errors
 ;; TODO better names
 (make all
-  ((property @gens)
+  (`(,property ,@gens)
    (all .run (context<- default-rng) 40 property gens))
   ({.run g n-times property gens}
    (let failures (fillvector<-))

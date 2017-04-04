@@ -48,6 +48,7 @@
 ;; Return a pair `(,exprs ,patts) of the immediate subexpressions and
 ;; subpatterns of patt.
 (to (patt-subparts patt)
+  ;; TODO macroexpand patterns (when that's ready)
   (match patt
     ((: symbol?)          none)
     ((: self-evaluating?) none)
@@ -57,17 +58,17 @@
     (`(: ,p ,e)           `((,e) (,p)))
     (`(@ ,_) (error "An @-pattern must be at the end of a list" patt))
     (`(optional ,p)       `(() (,p)))
-    (('quasiquote q)      `(() ,(quasiquote-subpatts q))) ;XXX list pattern syntax
+    ((list<- 'quasiquote q) `(() ,(quasiquote-subpatts q)))
     ((: list?)            `(() ,(list-subpatts patt)))))
 
 (to (quasiquote-subpatts q)
   ;;XXX list pattern syntax, all through below
   (match q
-    (('unquote p) `(,p))
-    ((('unquote-splicing p)) `(,p))
-    (('unquote-splicing p)
+    ((list<- 'unquote p) `(,p))
+    ((list<- (list<- 'unquote-splicing p)) `(,p))
+    ((list<- 'unquote-splicing p)
      (error "A ,@-pattern must be at the end of a list" q))
-    ((qcar @qcdr) `(',qcar ,@(quasiquote-subpatts qcdr)))
+    ((cons qcar qcdr) `(',qcar ,@(quasiquote-subpatts qcdr)))
     ((: term?) (qq-term-subpatts q))
     (_ '())))
 
