@@ -21,9 +21,10 @@
     (`(,e1 ,@es)                    `((,e1 ,@es) ()))))
 
 (to (clauses-subparts clauses)
-  (let `(,es-lists ,ps-lists) (transpose (each clause-subparts clauses)))
-  `(,(call chain es-lists)
-    ,(call chain ps-lists)))
+  (match (transpose (each clause-subparts clauses))
+    (() none)
+    (`(,es-lists ,ps-lists) `(,(call chain es-lists)
+                              ,(call chain ps-lists)))))
 
 (to (clause-subparts `(,p ,@es))
   `(,es (,p)))

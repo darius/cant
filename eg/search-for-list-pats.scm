@@ -9,6 +9,7 @@
   (each! report-badness filenames))
 
 (to (report-badness filename)
+;;  (format "Checking ~d...\n" filename)
   (match (those bad-expr? (with-input-file read-all filename))
     ('() 'ok)
     (top-level-bad-exprs
