@@ -39,7 +39,7 @@
        (let m-val (m .get key))
        (let a-val (match (assoc key a.^)
                     (#no #no)
-                    ((k v) v)))
+                    (`(,k ,v) v)))
        (surely (= m-val a-val))
                                         ;        (print `(,key ,m-val))
        )

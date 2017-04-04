@@ -11,11 +11,11 @@
   (match x
     (`(quote ,y)
      (group (<> (text "'") (doc<-sx y))))
-    (('quasiquote y)                    ;XXX
+    ((list<- 'quasiquote y)
      (group (<> (text "`") (doc<-sx y))))
-    (('unquote y)                       ;XXX
+    ((list<- 'unquote y)
      (group (<> (text ",") (doc<-sx y))))
-    (('unquote-splicing y)              ;XXX
+    ((list<- 'unquote-splicing y)
      (group (<> (text ",@") (doc<-sx y))))
     (`(,(: first symbol?) ,_ ,@_)
      (group

@@ -3,7 +3,7 @@
 (make sort
   (`(,xs)
    (sort-by xs compare))
-  ((xs {reverse})            ;TODO design a better keyword-args scheme
+  (`(,xs {reverse})          ;TODO design a better keyword-args scheme
    (sort-by xs compare-reversed))
   ;; ...
   )
