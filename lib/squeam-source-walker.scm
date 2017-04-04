@@ -11,7 +11,7 @@
     ((: symbol?)                    none)
     ((: self-evaluating?)           none)
     (`(quote ,_)                    none)
-    ((: term?)                      `(,expr.arguments ()))
+    ((: t term?)                    `(,t.arguments ()))
     (`(let ,p ,e)                   `((,e) (,p)))
     (`(make ,(: symbol?) ,@clauses) (clauses-subparts clauses))
     (`(make ,@clauses)              (clauses-subparts clauses))
