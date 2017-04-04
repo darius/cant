@@ -67,8 +67,13 @@
      (let ((p1-pat (parse-pat p1)))
        (term<- 'view-pat optional-match-exp (term<- 'term-pat 'ok (list p1-pat)))))
     (('quasiquote quoted)
+;     (parse-pat (expand-quasiquote-pat quoted)))  XXX broken
      (parse-quasiquote-pat quoted))
     ;; XXX complain if you see a bare , or ,@. but this will fall out of disallowing defaulty lists.
+    (('list<- . ps)
+     (parse-list-pat ps))
+    (('cons car-p cdr-p)
+     (make-cons-pat (parse-pat car-p) (parse-pat cdr-p)))
     ((: __ list?)
      (parse-list-pat p))
     ((: __ term?)
@@ -157,7 +162,8 @@
              (mlambda
               ((__ (: v symbol?) (: self symbol?) . clauses) ;XXX allow other patterns?
                (let ((msg (gensym)))
-                 `(to (,v ,self ,msg)   ;XXX probably should not support definition-style patterns here
+                 ;; TODO leave out miranda-trait if there's a catchall already
+                 `(to (,v ,self ,msg)
                     (match ,msg
                       ,@clauses
                       (_ (miranda-trait ,self ,msg)))))))) ;XXX hygiene, and XXX make it overridable
@@ -166,13 +172,12 @@
                `((make _ ,@(map (lambda (clause)
                                   (assert (pair? clause)
                                           "invalid clause" clause)
-                                  ;; XXX change to use non-defaulty list pattern:
-                                  `((,(car clause)) ,@(cdr clause)))
+                                  `((list<- ,(car clause)) ,@(cdr clause)))
                                 clauses))
                  ,subject))))
     ('to     (mlambda
               ((__ (head . param-spec) . body)
-               (let ((pattern (mcase param-spec
+               (let ((pattern (mcase param-spec ;XXX expand as definition-style pattern
                                 (((: cue cue?) . rest)
                                  (make-term cue rest))
                                 (__ param-spec))))
@@ -181,7 +186,7 @@
                      `(to ,head (given ,pattern ,@body)))))))
     ('given  (mlambda
               ((__ p . body)
-               `(make (,p ,@body)))))
+               `(make (,p ,@body)))))   ;XXX expand as definition-style pattern
     ('for    (mlambda
               ((__ fn bindings . body)
                (parse-bindings bindings
@@ -247,6 +252,34 @@
                  'ok)))
             bindings)
   (receiver (map car bindings) (map cadr bindings)))
+
+(define (expand-quasiquote-pat qq)
+  (mcase qq
+    (('unquote p)
+     p)
+    ((('unquote-splicing p))
+     `(: ',list? ,p))
+    ((('unquote-splicing p) . __)
+     (error 'parse "A ,@-pattern must be at the end of a list" qq))
+    ((qcar . qcdr)
+     `(cons ,(expand-quasiquote-pat qcar)
+            ,(expand-quasiquote-pat qcdr)))
+    ((: __ term?)
+     (expand-qq-term-pat qq))
+    ;; TODO what about e.g. vectors with a ,pat inside?
+    ;;  We should probably at least try to notice them and complain.
+    (__ `',qq)))
+
+(define (expand-qq-term-pat term)
+  (let ((tag (term-tag term))
+        (parts (term-parts term)))
+    (unless (symbol? tag)
+      ;; XXX for now:
+      (error 'parse "A term pattern must be tagged with a constant symbol" term))
+    ;; XXX duplicate and ugly code. also, TESTME.
+    (if (any (mlambda (('unquote-splicing __) #t) (__ #f)) parts)
+        `(: ',explode-term {term ',tag ,(expand-quasiquote-pat parts)})
+        (make-term tag (map expand-quasiquote-pat parts)))))
 
 ;; TODO probably cleaner with a macroexpander instead of a parser
 (define (parse-quasiquote-pat qq)
