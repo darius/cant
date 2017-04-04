@@ -7,34 +7,46 @@
 ;; Return a pair `(,exprs ,patts) of the immediate subexpressions and
 ;; subpatterns of expr.
 (to (expr-subparts expr)
-  (match (macroexpand-top-expr expr)
-    ((: symbol?)                   none)
-    ((: self-evaluating?)          none)
-    (`(quote ,_)                   none)
-    ((: term?)                     `(,expr.arguments ()))
-    (`(let ,p ,e)                  `((,e) (,p)))
+  (match (macroexpand-outer-expr expr)
+    ((: symbol?)                    none)
+    ((: self-evaluating?)           none)
+    (`(quote ,_)                    none)
+    ((: term?)                      `(,expr.arguments ()))
+    (`(let ,p ,e)                   `((,e) (,p)))
     (`(make ,(: symbol?) ,@clauses) (clauses-subparts clauses))
     (`(make ,@clauses)              (clauses-subparts clauses))
-    (`(do ,@es)                    `(,es ()))
-    (`(call ,e1 ,e2)               `((,e1 ,e2) ()))
-    (`(,e1 ,(: cue?) ,@es)         `((,e1 ,@es) ()))
-    (`(,e1 ,@es)                   `((,e1 ,@es) ()))))
+    (`(do ,@es)                     `(,es ()))
+    (`(call ,e1 ,e2)                `((,e1 ,e2) ()))
+    (`(,e1 ,(: cue?) ,@es)          `((,e1 ,@es) ()))
+    (`(,e1 ,@es)                    `((,e1 ,@es) ()))))
 
 (to (clauses-subparts clauses)
-  (let `(,es-lists ,ps-lists) (transpose (each clause-subparts clauses)))
+  ;; (format "clauses:\n")
+  ;; (for each! ((c clauses))
+  ;;   (format "p: ~w es: ~w\n" c.first c.rest))
+  ;; (format "end clauses\n")
+  (let wtf (each clause-subparts clauses))
+  ;; (format "each subparts:\n")
+  ;; (for each! ((sp wtf))
+  ;;   (format "subparts: ~w ~w\n" (sp 0) (sp 1))
+  ;;   (surely (= sp.count 2)))
+  ;; (format "end subparts\n")
+  (let `(,es-lists ,ps-lists) (transpose wtf))
+  ;; (format "es-lists: ~w\n" es-lists)
+  ;; (format "ps-lists: ~w\n" ps-lists)
   `(,(call chain es-lists)
     ,(call chain ps-lists)))
 
-(to (clause-subparts `(,p ,_ ,_ ,e))
-  `((,p) (,e)))
+(to (clause-subparts `(,p ,@es))
+  `(,es (,p)))
 
-(to (macroexpand-top-expr expr)
+(to (macroexpand-outer-expr expr)
   (match (maybe-macroexpand-expr expr)
     (#no expr)
     (expanded
-     ;; Keep expanding at the top level until we get to a core-syntax
-     ;; expression. But N.B. we don't expand subexpressions yet.
-     (macroexpand-top-expr expanded))))
+     ;; Keep expanding the outermost expr until we get core
+     ;; syntax. But N.B. we leave subexpressions unexpanded.
+     (macroexpand-outer-expr expanded))))
 
 ;; Return a pair `(,exprs ,patts) of the immediate subexpressions and
 ;; subpatterns of patt.
