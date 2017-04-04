@@ -58,7 +58,7 @@
     ((('unquote-splicing p)) `(,p))
     (('unquote-splicing p)
      (error "A ,@-pattern must be at the end of a list" q))
-    ((qcar @qcdr) `(,qcar ,@(quasiquote-subpatts qcdr)))
+    ((qcar @qcdr) `(',qcar ,@(quasiquote-subpatts qcdr)))
     ((: term?) (qq-term-subpatts q))
     (_ '())))
 
