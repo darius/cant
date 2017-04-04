@@ -92,8 +92,7 @@
   (call format `(,grid-format ,@(reverse values)))
   (newline))
 
-(let grid-format ("\n" .join (for each ((_ (range<- 3)))
-                                 " ~d ~d ~d")))
+(let grid-format ("\n" .join ('(" ~d ~d ~d") .repeat 3)))
 
 (let ways-to-win '(0o700 0o070 0o007 0o444 0o222 0o111 0o421 0o124))
 

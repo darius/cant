@@ -35,3 +35,5 @@
            (do (format "This subpattern is bad: ~w\n" patt)
                #yes))
       (bad-part? (patt-subparts patt))))
+
+(export main bad-expr? bad-patt?)
