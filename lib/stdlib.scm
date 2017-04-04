@@ -296,6 +296,9 @@
   (the-signal-handler .^= parent-handler)
   result)
 
+(to (break @values)
+  (call error `("Breakpoint" ,@values)))
+
 (import
     (hide
       (to (qualify-exp exp context)
