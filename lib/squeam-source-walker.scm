@@ -13,12 +13,20 @@
     (`(quote ,_)                    none)
     ((: t term?)                    `(,t.arguments ()))
     (`(let ,p ,e)                   `((,e) (,p)))
-    (`(make ,(: symbol?) ,@clauses) (clauses-subparts clauses))
-    (`(make ,@clauses)              (clauses-subparts clauses))
+    (`(make ,(: symbol?) ,@clauses) (make-subparts clauses))
+    (`(make ,@clauses)              (make-subparts clauses))
     (`(do ,@es)                     `(,es ()))
     (`(call ,e1 ,e2)                `((,e1 ,e2) ()))
     (`(,e1 ,(: cue?) ,@es)          `((,e1 ,@es) ()))
     (`(,e1 ,@es)                    `((,e1 ,@es) ()))))
+
+(to (make-subparts tail)
+  (match tail
+    (`({extending ,e} ,@clauses)
+     (let `(,es ,ps) (clauses-subparts clauses))
+     `((,e ,@es) ,ps))
+    (clauses
+     (clauses-subparts clauses))))
 
 (to (clauses-subparts clauses)
   (match (transpose (each clause-subparts clauses))
