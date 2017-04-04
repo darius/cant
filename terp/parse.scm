@@ -157,7 +157,7 @@
              (mlambda
               ((__ (: v symbol?) (: self symbol?) . clauses) ;XXX allow other patterns?
                (let ((msg (gensym)))
-                 `(to (,v ,self ,msg)
+                 `(to (,v ,self ,msg)   ;XXX probably should not support definition-style patterns here
                     (match ,msg
                       ,@clauses
                       (_ (miranda-trait ,self ,msg)))))))) ;XXX hygiene, and XXX make it overridable
@@ -166,6 +166,7 @@
                `((make _ ,@(map (lambda (clause)
                                   (assert (pair? clause)
                                           "invalid clause" clause)
+                                  ;; XXX change to use non-defaulty list pattern:
                                   `((,(car clause)) ,@(cdr clause)))
                                 clauses))
                  ,subject))))
@@ -190,7 +191,7 @@
               ((__ (: proc symbol?) bindings . body)
                (parse-bindings bindings
                  (lambda (ps es)
-                   `((hide (to (,proc ,@ps) ,@body))
+                   `((hide (to (,proc ,@ps) ,@body)) ;XXX should NOT support definition-style patterns here
                      ,@es))))))
     ('if     (mlambda
               ((__ test if-so if-not)
