@@ -12,8 +12,8 @@
   (match (those bad-expr? (with-input-file read-all filename))
     ('() 'ok)
     (top-level-bad-exprs
-     (format "In ~d these top-level expressions contain badness:\n" filename)
-     (each! pp top-level-bad-exprs)
+     (format "In ~d these top-level expressions harbor badness:\n" filename)
+     (each! print top-level-bad-exprs)  ;TODO use pp instead
      (newline))))
 
 (to (bad-expr? expr)
@@ -25,5 +25,7 @@
 
 (to (bad-patt? patt)
   (or (and (cons? patt)
-           (not ('(quote quasiquote : @ optional) .find? patt.first)))
+           (not ('(quote quasiquote : @ optional) .find? patt.first))
+           (do (format "This subpattern is bad: ~w\n" patt)
+               #yes))
       (bad-part? (patt-subparts patt))))
