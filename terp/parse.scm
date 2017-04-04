@@ -87,6 +87,16 @@
            (term<- 'term-pat tag (map parse-pat parts)))))
     ))
 
+(define (expand-definition-pattern dp)
+ (mcase dp
+   (((: cue cue?) . rest)
+    (make-term cue rest))
+   ((: __ list?)
+    `(list<- ,@dp))
+   ((: __ term?)
+    dp)
+   (__ (error 'parse "Bad definition pattern" dp))))
+
 (define optional-match-exp
   (term<- 'constant (lambda (x)
                       (cond ((null? x)
@@ -157,7 +167,7 @@
   (mcase key
     ('hide   (mlambda
               ((__ . es)
-               `((given _ ,@es)))))
+               `((given () ,@es)))))
     ('make-trait
              (mlambda
               ((__ (: v symbol?) (: self symbol?) . clauses) ;XXX allow other patterns?
@@ -177,26 +187,23 @@
                  ,subject))))
     ('to     (mlambda
               ((__ (head . param-spec) . body)
-               (let ((pattern (mcase param-spec ;XXX expand as definition-style pattern
-                                (((: cue cue?) . rest)
-                                 (make-term cue rest))
-                                (__ param-spec))))
+               (let ((pattern (expand-definition-pattern param-spec)))
                  (if (symbol? head)
                      `(make ,head (,pattern ,@body))
-                     `(to ,head (given ,pattern ,@body)))))))
+                     `(to ,head (make _ (,pattern ,@body))))))))
     ('given  (mlambda
-              ((__ p . body)
-               `(make (,p ,@body)))))   ;XXX expand as definition-style pattern
+              ((__ dp . body)
+               `(to (_ ,@dp) ,@body))))
     ('for    (mlambda
               ((__ fn bindings . body)
                (parse-bindings bindings
                  (lambda (ps es)
-                   `(,fn (given ,ps ,@body) ,@es))))))
+                   `(,fn (make _ (,ps ,@body)) ,@es))))))
     ('begin  (mlambda
               ((__ (: proc symbol?) bindings . body)
                (parse-bindings bindings
                  (lambda (ps es)
-                   `((hide (to (,proc ,@ps) ,@body)) ;XXX should NOT support definition-style patterns here
+                   `((hide (make ,proc (,ps ,@body)))
                      ,@es))))))
     ('if     (mlambda
               ((__ test if-so if-not)
@@ -212,9 +219,9 @@
     ('case   (mlambda
               ((__) #f)                 ;TODO: generate an error-raising?
               ((__ ('else . es)) `(do ,@es))
-              ((__ (e) . clauses) `(or ,e (case ,@clauses))) ;TODO: do I ever use this?
-              ((__ (e . es) . clauses)
-               `(if ,e (do ,@es) (case ,@clauses)))))
+;;              ((__ (e) . clauses) `(or ,e (case ,@clauses))) ;TODO: do I ever use this?
+              ((__ (e e1 . es) . clauses)
+               `(if ,e (do ,e1 ,@es) (case ,@clauses)))))
     ('and    (mlambda
               ((__) #t)
               ((__ e) e)
@@ -230,7 +237,7 @@
               ((__ m . names)
                (assert (all symbol? names) "bad syntax" names)
                (let ((map-var (gensym)))
-                 `(let ,names
+                 `(let (list<- ,@names)
                     (hide (let ,map-var ,m)
                           (',list ,@(map (lambda (name) `(,map-var ',name))
                                          names))))))))

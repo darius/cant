@@ -166,7 +166,7 @@
             (sink .display " ")
             (sink .print r.first)
             (printing r.rest))
-           ((null? r))
+           ((null? r) 'ok)
            (else
             (sink .display " . ")       ;XXX we're not supporting this in read, iirc
             (sink .print r))))
