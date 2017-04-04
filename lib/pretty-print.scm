@@ -3,8 +3,8 @@
 (import (use "lib/pretty-layout")
   pretty-print <> text line nest group)
 
-(to (pp sexpr @opt-width)
-  (display (call pretty-print `(,(doc<-sx sexpr) ,@opt-width)))
+(to (pp sexpr @(optional width))
+  (display (pretty-print (doc<-sx sexpr) (or width 72)))
   (newline))
 
 (to (doc<-sx x)
@@ -23,6 +23,7 @@
     ((: list?)
      (group (<> (text "(") (nest 1 (docs<- x)) (text ")"))))
     ((: term?)
+     (surely (symbol? x.tag) "Weird term" x)
      (group (<> (text "{")
                 (if x.arguments.empty?
                     (text x.tag.name)

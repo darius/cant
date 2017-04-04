@@ -14,7 +14,7 @@
     ('() 'ok)
     (top-level-bad-exprs
      (format "In ~d these top-level expressions harbor badness:\n" filename)
-     (each! print top-level-bad-exprs)  ;TODO use pp instead
+     (each! pp top-level-bad-exprs)
      (newline))))
 
 (to (bad-expr? expr)
