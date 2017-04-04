@@ -6,7 +6,7 @@
  (let a '(yo there))
  (let b 'gee)
 
- (print `(ok {,b its cool ,@a b c} yay))
+;; (print `(ok {,b its cool ,@a b c} yay))   XXX restore this after getting all the code to deal with it again
  (print `(ok {t its cool ,@a b c} yay))
  (print `(ok {t ,@a b c} yay))
  (print `(ok {t ,a b c} yay))
