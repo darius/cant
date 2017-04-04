@@ -11,23 +11,20 @@
                                    (parse operand)))))
 
 ;; Variable reference
-(to (var-ref<- v)
-  (given {.compile k}
-    `(VAR ,v ,@k)))
+(to ((var-ref<- v) .compile k)
+  `(VAR ,v ,@k))
 
 ;; Lambda expression
-(to (abstraction<- v body)
-  (given {.compile k}
-    (let code (body .compile '(RET)))
-    `(LAM ,v ,code.count ,@code ,@k)))
+(to ((abstraction<- v body) .compile k)
+  (let code (body .compile '(RET)))
+  `(LAM ,v ,code.count ,@code ,@k))
 
 ;; Application
-(to (call<- operator operand)
-  (given {.compile k}
-    (let code (operator .compile (operand .compile '(CALL))))
-    (match k
-      ('(RET) code)
-      (_      `(SAVE ,code.count ,@code ,@k)))))
+(to ((call<- operator operand) .compile k)
+  (let code (operator .compile (operand .compile '(CALL))))
+  (match k
+    ('(RET) code)
+    (_      `(SAVE ,code.count ,@code ,@k))))
 
 
 ;; Smoke test
