@@ -198,12 +198,12 @@
               ((__ fn bindings . body)
                (parse-bindings bindings
                  (lambda (ps es)
-                   `(,fn (make _ (,ps ,@body)) ,@es))))))
+                   `(,fn (make _ ((list<- ,@ps) ,@body)) ,@es))))))
     ('begin  (mlambda
               ((__ (: proc symbol?) bindings . body)
                (parse-bindings bindings
                  (lambda (ps es)
-                   `((hide (make ,proc (,ps ,@body)))
+                   `((hide (make ,proc ((list<- ,@ps) ,@body)))
                      ,@es))))))
     ('if     (mlambda
               ((__ test if-so if-not)
