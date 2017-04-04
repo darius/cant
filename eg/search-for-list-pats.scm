@@ -17,7 +17,12 @@
      (newline))))
 
 (to (bad-expr? expr)
-  (bad-part? (expr-subparts expr)))
+  (match expr
+    ;; Definitions may use list-patterns. TODO make the macroexpander
+    ;; convert them to 'normal' patterns instead.
+    (`(to ,_ ,@es)    (some bad-expr? es))
+    (`(given ,_ ,@es) (some bad-expr? es))
+    (_                (bad-part? (expr-subparts expr)))))
 
 (to (bad-part? `(,subexprs ,subpatts))
   (or (some bad-expr? subexprs)
