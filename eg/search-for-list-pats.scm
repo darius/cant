@@ -30,7 +30,7 @@
 
 (to (bad-patt? patt)
   (or (and (cons? patt)
-           (not ('(quote quasiquote : @ optional) .find? patt.first))
+           (not ('(list<- cons quote quasiquote : @ optional) .find? patt.first))
            (do (format "This subpattern is bad: ~w\n" patt)
                #yes))
       (bad-part? (patt-subparts patt))))
