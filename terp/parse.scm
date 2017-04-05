@@ -75,6 +75,8 @@
     (('cons car-p cdr-p)
      (make-cons-pat (parse-pat car-p) (parse-pat cdr-p)))
     ((: __ list?)
+;     (print `("old-style list pattern" ,p))
+;     (exit 1))       ;XXX
      (parse-list-pat p))
     ((: __ term?)
      (let ((tag (term-tag p))

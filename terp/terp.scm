@@ -339,6 +339,7 @@
     (error ,error-prim)
     (evaluate ,evaluate-prim)
     (open-input-file ,open-input-file)
+    (open-output-file ,open-output-file)
     (__set-dbg! ,set-dbg!)
 
     ;; These will get high-level definitions later TODO
@@ -466,6 +467,7 @@
     (__script-name ,script-name)
     (__script-trait ,script-trait)
     (__script-clauses ,script-clauses)
+;;    (exit ,exit)
     ))
 
 (define mask32 (- 1 (expt 2 32)))

@@ -414,6 +414,12 @@
   source.close                       ;TODO unwind-protect
   result)
 
+(to (with-output-file fn filename)
+  (let sink (open-output-file filename 'replace)) ;TODO the 'replace is for Chez
+  (let result (fn sink))
+  sink.close                       ;TODO unwind-protect
+  result)
+
 (to (read-all source)
   (let thing (read source))
   (if (eof? thing)
