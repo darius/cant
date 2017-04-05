@@ -467,7 +467,7 @@
     (__script-name ,script-name)
     (__script-trait ,script-trait)
     (__script-clauses ,script-clauses)
-;;    (exit ,exit)
+    (os-exit ,exit)
     ))
 
 (define mask32 (- 1 (expt 2 32)))

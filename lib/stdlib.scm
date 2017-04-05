@@ -269,19 +269,18 @@
 (let the-signal-handler (box<- panic))
 (let the-last-error (box<- #no))
 
-(to (install-signal-handler handler)
+(to (install-signal-handler handler)    ;TODO will I ever use this?
   (let parent-handler the-signal-handler.^)
   (the-signal-handler .^= (given (@evil)
                             (the-signal-handler .^= parent-handler)
                             (call handler evil))))
 
-(to (with-fallback-signal-handler try)
+(to (with-signal-handler handler thunk)
   (let parent-handler the-signal-handler.^)
-  (the-signal-handler .^= (given (k @evil)
-                            (display "Error within error!\n")
-                            (each! print evil)
-                            (os-exit 1)))
-  (let result (try))
+  (the-signal-handler .^= (given (@evil)
+                            (the-signal-handler .^= parent-handler)
+                            (call handler evil)))
+  (let result (thunk))
   (the-signal-handler .^= parent-handler)
   result)
 
@@ -292,9 +291,16 @@
                             (finally)
                             (call parent-handler evil)))
   (let result (try))
-  (finally)
   (the-signal-handler .^= parent-handler)
+  (finally)
   result)
+
+(to (with-fallback-signal-handler thunk)
+  (with-signal-handler (given (@evil)
+                         (display "Error within error!\n")
+                         (each! print evil)
+                         (os-exit 1))
+                       thunk))
 
 (to (break @values)
   (call error `("Breakpoint" ,@values)))
