@@ -1,0 +1,181 @@
+;; Instruction specs
+
+(to (spec<- mnemonic stem params+ doc-string uses)
+  (let params (for those ((p params+))
+                (not= p '{bytes u 0 0})))
+  (make spec                            ;TODO struct maker?
+    ({.mnemonic} mnemonic)
+    ({.stem} stem)
+    ({.params} params)
+    ({.doc-string} doc-string)
+    ({.uses} uses)
+    ({.unparse}
+     `(,mnemonic
+       ,@(each unparse-param params)
+       ,doc-string))))
+
+;; Return an unambiguous mnemonic, given the name of an overloaded one
+;; and the params that resolve the overloading.
+(to (mnemonic<- stem params)
+  (combined-mnemonic<- stem (each coerce-string (suffixes params))))
+
+;; Return an instruction mnemonic formed out of STEM and SPECS.
+(to (combined-mnemonic<- stem specs)
+  (symbol<- ("." .join `(,stem ,@specs))))
+
+(to (suffixes x)
+  (case ((list? x)
+         (gather suffixes x))
+        ((symbol? x)
+         (if ('(Sreg cr dr =16 =32 + /r /0 /1 /2 /3 /4 /5 /6 /7) .find? x)
+             '()
+             `(,x)))
+        (else
+         '())))
+
+;; A map of all specs by fully-qualified mnemonic.
+(let the-specs (map<-))
+
+;; Load the specs from the i386 instruction table.
+(to (setup-spec-table)
+  the-specs.clear!
+  (load-table (snarf "src/tables/i386.scm")))
+
+(to (load-table sexprs)
+  (for each! ((sexpr sexprs))
+    (let spec (parse-spec sexpr))
+    (surely (not (the-specs .maps? spec.mnemonic)))
+    (the-specs .set! spec.mnemonic spec)))
+
+;; Return the spec with mnemonic MNEMONIC.
+(to (find-spec mnemonic)
+  (the-specs mnemonic))
+
+
+;; Parse instruction table entries.
+
+(to (parse-spec sexpr)
+  (surely (and (list? sexpr)
+               (<= 3 sexpr.count)
+               (symbol? sexpr.first))
+          "Spec has the basics")
+  (let stem sexpr.first.name)
+  ;; We copy sexpr.rest until we hit the doc-string.
+  ;; Preceding were our params, and the reg/flag list optionally follows.
+  (let `(,params (,doc-string @(optional uses)))
+    (split-on string? sexpr.rest))
+  (spec<- (mnemonic<- stem params)
+          stem
+          (each parse-param params)
+          doc-string
+          uses))
+
+;; TODO This might make a good use case for nested-list Parson.
+(to (parse-param param)
+  (match (expand-abbrev param)
+    ((: b byte?)
+     (opcode-byte-param b))
+    ((: r register?)
+     (register-param r))
+    ('=16
+     (size-mode-param 16))
+    ('=32
+     (size-mode-param 16))
+    ((: operand operand?)
+     (parse-operand operand))
+    (`(,first ,@rest)
+     (let args (each expand-abbrev rest))
+     (let L args.count)
+     (match `(,first ,@args)
+       (`(? ,(: b byte?))
+        (condition-param b))
+       (`(+ ,(: b byte?) ,(: operand (operand-of 'G))) ;TODO
+        (opcode+register-param b operand))
+       (`(/r ,arg1 ,arg2)
+        (surely (or (and ((operand-of 'E) arg1) ((operand-of 'G) arg2))
+                    (and ((operand-of 'G) arg1) ((operand-of 'E) arg2))))
+        (if ((operand-of 'E) arg1)
+            (Ex.Gx-param arg1 arg2)
+            (Gx.Ex-param arg1 arg2)))
+       (`(,foo ,arg)
+        (surely (extended-opcode-tags .find? foo))
+        (surely ((operand-of 'E) arg))
+        (let extended-opcode (extended-opcode-tags .find foo))
+        (Ex-param extended-opcode arg))))))
+
+(let extended-opcode-tags '#(/0 /1 /2 /3 /4 /5 /6 /7))
+
+(to (operand? x)
+  (match x
+    (`(,(: symbol?) ,(: tag symbol?) ,size)
+     (and ('(I U J O) .find? tag)
+          ('(1 2 4) .find? size)))
+    (_ #no)))
+
+(to (parse-operand (symbol tag size))
+  (match tag
+    ('I (signed-immediate-param size))
+    ('U (unsigned-immediate-param size))
+    ('J (relative-jump-param size))
+    ('O (offset-param size))))
+
+;; TODO name like foo-param<-
+
+;; A literal opcode byte to output as is.
+(to (opcode-byte-param byte)
+  `{bytes u 1 ,byte})             ;TODO use terms instead? or objects?
+
+;; A literal register whose identity is implicit in the opcode.
+(to (register-param register)
+  `{bytes u 0 0})
+
+;; There's a global assumption in this assembler that we're in 32-bit
+;; mode.  So for 32 bits we do nothing, and for 16 bits we emit an
+;; operand-size prefix.
+(to (size-mode-param bits)
+  (if (= bits 32)
+      `{bytes u 0 0}
+      `{bytes u 1 0x66}))
+
+;; An immediate field as specified by an operand.
+(to (signed-immediate-param size)
+  `{bytes i ,size {arg int}})
+
+;; The other type of immediate field.
+(to (unsigned-immediate-param size)
+  `{bytes u ,size {arg int}})
+
+;; A pc-relative jump offset.
+(to (relative-jump-param size)
+  `{bytes i ,size {- {arg int} {hereafter}}})
+
+;; A segment-relative offset field (if I understand this... probably not)
+(to (offset-param size)
+  `{bytes u ,size {arg int}})
+
+;; A condition code field.  In Intel syntax, condition codes are part
+;; of the mnemonic, but in my syntax they're a separate argument.  The
+;; encoding of the condition gets added to OPCODE-BYTE on emission.
+(to (condition-param opcode-byte)
+  `{bytes u 1 {+ ,opcode-byte {arg cc}}})
+
+;; A general-register field that's added to an extended-opcode byte.
+;FIXME: confusing name
+(to (opcode+register-param opcode-byte `(,symbol ,tag ,size))
+  `{bytes u 1 {+ ,opcode-byte {arg reg ,size}}})
+
+;; A pair of fields that go into a mod-r/m encoding.  Ex is effective
+;; address, Gx is general register.
+(to (Ex.Gx-param Ex `(,Gx-symbol ,tag ,size))
+  `{swap-args {mod-r/m {arg reg ,size} {arg ,Ex}}})
+
+;; Like Ex.Gx, but with source arguments in the opposite order.
+(to (Gx.Ex-param `(,Gx-symbol ,tag ,size) Ex)
+  `{mod-r/m {arg reg ,size} {arg ,Ex}})
+
+;; Like Ex.Gx, this becomes a mod-r/m, but with 3 extended opcode bits
+;; in place of the general register code.
+(to (Ex-param extended-opcode operand)
+  `{mod-r/m ,extended-opcode {arg ,operand}})
+
+(export the-specs)
