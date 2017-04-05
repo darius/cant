@@ -11,6 +11,7 @@
  '(do
     ;; unparse-foo are used by runtime for tracebacks:
     (import (use "lib/squeam-ast") unparse-exp unparse-pat unparse-clause)
+    (use "test/smoke-test")
     (import (use "lib/format")     format)
     (import (use "lib/fillvector") fillvector<-)
     (import (use "lib/sort")       sort)
