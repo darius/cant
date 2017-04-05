@@ -662,6 +662,10 @@
             (case (js.empty? default)
                   ((= value (vs js.first)) (keys.^ js.first))
                   (else (searching js.rest)))))
+         ({.clear!}
+          (count .^= 0)
+          (keys .^= (vector<- none))
+          (vals .^= (vector<- #no)))
          ({.selfie sink}
           (sink .display "#<hash-map (")
           (sink .print count.^)

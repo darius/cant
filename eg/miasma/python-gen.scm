@@ -1,7 +1,8 @@
 (import (use "eg/miasma/registers") registers register-number)
-(import (use "eg/miasma/parse") the-specs)
+(import (use "eg/miasma/parse") the-specs setup-spec-table)
 
 (to (main _)
+  (setup-spec-table)
   (generate-py-assembler "asm.py"))
 
 (to (generate-py-assembler filename)

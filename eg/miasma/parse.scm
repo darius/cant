@@ -19,9 +19,17 @@
 (to (mnemonic<- stem params)
   (combined-mnemonic<- stem (each coerce-string (suffixes params))))
 
+;; Return a string that looks like X, an atom.
+;; TODO just "~d" .format ?
+(to (coerce-string x)
+  (case ((symbol? x) x.name)
+        ((string? x) x)
+        ((number? x) (string<-number x))
+        (else (surely #no))))
+
 ;; Return an instruction mnemonic formed out of STEM and SPECS.
 (to (combined-mnemonic<- stem specs)
-  (symbol<- ("." .join `(,stem ,@specs))))
+  (symbol<- ("-" .join `(,stem ,@specs)))) ;TODO join with some other separator? "/"?
 
 (to (suffixes x)
   (case ((list? x)
@@ -39,7 +47,7 @@
 ;; Load the specs from the i386 instruction table.
 (to (setup-spec-table)
   the-specs.clear!
-  (load-table (snarf "src/tables/i386.scm")))
+  (load-table (with-input-file read-all "eg/miasma/tables/i386.scm")))
 
 (to (load-table sexprs)
   (for each! ((sexpr sexprs))
@@ -62,7 +70,7 @@
   (let stem sexpr.first.name)
   ;; We copy sexpr.rest until we hit the doc-string.
   ;; Preceding were our params, and the reg/flag list optionally follows.
-  (let `(,params (,doc-string @(optional uses)))
+  (let `(,params (,doc-string ,@(optional uses)))
     (split-on string? sexpr.rest))
   (spec<- (mnemonic<- stem params)
           stem
@@ -102,6 +110,19 @@
         (surely ((operand-of 'E) arg))
         (let extended-opcode (extended-opcode-tags .find foo))
         (Ex-param extended-opcode arg))))))
+
+;;XXX finish porting
+(let abbrevs
+  (each (given (abbrev-pair expanded-pair)
+          (list (concat-symbol (car abbrev-pair) (cdr abbrev-pair))
+                (car expanded-pair)
+                (cdr expanded-pair)))
+       (outer-product '(E G I U M R J O S) '(b w v d))
+       (outer-product '(E G I U E E J O S) '(1 2 4 4))))
+; FIXME: preserve semantics of M, R, v
+
+(to (expand-abbrev x)
+  (or (assq x abbrevs) x))
 
 (let extended-opcode-tags '#(/0 /1 /2 /3 /4 /5 /6 /7))
 
@@ -178,4 +199,4 @@
 (to (Ex-param extended-opcode operand)
   `{mod-r/m ,extended-opcode {arg ,operand}})
 
-(export the-specs)
+(export the-specs setup-spec-table)
