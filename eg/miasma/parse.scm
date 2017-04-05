@@ -1,3 +1,5 @@
+(import (use "eg/miasma/registers") register?)
+
 ;; Instruction specs
 
 (to (spec<- mnemonic stem params+ doc-string uses)
@@ -78,6 +80,10 @@
           doc-string
           uses))
 
+;; Return true iff X is an unsigned byte.
+(to (byte? x)
+  (and (integer? x) (<= 0 x 255)))
+
 ;; TODO This might make a good use case for nested-list Parson.
 (to (parse-param param)
   (match (expand-abbrev param)
@@ -111,15 +117,25 @@
         (let extended-opcode (extended-opcode-tags .find foo))
         (Ex-param extended-opcode arg))))))
 
+;; Pre: XS and YS are lists.
+;; Return a list of all pairs (x . y) where x in XS and y in YS.
+(to (outer-product xs ys)
+  (for gather ((x xs))
+    (for each ((y ys))
+      `(,x ,y))))
+
+;; Return a symbol whose name is the concatenation of ATOMS.
+(to (concat-symbol @atoms)
+  (symbol<- (foldr chain (each coerce-string atoms) "")))
+
 ;;XXX finish porting
 (let abbrevs
-  (each (given (abbrev-pair expanded-pair)
-          (list (concat-symbol (car abbrev-pair) (cdr abbrev-pair))
-                (car expanded-pair)
-                (cdr expanded-pair)))
-       (outer-product '(E G I U M R J O S) '(b w v d))
-       (outer-product '(E G I U E E J O S) '(1 2 4 4))))
-; FIXME: preserve semantics of M, R, v
+  (for each ((`((,a ,b) (,x ,y))
+              (zip (outer-product '(E G I U M R J O S) '(b w v d))
+                   (outer-product '(E G I U E E J O S) '(1 2 4 4)))))
+    `(,(concat-symbol a b) ,x ,y)))
+
+; XXX: preserve semantics of M, R, v
 
 (to (expand-abbrev x)
   (or (assq x abbrevs) x))
