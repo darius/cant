@@ -120,6 +120,7 @@
          (if (or (pair? message) (null? message))
              (cond ((eq? object error-prim) (error-prim (cons k message)))
                    ((eq? object evaluate-prim) (evaluate-prim message k))
+                   ((eq? object panic) (apply panic message))
                    (else
                     ;; Intercept Scheme-level errors:
                     (call/cc
