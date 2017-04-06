@@ -174,7 +174,7 @@
    ((term? object)        term-script)
    ((eq? object (void))   void-script)
    ((script? object)      script-script)
-   ;; TODO: cont-script? too
+   ;; XXX: cont-script? too
    ((procedure? object)   procedure-script)
    ((object? object)      (object-script object))
    (else (error 'call "Non-object" object))))
@@ -182,7 +182,7 @@
 (define (extract-datum object)
   (cond
    ((object? object)      (object-datum object))
-   ;; TODO: script and cont-script too?
+   ;; XXX: script and cont-script too?
    (else                  object)))
 
 ;; XXX This is a hack.
@@ -196,10 +196,11 @@
   (let* ((the-box (get-prim 'the-signal-handler))
          (handler (unbox the-box)))
     ;; Panic by default if another error occurs during error handling.
-    (call the-box (term<- '.^= panic) halt-cont)
+    ;; (We're not doing this here anymore, because Squeam code is
+    ;; supposed to make similar arrangements. But you might want to go
+    ;; back to this in ticklish situations still.
+;;    (call the-box (term<- '.^= panic) halt-cont)
     ;; OK, up to the handler now.
-    ;; TODO always install a backup error handler? so that, e.g.
-    ;;  if the hardler fails to match the message, we're not stuck.
     (call handler message halt-cont)))
 
 (define (panic k . message)

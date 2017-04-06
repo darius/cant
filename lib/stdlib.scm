@@ -269,11 +269,17 @@
 (let the-signal-handler (box<- panic))
 (let the-last-error (box<- #no))
 
-(to (install-signal-handler handler)    ;TODO will I ever use this?
+(to (push-signal-handler handler)
   (let parent-handler the-signal-handler.^)
-  (the-signal-handler .^= (given (@evil)
-                            (the-signal-handler .^= parent-handler)
-                            (call handler evil))))
+  (to (handler/wrapped @evil)
+    ;; TODO might be cleaner with unwind-protect actions spelled out inline
+    (unwind-protect
+     (to (handler-thunk)
+       (the-signal-handler .^= parent-handler)
+       (call handler evil))
+     (to (unwind-thunk)
+       (the-signal-handler .^= handler/wrapped))))
+  (the-signal-handler .^= handler/wrapped))
 
 (to (with-signal-handler handler thunk)
   (let parent-handler the-signal-handler.^)
@@ -286,7 +292,7 @@
 
 (to (unwind-protect try finally)     ;TODO better name
   (let parent-handler the-signal-handler.^)
-  (the-signal-handler .^= (given (@evil)
+  (the-signal-handler .^= (to (unwind-protector @evil)
                             (the-signal-handler .^= parent-handler)
                             (finally)
                             (call parent-handler evil)))
@@ -295,12 +301,12 @@
   (finally)
   result)
 
-(to (with-fallback-signal-handler thunk)
-  (with-signal-handler (given (@evil)
-                         (display "Error within error!\n")
-                         (each! print evil)
-                         (os-exit 1))
-                       thunk))
+(to (fallback-signal-handler @evil)
+  (display "Error within error! Evils:\n")
+  (each! print evil)
+  (os-exit 1))
+
+(the-signal-handler .^= fallback-signal-handler)
 
 (to (break @values)
   (call error `("Breakpoint" ,@values)))
@@ -368,19 +374,26 @@
 
 (to (repl)                          ;TODO rename
   (import (use "lib/traceback") on-error-traceback)
-  (begin interacting ()
-    (the-signal-handler .^= (given (@evil)
-                              (the-last-error .^= evil)
-                              (call on-error-traceback evil)
-                              (display "Enter (debug) for more.\n")
-                              (interacting)))
+
+  (let parent-handler the-signal-handler.^)
+  (to (repl-handler @evil)
+    (the-signal-handler .^= parent-handler)
+    (the-last-error .^= evil)
+    (call on-error-traceback evil)
+    (display "Enter (debug) for more.\n")
+    (interacting))
+
+  (to (interacting)
+    (the-signal-handler .^= repl-handler)
     (display "sqm> ")
     (let sexpr (read))
     (unless (eof? sexpr)
       (let parsed (parse-exp sexpr))
       (let e (qualify-exp parsed '()))
       (print (evaluate e '())) ;XXX reify a proper env object
-      (interacting))))
+      (interacting)))
+
+  (interacting))
 
 (to (debug)
   (import (use "lib/debugger") inspect-continuation)

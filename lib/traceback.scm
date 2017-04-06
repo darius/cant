@@ -3,8 +3,6 @@
 ;; We try to call on less of the library than usual, to work better
 ;; when the system is borked.
 
-;; Install this via 
-;; (the-signal-handler .^= on-error-traceback)
 (to (on-error-traceback k @evil)
   (display "Error! Traceback:\n")
   (print-traceback k)

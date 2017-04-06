@@ -17,7 +17,7 @@
     (import (use "lib/sort")       sort)
     (import (use "lib/hashset")    set<-)
     ;; Let's default to traceback-on-error:
-    (the-signal-handler .^= ((use "lib/traceback") 'on-error-traceback))))
+    (push-signal-handler ((use "lib/traceback") 'on-error-traceback))))
 
 (define (repl)
   (squeam-interpret '(repl)))
