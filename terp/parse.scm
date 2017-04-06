@@ -56,6 +56,10 @@
      (term<- 'constant-pat p))
     (('quote datum)
      (term<- 'constant-pat datum))
+    (('and . ps)
+     (parse-and-pat ps))
+    (('view e1 p1)
+     (term<- 'view-pat (parse-exp e1) (parse-pat p1)))
     ((': e)
      (term<- 'view-pat (parse-exp e) (term<- 'constant-pat #t)))
     ((': p1 e)
@@ -88,6 +92,12 @@
                                                  (parse-list-pat parts))))
            (term<- 'term-pat tag (map parse-pat parts)))))
     ))
+
+(define (parse-and-pat ps)
+  (mcase ps
+    (()         (term<- 'any-pat))
+    ((p)        (parse-pat p))
+    ((p1 . ps1) (term<- 'and-pat (parse-pat p1) (parse-and-pat ps1)))))
 
 (define (expand-definition-pattern dp)
  (mcase dp
