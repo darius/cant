@@ -60,28 +60,11 @@
      (parse-and-pat ps))
     (('view e1 p1)
      (term<- 'view-pat (parse-exp e1) (parse-pat p1)))
-    ((': e)
-     (term<- 'view-pat (parse-exp e) (term<- 'constant-pat #t)))
-    ((': p1 e)
-     (term<- 'and-pat (parse-pat p1)
-              (term<- 'view-pat (parse-exp e) (term<- 'constant-pat #t))))
-    (('@ __)                      ;XXX make @vars be some disjoint type
-     (error 'parse "An @-pattern must be at the end of a list" p))
-    (('optional p1)                      ;TODO fancier
-     (let ((p1-pat (parse-pat p1)))
-       (term<- 'view-pat optional-match-exp (term<- 'term-pat 'ok (list p1-pat)))))
-    (('quasiquote quoted)
-;     (parse-pat (expand-quasiquote-pat quoted)) ;XXX broken
-     (parse-quasiquote-pat quoted))
     ;; XXX complain if you see a bare , or ,@. but this will fall out of disallowing defaulty lists.
     (('list<- . ps)
      (parse-list-pat ps))
     (('cons car-p cdr-p)
      (make-cons-pat (parse-pat car-p) (parse-pat cdr-p)))
-    ((: __ list?)
-;     (print `("old-style list pattern" ,p))
-;     (exit 1))       ;XXX
-     (parse-list-pat p))
     ((: __ term?)
      (let ((tag (term-tag p))
            (parts (term-parts p)))
@@ -91,6 +74,21 @@
                    (term<- 'term-pat 'term (list (term<- 'constant-pat tag)
                                                  (parse-list-pat parts))))
            (term<- 'term-pat tag (map parse-pat parts)))))
+    (('@ __)                      ;XXX make @vars be some disjoint type
+     (error 'parse "An @-pattern must be at the end of a list" p))
+    ((': e)
+     (parse-pat `(view ,e #t)))
+    ((': p1 e)
+     (parse-pat `(and ,p1 (view ,e #t))))
+    (('optional p1)                      ;TODO fancier
+     (parse-pat `(view ,optional-match-exp ,(term<- 'ok p1))))
+    (('quasiquote quoted)
+;     (parse-pat (expand-quasiquote-pat quoted)) ;XXX broken
+     (parse-quasiquote-pat quoted))
+    ((: __ list?)
+;     (print `("old-style list pattern" ,p))
+;     (exit 1))       ;XXX
+     (parse-list-pat p))
     ))
 
 (define (parse-and-pat ps)
@@ -110,13 +108,13 @@
    (__ (error 'parse "Bad definition pattern" dp))))
 
 (define optional-match-exp
-  (term<- 'constant (lambda (x)
-                      (cond ((null? x)
-                             (term<- 'ok #f))
-                            ((and (pair? x) (null? (cdr x)))
-                             (term<- 'ok (car x)))
-                            (else
-                             #f)))))
+  `',(lambda (x)
+       (cond ((null? x)
+              (term<- 'ok #f))
+             ((and (pair? x) (null? (cdr x)))
+              (term<- 'ok (car x)))
+             (else
+              #f))))
   
 (define explode-term-exp
   (term<- 'constant (lambda (thing)
