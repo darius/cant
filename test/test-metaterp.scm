@@ -5,6 +5,8 @@
   (print `(evaluating ,e))
   (print (eval (parse-exp e) global-env)))
 
+;; TODO code duplicated from smoke-test.scm
+
 (run '42)
 (run ''hello)
 ; (run '(make _))
@@ -12,8 +14,8 @@
 (run '((make (xs xs)) 1 2 3))
 (run '(if #no 1 2))
 (run '(if #yes 1 2))
-(run '((make ((#no) 'no) (_ 'yes)) #no))
-(run '((make ((#no) 'no) (_ 'yes)) #yes))
+(run '((make ('(#no) 'no) (_ 'yes)) #no))
+(run '((make ('(#no) 'no) (_ 'yes)) #yes))
 (run '`(hello ,(if #yes 'yes 'no)))
 (run '(2 .+ 3))
 (run '(hide (let x 55)))
