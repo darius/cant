@@ -80,9 +80,6 @@
               (term<- 'term-pat tag (map parse-pat parts)))))
        (('@ __)                      ;XXX make @vars be some disjoint type
         (error 'parse "An @-pattern must be at the end of a list" p))
-       (('quasiquote quoted)
-   ;     (parse-pat (expand-quasiquote-pat quoted)) ;XXX broken
-        (parse-quasiquote-pat quoted))
        ((: __ list?)
    ;     (write `("old-style list pattern" ,p))
    ;     (newline)
@@ -106,6 +103,9 @@
     ('optional (mlambda
                 ((__ p1)                      ;TODO fancier
                  `(view ,optional-match-exp ,(term<- 'ok p1)))))
+    ('quasiquote (mlambda
+                  ((__ quoted)
+                   (expand-quasiquote-pat quoted))))
     (__ #f)))
 
 (define (expand-definition-pattern dp)
@@ -127,10 +127,12 @@
              (else
               #f))))
   
+(define (explode-term thing)
+  (and (term? thing)
+       (term<- 'term (term-tag thing) (term-parts thing))))
+
 (define explode-term-exp
-  (term<- 'constant (lambda (thing)
-                      (and (term? thing)
-                           (term<- 'term (term-tag thing) (term-parts thing))))))
+  (term<- 'constant explode-term))
 
 (define (parse-list-pat ps)
   (if (all (mlambda (('@ __) #f) (__ #t)) ps)
@@ -286,7 +288,7 @@
     (('unquote p)
      p)
     ((('unquote-splicing p))
-     `(: ',list? ,p))
+     `(: ,p ',list?))
     ((('unquote-splicing p) . __)
      (error 'parse "A ,@-pattern must be at the end of a list" qq))
     ((qcar . qcdr)
@@ -306,39 +308,9 @@
       (error 'parse "A term pattern must be tagged with a constant symbol" term))
     ;; XXX duplicate and ugly code. also, TESTME.
     (if (any (mlambda (('unquote-splicing __) #t) (__ #f)) parts)
-        `(: ',explode-term {term ',tag ,(expand-quasiquote-pat parts)})
+        `(view ',explode-term ,(make-term tag (expand-quasiquote-pat parts)))
+;XXX        `(: ',explode-term {term ',tag ,(expand-quasiquote-pat parts)})
         (make-term tag (map expand-quasiquote-pat parts)))))
-
-;; TODO probably cleaner with a macroexpander instead of a parser
-(define (parse-quasiquote-pat qq)
-  (mcase qq
-    (('unquote p) (parse-pat p))
-    ((('unquote-splicing p))
-     (term<- 'and-pat list?-pat (parse-pat p)))
-    ((('unquote-splicing p) . __)
-     (error 'parse "A ,@-pattern must be at the end of a list" qq))
-    ((qcar . qcdr)
-     (make-cons-pat (parse-quasiquote-pat qcar)
-                    (parse-quasiquote-pat qcdr)))
-    ((: __ term?)
-     (parse-qq-term-pat qq))
-    ;; TODO what about e.g. vectors with ,pat inside?
-    ;;  We should probably at least try to notice them and complain.
-    (__ (term<- 'constant-pat qq))))
-
-(define (parse-qq-term-pat term)
-  (let ((tag (term-tag term))
-        (parts (term-parts term)))
-    (unless (symbol? tag)
-      ;; XXX for now:
-      (error 'parse "A term pattern must be tagged with a constant symbol" term))
-    ;; XXX duplicate and ugly code. also, TESTME.
-    (if (any (mlambda (('unquote-splicing __) #t) (__ #f)) parts)
-        (term<- 'view-pat
-                explode-term-exp
-                (term<- 'term-pat 'term (list (term<- 'constant-pat tag)
-                                              (parse-quasiquote-pat parts))))
-        (term<- 'term-pat tag (map parse-quasiquote-pat parts)))))
 
 (define (expand-quasiquote e)
   (mcase e
