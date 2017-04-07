@@ -29,7 +29,7 @@
                     (text x.tag.name)
                     (nest 1 (doc<-tagged x.tag.name x.arguments)))
                 (text "}"))))
-    ((: vector?)
+    ((: array?)
      (group (<> (text "#(") (nest 2 (docs<- x)) (text ")"))))
     ((: box?)
      (group (<> (text "#<box ") (nest 6 (doc<-sx x.^)) (text ">"))))

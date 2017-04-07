@@ -85,7 +85,7 @@
 (make *uninitialized*)
 
 (to (env-extend parent-r vars)
-  (let vals (vector<-list (for each ((_ vars)) *uninitialized*)))
+  (let vals (array<-list (for each ((_ vars)) *uninitialized*)))
   (make env
     (`(,key)
      (match (vars .find key #no)

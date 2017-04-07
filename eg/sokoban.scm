@@ -96,10 +96,10 @@ Level ~w ~d Move ~w")
   (let lines initial-config.split-lines)
   (surely (for every ((line lines))     ;XXX require
             (= line.count ((lines 0) .count))))
-  (vector<-list (list<-string initial-config))) ;XXX list<-string shouldn't be needed
+  (array<-list (list<-string initial-config))) ;XXX list<-string shouldn't be needed
 
 (to (sokoban-grid<- grid)
-  ;; We represent a grid as a mutable vector of characters, including
+  ;; We represent a grid as a mutable array of characters, including
   ;; the newlines, with every line the same length (which we call the
   ;; width of the grid). Thus moving up or down from some square means a
   ;; displacement by that same width, whatever the starting square.

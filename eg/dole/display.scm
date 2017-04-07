@@ -11,7 +11,7 @@
 
 ;; An array of strings, one per screen row.
 (to (display-buffer<-)
-  (vector<-list (for each ((_ (range<- rows))) "")))
+  (array<-list (for each ((_ (range<- rows))) "")))
 
 ;; Track what's on the screen, to avoid redundant writes.
 (let showing (display-buffer<-))

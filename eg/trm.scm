@@ -10,7 +10,7 @@
 (import (use "lib/parson") parse grammar<- feed)
 
 (to (trm-parse program)
-  (vector<-list ((parse parser program) .opt-results)))
+  (array<-list ((parse parser program) .opt-results)))
 
 (let grammar (grammar<- "
 program: insn* :end.
@@ -25,7 +25,7 @@ insn:    {'1'+} {'#' '#'? '#'? '#'? '#'?} :make_insn.
    "program"))
 
 (to (regs<- @strings)
-  (vector<-list `(#no ,@strings)))
+  (array<-list `(#no ,@strings)))
 
 (to (run insns regs @(optional loud?))
   (begin stepping ((pc 0))
@@ -40,7 +40,7 @@ insn:    {'1'+} {'#' '#'? '#'? '#'? '#'?} :make_insn.
   regs)
 
 (let insn-table
-  (vector<-
+  (array<-
    'illegal-insn
    (make _
      ({.name} "add-1")

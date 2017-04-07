@@ -53,7 +53,7 @@
   ;; 1). It has two extra rows and columns for the edges.
   (let R (+ n-rows 2))
   (let C (+ n-cols 2))
-  (let G (vector<-count (* R C) 0))
+  (let G (array<-count (* R C) 0))
 
   (let N (- C))
   (let S C)

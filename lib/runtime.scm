@@ -43,7 +43,7 @@
        seq
        (cons list.first (list.rest .chain seq))))
   ({.compare xs}
-   ;; N.B. mutable vectors compare by this method, so it's really a comparison as of right now
+   ;; N.B. mutable arrays compare by this method, so it's really a comparison as of right now
    (case (list.empty? (if xs.empty? 0 -1))
          (xs.empty? 1)
          (else (match (list.first .compare xs.first)

@@ -3,10 +3,10 @@
 
 ;; TODO: work on terms, not just lists
 
-(let variable? vector?) ;TODO make a disjoint type instead with stamps
+(let variable? array?) ;TODO make a disjoint type instead with stamps
 
 (to (variable<- prefix n)
-  (vector<- (symbol<- (chain prefix "." (string<-number n)))))
+  (array<- (symbol<- (chain prefix "." (string<-number n)))))
 
 (to (variable-name var)
   (var 0))

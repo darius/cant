@@ -16,7 +16,7 @@
 (let ranks (flexarray<- infinite-rank infinite-rank))
 (let if0s  (flexarray<- lit0 lit1))
 (let if1s  (flexarray<- lit0 lit1))
-(let ifs   (vector<- if0s if1s))
+(let ifs   (array<- if0s if1s))
 
 (to (dedup memo k1 k2 k3)
   (to (enter map key)

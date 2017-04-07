@@ -2,21 +2,19 @@
 ;; Ported from https://github.com/darius/superbench
 ;; ~/git/superbench/um/um.lua
 
-;; TODO: s/vector/array?
-
 ;;XXX .u<op> means small, unsigned op
 ;; and I'm gonna assume 32-bit here
 ;; Similar for .s<op> (signed).
 ;; Do these mix OK? Is this reasonable?
 
-;; TODO: mem could also be a typed vector, but neither the vector
+;; TODO: mem could also be a typed array, but neither the array
 ;; nor the type is as simple...
 
 (to (run program sink source)
   (let mem (flexarray<-))         ;TODO: shorter name? flexlist?
   (mem .push! program)
   (let free-list (flexarray<-))
-  (let reg (vector<-count 8 0))         ;TODO: typed vector, for efficiency
+  (let reg (array<-count 8 0))         ;TODO: typed array, for efficiency
 
   (begin running ((program program) (pc 0))
 
@@ -61,7 +59,7 @@
 
          (7 "Successful exit")
 
-         (8 (let chunk (vector<-count (reg c) 0)) ;TODO: typed vector again
+         (8 (let chunk (array<-count (reg c) 0)) ;TODO: typed array again
             (reg .set! b
                  (case (free-list.empty?
                         (mem .push! chunk))

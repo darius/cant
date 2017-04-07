@@ -7,14 +7,14 @@
 (to (fillvector<-count start-count start-value)
   (fillvector<-vector (vector<-count start-count start-value)))
 
-(to (fillvector<-vector start-vector)
-  (let count (box<- start-vector.count))
-  (let vec   (box<- start-vector))
+(to (fillvector<-vector start-array)
+  (let count (box<- start-array.count))
+  (let vec   (box<- start-array))
 
   (to (grow)
     (let old vec.^)
     (let n old.count)
-    (vec .^= (vector<-count (if (= 0 n) 1 (* 2 n))))
+    (vec .^= (array<-count (if (= 0 n) 1 (* 2 n))))
     (vec.^ .copy! old))
 
   (to (count-check i)
@@ -57,7 +57,7 @@
     ({.resize! n}
      (let old vec.^)
      (when (< old.count n) ;; TODO maybe we should always change the physical size
-       (let new (vector<-count n))
+       (let new (array<-count n))
        (new .copy! old 0 (min old.count n))
        (vec .^= new))
      (count .^= n))
