@@ -11,7 +11,7 @@
 ;; 0, then after the first character and before the second is 1, and
 ;; so on, until the coordinate after the last character is `size`.
 ;; 
-;; We store the characters at integer indices in a fillvector
+;; We store the characters at integer indices in a flexarray
 ;; (starting at index 0) in two chunks which we call the head and the
 ;; tail, separated by the gap. The fields `head` and `gap` (and `tail`
 ;; if it weren't implicit) denote the lengths of these spans. `size`
@@ -32,7 +32,7 @@
 
 (to (text<-)
 
-  (let t    (fillvector<-))
+  (let t    (flexarray<-))
   (let head (box<- 0))
   (let gap  (box<- 0))
   (let size (box<- 0))

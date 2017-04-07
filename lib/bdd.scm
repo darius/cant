@@ -13,9 +13,9 @@
   value)
 
 (let infinite-rank 0x7fffffff)
-(let ranks (fillvector<- infinite-rank infinite-rank))
-(let if0s  (fillvector<- lit0 lit1))
-(let if1s  (fillvector<- lit0 lit1))
+(let ranks (flexarray<- infinite-rank infinite-rank))
+(let if0s  (flexarray<- lit0 lit1))
+(let if1s  (flexarray<- lit0 lit1))
 (let ifs   (vector<- if0s if1s))
 
 (to (dedup memo k1 k2 k3)

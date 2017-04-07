@@ -454,3 +454,11 @@
       (cons thing (read-all source))))
 
 (the-signal-handler .^= fallback-signal-handler)
+
+
+;; TODO temporary
+
+(let array? vector?)
+(let array<- vector<-)
+(let array<-count vector<-count)
+(let array<-list vector<-list)

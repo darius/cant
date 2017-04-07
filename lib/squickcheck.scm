@@ -16,7 +16,7 @@
   (`(,property ,@gens)
    (all .run (context<- default-rng) 40 property gens))
   ({.run g n-times property gens}
-   (let failures (fillvector<-))
+   (let failures (flexarray<-))
    (for each! ((_ (range<- n-times)))
      (let inputs (for each ((gen gens))
                    (gen g)))

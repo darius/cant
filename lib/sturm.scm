@@ -184,7 +184,7 @@
                 (for each ((i (range<- 1 full-key.count)))
                   (full-key .slice 0 i)))))
 
-(let key-stack (fillvector<-))
+(let key-stack (flexarray<-))
 
 (to (get-key-unmapped)
   (if key-stack.empty?
@@ -194,7 +194,7 @@
       key-stack.pop!))
 
 (to (get-key)
-  (let keys (fillvector<- (get-key-unmapped)))
+  (let keys (flexarray<- (get-key-unmapped)))
   (begin matching ()
     (let s (string<-list (as-list keys))) ;XXX clumsy
     (or (key-map .get s)

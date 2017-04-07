@@ -10,7 +10,7 @@
 (to (cycle-write thing @(optional sink-arg))
   (let sink (or sink-arg out))          ;TODO fancier (optional ...)
   (let tags (map<-))
-  (let buffer (fillvector<-))
+  (let buffer (flexarray<-))
   (let cycle-sink (cycle-sink<- tags buffer)) ;XXX better name?
   (cycle-sink .print thing)
   (for each! ((writer buffer.values))

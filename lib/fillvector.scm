@@ -67,4 +67,9 @@
     ({.slice lo bound} (fillvector.snapshot .slice lo bound))
     ))
 
-(export fillvector<- fillvector<-count)
+(let flexarray<- fillvector<-)
+(let flexarray<-count fillvector<-count)
+
+(export
+  fillvector<- fillvector<-count
+  flexarray<- flexarray<-count)
