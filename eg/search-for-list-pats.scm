@@ -18,12 +18,18 @@
      (newline))))
 
 (to (bad-expr? expr)
-  (match expr
-    ;; Definitions may use list-patterns. TODO make the macroexpander
-    ;; convert them to 'normal' patterns instead.
-    (`(to ,_ ,@es)    (some bad-expr? es))
-    (`(given ,_ ,@es) (some bad-expr? es))
-    (_                (bad-part? (expr-subparts expr)))))
+  (bad-part? (expr-subparts expr)))
+
+(to (bad-definition? arg es)
+  (or (some bad-expr? es)
+      ;; TODO just call bad-patt? after a step of macroexpansion
+      (if (list? arg)
+          (and (not arg.empty?)
+               (match arg.last
+                 ((list<- '@ p)
+                  (or (bad-patt? p) (some bad-patt? ((reverse arg) .rest))))
+                 (_ (some bad-patt? arg))))
+          (bad-patt? arg))))
 
 (to (bad-part? `(,subexprs ,subpatts))
   (or (some bad-expr? subexprs)

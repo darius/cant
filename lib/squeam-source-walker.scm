@@ -82,4 +82,4 @@
     (`((@ ,p)) `(,p))
     (`(,head ,@tail) `(,head ,@(list-subpatts tail)))))
 
-(export expr-subparts patt-subparts)
+(export expr-subparts patt-subparts macroexpand-outer-expr)
