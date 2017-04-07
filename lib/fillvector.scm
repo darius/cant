@@ -21,7 +21,7 @@
     (unless (< i count.^)
       (error "Bad index" flexarray i)))
 
-  (make flexarray {extending vector-trait}
+  (make flexarray {extending array-trait}
     (`(,i)
      (count-check i)
      (vec.^ i))

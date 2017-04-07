@@ -174,7 +174,7 @@
   (message
    (list-trait me message))) ;XXX use trait syntax instead
 
-(make-trait vector-trait me
+(make-trait array-trait me
   ({.slice i}
    (me .slice i me.count))
   ({.slice i bound}
@@ -206,7 +206,7 @@
   (message
    (list-trait me message))) ;XXX use trait syntax instead
 
-(make-trait vector-primitive me
+(make-trait array-primitive me
   ({.empty?}      (= 0 me.count))
   ({.first}       (me 0))
   ({.rest}        (me .slice 1))
@@ -226,7 +226,7 @@
    (sink .display "#")
    (sink .print (__vector->list me)))
   (message
-   (vector-trait me message))) ;XXX use trait syntax instead
+   (array-trait me message))) ;XXX use trait syntax instead
 
 (make-trait string-primitive me
   ({.empty?}      (= 0 me.count))
