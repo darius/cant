@@ -1,13 +1,13 @@
-;; Growable mutable vectors (have a better name?)
+;; Growable mutable arrays (have a better name?)
 ;; TODO: shrink capacity sometimes
 
-(to (fillvector<- @arguments)
-  (fillvector<-vector (call vector<- arguments)))
+(to (flexarray<- @arguments)
+  (flexarray<-array (call array<- arguments)))
 
-(to (fillvector<-count start-count start-value)
-  (fillvector<-vector (vector<-count start-count start-value)))
+(to (flexarray<-count start-count start-value)
+  (flexarray<-array (array<-count start-count start-value)))
 
-(to (fillvector<-vector start-array)
+(to (flexarray<-array start-array)
   (let count (box<- start-array.count))
   (let vec   (box<- start-array))
 
@@ -19,9 +19,9 @@
 
   (to (count-check i)
     (unless (< i count.^)
-      (error "Bad index" fillvector i)))
+      (error "Bad index" flexarray i)))
 
-  (make fillvector {extending vector-trait}
+  (make flexarray {extending vector-trait}
     (`(,i)
      (count-check i)
      (vec.^ i))
@@ -39,7 +39,7 @@
     ({.pop!}
      (let i (- count.^ 1))
      (when (< i 0)
-       (error "Underflow" fillvector))
+       (error "Underflow" flexarray))
      (count .^= i)
      (vec.^ i))
     ({.snapshot}
@@ -49,7 +49,7 @@
      (vec.^ .copy! v lo bound))
     ({.extend! values}
      (for each! ((v values))
-       (fillvector .push! v)))
+       (flexarray .push! v)))
     ({.selfie sink}
      (sink .display "#<fillvector (")
      (sink .print count.^)
@@ -63,13 +63,9 @@
      (count .^= n))
 
     ;; inefficient:
-    ({.chain v}        (fillvector.snapshot .chain v))
-    ({.slice lo bound} (fillvector.snapshot .slice lo bound))
+    ({.chain v}        (flexarray.snapshot .chain v))
+    ({.slice lo bound} (flexarray.snapshot .slice lo bound))
     ))
 
-(let flexarray<- fillvector<-)
-(let flexarray<-count fillvector<-count)
-
 (export
-  fillvector<- fillvector<-count
   flexarray<- flexarray<-count)

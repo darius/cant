@@ -13,7 +13,7 @@
     (import (use "lib/squeam-ast") unparse-exp unparse-pat unparse-clause)
     (use "test/smoke-test")
     (import (use "lib/format")     format)
-    (import (use "lib/fillvector") fillvector<- flexarray<-)
+    (import (use "lib/fillvector") flexarray<-)
     (import (use "lib/sort")       sort)
     (import (use "lib/hashset")    set<-)
     ;; Let's default to traceback-on-error:
