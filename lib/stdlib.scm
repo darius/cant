@@ -302,11 +302,19 @@
   result)
 
 (to (fallback-signal-handler @evil)
-  (display "Error within error! Evils:\n")
-  (each! print evil)
-  (os-exit 1))
+  ;; XXX for some reason, the panic handler doesn't seem to be set
+  ;; when we're in here. So, for now let's just set it:
+  (the-signal-handler .^= panic)
 
-(the-signal-handler .^= fallback-signal-handler)
+  ;; N.B. we're trying not to use anything but primitives:
+  (display "Error within error! Evils:\n")
+  (to (printing xs)
+    (unless xs.empty?
+      (out .print xs.first)
+      (out .display #\newline)
+      (printing xs.rest)))
+  (printing evil)
+  (os-exit 1))
 
 (to (break @values)
   (call error `("Breakpoint" ,@values)))
@@ -444,3 +452,5 @@
   (if (eof? thing)
       '()
       (cons thing (read-all source))))
+
+(the-signal-handler .^= fallback-signal-handler)
