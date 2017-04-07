@@ -51,7 +51,7 @@
      (for each! ((v values))
        (flexarray .push! v)))
     ({.selfie sink}
-     (sink .display "#<fillvector (")
+     (sink .display "#<flexarray (")
      (sink .print count.^)
      (sink .display ")>"))     
     ({.resize! n}

@@ -24,7 +24,7 @@
 
 (loud-use "test/test-hashmap")
 (loud-use "test/test-format")
-(loud-use "test/test-fillvector")
+(loud-use "test/test-flexarray")
 (loud-use "test/test-sort")
 (loud-use "test/test-hashset")
 (loud-use "test/test-memoize")
