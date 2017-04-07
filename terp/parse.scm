@@ -86,8 +86,9 @@
 ;     (parse-pat (expand-quasiquote-pat quoted)) ;XXX broken
      (parse-quasiquote-pat quoted))
     ((: __ list?)
-;     (print `("old-style list pattern" ,p))
-;     (exit 1))       ;XXX
+;     (write `("old-style list pattern" ,p))
+;     (newline)
+;     (exit 1) ;)       ;XXX
      (parse-list-pat p))
     ))
 
