@@ -81,11 +81,7 @@
        (('@ __)                      ;XXX make @vars be some disjoint type
         (error 'parse "An @-pattern must be at the end of a list" p))
        ((: __ list?)
-   ;     (write `("old-style list pattern" ,p))
-   ;     (newline)
-   ;     (exit 1) ;)       ;XXX
-        (parse-list-pat p))
-       ))))
+        (error 'parse "Old-style list pattern" p)))))) ;TODO better plaint
 
 (define (parse-and-pat ps)
   (mcase ps
