@@ -66,7 +66,6 @@
     ((: ps list?)         `(() ,(list-subpatts ps))))) ;TODO remove
 
 (to (quasiquote-subpatts q)
-  ;;XXX list pattern syntax, all through below
   (match q
     ((list<- 'unquote p) `(,p))
     ((list<- (list<- 'unquote-splicing p)) `(,p))
