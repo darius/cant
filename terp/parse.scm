@@ -47,56 +47,66 @@
 
 ;; what's the syntax for a macro in pattern context?
 (define (parse-pat p)
-  (mcase p
-    ('_
-     (term<- 'any-pat))
-    ((: __ symbol?)
-     (term<- 'variable-pat p))
-    ((: __ self-evaluating?)
-     (term<- 'constant-pat p))
-    (('quote datum)
-     (term<- 'constant-pat datum))
-    (('and . ps)
-     (parse-and-pat ps))
-    (('view e1 p1)
-     (term<- 'view-pat (parse-exp e1) (parse-pat p1)))
-    ;; XXX complain if you see a bare , or ,@. but this will fall out of disallowing defaulty lists.
-    (('list<- . ps)
-     (parse-list-pat ps))
-    (('cons car-p cdr-p)
-     (make-cons-pat (parse-pat car-p) (parse-pat cdr-p)))
-    ((: __ term?)
-     (let ((tag (term-tag p))
-           (parts (term-parts p)))
-       (if (any (mlambda (('@ __) #t) (__ #f)) parts)  ;XXX really only need to check the last one
-           (term<- 'view-pat
-                   explode-term-exp
-                   (term<- 'term-pat 'term (list (term<- 'constant-pat tag)
-                                                 (parse-list-pat parts))))
-           (term<- 'term-pat tag (map parse-pat parts)))))
-    (('@ __)                      ;XXX make @vars be some disjoint type
-     (error 'parse "An @-pattern must be at the end of a list" p))
-    ((': e)
-     (parse-pat `(view ,e #t)))
-    ((': p1 e)
-     (parse-pat `(and ,p1 (view ,e #t))))
-    (('optional p1)                      ;TODO fancier
-     (parse-pat `(view ,optional-match-exp ,(term<- 'ok p1))))
-    (('quasiquote quoted)
-;     (parse-pat (expand-quasiquote-pat quoted)) ;XXX broken
-     (parse-quasiquote-pat quoted))
-    ((: __ list?)
-;     (write `("old-style list pattern" ,p))
-;     (newline)
-;     (exit 1) ;)       ;XXX
-     (parse-list-pat p))
-    ))
+  (cond
+    ((and (pair? p) (look-up-pat-macro (car p)))
+     => (lambda (expand) (parse-pat (expand p))))
+    (else
+     (mcase p
+       ('_
+        (term<- 'any-pat))
+       ((: __ symbol?)
+        (term<- 'variable-pat p))
+       ((: __ self-evaluating?)
+        (term<- 'constant-pat p))
+       (('quote datum)
+        (term<- 'constant-pat datum))
+       (('and . ps)
+        (parse-and-pat ps))
+       (('view e1 p1)
+        (term<- 'view-pat (parse-exp e1) (parse-pat p1)))
+       ;; XXX complain if you see a bare , or ,@. but this will fall out of disallowing defaulty lists.
+       (('list<- . ps)
+        (parse-list-pat ps))
+       (('cons car-p cdr-p)
+        (make-cons-pat (parse-pat car-p) (parse-pat cdr-p)))
+       ((: __ term?)
+        (let ((tag (term-tag p))
+              (parts (term-parts p)))
+          (if (any (mlambda (('@ __) #t) (__ #f)) parts)  ;XXX really only need to check the last one
+              (term<- 'view-pat
+                      explode-term-exp
+                      (term<- 'term-pat 'term (list (term<- 'constant-pat tag)
+                                                    (parse-list-pat parts))))
+              (term<- 'term-pat tag (map parse-pat parts)))))
+       (('@ __)                      ;XXX make @vars be some disjoint type
+        (error 'parse "An @-pattern must be at the end of a list" p))
+       (('quasiquote quoted)
+   ;     (parse-pat (expand-quasiquote-pat quoted)) ;XXX broken
+        (parse-quasiquote-pat quoted))
+       ((: __ list?)
+   ;     (write `("old-style list pattern" ,p))
+   ;     (newline)
+   ;     (exit 1) ;)       ;XXX
+        (parse-list-pat p))
+       ))))
 
 (define (parse-and-pat ps)
   (mcase ps
     (()         (term<- 'any-pat))
     ((p)        (parse-pat p))
     ((p1 . ps1) (term<- 'and-pat (parse-pat p1) (parse-and-pat ps1)))))
+
+(define (look-up-pat-macro key)
+  (mcase key
+    (':      (mlambda
+              ((__ e)
+               `(view ,e #t))
+              ((__ p1 e)
+               `(and ,p1 (view ,e #t)))))
+    ('optional (mlambda
+                ((__ p1)                      ;TODO fancier
+                 `(view ,optional-match-exp ,(term<- 'ok p1)))))
+    (__ #f)))
 
 (define (expand-definition-pattern dp)
  (mcase dp

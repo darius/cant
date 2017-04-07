@@ -365,9 +365,13 @@
     (self-evaluating? ,self-evaluating?)
     (maybe-macroexpand-expr ,(lambda (e)
                                (cond ((and (pair? e) (look-up-macro (car e)))
-                                      => (lambda (expander) (expander e)))
-                                     ;; XXX if we ever need to define a macro that expands into just #f
-                                     ;; we'll need to revisit this interface:
+                                      => (lambda (expander)
+                                           (term<- 'ok (expander e))))
+                                     (else #f))))
+    (maybe-macroexpand-patt ,(lambda (e)
+                               (cond ((and (pair? e) (look-up-pat-macro (car e)))
+                                      => (lambda (expander)
+                                           (term<- 'ok (expander e))))
                                      (else #f))))
     (open-subprocess ,process)
     (list-globals ,(lambda () (map car the-global-env)))

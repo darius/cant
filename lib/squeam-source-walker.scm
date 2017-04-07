@@ -40,26 +40,30 @@
 (to (macroexpand-outer-expr expr)
   (match (maybe-macroexpand-expr expr)
     (#no expr)
-    (expanded
+    ({ok expanded}
      ;; Keep expanding the outermost expr until we get core
      ;; syntax. But N.B. we leave subexpressions unexpanded.
      (macroexpand-outer-expr expanded))))
 
+(to (macroexpand-outer-patt patt)
+  (match (maybe-macroexpand-patt patt)
+    (#no patt)
+    ({ok expanded}
+     (macroexpand-outer-patt expanded))))
+
 ;; Return a pair `(,exprs ,patts) of the immediate subexpressions and
 ;; subpatterns of patt.
 (to (patt-subparts patt)
-  ;; TODO macroexpand patterns (when that's ready)
-  (match patt
+  (match (macroexpand-outer-patt patt)
     ((: symbol?)          none)
     ((: self-evaluating?) none)
     (`(quote ,_)          none)
-    ((: term?)            `(() ,(list-subpatts patt.arguments)))
-    (`(: ,e)              `((,e) ()))
-    (`(: ,p ,e)           `((,e) (,p)))
+    (`(and ,@ps)          `(() ,ps))
+    (`(view ,e ,p)        `((,e) (,p)))
+    ((: t term?)          `(() ,(list-subpatts t.arguments)))
     (`(@ ,_) (error "An @-pattern must be at the end of a list" patt))
-    (`(optional ,p)       `(() (,p)))
     ((list<- 'quasiquote q) `(() ,(quasiquote-subpatts q)))
-    ((: list?)            `(() ,(list-subpatts patt)))))
+    ((: ps list?)         `(() ,(list-subpatts ps))))) ;TODO remove
 
 (to (quasiquote-subpatts q)
   ;;XXX list pattern syntax, all through below
@@ -82,4 +86,4 @@
     (`((@ ,p)) `(,p))
     (`(,head ,@tail) `(,head ,@(list-subpatts tail)))))
 
-(export expr-subparts patt-subparts macroexpand-outer-expr)
+(export expr-subparts patt-subparts macroexpand-outer-expr macroexpand-outer-patt)

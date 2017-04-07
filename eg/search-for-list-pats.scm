@@ -3,7 +3,8 @@
 ;; I'm about to outlaw. I.e., patterns like (a b) instead of `(,a ,b).
 
 (import (use "lib/pretty-print") pp)
-(import (use "lib/squeam-source-walker") expr-subparts patt-subparts)
+(import (use "lib/squeam-source-walker")
+  expr-subparts patt-subparts macroexpand-outer-patt)
 
 (to (main `(,_ ,@filenames))
   (each! report-badness filenames))
@@ -20,26 +21,18 @@
 (to (bad-expr? expr)
   (bad-part? (expr-subparts expr)))
 
-(to (bad-definition? arg es)
-  (or (some bad-expr? es)
-      ;; TODO just call bad-patt? after a step of macroexpansion
-      (if (list? arg)
-          (and (not arg.empty?)
-               (match arg.last
-                 ((list<- '@ p)
-                  (or (bad-patt? p) (some bad-patt? ((reverse arg) .rest))))
-                 (_ (some bad-patt? arg))))
-          (bad-patt? arg))))
-
 (to (bad-part? `(,subexprs ,subpatts))
   (or (some bad-expr? subexprs)
       (some bad-patt? subpatts)))
 
 (to (bad-patt? patt)
-  (or (and (cons? patt)
-           (not ('(list<- cons quote quasiquote : @ optional) .find? patt.first))
-           (do (format "This subpattern is bad: ~w\n" patt)
-               #yes))
-      (bad-part? (patt-subparts patt))))
+  (let p (macroexpand-outer-patt patt))
+  (match p
+    (`(,s ,@_)
+     (or (and (not ('(list<- cons quote and view @ quasiquote) .find? s))
+              (do (format "This subpattern is bad: ~w\n" patt)
+                  #yes))
+         (bad-part? (patt-subparts p))))
+    (_ (bad-part? (patt-subparts p)))))
 
 (export main bad-expr? bad-patt?)
