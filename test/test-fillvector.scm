@@ -1,5 +1,5 @@
 (newline)
-(let v (fillvector<-))
+(let v (flexarray<-))
 (print v)
 (print (list<- v.snapshot v.empty? v.count))
 (print (v .push! 42))

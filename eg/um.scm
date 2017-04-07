@@ -13,9 +13,9 @@
 ;; nor the type is as simple...
 
 (to (run program sink source)
-  (let mem (fillvector<-))         ;TODO: shorter name? flexlist?
+  (let mem (flexarray<-))         ;TODO: shorter name? flexlist?
   (mem .push! program)
-  (let free-list (fillvector<-))
+  (let free-list (flexarray<-))
   (let reg (vector<-count 8 0))         ;TODO: typed vector, for efficiency
 
   (begin running ((program program) (pc 0))
@@ -93,7 +93,7 @@
          (_ (error "Bad opcode" opcode)))))))
 
 (to (read-program source)
-  (let program (fillvector<-))
+  (let program (flexarray<-))
   (begin reading ()
     (let c3 source.read-char)
     (unless (eof? c3)

@@ -21,7 +21,7 @@
 (let alphabet (each char<- (range<- (#\a .code) (+ (#\z .code) 1)))) ;XXX clumsy
 
 (to (random-encrypt rng text)
-  (let values (vector<-list alphabet))
+  (let values (array<-list alphabet))
   (rng .shuffle! values)
   (let code (map<- (zip alphabet values.values))) ;XXX why .values needed?
   (string<-list (for each ((ch text.lowercase))
@@ -111,7 +111,7 @@
 
      (let pos (box<- 0))
 
-     (let view (fillvector<-))
+     (let view (flexarray<-))
      (to (emit x) (view .push! x))
 
      (emit (green `("Free: " ,letters-left #\newline)))
@@ -138,7 +138,7 @@
 
 ;; Expand tabs; blank out other control characters.
 (to (clean str)
-  (let r (fillvector<-))
+  (let r (flexarray<-))
   (for each! ((ch str))
     (case ((= ch #\tab)
            (begin padding ()
@@ -152,7 +152,7 @@
   (string<-list (as-list r)))           ;XXX clumsy
 
 (to (running-sum numbers)
-  (let sums (fillvector<- 0))
+  (let sums (flexarray<- 0))
   (for each! ((n numbers))
     (sums .push! (+ sums.last n)))
   sums)

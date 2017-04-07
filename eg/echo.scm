@@ -11,7 +11,7 @@
   (cbreak-mode run))
 
 (to (run)
-  (let strokes (fillvector<-))
+  (let strokes (flexarray<-))
   (begin running ()
     (let echoes (fill (" " .join strokes) screen-width))
     (render `("Hit some keys; or hit capital Q to quit.\n\n"

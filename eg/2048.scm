@@ -15,7 +15,7 @@
     (play (starting-board<- rng) rng)))
 
 (to (play board rng)
-  (let history (fillvector<-))
+  (let history (flexarray<-))
   (begin playing ((board board) (forfeit? #no))
     (to (continue)
       (playing board forfeit?))

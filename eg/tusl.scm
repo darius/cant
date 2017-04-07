@@ -29,7 +29,7 @@
            )))
 
 (to (compile tokens)
-  (let code (fillvector<-))
+  (let code (flexarray<-))
   (begin compiling ((frames '()) (tokens tokens))
     (case (tokens.empty?
            (surely frames.empty?))      ;XXX require

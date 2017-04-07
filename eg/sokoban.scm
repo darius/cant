@@ -52,7 +52,7 @@
 
 ;; The UI to a sequence of Sokoban levels.
 (to (play grids name level)
-  (let trails (vector<-list (each fillvector<- grids)))
+  (let trails (array<-list (each flexarray<- grids)))
 
   (let heading
     "Move with the arrow keys or HJKL. U to undo.

@@ -18,7 +18,7 @@
   (1 .<< n))
 
 (to (find-circuits wanted n-inputs max-gates)
-  (let inputs (vector<-list (tabulate-inputs n-inputs)))
+  (let inputs (array<-list (tabulate-inputs n-inputs)))
   (let mask (- (pow2 (pow2 n-inputs)) 1))
 
   (to (print-formula L-input R-input)
@@ -34,8 +34,8 @@
   (to (find-for-n n-gates)
     (format "Trying ~w gates...\n" n-gates)
     (let n-wires (+ n-inputs n-gates))
-    (let L-input (vector<-count n-gates #no))
-    (let R-input (vector<-count n-gates #no))
+    (let L-input (array<-count n-gates #no))
+    (let R-input (array<-count n-gates #no))
     (let found?  (box<- #no))
     (let wire    (chain inputs L-input))
     (begin sweeping ((gate 0))
@@ -59,7 +59,7 @@
   ((x .and y) .not))     ;XXX why bitwise not here? only 1 bit, right?
 
 (to (tabulate-inputs n-inputs)
-  ;; An inputs vector is a vector of n-inputs bitvectors. It holds all
+  ;; An inputs array is an array of n-inputs bitvectors. It holds all
   ;; possible input patterns 'transposed': that is, the kth test case
   ;; can be formed out of bit #k of each the list's elements, one
   ;; element per circuit input. Transposed is the most useful form

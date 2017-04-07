@@ -8,7 +8,7 @@
 
 (to (grow-and-shrink numbers empty empty? get-min really-insert really-remove-min)
 
-  (let history (fillvector<-))
+  (let history (flexarray<-))
 
   (to (insert pq elem)
     (let pq11 (really-insert pq elem))

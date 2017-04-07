@@ -38,7 +38,7 @@
       (let ch (text .get p 1))
       (let pp (+ p 1))
       (case ((or (= ch "") (= ch "\n"))
-             ;; TODO fillvector to string, i guess
+             ;; TODO flexarray to string, i guess
              (rendering pp 0 (+ y 1)))
             (else
              (begin appending ((glyphs (render-glyph ch.first x))

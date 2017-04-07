@@ -7,7 +7,7 @@
 
 (to (interact)
   (show 0 "(Start typing...)")
-  (let strokes (fillvector<- (get-key)))
+  (let strokes (flexarray<- (get-key)))
   (let start (nano-now))
   (begin typing ()
     (show (/ (- (nano-now) start) 1000000000)
