@@ -317,7 +317,7 @@
     (claim? ,boolean?)
     (char? ,char?)
     (string? ,string?)
-    (vector? ,vector?)
+    (array? ,vector?)
     (box? ,box?)
     (term? ,term?)
     (source? ,input-port?)
@@ -328,7 +328,7 @@
     (term<- ,make-term)       ;TODO check that arguments arg is a list
     (char<- ,integer->char)
     (string<-list ,list->string)
-    (vector<-count ,make-vector)
+    (array<-count ,make-vector)
     (exact->inexact ,exact->inexact)  ;XXX rename or something
     (not ,not)
     (assq ,assq)  ;; TODO replace with 'real' hashmaps
@@ -349,7 +349,7 @@
     (expt ,expt)
     (abs ,abs)
     (gcd ,gcd)
-    (vector<-list ,list->vector)
+    (array<-list ,list->vector)
     (read ,squeam-read)
     (parse-exp ,parse-exp)
     (parse-pat ,parse-pat)

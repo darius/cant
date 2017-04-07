@@ -244,8 +244,8 @@
         `(,(reverse r-head) ,xs)
         (scanning `(,xs.first ,@r-head) xs.rest))))
 
-(to (vector<- @elements)
-  (vector<-list elements))
+(to (array<- @elements)
+  (array<-list elements))
 
 (to (string<- @chars)
   (string<-list chars))
@@ -454,11 +454,3 @@
       (cons thing (read-all source))))
 
 (the-signal-handler .^= fallback-signal-handler)
-
-
-;; TODO temporary
-
-(let array? vector?)
-(let array<- vector<-)
-(let array<-count vector<-count)
-(let array<-list vector<-list)

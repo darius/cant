@@ -178,7 +178,7 @@
   ({.slice i}
    (me .slice i me.count))
   ({.slice i bound}
-   (let v (vector<-count (- bound i)))
+   (let v (array<-count (- bound i)))
    (for each! ((j bound))
      (v .set! j (me (+ i j))))
    v)
@@ -578,8 +578,8 @@
 
       ('()
        (let count (box<- 0))
-       (let keys  (box<- (vector<- none)))  ;; size a power of 2
-       (let vals  (box<- (vector<- #no)))   ;; same size
+       (let keys  (box<- (array<- none)))  ;; size a power of 2
+       (let vals  (box<- (array<- #no)))   ;; same size
 
        (to (capacity) keys.^.count)
 
@@ -613,8 +613,8 @@
        (to (resize new-capacity)
          (let old-keys keys.^)
          (let old-vals vals.^)
-         (keys .^= (vector<-count new-capacity none))
-         (vals .^= (vector<-count new-capacity))
+         (keys .^= (array<-count new-capacity none))
+         (vals .^= (array<-count new-capacity))
          (for each! ((`(,i ,key) old-keys.items))
            (unless (= key none)
              (let {missing-at j} (place key))
@@ -664,8 +664,8 @@
                   (else (searching js.rest)))))
          ({.clear!}
           (count .^= 0)
-          (keys .^= (vector<- none))
-          (vals .^= (vector<- #no)))
+          (keys .^= (array<- none))
+          (vals .^= (array<- #no)))
          ({.selfie sink}
           (sink .display "#<hash-map (")
           (sink .print count.^)
