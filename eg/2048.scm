@@ -111,8 +111,8 @@
 
 ;; Slide row one place leftward, leaving fixed any places left of the
 ;; position at `low`. Advance low past merging or completion. Return
-;; the updated (low row) state.
-(to (slide (low row))
+;; the updated `(,low ,row) state.
+(to (slide `(,low ,row))
   (begin checking ((i low))
     (let j (+ i 1))
     (if (<= 4 j)

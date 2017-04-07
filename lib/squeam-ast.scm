@@ -44,7 +44,7 @@
      `(make ,name {extending ,(unparse trait-e)}
         ,@(each unparse-clause clauses)))))
 
-(to (unparse-clause (p p-vars e-vars e))
+(to (unparse-clause `(,p ,p-vars ,e-vars ,e))
   `(,(unparse-pat p) ,(unparse-exp e)))
 
 (to (self-evaluating? x)
