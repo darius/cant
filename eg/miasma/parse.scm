@@ -149,7 +149,7 @@
           ('(1 2 4) .find? size)))
     (_ #no)))
 
-(to (parse-operand (symbol tag size))
+(to (parse-operand `(,symbol ,tag ,size))
   (match tag
     ('I (signed-immediate-param size))
     ('U (unsigned-immediate-param size))
