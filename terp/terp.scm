@@ -290,9 +290,9 @@
          (string-append "#<"
                         (let ((script (object-script x)))
                           (cond ((script? script)
-                                 (symbol->string (script-name script)))
+                                 (script-name script))
                                 ((cont-script? script)
-                                 (symbol->string (cont-script-name script)))
+                                 (cont-script-name script))
                                 (else "XXX-WTF")))
                         ">"))
         (else

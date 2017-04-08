@@ -20,8 +20,10 @@
         (term<- 'let (parse-pat p) (parse-exp e1)))
        (('make '_ . clauses)
         (parse-make '_ clauses))
-       (('make (: name symbol?) . clauses) ;TODO: cons up a fully-qualified name
+       (('make (: name symbol?) . clauses)
         (term<- 'let (parse-pat name) (parse-make name clauses)))
+       (('make (: name string?) . clauses)
+        (parse-make name clauses))
        (('make . clauses)
         (parse-make '_ clauses))
        (('do e1)
@@ -163,15 +165,18 @@
 
 ;; XXX what about stamp?
 (define (parse-make name stuff)
-  (mcase stuff
-    (((: decl term?) . clauses)
-     (assert (eq? (term-tag decl) 'extending) "bad syntax" decl)
-     (assert (= (length (term-parts decl)) 1) "bad syntax" decl)
-     (term<- 'make name none-exp
-             (parse-exp (car (term-parts decl)))
-             (map parse-clause clauses)))
-    (clauses
-     (term<- 'make name none-exp none-exp (map parse-clause clauses)))))
+  (let ((name (cond ((symbol? name) (symbol->string name))
+                    ((string? name) name)
+                    (else (error 'parse "Illegal name type" name)))))
+    (mcase stuff
+      (((: decl term?) . clauses)
+       (assert (eq? (term-tag decl) 'extending) "bad syntax" decl)
+       (assert (= (length (term-parts decl)) 1) "bad syntax" decl)
+       (term<- 'make name none-exp
+               (parse-exp (car (term-parts decl)))
+               (map parse-clause clauses)))
+      (clauses
+       (term<- 'make name none-exp none-exp (map parse-clause clauses))))))
 
 (define none-exp (term<- 'constant '#f))
 
@@ -215,9 +220,14 @@
                `(to (_ ,@dp) ,@body))))
     ('for    (mlambda
               ((__ fn bindings . body)
-               (parse-bindings bindings
-                 (lambda (ps es)
-                   `(,fn (make _ ((list<- ,@ps) ,@body)) ,@es))))))
+               (let ((name-for (if (symbol? fn)
+                                   (string-append "for_" (symbol->string fn))
+                                   "for:_")))
+                 (parse-bindings bindings
+                   (lambda (ps es)
+                     `(,fn (make ,name-for
+                             ((list<- ,@ps) ,@body))
+                           ,@es)))))))
     ('begin  (mlambda
               ((__ (: proc symbol?) bindings . body)
                (parse-bindings bindings

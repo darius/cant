@@ -38,7 +38,7 @@
          ((<= bound i) '())
          ((= i 0) (cons list.first (list.rest .slice 0 (- bound 1))))
          (else (list.rest .slice (- i 1) (- bound 1)))))
-  ({.chain seq}
+  ({.chain seq}                         ;TODO self if seq is ()
    (if list.empty?
        seq
        (cons list.first (list.rest .chain seq))))

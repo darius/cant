@@ -363,14 +363,10 @@
         (export qe qp))
 
       (to (qualify-name name context)
-        (let parts (add-make-context name context))
-        (let joined (":" .join parts))
-        (let s (symbol<- joined))
-        s)
+        (":" .join (add-make-context name context)))
 
       (to (add-make-context name context)
-        ;; TODO make sure name is a symbol, or convert it
-        `(,name.name ,@context))
+        `(,name ,@context))
 
       (export qualify-exp qualify-pat))
 
