@@ -1,2 +1,2 @@
 (load "loadme.scm")
-(repl)
+(repl (cdr (command-line)))

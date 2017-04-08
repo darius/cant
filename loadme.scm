@@ -19,6 +19,6 @@
     ;; Let's default to traceback-on-error:
     (push-signal-handler ((use "lib/traceback") 'on-error-traceback))))
 
-(define (repl)
-  (squeam-interpret '(repl)))
+(define (repl . opt-args)
+  (squeam-interpret `(call repl ',opt-args)))
 ;(repl)

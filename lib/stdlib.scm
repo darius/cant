@@ -345,7 +345,7 @@
         (to (qualify-make {make name stamp-exp trait-exp clauses})
           {make (qualify-name name context) (qe stamp-exp) (qe trait-exp)
                 (hide
-                  (import (qualifier<- (add-make-context name context))
+                  (import (qualifier<- (nest-make-context name context))
                     qe qp)
                   (for each ((`(,p ,p-vars ,e-vars ,e) clauses))
                     `(,(qp p) ,p-vars ,e-vars ,(qe e))))})
@@ -363,9 +363,9 @@
         (export qe qp))
 
       (to (qualify-name name context)
-        (":" .join (add-make-context name context)))
+        (":" .join (nest-make-context name context)))
 
-      (to (add-make-context name context)
+      (to (nest-make-context name context)
         `(,name ,@context))
 
       (export qualify-exp qualify-pat))
@@ -376,7 +376,7 @@
   (unless (= 0 (system command))
     (error "Failed system command" command)))
 
-(to (repl)                          ;TODO rename
+(to (repl @(optional cmd-line-args))    ;TODO rename
   (import (use "lib/traceback") on-error-traceback)
 
   (let parent-handler the-signal-handler.^)
@@ -397,7 +397,18 @@
       (print (evaluate e '())) ;XXX reify a proper env object
       (interacting)))
 
-  (interacting))
+  (match cmd-line-args
+    (#no (interacting))
+    ('() (interacting))
+    (`(,filename ,@_)
+     (the-signal-handler .^= repl-handler)     
+     (load-and-run filename cmd-line-args)
+     (interacting))))
+
+(to (load-and-run filename args)
+  (load-globally filename `(,filename)) ;TODO remove .scm extension
+  (when ((list-globals) .find? 'main)     ;XXX hack
+    (main args)))
 
 (to (debug)
   (import (use "lib/debugger") inspect-continuation)
@@ -423,6 +434,14 @@
      (let mod (load (chain file-stem ".scm") `(,file-stem)))
      (the-modules .^= `((,file-stem ,mod) ,@the-modules.^))
      mod)))
+
+(to (load-globally filename @(optional context-arg))
+  ;; XXX duplication
+  (let context (or context-arg '()))
+  (let code `(do ,@(with-input-file read-all filename)))
+  (let code1 (parse-exp code))
+  (let code2 (qualify-exp code1 context))
+  (evaluate code2 '()))
 
 (to (load filename @(optional context-arg))
   (let context (or context-arg '()))
