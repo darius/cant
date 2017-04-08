@@ -149,6 +149,12 @@
           ('(1 2 4) .find? size)))
     (_ #no)))
 
+(to ((operand-of tag) x)                ;XXX duplicate code
+  (match x
+    (`(,(: symbol?) ,(: (given (t) (= t tag))) ,size)
+     ('(1 2 4) .find? size))
+    (_ #no)))
+
 (to (parse-operand `(,symbol ,tag ,size))
   (match tag
     ('I (signed-immediate-param size))
