@@ -69,6 +69,7 @@
   (let vocab
     '((? help      "this message")
       (q quit      "quit the debugger")
+      (r resume    "continue from here, with the value of an expression")
       (u up        "up to caller")
       (d down      "down to callee")
       (e env       "enumerate the variables in the current environment")
@@ -83,6 +84,9 @@
       (each! display messages)
       (interacting frame callees))
 
+    (to (read-eval)
+      (evaluate (parse-exp (read)) frame.env))
+
     (display "debug> ")
     (let input (read))
     (match (abbrevs .get input input)
@@ -91,6 +95,8 @@
        (continue))
       ('quit
        'ok)
+      ('resume
+       (frame .answer (read-eval)))
       ('up
        (let caller frame.rest)
        (if caller.empty?
@@ -104,7 +110,7 @@
        (show-env frame.env)
        (continue))
       ('value
-       (print (evaluate (parse-exp (read)) frame.env))
+       (print (read-eval))
        (continue))
       ('backtrace
        (print-traceback frame)
