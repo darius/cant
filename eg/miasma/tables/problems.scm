@@ -3,8 +3,8 @@
 ; Refer to legal/License.txt
 
 ; eax/ax register 
-(#xA8      TEST AL    imm8  "Logical compare")
-(#xA9      TEST EAX   imm32 "Logical compare")
+(#xA8      TEST %AL    imm8  "Logical compare")
+(#xA9      TEST %EAX   imm32 "Logical compare")
 
 (#x9A      CALL ptr16:32   "Call far, absolute")
 (#xFF /3   CALL m16:32     "Call far, absolute indirect")
@@ -12,10 +12,10 @@
 (#xEA      JMP ptr16:32  "Jump far, absolute, address given in operand")
 (#xFF /5   JMP m16:32    "Jump far, absolute, address given in m16:32")
 
-(#xA0      MOV AL      moffs8  "Move byte at (seg:offset) to AL")
-(#xA1      MOV EAX     moffs32 "Move doubleword at (seg:offset) to EAX")
-(#xA2      MOV moffs8  AL      "Move AL to (seg:offset)")
-(#xA3      MOV moffs32 EAX     "Move EAX to (seg:offset)")
+(#xA0      MOV %AL      moffs8  "Move byte at (seg:offset) to AL")
+(#xA1      MOV %EAX     moffs32 "Move doubleword at (seg:offset) to EAX")
+(#xA2      MOV moffs8  %AL      "Move AL to (seg:offset)")
+(#xA3      MOV moffs32 %EAX     "Move EAX to (seg:offset)")
 
 ; theory: m32 always means r/m32, but with an overloading
 ; superseding the r.  (and Intel isn't consistent about it)
@@ -58,11 +58,11 @@
 
 ; the manual doesn't mention /r -- I assume an oversight.
 (#x0F #xA4 /r SHLD r/m32 r32 imm8 "Double precision shift left")
-(#x0F #xA5 /r SHLD r/m32 r32 CL   "Double precision shift left")
+(#x0F #xA5 /r SHLD r/m32 r32 %CL  "Double precision shift left")
 ; note 3-argument instructions above
 
 (#x0F #xAC /r SHRD r/m32 r32 imm8 "Double precision shift right")
-(#x0F #xAD /r SHRD r/m32 r32 CL   "Double precision shift right")
+(#x0F #xAD /r SHRD r/m32 r32 %CL  "Double precision shift right")
 ; note 3-argument instructions above
 
 (#x0F #x00 /4 VERR r/m16 "Verify segment for reading")
