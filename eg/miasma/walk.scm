@@ -1,27 +1,23 @@
-;; XXX expecting terms is inconsistent with parse.scm's production of lists
 (to (walk-code code code-f exp-f)
   (begin walking ((code code))
-    (let f (code-f code.tag))
     (match code
       ({bytes signedness arg1 arg2}
-       (f (signed? signedness) arg1 (walk-exp arg2 exp-f)))
+       (let signed? (match signedness ('i #yes) ('u #no)))
+       (code-f {bytes signed? arg1 (walk-exp arg2 exp-f)}))
       ({swap-args arg}
-       (f (walking arg)))
+       (code-f {swap-args (walking arg)}))
       ({mod-r/m arg1 arg2}
-       (f (walk-exp arg1 exp-f)
-          (walk-exp arg2 exp-f))))))
-
-(to (signed? signedness)
-  (match signedness ('i #yes) ('u #no)))
+       (code-f {mod-r/m (walk-exp arg1 exp-f)
+                        (walk-exp arg2 exp-f)})))))
 
 (to (walk-exp exp exp-f)
   (begin walking ((exp exp))
     (match exp
-      ((: integer?)       ((exp-f 'literal) exp))
-      (`(hereafter)       ((exp-f 'hereafter)))
-      (`(arg ,@operands)  (call (exp-f 'arg) operands))
-      (`(,op ,arg1 ,arg2) ((exp-f 'op) op (walking arg1) (walking arg2))))))
-
+      ((: integer?)         (exp-f {literal exp}))
+      ({hereafter}          (exp-f exp))
+      ({arg @_}             (exp-f exp))
+      ({op rator arg1 arg2} (exp-f
+                             {op rator (walking arg1) (walking arg2)})))))
 
 (to ((unit v) args k)
   (k args v))
@@ -35,3 +31,5 @@
 
 (to ((eating m-proc) `(,z ,@rest) k)
   ((m-proc z) rest k))
+
+(export walk-code walk-exp unit bind swapping eating)

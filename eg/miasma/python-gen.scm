@@ -1,5 +1,6 @@
 (import (use "eg/miasma/registers") registers register-number)
 (import (use "eg/miasma/parse") the-specs setup-spec-table)
+(import (use "eg/miasma/walk") walk-code walk-exp unit bind swapping eating)
 
 (to (main _)
   (setup-spec-table)
@@ -87,7 +88,7 @@
 
   (to (py-code code)
     (match code
-      ({bytes signed? count exp}
+      ({bytes _ _ exp}
        exp)
       ({swap-args code}
        code)
@@ -98,7 +99,7 @@
 
   (to (py-exp exp)
     (match exp
-      ({literal n}
+      ({literal _}
        (unit 0))
       ({op operator e1 e2}
        (for bind ((cv1 e1))

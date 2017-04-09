@@ -16,6 +16,9 @@
        ,@(each unparse-param params)
        ,doc-string))))
 
+(to (unparse-param param)
+  param)                      ;TODO did I never write this originally?
+
 ;; Return an unambiguous mnemonic, given the name of an overloaded one
 ;; and the params that resolve the overloading.
 (to (mnemonic<- stem params)
@@ -166,7 +169,7 @@
 
 ;; A literal opcode byte to output as is.
 (to (opcode-byte-param byte)
-  `{bytes u 1 ,byte})             ;TODO use terms instead? or objects?
+  `{bytes u 1 ,byte})             ;TODO use lists instead? or objects?
 
 ;; A literal register whose identity is implicit in the opcode.
 (to (register-param register)
@@ -190,7 +193,7 @@
 
 ;; A pc-relative jump offset.
 (to (relative-jump-param size)
-  `{bytes i ,size {- {arg int} {hereafter}}})
+  `{bytes i ,size {op - {arg int} {hereafter}}})
 
 ;; A segment-relative offset field (if I understand this... probably not)
 (to (offset-param size)
@@ -200,12 +203,12 @@
 ;; of the mnemonic, but in my syntax they're a separate argument.  The
 ;; encoding of the condition gets added to OPCODE-BYTE on emission.
 (to (condition-param opcode-byte)
-  `{bytes u 1 {+ ,opcode-byte {arg cc}}})
+  `{bytes u 1 {op + ,opcode-byte {arg cc}}})
 
 ;; A general-register field that's added to an extended-opcode byte.
 ;FIXME: confusing name
 (to (opcode+register-param opcode-byte `(,symbol ,tag ,size))
-  `{bytes u 1 {+ ,opcode-byte {arg reg ,size}}})
+  `{bytes u 1 {op + ,opcode-byte {arg reg ,size}}})
 
 ;; A pair of fields that go into a mod-r/m encoding.  Ex is effective
 ;; address, Gx is general register.
