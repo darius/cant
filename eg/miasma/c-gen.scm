@@ -155,7 +155,7 @@
   ("#define ~d(~d)" .format name (", " .join vars)))
 
 (to (c-insn-name mnemonic)
-  (as-legal-c-identifier (chain "x86_" mnemonic.name)))
+  (chain "x86_" (as-legal-c-identifier mnemonic.name)))
 
 ;; Return `str`, but munging out any characters that are used in our 
 ;; mnemonics but aren't legal in C identifiers.

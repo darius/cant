@@ -109,11 +109,11 @@
        (`(+ ,(: b byte?) ,(: operand (operand-of 'G))) ;TODO
         (opcode+register-param b operand))
        (`(/r ,arg1 ,arg2)
-        (surely (or (and ((operand-of 'E) arg1) ((operand-of 'G) arg2))
-                    (and ((operand-of 'G) arg1) ((operand-of 'E) arg2))))
-        (if ((operand-of 'E) arg1)
-            (Ex.Gx-param arg1 arg2)
-            (Gx.Ex-param arg1 arg2)))
+        (case ((and ((operand-of 'E) arg1) ((operand-of 'G) arg2))
+               (Ex.Gx-param arg1 arg2))
+              ((and ((operand-of 'G) arg1) ((operand-of 'E) arg2))
+               (Gx.Ex-param arg1 arg2))
+              (else (surely #no))))
        (`(,foo ,arg)
         (surely (extended-opcode-tags .find? foo))
         (surely ((operand-of 'E) arg))
@@ -176,7 +176,7 @@
   `{bytes u 0 0})
 
 ;; There's a global assumption in this assembler that we're in 32-bit
-;; mode.  So for 32 bits we do nothing, and for 16 bits we emit an
+;; mode. So for 32 bits we do nothing, and for 16 bits we emit an
 ;; operand-size prefix.
 (to (size-mode-param bits)
   (if (= bits 32)
@@ -199,8 +199,8 @@
 (to (offset-param size)
   `{bytes u ,size {arg int}})
 
-;; A condition code field.  In Intel syntax, condition codes are part
-;; of the mnemonic, but in my syntax they're a separate argument.  The
+;; A condition code field. In Intel syntax, condition codes are part
+;; of the mnemonic, but in my syntax they're a separate argument. The
 ;; encoding of the condition gets added to OPCODE-BYTE on emission.
 (to (condition-param opcode-byte)
   `{bytes u 1 {op + ,opcode-byte {arg cc}}})
@@ -210,7 +210,7 @@
 (to (opcode+register-param opcode-byte `(,symbol ,tag ,size))
   `{bytes u 1 {op + ,opcode-byte {arg reg ,size}}})
 
-;; A pair of fields that go into a mod-r/m encoding.  Ex is effective
+;; A pair of fields that go into a mod-r/m encoding. Ex is effective
 ;; address, Gx is general register.
 (to (Ex.Gx-param Ex `(,Gx-symbol ,tag ,size))
   `{swap-args {mod-r/m {arg reg ,size} {arg ,Ex}}})
