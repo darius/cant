@@ -26,8 +26,9 @@
   (say-to sink)
   (say-to sink (c-enum registers.keys (each register-number registers.keys)))
   (say-to sink)
-  (for each! ((spec the-specs.values))
-    (say-to sink (c-gen spec.mnemonic spec.params))))
+  (for each! ((mnemonic (sort the-specs.keys)))
+    (let spec (the-specs mnemonic))
+    (say-to sink (c-gen mnemonic spec.params))))
 
 
 ;; Code translation
