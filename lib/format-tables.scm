@@ -5,8 +5,8 @@
 ;; Each line is the corresponding row joined by `spacer`, with each
 ;; column padded to its max width.
 (to (format-table rows @(optional opt-spacer opt-justify))
-  (let spacer  (or opt-spacer " "))
-  (let justify (or opt-justify   '.left-justify))
+  (let spacer  (or opt-spacer  " "))
+  (let justify (or opt-justify '.left-justify))
   (surely (for every ((row rows))
             (= row.count ((rows 0) .count))))
   (let widths (for each ((column (transpose rows)))
