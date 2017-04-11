@@ -24,7 +24,7 @@
   (let n-rows (max 1 ((+ strings.count n-cols -1) .quotient n-cols)))
   (let padded (chain strings
                      ('("") .repeat (- (* n-rows n-cols) strings.count))))
-  (transpose (for each ((i (range<- 0 strings.count n-rows))) ;XXX
+  (transpose (for each ((i (range<- 0 strings.count n-rows)))
                (padded .slice i (+ i n-rows)))))
 
 (export format-table tabulate)
