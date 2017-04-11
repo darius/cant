@@ -503,10 +503,17 @@
                              (begin (set-car! (cdr pair) value)
                                     (answer k #t)))))
         ((null? r)
-         (if (assq v the-global-env)
-             (signal k "Global redefinition" v)
-             (begin (set! the-global-env (cons (list v value) the-global-env))
-                    (answer k #t))))
+         (cond ((assq v the-global-env)
+                => (lambda (pair)
+                     ;;XXX as a hack, allow global redefinition for
+                     ;; now. This aids development at the repl, but we
+                     ;; need a more systematic solution.
+                     ;;(signal k "Global redefinition" v)
+                     (set-car! (cdr pair) value)
+                     (answer k #t)))
+               (else
+                (set! the-global-env (cons (list v value) the-global-env))
+                (answer k #t))))
         (else (signal k "Tried to bind in a non-environment" r v))))
 
 (define uninitialized (object<- (script<- '<uninitialized> #f '()) '*uninitialized*))
