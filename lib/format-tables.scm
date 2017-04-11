@@ -4,8 +4,9 @@
 ;; Given a list of rows, each a list of strings, return a list of lines.
 ;; Each line is the corresponding row joined by `separator`, with each
 ;; column padded to its max width.
-(to (format-table rows separator @(optional opt-justify))
-  (let justify (or opt-justify '.left-justify))
+(to (format-table rows @(optional opt-separator opt-justify))
+  (let separator (or opt-separator " "))
+  (let justify   (or opt-justify   '.left-justify))
   (surely (for every ((row rows))
             (= row.count ((rows 0) .count))))
   (let widths (for each ((column (transpose rows)))
@@ -16,7 +17,8 @@
 
 ;; Given a sequence of strings, return a matrix of the same strings in
 ;; column order, trying to fit them in the given width.
-(to (tabulate strings width)
+(to (tabulate strings @(optional opt-width))
+  (let width (or opt-width 79))
   (let max-width (+ 2 (call max `(0 ,@(each '.count strings)))))
   (let n-cols (max 1 (min strings.count (width .quotient max-width))))
   (let n-rows (max 1 ((+ strings.count n-cols -1) .quotient n-cols)))

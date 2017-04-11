@@ -99,12 +99,37 @@
               ((__ p1 e)
                `(and ,p1 (view ,e #t)))))
     ('optional (mlambda
-                ((__ p1)                      ;TODO fancier
-                 `(view ,optional-match-exp ,(term<- 'ok p1)))))
+                ((__ . ps)
+                 `(view ,(optional-match-exp (length ps))
+                        ,(make-term 'ok (reverse ps))))))
     ('quasiquote (mlambda
                   ((__ quoted)
                    (expand-quasiquote-pat quoted))))
     (__ #f)))
+
+(define (up-to-n-optional n)
+  (lambda (arguments)
+    (let eating ((n n) (xs arguments) (values '()))
+      (cond ((null? xs)
+             (let filling ((n n) (values values))
+               (if (= n 0)
+                   (make-term 'ok values)
+                   (filling (- n 1) (cons #f values)))))
+            ((= n 0)
+             #f)
+            (else
+             (eating (- n 1) (cdr xs) (cons (car xs) values)))))))
+
+(define (optional-match-exp<- n)
+  `',(up-to-n-optional n))
+
+(define optional-matcher-cache
+  (list->vector (map optional-match-exp<- '(0 1 2 3))))
+
+(define (optional-match-exp n)
+  (if (< n (vector-length optional-matcher-cache))
+      (vector-ref optional-matcher-cache n)
+      (optional-match-exp<- n)))
 
 (define (expand-definition-pattern dp)
  (mcase dp
@@ -116,15 +141,6 @@
     dp)
    (__ (error 'parse "Bad definition pattern" dp))))
 
-(define optional-match-exp
-  `',(lambda (x)
-       (cond ((null? x)
-              (term<- 'ok #f))
-             ((and (pair? x) (null? (cdr x)))
-              (term<- 'ok (car x)))
-             (else
-              #f))))
-  
 (define (explode-term thing)
   (and (term? thing)
        (term<- 'term (term-tag thing) (term-parts thing))))

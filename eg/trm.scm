@@ -71,20 +71,19 @@ insn:    {'1'+} {'#' '#'? '#'? '#'? '#'?} :make_insn.
 ;; (import (use "lib/pretty-layout") ...)
 ;;XXX use me
 
-(make show
-  (`(,insns)
-   (show insns 0 (regs<-)))             ;TODO fancier (optional ...)
-  (`(,insns ,pc ,regs)
-   (let left
-     (for each ((`(,addr (,fn ,n)) insns.items))
-       (let show-addr (if (= addr pc)
-                          "   "
-                          ("~3w" .format (abs (- pc addr)))))
-       ("~d ~d ~w" .format show-addr fn.name n)))
-   (let right (for each ((`(,i ,str) regs.items.rest))
-                ("\tr~w: ~d" .format i str)))
-   (for each! ((line (abut left right)))
-     (format "~d\n" line))))
+(to (show insns @(optional opt-pc opt-regs))
+  (let pc   (or opt-pc   0))
+  (let regs (or opt-regs (regs<-)))
+  (let left
+    (for each ((`(,addr (,fn ,n)) insns.items))
+      (let show-addr (if (= addr pc)
+                         "   "
+                         ("~3w" .format (abs (- pc addr)))))
+      ("~d ~d ~w" .format show-addr fn.name n)))
+  (let right (for each ((`(,i ,str) regs.items.rest))
+               ("\tr~w: ~d" .format i str)))
+  (for each! ((line (abut left right)))
+    (format "~d\n" line)))
 
 (to (abut lines1 lines2)
   (flip (chain (flip lines1) (flip lines2))))
