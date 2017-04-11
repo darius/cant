@@ -218,6 +218,20 @@
           (and (integer? i)
                (do (let j (+ first i))
                    (and (<= first j) (< j limit)))))
+         )))
+  (`(,first ,limit ,stride)
+   (unless (< 0 stride)
+     (error "TODO downward range" stride))
+   (if (<= limit first)
+       '()
+       (make range {extending list-trait}
+         ({.empty?} #no)
+         ({.first}  first)
+         ({.rest}   (range<- (+ first stride) limit stride))
+         (`(,i)
+          (error "TODO" range `(,i)))
+         ({.maps? i}
+          (error "TODO" range {.maps? i}))
          ))))
 
 (make enumerate
