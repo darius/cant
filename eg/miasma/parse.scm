@@ -141,7 +141,7 @@
 ; XXX: preserve semantics of M, R, v
 
 (to (expand-abbrev x)
-  (or (assq x abbrevs) x))
+  (or (assoc x abbrevs) x))
 
 (let extended-opcode-tags '#(/0 /1 /2 /3 /4 /5 /6 /7))
 

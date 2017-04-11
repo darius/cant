@@ -25,15 +25,15 @@
   (say-to sink)
   (say-to sink (py-enum registers.keys (each register-number registers.keys)))
   (say-to sink)
-  (for each! ((spec the-specs.values))
-    (say-to sink (py-gen spec.mnemonic spec.params))))
+  (for each! ((mnemonic (sort the-specs.keys)))
+    (let spec (the-specs mnemonic))
+    (say-to sink (py-gen mnemonic spec.params))))
 
 
 ;; Code translation
 
 (to (py-gen mnemonic code-list)
-  (let vars (py-make-variable-list 
-             (foldl + 0 (each py-variable-count code-list))))
+  (let vars (py-make-variable-list (sum (each py-variable-count code-list))))
   (py-stmt-macro (py-insn-name mnemonic)
                  vars
                  (py-body vars code-list)))
@@ -43,13 +43,14 @@
     ("v~w" .format k)))
 
 (to (py-body vars code-list)
-  (begin walking ((code-list code-list) (stmts '()))
+  (begin walking ((code-list code-list) (stmts '()) (vars vars))
     (match code-list
       (`() stmts)
       (`(,first ,@rest)
-       ((walk-code first py-code py-exp) vars
-                                         (given (vars cv) 
-                                           (walking rest `(,cv ,@stmts))))))))
+       ((walk-code first py-code py-exp)
+        vars
+        (given (vars2 cv) 
+          (walking rest `(,cv ,@stmts) vars2)))))))
 
 ;; TODO walker objects instead, with code/exp methods?
 

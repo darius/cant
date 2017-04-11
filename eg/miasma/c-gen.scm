@@ -34,8 +34,7 @@
 ;; Code translation
 
 (to (c-gen mnemonic code-list)
-  (let vars (c-make-variable-list 
-             (foldl + 0 (each c-variable-count code-list))))
+  (let vars (c-make-variable-list (sum (each c-variable-count code-list))))
   (c-stmt-macro (c-insn-name mnemonic)
                 vars
                 (c-body (each c-parenthesize vars) code-list)))
@@ -45,13 +44,14 @@
     ("v~w" .format k)))
 
 (to (c-body vars code-list)
-  (begin walking ((code-list code-list) (stmts '()))
+  (begin walking ((code-list code-list) (stmts '()) (vars vars))
     (match code-list
       (`() stmts)
       (`(,first ,@rest)
-       ((walk-code first c-code c-exp) vars
-                                       (given (vars cv) 
-                                         (walking rest `(,cv ,@stmts))))))))
+       ((walk-code first c-code c-exp)
+        vars
+        (given (vars2 cv) 
+          (walking rest `(,cv ,@stmts) vars2)))))))
 
 ;; TODO walker objects instead, with code/exp methods?
 
