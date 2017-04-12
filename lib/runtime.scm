@@ -626,9 +626,7 @@
           (match (place key)
             ({at i} (vals.^ i))
             (_      (error "Missing key" hashmap key))))
-         ({.get key}
-          (hashmap .get key #no))
-         ({.get key default}
+         ({.get key @(optional default)}
           (match (place key)
             ({at i} (vals.^ i))
             (_      default)))

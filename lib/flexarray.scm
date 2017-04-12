@@ -61,6 +61,8 @@
        (new .copy! old 0 (min old.count n))
        (vec .^= new))
      (count .^= n))
+    ({.clear!}
+     (count .^= 0))                     ;TODO also reset vec?
 
     ;; inefficient:
     ({.chain v}        (flexarray.snapshot .chain v))
