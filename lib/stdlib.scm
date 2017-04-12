@@ -408,7 +408,9 @@
     (unless (eof? sexpr)
       (let parsed (parse-exp sexpr))
       (let e (qualify-exp parsed '()))
-      (print (evaluate e '())) ;XXX reify a proper env object
+      (let value (evaluate e '())) ;XXX reify a proper env object
+      (unless (= value void)
+        (print value))
       (interacting)))
 
   (match cmd-line-args

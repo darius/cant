@@ -345,6 +345,7 @@
     (__set-dbg! ,set-dbg!)
 
     ;; These will get high-level definitions later TODO
+    (void ,(void))
     (/ ,/)
     (expt ,expt)
     (abs ,abs)
