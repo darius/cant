@@ -558,9 +558,9 @@
 ;; (but hygienic).
 
 ;; TODO:
+;;   test deletion more
 ;;   nonlinear probing -- how about xor probing?
 ;;   preserving insertion order
-;;   deletion
 ;;   immutable snapshots
 ;;
 ;;   impl without a million boxes
@@ -568,11 +568,13 @@
 ;;        (capacity, occupants, ..., hashmap)
 ;;   special-case impls for small maps and common-typed maps
 ;;   store hash codes instead of recomputing?
+;;   etc.
 
 (let map<-
   (hide
 
-    (let none (make))
+    (make none)
+    (make deleted)
 
     (make map<-
 
@@ -588,22 +590,23 @@
            (if (< i 0)
                '()
                (do (let k (keys.^ i))
-                   (if (= k none)
-                       (walking (- i 1))
-                       (cons i (walking (- i 1))))))))
+                   (case ((= k none) (walking (- i 1)))
+                         ((= k deleted) (walking (- i 1)))
+                         (else (cons i (walking (- i 1)))))))))
 
        (to (place key)
          (let mask (- keys.^.count 1))
          (let i0   (mask .and (__hash key)))
-         (begin walking ((i i0))
+         (begin walking ((i i0)
+                         (slot #no)) ;if integer, then where to put the key if missing
            (let k (keys.^ i))
-           (case ((= k none) {missing-at i})
+           (case ((= k none) {missing-at (or slot i)})
                  ((= k key)  {at i})
                  (else
                   (let j (mask .and (- i 1)))
                   (if (= j i0)
-                      (error "Can't happen")
-                      (walking j))))))
+                      (if slot {missing-at slot} (error "Can't happen"))
+                      (walking j (or slot (and (= k deleted) i))))))))
 
        (to (maybe-grow)
          (when (< (* 2 (capacity))
@@ -616,7 +619,7 @@
          (keys .^= (array<-count new-capacity none))
          (vals .^= (array<-count new-capacity))
          (for each! ((`(,i ,key) old-keys.items))
-           (unless (= key none)
+           (unless (or (= key none) (= key deleted))
              (let {missing-at j} (place key))
              (keys.^ .set! j key)
              (vals.^ .set! j (old-vals i)))))
@@ -652,6 +655,13 @@
           (let vs vals.^)
           (for each ((i (occupants)))
             `(,(ks i) ,(vs i))))
+         ({.delete! key}
+          (match (place key)
+            ({at i}
+             (vals.^ .set! i deleted)
+             (count .^= (- count.^ 1))
+             #no)
+            (_ #no)))
          ({.find? value}
           (hashmap.values .find? value))
          ({.find value default}
