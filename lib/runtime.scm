@@ -658,7 +658,7 @@
          ({.delete! key}
           (match (place key)
             ({at i}
-             (vals.^ .set! i deleted)
+             (keys.^ .set! i deleted)
              (count .^= (- count.^ 1))
              #no)
             (_ #no)))
