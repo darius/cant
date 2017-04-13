@@ -78,8 +78,8 @@
 
   (make buffer
 
-    ({.clear}
-     text.clear
+    ({.clear!}
+     text.clear!
      (point .^= 0)
      (origin .^= 0))
 
@@ -129,7 +129,7 @@
      rendering.show)
 
     ({.visit filename}
-     buffer.clear
+     buffer.clear!
      (let contents (with-input-file '.read-all filename))
      (text .insert 0 contents))))
 

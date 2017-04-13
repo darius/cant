@@ -135,13 +135,13 @@
     (size .^= (+ size.^ r-size)))
 
   (make _
-    ({.clear}
+    ({.clear!}
      (head .^= 0)
      (gap  .^= 0)
      (size .^= 0))
     ({.clip p}             (clip p))
     ({.get p span}         (get p span))
-    ({.delete p span}      (replace p span ""))
+    ({.delete p span}      (replace p span "")) ;TODO rename these with !
     ({.insert p str}       (replace p 0 str))
     ({.replace p span str} (replace p span str))
     ({.count}              size.^)
