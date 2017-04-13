@@ -422,7 +422,7 @@
      (interacting))))
 
 (to (load-and-run filename args)
-  (load-globally filename `(,filename)) ;TODO remove .scm extension
+  (load filename `(,filename)) ;TODO remove .scm extension
   (when ((list-globals) .find? 'main)     ;XXX hack
     (main args)))
 
