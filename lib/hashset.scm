@@ -23,6 +23,7 @@
        (unless (other .maps? x)
          (result .add! x)))
      result)
+    ({.clear!}        map.clear!)
     ;; XXX fill in rest of set interface (just the map interface, I guess)
     ({.selfie sink}
      (sink .display "#<set")
