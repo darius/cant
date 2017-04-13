@@ -447,11 +447,11 @@
   (match (assoc file-stem the-modules.^)
     (`(,_ ,mod) mod)
     (#no
-     (let mod (load (chain file-stem ".scm") `(,file-stem)))
+     (let mod (load-module (chain file-stem ".scm") `(,file-stem)))
      (the-modules .^= `((,file-stem ,mod) ,@the-modules.^))
      mod)))
 
-(to (load-globally filename @(optional context-arg))
+(to (load filename @(optional context-arg))
   ;; XXX duplication
   (let context (or context-arg '()))
   (let code `(do ,@(with-input-file read-all filename)))
@@ -459,7 +459,7 @@
   (let code2 (qualify-exp code1 context))
   (evaluate code2 '()))
 
-(to (load filename @(optional context-arg))
+(to (load-module filename @(optional context-arg))
   (let context (or context-arg '()))
   (let code `(hide ,@(with-input-file read-all filename)))
   (let code1 (parse-exp code))
