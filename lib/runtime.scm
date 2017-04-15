@@ -535,7 +535,7 @@
 (to (__ev-view-call-cont k r subject p)
   (make {extending __cont-trait}
     ({.rest} k)
-    ({.first} `(: _ ^ ,(unparse-pat p)))
+    ({.first} `(? _ ^ ,(unparse-pat p)))
     ({.env} r)))
 
 (to (__ev-view-match-cont k r p)

@@ -8,16 +8,16 @@
 ;; subpatterns of expr.
 (to (expr-subparts expr)
   (match (macroexpand-outer-expr expr)
-    ((: symbol?)                    none)
-    ((: self-evaluating?)           none)
+    ((? symbol?)                    none)
+    ((? self-evaluating?)           none)
     (`(quote ,_)                    none)
-    ((: t term?)                    `(,t.arguments ()))
+    ((? term? t)                    `(,t.arguments ()))
     (`(let ,p ,e)                   `((,e) (,p)))
-    (`(make ,(: symbol?) ,@clauses) (make-subparts clauses))
+    (`(make ,(? symbol?) ,@clauses) (make-subparts clauses))
     (`(make ,@clauses)              (make-subparts clauses))
     (`(do ,@es)                     `(,es ()))
     (`(call ,e1 ,e2)                `((,e1 ,e2) ()))
-    (`(,e1 ,(: cue?) ,@es)          `((,e1 ,@es) ()))
+    (`(,e1 ,(? cue?) ,@es)          `((,e1 ,@es) ()))
     (`(,e1 ,@es)                    `((,e1 ,@es) ()))))
 
 (to (make-subparts tail)
@@ -55,15 +55,15 @@
 ;; subpatterns of patt.
 (to (patt-subparts patt)
   (match (macroexpand-outer-patt patt)
-    ((: symbol?)          none)
-    ((: self-evaluating?) none)
+    ((? symbol?)          none)
+    ((? self-evaluating?) none)
     (`(quote ,_)          none)
     (`(and ,@ps)          `(() ,ps))
     (`(view ,e ,p)        `((,e) (,p)))
-    ((: t term?)          `(() ,(list-subpatts t.arguments)))
+    ((? term? t)          `(() ,(list-subpatts t.arguments)))
     (`(@ ,_) (error "An @-pattern must be at the end of a list" patt))
     ((list<- 'quasiquote q) `(() ,(quasiquote-subpatts q)))
-    ((: ps list?)         `(() ,(list-subpatts ps))))) ;TODO remove
+    ((? list? ps)         `(() ,(list-subpatts ps))))) ;TODO remove
 
 (to (quasiquote-subpatts q)
   (match q
@@ -72,7 +72,7 @@
     ((list<- 'unquote-splicing p)
      (error "A ,@-pattern must be at the end of a list" q))
     ((cons qcar qcdr) `(',qcar ,@(quasiquote-subpatts qcdr)))
-    ((: term?) (qq-term-subpatts q))
+    ((? term?) (qq-term-subpatts q))
     (_ '())))
 
 (to (qq-term-subpatts term)

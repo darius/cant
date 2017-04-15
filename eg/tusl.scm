@@ -35,7 +35,7 @@
            (surely frames.empty?))      ;XXX require
           (else
            (match tokens.first
-             ((: n number?)
+             ((? number? n)
               (code .push! (push<- n))
               (compiling frames tokens.rest))
              ('<<
@@ -49,7 +49,7 @@
               (surely (not frames.empty?)) ;XXX require
               (code .push! (ungrab<- frames.first.count))
               (compiling frames.rest tokens.rest))
-             ((: word symbol?)
+             ((? symbol? word)
               (code .push! (or (compile-local frames word)
                                (dictionary word)))
               (compiling frames tokens.rest))))))

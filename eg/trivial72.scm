@@ -101,7 +101,7 @@
   (trace `(terp ,e ,r ,k))
   (match e
     ('$                             (prim-$ k))
-    ((: symbol?)                    (return k (lookup r e)))
+    ((? symbol?)                    (return k (lookup r e)))
     (`(: ,@rest)                    (return k (make-definition rest r)))
     (`(% ,pattern ,@rest)           (terp-% pattern (nest rest r k)))
     (`(let ,variable ,val-e ,@rest) (terp val-e r `(let ,variable ,rest ,r ,k)))
@@ -135,8 +135,8 @@
   (let k (to-message kk))
   (trace `(send ,object ,k))
   (match object
-    ((: number?) (send-number object k))
-    ((: claim?)  (send-claim object k))
+    ((? number?) (send-number object k))
+    ((? claim?)  (send-claim object k))
     (`(,tag ,e ,r)
      (surely (= tag tag-definition))
      (terp e r k))

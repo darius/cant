@@ -40,7 +40,7 @@
     (#\~
      (sink .display "~")
      (scanning sink s.rest args))
-    ((: ch '.digit?)
+    ((? '.digit? ch)
      (let digit (- ch.code 48))
      (parsing sink s.rest pad sign      ;TODO testme with a multidigit width
               (+ (if width (* 10 width) 0)

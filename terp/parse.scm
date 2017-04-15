@@ -98,6 +98,11 @@
                `(view ,e #t))
               ((__ p1 e)
                `(and ,p1 (view ,e #t)))))
+    ('?      (mlambda
+              ((__ e)
+               `(view ,e #t))
+              ((__ e p1)
+               `(and (view ,e #t) ,p1))))
     ('optional (mlambda
                 ((__ . ps)
                  `(view ,(optional-match-exp (length ps))

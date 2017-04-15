@@ -17,7 +17,7 @@
 
 (to (complain @evil)
   (match evil
-    (`(,(: plaint string?) ,@values)
+    (`(,(? string? plaint) ,@values)
      (display plaint)
      (display ": ")
      (write values))

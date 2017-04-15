@@ -5,7 +5,7 @@
 
 (to (parse lexp)
   (match lexp
-    ((: v symbol?)         (var-ref<- v))
+    ((? symbol?)           (var-ref<- lexp))
     (`(lambda (,v) ,body)  (abstraction<- v (parse body)))
     (`(,operator ,operand) (call<- (parse operator)
                                    (parse operand)))))

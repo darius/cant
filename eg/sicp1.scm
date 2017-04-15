@@ -29,8 +29,8 @@
   (match tree
     ({mobile left right}
      (+ (weight left) (weight right)))
-    ((: number number?)
-     number)
+    ((? number?)
+     tree)
 ;; XXX this was missing -- go look up the problem again:
     ({branch _ thing}
      (weight thing))))

@@ -12,9 +12,9 @@
 
 (to (parse lexp)
   (match lexp
-    ((: symbol?)
+    ((? symbol?)
      (var-ref<- lexp))
-    ((: number?)
+    ((? number?)
      (constant<- lexp))
     (`(lambda (,v) ,body)
      (abstraction<- v (parse body)))
