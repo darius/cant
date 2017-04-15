@@ -13,7 +13,7 @@
 (to (walk-exp exp exp-f)
   (begin walking ((exp exp))
     (match exp
-      ((: integer?)         (exp-f {literal exp}))
+      ((? integer?)         (exp-f {literal exp}))
       ({hereafter}          (exp-f exp))
       ({arg @_}             (exp-f exp))
       ({op rator arg1 arg2} (exp-f

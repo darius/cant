@@ -90,23 +90,23 @@
 ;; TODO This might make a good use case for nested-list Parson.
 (to (parse-param param)
   (match (expand-abbrev param)
-    ((: b byte?)
+    ((? byte? b)
      (opcode-byte-param b))
-    ((: r register?)
+    ((? register? r)
      (register-param r))
     ('=16
      (size-mode-param 16))
     ('=32
      (size-mode-param 16))
-    ((: operand operand?)
+    ((? operand? operand)
      (parse-operand operand))
     (`(,first ,@rest)
      (let args (each expand-abbrev rest))
      (let L args.count)
      (match `(,first ,@args)
-       (`(? ,(: b byte?))
+       (`(? ,(? byte? b))
         (condition-param b))
-       (`(+ ,(: b byte?) ,(: operand (operand-of 'G))) ;TODO
+       (`(+ ,(? byte? b) ,(? (operand-of 'G) operand)) ;TODO
         (opcode+register-param b operand))
        (`(/r ,arg1 ,arg2)
         (case ((and ((operand-of 'E) arg1) ((operand-of 'G) arg2))
@@ -147,14 +147,14 @@
 
 (to (operand? x)
   (match x
-    (`(,(: symbol?) ,(: tag symbol?) ,size)
+    (`(,(? symbol?) ,(? symbol? tag) ,size)
      (and ('(I U J O) .find? tag)
           ('(1 2 4) .find? size)))
     (_ #no)))
 
 (to ((operand-of tag) x)                ;XXX duplicate code
   (match x
-    (`(,(: symbol?) ,(: (given (t) (= t tag))) ,size)
+    (`(,(? symbol?) ,(? (given (t) (= t tag))) ,size)
      ('(1 2 4) .find? size))
     (_ #no)))
 
