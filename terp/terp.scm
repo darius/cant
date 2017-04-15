@@ -116,47 +116,48 @@
 
 (define (call object message k)
 ;  (dbg `(call))
-  (cond ((procedure? object)
-         (if (or (pair? message) (null? message))
-             (cond ((eq? object error-prim) (error-prim (cons k message)))
-                   ((eq? object evaluate-prim) (evaluate-prim message k))
-                   ((eq? object panic) (apply panic message))
-                   (else
-                    ;; Intercept Scheme-level errors:
-                    (call/cc
-                     (lambda (scheme-cont)
-                       (answer
-                        k
-                        (with-exception-handler
-                         (lambda (exc)
-                           (scheme-cont
-                            (if (condition? exc)
-                                (let ((plaint
-                                       (with-output-to-string
-                                         (lambda () (display-condition exc)))))
-                                  (signal k plaint object message))
-                                (signal k "Primitive error" exc object message))))
-                         (lambda ()
-                           ;; Do the Scheme call in this error-handling context.
-                           (apply object message))))))))
-             (run-script object procedure-script object message k)))
-        ((object? object)
-         (let ((script (object-script object))
-               (datum (object-datum object)))
-           (cond ((script? script)
-                  (run-script object script datum message k))
-                 ((cont-script? script)
-                  (if (and (term? message)
-                           (eq? '.answer (term-tag message))
-                           (= 1 (length (term-parts message))))
-                      (apply (cont-script-answerer script)
-                             (cons (car (term-parts message)) datum))
-                      (call-cont-standin script datum message k)))
-                 (else
-                  (error 'call "Not a script" script datum)))))
-        (else
-         (let ((script (extract-script object)))
-           (run-script object script object message k)))))
+  (cond
+   ((object? object)
+    (let ((script (object-script object))
+          (datum (object-datum object)))
+      (cond ((script? script)
+             (run-script object script datum message k))
+            ((cont-script? script)
+             (if (and (term? message)
+                      (eq? '.answer (term-tag message))
+                      (= 1 (length (term-parts message))))
+                 (apply (cont-script-answerer script)
+                        (cons (car (term-parts message)) datum))
+                 (call-cont-standin script datum message k)))
+            (else
+             (error 'call "Not a script" script datum)))))
+   ((procedure? object)
+    (if (or (pair? message) (null? message))
+        (cond ((eq? object error-prim) (error-prim (cons k message)))
+              ((eq? object evaluate-prim) (evaluate-prim message k))
+              ((eq? object panic) (apply panic message))
+              (else
+               ;; Intercept Scheme-level errors:
+               (call/cc
+                (lambda (scheme-cont)
+                  (answer
+                   k
+                   (with-exception-handler
+                    (lambda (exc)
+                      (scheme-cont
+                       (if (condition? exc)
+                           (let ((plaint
+                                  (with-output-to-string
+                                    (lambda () (display-condition exc)))))
+                             (signal k plaint object message))
+                           (signal k "Primitive error" exc object message))))
+                    (lambda ()
+                      ;; Do the Scheme call in this error-handling context.
+                      (apply object message))))))))
+        (run-script object procedure-script object message k)))
+   (else
+    (let ((script (extract-script object)))
+      (run-script object script object message k)))))
 
 (define (extract-script object)
   (cond
