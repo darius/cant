@@ -630,9 +630,6 @@
   (object<- (make-cont-script '__halt-cont (lambda (value) value))
             '()))
 
-(set! the-global-env
-      `((halt-cont ,halt-cont) ,@the-global-env)) ;XXX temp
-
 (define call-cont-standin-cont          ;XXX still a hack
   (make-cont-script
    '__call-cont-standin-cont
