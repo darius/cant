@@ -93,11 +93,6 @@
 
 (define (look-up-pat-macro key)
   (mcase key
-    (':      (mlambda
-              ((__ e)
-               `(view ,e #t))
-              ((__ p1 e)
-               `(and ,p1 (view ,e #t)))))
     ('?      (mlambda
               ((__ e)
                `(view ,e #t))
@@ -315,7 +310,7 @@
     (('unquote p)
      p)
     ((('unquote-splicing p))
-     `(: ,p ',list?))
+     `(? ',list? ,p))
     ((('unquote-splicing p) . __)
      (error 'parse "A ,@-pattern must be at the end of a list" qq))
     ((qcar . qcdr)
