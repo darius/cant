@@ -444,111 +444,134 @@
 
 ;; Continuations
 
-(to (__halt-cont)
-  (make me {extending list-trait}
-    ({.empty?}        #yes)
-    ({.first}         (error "No more frames" me))
-    ({.rest}          (error "No more frames" me))
-    ({.selfie sink}   (sink .display "<halt-cont>"))))
+(make-trait __halt-cont me
+  ({.empty?}        #yes)
+  ({.first}         (error "No more frames" me))
+  ({.rest}          (error "No more frames" me))
+  ({.selfie sink}   (sink .display "<halt-cont>"))
+  (message (list-trait me message)))
 
-(make-trait __cont-trait me
+(make-trait __cont-trait me   ;; For the non-halt cont types
   ({.empty?}        #no)
-  ({.selfie sink}   (sink .display "<cont>")) ;XXX more
-  (message          (list-trait me message))) ;XXX use trait syntax instead
+  ({.rest}          (__cont-next-cont me)) ;TODO
+  ({.selfie sink}   (sink .display "<cont>")) ;TODO at least give out the tag
+  ({.env}
+   ((_cont-data me) .first)) ; Commonly this, but sometimes needs to be overridden.
+  (message
+   (list-trait me message))) ;XXX use trait syntax instead
 
-(to (__call-cont-standin-cont k message)
-  (make {extending __cont-trait}
-    ({.rest} k)
-    ({.first} '("XXX still a hack"))
-    ({.env} '())))
+(make-trait __match-clause-cont me
+  ({.first}
+   (let `(,pat-r ,body ,rest-clauses ,object ,script ,datum ,message) (__cont-data me))
+   `((^ ,body) ,@(each unparse-clause rest-clauses)))
+  (message
+   (__cont-trait me message)))
 
-(to (__match-clause-cont k pat-r body rest-clauses object script datum message)
-  (make {extending __cont-trait}
-    ({.rest} k)
-    ({.first} `((^ ,body) ,@(each unparse-clause rest-clauses)))
-    ({.env} pat-r)))
+(make-trait __ev-trait-cont me
+  ({.first}
+   (let `(,r ,name ,trait ,clauses) (__cont-data me))
+   `(make ,name ,trait ^
+      ,@(each unparse-clause clauses)))
+  (message
+   (__cont-trait me message)))
 
-(to (__ev-trait-cont k r name trait clauses)
-  (make {extending __cont-trait}
-    ({.rest} k)
-    ({.first} `(make ,name ,trait ^
-                 ,@(each unparse-clause clauses)))
-    ({.env} r)))
+(make-trait __ev-make-cont me
+  ({.first}
+   (let `(,name ,stamp-val ,r ,clauses) (__cont-data me))
+   `(make ,name ^ #no   ; XXX as above
+      ,@(each unparse-clause clauses)))
+  ({.env}
+   (let `(,name ,stamp-val ,r ,clauses) (__cont-data me))
+   r)
+  (message
+   (__cont-trait me message)))
 
-(to (__ev-make-cont k name stamp-val r clauses)
-  (make {extending __cont-trait}
-    ({.rest} k)
-    ({.first} `(make ,name ^ #no   ; XXX as above
-                 ,@(each unparse-clause clauses)))
-    ({.env} r)))
+(make-trait __ev-do-rest-cont me
+  ({.first}
+   (let `(,r ,e2) (__cont-data me))
+   (unparse-exp e2))
+  (message
+   (__cont-trait me message)))
 
-(to (__ev-do-rest-cont k r e2)
-  (make {extending __cont-trait}
-    ({.rest} k)
-    ({.first} (unparse-exp e2))
-    ({.env} r)))
+(make-trait __ev-let-match-cont me
+  ({.first}
+   (let `(,r ,p) (__cont-data me))
+   `(<match> ,(unparse-pat p)))          ;XXX lousy presentation
+  (message
+   (__cont-trait me message)))
 
-(to (__ev-let-match-cont k r p)
-  (make {extending __cont-trait}
-    ({.rest} k)
-    ({.first} `(<match> ,(unparse-pat p)))          ;XXX lousy presentation
-    ({.env} r)))
+(make-trait __ev-let-check-cont me
+  ({.first}
+   (let `(,val) (__cont-data me))
+   `(<assert-matched-then> ',val))
+  ({.env}
+   '())
+  (message
+   (__cont-trait me message)))
 
-(to (__ev-let-check-cont k val)
-  (make {extending __cont-trait}
-    ({.rest} k)
-    ({.first} `(<assert-matched-then> ',val))
-    ({.env} '())))
+(make-trait __ev-arg-cont me
+  ({.first}
+   (let `(,r ,e2) (__cont-data me))
+   `(^ ,(unparse-exp e2)))
+  (message
+   (__cont-trait me message)))
 
-(to (__ev-arg-cont k r e2)
-  (make {extending __cont-trait}
-    ({.rest} k)
-    ({.first} `(^ ,(unparse-exp e2)))
-    ({.env} r)))
+(make-trait __ev-call-cont me
+  ({.first}
+   (let `(,receiver) (__cont-data me))
+   `(call ',receiver ^))
+  ({.env}
+   '())
+  (message
+   (__cont-trait me message)))
 
-(to (__ev-call-cont k receiver)
-  (make {extending __cont-trait}
-    ({.rest} k)
-    ({.first} `(call ',receiver ^))
-    ({.env} '())))
+(make-trait __ev-rest-args-cont me
+  ({.first}
+   (let `(,es ,r ,vals) (__cont-data me))
+   (to (quotify v) `',v)
+   `(,@(each quotify (reverse vals)) ^ ,@(each unparse-exp es)))
+  ({.env}
+   (let `(,es ,r ,vals) (__cont-data me))
+   r)
+  (message
+   (__cont-trait me message)))
 
-(to (__ev-rest-args-cont k es r vals)
-  (make {extending __cont-trait}
-    ({.rest} k)
-    ({.first}
-     (to (quotify v) `',v)
-     `(,@(each quotify (reverse vals)) ^ ,@(each unparse-exp es)))
-    ({.env} r)))
+(make-trait __ev-tag-cont me
+  ({.first}
+   (let `(,tag) (__cont-data me))
+   `{,tag ^^^})
+  ({.env}
+   '())
+  (message
+   (__cont-trait me message)))
 
-(to (__ev-tag-cont k tag)
-  (make {extending __cont-trait}
-    ({.rest} k)
-    ({.first} `{,tag ^^^})
-    ({.env} '())))
+(make-trait __ev-and-pat-cont me
+  ({.first}
+   (let `(,r ,subject ,p2) (__cont-data me))
+   `(<and-match?> ,(unparse-pat p2)))
+  (message
+   (__cont-trait me message)))
 
-(to (__ev-and-pat-cont k r subject p2)
-  (make {extending __cont-trait}
-    ({.rest} k)
-    ({.first} `(<and-match?> ,(unparse-pat p2)))
-    ({.env} r)))
+(make-trait __ev-view-call-cont me
+  ({.first}
+   (let `(,r ,subject ,p) (__cont-data me))
+   `(? _ ^ ,(unparse-pat p)))
+  (message
+   (__cont-trait me message)))
 
-(to (__ev-view-call-cont k r subject p)
-  (make {extending __cont-trait}
-    ({.rest} k)
-    ({.first} `(? _ ^ ,(unparse-pat p)))
-    ({.env} r)))
+(make-trait __ev-view-match-cont me
+  ({.first}
+   (let `(,r ,p) (__cont-data me))
+   (unparse-pat p))
+  (message
+   (__cont-trait me message)))
 
-(to (__ev-view-match-cont k r p)
-  (make {extending __cont-trait}
-    ({.rest} k)
-    ({.first} (unparse-pat p))
-    ({.env} r)))
-
-(to (__ev-match-rest-cont k r subjects ps)
-  (make {extending __cont-trait}
-    ({.rest} k)
-    ({.first} `(<all-match?> ,@(each unparse-pat ps)))
-    ({.env} r)))
+(make-trait __ev-match-rest-cont me
+  ({.first}
+   (let `(,r ,subject ,ps) (__cont-data me))
+   `(<all-match?> ,@(each unparse-pat ps)))
+  (message
+   (__cont-trait me message)))
 
 
 ;; Hash-maps

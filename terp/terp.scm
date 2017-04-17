@@ -100,19 +100,15 @@
 (define-record-type script (fields name trait clauses))
 (define script<- make-script)
 
+;; For less inefficiency, a continuation is just a list, whose car
+;; element is the continuation procedure. This representation must
+;; never be exposed directly to Squeam code, only wrapped as an object
+;; with an appropriate wrapper script. TODO see if a vector or record
+;; is better than a list -- probably.
 (define (answer k value)
 ;  (dbg `(answer ,value ,k))
 ;  (dbg `(answer))
-  ;; This could be just (call k (term<- '.answer value) 'ignored))
-  ;; but it's specialized here to recover a little lost speed.
-  (if (object? k)
-      (let ((script (object-script k)))
-        (if (cont-script? script)
-            (apply (cont-script-answerer script)
-                   value
-                   (object-datum k))
-            (error 'answer "Answering to a non-cont" k)))
-      (error 'answer "Answering to a non-cont" k)))
+  (apply (car k) value (cdr k)))
 
 (define (call object message k)
 ;  (dbg `(call))
@@ -127,13 +123,15 @@
                       (eq? '.answer (term-tag message))
                       (= 1 (length (term-parts message))))
                  (apply (cont-script-answerer script)
-                        (cons (car (term-parts message)) datum))
-                 (call-cont-standin script datum message k)))
+                        (car (term-parts message))
+                        datum)
+                 (delegate (get-prim (cont-script-name script))
+                           object message k)))
             (else
              (error 'call "Not a script" script datum)))))
    ((procedure? object)
     (if (or (pair? message) (null? message))
-        (cond ((eq? object error-prim) (error-prim (cons k message)))
+        (cond ((eq? object error-prim) (error-prim (cons (wrap-cont k) message)))
               ((eq? object evaluate-prim) (evaluate-prim message k))
               ((eq? object panic) (apply panic message))
               (else
@@ -186,13 +184,6 @@
    ;; XXX: script and cont-script too?
    (else                  object)))
 
-;; XXX This is a hack.
-(define (call-cont-standin script datum message k)
-;  (pp `(making standin ,(cont-script-name script)))
-  (let ((make-standin (get-prim (cont-script-name script))))
-    (call make-standin datum
-          (cont<- call-cont-standin-cont k message))))
-
 (define (error-prim message)
   (let* ((the-box (get-prim 'the-signal-handler))
          (handler (unbox the-box)))
@@ -232,8 +223,7 @@
     (call handler (list object message) k)))
 
 (define (signal k plaint . values)
-  (error-prim `(,k ,plaint ,@values)))
-
+  (error-prim `(,(wrap-cont k) ,plaint ,@values)))
 
 (define (as-cons x)
   (and (pair? x)
@@ -475,6 +465,13 @@
     (__script-name ,script-name)
     (__script-trait ,script-trait)
     (__script-clauses ,script-clauses)
+    (__cont-data ,(lambda (wrapped-k)
+                    (let ((datum (object-datum wrapped-k)))
+                      (cdr datum))))
+    (__cont-next-cont ,(lambda (wrapped-k)
+                         (let* ((datum (object-datum wrapped-k))
+                                (k (car datum)))
+                           (wrap-cont k))))
     (os-exit ,exit)
     ))
 
@@ -616,8 +613,7 @@
          (ev-pat (car subjects) (car ps) r
                  (cont<- ev-match-rest-cont k r (cdr subjects) (cdr ps))))))
 
-(define (cont<- cont-script k . values)
-  (object<- cont-script (cons k values)))
+(define cont<- list)  ;TODO use vectors?
 
 ;; Continuation scripts are special mainly for efficiency at answering
 ;; to continuations. It also saves us from having to name and bind,
@@ -626,128 +622,102 @@
 ;; primitive that doesn't need a continuation, too.
 (define-record-type cont-script (fields name answerer))
 
-(define halt-cont
-  (object<- (make-cont-script '__halt-cont (lambda (value) value))
-            '()))
+(define (halt-cont-fn value) value)
+(define halt-cont (list halt-cont-fn))
 
-(define call-cont-standin-cont          ;XXX still a hack
-  (make-cont-script
-   '__call-cont-standin-cont
-   (lambda (standin k message)
-;;     (pp `(call-cont-standin-cont ,message))
-     (call standin message k))))
-
-(define match-clause-cont
-  (make-cont-script
-   '__match-clause-cont
-   (lambda (matched? k pat-r body rest-clauses object script datum message)
+(define (match-clause-cont matched? k pat-r body rest-clauses object script datum message)
 ;     (dbg `(match-clause-cont))
-     ;; body is now a list (body-vars body-exp)
-     (if matched?
-         (ev-exp (cadr body) (env-extend-promises pat-r (car body)) k)
-         (matching rest-clauses object script datum message k)))))
+  ;; body is now a list (body-vars body-exp)
+  (if matched?
+      (ev-exp (cadr body) (env-extend-promises pat-r (car body)) k)
+      (matching rest-clauses object script datum message k)))
 
-(define ev-trait-cont-script
-  (make-cont-script
-   '__ev-trait-cont
-   (lambda (stamp-val k r name trait clauses)
+(define (ev-trait-cont-script stamp-val k r name trait clauses)
 ;     (dbg `(ev-trait-cont))
-     (ev-exp trait r
-             (cont<- ev-make-cont-script k name stamp-val r clauses)))))
+  (ev-exp trait r
+          (cont<- ev-make-cont-script k name stamp-val r clauses)))
 
-(define ev-make-cont-script
-  (make-cont-script
-   '__ev-make-cont
-   (lambda (trait-val k name stamp-val r clauses)
+(define (ev-make-cont-script trait-val k name stamp-val r clauses)
 ;     (dbg `(ev-make-cont))
-     (answer k (object<- (script<- name trait-val clauses) ;XXX use stamp-val
-                         r)))))
+  (answer k (object<- (script<- name trait-val clauses) ;XXX use stamp-val
+                      r)))
 
-(define ev-do-rest-cont
-  (make-cont-script
-   '__ev-do-rest-cont
-   (lambda (_ k r e2)
+(define (ev-do-rest-cont _ k r e2)
 ;     (dbg `(ev-do-rest-cont))
-     (ev-exp e2 r k))))
+  (ev-exp e2 r k))
 
-(define ev-let-match-cont
-  (make-cont-script
-   '__ev-let-match-cont
-   (lambda (val k r p)
+(define (ev-let-match-cont val k r p)
 ;     (dbg `(ev-let-match-cont))
-     (ev-pat val p r
-             (cont<- ev-let-check-cont k val)))))
+  (ev-pat val p r
+          (cont<- ev-let-check-cont k val)))
 
-(define ev-let-check-cont
-  (make-cont-script
-   '__ev-let-check-cont
-   (lambda (matched? k val)
+(define (ev-let-check-cont matched? k val)
 ;     (dbg `(ev-let-check-cont))
-     (if matched?
-         (answer k val)
-         (signal k "Match failure" val)))))
+  (if matched?
+      (answer k val)
+      (signal k "Match failure" val)))
 
-(define ev-arg-cont
-  (make-cont-script
-   '__ev-arg-cont
-   (lambda (receiver k r e2)
+(define (ev-arg-cont receiver k r e2)
 ;     (dbg `(ev-arg-cont))
-     (ev-exp e2 r
-             (cont<- ev-call-cont k receiver)))))
+  (ev-exp e2 r
+          (cont<- ev-call-cont k receiver)))
 
-(define ev-call-cont
-  (make-cont-script
-   '__ev-call-cont
-   (lambda (message k receiver)
+(define (ev-call-cont message k receiver)
 ;     (dbg `(ev-call-cont ,receiver ,message))
-     (call receiver message k))))
+  (call receiver message k))
 
-(define ev-rest-args-cont
-  (make-cont-script
-   '__ev-rest-args-cont
-   (lambda (val k es r vals)
+(define (ev-rest-args-cont val k es r vals)
 ;     (dbg `(ev-rest-args-cont))
-     (ev-args es r (cons val vals) k))))
+  (ev-args es r (cons val vals) k))
 
-(define ev-tag-cont
-  (make-cont-script
-   '__ev-tag-cont
-   (lambda (vals k tag)
+(define (ev-tag-cont vals k tag)
 ;     (dbg `(ev-tag-cont))
-     (answer k (make-term tag vals)))))
+  (answer k (make-term tag vals)))
 
-(define ev-and-pat-cont
-  (make-cont-script
-   '__ev-and-pat-cont
-   (lambda (matched? k r subject p2)
+(define (ev-and-pat-cont matched? k r subject p2)
 ;     (dbg `(ev-and-pat-cont))
-     (if matched?
-         (ev-pat subject p2 r k)
-         (answer k #f)))))
+  (if matched?
+      (ev-pat subject p2 r k)
+      (answer k #f)))
 
-(define ev-view-call-cont
-  (make-cont-script
-   '__ev-view-call-cont
-   (lambda (convert k r subject p)
+(define (ev-view-call-cont convert k r subject p)
 ;     (dbg `(ev-view-call-cont))
-     (call convert (list subject)
-           (cont<- ev-view-match-cont k r p)))))
+  (call convert (list subject)
+        (cont<- ev-view-match-cont k r p)))
 
-(define ev-view-match-cont
-  (make-cont-script
-   '__ev-view-match-cont
-   (lambda (new-subject k r p)
+(define (ev-view-match-cont new-subject k r p)
 ;     (dbg `(ev-view-match-cont))
-     (ev-pat new-subject p r k))))
+  (ev-pat new-subject p r k))
 
-(define ev-match-rest-cont
-  (make-cont-script
-   '__ev-match-rest-cont
-   (lambda (matched? k r subjects ps)
+(define (ev-match-rest-cont matched? k r subjects ps)
 ;     (dbg `(ev-match-rest-cont))
-     (if matched?
-         (ev-match-all subjects ps r k)
-         (answer k #f)))))
+  (if matched?
+      (ev-match-all subjects ps r k)
+      (answer k #f)))
+
+
+(define (wrap-cont k)
+  (let* ((f (car k))
+         (name
+          (cond
+           ((eq? f halt-cont-fn)         '__halt-cont)
+           ((eq? f match-clause-cont)    '__match-clause-cont)
+           ((eq? f ev-trait-cont-script) '__ev-trait-cont)
+           ((eq? f ev-make-cont-script)  '__ev-make-cont)
+           ((eq? f ev-do-rest-cont)      '__ev-do-rest-cont)
+           ((eq? f ev-let-match-cont)    '__ev-let-match-cont)
+           ((eq? f ev-let-check-cont)    '__ev-let-check-cont)
+           ((eq? f ev-arg-cont)          '__ev-arg-cont)
+           ((eq? f ev-call-cont)         '__ev-call-cont)
+           ((eq? f ev-rest-args-cont)    '__ev-rest-args-cont)
+           ((eq? f ev-tag-cont)          '__ev-tag-cont)
+           ((eq? f ev-and-pat-cont)      '__ev-and-pat-cont)
+           ((eq? f ev-view-call-cont)    '__ev-view-call-cont)
+           ((eq? f ev-view-match-cont)   '__ev-view-match-cont)
+           ((eq? f ev-match-rest-cont)   '__ev-match-rest-cont)
+           (else '__XXX-cont))))        ;TODO panic hard
+    (object<- (make-cont-script name (car k)) ;XXX script should be static, new-terp
+              (cdr k))))                      ;TODO keep Squeam code from ever accessing an unwrapped cont at (cadr k) via extract-datum
 
 
 ;; Primitive types
