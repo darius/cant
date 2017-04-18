@@ -348,7 +348,6 @@
     (sqrt ,sqrt)
     (display ,prim-display)
     (newline ,newline)           ;XXX temp
-;    (pp ,pp)                     ;XXX obviously shouldn't be primitive
     (panic ,panic-object)
     (error ,error-prim-object)
     (evaluate ,evaluate-prim)
