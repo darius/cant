@@ -749,7 +749,7 @@
            ((eq? f ev-view-match-cont)   '__ev-view-match-cont)
            ((eq? f ev-match-rest-cont)   '__ev-match-rest-cont)
            (else '__XXX-cont))))        ;TODO panic hard
-    (object<- (make-cont-script name f) ;XXX script should be static, new-terp
+    (object<- (make-cont-script name f) ;XXX script should be static
               (cdr (vector->list k))))) ;TODO keep Squeam code from ever accessing an unwrapped cont at (cadr k) via extract-datum
 
 
