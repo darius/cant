@@ -100,6 +100,9 @@
 (define-record-type script (fields name trait clauses))
 (define script<- make-script)
 
+(define-record-type cps-script (fields name procedure))
+(define cps-script<- make-cps-script)
+
 ;; For less inefficiency, a continuation is just a list, whose car
 ;; element is the continuation procedure. This representation must
 ;; never be exposed directly to Squeam code, only wrapped as an object
@@ -118,6 +121,11 @@
           (datum (object-datum object)))
       (cond ((script? script)
              (run-script object script datum message k))
+            ((cps-script? script)
+             (if (or (pair? message) (null? message)) ;XXX also check for matching arity
+                 ((cps-script-procedure script) datum message k)
+                 (delegate (get-prim 'cps-primitive)
+                           object message k)))
             ((cont-script? script)
              (if (and (term? message)
                       (eq? '.answer (term-tag message))
@@ -131,15 +139,10 @@
              (error 'call "Not a script" script datum)))))
    ((procedure? object)
     (if (or (pair? message) (null? message))
-        (cond ((eq? object error-prim) (error-prim (cons (wrap-cont k) message)))
-              ((eq? object evaluate-prim) (evaluate-prim message k))
-              ((eq? object panic) (apply panic message))
-              (else
-               ;; Intercept Scheme-level errors:
-               (call/cc
-                (lambda (scheme-cont)
-                  (answer
-                   k
+        ;; Intercept Scheme-level errors:
+        (call/cc
+         (lambda (scheme-cont)
+           (answer k
                    (with-exception-handler
                     (lambda (exc)
                       (scheme-cont
@@ -151,7 +154,7 @@
                            (signal k "Primitive error" exc object message))))
                     (lambda ()
                       ;; Do the Scheme call in this error-handling context.
-                      (apply object message))))))))
+                      (apply object message))))))
         (run-script object procedure-script object message k)))
    (else
     (let ((script (extract-script object)))
@@ -195,12 +198,25 @@
     ;; OK, up to the handler now.
     (call handler message halt-cont)))
 
-(define (panic k . message)
+(define error-prim-object
+  (object<- (cps-script<- 'error
+                          (lambda (datum message k)
+                            ;;TODO could *almost* just call signal
+                            (error-prim (cons (wrap-cont k) message))))
+            #f))
+
+(define (panic message)
   (let ((message-for-chez ;Chez Scheme is picky about arguments to (error).
          (if (and (pair? message) (string? (car message)))
              message
              (cons "Error" message))))
     (apply error 'panic message-for-chez)))
+
+(define panic-object
+  (object<- (cps-script<- 'panic
+                          (lambda (datum message k)
+                            (panic message)))
+            #f))
 
 (define (run-script object script datum message k)
   (matching (script-clauses script) object script datum message k))
@@ -231,8 +247,12 @@
 
 (define box<- box)
       
-(define (evaluate-prim message k)
-  (apply ev-exp `(,@message ,k)))
+(define evaluate-prim
+  (object<- (cps-script<- 'evaluate
+                          (lambda (datum message k)
+                            ;;XXX check arity
+                            (apply ev-exp `(,@message ,k))))
+            #f))
 
 
 ;; Environments
@@ -328,8 +348,8 @@
     (display ,prim-display)
     (newline ,newline)           ;XXX temp
 ;    (pp ,pp)                     ;XXX obviously shouldn't be primitive
-    (panic ,panic)
-    (error ,error-prim)
+    (panic ,panic-object)
+    (error ,error-prim-object)
     (evaluate ,evaluate-prim)
     (open-input-file ,open-input-file)
     (open-output-file ,open-output-file)
@@ -462,6 +482,8 @@
     (__u<< ,(lambda (a b) (logand mask32 (ash a b))))
     (__u>> ,(lambda (a b) (logand mask32 (ash a (- b)))))
 
+    (__cps-primitive-name ,(lambda (x)
+                             (cps-script-name (object-script x))))
     (__script-name ,script-name)
     (__script-trait ,script-trait)
     (__script-clauses ,script-clauses)
@@ -615,11 +637,6 @@
 
 (define cont<- list)  ;TODO use vectors?
 
-;; Continuation scripts are special mainly for efficiency at answering
-;; to continuations. It also saves us from having to name and bind,
-;; for each continuation type, a separate primitive procedure to do
-;; the actual answering -- and those'd have to be a special kind of
-;; primitive that doesn't need a continuation, too.
 (define-record-type cont-script (fields name answerer))
 
 (define (halt-cont-fn value) value)
