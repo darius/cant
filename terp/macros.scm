@@ -1,3 +1,17 @@
+(define-syntax unpack-cont
+  (syntax-rules ()
+    ((_ vec vars exp1 exp2 ...)
+     (let ((t vec))
+       (vector-let-each vars 1 t (begin exp1 exp2 ...))))))
+
+(define-syntax vector-let-each
+  (syntax-rules ()
+    ((_ () _ _ body)
+     body)
+    ((_ (var . vars) i t body)
+     (let ((var (vector-ref t i)))
+       (vector-let-each vars (+ i 1) t body)))))
+
 (define-syntax mcase
   (syntax-rules ()
     ((_ subject clause ...)

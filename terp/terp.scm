@@ -111,7 +111,7 @@
 (define (answer k value)
 ;  (dbg `(answer ,value ,k))
 ;  (dbg `(answer))
-  (apply (car k) value (cdr k)))
+  ((vector-ref k 0) value k))
 
 (define (call object message k)
 ;  (dbg `(call))
@@ -130,9 +130,10 @@
              (if (and (term? message)
                       (eq? '.answer (term-tag message))
                       (= 1 (length (term-parts message))))
-                 (apply (cont-script-answerer script)
-                        (car (term-parts message))
-                        datum)
+                 (let ((unwrapped-k (list->vector (cons (cont-script-answerer script) datum))))
+                   ((cont-script-answerer script)
+                    (car (term-parts message))
+                    unwrapped-k))
                  (delegate (get-prim (cont-script-name script))
                            object message k)))
             (else
@@ -635,86 +636,101 @@
          (ev-pat (car subjects) (car ps) r
                  (cont<- ev-match-rest-cont k r (cdr subjects) (cdr ps))))))
 
-(define cont<- list)  ;TODO use vectors?
+(define cont<- vector)
 
 (define-record-type cont-script (fields name answerer))
 
-(define (halt-cont-fn value) value)
-(define halt-cont (list halt-cont-fn))
+(define (halt-cont-fn value k0) value)
+(define halt-cont (cont<- halt-cont-fn))
 
-(define (match-clause-cont matched? k pat-r body rest-clauses object script datum message)
+(define (match-clause-cont matched? k0)
 ;     (dbg `(match-clause-cont))
+  (unpack-cont k0 (k pat-r body rest-clauses object script datum message)
+               ;; TODO don't unpack it all till needed
   ;; body is now a list (body-vars body-exp)
-  (if matched?
-      (ev-exp (cadr body) (env-extend-promises pat-r (car body)) k)
-      (matching rest-clauses object script datum message k)))
+    (if matched?
+        (ev-exp (cadr body) (env-extend-promises pat-r (car body)) k)
+        (matching rest-clauses object script datum message k))))
 
-(define (ev-trait-cont-script stamp-val k r name trait clauses)
+(define (ev-trait-cont-script stamp-val k0)
 ;     (dbg `(ev-trait-cont))
-  (ev-exp trait r
-          (cont<- ev-make-cont-script k name stamp-val r clauses)))
+  (unpack-cont k0 (k r name trait clauses)
+    (ev-exp trait r
+            (cont<- ev-make-cont-script k name stamp-val r clauses))))
 
-(define (ev-make-cont-script trait-val k name stamp-val r clauses)
+(define (ev-make-cont-script trait-val k0)
 ;     (dbg `(ev-make-cont))
-  (answer k (object<- (script<- name trait-val clauses) ;XXX use stamp-val
-                      r)))
+  (unpack-cont k0 (k name stamp-val r clauses)
+    (answer k (object<- (script<- name trait-val clauses) ;XXX use stamp-val
+                        r))))
 
-(define (ev-do-rest-cont _ k r e2)
+(define (ev-do-rest-cont _ k0)
 ;     (dbg `(ev-do-rest-cont))
-  (ev-exp e2 r k))
+  (unpack-cont k0 (k r e2)
+    (ev-exp e2 r k)))
 
-(define (ev-let-match-cont val k r p)
+(define (ev-let-match-cont val k0)
 ;     (dbg `(ev-let-match-cont))
-  (ev-pat val p r
-          (cont<- ev-let-check-cont k val)))
+  (unpack-cont k0 (k r p)
+    (ev-pat val p r
+            (cont<- ev-let-check-cont k val))))
 
-(define (ev-let-check-cont matched? k val)
+(define (ev-let-check-cont matched? k0)
 ;     (dbg `(ev-let-check-cont))
-  (if matched?
-      (answer k val)
-      (signal k "Match failure" val)))
+  (unpack-cont k0 (k val)
+    (if matched?
+        (answer k val)
+        (signal k "Match failure" val))))
 
-(define (ev-arg-cont receiver k r e2)
+(define (ev-arg-cont receiver k0)
 ;     (dbg `(ev-arg-cont))
-  (ev-exp e2 r
-          (cont<- ev-call-cont k receiver)))
+  (unpack-cont k0 (k r e2)
+    (ev-exp e2 r
+            (cont<- ev-call-cont k receiver))))
 
-(define (ev-call-cont message k receiver)
+(define (ev-call-cont message k0)
 ;     (dbg `(ev-call-cont ,receiver ,message))
-  (call receiver message k))
+  (unpack-cont k0 (k receiver)
+    (call receiver message k)))
 
-(define (ev-rest-args-cont val k es r vals)
+(define (ev-rest-args-cont val k0)
 ;     (dbg `(ev-rest-args-cont))
-  (ev-args es r (cons val vals) k))
+  (unpack-cont k0 (k es r vals)
+    (ev-args es r (cons val vals) k)))
 
-(define (ev-tag-cont vals k tag)
+(define (ev-tag-cont vals k0)
 ;     (dbg `(ev-tag-cont))
-  (answer k (make-term tag vals)))
+  (unpack-cont k0 (k tag)
+    (answer k (make-term tag vals))))
 
-(define (ev-and-pat-cont matched? k r subject p2)
+(define (ev-and-pat-cont matched? k0)
 ;     (dbg `(ev-and-pat-cont))
-  (if matched?
-      (ev-pat subject p2 r k)
-      (answer k #f)))
+  (unpack-cont k0 (k r subject p2)
+    (if matched?
+        (ev-pat subject p2 r k)
+        (answer k #f))))
 
-(define (ev-view-call-cont convert k r subject p)
+(define (ev-view-call-cont convert k0)
 ;     (dbg `(ev-view-call-cont))
-  (call convert (list subject)
-        (cont<- ev-view-match-cont k r p)))
+  (unpack-cont k0 (k r subject p)
+    (call convert (list subject)
+          (cont<- ev-view-match-cont k r p))))
 
-(define (ev-view-match-cont new-subject k r p)
+(define (ev-view-match-cont new-subject k0)
 ;     (dbg `(ev-view-match-cont))
-  (ev-pat new-subject p r k))
+  (unpack-cont k0 (k r p)
+    (ev-pat new-subject p r k)))
 
-(define (ev-match-rest-cont matched? k r subjects ps)
+(define (ev-match-rest-cont matched? k0)
 ;     (dbg `(ev-match-rest-cont))
-  (if matched?
-      (ev-match-all subjects ps r k)
-      (answer k #f)))
+  (unpack-cont k0 (k r subjects ps)
+    (if matched?
+        (ev-match-all subjects ps r k)
+        (answer k #f))))
 
 
 (define (wrap-cont k)
-  (let* ((f (car k))
+  (let* ((f (vector-ref k 0))
          (name
           (cond
            ((eq? f halt-cont-fn)         '__halt-cont)
@@ -733,8 +749,8 @@
            ((eq? f ev-view-match-cont)   '__ev-view-match-cont)
            ((eq? f ev-match-rest-cont)   '__ev-match-rest-cont)
            (else '__XXX-cont))))        ;TODO panic hard
-    (object<- (make-cont-script name (car k)) ;XXX script should be static, new-terp
-              (cdr k))))                      ;TODO keep Squeam code from ever accessing an unwrapped cont at (cadr k) via extract-datum
+    (object<- (make-cont-script name f) ;XXX script should be static, new-terp
+              (cdr (vector->list k))))) ;TODO keep Squeam code from ever accessing an unwrapped cont at (cadr k) via extract-datum
 
 
 ;; Primitive types
