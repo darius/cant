@@ -441,6 +441,13 @@
    (sink .display ">"))
   )
 
+(make-trait cps-primitive me
+  ({.selfie sink}
+   (sink .display "#<primitive ")
+   (sink .display (__cps-primitive-name me))
+   (sink .display ">"))
+  )
+
 
 ;; Continuations
 
@@ -456,7 +463,7 @@
   ({.rest}          (__cont-next-cont me)) ;TODO
   ({.selfie sink}   (sink .display "<cont>")) ;TODO at least give out the tag
   ({.env}
-   ((_cont-data me) .first)) ; Commonly this, but sometimes needs to be overridden.
+   ((__cont-data me) .first)) ; Commonly this, but sometimes needs to be overridden.
   (message
    (list-trait me message))) ;XXX use trait syntax instead
 
