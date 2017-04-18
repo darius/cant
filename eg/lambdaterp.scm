@@ -128,7 +128,7 @@
   `((,v ,val) ,@r))
 
 (to (lookup r v k)
-  (match (assq v r)
+  (match (assoc v r)
     (#no (debug k "Unbound var" v))
     (record (k .take (record 1)))))
 

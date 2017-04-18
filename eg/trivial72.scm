@@ -198,7 +198,7 @@
 (make tag-definition)
 
 (to (lookup r name)
-  (let `(,_ ,value) (assq name r))
+  (let `(,_ ,value) (assoc name r))
   value)
 
 (export main)
