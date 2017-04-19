@@ -448,6 +448,13 @@
    (sink .display ">"))
   )
 
+(make-trait ejector-primitive me
+  ({.eject value}
+   (__eject me value))
+  ({.selfie sink}
+   (sink .display "#<ejector>"))
+  )
+
 
 ;; Continuations
 
@@ -577,6 +584,12 @@
   ({.first}
    (let `(,r ,subject ,ps) (__cont-data me))
    `(<all-match?> ,@(each unparse-pat ps)))
+  (message
+   (__cont-trait me message)))
+
+(make-trait __disable-ejector-cont me
+  ({.first}
+   '<ejector>)
   (message
    (__cont-trait me message)))
 
