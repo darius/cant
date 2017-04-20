@@ -411,7 +411,8 @@
       (let value (evaluate e '())) ;XXX reify a proper env object
       (unless (= value void)
         (print value))
-      (interacting)))
+      (interacting))
+    (newline))
 
   (match cmd-line-args
     (#no (interacting))
