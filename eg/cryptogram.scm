@@ -34,6 +34,7 @@
 (to (shell-run command)
   (let `(,from-stdout ,to-stdin ,pid) (open-subprocess command))
   ;; TODO do we have to wait for it to terminate?
+  ;; XXX catch subprocess errors
   from-stdout.read-all)
 
 (to (puzzle cryptogram)
