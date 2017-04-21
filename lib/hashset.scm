@@ -24,6 +24,8 @@
          (result .add! x)))
      result)
     ({.clear!}        map.clear!)
+    ({.get key}       (map .maps? key))
+    (`(,key)          (map .maps? key))
     ;; XXX fill in rest of set interface (just the map interface, I guess)
     ({.selfie sink}
      (sink .display "#<set")
