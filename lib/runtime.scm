@@ -587,9 +587,20 @@
   (message
    (__cont-trait me message)))
 
-(make-trait __disable-ejector-cont me
+(make-trait __unwind-cont me
   ({.first}
-   '<ejector>)
+   '<unwind>)                           ;TODO show more
+  ({.env}
+   '())
+  (message
+   (__cont-trait me message)))
+
+(make-trait __replace-answer-cont me
+  ({.first}
+   (let `(,value) (__cont-data me))
+   `(<replace-answer> ',value))
+  ({.env}
+   '())
   (message
    (__cont-trait me message)))
 

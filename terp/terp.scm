@@ -259,43 +259,75 @@
   (object<- (cps-script<- 'with-ejector
                           (lambda (datum message k)
                             ;;XXX check arity
-                            (let* ((ejector-k (ejector-cont<- k))
+                            (let* ((ejector-k
+                                    (cont<- unwind-cont k unwind-ejector #t))
                                    (ejector (ejector<- ejector-k)))
                               (call (car message) (list ejector) ejector-k))))
             #f))
 
 (define (ejector<- ejector-k)
-  ;; XXX make this a record type instead? with a new script type
   (object<- ejector-script ejector-k)) ;XXX another place extract-datum could wreak havoc
 
-(define (ejector-cont<- k)
-  (vector disable-ejector-cont k #t))
+(define (unwind-cont value k0)
+  (unpack-cont k0 (k unwind-action)
+    (unwind-action k0 (cont<- replace-answer-cont k value))))
 
-(define (disable-ejector-cont value k0)
-  (vector-set! k0 2 #f)           ;TODO generalize to other unwinders?
-  (unpack-cont k0 (k)
+(define (replace-answer-cont value-to-ignore k0)
+  (unpack-cont k0 (k value)
     (answer k value)))
 
+;; k0 is like #(unwind-cont parent-k unwind-ejector enabled?)
+(define (unwind-ejector k0 k)
+  (vector-set! k0 3 #f)
+  (answer k (void)))
+
 (define ejector-eject
-  (object<- (cps-script<- '__eject
-                          (lambda (datum message k)
-                            ;;XXX check arity
-                            (let ((ejector (car message))
-                                  (value (cadr message)))
-                              (if (and (object? ejector)
-                                       (eq? (object-script ejector) ejector-script))
-                                  (let ((ejector-k (object-datum ejector)))
-                                    (if (vector-ref ejector-k 2) ;still enabled?
-                                        (let unwinding ((k k))
-                                          (if (eq? k ejector-k)
-                                              (answer ejector-k value)
-                                              (let ((k-action (vector-ref k 0)))
-                                                (if (eq? k-action disable-ejector-cont) ;TODO generalize to other unwinders
-                                                    (vector-set! k 2 #f)) ;disable
-                                                (unwinding (vector-ref k 1)))))
-                                        (signal k "Tried to eject to a disabled ejector" ejector)))
-                                  (signal k "Not an ejector" ejector)))))
+  (object<- (cps-script<-
+             '__eject
+             (lambda (datum message k)
+               ;;XXX check arity
+               (let ((ejector (car message))
+                     (value (cadr message)))
+                 (if (and (object? ejector)
+                          (eq? (object-script ejector) ejector-script))
+                     (let ((ejector-k (object-datum ejector)))
+                       (assert (vector? ejector-k) "ejector-eject vector"
+                               ejector-k)
+                       (assert (eq? unwind-cont (vector-ref ejector-k 0))
+                               "Ejector cont is a cont" ejector-k)
+                       (if (vector-ref ejector-k 3) ;still enabled?
+                           (ejector-unwinding k ejector-k value)
+                           (signal k "Tried to eject to a disabled ejector"
+                                   ejector)))
+                     (signal k "Not an ejector" ejector)))))
             #f))
+
+(define (ejector-unwinding k ejector-k value)
+  (if (eq? k ejector-k)
+      (answer ejector-k value)
+      (let ((k-action (vector-ref k 0))
+            (parent-k (vector-ref k 1)))
+        (if (eq? k-action unwind-cont)
+            (let ((unwind-action (vector-ref k 2)))
+              (unwind-action k (cont<- keep-unwinding parent-k ejector-k value)))
+            (ejector-unwinding parent-k ejector-k value)))))
+
+(define (keep-unwinding value-to-ignore k0)
+  (unpack-cont k0 (k ejector-k value)
+    (ejector-unwinding k ejector-k value)))
+
+(define (do-ejector-protect datum message k)
+  ;;XXX check arity
+  (let ((thunk (car message))
+        (unwind-thunk (cadr message)))
+    (call thunk '() (cont<- unwind-cont k call-unwinder unwind-thunk))))
+
+(define (call-unwinder k0 k)
+  (let ((unwind-thunk (vector-ref k0 3)))
+    (call unwind-thunk '() k)))
+
+(define ejector-protect                 ;TODO rename
+  (object<- (cps-script<- 'ejector-protect do-ejector-protect) #f))
 
 
 ;; Environments
@@ -397,6 +429,7 @@
     (__set-dbg! ,set-dbg!)
     (with-ejector ,with-ejector)
     (__eject ,ejector-eject)
+    (ejector-protect ,ejector-protect)
 
     ;; These will get high-level definitions later TODO
     (void ,(void))
@@ -790,7 +823,8 @@
            ((eq? f ev-view-call-cont)    '__ev-view-call-cont)
            ((eq? f ev-view-match-cont)   '__ev-view-match-cont)
            ((eq? f ev-match-rest-cont)   '__ev-match-rest-cont)
-           ((eq? f disable-ejector-cont) '__disable-ejector-cont)
+           ((eq? f unwind-cont)          '__unwind-cont)
+           ((eq? f replace-answer-cont)  '__replace-answer-cont)
            (else '__XXX-cont))))        ;TODO panic hard
     (object<- (make-cont-script name f) ;XXX script should be static
               (cdr (vector->list k))))) ;TODO keep Squeam code from ever accessing an unwrapped cont at (cadr k) via extract-datum
