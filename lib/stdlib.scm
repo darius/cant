@@ -333,59 +333,6 @@
 (to (break @values)
   (call error `("Breakpoint" ,@values)))
 
-(import
-    (hide
-      (to (qualify-exp exp context)
-        (import (qualifier<- context) qe)
-        (qe exp))
-      
-      (to (qualify-pat pat context)
-        (import (qualifier<- context) qp)
-        (qp exp))
-
-      (to (qualifier<- context)
-
-        (to (qe exp)
-          (match exp
-            ({constant _}   exp)
-            ({variable _}   exp)
-            ({make _ _ _ _} (qualify-make exp))
-            ({do e1 e2}     {do (qe e1) (qe e2)})
-            ({let p e}      {let (qp p) (qe e)})
-            ({call e1 e2}   {call (qe e1) (qe e2)})
-            ({term tag es}  {term tag (each qe es)})
-            ({list es}      {list (each qe es)})))
-
-        (to (qualify-make {make name stamp-exp trait-exp clauses})
-          {make (qualify-name name context) (qe stamp-exp) (qe trait-exp)
-                (hide
-                  (import (qualifier<- (nest-make-context name context))
-                    qe qp)
-                  (for each ((`(,p ,p-vars ,e-vars ,e) clauses))
-                    `(,(qp p) ,p-vars ,e-vars ,(qe e))))})
-
-        (to (qp pat)
-          (match pat
-            ({any-pat}         pat)
-            ({variable-pat v}  pat)
-            ({constant-pat c}  pat)
-            ({list-pat ps}     {list-pat (each qp ps)})
-            ({term-pat tag ps} {term-pat tag (each qp ps)})
-            ({view-pat e p}    {view-pat (qe e) (qp p)})
-            ({and-pat p1 p2}   {and-pat (qp p1) (qp p2)})))
-
-        (export qe qp))
-
-      (to (qualify-name name context)
-        (":" .join (nest-make-context name context)))
-
-      (to (nest-make-context name context)
-        `(,name ,@context))
-
-      (export qualify-exp qualify-pat))
-
-  qualify-exp qualify-pat)
-
 (to (system/must-succeed command)
   (unless (= 0 (system command))
     (error "Failed system command" command)))
@@ -406,8 +353,7 @@
     (display "sqm> ")
     (let sexpr (read))
     (unless (eof? sexpr)
-      (let parsed (parse-exp sexpr))
-      (let e (qualify-exp parsed '()))
+      (let e (parse-exp sexpr))
       (let value (evaluate e '())) ;XXX reify a proper env object
       (unless (= value void)
         (print value))
@@ -456,16 +402,14 @@
   ;; XXX duplication
   (let context (or context-arg '()))
   (let code `(do ,@(with-input-file read-all filename)))
-  (let code1 (parse-exp code))
-  (let code2 (qualify-exp code1 context))
-  (evaluate code2 '()))
+  (let code1 (parse-exp code context))
+  (evaluate code1 '()))
 
 (to (load-module filename @(optional context-arg))
   (let context (or context-arg '()))
   (let code `(hide ,@(with-input-file read-all filename)))
-  (let code1 (parse-exp code))
-  (let code2 (qualify-exp code1 context))
-  (evaluate code2 '()))
+  (let code1 (parse-exp code context))
+  (evaluate code1 '()))
 
 (to (with-input-file fn filename)
   (let source (open-input-file filename))

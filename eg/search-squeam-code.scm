@@ -56,8 +56,6 @@
   (`(,filename ,context)
    (let code (for with-input-file ((source filename))
                `(hide ,@(read-all source))))
-   (let code1 (parse-exp code))
-   (let code2 (qualify-exp code1 context))
-   code2))
+   (parse-exp code context)))
 
 (export search)

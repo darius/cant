@@ -1,9 +1,23 @@
-;; Like elaborate.scm for the new scheme
+;; Parse expressions and patterns to ASTs
 
-(define (parse-exp e)
+(define (parse-exp e . opt-context)
+  (parse-e e (optional-context 'parse-exp opt-context)))
+
+(define (parse-pat p . opt-context)
+  (parse-p p (optional-context 'parse-pat opt-context)))
+
+(define (optional-context caller opt-context)
+  (cond ((null? opt-context) '())
+        ((null? (cdr opt-context)) (car opt-context))
+        (else (error caller "Too many arguments" opt-context))))
+
+(define (nest-context name ctx)
+  (cons name ctx))
+
+(define (parse-e e ctx)
   (cond
     ((and (pair? e) (look-up-macro (car e)))
-     => (lambda (expand) (parse-exp (expand e))))
+     => (lambda (expand) (parse-e (expand e) ctx)))
     (else
      (mcase e
        ((: __ symbol?)
@@ -15,43 +29,52 @@
        ((: __ term?)
         (term<- 'term
                 (term-tag e)
-                (map parse-exp (term-parts e))))
+                (parse-es (term-parts e) ctx)))
        (('let p e1)
-        (term<- 'let (parse-pat p) (parse-exp e1)))
+        (term<- 'let (parse-p p ctx) (parse-e e1 ctx)))
        (('make '_ . clauses)
-        (parse-make '_ clauses))
+        (parse-make '_ clauses ctx))
        (('make (: name symbol?) . clauses)
-        (term<- 'let (parse-pat name) (parse-make name clauses)))
+        (term<- 'let (parse-p name ctx) (parse-make name clauses ctx)))
        (('make (: name string?) . clauses)
-        (parse-make name clauses))
+        (parse-make name clauses ctx))
        (('make . clauses)
-        (parse-make '_ clauses))
+        (parse-make '_ clauses ctx))
        (('do e1)
-        (parse-exp e1))
+        (parse-e e1 ctx))
        (('do e1 ('XXX-halp-spot start end) . es)
-        (term<- 'do (parse-exp `(__halp-log ,start ,end ,e1))  ;XXX hygiene
-                (parse-exp `(do ,@es))))
+        (term<- 'do (parse-e `(__halp-log ,start ,end ,e1) ctx)  ;XXX hygiene
+                (parse-e `(do ,@es) ctx)))
        (('do e1 . es)
-        (term<- 'do (parse-exp e1) (parse-exp `(do ,@es))))
+        (term<- 'do (parse-e e1 ctx) (parse-e `(do ,@es) ctx)))
        (('do)
         (term<- 'constant #f))          ;I guess
        (('call e1 e2)
-        (term<- 'call (parse-exp e1) (parse-exp e2)))
+        (term<- 'call (parse-e e1 ctx) (parse-e e2 ctx)))
        ((addressee (: cue cue?) . operands)
         (term<- 'call
-                (parse-exp addressee)
-                (term<- 'term cue (map parse-exp operands))))
+                (parse-e addressee ctx)
+                (term<- 'term cue (parse-es operands ctx))))
        ((addressee . operands)
         (term<- 'call
-                (parse-exp addressee)
-                (term<- 'list (map parse-exp operands))))
+                (parse-e addressee ctx)
+                (term<- 'list (parse-es operands ctx))))
        ))))
 
+(define (parse-es es ctx)
+  (map (lambda (e) (parse-e e ctx)) es))
+
+(define (parse-ps ps ctx)
+  (map (lambda (p) (parse-p p ctx)) ps))
+
+(define (parse-clauses clauses ctx)
+  (map (lambda (clause) (parse-clause clause ctx)) clauses))
+
 ;; what's the syntax for a macro in pattern context?
-(define (parse-pat p)
+(define (parse-p p ctx)
   (cond
     ((and (pair? p) (look-up-pat-macro (car p)))
-     => (lambda (expand) (parse-pat (expand p))))
+     => (lambda (expand) (parse-p (expand p) ctx)))
     (else
      (mcase p
        ('_
@@ -63,14 +86,14 @@
        (('quote datum)
         (term<- 'constant-pat datum))
        (('and . ps)
-        (parse-and-pat ps))
+        (parse-and-pat ps ctx))
        (('view e1 p1)
-        (term<- 'view-pat (parse-exp e1) (parse-pat p1)))
+        (term<- 'view-pat (parse-e e1 ctx) (parse-p p1 ctx)))
        ;; XXX complain if you see a bare , or ,@. but this will fall out of disallowing defaulty lists.
        (('list<- . ps)
-        (parse-list-pat ps))
+        (parse-list-pat ps ctx))
        (('cons car-p cdr-p)
-        (make-cons-pat (parse-pat car-p) (parse-pat cdr-p)))
+        (make-cons-pat (parse-p car-p ctx) (parse-p cdr-p ctx)))
        ((: __ term?)
         (let ((tag (term-tag p))
               (parts (term-parts p)))
@@ -78,18 +101,18 @@
               (term<- 'view-pat
                       explode-term-exp
                       (term<- 'term-pat 'term (list (term<- 'constant-pat tag)
-                                                    (parse-list-pat parts))))
-              (term<- 'term-pat tag (map parse-pat parts)))))
+                                                    (parse-list-pat parts ctx))))
+              (term<- 'term-pat tag (parse-ps parts ctx)))))
        (('@ __)                      ;XXX make @vars be some disjoint type
         (error 'parse "An @-pattern must be at the end of a list" p))
        ((: __ list?)
         (error 'parse "Old-style list pattern" p)))))) ;TODO better plaint
 
-(define (parse-and-pat ps)
+(define (parse-and-pat ps ctx)
   (mcase ps
     (()         (term<- 'any-pat))
-    ((p)        (parse-pat p))
-    ((p1 . ps1) (term<- 'and-pat (parse-pat p1) (parse-and-pat ps1)))))
+    ((p)        (parse-p p ctx))
+    ((p1 . ps1) (term<- 'and-pat (parse-p p1 ctx) (parse-and-pat ps1 ctx)))))
 
 (define (look-up-pat-macro key)
   (mcase key
@@ -148,17 +171,17 @@
 (define explode-term-exp
   (term<- 'constant explode-term))
 
-(define (parse-list-pat ps)
+(define (parse-list-pat ps ctx)
   (if (all (mlambda (('@ __) #f) (__ #t)) ps)
-      (term<- 'list-pat (map parse-pat ps)) ; Special-cased just for speed
+      (term<- 'list-pat (parse-ps ps ctx)) ; Special-cased just for speed
       (mcase ps
         (()
          (term<- 'constant-pat '()))
         ((('@ v))
-         (term<- 'and-pat list?-pat (parse-pat v)))
+         (term<- 'and-pat list?-pat (parse-p v ctx)))
         ((head . tail)
-         (make-cons-pat (parse-pat head)
-                        (parse-list-pat tail))))))
+         (make-cons-pat (parse-p head ctx)
+                        (parse-list-pat tail ctx))))))
 
 (define list?-pat (term<- 'view-pat
                           (term<- 'constant list?) ;XXX just check pair?/null?
@@ -180,27 +203,31 @@
       (string? x)))
 
 ;; XXX what about stamp?
-(define (parse-make name stuff)
+(define (parse-make name stuff ctx)
   (let ((name (cond ((symbol? name) (symbol->string name))
                     ((string? name) name)
                     (else (error 'parse "Illegal name type" name)))))
-    (mcase stuff
-      (((: decl term?) . clauses)
-       (assert (eq? (term-tag decl) 'extending) "bad syntax" decl)
-       (assert (= (length (term-parts decl)) 1) "bad syntax" decl)
-       (term<- 'make name none-exp
-               (parse-exp (car (term-parts decl)))
-               (map parse-clause clauses)))
-      (clauses
-       (term<- 'make name none-exp none-exp (map parse-clause clauses))))))
+    (let* ((ctx (nest-context name ctx))
+           (qualified-name (string-join ":" ctx)))
+      (mcase stuff
+        (((: decl term?) . clauses)
+         (assert (eq? (term-tag decl) 'extending) "bad syntax" decl)
+         (assert (= (length (term-parts decl)) 1) "bad syntax" decl)
+         (term<- 'make qualified-name none-exp
+                 (parse-e (car (term-parts decl)) ctx)
+                 (parse-clauses clauses ctx)))
+        (clauses
+         (term<- 'make qualified-name none-exp
+                 none-exp
+                 (parse-clauses clauses ctx)))))))
 
 (define none-exp (term<- 'constant '#f))
 
-(define (parse-clause clause)
+(define (parse-clause clause ctx)
   (mcase clause
     ((pat . body)
-     (let ((p (parse-pat pat))
-           (e (parse-exp `(do ,@body))))
+     (let ((p (parse-p pat ctx))
+           (e (parse-e `(do ,@body) ctx)))
        (list p (pat-vars-defined p) (exp-vars-defined e) e)))))
 
 (define (look-up-macro key)
