@@ -45,14 +45,11 @@
 
 (to (decode tree bits)
   (begin stepping ((subtree tree) (bits bits))
-    (match subtree
-      ({leaf symbol}
-       `(,symbol ,@(if bits.empty?
-                       '()
-                       (stepping tree bits))))
-      ({branch @branches}
-       (if bits.empty?
-           '()       ;TODO: check that we're at the root?
-           (stepping (branches bits.first) bits.rest))))))
+    (if bits.empty?
+        '()
+        (do (let {branch @branches} subtree)
+            (match (branches bits.first)
+              ({leaf symbol} `(,symbol ,@(stepping tree bits.rest)))
+              (next-branch   (stepping next-branch bits.rest)))))))
 
 (export build-tree show-tree encoder<- encode decode)
