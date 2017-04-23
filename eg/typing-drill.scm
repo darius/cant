@@ -34,7 +34,8 @@
   (let cps (if (or (= t 0) body.empty?)
                0
                (/ (- body.count 1) t)))
+  (let wpm (/ (* cps 60) 5))
   (render `(,("~w seconds  ~w words/minute"
-              .format t (* cps 60 (/ 1 5)))
+              .format t wpm)
             "   (Hit Esc to quit.)\n\n"
             ,body ,cursor)))
