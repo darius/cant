@@ -269,11 +269,11 @@
   (object<- ejector-script ejector-k)) ;XXX another place extract-datum could wreak havoc
 
 (define (unwind-cont value k0)
-  (unpack-cont k0 (k unwind-action)
+  (unpack k0 (k unwind-action)
     (unwind-action k0 (cont<- replace-answer-cont k value))))
 
 (define (replace-answer-cont value-to-ignore k0)
-  (unpack-cont k0 (k value)
+  (unpack k0 (k value)
     (answer k value)))
 
 ;; k0 is like #(unwind-cont parent-k unwind-ejector enabled?)
@@ -313,7 +313,7 @@
             (ejector-unwinding parent-k ejector-k value)))))
 
 (define (keep-unwinding value-to-ignore k0)
-  (unpack-cont k0 (k ejector-k value)
+  (unpack k0 (k ejector-k value)
     (ejector-unwinding k ejector-k value)))
 
 (define (do-ejector-protect datum message k)
@@ -720,7 +720,7 @@
 
 (define (match-clause-cont matched? k0)
 ;     (dbg `(match-clause-cont))
-  (unpack-cont k0 (k pat-r body rest-clauses object script datum message)
+  (unpack k0 (k pat-r body rest-clauses object script datum message)
                ;; TODO don't unpack it all till needed
   ;; body is now a list (body-vars body-exp)
     (if matched?
@@ -729,76 +729,76 @@
 
 (define (ev-trait-cont-script stamp-val k0)
 ;     (dbg `(ev-trait-cont))
-  (unpack-cont k0 (k r name trait clauses)
+  (unpack k0 (k r name trait clauses)
     (ev-exp trait r
             (cont<- ev-make-cont-script k name stamp-val r clauses))))
 
 (define (ev-make-cont-script trait-val k0)
 ;     (dbg `(ev-make-cont))
-  (unpack-cont k0 (k name stamp-val r clauses)
+  (unpack k0 (k name stamp-val r clauses)
     (answer k (object<- (script<- name trait-val clauses) ;XXX use stamp-val
                         r))))
 
 (define (ev-do-rest-cont _ k0)
 ;     (dbg `(ev-do-rest-cont))
-  (unpack-cont k0 (k r e2)
+  (unpack k0 (k r e2)
     (ev-exp e2 r k)))
 
 (define (ev-let-match-cont val k0)
 ;     (dbg `(ev-let-match-cont))
-  (unpack-cont k0 (k r p)
+  (unpack k0 (k r p)
     (ev-pat val p r
             (cont<- ev-let-check-cont k val))))
 
 (define (ev-let-check-cont matched? k0)
 ;     (dbg `(ev-let-check-cont))
-  (unpack-cont k0 (k val)
+  (unpack k0 (k val)
     (if matched?
         (answer k val)
         (signal k "Match failure" val))))
 
 (define (ev-arg-cont receiver k0)
 ;     (dbg `(ev-arg-cont))
-  (unpack-cont k0 (k r e2)
+  (unpack k0 (k r e2)
     (ev-exp e2 r
             (cont<- ev-call-cont k receiver))))
 
 (define (ev-call-cont message k0)
 ;     (dbg `(ev-call-cont ,receiver ,message))
-  (unpack-cont k0 (k receiver)
+  (unpack k0 (k receiver)
     (call receiver message k)))
 
 (define (ev-rest-args-cont val k0)
 ;     (dbg `(ev-rest-args-cont))
-  (unpack-cont k0 (k es r vals)
+  (unpack k0 (k es r vals)
     (ev-args es r (cons val vals) k)))
 
 (define (ev-tag-cont vals k0)
 ;     (dbg `(ev-tag-cont))
-  (unpack-cont k0 (k tag)
+  (unpack k0 (k tag)
     (answer k (make-term tag vals))))
 
 (define (ev-and-pat-cont matched? k0)
 ;     (dbg `(ev-and-pat-cont))
-  (unpack-cont k0 (k r subject p2)
+  (unpack k0 (k r subject p2)
     (if matched?
         (ev-pat subject p2 r k)
         (answer k #f))))
 
 (define (ev-view-call-cont convert k0)
 ;     (dbg `(ev-view-call-cont))
-  (unpack-cont k0 (k r subject p)
+  (unpack k0 (k r subject p)
     (call convert (list subject)
           (cont<- ev-view-match-cont k r p))))
 
 (define (ev-view-match-cont new-subject k0)
 ;     (dbg `(ev-view-match-cont))
-  (unpack-cont k0 (k r p)
+  (unpack k0 (k r p)
     (ev-pat new-subject p r k)))
 
 (define (ev-match-rest-cont matched? k0)
 ;     (dbg `(ev-match-rest-cont))
-  (unpack-cont k0 (k r subjects ps)
+  (unpack k0 (k r subjects ps)
     (if matched?
         (ev-match-all subjects ps r k)
         (answer k #f))))

@@ -1,4 +1,4 @@
-(define-syntax unpack-cont
+(define-syntax unpack
   (syntax-rules ()
     ((_ vec vars exp1 exp2 ...)
      (let ((t vec))
