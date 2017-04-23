@@ -7,6 +7,12 @@
 ;; reduced to lowest terms (and with positive denom), and preserve
 ;; the same invariant.
 
+(to (ratio? thing)
+  (match thing
+    ({ratio n d}
+     (and (integer? n) (integer? d) (not= d 0)))
+    (_ #no)))
+
 (make ratio<-
   (`(,n)
    (surely (integer? n))
@@ -50,6 +56,7 @@
   (/ (exact->inexact n) d))
 
 (map<- `(
+         (ratio? ,ratio?)
          (ratio<- ,ratio<-)
          (+ ,r+)
          (- ,r-)
