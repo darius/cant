@@ -1,10 +1,26 @@
 ;; Parse expressions and patterns to ASTs
 
-(define (parse-exp e . opt-context)
-  (parse-e e (optional-context 'parse-exp opt-context)))
+(define pack<- vector)
 
-(define (parse-pat p . opt-context)
-  (parse-p p (optional-context 'parse-pat opt-context)))
+(define (pack-tag vec)
+  (vector-ref vec 0))
+
+(define e-constant 0)
+(define e-variable 1)
+(define e-term     2)
+(define e-list     3)
+(define e-make     4)
+(define e-do       5)
+(define e-let      6)
+(define e-call     7)
+
+(define p-constant 0)
+(define p-any      1)
+(define p-variable 2)
+(define p-term     3)
+(define p-list     4)
+(define p-and      5)
+(define p-view     6)
 
 (define (optional-context caller opt-context)
   (cond ((null? opt-context) '())
@@ -21,21 +37,21 @@
     (else
      (mcase e
        ((: __ symbol?)
-        (term<- 'variable e))
+        (pack<- e-variable e))
        (('quote datum)
-        (term<- 'constant datum))
+        (pack<- e-constant datum))
        ((: __ self-evaluating?)
-        (term<- 'constant e))
+        (pack<- e-constant e))
        ((: __ term?)
-        (term<- 'term
+        (pack<- e-term
                 (term-tag e)
                 (parse-es (term-parts e) ctx)))
        (('let p e1)
-        (term<- 'let (parse-p p ctx) (parse-e e1 ctx)))
+        (pack<- e-let (parse-p p ctx) (parse-e e1 ctx)))
        (('make '_ . clauses)
         (parse-make '_ clauses ctx))
        (('make (: name symbol?) . clauses)
-        (term<- 'let (parse-p name ctx) (parse-make name clauses ctx)))
+        (pack<- e-let (parse-p name ctx) (parse-make name clauses ctx)))
        (('make (: name string?) . clauses)
         (parse-make name clauses ctx))
        (('make . clauses)
@@ -43,22 +59,22 @@
        (('do e1)
         (parse-e e1 ctx))
        (('do e1 ('XXX-halp-spot start end) . es)
-        (term<- 'do (parse-e `(__halp-log ,start ,end ,e1) ctx)  ;XXX hygiene
+        (pack<- e-do (parse-e `(__halp-log ,start ,end ,e1) ctx)  ;XXX hygiene
                 (parse-e `(do ,@es) ctx)))
        (('do e1 . es)
-        (term<- 'do (parse-e e1 ctx) (parse-e `(do ,@es) ctx)))
+        (pack<- e-do (parse-e e1 ctx) (parse-e `(do ,@es) ctx)))
        (('do)
-        (term<- 'constant #f))          ;I guess
+        (pack<- e-constant #f))          ;I guess
        (('call e1 e2)
-        (term<- 'call (parse-e e1 ctx) (parse-e e2 ctx)))
+        (pack<- e-call (parse-e e1 ctx) (parse-e e2 ctx)))
        ((addressee (: cue cue?) . operands)
-        (term<- 'call
+        (pack<- e-call
                 (parse-e addressee ctx)
-                (term<- 'term cue (parse-es operands ctx))))
+                (pack<- e-term cue (parse-es operands ctx))))
        ((addressee . operands)
-        (term<- 'call
+        (pack<- e-call
                 (parse-e addressee ctx)
-                (term<- 'list (parse-es operands ctx))))
+                (pack<- e-list (parse-es operands ctx))))
        ))))
 
 (define (parse-es es ctx)
@@ -67,6 +83,7 @@
 (define (parse-ps ps ctx)
   (map (lambda (p) (parse-p p ctx)) ps))
 
+;; TODO vector instead of list
 (define (parse-clauses clauses ctx)
   (map (lambda (clause) (parse-clause clause ctx)) clauses))
 
@@ -78,17 +95,17 @@
     (else
      (mcase p
        ('_
-        (term<- 'any-pat))
+        (pack<- p-any))
        ((: __ symbol?)
-        (term<- 'variable-pat p))
+        (pack<- p-variable p))
        ((: __ self-evaluating?)
-        (term<- 'constant-pat p))
+        (pack<- p-constant p))
        (('quote datum)
-        (term<- 'constant-pat datum))
+        (pack<- p-constant datum))
        (('and . ps)
         (parse-and-pat ps ctx))
        (('view e1 p1)
-        (term<- 'view-pat (parse-e e1 ctx) (parse-p p1 ctx)))
+        (pack<- p-view (parse-e e1 ctx) (parse-p p1 ctx)))
        ;; XXX complain if you see a bare , or ,@. but this will fall out of disallowing defaulty lists.
        (('list<- . ps)
         (parse-list-pat ps ctx))
@@ -98,11 +115,11 @@
         (let ((tag (term-tag p))
               (parts (term-parts p)))
           (if (any (mlambda (('@ __) #t) (__ #f)) parts)  ;XXX really only need to check the last one
-              (term<- 'view-pat
+              (pack<- p-view
                       explode-term-exp
-                      (term<- 'term-pat 'term (list (term<- 'constant-pat tag)
-                                                    (parse-list-pat parts ctx))))
-              (term<- 'term-pat tag (parse-ps parts ctx)))))
+                      (pack<- p-term 'term (list (pack<- p-constant tag)
+                                                 (parse-list-pat parts ctx))))
+              (pack<- p-term tag (parse-ps parts ctx)))))
        (('@ __)                      ;XXX make @vars be some disjoint type
         (error 'parse "An @-pattern must be at the end of a list" p))
        ((: __ list?)
@@ -110,9 +127,9 @@
 
 (define (parse-and-pat ps ctx)
   (mcase ps
-    (()         (term<- 'any-pat))
+    (()         (pack<- p-any))
     ((p)        (parse-p p ctx))
-    ((p1 . ps1) (term<- 'and-pat (parse-p p1 ctx) (parse-and-pat ps1 ctx)))))
+    ((p1 . ps1) (pack<- p-and (parse-p p1 ctx) (parse-and-pat ps1 ctx)))))
 
 (define (look-up-pat-macro key)
   (mcase key
@@ -169,32 +186,33 @@
        (term<- 'term (term-tag thing) (term-parts thing))))
 
 (define explode-term-exp
-  (term<- 'constant explode-term))
+  (pack<- e-constant explode-term))
 
 (define (parse-list-pat ps ctx)
   (if (all (mlambda (('@ __) #f) (__ #t)) ps)
-      (term<- 'list-pat (parse-ps ps ctx)) ; Special-cased just for speed
+      (pack<- p-list (parse-ps ps ctx)) ; Special-cased just for speed
       (mcase ps
         (()
-         (term<- 'constant-pat '()))
+         (pack<- p-constant '()))
         ((('@ v))
-         (term<- 'and-pat list?-pat (parse-p v ctx)))
+         (pack<- p-and list?-pat (parse-p v ctx)))
         ((head . tail)
          (make-cons-pat (parse-p head ctx)
                         (parse-list-pat tail ctx))))))
 
-(define list?-pat (term<- 'view-pat
-                          (term<- 'constant list?) ;XXX just check pair?/null?
-                          (term<- 'constant-pat #t)))
+(define list?-pat (pack<- p-view
+                          (pack<- e-constant list?) ;XXX just check pair?/null?
+                          (pack<- p-constant #t)))
 
 (define (make-cons-pat car-pat cdr-pat)
-  (if (and (eq? (term-tag car-pat) 'constant-pat)
-           (eq? (term-tag cdr-pat) 'constant-pat))
-      (term<- 'constant-pat (cons (car (term-parts car-pat))
-                                  (car (term-parts cdr-pat))))
-      (term<- 'view-pat
-              (term<- 'variable '__as-cons)
-              (term<- 'term-pat 'cons (list car-pat cdr-pat)))))
+  (if (and (eq? (pack-tag car-pat) p-constant)
+           (eq? (pack-tag cdr-pat) p-constant))
+      (unpack car-pat (car-value)
+        (unpack cdr-pat (cdr-value)
+          (pack<- p-constant (cons car-value cdr-value)))) ;TODO avoid re-consing when possible
+      (pack<- p-view
+              (pack<- e-variable '__as-cons)
+              (pack<- p-term 'cons (list car-pat cdr-pat)))))
 
 (define (self-evaluating? x)
   (or (boolean? x)
@@ -213,15 +231,15 @@
         (((: decl term?) . clauses)
          (assert (eq? (term-tag decl) 'extending) "bad syntax" decl)
          (assert (= (length (term-parts decl)) 1) "bad syntax" decl)
-         (term<- 'make qualified-name none-exp
+         (pack<- e-make qualified-name none-exp
                  (parse-e (car (term-parts decl)) ctx)
                  (parse-clauses clauses ctx)))
         (clauses
-         (term<- 'make qualified-name none-exp
+         (pack<- e-make qualified-name none-exp
                  none-exp
                  (parse-clauses clauses ctx)))))))
 
-(define none-exp (term<- 'constant '#f))
+(define none-exp (pack<- e-constant '#f))
 
 (define (parse-clause clause ctx)
   (mcase clause
@@ -341,6 +359,7 @@
     ((('unquote-splicing p) . __)
      (error 'parse "A ,@-pattern must be at the end of a list" qq))
     ((qcar . qcdr)
+     ;; TODO optimize simple list patterns into p-list forms
      `(cons ,(expand-quasiquote-pat qcar)
             ,(expand-quasiquote-pat qcdr)))
     ((: __ term?)
@@ -405,48 +424,57 @@
 
 ;; Variables defined
 
-(define (pat-vars-defined p)
-  (let ((parts (term-parts p)))
-    (case (term-tag p)
-      ((any-pat constant-pat)
-       '())
-      ((variable-pat)
-       parts)
-      ((list-pat)
-       (let ((p-args (car parts)))
-         (flatmap pat-vars-defined p-args)))
-      ((term-pat)
-       (let ((p-args (cadr parts)))
-         (flatmap pat-vars-defined p-args)))
-      ((and-pat)
-       (let ((p1 (car parts)) (p2 (cadr parts)))
-         (append (pat-vars-defined p1)
-                 (pat-vars-defined p2))))
-      ((view-pat)
-       (let ((e (car parts)) (p (cadr parts)))
-         (append (exp-vars-defined e)
-                 (pat-vars-defined p))))
-      (else
-       (error 'parse "Bad pattern type" p)))))
-
 (define (exp-vars-defined e)
-  (let ((parts (term-parts e)))
-    (case (term-tag e)
-      ((constant variable make)
-       '())
-      ((call do)
-       (let ((e1 (car parts)) (e2 (cadr parts)))
-         (append (exp-vars-defined e1)
-                 (exp-vars-defined e2))))
-      ((let)
-       (let ((p (car parts)) (e (cadr parts)))
-         (append (pat-vars-defined p)
-                 (exp-vars-defined e))))
-      ((term)
-       (let ((es (cadr parts)))
-         (flatmap exp-vars-defined es)))
-      ((list)
-       (let ((es (car parts)))
-         (flatmap exp-vars-defined es)))
-      (else
-       (error 'parse "Bad expression type" e)))))
+  ((vector-ref methods/exp-vars-defined (pack-tag e))
+   e))
+
+(define methods/exp-vars-defined
+  (vector
+   (lambda (e) '())                         ;e-constant
+   (lambda (e) '())                         ;e-variable
+   (lambda (e)                              ;e-term
+     (unpack e (tag args)
+       (flatmap exp-vars-defined args)))
+   (lambda (e)                              ;e-list
+     (unpack e (args)
+       (flatmap exp-vars-defined args)))
+   (lambda (e)                              ;e-make
+     '())
+   (lambda (e)                              ;e-do
+     (unpack e (e1 e2)
+       (append (exp-vars-defined e1)
+               (exp-vars-defined e2))))
+   (lambda (e)                              ;e-let
+     (unpack e (p1 e1)
+       (append (pat-vars-defined p1)
+               (exp-vars-defined e1))))
+   (lambda (e)                              ;e-call
+     (unpack e (e1 e2)
+       (append (exp-vars-defined e1)
+               (exp-vars-defined e2))))))
+
+(define (pat-vars-defined p)
+  ((vector-ref methods/pat-vars-defined (pack-tag p))
+   p))
+
+(define methods/pat-vars-defined
+  (vector
+   (lambda (p) '())                         ;p-constant
+   (lambda (p) '())                         ;p-any
+   (lambda (p)                              ;p-variable
+     (unpack p (var)
+       (list var)))
+   (lambda (p)                              ;p-term
+     (unpack p (tag args)
+       (flatmap pat-vars-defined args)))
+   (lambda (p)                              ;p-list
+     (unpack p (args)
+       (flatmap pat-vars-defined args)))
+   (lambda (p)                              ;p-and
+     (unpack p (p1 p2)
+       (append (pat-vars-defined p1)
+               (pat-vars-defined p2))))
+   (lambda (p)                              ;p-view
+     (unpack p (e1 p1)
+       (append (exp-vars-defined e1)
+               (pat-vars-defined p1))))))

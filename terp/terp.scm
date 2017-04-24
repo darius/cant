@@ -1,3 +1,63 @@
+;; Bootstrap prereqs
+
+(define-record-type object (fields script datum))   ; Nonprimitive objects, that is.
+(define object<- make-object)
+
+(define-record-type script (fields name trait clauses))
+(define script<- make-script)
+
+;; Parser bootstrap
+
+(define (expression<- vec) (object<- expression-script vec))
+(define (pattern<- vec)    (object<- pattern-script vec))
+
+(define (parse-exp e . opt-context)
+  (expression<- (parse-e e (optional-context 'parse-exp opt-context))))
+
+(define (parse-pat p . opt-context)
+  (pattern<- (parse-p p (optional-context 'parse-pat opt-context))))
+
+(define (load-ast-script script-name module-name)
+  (let ((form (car (snarf (string-append module-name ".scm") squeam-read))))
+    (let ((e (parse-e form `(,module-name))))
+      ;; This stands in for calling `evaluate`, which we don't have yet:
+      (assert (equal? (pack-tag e) e-make) "Script must be `make`" e)
+      (unpack e (name stamp trait clauses)
+        (assert (eq? stamp none-exp) "simple script" e)
+        (assert (eq? trait none-exp) "simple script" e)
+        (let ((prim (object<- (script<- name #f clauses)
+                              primitive-env)))
+          (script<- 'script-name prim primitive-env))))))
+
+(define primitive-env '())
+
+(define expression-script
+  (load-ast-script 'expression-primitive "terp/ast-expression"))
+
+(define pattern-script
+  (load-ast-script 'pattern-primitive "terp/ast-pattern"))
+
+(define (unwrap-ast ast)
+  (assert (and (object? ast)
+               (or (eq? (object-script ast) expression-script)
+                   (eq? (object-script ast) pattern-script)))
+          "Not an ast object" ast)
+  (object-datum ast))
+
+(define (__ast-part ast i) (vector-ref (unwrap-ast ast) i))
+(define (__ast-tag ast)    (__ast-part ast 0))
+(define (__ast-e ast i)    (expression<- (__ast-part ast i)))
+(define (__ast-p ast i)    (pattern<- (__ast-part ast i)))
+(define (__ast-es ast i)   (map expression<- (__ast-part ast i)))
+(define (__ast-ps ast i)   (map pattern<- (__ast-part ast i)))
+(define (__ast-clauses ast i)
+  (map (lambda (clause)
+         `(,(pattern<- (car clause))
+           ,(cadr clause)
+           ,(caddr clause)
+           ,(expression<- (cadddr clause))))
+       (__ast-part ast i)))
+
 ;; Interpreter
 
 (define (run-load filename)
@@ -93,12 +153,6 @@
 
 
 ;; Objects, calling, and answering
-
-(define-record-type object (fields script datum))   ; Nonprimitive objects, that is.
-(define object<- make-object)
-
-(define-record-type script (fields name trait clauses))
-(define script<- make-script)
 
 (define-record-type cps-script (fields name procedure))
 (define cps-script<- make-cps-script)
@@ -252,7 +306,7 @@
   (object<- (cps-script<- 'evaluate
                           (lambda (datum message k)
                             ;;XXX check arity
-                            (apply ev-exp `(,@message ,k))))
+                            (apply evaluate-exp `(,@message ,k))))
             #f))
 
 (define with-ejector
@@ -558,6 +612,14 @@
     (__u<< ,(lambda (a b) (logand mask32 (ash a b))))
     (__u>> ,(lambda (a b) (logand mask32 (ash a (- b)))))
 
+    (__ast-part ,__ast-part)
+    (__ast-tag  ,__ast-tag)
+    (__ast-e    ,__ast-e)
+    (__ast-p    ,__ast-p)
+    (__ast-es   ,__ast-es)
+    (__ast-ps   ,__ast-ps)
+    (__ast-clauses ,__ast-clauses)
+
     (__cps-primitive-name ,(lambda (x)
                              (cps-script-name (object-script x))))
     (__script-name ,script-name)
@@ -620,45 +682,50 @@
 
 (define (evaluate e r)
 ;  (report `(evaluate ,e))
-  (ev-exp e r halt-cont))
+  (evaluate-exp e r halt-cont))
+
+(define (evaluate-exp e r k)
+  (if (and (object? e) (eq? (object-script e) expression-script))
+      (ev-exp (object-datum e) r k)
+      (signal k "evaluate: Not an expression" e)))
 
 (define (ev-exp e r k)
 ;  (dbg `(ev-exp)) ; ,e))
-  (let ((parts (term-parts e)))
-    (case (term-tag e)
-      ((constant)
-       (answer k (car parts)))
-      ((variable)
-       (env-lookup r (car parts) k))
-      ((make)
-       (let ((name (car parts))
-             (stamp (cadr parts))
-             (trait (caddr parts))
-             (clauses (cadddr parts)))
-         (if (and (eq? trait none-exp) ; Just fast-path tuning; this if is not logically necessary.
-                  (eq? stamp none-exp))
-             (answer k (object<- (script<- name #f clauses)
-                                 r))
-             (ev-exp stamp r
-                     (cont<- ev-trait-cont-script k r name trait clauses)))))
-      ((do)
-       (let ((e1 (car parts)) (e2 (cadr parts)))
-         (ev-exp e1 r (cont<- ev-do-rest-cont k r e2))))
-      ((let)
-       (let ((p (car parts)) (e1 (cadr parts)))
-         (ev-exp e1 r (cont<- ev-let-match-cont k r p))))
-      ((call)
-       (let ((e1 (car parts)) (e2 (cadr parts)))
-         (ev-exp e1 r (cont<- ev-arg-cont k r e2))))
-      ((term)
-       (let ((tag (car parts)) (es (cadr parts)))
-         (ev-args es r '()
-                  (cont<- ev-tag-cont k tag))))
-      ((list)
-       (let ((es (car parts)))
-         (ev-args es r '() k)))
-      (else
-       (error 'ev-exp "Bad exp type" e)))))
+  ((vector-ref methods/ev-exp (pack-tag e))
+   e r k))
+
+(define methods/ev-exp
+  (vector
+   (lambda (e r k)                          ;e-constant
+     (unpack e (value)
+       (answer k value)))
+   (lambda (e r k)                          ;e-variable
+     (unpack e (var)
+       (env-lookup r var k)))
+   (lambda (e r k)                          ;e-term
+     (unpack e (tag es)
+       (ev-args es r '()
+                (cont<- ev-tag-cont k tag))))
+   (lambda (e r k)                          ;e-list
+     (unpack e (es)
+       (ev-args es r '() k)))
+   (lambda (e r k)                          ;e-make
+     (unpack e (name stamp trait clauses)
+       (if (and (eq? trait none-exp) ; Just fast-path tuning; this if is not logically necessary.
+                (eq? stamp none-exp))
+           (answer k (object<- (script<- name #f clauses)
+                               r))
+           (ev-exp stamp r
+                   (cont<- ev-trait-cont-script k r name trait clauses)))))
+   (lambda (e r k)                          ;e-do
+     (unpack e (e1 e2)
+       (ev-exp e1 r (cont<- ev-do-rest-cont k r e2))))
+   (lambda (e r k)                          ;e-let
+     (unpack e (p e1)
+       (ev-exp e1 r (cont<- ev-let-match-cont k r p))))
+   (lambda (e r k)                          ;e-call
+     (unpack e (e1 e2)
+       (ev-exp e1 r (cont<- ev-arg-cont k r e2))))))
 
 (define (ev-args es r vals k)
   (if (null? es)
@@ -668,39 +735,40 @@
 
 (define (ev-pat subject p r k)
 ;  (dbg `(match)) ; ,subject ,p))
-  (let ((parts (term-parts p)))
-    (case (term-tag p)
-      ((constant-pat)
-       (let ((value (car parts)))
-         (answer k (squeam=? subject value))))
-      ((any-pat)
-       (answer k #t))
-      ((variable-pat)
-       (let ((name (car parts)))
-         (env-resolve! r name subject k)))
-      ((list-pat)
-       (let ((p-args (car parts)))
-         (if (or (and (pair? p-args) (pair? subject)
-                      (= (length p-args) (length subject))) ;TODO move this into ev-match-all
-                 (and (null? p-args) (null? subject)))
-             (ev-match-all subject p-args r k)
-             (answer k #f))))
-      ((term-pat)
-       (let ((tag (car parts)) (p-args (cadr parts)))
-         (if (not (and (term? subject)
-                       (squeam=? (term-tag subject) tag)))
-             (answer k #f)
-             (ev-match-all (term-parts subject) p-args r k))))
-      ((and-pat)
-       (let ((p1 (car parts)) (p2 (cadr parts)))
-         (ev-pat subject p1 r
-                 (cont<- ev-and-pat-cont k r subject p2))))
-      ((view-pat)
-       (let ((e (car parts)) (p (cadr parts)))
-         (ev-exp e r
-                 (cont<- ev-view-call-cont k r subject p))))
-      (else
-       (error 'ev-pat "Bad pattern type" p)))))
+  ((vector-ref methods/ev-pat (pack-tag p))
+   subject p r k))
+
+(define methods/ev-pat
+  (vector
+   (lambda (subject p r k)              ;p-constant
+     (unpack p (value)
+       (answer k (squeam=? subject value))))
+   (lambda (subject p r k)              ;p-any
+     (answer k #t))
+   (lambda (subject p r k)              ;p-variable
+     (unpack p (name)
+       (env-resolve! r name subject k)))
+   (lambda (subject p r k)              ;p-term
+     (unpack p (tag args)
+       (if (not (and (term? subject)
+                     (squeam=? (term-tag subject) tag)))
+           (answer k #f)
+           (ev-match-all (term-parts subject) args r k))))
+   (lambda (subject p r k)              ;p-list
+     (unpack p (args)
+       (if (or (and (pair? args) (pair? subject)
+                    (= (length args) (length subject))) ;TODO move this into ev-match-all
+               (and (null? args) (null? subject)))      ;TODO answer right away here
+           (ev-match-all subject args r k)
+           (answer k #f))))
+   (lambda (subject p r k)              ;p-and
+     (unpack p (p1 p2)
+       (ev-pat subject p1 r
+               (cont<- ev-and-pat-cont k r subject p2))))
+   (lambda (subject p r k)              ;p-view
+     (unpack p (e p1)
+       (ev-exp e r
+               (cont<- ev-view-call-cont k r subject p1))))))
 
 (define (ev-match-all subjects ps r k)
   (cond ((null? ps)
@@ -831,8 +899,6 @@
 
 
 ;; Primitive types
-
-(define primitive-env '())
 
 (define (get-script name)
   (script<- name (get-prim name) primitive-env))

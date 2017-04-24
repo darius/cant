@@ -24,7 +24,7 @@
               (matching rest))))))))
 
 (to (eval e r)
-  (match e
+  (match e.term
     ({constant value}
      value)
     ({variable name}
@@ -51,7 +51,7 @@
        (eval e1 r)))))
 
 (to (eval-match subject p r)
-  (match p
+  (match p.term
     ({any-pat}
      #yes)
     ({variable-pat name}
