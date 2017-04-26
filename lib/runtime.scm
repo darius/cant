@@ -101,7 +101,7 @@
    (and (claim? a)
         (case ((= me a) 0)
               (me       1)
-              (_       -1))))
+              (else    -1))))
   )
 
 (make-trait procedure-primitive me
@@ -125,7 +125,7 @@
   ({.xor b}       (__bit-xor me b))
   ;; XXX sketchy support for 32-bit word ops:
   ({.u+ a}        (__u+ me a))
-  ({.u/ a}        (__u/ me a))
+  ({.u- a}        (__u- me a))
   ({.u>> a}       (__u>> me a))
   ({.u<< a}       (__u<< me a))
   ({.s+ a}        (__s+ me a))
@@ -485,7 +485,7 @@
   ({.first}
    (let `(,pat-r ,body ,rest-clauses ,object ,script ,datum ,message) (__cont-data me))
    `((^ ,(__unexp (body 1)))
-     ,@(each __unclause clauses)))
+     ,@(each __unclause rest-clauses)))
   (message
    (__cont-trait me message)))
 
@@ -733,3 +733,435 @@
        (for each! ((`(,k ,v) a-list))
          (m .set! k v))
        m))))
+
+
+;; stdlib
+
+(to (surely ok? @arguments)
+  (unless ok?
+    (call error (if arguments.empty? '("Assertion failed") arguments))))
+
+(to (not= x y)
+  (not (= x y)))
+
+(make +
+  (`() 0)
+  (`(,a) a)
+  (`(,a ,b) (a .+ b))
+  (`(,a ,b ,@arguments) (foldl '.+ (a .+ b) arguments)))
+
+(make *
+  (`() 1)
+  (`(,a) a)
+  (`(,a ,b) (a .* b))
+  (`(,a ,b ,@arguments) (foldl '.* (a .* b) arguments)))
+
+(make -
+  (`() (error "Bad arity"))
+  (`(,a) (0 .- a))
+  (`(,a ,b) (a .- b))
+  (`(,a ,b ,@arguments) (foldl '.- (a .- b) arguments)))
+
+(make-trait transitive-comparison compare?
+  (`(,x ,@xs)
+   (begin comparing ((x0 x) (xs xs))
+     (match xs
+       (`() #yes)
+       (`(,x1 ,@rest) (and (compare? x0 x1)
+                           (comparing x1 rest)))))))
+
+(make <   {extending transitive-comparison} (`(,a ,b)      (= (compare a b) -1)))
+(make <=  {extending transitive-comparison} (`(,a ,b) (not (= (compare a b)  1))))
+(make <=> {extending transitive-comparison} (`(,a ,b)      (= (compare a b)  0))) ; XXX better name?
+(make >=  {extending transitive-comparison} (`(,a ,b) (not (= (compare a b) -1))))
+(make >   {extending transitive-comparison} (`(,a ,b)      (= (compare a b)  1)))
+
+(to (compare a b)
+  (let result (a .compare b))
+  (if (comparison? result) result (error "Incomparable" a b)))
+
+(to (comparison? x)
+  (match x
+    (-1 #yes)
+    ( 0 #yes)
+    (+1 #yes)
+    (_  #no)))
+
+;; XXX float contagion
+(make min
+  (`(,a) a)
+  (`(,a ,b) (if (< a b) a b))
+  (`(,a ,b ,@rest) (call min `(,(min a b) ,@rest))))
+(make max
+  (`(,a) a)
+  (`(,a ,b) (if (< a b) b a))
+  (`(,a ,b ,@rest) (call max `(,(max a b) ,@rest))))
+
+(to (arg-min xs key) (foldr1 (given (x y) (if (< (key x) (key y)) x y))
+                             xs))
+(to (arg-max xs key) (foldr1 (given (x y) (if (> (key x) (key y)) x y))
+                             xs))
+
+
+;;XXX so should some of these be in list-trait?
+
+(to (reverse xs)
+  (for foldl ((ys '()) (x xs))
+    (cons x ys)))
+
+(to (foldl f z xs)
+  (if xs.empty?
+      z
+      (foldl f (f z xs.first) xs.rest)))
+
+(to (foldr f xs z)
+  (if xs.empty?
+      z
+      (f xs.first (foldr f xs.rest z))))
+
+(to (foldr1 f xs)
+  (let tail xs.rest)
+  (if tail.empty?
+      xs.first
+      (f xs.first (foldr1 f tail))))
+
+(to (each f xs)
+  (for foldr ((x xs) (ys '()))
+    (cons (f x) ys)))
+
+(to (gather f xs)
+  (for foldr ((x xs) (ys '()))
+    (chain (f x) ys)))
+
+(to (those ok? xs)
+  (for foldr ((x xs) (ys '()))
+    (if (ok? x) (cons x ys) ys)))
+
+(to (filter f xs)             ;TODO is this worth defining? good name?
+  (those identity (each f xs)))
+
+(to (remove xs unwanted) ;TODO different arg order? N.B. almost unused
+  (for those ((x xs))
+    (not= x unwanted)))
+
+(to (list<- @arguments)
+  arguments)
+
+(make chain
+  (`() '())
+  (`(,xs) xs)
+  (`(,xs ,ys) (xs .chain ys))
+  (`(,@arguments) (foldr1 '.chain arguments)))
+
+(to (some ok? xs)
+  (and (not xs.empty?)
+       (or (ok? xs.first)
+           (some ok? xs.rest))))
+
+(to (every ok? xs)
+  (or xs.empty?
+      (and (ok? xs.first)
+           (every ok? xs.rest))))
+
+(to (each! f xs)
+  (unless xs.empty?
+    (f xs.first)
+    (each! f xs.rest)))
+
+(to (as-list seq)            ;XXX naming convention for coercions?
+  (if seq.empty?
+      '()
+      (cons seq.first (as-list seq.rest))))
+
+(to (zip xs ys)
+  (to (mismatch)
+    (error "zip: mismatched arguments" xs ys))
+  (begin zipping ((xs xs) (ys ys))
+    (case (xs.empty? (if ys.empty? '() (mismatch)))
+          (ys.empty? (mismatch))
+          (else `((,xs.first ,ys.first)
+                  ,@(zipping xs.rest ys.rest))))))
+
+(to (zip-with fn xs ys)
+  (for each ((`(,x ,y) (zip xs ys)))
+    (fn x y)))
+
+;; TODO: name it (zip @rows) instead, like Python?
+(to (transpose rows)
+  (if (every '.empty? rows)   ; and make it (some '.empty? rows)?
+      '()
+      `(,(each '.first rows)
+        ,@(transpose (each '.rest rows)))))
+
+(to (intercalate between elements)      ;TODO unify with .join
+  (if elements.empty?
+      elements
+      `(,elements.first
+        ,@(for gather ((x elements.rest)) ;TODO more efficient
+            `(,between ,x)))))
+
+(to (cons/lazy x thunk)
+  (make lazy-list {extending list-trait}
+    ({.empty?} #no)
+    ({.first}  x)
+    ({.rest}   (thunk))
+    ;; XXX override parts of list-trait that need it for laziness
+    ))
+
+(to (those/lazy ok? xs)
+  (if (ok? xs.first)
+      (cons/lazy xs.first (given () (those/lazy ok? xs.rest)))
+      (those/lazy ok? xs.rest)))
+
+(to (each/lazy f xs)
+  (for foldr/lazy ((x xs)
+                   (rest-thunk (given () '())))
+    (cons/lazy (f x) rest-thunk)))
+
+(to (gather/lazy f xs)
+  (for foldr/lazy ((x xs)
+                   (rest-thunk (given () '())))
+    (chain/lazy (f x) rest-thunk)))
+
+(to (chain/lazy xs ys-thunk)
+  (foldr/lazy cons/lazy xs ys-thunk))
+
+(to (foldr/lazy f xs z-thunk)
+  (if xs.empty?
+      (z-thunk)
+      (f xs.first
+         (given () (foldr/lazy f xs.rest z-thunk)))))
+
+(to (identity x)
+  x)
+
+(to ((compose f g) @arguments)
+  (f (call g arguments)))
+
+(make range<-
+  (`(,limit)
+   (range<- 0 limit))
+  (`(,first ,limit)
+   (if (<= limit first)
+       '()
+       (make range {extending list-trait}
+         ({.empty?} #no)
+         ({.first}  first)
+         ({.rest}   (range<- (+ first 1) limit))
+         ({.count}  (- limit first))
+         (`(,i)
+          (if (not (integer? i))
+              (error "Key error" range i)
+              (do (let j (+ first i))
+                  (if (and (<= first j) (< j limit))
+                      j
+                      (error "Out of range" range i)))))
+         ({.maps? i}
+          (and (integer? i)
+               (do (let j (+ first i))
+                   (and (<= first j) (< j limit)))))
+         )))
+  (`(,first ,limit ,stride)
+   (unless (< 0 stride)
+     (error "TODO downward range" stride))
+   (if (<= limit first)
+       '()
+       (make range {extending list-trait}
+         ({.empty?} #no)
+         ({.first}  first)
+         ({.rest}   (range<- (+ first stride) limit stride))
+         (`(,i)
+          (error "TODO" range `(,i)))
+         ({.maps? i}
+          (error "TODO" range {.maps? i}))
+         ))))
+
+(make enumerate
+  (`(,xs)
+   (enumerate xs 0))
+  (`(,xs ,i)
+   (if xs.empty?
+       '()
+       (make enumeration {extending list-trait}
+         ({.empty?} #no)
+         ({.first}  `(,i ,xs.first))
+         ({.rest}   (enumerate xs.rest (+ i 1)))))))
+
+(to (sum ns)
+  (foldl + 0 ns))
+
+;; Split xs at its first element where split-point? is true.
+;; That is, return `(,head ,tail), where (chain head tail) = xs,
+;; and either tail is () or (split-point? tail.first) is true
+;; at the first possible place.
+(to (split-on split-point? xs)
+  (begin scanning ((r-head '()) (xs xs))
+    (if (or xs.empty? (split-point? xs.first))
+        `(,(reverse r-head) ,xs)
+        (scanning `(,xs.first ,@r-head) xs.rest))))
+
+(to (array<- @elements)
+  (array<-list elements))
+
+(to (string<- @chars)
+  (string<-list chars))
+
+(to (method<- actor cue)
+  (given (@arguments)
+    (call actor (term<- cue arguments))))
+
+(to (write x)                      ;TODO rename
+  (out .print x))
+
+(to (print x)                      ;TODO rename
+  (write x)
+  (newline))
+
+(to (with-output-string take-sink)             ;TODO rename
+  (let sink (string-sink<-))
+  (take-sink sink)
+  sink.output-string)
+
+
+;; (Roughly) undo parse-exp and parse-pat.
+;; Really we should track source-position info instead, and report that.
+;; This is just to make debugging less painful till then.
+
+(let (list<- unparse-exp unparse-pat unparse-clause)
+  (hide
+
+    (to (unparse-exp e)
+      (match e.term
+        ({constant c}
+         (if (self-evaluating? c) c `',c))
+        ({variable v}
+         v)
+        ({make name stamp trait clauses}
+         (unparse-make name stamp trait clauses))
+        ({do e1 e2}
+         (unparse-do e1 e2))
+        ({let p e}
+         `(let ,(unparse-pat p) ,(unparse-exp e)))
+        ({call e1 e2}
+         (match e2.term
+           ({list operands}
+            `(,(unparse-exp e1) ,@(each unparse-exp operands)))
+           ({term (? cue? cue) operands}
+            `(,(unparse-exp e1) ,cue ,@(each unparse-exp operands)))
+           (_
+            `(call ,(unparse-exp e1) ,(unparse-exp e2)))))
+        ({term tag es}
+         (term<- tag (each unparse-exp es)))
+        ({list es}
+         `(list<- ,@(each unparse-exp es))))) ;XXX unhygienic
+
+    (to (unparse-do e1 e2)
+      (let es
+        (begin unparsing ((tail e2))
+          (match tail.term
+            ({do e3 e4} (cons e3 (unparsing e4)))
+            (_ `(,tail)))))
+      `(do ,@(each unparse-exp (cons e1 es))))
+
+    (to (unparse-make name stamp trait-term clauses)
+      (surely (= {constant #no} stamp.term)) ;XXX
+      `(make ,name
+         ,@(match trait-term.term
+             ({constant #no} '())
+             (trait-e `({extending ,(unparse-exp trait-e)})))
+         ,@(each unparse-clause clauses)))
+
+    (to (unparse-clause `(,p ,p-vars ,e-vars ,e))
+      `(,(unparse-pat p) ,(unparse-exp e)))
+
+    (to (self-evaluating? x)
+      (or (claim? x)
+          (number? x)
+          (char? x)
+          (string? x)))
+
+    (to (unparse-pat pat)
+      ;; XXX these need updating to the newer pattern syntax
+      (match pat.term
+        ({constant-pat c}
+         (if (self-evaluating? c) c `',c))
+        ({any-pat}
+         '_)
+        ({variable-pat v}
+         v)
+        ({term-pat tag ps}
+         (term<- tag (each unparse-pat ps)))
+        ({list-pat ps}
+         (each unparse-pat ps))
+        ({and-pat p1 p2}
+         `(<and-pat> ,(unparse-pat p1) ,(unparse-pat p2)))
+        ({view-pat e p}
+         `(<view-pat> ,(unparse-exp e) ,(unparse-pat p)))))
+
+    (list<- unparse-exp unparse-pat unparse-clause)))
+
+
+;; printf-ish thing. TODO do something completely different?
+(let format
+  (hide
+
+    (make format
+      (`(,format-string ,@arguments)
+       (scanning out format-string arguments))
+      ({.to sink format-string @arguments}
+       (scanning sink format-string arguments)))
+
+    ;;TODO actually design the format language
+
+    (to (scanning sink s args)
+      (if s.empty? 
+          (unless args.empty?
+            (error "Leftover arguments" args))
+          (match s.first
+            (#\~
+             (let ss s.rest)
+             (if (ss .starts-with? "-")
+                 (parse sink ss.rest -1 #no args)
+                 (parse sink ss #no #no args)))
+            (ch
+             (sink .display ch)
+             (scanning sink s.rest args)))))
+
+    (to (parse sink s sign width args)
+      (if (s .starts-with? "0")
+          (parsing sink s.rest #\0     sign width args)
+          (parsing sink s      #\space sign width args)))
+
+    (to (parsing sink s pad sign width args)
+      (when s.empty?
+        (error "Incomplete format")) ;TODO report the format-string
+      (match s.first
+        (#\w
+         (maybe-pad sink pad sign width {.print args.first})
+         (scanning sink s.rest args.rest))
+        (#\d
+         (maybe-pad sink pad sign width {.display args.first})
+         (scanning sink s.rest args.rest))
+        (#\~
+         (sink .display "~")
+         (scanning sink s.rest args))
+        ((? '.digit? ch)
+         (let digit (- ch.code 48))
+         (parsing sink s.rest pad sign      ;TODO testme with a multidigit width
+                  (+ (if width (* 10 width) 0)
+                     digit)
+                  args))
+        (_
+         (error "Bad format string" s))))
+
+    (to (maybe-pad sink pad sign width message)
+      (case (width
+             (sink .display ((with-output-string (given (o) (call o message)))
+                             .justify (if sign (* sign width) width)
+                                      pad)))
+            (sign
+             (error "Missing width in format string"))
+            (else
+             (call sink message))))
+
+    format))

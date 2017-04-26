@@ -4,15 +4,16 @@
 (load "terp/macros.scm")
 (load "terp/read.scm")
 (load "terp/parse.scm")
+(load "terp/elaborate.scm")
 (load "terp/terp.scm")
 
 (run-load "lib/stdlib.scm")
 (squeam-interpret
  '(do
     ;; unparse-foo are used by runtime for tracebacks:
-    (import (use "lib/squeam-ast") unparse-exp unparse-pat unparse-clause)
+;    (import (use "lib/squeam-ast") unparse-exp unparse-pat unparse-clause)
     (use "test/smoke-test")
-    (import (use "lib/format")     format)
+;    (import (use "lib/format")     format)
     (import (use "lib/flexarray")  flexarray<-)
     (import (use "lib/sort")       sort)
     (import (use "lib/hashset")    set<-)
