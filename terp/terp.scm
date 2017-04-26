@@ -11,6 +11,20 @@
 (define (expression<- vec) (object<- expression-script vec))
 (define (pattern<- vec)    (object<- pattern-script vec))
 
+(define (__expr thing)
+  (assert (and (vector? thing)
+               (< 0 (vector-length thing))
+               (number? (vector-ref thing 0)))
+          "Must be an internal expression" thing)
+  (expression<- thing))
+
+(define (__patt thing)
+  (assert (and (vector? thing)
+               (< 0 (vector-length thing))
+               (number? (vector-ref thing 0)))
+          "Must be an internal pattern" thing)
+  (pattern<- thing))
+
 (define (parse-exp e . opt-context)
   (expression<- (parse-e e (optional-context 'parse-exp opt-context))))
 
@@ -612,6 +626,8 @@
     (__u<< ,(lambda (a b) (logand mask32 (ash a b))))
     (__u>> ,(lambda (a b) (logand mask32 (ash a (- b)))))
 
+    (__expr     ,__expr)
+    (__patt     ,__patt)
     (__ast-part ,__ast-part)
     (__ast-tag  ,__ast-tag)
     (__ast-e    ,__ast-e)

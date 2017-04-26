@@ -458,6 +458,13 @@
 
 ;; Continuations
 
+(to (__unexp e)         (unparse-exp (__expr e)))
+(to (__unpat p)         (unparse-pat (__patt p)))
+(to (__unclause clause) (unparse-clause (__clause clause)))
+
+(to (__clause `(,p ,pv ,ev ,e))
+  `(,(__patt p) ,pv ,ev ,(__expr e)))
+
 (make-trait __halt-cont me
   ({.empty?}        #yes)
   ({.first}         (error "No more frames" me))
@@ -477,15 +484,16 @@
 (make-trait __match-clause-cont me
   ({.first}
    (let `(,pat-r ,body ,rest-clauses ,object ,script ,datum ,message) (__cont-data me))
-   `((^ ,body) ,@(each unparse-clause rest-clauses)))
+   `((^ ,(__unexp (body 1)))
+     ,@(each __unclause clauses)))
   (message
    (__cont-trait me message)))
 
 (make-trait __ev-trait-cont me
   ({.first}
    (let `(,r ,name ,trait ,clauses) (__cont-data me))
-   `(make ,name ,trait ^
-      ,@(each unparse-clause clauses)))
+   `(make ,name ,(__unexp trait) ^
+      ,@(each __unclause clauses)))
   (message
    (__cont-trait me message)))
 
@@ -493,7 +501,7 @@
   ({.first}
    (let `(,name ,stamp-val ,r ,clauses) (__cont-data me))
    `(make ,name ^ #no   ; XXX as above
-      ,@(each unparse-clause clauses)))
+      ,@(each __unclause clauses)))
   ({.env}
    (let `(,name ,stamp-val ,r ,clauses) (__cont-data me))
    r)
@@ -503,14 +511,14 @@
 (make-trait __ev-do-rest-cont me
   ({.first}
    (let `(,r ,e2) (__cont-data me))
-   (unparse-exp e2))
+   (__unexp e2))
   (message
    (__cont-trait me message)))
 
 (make-trait __ev-let-match-cont me
   ({.first}
    (let `(,r ,p) (__cont-data me))
-   `(<match> ,(unparse-pat p)))          ;XXX lousy presentation
+   `(<match> ,(__unpat p)))          ;XXX lousy presentation
   (message
    (__cont-trait me message)))
 
@@ -526,7 +534,7 @@
 (make-trait __ev-arg-cont me
   ({.first}
    (let `(,r ,e2) (__cont-data me))
-   `(^ ,(unparse-exp e2)))
+   `(^ ,(__unexp e2)))
   (message
    (__cont-trait me message)))
 
@@ -543,7 +551,7 @@
   ({.first}
    (let `(,es ,r ,vals) (__cont-data me))
    (to (quotify v) `',v)
-   `(,@(each quotify (reverse vals)) ^ ,@(each unparse-exp es)))
+   `(,@(each quotify (reverse vals)) ^ ,@(each __unexp es)))
   ({.env}
    (let `(,es ,r ,vals) (__cont-data me))
    r)
@@ -562,28 +570,28 @@
 (make-trait __ev-and-pat-cont me
   ({.first}
    (let `(,r ,subject ,p2) (__cont-data me))
-   `(<and-match?> ,(unparse-pat p2)))
+   `(<and-match?> ,(__unpat p2)))
   (message
    (__cont-trait me message)))
 
 (make-trait __ev-view-call-cont me
   ({.first}
    (let `(,r ,subject ,p) (__cont-data me))
-   `(? _ ^ ,(unparse-pat p)))
+   `(? _ ^ ,(__unpat p)))
   (message
    (__cont-trait me message)))
 
 (make-trait __ev-view-match-cont me
   ({.first}
    (let `(,r ,p) (__cont-data me))
-   (unparse-pat p))
+   (__unpat p))
   (message
    (__cont-trait me message)))
 
 (make-trait __ev-match-rest-cont me
   ({.first}
    (let `(,r ,subject ,ps) (__cont-data me))
-   `(<all-match?> ,@(each unparse-pat ps)))
+   `(<all-match?> ,@(each __unpat ps)))
   (message
    (__cont-trait me message)))
 

@@ -2,22 +2,8 @@
 ;; Really we should track source-position info instead, and report that.
 ;; This is just to make debugging less painful till then.
 
-;;XXX duplicate code: ast-expression.scm
-(to (wrap-exp e)
-  (surely (and (array? e) (< 0 e.count)))
-  (match (e 0)
-    (0 {constant (e 1)})
-    (1 {variable (e 1)})
-    (2 {term (e 1) (e 2)})
-    (3 {list (e 1)})
-    (4 {make (e 1) (e 2) (e 3) (e 4)})
-    (5 {do (e 1) (e 2)})
-    (6 {let (e 1) (e 2)})
-    (7 {call (e 1) (e 2)})
-    (_ (error "Ill-formed expression" e))))
-
 (to (unparse-exp e)
-  (match (wrap-exp e)
+  (match e.term
     ({constant c}
      (if (self-evaluating? c) c `',c))
     ({variable v}
@@ -29,7 +15,7 @@
     ({let p e}
      `(let ,(unparse-pat p) ,(unparse-exp e)))
     ({call e1 e2}
-     (match (wrap-exp e2)
+     (match e2.term
        ({list operands}
         `(,(unparse-exp e1) ,@(each unparse-exp operands)))
        ({term (? cue? cue) operands}
@@ -44,15 +30,15 @@
 (to (unparse-do e1 e2)
   (let es
     (begin unparsing ((tail e2))
-      (match (wrap-exp tail)
+      (match tail.term
         ({do e3 e4} (cons e3 (unparsing e4)))
         (_ `(,tail)))))
   `(do ,@(each unparse-exp (cons e1 es))))
 
 (to (unparse-make name stamp trait-term clauses)
-  (surely (= {constant #no} (wrap-exp stamp))) ;XXX
+  (surely (= {constant #no} stamp.term)) ;XXX
   `(make ,name
-     ,@(match (wrap-exp trait-term)
+     ,@(match trait-term.term
          ({constant #no} '())
          (trait-e `({extending ,(unparse-exp trait-e)})))
      ,@(each unparse-clause clauses)))
@@ -66,21 +52,9 @@
       (char? x)
       (string? x)))
 
-(to (wrap-pat p)
-  (surely (and (array? p) (< 0 p.count)))
-  (match (p 0)
-    (0 {constant-pat (p 1)})
-    (1 {any-pat})
-    (2 {variable-pat (p 1)})
-    (3 {term-pat (p 1) (p 2)})
-    (4 {list-pat (p 1)})
-    (5 {and-pat (p 1) (p 2)})
-    (6 {view-pat (p 1) (p 2)})
-    (_ (error "Ill-formed pattern" p))))
-
 (to (unparse-pat pat)
   ;; XXX these need updating to the newer pattern syntax
-  (match (wrap-pat pat)
+  (match pat.term
     ({constant-pat c}
      (if (self-evaluating? c) c `',c))
     ({any-pat}
