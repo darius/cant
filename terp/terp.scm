@@ -746,7 +746,7 @@
   (if (null? es)
       (answer k (reverse vals))
       (ev-exp (car es) r
-              (cont<- ev-rest-args-cont k (cdr es) r vals))))
+              (cont<- ev-rest-args-cont k r (cdr es) vals))))
 
 (define (ev-pat subject p r k)
 ;  (dbg `(match)) ; ,subject ,p))
@@ -847,7 +847,7 @@
 
 (define (ev-rest-args-cont val k0)
 ;     (dbg `(ev-rest-args-cont))
-  (unpack k0 (k es r vals)
+  (unpack k0 (k r es vals)
     (ev-args es r (cons val vals) k)))
 
 (define (ev-tag-cont vals k0)

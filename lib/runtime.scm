@@ -538,12 +538,9 @@
 
 (make-trait __ev-rest-args-cont me
   ({.first}
-   (let `(,es ,r ,vals) (__cont-data me))
+   (let `(,r ,es ,vals) (__cont-data me))
    (to (quotify v) `',v)
    `(,@(each quotify (reverse vals)) ^ ,@(each __unexp es)))
-  ({.env}
-   (let `(,es ,r ,vals) (__cont-data me))
-   r)
   (message
    (__cont-trait me message)))
 
