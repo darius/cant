@@ -489,22 +489,11 @@
   (message
    (__cont-trait me message)))
 
-(make-trait __ev-trait-cont me
-  ({.first}
-   (let `(,r ,name ,trait ,clauses) (__cont-data me))
-   `(make ,name ,(__unexp trait) ^
-      ,@(each __unclause clauses)))
-  (message
-   (__cont-trait me message)))
-
 (make-trait __ev-make-cont me
   ({.first}
-   (let `(,name ,stamp-val ,r ,clauses) (__cont-data me))
-   `(make ,name ^ #no   ; XXX as above
+   (let `(,r ,name ,clauses) (__cont-data me))
+   `(make ,name ^
       ,@(each __unclause clauses)))
-  ({.env}
-   (let `(,name ,stamp-val ,r ,clauses) (__cont-data me))
-   r)
   (message
    (__cont-trait me message)))
 

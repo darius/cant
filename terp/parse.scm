@@ -231,11 +231,11 @@
         (((: decl term?) . clauses)
          (assert (eq? (term-tag decl) 'extending) "bad syntax" decl)
          (assert (= (length (term-parts decl)) 1) "bad syntax" decl)
-         (pack<- e-make qualified-name none-exp
+         (pack<- e-make qualified-name
                  (parse-e (car (term-parts decl)) ctx)
                  (parse-clauses clauses ctx)))
         (clauses
-         (pack<- e-make qualified-name none-exp
+         (pack<- e-make qualified-name
                  none-exp
                  (parse-clauses clauses ctx)))))))
 

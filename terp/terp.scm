@@ -36,8 +36,8 @@
     (let ((e (parse-e form `(,module-name))))
       ;; This stands in for calling `evaluate`, which we don't have yet:
       (assert (equal? (pack-tag e) e-make) "Script must be `make`" e)
-      (unpack e (name stamp trait clauses)
-        (assert (eq? stamp none-exp) "simple script" e)
+      (unpack e (name trait clauses)
+;;        (assert (eq? stamp none-exp) "simple script" e)
         (assert (eq? trait none-exp) "simple script" e)
         (let ((prim (object<- (script<- name #f clauses)
                               primitive-env)))
@@ -726,13 +726,12 @@
      (unpack e (es)
        (ev-args es r '() k)))
    (lambda (e r k)                          ;e-make
-     (unpack e (name stamp trait clauses)
-       (if (and (eq? trait none-exp) ; Just fast-path tuning; this if is not logically necessary.
-                (eq? stamp none-exp))
+     (unpack e (name trait clauses)
+       (if (eq? trait none-exp) ; Just fast-path tuning; this IF is not logically necessary.
            (answer k (object<- (script<- name #f clauses)
                                r))
-           (ev-exp stamp r
-                   (cont<- ev-trait-cont-script k r name trait clauses)))))
+           (ev-exp trait r
+                   (cont<- ev-make-cont-script k r name clauses)))))
    (lambda (e r k)                          ;e-do
      (unpack e (e1 e2)
        (ev-exp e1 r (cont<- ev-do-rest-cont k r e2))))
@@ -811,16 +810,10 @@
         (ev-exp (cadr body) (env-extend-promises pat-r (car body)) k)
         (matching rest-clauses object script datum message k))))
 
-(define (ev-trait-cont-script stamp-val k0)
-;     (dbg `(ev-trait-cont))
-  (unpack k0 (k r name trait clauses)
-    (ev-exp trait r
-            (cont<- ev-make-cont-script k name stamp-val r clauses))))
-
 (define (ev-make-cont-script trait-val k0)
 ;     (dbg `(ev-make-cont))
-  (unpack k0 (k name stamp-val r clauses)
-    (answer k (object<- (script<- name trait-val clauses) ;XXX use stamp-val
+  (unpack k0 (k r name clauses)
+    (answer k (object<- (script<- name trait-val clauses)
                         r))))
 
 (define (ev-do-rest-cont _ k0)
@@ -894,7 +887,6 @@
           (cond
            ((eq? f halt-cont-fn)         '__halt-cont)
            ((eq? f match-clause-cont)    '__match-clause-cont)
-           ((eq? f ev-trait-cont-script) '__ev-trait-cont)
            ((eq? f ev-make-cont-script)  '__ev-make-cont)
            ((eq? f ev-do-rest-cont)      '__ev-do-rest-cont)
            ((eq? f ev-let-match-cont)    '__ev-let-match-cont)
