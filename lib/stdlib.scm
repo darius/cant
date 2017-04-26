@@ -1,3 +1,113 @@
+;; XXX float contagion
+(make min
+  (`(,a) a)
+  (`(,a ,b) (if (< a b) a b))
+  (`(,a ,b ,@rest) (call min `(,(min a b) ,@rest))))
+(make max
+  (`(,a) a)
+  (`(,a ,b) (if (< a b) b a))
+  (`(,a ,b ,@rest) (call max `(,(max a b) ,@rest))))
+
+(to (arg-min xs key) (foldr1 (given (x y) (if (< (key x) (key y)) x y))
+                             xs))
+(to (arg-max xs key) (foldr1 (given (x y) (if (> (key x) (key y)) x y))
+                             xs))
+
+(to (remove xs unwanted) ;TODO different arg order? N.B. almost unused
+  (for those ((x xs))
+    (not= x unwanted)))
+
+(to (as-list seq)            ;XXX naming convention for coercions?
+  (if seq.empty?
+      '()
+      (cons seq.first (as-list seq.rest))))
+
+(to (zip xs ys)
+  (to (mismatch)
+    (error "zip: mismatched arguments" xs ys))
+  (begin zipping ((xs xs) (ys ys))
+    (case (xs.empty? (if ys.empty? '() (mismatch)))
+          (ys.empty? (mismatch))
+          (else `((,xs.first ,ys.first)
+                  ,@(zipping xs.rest ys.rest))))))
+
+(to (zip-with fn xs ys)
+  (for each ((`(,x ,y) (zip xs ys)))
+    (fn x y)))
+
+;; TODO: name it (zip @rows) instead, like Python?
+(to (transpose rows)
+  (if (every '.empty? rows)   ; and make it (some '.empty? rows)?
+      '()
+      `(,(each '.first rows)
+        ,@(transpose (each '.rest rows)))))
+
+(to (intercalate between elements)      ;TODO unify with .join
+  (if elements.empty?
+      elements
+      `(,elements.first
+        ,@(for gather ((x elements.rest)) ;TODO more efficient
+            `(,between ,x)))))
+
+(to (cons/lazy x thunk)
+  (make lazy-list {extending list-trait}
+    ({.empty?} #no)
+    ({.first}  x)
+    ({.rest}   (thunk))
+    ;; XXX override parts of list-trait that need it for laziness
+    ))
+
+(to (those/lazy ok? xs)
+  (if (ok? xs.first)
+      (cons/lazy xs.first (given () (those/lazy ok? xs.rest)))
+      (those/lazy ok? xs.rest)))
+
+(to (each/lazy f xs)
+  (for foldr/lazy ((x xs)
+                   (rest-thunk (given () '())))
+    (cons/lazy (f x) rest-thunk)))
+
+(to (gather/lazy f xs)
+  (for foldr/lazy ((x xs)
+                   (rest-thunk (given () '())))
+    (chain/lazy (f x) rest-thunk)))
+
+(to (chain/lazy xs ys-thunk)
+  (foldr/lazy cons/lazy xs ys-thunk))
+
+(to (foldr/lazy f xs z-thunk)
+  (if xs.empty?
+      (z-thunk)
+      (f xs.first
+         (given () (foldr/lazy f xs.rest z-thunk)))))
+
+(to ((compose f g) @arguments)
+  (f (call g arguments)))
+
+(to (sum ns)
+  (foldl + 0 ns))
+
+;; Split xs at its first element where split-point? is true.
+;; That is, return `(,head ,tail), where (chain head tail) = xs,
+;; and either tail is () or (split-point? tail.first) is true
+;; at the first possible place.
+(to (split-on split-point? xs)
+  (begin scanning ((r-head '()) (xs xs))
+    (if (or xs.empty? (split-point? xs.first))
+        `(,(reverse r-head) ,xs)
+        (scanning `(,xs.first ,@r-head) xs.rest))))
+
+(to (method<- actor cue)
+  (given (@arguments)
+    (call actor (term<- cue arguments))))
+
+(to (write x)                      ;TODO rename
+  (out .print x))
+
+(to (print x)                      ;TODO rename
+  (write x)
+  (newline))
+
 (let the-signal-handler (box<- panic))
 (let the-last-error (box<- #no))
 
