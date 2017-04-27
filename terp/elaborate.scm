@@ -13,9 +13,10 @@
      e)
    (lambda (e s)                        ;e-variable
      (unpack e (name)
-       (unless (env-defined? s name)
-         (printf "Warning: unbound variable: ~s\n" name)) ;TODO don't repeat the same warning
-       e))
+       (let ((addr (scope-find s name)))
+         (unless addr
+           (printf "Warning: unbound variable: ~s\n" name)) ;TODO don't repeat the same warning
+         e)))
    (lambda (e s)                        ;e-term
      (unpack e (tag args)
        (pack<- e-term tag (elaborate-es args s))))
@@ -43,16 +44,13 @@
 (define (elaborate-clause clause s)
   (mcase clause
     ((p pvs evs e)
-     (check-for-duplicates pvs)
-     (check-for-duplicates evs)
-     (let ((s+p (env-extend s pvs (obliviate pvs #t))))
-       `(,(elaborate-p p s+p)
-         ,pvs
-         ,evs
-         ,(elaborate-e e (env-extend s+p evs (obliviate evs #t))))))))
-
-(define (obliviate vs value)            ;c'mon, better name?
-  (map (lambda (_) value) vs))
+     (let ((vs (append pvs evs)))
+       (check-for-duplicates vs)
+       (let ((nest-s (scope-extend s vs)))
+         `(,(elaborate-p p nest-s)
+           ,pvs
+           ,evs
+           ,(elaborate-e e nest-s)))))))
 
 (define (check-for-duplicates vars)
   'ok)                                  ;TODO
@@ -86,3 +84,28 @@
      (unpack p (e1 p1)
        (pack<- p-view (elaborate-e e1 s)
                       (elaborate-p p1 s))))))
+
+(define-record-type scope (fields outer inner))
+(define (outer-scope<- vars)
+  (make-scope vars '()))
+
+(define (scope-find scope v)
+  (let walking ((f 0) (frames (scope-inner scope)))
+    (cond ((null? frames)
+           (cond ((frame-index (scope-outer scope) v)
+                  => (lambda (i) `(outer ,i)))
+                 ((env-defined? '() v) `(global ,v))
+                 (else #f)))
+          ((frame-index (car frames) v)
+           => (lambda (i) `(inner ,f ,i)))
+          (else (walking (+ f 1) (cdr frames))))))
+
+(define (frame-index vars v)
+  (let scanning ((i 0) (vars vars))
+    (cond ((null? vars) #f)
+          ((eq? (car vars) v) i)
+          (else (scanning (+ i 1) (cdr vars))))))
+
+(define (scope-extend scope vars)
+  (make-scope (scope-outer scope)
+              (cons vars (scope-inner scope))))

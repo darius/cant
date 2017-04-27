@@ -28,14 +28,17 @@
 (define (parse-exp e . opt-context)
   (let* ((parsed (parse-e e (optional-context 'parse-exp opt-context)))
          (vars (exp-vars-defined parsed))
-         (e (elaborate-e parsed (env-extend '() vars (obliviate vars #t)))))
+         (e (elaborate-e parsed (outer-scope<- vars))))
     (expression<- e)))
 
 (define (parse-pat p . opt-context)
   (let* ((parsed (parse-p p (optional-context 'parse-pat opt-context)))
          (vars (pat-vars-defined parsed))
-         (p (elaborate-p parsed (env-extend '() vars (obliviate vars #t)))))
+         (p (elaborate-p parsed (outer-scope<- vars))))
     (pattern<- p)))
+
+(define (obliviate vs value)            ;c'mon, better name?
+  (map (lambda (_) value) vs))
 
 (define (load-ast-script script-name module-name)
   (let ((form (car (snarf (string-append module-name ".scm") squeam-read))))
