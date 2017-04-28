@@ -26,16 +26,12 @@
   (pattern<- thing))
 
 (define (parse-exp e . opt-context)
-  (let* ((parsed (parse-e e (optional-context 'parse-exp opt-context)))
-         (vars (exp-vars-defined parsed))
-         (e (elaborate-e parsed (outer-scope<- vars))))
-    (expression<- e)))
+  (let* ((parsed (parse-e e (optional-context 'parse-exp opt-context))))
+    (expression<- parsed)))
 
 (define (parse-pat p . opt-context)
-  (let* ((parsed (parse-p p (optional-context 'parse-pat opt-context)))
-         (vars (pat-vars-defined parsed))
-         (p (elaborate-p parsed (outer-scope<- vars))))
-    (pattern<- p)))
+  (let ((parsed (parse-p p (optional-context 'parse-pat opt-context))))
+    (pattern<- parsed)))
 
 (define (obliviate vs value)            ;c'mon, better name?
   (map (lambda (_) value) vs))
@@ -711,7 +707,10 @@
 
 (define (evaluate-exp e r k)
   (if (and (object? e) (eq? (object-script e) expression-script))
-      (ev-exp (object-datum e) r k)
+      (let* ((parsed (object-datum e))
+             (vars (exp-vars-defined parsed))
+             (elaborated (elaborate-e parsed (outer-scope<- vars))))
+        (ev-exp elaborated r k))
       (signal k "evaluate: Not an expression" e)))
 
 (define (ev-exp e r k)
@@ -749,7 +748,13 @@
        (ev-exp e1 r (cont<- ev-let-match-cont k r p))))
    (lambda (e r k)                          ;e-call
      (unpack e (e1 e2)
-       (ev-exp e1 r (cont<- ev-arg-cont k r e2))))))
+       (ev-exp e1 r (cont<- ev-arg-cont k r e2))))
+   (lambda (e r k)                          ;e-global
+     (unpack e (var)
+        (cond ((assq var the-global-env)
+               => (lambda (pair) (answer k (cadr pair))))
+        (else (signal k "Unbound variable" v)))))
+   ))
 
 (define (ev-args es r vals k)
   (if (null? es)

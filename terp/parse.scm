@@ -13,6 +13,7 @@
 (define e-do       5)
 (define e-let      6)
 (define e-call     7)
+(define e-global   8)  ;; specialized from e-variable
 
 (define p-constant 0)
 (define p-any      1)

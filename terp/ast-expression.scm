@@ -23,5 +23,7 @@
              (__ast-clauses me 3)})
         (5 {do (__ast-e me 1) (__ast-e me 2)})
         (6 {let (__ast-p me 1) (__ast-e me 2)})
-        (7 {call (__ast-e me 1) (__ast-e me 2)})))
+        (7 {call (__ast-e me 1) (__ast-e me 2)})
+        (8 {variable (__ast-part me 1)})
+        ))
      (_ (miranda-trait me message)))))
