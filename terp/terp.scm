@@ -711,7 +711,7 @@
              (vars (exp-vars-defined parsed))
              (elaborated (elaborate-e parsed (outer-scope<- vars))))
         (ev-exp elaborated r k))
-      (signal k "evaluate: Not an expression" e)))
+      (evaluate-exp (parse-exp e) r k))) ;XXX need to supply a lexical env from `r`, so unbound-var warnings are accurate
 
 (define (ev-exp e r k)
 ;  (dbg `(ev-exp)) ; ,e))

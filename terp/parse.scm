@@ -76,6 +76,7 @@
         (pack<- e-call
                 (parse-e addressee ctx)
                 (pack<- e-list (parse-es operands ctx))))
+       (__ (error 'parse-exp "Bad syntax" e))
        ))))
 
 (define (parse-es es ctx)

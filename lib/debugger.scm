@@ -56,7 +56,7 @@
       ('value
        (let focus-env '())              ;XXX
        (let env `((*focus* ,focus) ,@focus-env))
-       (print (evaluate (parse-exp (read)) env))
+       (print (evaluate (read) env))
        (continue))
       (_
        (case ((eof? input) 'ok)
@@ -85,10 +85,10 @@
       (interacting frame callees))
 
     (to (read-eval)
-      (evaluate (parse-exp (read)) frame.env))
+      (evaluate (read) frame.env))
 
     (display "debug> ")
-    (let input (read))
+    (let input (read))  ; TODO read a line, then parse?
     (match (abbrevs .get input input)
       ('help
        (help vocab)

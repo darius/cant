@@ -181,8 +181,7 @@
     (display "sqm> ")
     (let sexpr (read))
     (unless (eof? sexpr)
-      (let e (parse-exp sexpr))
-      (let value (evaluate e '())) ;XXX reify a proper env object
+      (let value (evaluate sexpr '())) ;XXX reify a proper env object
       (unless (= value void)
         (print value))
       (interacting))
@@ -199,7 +198,7 @@
 (to (load-and-run filename args)
   (load filename `(,filename)) ;TODO remove .scm extension
   (when ((list-globals) .find? 'main)     ;XXX hack
-    ((evaluate (parse-exp 'main '()) '()) args)))
+    ((evaluate 'main '()) args)))
 
 (to (debug)
   (import (use "lib/debugger") inspect-continuation)
