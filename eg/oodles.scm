@@ -13,9 +13,8 @@
   (format "~d\n" (fill expanded 72)))
 
 (to (expand-text text probability)
-  (call chain
-        (for each ((token ((parse parser text) .opt-results)))
-          (expand token probability))))
+  (call chain (for each ((token ((parse parser text) .opt-results)))
+                (expand token probability))))
 
 (let grammar (grammar<- "
 phrase: (word | :anyone)*.
