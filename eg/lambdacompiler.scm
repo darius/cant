@@ -1,4 +1,4 @@
-;; Compile cbv lambda calculus to a machine with flat closures.
+;; Compile call-by-value lambda calculus to a machine with flat closures.
 
 (to (compile lexp)
   ((parse lexp) .compile global-static-env '(halt)))
@@ -12,22 +12,22 @@
 
 ;; Variable reference
 (to (var-ref<- v)
-  (make ({.free-vars} (list<- v))
+  (make ({.free-vars} (set<- v))
         ({.compile s k} (cons (s v) k))))
 
 ;; Lambda expression
 (to (abstraction<- v body)
-  (let free-vars (remove body.free-vars v))
+  (let free-vars (body.free-vars .difference (set<- v)))
   (make ({.free-vars} free-vars)
         ({.compile s k}
-         (let code (body .compile (static-env<- v free-vars) '(return)))
+         (let code (body .compile (static-env<- v free-vars.keys) '(return)))
          `(make-closure
-           ,free-vars.count ,code.count ,@(each s free-vars)
+           ,free-vars.count ,code.count ,@(each s free-vars.keys)
            ,@code ,@k))))
 
 ;; Application
 (to (call<- operator operand)
-  (make ({.free-vars} (union operator.free-vars operand.free-vars))
+  (make ({.free-vars} (operator.free-vars .union operand.free-vars))
         ({.compile s k}
          (let code (operand .compile s (operator .compile s '(invoke))))
          (if (= k '(return))
@@ -44,13 +44,6 @@
   (if (= v param)
       'local
       (+ 1 (free-vars .find v))))
-
-
-;; Helpers
-
-(to (union set1 set2)
-  (for foldr ((x set1) (ys set2))
-    (if (set2 .find? x) ys (cons x ys))))
 
 
 ;; Smoke test
