@@ -36,8 +36,7 @@
 
 (to (encoder<- tree)
   (let encoder (map<-))
-  (walk tree (given (symbol encoding)
-               (encoder .set! symbol encoding)))
+  (walk tree (method<- encoder '.set!))
   encoder)
 
 (to (encode encoder symbols)
