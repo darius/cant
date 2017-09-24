@@ -56,7 +56,7 @@
       "OX"))
 
 (to (player-bits bits)
-  (for each ((i (range<- 9)))
+  (for each ((i (0 .up-to 8)))
     (1 .and (bits .>> i))))
 
 (to (won? {grid p q})
@@ -67,7 +67,7 @@
   ((successors grid) .empty?))
 
 (to (successors grid)
-  (for filter ((move (range<- 9)))
+  (for filter ((move (0 .up-to 8)))
     (apply-move grid move)))
 
 (to (apply-move {grid p q} move)

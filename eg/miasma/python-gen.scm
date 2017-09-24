@@ -39,7 +39,7 @@
                  (py-body vars code-list)))
 
 (to (py-make-variable-list n)
-  (for each ((k (range<- 1 (+ n 1))))
+  (for each ((k (1 .up-to n)))
     ("v~w" .format k)))
 
 (to (py-body vars code-list)

@@ -1,4 +1,4 @@
-(for each! ((n (range<- 1 31)))
+(for each! ((n (1 .up-to 30)))
   (display (match `(,(n .remainder 3) ,(n .remainder 5))
              ('(0  0) "FizzBuzz")
              (`(0 ,_) "Fizz")

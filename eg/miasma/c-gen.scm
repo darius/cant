@@ -40,7 +40,7 @@
                 (c-body (each c-parenthesize vars) code-list)))
 
 (to (c-make-variable-list n)
-  (for each ((k (range<- 1 (+ n 1))))
+  (for each ((k (1 .up-to n)))
     ("v~w" .format k)))
 
 (to (c-body vars code-list)

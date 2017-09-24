@@ -18,7 +18,7 @@
   (for cbreak-mode ()
     (puzzle cryptogram)))
 
-(let alphabet (each char<- (range<- (#\a .code) (+ (#\z .code) 1)))) ;XXX clumsy
+(let alphabet (each char<- ((#\a .code) .up-to (#\z .code)))) ;XXX clumsy
 
 (to (random-encrypt rng text)
   (let values (array<-list alphabet))

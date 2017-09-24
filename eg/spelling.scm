@@ -24,7 +24,7 @@
 
 ;; TODO real list comprehensions would be nice to have.
 (to (edits1 word)
-  (let splits     (for each ((i (range<- (+ word.count 1))))
+  (let splits     (for each ((i (0 .up-to word.count)))
                     `(,(word .slice 0 i)
                       ,(word .slice i))))
   (let deletes    (for filter ((`(,a ,b) splits))

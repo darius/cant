@@ -40,7 +40,7 @@
   (case (Ns.empty? none)
         (else
          ;; TODO wow this is pretty horrible
-         (let r-matches (r (call set<- (as-list (range<- (+ (call max Ns.keys) 1))))))
+         (let r-matches (r (call set<- (as-list (0 .up-to (call max Ns.keys))))))
          (let Ns-r (call set<- (each '.count r-matches.keys)))
          (let Ns-s (call set<- (for gather ((n Ns.keys))
                                  (for filter ((m Ns-r.keys))

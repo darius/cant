@@ -7,7 +7,7 @@
 
 (let home               (seq "H"))
 (let clear-to-bottom    (seq "J"))
-(let clear-screen       (chain prefix "2J" home))
+(let clear-screen       (chain prefix "2J" home))  ;XXX don't actually need `home`, right?
 (let clear-to-right     (seq "K"))
 
 (let cursor-pos-save    (seq "s"))
@@ -22,7 +22,7 @@
          (string<-number (+ x 1)) "H"))
 
 (let `(,black ,red ,green ,yellow ,blue ,magenta ,cyan ,white)
-  (as-list (range<- 8)))              ;TODO ugly
+  (as-list (0 .up-to 7)))              ;TODO ugly
 
 (to (bright color)
   (+ 60 color))

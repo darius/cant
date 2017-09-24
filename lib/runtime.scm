@@ -126,6 +126,8 @@
   ({.and b}       (__bit-and me b))
   ({.or b}        (__bit-or  me b))
   ({.xor b}       (__bit-xor me b))
+  ({.up-to< b}    (range<- me b))
+  ({.up-to b}     (range<- me (+ b 1)))
   ;; XXX sketchy support for 32-bit word ops:
   ({.u+ a}        (__u+ me a))
   ({.u- a}        (__u- me a))
