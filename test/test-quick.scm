@@ -48,6 +48,7 @@
 (loud-use "test/test-text-wrap")
 (loud-use "test/test-regex-gen")
 (loud-use "test/test-random")
+(loud-use "test/test-format-tables")
 
 (loud-use "eg/compact-lambda")
 (loud-use "eg/sicp1")
