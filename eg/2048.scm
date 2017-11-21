@@ -120,12 +120,10 @@
         (do (let same? (= (row i) (row j)))
             (case ((= same? (= (row i) 0))
                    (checking j))
-                  (else
-                   (let slid ; Found one, let's slide.
-                     `(,@(row .slice 0 i)
-                       ,(+ (row i) (row j))
-                       ,@(row .slice (+ j 1))
-                       0))
+                  (else ; Found one, let's slide:
+                   (let sum (+ (row i) (row j)))
+                   (let slid
+                     `(,@(row .slice 0 i) ,sum ,@(row .slice (+ j 1)) 0))
                    `(,(if same? j low) ,slid)))))))
 
 (to (right rows) (each flip-h (left (flip-h rows))))
