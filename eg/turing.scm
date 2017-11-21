@@ -1,8 +1,10 @@
 ;; Turing machine interpreter
 ;; XXX untested
 
+;; mark = value that can appear in a tape square.
 ;; state = function from mark to `(,actions ,state-id).
 ;; action = '< | '> | mark
+;;   (< = step left, > = right)
 
 (to (turer<- states start-state-id)
   (let state-id (box<- start-state-id))
