@@ -804,7 +804,7 @@
       z
       (foldl f (f z xs.first) xs.rest)))
 
-(to (foldr f xs z)
+(to (foldr f xs z)     ;TODO rename since args are in nonstandard order
   (if xs.empty?
       z
       (f xs.first (foldr f xs.rest z))))
