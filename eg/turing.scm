@@ -17,9 +17,10 @@
 
   (make turer
 
-    ({set-tape! marks}
+    ({reset! marks}
      (let `(,h ,@R) (peek marks))
-     (tape .^= `(() ,h ,R)))
+     (tape .^= `(() ,h ,R))
+     (state-id .^= start-state-id))
 
     ({run} (turer .run #no))
     ({run option}
