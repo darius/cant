@@ -38,7 +38,7 @@
   from-stdout.read-all)
 
 (to (puzzle cryptogram)
-  (let cv (cryptoview<- cryptogram.lowercase))
+  (let cv (cryptoview<- cryptogram))
   (begin playing ()
     (render (cv .view #yes))
     (let key (get-key))
@@ -57,21 +57,23 @@
                        (cv .jot #\space))
            ('del       (cv .jot #\space)
                        (cv .shift-by 1))
-           (_          (when (or (= key #\space) (alphabet .find? key))
-                         (cv .jot key)
-                         (cv .shift-by 1))))
+           (_ (case ((or (= key #\space) (alphabet .find? key))
+                     (cv .jot key)
+                     (cv .shift-by 1))
+                    ((and (char? key) key.uppercase?)
+                     (cv .shift-to-code 1 key)))))
          (playing)))))
 
 (to (cryptoview<- cryptogram)
 
-  (let code (those '.letter? cryptogram))
+  (let code (those '.letter? cryptogram.uppercase))
   (surely (not code.empty?))            ;XXX 'require' or something
   (let decoder
     (map<- (for each ((ch ((call set<- code) .keys))) ;XXX clumsy
              `(,ch #\space))))
-  (let lines (each clean cryptogram.split-lines))
   (let point (box<- 0))                ; Index in `code` of the cursor
 
+  (let lines (each clean cryptogram.uppercase.split-lines))
   (let line-starts
     (running-sum (for each ((line lines))
                    ((those '.letter? line) .count))))
@@ -103,6 +105,10 @@
     ({.shift-to-space offset}
      (when (decoder.values .find? #\space)
        (shift-till offset (given () (= #\space (decoder (code point.^)))))))
+
+    ({.shift-to-code offset letter}
+     (when (code .find? letter)
+       (shift-till offset (given () (= letter (code point.^))))))
 
     ({.view show-cursor?}
      (let counts (call bag<- (for those ((v decoder.values))
