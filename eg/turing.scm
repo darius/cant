@@ -56,3 +56,6 @@
 
 ;; TODO a canonicalizer that rewrites to an equiv turing machine
 ;; that steps one square at a time.
+
+;; TODO maybe: a states-table maker that goes from list of (state-id mark actions next-state-id)
+;;  to map of state-id to function from mark to pair (actions next-state-id).

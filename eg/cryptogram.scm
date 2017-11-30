@@ -31,7 +31,7 @@
   ;; TODO ensure fits in sturm's width
   (shell-run "exec fortune"))
 
-(to (shell-run command)
+(to (shell-run command)                 ;; TODO extract to a library
   (let `(,from-stdout ,to-stdin ,pid) (open-subprocess command))
   ;; TODO do we have to wait for it to terminate?
   ;; XXX catch subprocess errors
