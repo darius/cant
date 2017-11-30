@@ -380,6 +380,8 @@
   ({.digit?}      (__char-digit? me))
   ({.whitespace?} (__char-whitespace? me))
   ({.alphanumeric?} (or me.letter? me.digit?))
+  ({.lowercase?}  (__char-lowercase? me))
+  ({.uppercase?}  (__char-uppercase? me))
   ({.lowercase}   (__char-lowercase me))
   ({.uppercase}   (__char-uppercase me))
   ({.compare c}   (__char-compare me c)) ;XXX untested
