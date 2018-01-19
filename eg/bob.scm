@@ -4,12 +4,11 @@
 ;; I'm adding an assumption that arguments are well-formed or well-typed. (to be fleshed out)
 ;; Going to assume things are pre-parsed into structs
 ;;   (I'm not sure that's a net win for readability)
-;; Factored def structs together
+;; Factored def structs together, moved rators together with axioms
 
 ;; More notes & nits about Appendix C:
 ;; * They have a forward ref to arity? contradicting their claim to bottom-up style
 ;; * Mis-grouping of code and literate-doc blocks
-;; * The prelude seems to omit the rators -- don't you need those defs?
 ;; * I don't think the book ever explicitly said just what you can conclude from the output.
 ;;   E.g. can you feed in an absurdity as an axiom?
 ;;   Maybe it's: given a standard set of axioms, running a certain standard interpreter
@@ -32,7 +31,7 @@
 ;;   Might we simplify any code if we wired in those axioms, too? Or OTOH would anything work if
 ;;   we changed them?
 ;; * What if we made J-Bob Lisp more like Squeam: pattern matching instead of if, car, cdr?
-;;   We'd have to handle local variables (not just parameters), I guess. Would it be worth it?
+;;   We'd have to handle local variables (not just parameters). Would it be worth it?
 ;; * Might be nice to have a kind of Pre-Scheme-ish thing that expands out higher-order functions
 ;;   and I guess mutual recursion. You'd want it to instantiate theorems at the same time.
 ;; * I don't like 'E' as the tag for an if's else-branch, because
@@ -52,7 +51,7 @@
 ;; meaning:
 ;;   {fun e}
 ;;   {thm e}
-;;   {rator}          TODO make it {rator fn} to call fn for constant args
+;;   {op fn}    "rator?" in J-Bob
 
 ;; e: 
 ;;   {constant datum}
@@ -147,6 +146,7 @@
 ;; Equality... TODO explain me
 ;; N.B. their 'claim' is not a Squeam claim type
 
+;; TODO incohesion in that we're assuming the def corresponds to the app
 (to (equality/def claim path app {def name formals meaning})
   (when loud?
     (pp `(equality/def ,(unparse-e claim) ,path ,(unparse-e app) ,(unparse-def {def name formals meaning}))))
@@ -156,7 +156,7 @@
                  (match meaning
                    ;; TODO do these constructed (= foo bar) exprs ever cause rewriting-in-reverse?
                    ;;   Or is this just a fancy way of substituting (eval-op app), etc.?
-                   ({rator}    `{call = (,app ,(eval-op app))})
+                   ({op fn}    `{call = (,app ,(eval-op fn args))})
                    ({fun body} (sub-e formals args
                                       `{call = ({call ,name ,(express-variables formals)}
                                                 ,body)}))
@@ -191,10 +191,11 @@
 
 
 ;; "Check the premises against the instantiated conclusion." (?)
-;; thm must be an equality perhaps nested in if-then-elses.
-;; If possible, dig the equality out of the if-then-elses.
-;; It's possible when every if-question appears also as the question of
-;; some if in path through e1.
+;; As far as possible, remove any top-level if-then-elses from thm.
+;; It's possible when the if-question appears also as the question of
+;; some 'if' in path through e1; then dig out the branch of thm's 'if'
+;; corresponding to the next branch of the path through e1's 'if'.
+;; TODO check that this makes sense on some examples
 (to (follow-prems path e1 thm)          ;TODO rename e1?
   (match thm
     ({if q a e}
@@ -430,7 +431,7 @@
                      (expr? known-defs formals body))) ;TODO y'know, this could use extend-rec too
     ({fun body} (and (undefined? name known-defs)
                      (expr? (extend-rec known-defs def) formals body)))
-    ({rator}    #yes)))               ;XXX different from the book.
+    ({op _}     #yes)))               ;XXX different from the book.
 ;;    (_          #no)))                ;TODO needed? or should be #yes?
 
 (to (extend-rec defs {def name formals meaning})
@@ -452,8 +453,8 @@
     (let {def _ formals meaning} (lookup name defs))
     (and (arity? formals args)
          (match meaning
-           ({rator} (every constant? args))
-           (_       (exprs? defs 'any args)))))) ;XXX so where do we check the boundness of args?
+           ({op _} (every constant? args))
+           (_      (exprs? defs 'any args)))))) ;XXX so where do we check the boundness of args?
 
 
 ;; Check okayness of expressions.
@@ -474,7 +475,7 @@
 
 (to (call-arity? defs {call name args})
   (match (lookup name defs)
-    ({def _ formals {rator}} (arity? formals args))
+    ({def _ formals {op _}}  (arity? formals args))
     ({def _ formals {fun _}} (arity? formals args))
     (_                       #no))) ;TODO maybe assume this case never happens. Then just ignore the meaning field.
 
@@ -535,46 +536,37 @@
 
 ;; Apply an operator to values.
 
-(to (eval-op {call f args})
-  {constant (apply-op f (for each (({constant value} args))
-                          value))})
-
-(to (apply-op rator rands)
-  (match rands.count
-    (1 (unary-op rator (rands 0)))
-    (2 (binary-op rator (rands 0) (rands 1)))))
-
-(to (unary-op rator rand)
-  (match rator
-    ('atom? (not (cons? rand)))          ;XXX right?
-    ('car   (and (cons? rand) rand.first))
-    ('cdr   (and (cons? rand) rand.rest))
-    ('nat?  (nat? rand))
-    ('size  (size rand))))
-
-(to (binary-op rator rand1 rand2)
-  (match rator
-    ('=    (= rand1 rand2))
-    ('cons (cons rand1 rand2))
-    ('+    (bob+ rand1 rand2))
-    ('<    (bob< rand1 rand2))))
+(to (eval-op fn args)
+  {constant (call fn (for each (({constant value} args))
+                       value))})
 
 
 ;; Runtime.
 
-(to (nat? x)
-  (and (number? x) (integer? x) (<= 0 x)))
+(to (atom? x)   (not (cons? x)))                      ;XXX right?
+(to (bob-car x) (and (cons? x) x.first))
+(to (bob-cdr x) (and (cons? x) x.rest))
+(to (nat? x)    (and (number? x) (integer? x) (<= 0 x)))
+(to (bob+ x y)  (and (number? x) (number? y) (+ x y)))
+(to (bob< x y)  (and (number? x) (number? y) (< x y)))
 
 (to (size x)
   (match x
     (`(,h ,@t) (+ (size h) (size t)))
     (_ 1)))
 
-(to (bob+ x y)
-  (and (number? x) (number? y) (+ x y)))
-      
-(to (bob< x y)
-  (and (number? x) (number? y) (< x y)))
+(let x-ops
+  `(
+    (atom? (x)  ,atom?)
+    (car (x)    ,bob-car)
+    (cdr (x)    ,bob-cdr)
+    (nat? (x)   ,nat?)
+    (size (x)   ,size)
+    (= (x y)    ,=)
+    (cons (x y) ,cons)
+    (+ (x y)    ,bob+)
+    (< (x y)    ,bob<)
+    ))
 
 
 ;; Unparse.
@@ -582,7 +574,7 @@
 (to (unparse-def {def name formals meaning})
   (match meaning
     ({fun body} `(defun ,name ,formals ,(unparse-e body)))
-    ({rator}    `(defrator ,name ,formals))
+    ({op fn}    `(defop ,name))
     ({thm body} `(dethm ,name ,formals ,(unparse-e body)))))
 
 (to (unparse-e e)
@@ -621,8 +613,8 @@
      {def name formals {fun (parse-e body)}})
     (`(dethm ,(? symbol? name) ,(? formals? formals) ,body)
      {def name formals {thm (parse-e body)}})
-    (`(,(? symbol? name) ,(? formals? formals))
-     {def name formals {rator}})))
+    (`(,(? symbol? name) ,(? formals? formals) ,fn)
+     {def name formals {op fn}})))
 
 (to (formals? x)
   (and (list? x)
@@ -663,19 +655,6 @@
 
 
 ;; Prelude
-
-(let x-rators
-  '(
-    (atom? (x))
-    (car (x))
-    (cdr (x))
-    (nat? (x))
-    (size (x))
-    (= (x y))
-    (cons (x y))
-    (+ (x y))
-    (< (x y))
-    ))
 
 (let x-axioms
   '(
@@ -728,7 +707,7 @@
 
 (let prelude
   ;; TODO more
-  (each parse-def (chain x-rators x-axioms)))
+  (each parse-def (chain x-ops x-axioms)))
 
 
 ;; Smoke test
@@ -744,9 +723,6 @@
 
 (print (list-union '(a b c) '(c d b e)))
 
-(print (unparse-e (eval-op (parse-e '(+ 2 3)))))
-(print (unparse-e (eval-op (parse-e '(size '(2 3))))))
-
 (print (unparse-e (if-c-when-necessary (parse-e '(+ 2 3))
                                        (parse-e '(+ 2 3))
                                        (parse-e '(+ 2 3)))))
@@ -754,37 +730,19 @@
                                        (parse-e '(+ 2 4))
                                        (parse-e '(+ 2 3)))))
 
-(print (lookup '+ (each parse-def '())))
-(print (lookup '+ (each parse-def '((car (pair))
-                                    (+ (m n))))))
-
-(print (undefined? '+ (each parse-def '())))
-(print (undefined? '+ (each parse-def '((car (pair))
-                                        (+ (m n))))))
-
 (print (bound? 'x '(a b c)))
 (print (bound? 'x '(a x y)))
 (print (bound? 'x 'any))
 
-(let op-defs '((atom? (x))              ;XXX some different names
-               (car (p))
-               (cdr (p))
-               (nat? (x))
-               (size (x))
-               (= (x y))
-               (+ (m n))
-               (< (m n))))
-
-(print (expr? (each parse-def op-defs)
-              'any
+(print (expr? prelude 'any
               (parse-e '(car (if (+ a 2) (cdr x) (cdr (car x)))))))
 
-(print (call-arity? (each parse-def op-defs)
+(print (call-arity? prelude
                     (parse-e '(+ 2 3 4))))
 
-(print (steps? (each parse-def op-defs)
+(print (steps? prelude
                (parse-steps '((XXX-path (+ a b))))))
-(print (steps? (each parse-def op-defs)
+(print (steps? prelude
                (parse-steps '((XXX-path (+ 1 2))))))
 
 ;; TODO check defs?
@@ -814,3 +772,35 @@
                  (parse-steps '(((1 1) (equal-same (cons x y)))
                                 ((1) (cons #yes '(and crumpets)))
                                 (() (car '(#yes and crumpets)))))))
+
+'(
+
+(defun defun-pair ()
+  (J-Bob/define (prelude)
+    '(((defun pair (x y)
+         (cons x (cons y '())))
+       nil))))
+
+(defun defun-first-of ()
+  (J-Bob/define (defun-pair)
+    '(((defun first-of (x)
+         (car x))
+       nil))))
+
+(defun defun-second-of ()
+  (J-Bob/define (defun-first-of)
+    '(((defun second-of (x)
+         (car (cdr x)))
+       nil))))
+
+(defun dethm-first-of-pair ()
+  (J-Bob/define (defun-second-of)
+    '(((dethm first-of-pair (a b)
+         (equal (first-of (pair a b)) a))
+       nil
+       ((1 1) (pair a b))
+       ((1) (first-of (cons a (cons b '()))))
+       ((1) (car/cons a (cons b '())))
+       (() (equal-same a))))))
+
+)
