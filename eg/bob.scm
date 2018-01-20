@@ -1,6 +1,8 @@
 ;; a la The Little Prover
 ;; #yes/#no for 't/'nil
 ;; Renamed some operators: atom? nat? =
+;;   (we also allow the book's "atom" and "natp", but it'd be a bit of a pain to support
+;;   both "equal" and "=")
 ;; I'm adding an assumption that arguments are well-formed or well-typed. (to be fleshed out)
 ;; Going to assume things are pre-parsed into structs
 ;;   (I'm not sure that's a net win for readability)
@@ -558,9 +560,11 @@
 (let x-ops
   `(
     (atom? (x)  ,atom?)
+    (atom (x)   ,atom?)
     (car (x)    ,bob-car)
     (cdr (x)    ,bob-cdr)
     (nat? (x)   ,nat?)
+    (natp (x)   ,nat?)
     (size (x)   ,size)
     (= (x y)    ,=)
     (cons (x y) ,cons)
@@ -629,10 +633,8 @@
     (''t             yes-c)
     (`',datum        {constant datum})
     ((? symbol?)     {variable xe})
-    (`(if ,x1 ,x2 ,x3) {if (parse-e x1) (parse-e x2) (parse-e x3)})
-    (`(,f ,@xargs)
-     (surely (symbol? f) "Bob syntax")
-     {call f (each parse-e xargs)})))
+    (`(if ,x1 ,x2 ,x3)         {if (parse-e x1) (parse-e x2) (parse-e x3)})
+    (`(,(? symbol? f) ,@xargs) {call f (each parse-e xargs)})))
 
 
 ;; Lists as sets with order.
@@ -770,7 +772,7 @@
                  (parse-e '(car (cons (= (cons x y) (cons x y))
                                       '(and crumpets))))
                  (parse-steps '(((1 1) (equal-same (cons x y)))
-                                ((1) (cons #yes '(and crumpets)))
+                                ((1) (cons 't '(and crumpets)))
                                 (() (car '(#yes and crumpets)))))))
 
 '(
