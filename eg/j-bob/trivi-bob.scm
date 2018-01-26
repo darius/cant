@@ -88,10 +88,10 @@
 
 (to (rewrite/prove defs def seed steps)
   (let {def _ _ meaning} def)
+  (surely (not seed))
   (match meaning
-    ({fun _} (rewrite/steps defs (totality/claim seed def)       steps))
-    ({thm _} (rewrite/steps defs (induction/claim defs seed def) steps))
-    (_       no-c)))                    ;TODO just #no?
+    ({fun _} yes-c)
+    ({thm _} (rewrite/steps defs seed steps))))
 
 
 ;; Rewriting... TODO explain me
@@ -241,36 +241,6 @@
                        (_ #no)))))
 
 
-;; Build an induction claim.
-
-(to (induction/claim defs seed {def _ _ {thm body}})
-  (match seed
-    (#no           body)))
-
-
-;; Build a totality claim.
-;; TODO not needed any more
-
-(to (totality/claim meas {def name formals {fun body}})
-  (surely (not meas))                        ;XXX might need to unparse a constant
-  {constant ((calls-to name body) .empty?)})
-
-
-;; Collect all the calls to f from any subexpression.
-
-(to (calls-to f e)
-  (match e
-    ({constant _}  '())
-    ({variable _}  '())
-    ({if q a e}    (exprs-calls-to f `(,q ,a ,e)))
-    ({call g args} (list-union (if (= f g) `(,e) '())
-                               (exprs-calls-to f args)))))
-
-(to (exprs-calls-to f es)
-  (for foldr ((e es) (recs '()))
-    (list-union (calls-to f e) recs)))
-
-
 ;; Substitute vars -> args in an expression.
 
 (to (sub-e vars args e)
@@ -329,6 +299,7 @@
     ({thm _} (induction-scheme? defs formals seed))
     (_       #no)))          ;does this come up?
 
+;; TODO refactor for trivi-bob requirements? or at least rename?
 (to (induction-scheme? defs vars e)
   (match e
     ({call f args} (induction-scheme-for? (lookup f defs) vars e))
