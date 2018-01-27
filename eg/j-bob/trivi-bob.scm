@@ -18,21 +18,17 @@
 
 ;; Types:
 
-;; proof:
-;;   {proof def steps}
+;; proof:   {proof def steps}
 
-;; def:
-;;   {def name formals meaning}
-;; meaning:
-;;   {fun e}
-;;   {thm e}
-;;   {op fn}    "rator?" in J-Bob
+;; def:     {def name formals meaning}
+;; meaning: {fun e}
+;;          {thm e}
+;;          {op fn}    "rator?" in J-Bob
 
-;; e: 
-;;   {constant datum}
-;;   {variable name}
-;;   {if e e e}
-;;   {call name es}
+;; e:       {constant datum}
+;;          {variable name}
+;;          {if e e e}
+;;          {call name es}
 
 
 ;; Top level.
@@ -98,14 +94,13 @@
 ;; Rewriting... TODO explain me
 
 (to (rewrite/steps defs claim steps)
-  (if steps.empty?
-      claim
-      (begin stepping ((`(,first ,@rest) steps)
-                       (old claim))
-        (let new (rewrite/step defs old first))
-        (if (or (= old new) rest.empty?)
-            new
-            (stepping rest new)))))
+  (match steps
+    ('() claim)
+    (`(,first ,@rest)
+     (let new (rewrite/step defs claim first))
+     (if (= new claim)
+         new
+         (rewrite/steps defs new rest)))))
 
 (to (rewrite/step defs claim {step path app})
   (let {call f _} app)
