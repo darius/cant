@@ -69,8 +69,7 @@
     (`({proof ,def ,steps} ,@rest-proofs)
      (if (= yes-c (rewrite/prove defs def steps))
          (rewrite/define+ (append defs def) rest-proofs)
-         #no))))
-;         defs))))   XXX
+         #no))))                        ;was defs in book
 
 
 ;; TODO explain me
