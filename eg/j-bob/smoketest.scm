@@ -3,20 +3,8 @@
 (print (set? '(a b c)))
 (print (set? '(a b c b)))
 
-(print (subset? '(a b c) '(c a)))
-(print (subset? '(c a) '(a b c)))
-
 (print (append '(a b c) 'a))
 (print (append '(a b c) 'd))
-
-(print (list-union '(a b c) '(c d b e)))
-
-(print (unparse-e (if-c-when-necessary (parse-e '(+ 2 3))
-                                       (parse-e '(+ 2 3))
-                                       (parse-e '(+ 2 3)))))
-(print (unparse-e (if-c-when-necessary (parse-e '(+ 2 3))
-                                       (parse-e '(+ 2 4))
-                                       (parse-e '(+ 2 3)))))
 
 (print (bound? 'x '(a b c)))
 (print (bound? 'x '(a x y)))
@@ -33,15 +21,9 @@
 (print (steps? prelude
                (parse-steps '((XXX-path (+ 1 2))))))
 
-;; TODO check defs?
-;; TODO check seed?
-;; TODO check proof?
-
 (print (unparse-e (sub-e '(a)
                          (each parse-e '((< 2 3)))
                          (parse-e '(+ a 3)))))
-
-;(let eg1 (parse-def '(
 
 (print (defs? prelude '()))
 
@@ -60,10 +42,6 @@
                  (parse-steps '(((1 1) (equal-same (cons x y)))
                                 ((1) (cons 't '(and crumpets)))
                                 (() (car '(#yes and crumpets)))))))
-
-(to (J-Bob/define defs x-proofs)
-  (bob/define defs
-              (each parse-proof x-proofs)))
 
 (let defun-pair
   (J-Bob/define prelude

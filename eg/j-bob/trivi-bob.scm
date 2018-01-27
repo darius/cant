@@ -7,7 +7,6 @@
 
 (import (use "lib/pretty-print") pp)    ;XXX for debugging
 
-;;XXX
 (to (trace fn @args)
   (when loud? (pp `(>>> ,fn ,@args)))
   (let result (call fn args))
@@ -20,8 +19,7 @@
 ;; Types:
 
 ;; proof:
-;;   {proof def seed steps}
-;; where seed is an e or #no            XXX make that {constant #no}?
+;;   {proof def steps}
 
 ;; def:
 ;;   {def name formals meaning}
@@ -38,7 +36,10 @@
 
 
 ;; Top level.
-;; TODO parse/unparse
+
+(to (J-Bob/define defs x-proofs)
+  (bob/define defs
+              (each parse-proof x-proofs)))
 
 (to (bob/define defs proofs)
   (if (valid? defs proofs)
@@ -69,10 +70,11 @@
 (to (rewrite/define+ defs proofs)
   (match proofs
     ('() defs)
-    (`({proof ,def ,seed ,steps} ,@rest-proofs)
-     (if (= yes-c (rewrite/prove defs def seed steps))
+    (`({proof ,def ,steps} ,@rest-proofs)
+     (if (= yes-c (rewrite/prove defs def steps))
          (rewrite/define+ (append defs def) rest-proofs)
-         defs))))
+         #no))))
+;         defs))))   XXX
 
 
 ;; TODO explain me
@@ -80,18 +82,17 @@
 (to (rewrite/prove+ defs proofs)
   (match proofs
     ('() yes-c)
-    (`({proof ,def ,seed ,steps} ,@rest-proofs)
+    (`({proof ,def ,steps} ,@rest-proofs)
      (let e (rewrite/prove+ (append defs def) rest-proofs))
      (if (= e yes-c)
-         (rewrite/prove defs def seed steps) ;y'know, if we did this first it'd be more like rewrite/define+
+         (rewrite/prove defs def steps) ;y'know, if we did this first it'd be more like rewrite/define+
          e))))
 
-(to (rewrite/prove defs def seed steps)
-  (let {def _ _ meaning} def)
-  (surely (not seed))
+(to (rewrite/prove defs def steps)
+  (let {def _ formals meaning} def)
   (match meaning
-    ({fun _} yes-c)
-    ({thm _} (rewrite/steps defs seed steps))))
+    ({fun _}    yes-c)
+    ({thm body} (rewrite/steps defs body steps)))) ;XXX should be using the formals too
 
 
 ;; Rewriting... TODO explain me
@@ -186,61 +187,6 @@
              (matching path.rest (get-at-direction path.first e))))))
 
 
-;; Rewriting.
-;; TODO ought to be shorter
-
-(to (set-at-path path e1 e2)
-  (if path.empty?
-      e2
-      (set-at-direction path.first e1
-                        (set-at-path path.rest (get-at-direction path.first e1)
-                                     e2))))
-
-(to (get-at-path path e)                ;TODO: foldl
-  (if path.empty?
-      e
-      (get-at-path path.rest (get-at-direction path.first e))))
-
-(to (get-at-direction dir e)
-  (match dir
-    ('Q       (match e ({if q _ _}    q)))
-    ('A       (match e ({if _ a _}    a)))
-    ('E       (match e ({if _ _ e}    e)))
-    ((? nat?) (match e ({call _ args} (get-arg dir args))))))
-
-(to (set-at-direction dir e1 e2)
-  (match dir
-    ('Q       (match e1 ({if q a e}    {if e2 a e})))
-    ('A       (match e1 ({if q a e}    {if q e2 e})))
-    ('E       (match e1 ({if q a e}    {if q a e2})))
-    ((? nat?) (match e1 ({call f args} {call f (set-arg dir args e2)})))))
-
-(to (get-arg n args)
-  (args (- n 1)))
-
-(to (set-arg n args e)
-  (if (= n 1)
-      (cons e args.rest)
-      (cons args.first (set-arg (- n 1) args.rest e))))
-
-
-;; Check okayness of a path.
-
-(to (focus-is-at-path? path e)
-  (or path.empty?
-      (and (focus-is-at-direction? path.first e)
-           (focus-is-at-path? path.rest
-                              (get-at-direction path.first e)))))
-  
-(to (focus-is-at-direction? dir e)
-  (match dir
-    ('Q       (match e ({if _ _ _}    #yes) (_ #no)))
-    ('A       (match e ({if _ _ _}    #yes) (_ #no)))
-    ('E       (match e ({if _ _ _}    #yes) (_ #no)))
-    ((? nat?) (match e ({call _ args} (<= 1 dir args.count))
-                       (_ #no)))))
-
-
 ;; Substitute vars -> args in an expression.
 
 (to (sub-e vars args e)
@@ -265,57 +211,17 @@
 ;; Check okayness of proofs.
 ;; Each purports to prove a defun or dethm in the context of defs plus
 ;; the defs of the preceding proofs.
-;; A proof is okay when its def, seed, and steps are all okay.
-;; XXX the step-checking seems to have no connection to the seed
+;; A proof is okay when its def and steps are all okay.
 
 (to (proofs? defs proofs)
   (or proofs.empty?
       (and (proof? defs proofs.first)
-           (do (let {proof def _ _} proofs.first)
+           (do (let {proof def _} proofs.first)
                (proofs? (append defs def) proofs.rest)))))
 
-(to (proof? defs {proof def seed steps})
+(to (proof? defs {proof def steps})
   (and (def? defs def)
-       (and seed (seed? defs def seed)) ;XXX delete me, right?
-       (steps? defs steps))) ;TODO removed extend-rec -- is that right?
-
-
-;; Check okayness of an induction scheme.
-;; A defun's seed can be any okay expression. (It's the measure for a totality proof, right?)
-;; A dethm's seed is okay when:
-;;  * It's a call to a defun. XXX should it have to be a *recursive* call?
-;;  * The args match the target's arity, i.e. it's an okay call.
-;;    XXX Actually could it be not okay because the vars are not bound? Should we check?
-;;        No, I think we do check with subset? -- vars are the scope at the call.
-;;  * The args are all variables, a set, and a subset of the target's formals.
-;;    I think this means they're a permutation of the formals.
-;;    XXX wtf is all this?
-;; Probably my concerns don't come up because seeds come only from totality/claim or induction/claim.
-;; I probably need to understand those to understand the checks that we do here.
-
-(to (seed? defs {def _ formals meaning} seed)
-  (match meaning
-    ({fun _} (expr? defs formals seed))
-    ({thm _} (induction-scheme? defs formals seed))
-    (_       #no)))          ;does this come up?
-
-;; TODO refactor for trivi-bob requirements? or at least rename?
-(to (induction-scheme? defs vars e)
-  (match e
-    ({call f args} (induction-scheme-for? (lookup f defs) vars e))
-    (_             #no)))
-
-(to (induction-scheme-for? def vars {call _ args})
-  (match def
-    ({def _ formals {fun _}}
-     (and (arity? formals args)
-          (formals-exprs? args)
-          (subset? args vars)))           ;XXX need to convert exprs/names
-    (_ #no)))
-
-(to (formals-exprs? es)                       ;XXX sometimes called with symbols instead of exprs
-  (and (every variable? es)
-       (set? es)))
+       (steps? defs steps)))
 
 
 ;; Check okayness of defs.
@@ -396,6 +302,61 @@
       (vars .find? var)))
 
 
+;; Rewriting.
+;; TODO ought to be shorter
+
+(to (set-at-path path e1 e2)
+  (if path.empty?
+      e2
+      (set-at-direction path.first e1
+                        (set-at-path path.rest (get-at-direction path.first e1)
+                                     e2))))
+
+(to (get-at-path path e)                ;TODO: foldl
+  (if path.empty?
+      e
+      (get-at-path path.rest (get-at-direction path.first e))))
+
+(to (get-at-direction dir e)
+  (match dir
+    ('Q       (match e ({if q _ _}    q)))
+    ('A       (match e ({if _ a _}    a)))
+    ('E       (match e ({if _ _ e}    e)))
+    ((? nat?) (match e ({call _ args} (get-arg dir args))))))
+
+(to (set-at-direction dir e1 e2)
+  (match dir
+    ('Q       (match e1 ({if q a e}    {if e2 a e})))
+    ('A       (match e1 ({if q a e}    {if q e2 e})))
+    ('E       (match e1 ({if q a e}    {if q a e2})))
+    ((? nat?) (match e1 ({call f args} {call f (set-arg dir args e2)})))))
+
+(to (get-arg n args)
+  (args (- n 1)))
+
+(to (set-arg n args e)
+  (if (= n 1)
+      (cons e args.rest)
+      (cons args.first (set-arg (- n 1) args.rest e))))
+
+
+;; Check okayness of a path.
+
+(to (focus-is-at-path? path e)
+  (or path.empty?
+      (and (focus-is-at-direction? path.first e)
+           (focus-is-at-path? path.rest
+                              (get-at-direction path.first e)))))
+  
+(to (focus-is-at-direction? dir e)
+  (match dir
+    ('Q       (match e ({if _ _ _}    #yes) (_ #no)))
+    ('A       (match e ({if _ _ _}    #yes) (_ #no)))
+    ('E       (match e ({if _ _ _}    #yes) (_ #no)))
+    ((? nat?) (match e ({call _ args} (<= 1 dir args.count))
+                       (_ #no)))))
+
+
 ;; Some expression helpers.
 
 (let yes-c {constant #yes})
@@ -410,22 +371,6 @@
   (match e
     ({variable _} #yes)
     (_            #no)))
-
-(to (if-c-when-necessary q a e)
-  (if (= a e)
-      a
-      {if q a e}))
-
-(to (conjoin es)
-  (match es
-    ('()         yes-c)
-    (`(,e)       e)
-    (`(,e ,@es1) {if e (conjoin es1) no-c})))
-
-(to (implies es e)
-  (match es
-    ('()          e)
-    (`(,e1 ,@es1) {if e1 (implies es1 e) yes-c})))
 
 
 ;; Apply an operator to values.
@@ -458,8 +403,8 @@
 (to (parse-proof xproof)
   (match xproof
     (`(,xdef ,xseed ,@xsteps)
+     (surely (not xseed))
      {proof (parse-def xdef)
-            (and xseed (parse-e xseed))
             (parse-steps xsteps)})))
 
 (to (parse-steps xsteps)
@@ -505,14 +450,6 @@
   (if (xs .find? x)
       xs
       (chain xs `(,x))))
-
-(to (list-union xs ys)
-  (for foldl ((xs xs) (y ys))
-    (append xs y)))
-
-(to (subset? xs ys)
-  (for every ((x xs))
-    (ys .find? x)))
 
 (to (set? xs)
   (= xs.count ((call set<- xs) .count)))
