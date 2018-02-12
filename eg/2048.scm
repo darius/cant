@@ -24,9 +24,9 @@
                      ((won? board)  "You win!")
                      (else          "")))
     (frame board score)
-    (let key (get-key))
-    (case (("Qq" .find? key) 'quitting)
-          (("Uu" .find? key)
+    (let key ((get-key) .lowercase))
+    (case ((= #\q key) 'quitting)
+          ((= #\u key)
            (if history.empty?
                (continue)
                (playing history.pop! #yes)))

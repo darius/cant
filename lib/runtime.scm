@@ -144,6 +144,9 @@
   ({.compare a}   (and (symbol? a)
                        (me.name .compare a.name)))
   ({.selfie sink} (sink .display me.name))
+  ;; Some silly conveniences for sturm:
+  ({.lowercase}   (symbol<- me.name.lowercase))
+  ({.uppercase}   (symbol<- me.name.uppercase))
   )
 
 (make-trait nil-primitive me
