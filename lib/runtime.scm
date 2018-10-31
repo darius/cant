@@ -367,7 +367,7 @@
   ({.selfie sink}
    (sink .display #\")
    (for each! ((c me))
-     (sink .display (match c            ;XXX super slow. We might prefer to use the Gambit built-in.
+     (sink .display (match c            ;XXX super slow. We might prefer to use the Scheme built-in.
                       (#\\ "\\\\")
                       (#\" "\\\"")
                       (#\newline "\\n")
@@ -440,7 +440,7 @@
   )
 
 (make-trait void-primitive me
-  ;; A Gambit type returned by some of the Gambit operations.
+  ;; A Scheme type returned by some of the Scheme operations.
   )
 
 (make-trait script-primitive me
