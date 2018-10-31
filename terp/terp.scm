@@ -458,7 +458,33 @@
          (call-with-string-output-port
           (lambda (p) (put-datum p x))))))
 
-(define the-global-env
+(define globals (make-eq-hashtable))
+(define missing (list '*missing*))
+
+(define (list-globals)
+  (vector->list (hashtable-keys globals)))
+
+(define (global-defined? v)
+  ;;XXX or (not (eq? value uninitialized))
+  (eq-hashtable-contains? globals v))
+
+(define (global-lookup v k)
+  (let ((value (eq-hashtable-ref globals v missing)))
+    (if (eq? value missing)
+        (signal k "Unbound variable" v)
+        (answer k value))))
+
+(define (global-define! v value k)
+  ;;XXX as a hack, allow global redefinition for
+  ;; now. This aids development at the repl, but we
+  ;; need a more systematic solution.
+  ;;(signal k "Global redefinition" v)
+  (eq-hashtable-set! globals v value)
+  (answer k #t))
+
+(for-each (lambda (pair)
+            (let ((key (car pair)) (value (cadr pair)))
+              (eq-hashtable-set! globals key value)))
   `((__as-cons ,as-cons)
     (= ,squeam=?)
     (out ,(current-output-port))
@@ -533,7 +559,7 @@
                                            (term<- 'ok (expander e))))
                                      (else #f))))
     (open-subprocess ,process)
-    (list-globals ,(lambda () (map car the-global-env)))
+    (list-globals ,list-globals)
     (extract-script ,extract-script)
     (extract-datum ,extract-datum)
     (__halp-log ,(lambda (start end result)
@@ -660,14 +686,12 @@
 (define (env-defined? r v)
   (define (succeed pair) #t)  ;XXX or (not (eq? (cadr pair) uninitialized)))
   (cond ((assq v r) => succeed)
-        ((assq v the-global-env) => succeed)
-        (else #f)))
+        (else (global-defined? v))))
 
 (define (env-lookup r v k)
   (define (succeed pair) (answer k (cadr pair)))
   (cond ((assq v r) => succeed)
-        ((assq v the-global-env) => succeed)
-        (else (signal k "Unbound variable" v))))
+        (else (global-lookup v k))))
 
 (define (env-extend r vs values)
   (append (map list vs values) r))
@@ -682,17 +706,7 @@
                              (begin (set-car! (cdr pair) value)
                                     (answer k #t)))))
         ((null? r)
-         (cond ((assq v the-global-env)
-                => (lambda (pair)
-                     ;;XXX as a hack, allow global redefinition for
-                     ;; now. This aids development at the repl, but we
-                     ;; need a more systematic solution.
-                     ;;(signal k "Global redefinition" v)
-                     (set-car! (cdr pair) value)
-                     (answer k #t)))
-               (else
-                (set! the-global-env (cons (list v value) the-global-env))
-                (answer k #t))))
+         (global-define! v value k))
         (else (signal k "Tried to bind in a non-environment" r v))))
 
 (define uninitialized (object<- (script<- '<uninitialized> #f '()) '*uninitialized*))
@@ -750,9 +764,7 @@
        (ev-exp e1 r (cont<- ev-arg-cont k r e2))))
    (lambda (e r k)                          ;e-global
      (unpack e (var)
-        (cond ((assq var the-global-env)
-               => (lambda (pair) (answer k (cadr pair))))
-        (else (signal k "Unbound variable" v)))))
+       (global-lookup var k)))
    ))
 
 (define (ev-args es r vals k)
