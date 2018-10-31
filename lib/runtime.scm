@@ -27,9 +27,10 @@
   ({.rest}
    (list .slice 1))
   ({.count}
-   (if list.empty?
-       0
-       (+ 1 list.rest.count)))          ;TODO tail recursion
+   (begin counting ((list list) (count 0))
+     (if list.empty?
+         count
+         (counting list.rest (+ count 1)))))
   ({.slice i}
    (surely (<= 0 i))
    (if (= i 0)
