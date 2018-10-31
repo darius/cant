@@ -176,11 +176,10 @@
 (define-record-type cps-script (fields name procedure))
 (define cps-script<- make-cps-script)
 
-;; For less inefficiency, a continuation is just a list, whose car
+;; For less inefficiency, a continuation is just a vector, whose zeroth
 ;; element is the continuation procedure. This representation must
 ;; never be exposed directly to Squeam code, only wrapped as an object
-;; with an appropriate wrapper script. TODO see if a vector or record
-;; is better than a list -- probably.
+;; with an appropriate wrapper script.
 (define (answer k value)
 ;  (dbg `(answer ,value ,k))
 ;  (dbg `(answer))
