@@ -27,6 +27,7 @@
   ({.rest}
    (list .slice 1))
   ({.count}
+   ;; TODO non-tail-recursive would be more OO in style. Go back to that?
    (begin counting ((list list) (count 0))
      (if list.empty?
          count
