@@ -197,7 +197,7 @@
 
 (to (load-and-run filename args)
   (load filename `(,filename)) ;TODO remove .scm extension
-  (when ((list-globals) .find? 'main)     ;XXX hack
+  (when (global-defined? 'main)     ;XXX hack
     ((evaluate 'main '()) args)))
 
 (to (debug)

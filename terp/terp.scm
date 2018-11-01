@@ -461,9 +461,6 @@
 (define globals (make-eq-hashtable))
 (define missing (list '*missing*))
 
-(define (list-globals)
-  (vector->list (hashtable-keys globals)))
-
 (define (global-defined? v)
   ;;XXX or (not (eq? value uninitialized))
   (eq-hashtable-contains? globals v))
@@ -559,7 +556,7 @@
                                            (term<- 'ok (expander e))))
                                      (else #f))))
     (open-subprocess ,process)
-    (list-globals ,list-globals)
+    (global-defined? ,global-defined?)
     (extract-script ,extract-script)
     (extract-datum ,extract-datum)
     (__halp-log ,(lambda (start end result)
