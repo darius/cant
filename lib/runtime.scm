@@ -130,6 +130,8 @@
   ({.xor b}       (__bit-xor me b))
   ({.up-to< b}    (range<- me b))
   ({.up-to b}     (range<- me (+ b 1)))
+  ({.even?}       (surely (integer? me)) (= 0 (me .modulo 2)))
+  ({.odd?}        (surely (integer? me)) (not= 0 (me .modulo 2)))
   ;; XXX sketchy support for 32-bit word ops:
   ({.u+ a}        (__u+ me a))
   ({.u- a}        (__u- me a))
@@ -309,6 +311,7 @@
                      (else (scanning (+ i 1)))))))))
   ({.lowercase} (string<-list (for each ((c me)) c.lowercase)))
   ({.uppercase} (string<-list (for each ((c me)) c.uppercase)))
+  ({.capitalize} (chain ((me .slice 0 1) .uppercase) (me .slice 1)))
   ({.starts-with? s}
    (= (me .slice 0 s.count) s))   ;TODO more efficient
   ({.replace pattern replacement} ;TODO more efficient
