@@ -75,7 +75,8 @@
            ,(expression<- (cadddr clause))))
        (__ast-part ast i)))
 
-;; Interpreter
+
+;; Interpreter top level
 
 (define (run-load filename)
   (let ((forms (snarf filename squeam-read)))
@@ -289,19 +290,6 @@
                             (panic message)))
             #f))
 
-(define (run-script object script datum message k)
-  (matching (script-clauses script) object script datum message k))
-
-(define (matching clauses object script datum message k)
-;  (dbg `(matching)) ; ,clauses))
-  (mcase clauses
-    (()
-     (delegate (script-trait script) object message k))
-    (((pattern pat-vars . body) . rest-clauses)
-     (let ((pat-r (env-extend-promises datum pat-vars)))
-       (ev-pat message pattern pat-r
-               (cont<- match-clause-cont k pat-r body rest-clauses object script datum message))))))  ;XXX geeeez
-
 (define (delegate trait object message k)
 ;  (dbg `(delegate))
   (let ((handler (cond ((object? trait) trait)
@@ -401,6 +389,7 @@
 
 
 ;; Environments
+;; N.B. repl-env and primitive-env defined above
 
 (define globals (make-eq-hashtable))
 (define missing (list '*missing*))
@@ -823,6 +812,19 @@
 
 (define (halt-cont-fn value k0) value)
 (define halt-cont (cont<- halt-cont-fn))
+
+(define (run-script object script datum message k)
+  (matching (script-clauses script) object script datum message k))
+
+(define (matching clauses object script datum message k)
+;  (dbg `(matching)) ; ,clauses))
+  (mcase clauses
+    (()
+     (delegate (script-trait script) object message k))
+    (((pattern pat-vars . body) . rest-clauses)
+     (let ((pat-r (env-extend-promises datum pat-vars)))
+       (ev-pat message pattern pat-r
+               (cont<- match-clause-cont k pat-r body rest-clauses object script datum message))))))  ;XXX geeeez
 
 (define (match-clause-cont matched? k0)
 ;     (dbg `(match-clause-cont))
