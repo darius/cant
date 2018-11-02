@@ -5,6 +5,7 @@
 (load "terp/read.scm")
 (load "terp/parse.scm")
 (load "terp/elaborate.scm")
+(load "terp/primitives.scm")
 (load "terp/terp.scm")
 
 (run-load "lib/stdlib.scm")
