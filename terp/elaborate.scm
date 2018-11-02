@@ -96,7 +96,7 @@
     (cond ((null? frames)
            (cond ((frame-index (scope-outer scope) v)
                   => (lambda (i) `(outer ,i)))
-                 ((env-defined? '() v) `(global ,v))
+                 ((global-defined? v) `(global ,v))
                  (else #f)))
           ((frame-index (car frames) v)
            => (lambda (i) `(inner ,f ,i)))
