@@ -1,3 +1,11 @@
+(define (set-dbg! debug?)
+  (set! dbg (if debug? pp (lambda (x) #f))))
+
+(define (dbg x)
+;  (pp x))
+  #f)
+
+
 ;; Bootstrap prereqs
 
 (define-record-type object (fields script datum))   ; Nonprimitive objects, that is.
@@ -5,94 +13,6 @@
 
 (define-record-type script (fields name trait clauses))
 (define script<- make-script)
-
-;; Parser bootstrap
-
-(define (expression<- vec) (object<- expression-script vec))
-(define (pattern<- vec)    (object<- pattern-script vec))
-
-(define (__expr thing)
-  (assert (and (vector? thing)
-               (< 0 (vector-length thing))
-               (number? (vector-ref thing 0)))
-          "Must be an internal expression" thing)
-  (expression<- thing))
-
-(define (__patt thing)
-  (assert (and (vector? thing)
-               (< 0 (vector-length thing))
-               (number? (vector-ref thing 0)))
-          "Must be an internal pattern" thing)
-  (pattern<- thing))
-
-(define (parse-exp e . opt-context)
-  (expression<- (parse-e e (optional-context 'parse-exp opt-context))))
-
-(define (parse-pat p . opt-context)
-  (pattern<- (parse-p p (optional-context 'parse-pat opt-context))))
-
-(define (obliviate vs value)            ;c'mon, better name?
-  (map (lambda (_) value) vs))
-
-(define (load-ast-script script-name module-name)
-  (let ((form (car (snarf (string-append module-name ".scm") squeam-read))))
-    (let ((e (parse-e form `(,module-name))))
-      ;; This stands in for calling `evaluate`, which we don't have yet:
-      (assert (equal? (pack-tag e) e-make) "Script must be `make`" e)
-      (unpack e (name trait clauses)
-;;        (assert (eq? stamp none-exp) "simple script" e)
-        (assert (eq? trait none-exp) "simple script" e)
-        (let ((prim (object<- (script<- name #f clauses)
-                              primitive-env)))
-          (script<- 'script-name prim primitive-env))))))
-
-(define primitive-env '())
-
-(define expression-script
-  (load-ast-script 'expression-primitive "terp/ast-expression"))
-
-(define pattern-script
-  (load-ast-script 'pattern-primitive "terp/ast-pattern"))
-
-(define (unwrap-ast ast)
-  (assert (and (object? ast)
-               (or (eq? (object-script ast) expression-script)
-                   (eq? (object-script ast) pattern-script)))
-          "Not an ast object" ast)
-  (object-datum ast))
-
-(define (__ast-part ast i) (vector-ref (unwrap-ast ast) i))
-(define (__ast-tag ast)    (__ast-part ast 0))
-(define (__ast-e ast i)    (expression<- (__ast-part ast i)))
-(define (__ast-p ast i)    (pattern<- (__ast-part ast i)))
-(define (__ast-es ast i)   (map expression<- (__ast-part ast i)))
-(define (__ast-ps ast i)   (map pattern<- (__ast-part ast i)))
-(define (__ast-clauses ast i)
-  (map (lambda (clause)
-         `(,(pattern<- (car clause))
-           ,(cadr clause)
-           ,(caddr clause)
-           ,(expression<- (cadddr clause))))
-       (__ast-part ast i)))
-
-
-;; Interpreter top level
-
-(define (run-load filename)
-  (let ((forms (snarf filename squeam-read)))
-    (squeam-interpret `(do ,@forms))))
-
-(define (squeam-interpret e)
-  (evaluate (parse-exp e) repl-env))
-
-(define repl-env '())
-
-(define (dbg x)
-;  (pp x))
-  #f)
-
-(define (set-dbg! debug?)
-  (set! dbg (if debug? pp (lambda (x) #f))))
 
 
 ;; Hashing and equality
@@ -168,6 +88,195 @@
        (cond ((string<? x y) -1)
              ((string=? x y)  0)
              (else            +1))))
+
+
+;; Misc primitives
+
+(define (as-cons x)
+  (and (pair? x)
+       (term<- 'cons (car x) (cdr x))))
+
+(define box<- box)
+      
+(define (vector-append v1 v2)
+  (let ((n1 (vector-length v1))
+        (n2 (vector-length v2)))
+    (let ((result (make-vector (+ n1 n2))))
+      (copy-range! result  0 v1 0 n1)
+      (copy-range! result n1 v2 0 n2)
+      result)))
+
+(define (subvector v lo hi)
+  (let ((n (max 0 (- hi lo))))
+    (let ((result (make-vector n)))
+      (copy-range! result 0 v lo n)
+      result)))
+  
+(define (copy-range! dest d source s n)
+  (do ((i (- n 1) (- i 1)))
+      ((< i 0))
+    (vector-set! dest (+ d i)
+                 (vector-ref source (+ s i)))))
+
+
+;; Primitive depiction
+
+(define (prim-display x . opt-sink)
+  (let ((sink (cond ((null? opt-sink) (current-output-port))
+                    ((null? (cdr opt-sink)) (car opt-sink))
+                    (else (error 'prim-display "Too many arguments" `(,x ,@opt-sink))))))
+    (cond ((or (char? x) (string? x) (symbol? x) (number? x))
+           (display x sink))
+          ((boolean? x) ;just for completeness -- not sure I want this
+           (display (if x "#yes" "#no") sink))
+          (else
+           (display "#<XXX non-basic display>" sink))))) ;TODO
+
+(define (prim-write x sink)
+  (let ((s (depict x)))
+    (cond ((output-port? sink)
+           (display s sink))
+          (else
+           ;;XXX shouldn't call Squeam from a Scheme primitive
+           (call sink (term<- '.display s) halt-cont)))))
+
+(define (depict x)
+  (cond ((object? x)
+         (string-append "#<"
+                        (let ((script (object-script x)))
+                          (cond ((script? script)
+                                 (script-name script))
+                                ((cont-script? script)
+                                 (cont-script-name script))
+                                (else "XXX-WTF")))
+                        ">"))
+        (else
+         ;;XXX other types specially? booleans at least?
+         (call-with-string-output-port
+          (lambda (p) (put-datum p x))))))
+
+
+;; Environments
+
+(define primitive-env '())
+(define repl-env '())
+
+(define globals (make-eq-hashtable))
+(define missing (list '*missing*))
+
+(define (global-defined? v)
+  ;;XXX or (not (eq? value uninitialized))
+  (eq-hashtable-contains? globals v))
+
+(define (global-lookup v k)
+  (let ((value (eq-hashtable-ref globals v missing)))
+    (if (eq? value missing)
+        (signal k "Unbound variable" v)
+        (answer k value))))
+
+(define (global-define! v value k)
+  ;;XXX as a hack, allow global redefinition for
+  ;; now. This aids development at the repl, but we
+  ;; need a more systematic solution.
+  ;;(signal k "Global redefinition" v)
+  (eq-hashtable-set! globals v value)
+  (answer k #t))
+
+(define (env-defined? r v)
+  (define (succeed pair) #t)  ;XXX or (not (eq? (cadr pair) uninitialized)))
+  (cond ((assq v r) => succeed)
+        (else (global-defined? v))))
+
+(define (env-lookup r v k)
+  (define (succeed pair) (answer k (cadr pair)))
+  (cond ((assq v r) => succeed)
+        (else (global-lookup v k))))
+
+(define (env-extend r vs values)
+  (append (map list vs values) r))
+
+(define (env-extend-promises r vs)
+  (env-extend r vs (map (lambda (_) uninitialized) vs)))
+
+(define (env-resolve! r v value k)
+  (cond ((assq v r) => (lambda (pair)
+                         (if (not (eq? (cadr pair) uninitialized))
+                             (signal k "Multiple definition" v)
+                             (begin (set-car! (cdr pair) value)
+                                    (answer k #t)))))
+        ((null? r)
+         (global-define! v value k))
+        (else (signal k "Tried to bind in a non-environment" r v))))
+
+(define uninitialized (object<- (script<- '<uninitialized> #f '()) '*uninitialized*))
+
+
+;; Parser bootstrap
+
+(define (expression<- vec) (object<- expression-script vec))
+(define (pattern<- vec)    (object<- pattern-script vec))
+
+(define (__expr thing)
+  (assert (and (vector? thing)
+               (< 0 (vector-length thing))
+               (number? (vector-ref thing 0)))
+          "Must be an internal expression" thing)
+  (expression<- thing))
+
+(define (__patt thing)
+  (assert (and (vector? thing)
+               (< 0 (vector-length thing))
+               (number? (vector-ref thing 0)))
+          "Must be an internal pattern" thing)
+  (pattern<- thing))
+
+(define (parse-exp e . opt-context)
+  (expression<- (parse-e e (optional-context 'parse-exp opt-context))))
+
+(define (parse-pat p . opt-context)
+  (pattern<- (parse-p p (optional-context 'parse-pat opt-context))))
+
+(define (obliviate vs value)            ;c'mon, better name?
+  (map (lambda (_) value) vs))
+
+(define (load-ast-script script-name module-name)
+  (let ((form (car (snarf (string-append module-name ".scm") squeam-read))))
+    (let ((e (parse-e form `(,module-name))))
+      ;; This stands in for calling `evaluate`, which we don't have yet:
+      (assert (equal? (pack-tag e) e-make) "Script must be `make`" e)
+      (unpack e (name trait clauses)
+;;        (assert (eq? stamp none-exp) "simple script" e)
+        (assert (eq? trait none-exp) "simple script" e)
+        (let ((prim (object<- (script<- name #f clauses)
+                              primitive-env)))
+          (script<- 'script-name prim primitive-env))))))
+
+(define expression-script
+  (load-ast-script 'expression-primitive "terp/ast-expression"))
+
+(define pattern-script
+  (load-ast-script 'pattern-primitive "terp/ast-pattern"))
+
+(define (unwrap-ast ast)
+  (assert (and (object? ast)
+               (or (eq? (object-script ast) expression-script)
+                   (eq? (object-script ast) pattern-script)))
+          "Not an ast object" ast)
+  (object-datum ast))
+
+(define (__ast-part ast i) (vector-ref (unwrap-ast ast) i))
+(define (__ast-tag ast)    (__ast-part ast 0))
+(define (__ast-e ast i)    (expression<- (__ast-part ast i)))
+(define (__ast-p ast i)    (pattern<- (__ast-part ast i)))
+(define (__ast-es ast i)   (map expression<- (__ast-part ast i)))
+(define (__ast-ps ast i)   (map pattern<- (__ast-part ast i)))
+(define (__ast-clauses ast i)
+  (map (lambda (clause)
+         `(,(pattern<- (car clause))
+           ,(cadr clause)
+           ,(caddr clause)
+           ,(expression<- (cadddr clause))))
+       (__ast-part ast i)))
 
 
 ;; Objects, calling, and answering
@@ -300,29 +409,6 @@
 (define (signal k plaint . values)
   (error-prim `(,(wrap-cont k) ,plaint ,@values)))
 
-(define (as-cons x)
-  (and (pair? x)
-       (term<- 'cons (car x) (cdr x))))
-
-(define box<- box)
-      
-(define evaluate-prim
-  (object<- (cps-script<- 'evaluate
-                          (lambda (datum message k)
-                            ;;XXX check arity
-                            (apply evaluate-exp `(,@message ,k))))
-            #f))
-
-(define with-ejector
-  (object<- (cps-script<- 'with-ejector
-                          (lambda (datum message k)
-                            ;;XXX check arity
-                            (let* ((ejector-k
-                                    (cont<- unwind-cont k unwind-ejector #t))
-                                   (ejector (ejector<- ejector-k)))
-                              (call (car message) (list ejector) ejector-k))))
-            #f))
-
 (define (ejector<- ejector-k)
   (object<- ejector-script ejector-k)) ;XXX another place extract-datum could wreak havoc
 
@@ -388,114 +474,24 @@
   (object<- (cps-script<- 'ejector-protect do-ejector-protect) #f))
 
 
-;; Environments
-;; N.B. repl-env and primitive-env defined above
-
-(define globals (make-eq-hashtable))
-(define missing (list '*missing*))
-
-(define (global-defined? v)
-  ;;XXX or (not (eq? value uninitialized))
-  (eq-hashtable-contains? globals v))
-
-(define (global-lookup v k)
-  (let ((value (eq-hashtable-ref globals v missing)))
-    (if (eq? value missing)
-        (signal k "Unbound variable" v)
-        (answer k value))))
-
-(define (global-define! v value k)
-  ;;XXX as a hack, allow global redefinition for
-  ;; now. This aids development at the repl, but we
-  ;; need a more systematic solution.
-  ;;(signal k "Global redefinition" v)
-  (eq-hashtable-set! globals v value)
-  (answer k #t))
-
-(define (env-defined? r v)
-  (define (succeed pair) #t)  ;XXX or (not (eq? (cadr pair) uninitialized)))
-  (cond ((assq v r) => succeed)
-        (else (global-defined? v))))
-
-(define (env-lookup r v k)
-  (define (succeed pair) (answer k (cadr pair)))
-  (cond ((assq v r) => succeed)
-        (else (global-lookup v k))))
-
-(define (env-extend r vs values)
-  (append (map list vs values) r))
-
-(define (env-extend-promises r vs)
-  (env-extend r vs (map (lambda (_) uninitialized) vs)))
-
-(define (env-resolve! r v value k)
-  (cond ((assq v r) => (lambda (pair)
-                         (if (not (eq? (cadr pair) uninitialized))
-                             (signal k "Multiple definition" v)
-                             (begin (set-car! (cdr pair) value)
-                                    (answer k #t)))))
-        ((null? r)
-         (global-define! v value k))
-        (else (signal k "Tried to bind in a non-environment" r v))))
-
-(define uninitialized (object<- (script<- '<uninitialized> #f '()) '*uninitialized*))
-
-
 ;; Primitives
 
-(define (vector-append v1 v2)
-  (let ((n1 (vector-length v1))
-        (n2 (vector-length v2)))
-    (let ((result (make-vector (+ n1 n2))))
-      (copy-range! result  0 v1 0 n1)
-      (copy-range! result n1 v2 0 n2)
-      result)))
+(define evaluate-prim
+  (object<- (cps-script<- 'evaluate
+                          (lambda (datum message k)
+                            ;;XXX check arity
+                            (apply evaluate-exp `(,@message ,k))))
+            #f))
 
-(define (subvector v lo hi)
-  (let ((n (max 0 (- hi lo))))
-    (let ((result (make-vector n)))
-      (copy-range! result 0 v lo n)
-      result)))
-  
-(define (copy-range! dest d source s n)
-  (do ((i (- n 1) (- i 1)))
-      ((< i 0))
-    (vector-set! dest (+ d i)
-                 (vector-ref source (+ s i)))))
-
-(define (prim-display x . opt-sink)
-  (let ((sink (cond ((null? opt-sink) (current-output-port))
-                    ((null? (cdr opt-sink)) (car opt-sink))
-                    (else (error 'prim-display "Too many arguments" `(,x ,@opt-sink))))))
-    (cond ((or (char? x) (string? x) (symbol? x) (number? x))
-           (display x sink))
-          ((boolean? x) ;just for completeness -- not sure I want this
-           (display (if x "#yes" "#no") sink))
-          (else
-           (display "#<XXX non-basic display>" sink))))) ;TODO
-
-(define (prim-write x sink)
-  (let ((s (depict x)))
-    (cond ((output-port? sink)
-           (display s sink))
-          (else
-           ;;XXX shouldn't call Squeam from a Scheme primitive
-           (call sink (term<- '.display s) halt-cont)))))
-
-(define (depict x)
-  (cond ((object? x)
-         (string-append "#<"
-                        (let ((script (object-script x)))
-                          (cond ((script? script)
-                                 (script-name script))
-                                ((cont-script? script)
-                                 (cont-script-name script))
-                                (else "XXX-WTF")))
-                        ">"))
-        (else
-         ;;XXX other types specially? booleans at least?
-         (call-with-string-output-port
-          (lambda (p) (put-datum p x))))))
+(define with-ejector
+  (object<- (cps-script<- 'with-ejector
+                          (lambda (datum message k)
+                            ;;XXX check arity
+                            (let* ((ejector-k
+                                    (cont<- unwind-cont k unwind-ejector #t))
+                                   (ejector (ejector<- ejector-k)))
+                              (call (car message) (list ejector) ejector-k))))
+            #f))
 
 (for-each (lambda (pair)
             (let ((key (car pair)) (value (cadr pair)))
@@ -931,6 +927,16 @@
               (cdr (vector->list k))))) ;TODO keep Squeam code from ever accessing an unwrapped cont at (cadr k) via extract-datum
 
 
+;; Interpreter top level
+
+(define (run-load filename)
+  (let ((forms (snarf filename squeam-read)))
+    (squeam-interpret `(do ,@forms))))
+
+(define (squeam-interpret e)
+  (evaluate (parse-exp e) repl-env))
+
+
 ;; Primitive types
 
 (define (get-script name)
@@ -967,3 +973,5 @@
 
 (define (report-stats)
   'ok)
+
+
