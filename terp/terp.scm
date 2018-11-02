@@ -26,12 +26,10 @@
   (pattern<- thing))
 
 (define (parse-exp e . opt-context)
-  (let* ((parsed (parse-e e (optional-context 'parse-exp opt-context))))
-    (expression<- parsed)))
+  (expression<- (parse-e e (optional-context 'parse-exp opt-context))))
 
 (define (parse-pat p . opt-context)
-  (let ((parsed (parse-p p (optional-context 'parse-pat opt-context))))
-    (pattern<- parsed)))
+  (pattern<- (parse-p p (optional-context 'parse-pat opt-context))))
 
 (define (obliviate vs value)            ;c'mon, better name?
   (map (lambda (_) value) vs))
@@ -404,6 +402,58 @@
 
 ;; Environments
 
+(define globals (make-eq-hashtable))
+(define missing (list '*missing*))
+
+(define (global-defined? v)
+  ;;XXX or (not (eq? value uninitialized))
+  (eq-hashtable-contains? globals v))
+
+(define (global-lookup v k)
+  (let ((value (eq-hashtable-ref globals v missing)))
+    (if (eq? value missing)
+        (signal k "Unbound variable" v)
+        (answer k value))))
+
+(define (global-define! v value k)
+  ;;XXX as a hack, allow global redefinition for
+  ;; now. This aids development at the repl, but we
+  ;; need a more systematic solution.
+  ;;(signal k "Global redefinition" v)
+  (eq-hashtable-set! globals v value)
+  (answer k #t))
+
+(define (env-defined? r v)
+  (define (succeed pair) #t)  ;XXX or (not (eq? (cadr pair) uninitialized)))
+  (cond ((assq v r) => succeed)
+        (else (global-defined? v))))
+
+(define (env-lookup r v k)
+  (define (succeed pair) (answer k (cadr pair)))
+  (cond ((assq v r) => succeed)
+        (else (global-lookup v k))))
+
+(define (env-extend r vs values)
+  (append (map list vs values) r))
+
+(define (env-extend-promises r vs)
+  (env-extend r vs (map (lambda (_) uninitialized) vs)))
+
+(define (env-resolve! r v value k)
+  (cond ((assq v r) => (lambda (pair)
+                         (if (not (eq? (cadr pair) uninitialized))
+                             (signal k "Multiple definition" v)
+                             (begin (set-car! (cdr pair) value)
+                                    (answer k #t)))))
+        ((null? r)
+         (global-define! v value k))
+        (else (signal k "Tried to bind in a non-environment" r v))))
+
+(define uninitialized (object<- (script<- '<uninitialized> #f '()) '*uninitialized*))
+
+
+;; Primitives
+
 (define (vector-append v1 v2)
   (let ((n1 (vector-length v1))
         (n2 (vector-length v2)))
@@ -457,27 +507,6 @@
          ;;XXX other types specially? booleans at least?
          (call-with-string-output-port
           (lambda (p) (put-datum p x))))))
-
-(define globals (make-eq-hashtable))
-(define missing (list '*missing*))
-
-(define (global-defined? v)
-  ;;XXX or (not (eq? value uninitialized))
-  (eq-hashtable-contains? globals v))
-
-(define (global-lookup v k)
-  (let ((value (eq-hashtable-ref globals v missing)))
-    (if (eq? value missing)
-        (signal k "Unbound variable" v)
-        (answer k value))))
-
-(define (global-define! v value k)
-  ;;XXX as a hack, allow global redefinition for
-  ;; now. This aids development at the repl, but we
-  ;; need a more systematic solution.
-  ;;(signal k "Global redefinition" v)
-  (eq-hashtable-set! globals v value)
-  (answer k #t))
 
 (for-each (lambda (pair)
             (let ((key (car pair)) (value (cadr pair)))
@@ -679,34 +708,6 @@
     ))
 
 (define mask32 (- 1 (expt 2 32)))
-
-(define (env-defined? r v)
-  (define (succeed pair) #t)  ;XXX or (not (eq? (cadr pair) uninitialized)))
-  (cond ((assq v r) => succeed)
-        (else (global-defined? v))))
-
-(define (env-lookup r v k)
-  (define (succeed pair) (answer k (cadr pair)))
-  (cond ((assq v r) => succeed)
-        (else (global-lookup v k))))
-
-(define (env-extend r vs values)
-  (append (map list vs values) r))
-
-(define (env-extend-promises r vs)
-  (env-extend r vs (map (lambda (_) uninitialized) vs)))
-
-(define (env-resolve! r v value k)
-  (cond ((assq v r) => (lambda (pair)
-                         (if (not (eq? (cadr pair) uninitialized))
-                             (signal k "Multiple definition" v)
-                             (begin (set-car! (cdr pair) value)
-                                    (answer k #t)))))
-        ((null? r)
-         (global-define! v value k))
-        (else (signal k "Tried to bind in a non-environment" r v))))
-
-(define uninitialized (object<- (script<- '<uninitialized> #f '()) '*uninitialized*))
 
 
 ;; A small-step interpreter
