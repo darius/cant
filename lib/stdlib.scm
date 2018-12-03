@@ -58,9 +58,11 @@
     ))
 
 (to (those/lazy ok? xs)
-  (if (ok? xs.first)
-      (cons/lazy xs.first (given () (those/lazy ok? xs.rest)))
-      (those/lazy ok? xs.rest)))
+  (if xs.empty?
+      '()
+      (if (ok? xs.first)
+          (cons/lazy xs.first (given () (those/lazy ok? xs.rest)))
+          (those/lazy ok? xs.rest))))
 
 (to (each/lazy f xs)
   (for foldr/lazy ((x xs)
@@ -250,7 +252,7 @@
   sink.close                       ;TODO unwind-protect
   result)
 
-(to (read-all source)
+(to (read-all source) ;XXX confusing name, since source.read-all returns a string
   (let thing (read source))
   (if (eof? thing)
       '()
