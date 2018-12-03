@@ -171,31 +171,40 @@
   (import (use "lib/traceback") on-error-traceback)
 
   (let parent-handler the-signal-handler.^)
+
+  (to (script-handler @evil)
+    (the-signal-handler .^= parent-handler)
+    (the-last-error .^= evil)
+    (call on-error-traceback evil))
+
   (to (repl-handler @evil)
     (the-signal-handler .^= parent-handler)
     (the-last-error .^= evil)
     (call on-error-traceback evil)
     (display "Enter (debug) for more.\n")
-    (interacting))
+    (interact))
 
-  (to (interacting)
+  (to (interact)
     (the-signal-handler .^= repl-handler)
     (display "sqm> ")
     (let sexpr (read))
-    (unless (eof? sexpr)
-      (let value (evaluate sexpr '())) ;XXX reify a proper env object
-      (unless (= value void)
-        (print value))
-      (interacting))
-    (newline))
+    (if (eof? sexpr)
+        (newline)
+        (do (let value (evaluate sexpr '())) ;XXX reify a proper env object
+            (unless (= value void)
+              (print value))
+            (interact))))
 
   (match cmd-line-args
-    (#no (interacting))
-    ('() (interacting))
-    (`(,filename ,@_)
-     (the-signal-handler .^= repl-handler)     
+    (#no (interact))
+    ('() (interact))
+    (`("-i" ,filename ,@_)
+     (the-signal-handler .^= repl-handler)
      (load-and-run filename cmd-line-args)
-     (interacting))))
+     (interact))
+    (`(,filename ,@_)
+     (the-signal-handler .^= script-handler)
+     (load-and-run filename cmd-line-args))))
 
 (to (load-and-run filename args)
   (load filename `(,filename)) ;TODO remove .scm extension
