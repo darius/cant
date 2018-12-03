@@ -217,25 +217,25 @@
    ((procedure? object)
     (if (or (pair? message) (null? message))
         ;; Intercept Scheme-level errors:
-        (let ((outcome
-               (with-exception-handler make-exc-wrapper
-                                       (lambda () (apply object message)))))
-          (if (exc-wrapper? outcome)
-              (let ((exc (exc-wrapper-exc outcome)))
-                (cond ((condition? exc)
-                       (let ((plaint (with-output-to-string
-                                       (lambda () (display-condition exc)))))
-                         (signal k plaint object message)))
-                      (else
-                       ;;TODO does this ever happen?
-                       (signal k "Primitive error" exc object message))))
-              (answer k outcome)))
+        (call/cc
+         (lambda (scheme-cont)
+           (answer k
+                   (with-exception-handler
+                    (lambda (exc)
+                      (scheme-cont
+                       (if (condition? exc)
+                           (let ((plaint
+                                  (with-output-to-string
+                                    (lambda () (display-condition exc)))))
+                             (signal k plaint object message))
+                           (signal k "Primitive error" exc object message))))
+                    (lambda ()
+                      ;; Do the Scheme call in this error-handling context.
+                      (apply object message))))))
         (run-script object procedure-script object message k)))
    (else
     (let ((script (extract-script object)))
       (run-script object script object message k)))))
-
-(define-record-type exc-wrapper (fields exc))
 
 (define (extract-script object)
   (cond
