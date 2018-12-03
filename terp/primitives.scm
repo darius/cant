@@ -10,26 +10,23 @@
 ;; needs a radical overhaul to use Chez's eq? hashtables
 
 (define (hash x)
-  (equal-hash x))        ;XXX semantically wrong for Squeam. quick hack to try out Chez.
-;  (cond ((term? x) (hash-term x))
-;        ((pair? x) (hash-pair x))
-;        ((string? x) (hash-string x))
-;        (else (equal-hash x)))) 
+  (if (and (integer? x) (<= 0 x))
+      (nat-hash x) ;The Chez equal-hash on ints works poorly with a power-of-2 table size.
+      (equal-hash x)))        ;XXX semantically wrong for Squeam. quick hack to try out Chez.
 
-(define (hash-term x)
-  1) ;(hash-em 1 (cons (term-tag x) (term-parts x))))
-
-(define (hash-pair x)
-  2) ;(hash-em 2 (list (car x) (cdr x))))
-
-(define (hash-string x)
-  3) ; (hash-em 3 (string->list x)))         ;TODO find a built-in string hash fn?
-
-(define (hash-em seed xs)
-  (foldl hash-mix seed xs))
-
-(define (hash-mix h x)
-  (+ (* 7 h) (hash x))) ;XXX we want a function that mixes nicely into the low-order bits
+;; From https://stackoverflow.com/a/12996028
+;; unsigned int unhash(unsigned int x) {
+;;     x = ((x >> 16) ^ x) * 0x119de1f3;
+;;     x = ((x >> 16) ^ x) * 0x119de1f3;
+;;     x = (x >> 16) ^ x;
+;;     return x;
+;; }
+(define (nat-hash x)                    ;XXX undertested
+  (define (mix x)
+    (logxor x (ash x -16)))
+  (define (mulmix x)
+    (logand #xFFFFFFFF (* #x119de1f3 (mix x))))
+  (mix (mulmix (mulmix x))))
 
 (define (squeam=? x y)
   (cond ((term? x) (and (term? y) (term=? x y)))
