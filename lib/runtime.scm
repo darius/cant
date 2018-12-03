@@ -646,6 +646,10 @@
        (let keys  (box<- (array<- none)))  ;; size a power of 2
        (let vals  (box<- (array<- #no)))   ;; same size
 
+       ;; temp performance tracking
+;;       (let n-places (box<- 0))
+;;       (let n-probes (box<- 0))
+
        (to (capacity) keys.^.count)
 
        (to (occupants)
@@ -658,18 +662,22 @@
                          (else (cons i (walking (- i 1)))))))))
 
        (to (place key)
-         (let mask (- keys.^.count 1))
-         (let i0   (mask .and (__hash key)))
-         (begin walking ((i i0)
+;;         (n-places .^= (+ n-places.^ 1))
+         (let m keys.^.count)
+         (let mask (- m 1))
+         (begin walking ((i0 (__hash key))
+                         (q 0)       ;iteration number for quadratic probing, d(q) = 0.5(q + q*q)
                          (slot #no)) ;if integer, then where to put the key if missing
+;;           (n-probes .^= (+ n-probes.^ 1))
+           (let i (mask .and i0))
            (let k (keys.^ i))
            (case ((= k none) {missing-at (or slot i)})
                  ((= k key)  {at i})
+                 ((= q m)    (if slot {missing-at slot} (error "Can't happen")))
                  (else
-                  (let j (mask .and (- i 1)))
-                  (if (= j i0)
-                      (if slot {missing-at slot} (error "Can't happen"))
-                      (walking j (or slot (and (= k deleted) i))))))))
+                  (walking (+ i (+ q 1))
+                           (+ q 1)
+                           (or slot (and (= k deleted) i)))))))
 
        (to (maybe-grow)
          (when (< (* 2 (capacity))
@@ -677,6 +685,10 @@
            (resize (* 2 (capacity)))))
 
        (to (resize new-capacity)
+;;         (print `(resize ,new-capacity places ,n-places.^ probes ,n-probes.^
+;;                         average ,(exact->inexact (/ n-probes.^ (max 1 n-places.^)))))
+;;         (n-places .^= 0)
+;;         (n-probes .^= 0)
          (let old-keys keys.^)
          (let old-vals vals.^)
          (keys .^= (array<-count new-capacity none))
