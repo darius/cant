@@ -66,13 +66,17 @@
 (let __ (maybe whitespace))
 
 (let name 
-  (then (capture (then (skip-1 name-char?)
-                       (many (skip-1 word-char?))))
-        __))
+  (seclude
+   (then (capture (then (skip-1 name-char?)
+                        (many (skip-1 word-char?))))
+         (feed symbol<-)
+         __)))
 
 (let word
-  (then (capture (many (skip-1 word-char?)))
-        __))
+  (seclude
+   (then (capture (many (skip-1 word-char?)))
+         (feed symbol<-)
+         __)))
 
 (to (string-quoted-by q-char)
   (let q (lit-1 q-char))
@@ -155,12 +159,12 @@
     rules))
 
 (let default-subs
-  (map<- `(("anyone" ,any-1)            ;XXX should probably skip instead of capture
-           ("letter" ,(take-1 '.letter?))
-           ("end" ,end)
-           ("hug" ,hug)
-           ("join" ,(feed chain))
-           ("whitespace" ,(skip-1 '.whitespace?))
+  (map<- `((anyone ,any-1)            ;XXX should probably skip instead of capture
+           (letter ,(take-1 '.letter?))
+           (end ,end)
+           (hug ,hug)
+           (join ,(feed chain))
+           (whitespace ,(skip-1 '.whitespace?))
            ;; TODO: more
            )))
 

@@ -20,7 +20,7 @@
 phrase: (word | :anyone)*.
 word:   :letter+ {'!'}? :join.
 "))
-(let parser ((grammar (map<-)) "phrase"))
+(let parser ((grammar (map<-)) 'phrase))
 
 (to (expand token probability)
   (if (and (menu .maps? token) (< (rng .random-integer 1000) probability))

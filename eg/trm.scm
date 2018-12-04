@@ -21,8 +21,8 @@ insn:    {'1'+} {'#' '#'? '#'? '#'? '#'?} :make_insn.
   `(,(insn-table hashes.count) ,ones.count))
 
 (let parser
-  ((grammar (map<- `(("make_insn" ,(feed insn<-)))))
-   "program"))
+  ((grammar (map<- `((make_insn ,(feed insn<-)))))
+   'program))
 
 (to (regs<- @strings)
   (array<-list `(#no ,@strings)))
