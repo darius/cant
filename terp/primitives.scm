@@ -10,9 +10,8 @@
 ;; needs a radical overhaul to use Chez's eq? hashtables
 
 (define (hash x)
-  (if (and (integer? x) (<= 0 x))
-      (nat-hash x) ;The Chez equal-hash on ints works poorly with a power-of-2 table size.
-      (equal-hash x)))        ;XXX semantically wrong for Squeam. quick hack to try out Chez.
+  (nat-hash    ;The Chez equal-hash doesn't mix up ints well
+   (equal-hash x)))        ;XXX semantically wrong for Squeam. quick hack to try out Chez.
 
 ;; From https://stackoverflow.com/a/12996028
 ;; unsigned int unhash(unsigned int x) {
