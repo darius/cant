@@ -171,18 +171,22 @@
   (`(,i)          (__list-ref me i))    ;XXX just use the trait method? then can e.g. mix lazy and eager list nodes
   ({.chain a}     (__append me a))
   ({.selfie sink}
-   (sink .display "(")
-   (sink .print me.first)
-   (begin printing ((r me.rest))
-     (case ((cons? r)
-            (sink .display " ")
-            (sink .print r.first)
-            (printing r.rest))
-           ((null? r) 'ok)
-           (else
-            (sink .display " . ")       ;XXX we're not supporting this in read, iirc
-            (sink .print r))))
-   (sink .display ")"))
+   (case ((and (= me.first 'quote) (= me.count 2))
+          (sink .display "'")
+          (sink .print (me 1)))
+         (else
+          (sink .display "(")
+          (sink .print me.first)
+          (begin printing ((r me.rest))
+            (case ((cons? r)
+                   (sink .display " ")
+                   (sink .print r.first)
+                   (printing r.rest))
+                  ((null? r) 'ok)
+                  (else
+                   (sink .display " . ")       ;XXX we're not supporting this in read, iirc
+                   (sink .print r))))
+          (sink .display ")"))))
   (message
    (list-trait me message))) ;XXX use trait syntax instead
 
