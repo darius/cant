@@ -149,9 +149,9 @@
   (let builder default-builder)         ;TODO parameterize
   (given (subs)
     (let full-subs (union-map<- subs default-subs))
-    (let rules (map<- (for each ((`(,name (,refs ,f)) skeletons)) ;XXX better name than f
+    (let rules (map<- (for each ((`(,name ,_) skeletons))
                         `(,name ,(delay (given () (rules name)))))))
-    (for each! ((`(,name (,refs ,f)) skeletons))
+    (for each! ((`(,name (,_ ,f)) skeletons)) ;XXX better name than f
       (let peg (f builder rules full-subs))
       (rules .set! name peg))
     rules))
