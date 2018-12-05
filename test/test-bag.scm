@@ -1,5 +1,3 @@
-(import (use "lib/bag") bag<-)
-
 ;; TODO this is a dupe of test-hashmap, c'mon
 
 (let a (bag<-))

@@ -15,6 +15,7 @@
     (import (use "lib/flexarray")  flexarray<-)
     (import (use "lib/sort")       sort)
     (import (use "lib/hashset")    set<-)
+    (import (use "lib/bag")        bag<-)
     ;; Let's default to traceback-on-error:
     (push-signal-handler ((use "lib/traceback") 'on-error-traceback))))
 

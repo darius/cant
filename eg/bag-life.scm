@@ -6,7 +6,6 @@
   cbreak-mode)
 (import (use "lib/ansi-term")
   home clear-screen cursor-show cursor-hide)
-(import (use "lib/bag") bag<-)
 
 (to (main `(,prog ,@args))
   (let n-steps (match args
@@ -30,7 +29,7 @@
         (for filter ((`(,pos ,n-live) active.items))
           (match n-live
             (3 pos)
-            (2 (and (grid .get pos) pos))
+            (2 (and (grid .maps? pos) pos))
             (_ #no)))))
 
 (to (neighbors `(,x ,y))

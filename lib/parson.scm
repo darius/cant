@@ -3,8 +3,6 @@
 ;; XXX leaving out regexes, fnord, anonymous start
 ;; XXX need to parameterize by semantics
 
-(import (use "lib/bag")
-  bag<-)
 (import (use "lib/hashset")
   union-over)
 (import (use "lib/parson-core")

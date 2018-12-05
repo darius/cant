@@ -4,8 +4,6 @@
 (import (use "lib/sturm")
   cbreak-mode get-key render
   cursor green red unstyled)
-(import (use "lib/bag")
-  bag<-)
 (import (use "lib/random")
   random-rng<-)
 
