@@ -422,6 +422,8 @@
           (if (or (eof? ch) (= ch #\newline))
               '()
               (cons ch (reading me.read-char)))))))
+  ({.read-lines}
+   me.read-all.split-lines)  ;; TODO inefficient. also, maybe include the newlines?
   )
 
 (make-trait sink-primitive me

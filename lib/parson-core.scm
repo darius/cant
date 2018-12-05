@@ -26,6 +26,7 @@
     ({.prefix _}         failure)
     ({.leftovers}        (error "Parsing failed" failure))
     ({.opt-results}      #no)
+    ({.results}          (error "Parsing failed" failure))
     ({.result}           (error "Parsing failed" failure))
     ({.display}                         ;TODO change to .selfie
      (display "failed: ")
@@ -42,6 +43,7 @@
     ({.prefix pre-vals}  (empty text far i `(,@pre-vals ,@vals)))
     ({.leftovers}        i)
     ({.opt-results}      vals)
+    ({.results}          vals)
     ({.result}
      (if (= 1 vals.count)
          vals.first
@@ -73,6 +75,9 @@
 
 (to (feed f)
   (feed-list (given (vals) (call f vals))))
+
+(to (drop text far i vals)
+  (empty text far i '()))
 
 (to ((push constant) text far i vals)
   (empty text far i `(,@vals ,constant)))
@@ -130,5 +135,5 @@
 
 (export invert capture either then feed-list feed push seclude delay
         maybe many at-least-1
-        fail empty end skip-1 take-1 any-1 skip-any-1 lit-1 lit
+        fail empty end skip-1 take-1 any-1 skip-any-1 lit-1 lit drop
         parse)

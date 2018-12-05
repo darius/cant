@@ -75,6 +75,11 @@
   ;; now. This aids development at the repl, but we
   ;; need a more systematic solution.
   ;;(signal k "Global redefinition" v)
+  (let ((value (eq-hashtable-ref globals v missing)))
+    (unless (eq? value missing)
+      (display "\nWarning: redefined ")
+      (write v)
+      (newline)))
   (eq-hashtable-set! globals v value)
   (answer k #t))
 

@@ -10,7 +10,7 @@
 (import (use "lib/parson-core")
   invert capture either then feed-list feed push seclude delay
   maybe many at-least-1
-  fail empty end skip-1 take-1 any-1 skip-any-1 lit-1 lit
+  fail empty end skip-1 take-1 any-1 skip-any-1 lit-1 lit drop
   parse)
 
 (let hug (feed-list identity))
@@ -159,12 +159,18 @@
     rules))
 
 (let default-subs
-  (map<- `((anyone ,any-1)            ;XXX should probably skip instead of capture
+  (map<- `((skip ,skip-any-1)
+           (anyone ,any-1)            ;XXX all these should probably skip instead of capture
            (letter ,(take-1 '.letter?))
+           (digit ,(take-1 '.digit?))
            (end ,end)
            (hug ,hug)
            (join ,(feed chain))
+           (drop ,drop)
            (whitespace ,(skip-1 '.whitespace?))
+           (nat ,(seclude
+                  (then (capture (at-least-1 (skip-1 '.digit?))) ;; TODO no leading 0s
+                       (feed number<-string))))
            ;; TODO: more
            )))
 
