@@ -100,8 +100,8 @@
   )
 
 (make-trait claim-primitive me
-  ({.selfie sink}
-   (sink .display (if me "#yes" "#no")))
+  ({.count}       (if me 1 0))
+  ({.selfie sink} (sink .display (if me "#yes" "#no")))
   ({.compare a}
    (and (claim? a)
         (case ((= me a) 0)

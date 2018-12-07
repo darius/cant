@@ -126,7 +126,7 @@ Level ~w ~d Move ~w")
   ;; Into a clear square, put thing.
   (to (drop! thing pos)
     (let target? (= #\. (grid pos)))
-    (grid .set! pos (thing (if target? 1 0))))
+    (grid .set! pos (thing target?.count)))
 
   (make _
     ({.unparse}
