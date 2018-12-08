@@ -38,7 +38,7 @@
 (loud-use "test/test-ratio")
 (loud-use "test/test-text")
 (loud-use "test/test-huffman")
-(loud-use "test/test-pairing-heap")
+((loud-use "test/test-pairing-heap") '())
 (loud-use "test/test-2048")
 (loud-use "test/test-kernel")
 (loud-use "test/test-cycle-write")
