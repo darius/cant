@@ -34,7 +34,7 @@
        (let c (7 .and inst))
        (match opcode
 
-         (0 (when (not= (reg c) 0)
+         (0 (unless (= (reg c) 0)
               (reg .set! a (reg b)))
             (next))
 

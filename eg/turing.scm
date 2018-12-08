@@ -25,8 +25,8 @@
     ({run} (turer .run #no))
     ({run option}
      (begin running ()
-       (match option
-         ('loudly (print turer.show-config)))
+       (when (= option 'loudly)
+         (print turer.show-config))
        (when (states .maps? state-id.^)
          turer.step
          (running))))
@@ -52,7 +52,7 @@
 (to (peek marks)
   (match marks
     ('() '(-))
-    (_ marks)))
+    (_   marks)))
 
 ;; TODO a canonicalizer that rewrites to an equiv turing machine
 ;; that steps one square at a time.

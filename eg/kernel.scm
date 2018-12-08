@@ -90,7 +90,7 @@
     (`(,key)
      (match (vars .find key #no)
        (#no (parent-r key))
-       (i (vals i))))
+       (i   (vals i))))
     ({.bind var val}
      (let i (vars .find var))
      (unless (= (vals i) *uninitialized*)

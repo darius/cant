@@ -20,11 +20,10 @@
    (for each! ((_ (range<- n-times)))
      (let inputs (for each ((gen gens))
                    (gen g)))
-     (let outcome (call property inputs))
-     (match outcome
-       (#yes (display "."))
-       (_ (display "X")
-          (failures .push! `(,outcome ,inputs)))))
+     (match (call property inputs)
+       (#yes    (display "."))
+       (outcome (display "X")
+                (failures .push! `(,outcome ,inputs)))))
    (newline)
    (unless failures.empty?
      (format "Failures for ~w:\n" property)

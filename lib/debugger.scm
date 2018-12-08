@@ -1,4 +1,4 @@
-;; Interactively introspect into the call stack or an arbitrary object.
+;; Interactively explore the call stack or an arbitrary object.
 
 (import (use "lib/traceback") print-traceback)
 
@@ -43,6 +43,8 @@
        (continue))
       ('quit
        'ok)
+      ((? eof?)
+       'ok)
       ('up
        (if trail.empty?
            (continue "At top.\n")
@@ -58,10 +60,10 @@
        (let env `((*focus* ,focus) ,@focus-env))
        (print (evaluate (read) env))
        (continue))
-      (_
-       (case ((eof? input) 'ok)
-             ((integer? input) (push (focus input))) ;TODO handle negative
-             (else (continue "Huh? Enter 'help' for help.")))))))
+      ((? integer?)
+       (push (focus input))) ;TODO handle out-of-range
+      (else
+       (continue "Huh? Enter 'help' for help.")))))
 
 (to (inspect-continuation k)
   (surely (not k.empty?))               ;XXX require
@@ -95,6 +97,8 @@
        (continue))
       ('quit
        'ok)
+      ((? eof?)
+       'ok)
       ('resume
        (frame .answer (read-eval)))
       ('up
@@ -115,9 +119,8 @@
       ('backtrace
        (print-traceback frame)
        (continue))
-      (_
-       (unless (eof? input)
-         (continue "Huh? Enter 'help' for help.\n"))))))
+      (else
+       (continue "Huh? Enter 'help' for help.\n")))))
 
 (to (show-env env)
   (print (each '.first env)))

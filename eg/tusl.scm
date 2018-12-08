@@ -58,7 +58,7 @@
 (to (compile-local frames word)
   (let locals (call chain frames))      ;I think
   (match (locals .find word #no)
-    (#no #no)
+    (#no   #no)
     (index (local<- index))))
 
 (to (run xts)

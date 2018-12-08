@@ -187,13 +187,12 @@
   (to (interact)
     (the-signal-handler .^= repl-handler)
     (display "sqm> ")
-    (let sexpr (read))
-    (if (eof? sexpr)
-        (newline)
-        (do (let value (evaluate sexpr '())) ;XXX reify a proper env object
-            (unless (= value void)
-              (print value))
-            (interact))))
+    (match (read)
+      ((? eof?) (newline))
+      (sexpr (let value (evaluate sexpr '())) ;XXX reify a proper env object
+             (unless (= value void)
+               (print value))
+             (interact))))
 
   (match cmd-line-args
     (#no (interact))
