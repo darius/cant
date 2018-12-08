@@ -59,7 +59,7 @@
 (to ((capture p) text far i vals)
   ((p text far i vals) .capture-from i))
 
-(to ((folded<- combine) @arguments)
+(to ((folded<- combine) @arguments)     ;TODO support arguments.empty?
   (foldr1 combine arguments))
 
 (let either
