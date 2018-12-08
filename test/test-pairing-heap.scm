@@ -21,14 +21,12 @@
     pq1)
 
   (to (growing pq ns)
-    (case (ns.empty? pq)
-          (else
-           (let pq1 (insert pq ns.first))
-           (let rest ns.rest)
-           (if rest.empty?
-               pq1
-               (growing (remove-min (insert pq1 rest.first)) 
-                        rest.rest)))))
+    (match ns
+      ('() pq)
+      (`(,n1) (insert pq n1))
+      (`(,n1 ,n2 ,@rest)
+       (growing (remove-min (insert (insert pq n1) n2))
+                rest))))
 
   (begin shrinking ((pq (growing empty numbers))
                     (ns numbers))
