@@ -150,15 +150,13 @@
   ;; when we're in here. So, for now let's just set it:
   (the-signal-handler .^= panic)
 
-  ;; N.B. we're trying not to use anything but primitives:
+  ;; N.B. we're trying to use only primitives here as far as possible:
   (display "Error within error! Evils:\n")
-  (to (printing xs)
-    (unless xs.empty?
-      (out .print xs.first)
-      (out .display #\newline)
-      (printing xs.rest)))
-  (printing evil)
-  (os-exit 1))
+  (begin printing ((xs evil))
+    (case (xs.empty? (os-exit 1))
+          (else (out .print xs.first)
+                (out .display #\newline)
+                (printing xs.rest)))))
 
 (to (break @values)
   (call error `("Breakpoint" ,@values)))
