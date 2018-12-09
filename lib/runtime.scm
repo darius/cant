@@ -12,7 +12,7 @@
 ;; definitions, transitively.
 
 (make-trait miranda-trait me
-  ({.selfie sink} (__write me sink))
+  ({.selfie sink} (sink .display (__depict me)))
   (message (error "Match failure" me message)))
 
 (make-trait list-trait list

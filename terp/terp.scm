@@ -28,14 +28,6 @@
           (else
            (display "#<XXX non-basic display>" sink))))) ;TODO
 
-(define (prim-write x sink)
-  (let ((s (depict x)))
-    (cond ((output-port? sink)
-           (display s sink))
-          (else
-           ;;XXX shouldn't call Squeam from a Scheme primitive
-           (call sink (term<- '.display s) halt-cont)))))
-
 (define (depict x)
   (cond ((object? x)
          (string-append "#<"
@@ -526,7 +518,7 @@
     (__read-all ,prim-read-all)
     (__write-char ,write-char)
     (__display ,prim-display)
-    (__write ,prim-write)
+    (__depict ,depict)
 
     (__u+ ,(lambda (a b) (logand mask32 (+ a b)))) ;XXX revisit these definitions
     (__s+ ,(lambda (a b) (logand mask32 (+ a b)))) ;XXX I forget what distinction I meant to make
