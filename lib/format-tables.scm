@@ -12,8 +12,7 @@
   (let widths (for each ((column (transpose rows)))
                 (call max (each '.count column))))
   (for each ((row rows))
-    (spacer .join (for each ((pair (zip row widths)))
-                    (call justify pair)))))
+    (spacer .join (zip-with justify row widths))))
 
 ;; Given a sequence of strings, return a matrix of the same strings in
 ;; column order, trying to fit them in the given width.
