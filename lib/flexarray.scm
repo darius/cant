@@ -18,7 +18,7 @@
     (vec.^ .copy! old))
 
   (to (count-check i)
-    (unless (< i count.^)
+    (unless (< i count.^)               ;TODO check negative too
       (error "Bad index" flexarray i)))
 
   (make flexarray {extending array-trait}
@@ -42,6 +42,23 @@
        (error "Underflow" flexarray))
      (count .^= i)
      (vec.^ i))
+    ({.pop! i}
+     (when (< i 0)
+       (error "Out of range" flexarray))
+     (count-check i)
+     (let popped (vec.^ i))
+     (vec.^ .move! i (+ i 1) (- count.^ (+ i 1)))
+     (count .^= (- count.^ 1))
+     popped)
+    ({.insert! i value}                 ;TODO code duplication .push!
+     (let c count.^)
+     (unless (<= i c)
+       (error "Bad index" flexarray i))
+     (when (= c vec.^.count) (grow))
+     (vec.^ .move! (+ i 1) i (- c i))
+     (vec.^ .set! i value)
+     (count .^= (+ c 1))
+     i)                                 ;TODO what's a good return value?
     ({.snapshot}
      (vec.^ .slice 0 count.^))         ;XXX make immutable
     ({.copy! v lo bound}
