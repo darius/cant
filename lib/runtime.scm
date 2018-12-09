@@ -202,19 +202,22 @@
    (me (- me.count 1)))
   ({.copy! v}
    (me .copy! v 0 v.count))
-  ({.move! dest src len}                ;XXX untested
+  ({.move! dest src len}
    (for each! ((i (if (<= dest src)
                       (range<- len)
                       (reverse (range<- len)))))  ;TODO inefficient
      (me .set! (+ dest i)
          (me (+ src i)))))
   ({.values}
-   (for each ((i (range<- me.count)))   ;TODO cheaper to represent by self -- when can we get away with that?
-     (me i)))
+   (each me (range<- me.count)))   ;TODO cheaper to represent by self -- when can we get away with that?
   ({.items}
    (for each ((i (range<- me.count)))
      `(,i ,(me i))))
-;  ({.get key default}  TODO custom impl
+  ({.get key default}
+   (case ((not (integer? key)) default)
+         ((< key 0) default)
+         ((<= me.count key) default)
+         (else (me key))))
   ({.swap! i j}
    (let t (me i))
    (me .set! i (me j))
