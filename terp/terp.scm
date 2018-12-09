@@ -21,6 +21,7 @@
   (let ((sink (cond ((null? opt-sink) (current-output-port))
                     ((null? (cdr opt-sink)) (car opt-sink))
                     (else (error 'prim-display "Too many arguments" `(,x ,@opt-sink))))))
+    ;; XXX need to support non-primitive sinks
     (cond ((or (char? x) (string? x) (symbol? x) (number? x))
            (display x sink))
           ((boolean? x) ;just for completeness -- not sure I want this
