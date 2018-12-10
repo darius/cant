@@ -168,7 +168,11 @@
            (whitespace ,(skip-1 '.whitespace?))
            (nat ,(seclude
                   (then (capture (at-least-1 (skip-1 '.digit?))) ;; TODO no leading 0s
-                       (feed number<-string))))
+                        (feed number<-string))))
+           (int ,(seclude
+                  (then (capture (then (maybe (lit-1 #\-))
+                                       (at-least-1 (skip-1 '.digit?))));; TODO no leading 0s
+                        (feed number<-string))))
            ;; TODO: more
            )))
 
