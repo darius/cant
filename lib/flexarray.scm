@@ -63,10 +63,10 @@
      i)                                 ;TODO what's a good return value?
     ({.snapshot}
      (vec.^ .slice 0 count.^))         ;XXX make immutable
-;;XXX with this optimization, tests fail. Since the method looks right, things must be buggy elsewhere:
-;    ({.move! dst source lo bound}
-;     (count-check bound)
-;     (vec.^ .move! dst source lo bound))
+    ({.move! dst source lo bound}
+     (when (< lo bound)
+       (count-check (+ dst (- bound lo) -1)))
+     (vec.^ .move! dst source lo bound))
     ({.extend! values}
      (for each! ((v values))
        (flexarray .push! v)))
