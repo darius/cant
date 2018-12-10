@@ -13,7 +13,8 @@
   (call complain evil))
 
 (to (print-traceback k)
-  (each! print (reverse k)))
+  (for each! ((frame (reverse k)))
+    (format "  ~w\n" frame)))
 
 (to (complain @evil)
   (match evil
