@@ -65,8 +65,8 @@
      (vec.^ .slice 0 count.^))         ;XXX make immutable
     ({.move! dst source lo bound}
      (when (< lo bound)
-       (count-check (+ dst (- bound lo) -1)))
-     (vec.^ .move! dst source lo bound))
+       (count-check (+ dst (- bound lo) -1))
+       (vec.^ .move! dst source lo bound)))
     ({.extend! values}
      (for each! ((v values))
        (flexarray .push! v)))
