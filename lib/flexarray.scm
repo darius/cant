@@ -47,7 +47,8 @@
        (error "Out of range" flexarray))
      (count-check i)
      (let popped (vec.^ i))
-     (vec.^ .move! i (+ i 1) (- count.^ (+ i 1)))
+;     (vec.^ .move! i (+ i 1) (- count.^ (+ i 1)))
+     (__vector-move! vec.^ i vec.^ (+ i 1) count.^)
      (count .^= (- count.^ 1))
      popped)
     ({.insert! i value}                 ;TODO code duplication .push!
@@ -55,15 +56,17 @@
      (unless (<= i c)
        (error "Bad index" flexarray i))
      (when (= c vec.^.count) (grow))
-     (vec.^ .move! (+ i 1) i (- c i))
+     (__vector-move! vec.^ (+ i 1) vec.^ i c)
+;     (vec.^ .move! (+ i 1) i (- c i))
      (vec.^ .set! i value)
      (count .^= (+ c 1))
      i)                                 ;TODO what's a good return value?
     ({.snapshot}
      (vec.^ .slice 0 count.^))         ;XXX make immutable
-    ({.copy! v lo bound}
-     (count-check bound)
-     (vec.^ .copy! v lo bound))
+;;XXX with this optimization, tests fail. Since the method looks right, things must be buggy elsewhere:
+;    ({.move! dst source lo bound}
+;     (count-check bound)
+;     (vec.^ .move! dst source lo bound))
     ({.extend! values}
      (for each! ((v values))
        (flexarray .push! v)))
@@ -75,7 +78,7 @@
      (let old vec.^)
      (when (< old.count n) ;; TODO maybe we should always change the physical size
        (let new (array<-count n))
-       (new .copy! old 0 (min old.count n))
+       (new .move! 0 old 0 (min old.count n))
        (vec .^= new))
      (count .^= n))
     ({.clear!}

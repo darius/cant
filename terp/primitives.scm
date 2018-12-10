@@ -97,6 +97,21 @@
     (vector-set! dest (+ d i)
                  (vector-ref source (+ s i)))))
 
+;; TODO reconcile with copy-range!
+;; TODO range-check first
+;; TODO no-op if in range and (dest,d) == (src,lo)
+(define (vector-move! dest d source lo bound)
+  (let ((diff (- d lo)))
+    (if (<= d lo)
+        (do ((i lo (+ i 1)))
+            ((<= bound i))
+          (vector-set! dest (+ i diff)
+                       (vector-ref source i)))
+        (do ((i (- bound 1) (- i 1)))
+            ((< i lo))
+          (vector-set! dest (+ i diff)
+                       (vector-ref source i))))))
+
 (define (maybe-macroexpand-expr e)
   (cond ((and (pair? e) (look-up-macro (car e)))
          => (lambda (expander)

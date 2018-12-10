@@ -108,8 +108,8 @@
      
     ;; Make position p start the tail.
     (if (<= p head.^)
-        (t .move! (+ gap.^ p)  p                 (- head.^ p))
-        (t .move! head.^       (+ gap.^ head.^)  (- p head.^)))
+        (t .move! (+ gap.^ p)  t p                head.^)
+        (t .move! head.^       t (+ gap.^ head.^) (+ gap.^ p)))
     (head .^= p)
 
     ;; Delete the next `span` characters.
@@ -123,13 +123,12 @@
       (let sz   (+ (grow (+ size.^ gap.^))   ;; TODO rename
                    r-size))
       (t .resize! sz)
-      (t .move! (- sz tail) (+ head.^ gap.^) tail)
+      (t .move! (- sz tail) t (+ head.^ gap.^) (+ size.^ gap.^)) ;TODO isn't the last just t.count ?
       (gap .^= (- sz size.^)))
 
     ;; Insert `replacement`.
-    ;; (t .copy! head.^ replacement 0 r-size)   TODO no such method
-    (for each! ((i (range<- r-size)))
-      (t .set! (+ i head.^) (replacement i)))
+    (t .move! head.^ replacement 0 r-size)
+
     (head .^= (+ head.^ r-size))
     (gap  .^= (- gap.^ r-size))
     (size .^= (+ size.^ r-size)))

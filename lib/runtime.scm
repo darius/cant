@@ -56,7 +56,7 @@
                  (d d)))))
   ;; A sequence is a kind of collection. Start implementing that:
   ({.keys}
-   (range<- list.count))
+   (range<- list.count)) ;TODO move this impl to array-trait; here, enum lazily.
   ({.values}
    list)
   ({.items}
@@ -171,43 +171,45 @@
   (`(,i)          (__list-ref me i))    ;XXX just use the trait method? then can e.g. mix lazy and eager list nodes
   ({.chain a}     (__append me a))
   ({.selfie sink}
-   (case ((and (= me.first 'quote) (= me.count 2))
-          (sink .display "'")
-          (sink .print (me 1)))
-         (else
-          (sink .display "(")
-          (sink .print me.first)
-          (begin printing ((r me.rest))
-            (case ((cons? r)
-                   (sink .display " ")
-                   (sink .print r.first)
-                   (printing r.rest))
-                  ((null? r) 'ok)
-                  (else
-                   (sink .display " . ")       ;XXX we're not supporting this in read, iirc
-                   (sink .print r))))
-          (sink .display ")"))))
+   (match me
+     (`(quote ,x)
+      (sink .display "'")
+      (sink .print x))
+     (else
+      (sink .display "(")
+      (sink .print me.first)
+      (begin printing ((r me.rest))
+        (case ((cons? r)
+               (sink .display " ")
+               (sink .print r.first)
+               (printing r.rest))
+              ((null? r) 'ok)
+              (else
+               (sink .display " . ")       ;XXX we're not supporting this in read, iirc
+               (sink .print r))))
+      (sink .display ")"))))
   (message
    (list-trait me message))) ;XXX use trait syntax instead
 
 (make-trait array-trait me
   ({.slice i}
    (me .slice i me.count))
-  ({.slice i bound}
+  ({.slice i bound}                     ;XXX untested
    (let v (array<-count (- bound i)))
-   (for each! ((j bound))
-     (v .set! j (me (+ i j))))
+   (v .move! 0 me i bound)
    v)
   ({.last}
    (me (- me.count 1)))
   ({.copy! v}
-   (me .copy! v 0 v.count))
-  ({.move! dest src len}
-   (for each! ((i (if (<= dest src)
-                      (range<- len)
-                      (reverse (range<- len)))))  ;TODO inefficient
-     (me .set! (+ dest i)
-         (me (+ src i)))))
+   (me .move! 0 v 0 v.count))
+  ({.move! dst source lo bound}
+   ;; TODO no-op if in range and (me,dst) == (source,lo)
+   (let lo->dst (- dst lo))
+   (for each! ((i (if (<= dst lo)
+                      (range<- lo bound)
+                      (range<- (- bound 1) lo -1))))
+     (me .set! (+ i lo->dst)
+         (source i))))
   ({.values}
    (each me (range<- me.count)))   ;TODO cheaper to represent by self -- when can we get away with that?
   ({.items}
@@ -236,10 +238,11 @@
   ({.slice i}     (__subvector me i me.count))
   ({.slice i j}   (__subvector me i j))
   ({.set! i val}  (__vector-set! me i val))
-  ({.copy! v lo bound}
-   ;; XXX range-check first
-   (for each! ((i (range<- lo bound)))
-     (__vector-set! me (- i lo) (v i)))) ;XXX was this what I wanted? I forget.
+  ({.move! dst source lo bound}
+   ;; Block-copy source[lo..bound) to me[dst..dst+(bound-lo)).
+   (if (array? source)
+       (__vector-move! me dst source lo bound)
+       (array-trait me {.move! dst source lo bound}))) ;TODO we want to just name the message
   ({.copy}        (__vector-copy me))
   ({.selfie sink}
    (sink .display "#")
@@ -889,8 +892,6 @@
   x)
 
 (make range<-
-  (`(,limit)
-   (range<- 0 limit))
   (`(,first ,limit)
    (if (<= limit first)
        '()
@@ -911,20 +912,36 @@
                (do (let j (+ first i))
                    (and (<= first j) (< j limit)))))
          )))
+  (`(,limit)
+   (range<- 0 limit))
   (`(,first ,limit ,stride)
-   (unless (< 0 stride)
-     (error "TODO downward range" stride))
-   (if (<= limit first)
-       '()
-       (make range {extending list-trait}
-         ({.empty?} #no)
-         ({.first}  first)
-         ({.rest}   (range<- (+ first stride) limit stride))
-         (`(,i)
-          (error "TODO" range `(,i)))
-         ({.maps? i}
-          (error "TODO" range {.maps? i}))
-         ))))
+   ;; TODO factor the code better
+   (case ((< 0 stride)
+          (if (<= limit first)
+              '()
+              (make range {extending list-trait}
+                    ({.empty?} #no)
+                    ({.first}  first)
+                    ({.rest}   (range<- (+ first stride) limit stride))
+                    (`(,i)
+                     (error "TODO" range `(,i)))
+                    ({.maps? i}
+                     (error "TODO" range {.maps? i}))
+                    )))
+         ((< stride 0)
+          (if (< first limit)
+              '()
+              (make range {extending list-trait}
+                    ({.empty?} #no)
+                    ({.first}  first)
+                    ({.rest}   (range<- (+ first stride) limit stride))
+                    (`(,i)
+                     (error "TODO" range `(,i)))
+                    ({.maps? i}
+                     (error "TODO" range {.maps? i}))
+                    )))
+         (else
+          (error "Zero stride" first limit stride)))))
 
 (make enumerate
   (`(,xs)
