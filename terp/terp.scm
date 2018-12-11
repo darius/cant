@@ -465,7 +465,8 @@
     (nanosleep ,prim-nanosleep)
 
     ;; Primitives only -- TODO seclude in their own env:
-    (__hash ,hash)
+    (__hash ,hash)                      ;TODO not needed when we have __place
+    (__place ,hashmap-place)
     (__char-compare ,char-compare)
     (__number-compare ,number-compare)
     (__+ ,+)

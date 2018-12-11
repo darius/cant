@@ -71,6 +71,27 @@
 
 ;; Misc primitives
 
+(define (hashmap-place key keys none deleted)
+  (let* ((m (vector-length keys))
+         (mask (- m 1)))
+    (let walking ((i0 (hash key))
+                  (q 0)      ;iteration number for quadratic probing, d(q) = 0.5(q + q*q)
+                  (slot #f)) ;if integer, then where to put the key if missing
+      (let* ((i (logand mask i0))
+             (k (vector-ref keys i)))
+        (cond ((eq? k none)
+               (term<- 'missing-at (or slot i)))
+              ((squeam=? k key)
+               (term<- 'at i))
+              ((= q m)
+               (if slot
+                   (term<- 'missing-at slot)
+                   (error 'hashmap-place "Can't happen")))
+              (else
+               (walking (+ i (+ q 1))
+                        (+ q 1)
+                        (or slot (and (eq? k deleted) i)))))))))
+
 (define (as-cons x)
   (and (pair? x)
        (term<- 'cons (car x) (cdr x))))

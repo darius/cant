@@ -678,22 +678,7 @@
                          (else (cons i (walking (- i 1)))))))))
 
        (to (place key)
-;;         (n-places .^= (+ n-places.^ 1))
-         (let m keys.^.count)
-         (let mask (- m 1))
-         (begin walking ((i0 (__hash key))
-                         (q 0)       ;iteration number for quadratic probing, d(q) = 0.5(q + q*q)
-                         (slot #no)) ;if integer, then where to put the key if missing
-;;           (n-probes .^= (+ n-probes.^ 1))
-           (let i (mask .and i0))
-           (let k (keys.^ i))
-           (case ((= k none) {missing-at (or slot i)})
-                 ((= k key)  {at i})
-                 ((= q m)    (if slot {missing-at slot} (error "Can't happen")))
-                 (else
-                  (walking (+ i (+ q 1))
-                           (+ q 1)
-                           (or slot (and (= k deleted) i)))))))
+         (__place key keys.^ none deleted))
 
        (to (maybe-grow)
          (when (< (* 2 (capacity))
