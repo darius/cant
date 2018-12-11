@@ -197,7 +197,7 @@
     ('() (interact))
     (`("-i" ,filename ,@_)
      (the-signal-handler .^= repl-handler)
-     (load-and-run filename cmd-line-args)
+     (load-and-run filename cmd-line-args.rest)
      (interact))
     (`(,filename ,@_)
      (the-signal-handler .^= script-handler)
