@@ -19,13 +19,8 @@
 (let ifs   (array<- if0s if1s))
 
 (to (dedup memo k1 k2 k3)
-  (to (enter map key)
-    (or (map .get key)
-        (do (let v (map<-))
-            (map .set! key v)
-            v)))
-  (let mem1 (enter memo k1))
-  (let mem2 (enter mem1 k2))
+  (let mem1 (memo .get-set! k1 map<-))
+  (let mem2 (mem1 .get-set! k2 map<-))
   (list<- (mem2 .get k3) mem2))
 
 (let choice-memo (map<-))
