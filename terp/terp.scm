@@ -250,6 +250,7 @@
    ((boolean? object)     boolean-script)
    ((term? object)        term-script)
    ((eq? object (void))   void-script)
+   ((eof-object? object)  eof-script)
    ((script? object)      script-script)
    ;; XXX: cont-script? too
    ((procedure? object)   procedure-script)
@@ -826,6 +827,7 @@
 (define term-script   (get-script 'term-primitive))
 (define procedure-script (get-script 'procedure-primitive))
 (define void-script   (get-script 'void-primitive))
+(define eof-script    (get-script 'eof-primitive))
 (define script-script (get-script 'script-primitive))
 (define ejector-script (get-script 'ejector-primitive))
 

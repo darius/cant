@@ -159,7 +159,5 @@
   (let reading ((cs '()))
     (let ((c (read-char port)))
       (if (eof-object? c)
-          (if (null? cs)
-              c
-              (list->string (reverse cs)))
+          (list->string (reverse cs))
           (reading (cons c cs))))))

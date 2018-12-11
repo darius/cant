@@ -458,6 +458,10 @@
   ;; A Scheme type returned by some of the Scheme operations.
   )
 
+(make-trait eof-primitive me
+  ;; The eof object.
+  )
+
 (make-trait script-primitive me
   ({.name}    (__script-name me))
   ({.trait}   (__script-trait me))
