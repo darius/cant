@@ -2,6 +2,13 @@
 
 (import (use "lib/memoize") memoize)
 
+(to (main _)
+  (let g {grid 0o610 0o061})
+;  (let g {grid 0o000 0o000})
+  (tic-tac-toe spock-play spock-play g)
+; (tic-tac-toe spock-play drunk-play {grid 0o400 0o020})
+)
+
 (to (tic-tac-toe player opponent grid)
   (show grid)
   (newline)
@@ -17,7 +24,7 @@
 
 (to (human-play grid)
   "Just ask for a move."
-  XXX)
+  'XXX)
 
 (to (drunk-play grid)
   (arg-min (successors grid) drunk-value))
@@ -101,9 +108,4 @@
 (to (move<-human-numbered n)
   (- 9 n))
 
-
-(hide
- (let g {grid 0o610 0o061})
- (tic-tac-toe spock-play spock-play g)
-;; (tic-tac-toe spock-play drunk-play {grid 0o400 0o020})
-)
+(export main)
