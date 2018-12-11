@@ -731,6 +731,16 @@
           (let vs vals.^)
           (for each ((i (occupants)))
             `(,(ks i) ,(vs i))))
+         ({.get-set! key value<-}
+          (match (place key)
+            ({at i}
+             (vals.^ i))
+            ({missing-at _}
+             (let value (value<-))
+             ;; Alas, we can't just stick it in at i because (value<-)
+             ;; might have changed things too:
+             (hashmap .set! key value)
+             value)))
          ({.delete! key}
           (match (place key)
             ({at i}
