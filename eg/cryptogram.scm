@@ -74,7 +74,7 @@
   (let lines (each clean cryptogram.uppercase.split-lines))
   (let line-starts
     (running-sum (for each ((line lines))
-                   ((those '.letter? line) .count))))
+                   ('.count (those '.letter? line)))))
 
   (to (shift-by offset)
     (point .^= ((+ point.^ offset) .modulo code.count)))
