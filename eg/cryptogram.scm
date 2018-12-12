@@ -16,7 +16,7 @@
   (for cbreak-mode ()
     (puzzle cryptogram)))
 
-(let alphabet (each char<- ((#\a .code) .up-to (#\z .code)))) ;XXX clumsy
+(let alphabet (as-list (#\a .up-to #\z)))
 
 (to (random-encrypt rng text)
   (let values (array<-list alphabet))
@@ -152,7 +152,7 @@
              (r .push! #\space)
              (unless (= 0 (r.count .modulo 8))
                (padding))))
-          ((< ch.code 32)
+          ((< ch #\space)
            (r .push! #\space))
           (else
            (r .push! ch))))

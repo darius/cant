@@ -402,7 +402,16 @@
   ({.uppercase?}  (__char-uppercase? me))
   ({.lowercase}   (__char-lowercase me))
   ({.uppercase}   (__char-uppercase me))
-  ({.compare c}   (__char-compare me c)) ;XXX untested
+  ({.compare c}   (__char-compare me c))
+  ({.+ n}   ;; Is this a good idea?
+   (surely (integer? n) "Bad arg type" n)
+   (char<- (+ me.code n)))
+  ({.- b}
+   (case ((integer? b) (char<- (- me.code b)))
+         ((char? b)    (- me.code b.code))
+         (else (error "Bad arg type" b))))
+  ({.up-to< b}    (range<- me b))       ;These methods should be in a trait
+  ({.up-to b}     (range<- me (+ b 1))) ;if they're a good idea at all...
   )
 
 (make-trait box-primitive me
