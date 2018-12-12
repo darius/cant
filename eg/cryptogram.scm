@@ -109,12 +109,11 @@
        (shift-till offset (given () (= letter (code point.^))))))
 
     ({.view show-cursor?}
-     (let counts (call bag<- (for those ((v decoder.values))
-                               (not= v #\space))))
+     (let counts (call bag<- decoder.values))
      (let letters-left (for each ((ch alphabet))
                          (if (counts .maps? ch) #\space ch)))
      (let clashes (call set<- (for filter ((`(,v ,n) counts.items))
-                                (and (< 1 n) v))))
+                                (and (< 1 n) (not= v #\space) v))))
 
      (let pos (box<- 0))
 
