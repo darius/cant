@@ -60,7 +60,7 @@
 (loud-use "eg/fizzbuzz")
 (loud-use "eg/failing")
 (loud-use "eg/lambdaterp")
-(((loud-use "eg/tictactoe") 'main) '(_))
+(((loud-use "eg/tictactoe") 'quick-test))
 (loud-use "eg/max-path-sum")
 (loud-use "eg/squickcheck-examples")
 (((loud-use "eg/slow-life") 'smoke-test))
