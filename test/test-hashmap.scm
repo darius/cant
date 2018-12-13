@@ -25,9 +25,12 @@
   (for each! ((_ (range<- n-trials)))
     (exercise-em (for each ((value (range<- 50)))
                    (let key (rng .random-integer 16))
-                   (let op  (if (< (rng .random-integer 10) 3)
-                                'fetch
-                                value))
+                   (let op (match (rng .random-integer 10)
+                             (0 'delete)
+                             (1 'fetch)
+                             (2 'fetch)
+                             (3 'fetch)
+                             (_ value)))
                    `(,key ,op)))))
 
 (to (exercise-em pairs)
@@ -43,10 +46,20 @@
        (surely (= m-val a-val))
                                         ;        (print `(,key ,m-val))
        )
+      ('delete
+       (m .delete! key)
+       (a .^= (a-list-remove key a.^)))
       (value
        (m .set! key value)
-       (a .^= `((,key ,value) ,@a.^))
+       (a .^= `((,key ,value) ,@(a-list-remove key a.^)))
        ;; TODO test equivalence here
-       ))))
+       )))
+  (let r1 (sort m.items))
+  (let r2 (sort a.^))
+  (surely (= r1 r2) "Final maps diverge" r1 r2))
+
+(to (a-list-remove key a-list)
+  (for those ((`(,k ,_) a-list))
+    (not= k key)))
 
 (random-tests 18)
