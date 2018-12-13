@@ -428,8 +428,12 @@
     (panic ,panic-object)
     (error ,error-prim-object)
     (evaluate ,evaluate-prim)
-    (open-input-file ,open-input-file)
-    (open-output-file ,open-output-file)
+    (open-input-file ,open-input-file)  ;XXX rename open-file-source
+    (open-output-file ,open-output-file) ; open-file-sink
+    (open-binary-file-source ,open-file-input-port) ; This actually has more options in Chez than just binary
+    (open-binary-file-sink ,open-file-output-port)  ; but let's just hack it in for now. 
+    (__get-u8 ,get-u8)
+    (__put-u8 ,put-u8)
     (__set-dbg! ,set-dbg!)
     (with-ejector ,with-ejector)
     (__eject ,ejector-eject)

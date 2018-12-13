@@ -93,14 +93,14 @@
 (to (read-program source)
   (let program (flexarray<-))
   (begin reading ()
-    (let c3 source.read-char)
-    (unless (eof? c3)
-      (let c2 source.read-char)
-      (let c1 source.read-char)
-      (let c0 source.read-char)
+    (let b3 source.read-u8)
+    (unless (eof? b3)
+      (let b2 source.read-u8)
+      (let b1 source.read-u8)
+      (let b0 source.read-u8)
       ;; TODO: a syntax for int-guard coercion instead?
       (program .push!
-               (u32<-bytes c3.code c2.code c1.code c0.code))
+               (u32<-bytes b3 b2 b1 b0))
       (reading)))
   program)                              ;TODO: snapshot it
 
@@ -110,8 +110,29 @@
 (to (append-byte u byte)
   (byte .u+ (u .u<< 8)))
 
+(to (wtf source)
+  (for with-binary-output-file ((f "geez"))
+    (begin reading ((i 0))
+      (let c3 source.read-u8)
+      (unless (eof? c3)
+        (f .write-u8 c3)
+        (reading (+ i 1))))))
+
+;; XXX put something like this in stdlib
+(to (with-binary-input-file fn filename)
+  (let source (open-binary-file-source filename))
+  (let result (fn source))
+  source.close                       ;TODO unwind-protect
+  result)
+
+(to (with-binary-output-file fn filename)
+  (let source (open-binary-file-sink filename))
+  (let result (fn source))
+  source.close                       ;TODO unwind-protect
+  result)
+
 (hide
  (to (testme)
-   (let program (with-input-file read-program "sandmark.umz"))
+   (let program (with-binary-input-file read-program "codex.umz"))
    (run program out stdin))   
  (testme))

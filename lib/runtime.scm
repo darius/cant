@@ -425,6 +425,7 @@
 
 (make-trait source-primitive me
   ({.read-char}   (__read-char me))
+  ({.read-u8}     (__get-u8 me))
   ({.read-all}    (__read-all me))
   ({.close}       (__close-port me))
   ({.ready?}      (__char-ready? me))
@@ -443,6 +444,7 @@
 
 (make-trait sink-primitive me
   ({.display a}   (__display a me))
+  ({.write-u8 u8} (__put-u8 me u8))
   ({.print a}     (a .selfie me))
   ({.close}       (__close-port me))
   ({.output-string}                 ;XXX for string-sink only
