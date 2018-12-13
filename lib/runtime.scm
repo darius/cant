@@ -769,6 +769,8 @@
           (count .^= 0)
           (keys .^= (array<- none))
           (vals .^= (array<- #no)))
+         ({.copy}
+          (map<- hashmap.items))
          ({.selfie sink}
           (sink .display "#<hash-map (")
           (sink .print count.^)
