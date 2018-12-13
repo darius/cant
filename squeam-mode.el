@@ -57,7 +57,7 @@ implementation.)"
          (params (squeam-mode-params (cdr call))))
     ;; TODO error check
     ;; TODO if already defined, just go there
-;    (set-mark-command nil)
+    (push-mark nil)
     (let ((defn (squeam-mode-find-function-definition name)))
       (if defn
           (goto-char defn)
