@@ -24,15 +24,15 @@
     ({.invert}           empty)
     ({.capture-from _}   failure)
     ({.prefix _}         failure)
-    ({.leftovers}        (error "Parsing failed" failure))
+    ({.leftovers}        (error "Parse failed" failure.postmortem))
     ({.opt-results}      #no)
-    ({.results}          (error "Parsing failed" failure))
-    ({.result}           (error "Parsing failed" failure))
+    ({.results}          (error "Parse failed" failure.postmortem))
+    ({.result}           (error "Parse failed" failure.postmortem))
+    ({.postmortem}       `(,(text .slice 0 far)
+                           ,(text .slice far)))
     ({.display}                         ;TODO change to .selfie
-     (display "failed: ")
-     (write (text .slice 0 far))
-     (display "/")
-     (write (text .slice far)))))
+     (let `(,left ,right) failure.postmortem)
+     (format "failed: ~w/~w" left right))))
 
 (to (empty text far i vals)
   (make success
