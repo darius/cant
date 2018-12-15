@@ -560,7 +560,7 @@
     (os-exit ,exit)
     ))
 
-(define mask32 (- 1 (expt 2 32)))
+(define mask32 (- (expt 2 32) 1))
 
 
 ;; A small-step interpreter
