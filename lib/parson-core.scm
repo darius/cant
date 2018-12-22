@@ -28,10 +28,10 @@
     ({.opt-results}      #no)
     ({.results}          (error "Parse failed" failure.postmortem))
     ({.result}           (error "Parse failed" failure.postmortem))
-    ({.postmortem}       `(,(text .slice 0 far)
+    ({.postmortem}       `(,(text .slice 0 far) /
                            ,(text .slice far)))
     ({.display}                         ;TODO change to .selfie
-     (let `(,left ,right) failure.postmortem)
+     (let `(,left / ,right) failure.postmortem)
      (format "failed: ~w/~w" left right))))
 
 (to (empty text far i vals)
