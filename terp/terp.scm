@@ -419,7 +419,9 @@
     (char<- ,integer->char)
     (string<-list ,list->string)
     (array<-count ,make-vector)
-    (exact->inexact ,exact->inexact)  ;XXX rename or something
+    (inexact<-exact ,exact->inexact)  ;XXX rename or something
+    (exact<-inexact ,inexact->exact)  ;XXX rename or something
+    (floor ,floor)
     (not ,not)
     (assoc ,assoc)  ;; TODO replace with 'real' hashmaps
     (sqrt ,sqrt)

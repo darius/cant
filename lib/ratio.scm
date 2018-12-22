@@ -53,7 +53,7 @@
   ((* n1 d2) .compare (* n2 d1)))
 
 (to (as-float {ratio n d})
-  (/ (exact->inexact n) d))
+  (/ (inexact<-exact n) d))
 
 (map<- `(
          (ratio? ,ratio?)
