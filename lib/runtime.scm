@@ -231,13 +231,14 @@
   ({.empty?}      (= 0 me.count))
   ({.first}       (me 0))
   ({.rest}        (me .slice 1))
+  ({.set! i val}  (__vector-set! me i val))
   ({.count}       (__vector-length me))
   (`(,i)          (__vector-ref me i))
   ({.maps? i}     (__vector-maps? me i))
   ({.chain v}     (__vector-append me v))
+  ({.values}      (__vector->list me))
   ({.slice i}     (__subvector me i me.count))
   ({.slice i j}   (__subvector me i j))
-  ({.set! i val}  (__vector-set! me i val))
   ({.move! dst source lo bound}
    ;; Block-copy source[lo..bound) to me[dst..dst+(bound-lo)).
    (if (array? source)
@@ -698,7 +699,7 @@
 
        (to (resize new-capacity)
 ;;         (print `(resize ,new-capacity places ,n-places.^ probes ,n-probes.^
-;;                         average ,(exact->inexact (/ n-probes.^ (max 1 n-places.^)))))
+;;                         average ,(inexact<-exact (/ n-probes.^ (max 1 n-places.^)))))
 ;;         (n-places .^= 0)
 ;;         (n-probes .^= 0)
          (let old-keys keys.^)
@@ -1106,6 +1107,9 @@
                   (+ (if width (* 10 width) 0)
                      digit)
                   args))
+        (#\x  ; hex number, XXX works wrong on negative numbers
+         (maybe-pad sink pad sign width {.display ((string<-number args.first 16) .lowercase)})
+         (scanning sink s.rest args.rest))
         (_
          (error "Bad format string" s))))
 

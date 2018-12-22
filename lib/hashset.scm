@@ -17,6 +17,12 @@
     ({.add-all! vals} (for each! ((v vals)) (hash-set .add! v)))
     ({.union! other}  (hash-set .add-all! other.keys))
     ({.union other}   (union hash-set other))
+    ({.intersect other}                 ;TODO rename to .and, etc., I guess
+     (let result (set<-))
+     (for each! ((x map.keys))
+       (when (other .maps? x)
+         (result .add! x)))
+     result)
     ({.difference other}
      (let result (set<-))
      (for each! ((x map.keys))
