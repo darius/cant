@@ -102,8 +102,8 @@
     ({.next}
      (copy-edges)
      (let new (grid<- n-rows n-cols))
-     (for each ((r (1 .up-to n-rows)))
-       (for each ((c (1 .up-to n-cols)))
+     (for each! ((r (1 .up-to n-rows)))
+       (for each! ((c (1 .up-to n-cols)))
          (new .set! r c (update (at r c)))))
      new)
     ))
