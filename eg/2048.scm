@@ -138,10 +138,7 @@
 
 (let arrows (export left right up down))
 
-(let empty-board '((0 0 0 0)   ;XXX crude
-                   (0 0 0 0)
-                   (0 0 0 0)
-                   (0 0 0 0)))
+(let empty-board ('((0 0 0 0)) .repeat 4))
 
 (export 
   main
