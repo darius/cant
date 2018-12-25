@@ -21,6 +21,9 @@
 ;; XXX use (compare x y)
 ;; TODO compatible interface with fifo queues?
 
+;; TODO probably more convenient/efficient to parameterize by a `key`
+;; fn instead of by `<=?`
+
 (to (priority-queues<- <=?)
 
   ;; The priority queue with no elements.
