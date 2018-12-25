@@ -534,6 +534,7 @@
     (__s+ ,(lambda (a b) (logand mask32 (+ a b)))) ;XXX I forget what distinction I meant to make
     (__s* ,(lambda (a b) (logand mask32 (* a b))))
     (__u- ,(lambda (a b) (logand mask32 (- a b))))
+    (__u/ ,(lambda (a b) (logand mask32 (fx/ a b))))
     (__u<< ,(lambda (a b) (logand mask32 (ash a b))))
     (__u>> ,(lambda (a b) (logand mask32 (ash a (- b)))))
 

@@ -135,6 +135,7 @@
   ;; XXX sketchy support for 32-bit word ops:
   ({.u+ a}        (__u+ me a))
   ({.u- a}        (__u- me a))
+  ({.u/ a}        (__u/ me a))
   ({.u>> a}       (__u>> me a))
   ({.u<< a}       (__u<< me a))
   ({.s+ a}        (__s+ me a))
