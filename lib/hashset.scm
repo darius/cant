@@ -29,6 +29,8 @@
        (unless (other .maps? x)
          (result .add! x)))
      result)
+    ({.intersects? map2}
+     (map .intersects? map2))
     ({.clear!}        map.clear!)
     ({.get key}       (map .maps? key))
     (`(,key)          (map .maps? key))

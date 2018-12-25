@@ -760,6 +760,11 @@
              (count .^= (- count.^ 1))
              #no)
             (_ #no)))
+         ({.intersects? map2}
+          ;; TODO: maybe iterate over the one with smaller .count ?
+          (let ks keys.^)
+          (for some ((j (occupants)))
+            (map2 .maps? (ks j))))
          ({.find? value}
           (hashmap.values .find? value))
          ({.find value default}
