@@ -1,0 +1,130 @@
+(import (use "advent-utils")
+  simple-parser<-
+  grammar<- parson-parse)
+
+;(let input (with-input-file '.read-all "advent16.test"))
+(let input (with-input-file '.read-all "advent16"))
+
+(let grammar (grammar<- "
+main: clause* :hug '\n\n' program.  # N.B. no :end
+clause: 'Before: [' [:nat ', ' :nat ', ' :nat ', ' :nat :hug] ']\n'
+        [:nat ' ' :nat ' ' :nat ' ' :nat :hug] '\n'
+        'After:  [' [:nat ', ' :nat ', ' :nat ', ' :nat :hug] ']\n\n' :hug.
+
+program: insn* :hug.
+insn:    :nat ' ' :nat ' ' :nat ' ' :nat '\n' :hug.
+"))
+(let semantics (grammar (map<-)))
+(let parse-main (semantics 'main))
+(to (parse string)
+  (let outcome (parson-parse parse-main string))
+  ('.results outcome))
+
+(let `(,observations ,program) (parse input))
+(each! print program)
+(format "#obs: ~w\n" observations.count)
+
+
+(display "\nPart 1\n")
+
+(to (run program assignments)
+  (let regs (array<-count 4 0))
+  (let vm (vm<- regs))
+  (for each! ((`(,opcode ,a ,b ,c) program))
+    (vm .do (assignments opcode) a b c))
+  regs)
+
+(to (vm<- regs)
+  (make vm
+    ({.do op a b c}
+     (let result
+       (match op
+
+         ('addr  (+ (regs a) (regs b)))
+         ('addi  (+ (regs a) b))
+
+         ('mulr  (* (regs a) (regs b)))
+         ('muli  (* (regs a) b))
+
+         ('banr  ((regs a) .and (regs b)))
+         ('bani  ((regs a) .and b))
+       
+         ('borr  ((regs a) .or (regs b)))
+         ('bori  ((regs a) .or b))
+       
+         ('setr  (regs a))
+         ('seti  a)
+       
+         ('gtir  (if (> a (regs b)) 1 0))
+         ('gtri  (if (> (regs a) b) 1 0))
+         ('gtrr  (if (> (regs a) (regs b)) 1 0))
+       
+         ('eqir  (if (= a (regs b)) 1 0))
+         ('eqri  (if (= (regs a) b) 1 0))
+         ('eqrr  (if (= (regs a) (regs b)) 1 0))
+       
+         ))
+     (regs .set! c result))
+
+    ({.get-regs} regs)
+    ))
+
+(let all-op-names
+  '(addr addi mulr muli
+    banr bani borr bori
+    setr seti
+    gtir gtri gtrr eqir eqri eqrr))
+
+(let constraints
+  (for each ((sample observations))
+    (let `(,regs-pre (,op ,a ,b ,c) ,regs-post) sample)
+    (let compatible-ops
+      (for filter ((op-name all-op-names))
+        (let vm (vm<- (array<-list regs-pre)))
+        (vm .do op-name a b c)
+        (and (= regs-post (as-list vm.get-regs))
+             op-name)))
+;;    (format "~w: ~w\n" op (sort compatible-ops))
+    `(,op ,compatible-ops)))
+
+(to (part-1)
+  ('.count
+   (for those ((`(,_ ,compatible-ops) constraints))
+     (<= 3 compatible-ops.count))))
+
+;(format "~w\n" (part-1))
+
+
+(display "\nPart 2\n")
+
+(to (part-2)
+  ;; TODO: map-reduce with intersection
+  (let op-name-set (call set<- all-op-names))
+  (let opcodes (call set<- (each '.first constraints)))
+  (let candidates (map<- (for each ((opcode opcodes.keys))
+                           `(,opcode ,op-name-set))))
+  (for each! ((`(,opcode ,op-names) constraints))
+    (let set (candidates opcode))
+    (candidates .set! opcode (set .intersect (call set<- op-names))))
+
+  ;; Trivial constraint satisfaction turns out to be good enough:
+  (let assignments (map<-))
+  (begin pruning ()
+    (let opcode (arg-min candidates.keys (given (op) ('.count (candidates op)))))
+    (when (= 1 ('.count (candidates opcode)))
+      (let op-name (((candidates opcode) .keys) .first)) ;clumsy
+      (assignments .set! opcode op-name)
+      (candidates .delete! opcode)
+      (for each! ((`(,op2 ,names2) candidates.items))
+        (candidates .set! op2 (names2 .difference (set<- op-name)))) ;XXX missing .delete!
+      (unless candidates.empty?
+        (pruning))))
+  (surely candidates.empty?)
+
+  (each! print assignments.items)
+  (newline)
+
+  (let post-regs (run program assignments))
+  (post-regs 0))
+
+(format "~w\n" (part-2))
