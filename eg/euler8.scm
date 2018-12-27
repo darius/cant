@@ -3,7 +3,7 @@
 ;; have the greatest product.
 
 (let input
-"73167176531330624919225119674426574742355349194934
+("73167176531330624919225119674426574742355349194934
 96983520312774506326239578318016984801869478851843
 85861560789112949495459501737958331952853208805511
 12540698747158523863050715693290963295227443043557
@@ -22,20 +22,17 @@
 07198403850962455444362981230987879927244284909188
 84580156166097919133875499200524063689912560717606
 05886116467109405077541002256983155200055935729725
-71636269561882670428252483600823257530420752963450")
+71636269561882670428252483600823257530420752963450" .replace "\n" ""))
 
-(to (number<-digit char)
-  (- char #\0))
+(to (k-slices<- xs k)                   ;ugly: better name?
+  (for each ((i (range<- (- xs.count k))))
+    (xs .slice i (+ i k))))
 
-(let digits (each number<-digit (input .replace "\n" "")))
+(let digits
+  (call array<- (each number<-string (k-slices<- input 1))))
 
 (to (euler8 n)
   (call max (each product<- (k-slices<- digits n))))
-
-(to (k-slices<- xs k)                   ;ugly: better name?
-  (let array (call array<- xs))
-  (for each ((i (range<- (- array.count k))))
-    (array .slice i (+ i k))))
 
 (to (product<- ns) ;ugly: the asymmetry of this name and `sum`
   (foldl * 1 ns))
