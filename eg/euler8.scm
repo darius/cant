@@ -27,7 +27,7 @@
 (to (number<-digit char)
   (- char #\0))
 
-(let digits (each number<-digit (call chain input.split-lines)))
+(let digits (each number<-digit (input .replace "\n" "")))
 
 (to (euler8 n)
   (call max (each product<- (k-slices<- digits n))))
