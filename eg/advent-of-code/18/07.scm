@@ -7,7 +7,7 @@
 ;  '(2 1))
 ;  '(2 61))
   '(5 61))
-(let input (with-input-file '.read-lines "advent07"))
+(let input (with-input-file '.read-lines "eg/advent-of-code/18/data/advent07"))
 
 (let parser (simple-parser<- "'Step ' :anyone ' must be finished before step ' :anyone ' can begin.'"))
 

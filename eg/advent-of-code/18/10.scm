@@ -1,7 +1,7 @@
 (import (use "eg/advent-of-code/utils")
   simple-parser<-)
 
-(let input (with-input-file '.read-lines "advent10"))
+(let input (with-input-file '.read-lines "eg/advent-of-code/18/data/advent10"))
 
 (let parser
   (simple-parser<- "'position=<'_ :int ','_ :int :hug ['> velocity=<'_ :int ','_ :int '>' :hug]"))

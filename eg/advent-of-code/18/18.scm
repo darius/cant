@@ -1,7 +1,7 @@
 (import (use "lib/grid-2d")
   grid-2d<-)
 
-(let input (with-input-file '.read-lines "advent18"))
+(let input (with-input-file '.read-lines "eg/advent-of-code/18/data/advent18"))
 
 (let width input.first.count)
 (let height input.count)

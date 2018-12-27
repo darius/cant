@@ -3,7 +3,7 @@
 (import (use "lib/memoize")
   memoize)
 
-(let input (with-input-file '.read-all "advent20"))
+(let input (with-input-file '.read-all "eg/advent-of-code/18/data/advent20"))
 
 (to (alt<- @es) {alt es})
 (to (seq<- @es) {seq es})

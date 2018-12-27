@@ -1,4 +1,4 @@
-(let input (with-input-file read "advent14"))
+(let input (with-input-file read "eg/advent-of-code/18/data/advent14"))
 ;(let input 9)
 
 (display "\nPart 1\n")

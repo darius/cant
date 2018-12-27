@@ -3,7 +3,7 @@
   manhattan-distance<-
 )
 
-(let input (with-input-file '.read-lines "advent23"))
+(let input (with-input-file '.read-lines "eg/advent-of-code/18/data/advent23"))
 
 (let parser
   (simple-parser<- "'pos=<' [:int ',' :int ',' :int :hug] '>, r=' :int"))

@@ -11,7 +11,7 @@
 ;(let input (with-input-file '.read-all "advent15.combat3"))
 ;(let input (with-input-file '.read-all "advent15.combat4"))
 ;(let input (with-input-file '.read-all "advent15.combat5"))
-(let input (with-input-file '.read-all "advent15"))
+(let input (with-input-file '.read-all "eg/advent-of-code/18/data/advent15"))
 
 (to (part-1)
   (let field (field<- input 3))
@@ -105,10 +105,8 @@
       ('() #no)
       (targets
        (let target
-         (min-by (given (target)
-                   ;; The least remaining hit points, then the first in reading order.
-                   `(,(units target) ,target))
-                 targets)
+         ;; The least remaining hit points, then the first in reading order.
+         (min-by (compound-key<- units identity) targets))
        ;;     (format "target ~w\n" target)
        (attack p target)
        #yes)))
@@ -163,10 +161,10 @@
                      (exploring (extend queue-1 (expand trail)))))
              (exploring (extend queue-1 (expand trail))))))))
 
-  (to (list<-queue {queue h t})
-    (chain h (reverse t)))
+;;  (to (list<-queue {queue h t})
+;;    (chain h (reverse t)))
 
-  (to (sorted? xs)
+  (to (sorted? xs)                      ;TODO extract to lib
     (or xs.empty?
         xs.rest.empty?
         (and (<= xs.first xs.rest.first)

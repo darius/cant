@@ -9,8 +9,8 @@
   push extend
   peek)
 
-;(let input (with-input-file '.read-lines "advent17.test"))
-(let input (with-input-file '.read-lines "advent17"))
+;(let input (with-input-file '.read-lines "eg/advent-of-code/18/data/advent17.test"))
+(let input (with-input-file '.read-lines "eg/advent-of-code/18/data/advent17"))
 
 (let parser
   (simple-parser<- ":anyone '=' :int ', ' :anyone '=' :int '..' :int"))

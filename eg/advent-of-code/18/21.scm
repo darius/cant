@@ -1,4 +1,4 @@
-(let input (with-input-file '.read-lines "advent21"))
+(let input (with-input-file '.read-lines "eg/advent-of-code/18/data/advent21"))
 
 (let the-ip (number<-string (input.first.split 1)))
 (print the-ip)

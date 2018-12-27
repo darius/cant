@@ -12,7 +12,7 @@
   (reverse (for foldl ((results '()) (x xs))
              `(,(f x) ,@results))))
 
-(let input (with-input-file read-tree "advent08"))
+(let input (with-input-file read-tree "eg/advent-of-code/18/data/advent08"))
 
 (format "Part 1\n")
 

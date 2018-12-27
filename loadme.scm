@@ -1,19 +1,19 @@
 ;; The Squeam interpreter and global environment.
 
-(load "terp/util.scm")
-(load "terp/macros.scm")
-(load "terp/read.scm")
-(load "terp/parse.scm")
-(load "terp/elaborate.scm")
-(load "terp/primitives.scm")
-(load "terp/terp.scm")
+(load "terp/util.so")
+(load "terp/macros.so")
+(load "terp/read.so")
+(load "terp/parse.so")
+(load "terp/elaborate.so")
+(load "terp/primitives.so")
+(load "terp/terp.so")
 
 (run-load "lib/stdlib.scm")
 (squeam-interpret
  '(do
     (use "test/smoke-test")
     (import (use "lib/flexarray")  flexarray<-)
-    (import (use "lib/sort")       sort)
+    (import (use "lib/sort")       sort sort-by)
     (import (use "lib/hashset")    set<-)
     (import (use "lib/bag")        bag<-)
     ;; Let's default to traceback-on-error:

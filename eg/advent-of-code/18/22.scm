@@ -7,8 +7,8 @@
 (import (use "lib/pairing-heap")
   priority-queues<-)
 
-(let input (with-input-file '.read-all "advent22"))
-;(let input (with-input-file '.read-all "advent22.test"))
+(let input (with-input-file '.read-all "eg/advent-of-code/18/data/advent22"))
+;(let input (with-input-file '.read-all "eg/advent-of-code/18/data/advent22.test"))
 
 (let parser
   (simple-parser<- "'depth: ' :nat '\ntarget: ' [:nat ',' :nat :hug] '\n'"))

@@ -1,4 +1,4 @@
-(let inputs (with-input-file '.read-all "advent13"))
+(let inputs (with-input-file '.read-all "eg/advent-of-code/18/data/advent13"))
 
 (to (parse world-str)
   (let width (+ 1 world-str.split-lines.first.count)) ;XXX check same others

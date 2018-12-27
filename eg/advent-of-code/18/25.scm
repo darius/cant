@@ -1,12 +1,12 @@
 (import (use "eg/advent-of-code/utils")
   manhattan-distance<-)
 
-;(let input (with-input-file '.read-lines "advent25"))
-;(let input (with-input-file '.read-lines "advent25.0"))
-;(let input (with-input-file '.read-lines "advent25.1"))
-;(let input (with-input-file '.read-lines "advent25.2"))
-;(let input (with-input-file '.read-lines "advent25.3"))
-(let input (with-input-file '.read-lines "advent25.4"))
+;(let input (with-input-file '.read-lines "eg/advent-of-code/18/data/advent25"))
+;(let input (with-input-file '.read-lines "eg/advent-of-code/18/data/advent25.0"))
+;(let input (with-input-file '.read-lines "eg/advent-of-code/18/data/advent25.1"))
+;(let input (with-input-file '.read-lines "eg/advent-of-code/18/data/advent25.2"))
+;(let input (with-input-file '.read-lines "eg/advent-of-code/18/data/advent25.3"))
+(let input (with-input-file '.read-lines "eg/advent-of-code/18/data/advent25.4"))
 
 (to (parse line)
   (each number<-string (line.trim .split ","))) ;TODO I thought it was #\,

@@ -1,6 +1,6 @@
 (import (use "eg/advent-of-code/utils") first-duplicate deletions)
 
-(let input (with-input-file '.read-lines "02.txt"))
+(let input (with-input-file '.read-lines "eg/advent-of-code/18/data/02.txt"))
 
 
 (display "Part 1\n")

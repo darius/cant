@@ -1,6 +1,5 @@
-(let input (with-input-file '.read-lines "advent19"))
-;(let input (with-input-file '.read-lines "advent19.test"))
-(each! print (input .slice 0 5))
+(let input (with-input-file '.read-lines "eg/advent-of-code/18/data/advent19"))
+;(let input (with-input-file '.read-lines "eg/advent-of-code/18/data/advent19.test"))
 
 (let the-ip (number<-string (input.first.split 1)))
 (print the-ip)

@@ -1,4 +1,2 @@
-#! /usr/bin/scheme --script
-
-(load "loadme.scm")
-(repl (cdr (command-line)))
+make -s &&
+./squeam.scm "$@"

@@ -1,6 +1,6 @@
 (import (use "eg/advent-of-code/advent-utils") cycle scanl/lazy)
 
-(let changes (with-input-file read-all "01.txt"))
+(let changes (with-input-file read-all "eg/advent-of-code/18/data/01.txt"))
 
 
 (display "Part 1\n")
