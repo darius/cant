@@ -30,12 +30,12 @@
 (let digits (each number<-digit (call chain input.split-lines)))
 
 (to (euler8 n)
-  (call max (each product<- (length-n-slices<- n digits))))
+  (call max (each product<- (k-slices<- digits n))))
 
-(to (length-n-slices<- n xs)
+(to (k-slices<- xs k)                   ;ugly: better name?
   (let array (call array<- xs))
-  (for each ((k (range<- (- array.count n))))
-    (array .slice k (+ k n))))
+  (for each ((i (range<- (- array.count k))))
+    (array .slice i (+ i k))))
 
 (to (product<- ns) ;ugly: the asymmetry of this name and `sum`
   (foldl * 1 ns))
