@@ -11,4 +11,5 @@
 (loud-use "eg/euler3")
 (loud-use "eg/euler4")
 (loud-use "eg/euler5")
+(loud-use "eg/euler6")
 (loud-use "eg/euler7")
