@@ -1,5 +1,3 @@
-;; (Fails on the real input.)
-
 (import (use "eg/advent-of-code/utils")
   grammar<- parson-parse feed)
 (import (use "lib/pretty-print")
