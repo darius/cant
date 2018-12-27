@@ -1,7 +1,3 @@
-;; OK, now to hopefully find the bug and submit an answer! Sheesh!
-
-(import (use "eg/advent-of-code/utils")
-  all-mins-by)
 (import (use "lib/queue")
   empty empty?                          ;TODO too-generic names
   push extend
@@ -90,7 +86,7 @@
         ('())
         (paths
          (let chosen-path
-           (min-by paths (given (path) `(,path.last ,path.first))))
+           (min-by (compound-key<- '.last '.first) paths))
          (let spot chosen-path.first)
          (move! p spot)
          (unless (maybe-attack spot)
@@ -109,10 +105,10 @@
       ('() #no)
       (targets
        (let target
-         (min-by targets
-                 (given (target)
+         (min-by (given (target)
                    ;; The least remaining hit points, then the first in reading order.
-                   `(,(units target) ,target))))
+                   `(,(units target) ,target))
+                 targets)
        ;;     (format "target ~w\n" target)
        (attack p target)
        #yes)))

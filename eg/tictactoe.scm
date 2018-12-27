@@ -83,17 +83,18 @@
 
 (make drunk-play
   ({.name} 'Drunk)
-  (`(,grid) (min-by (successors grid) drunk-value)))
+  (`(,grid) (min-by drunk-value (successors grid))))
 
 (make spock-play
   ({.name} 'Spock)
-  (`(,grid) (min-by (successors grid) spock-value)))
+  (`(,grid) (min-by spock-value (successors grid))))
 
 (make max-play
   ({.name} 'Max)
   (`(,grid)
-   (min-by (successors grid)
-           (given (succ) `(,(spock-value succ) ,(drunk-value succ))))))
+   (min-by (compound-key<- spock-value drunk-value)
+           (successors grid))))
+           
 
 (let drunk-value
   (memoize (given (grid)

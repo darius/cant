@@ -2,15 +2,15 @@
 
 (make sort
   (`(,xs)
-   (sort-by xs identity))
+   (sort-by identity xs))
   (`(,xs {reverse})          ;TODO design a better keyword-args scheme
    ;; TODO sort by 'negation' of key instead, but allowing for
    ;; non-numbers. Make up a negation-wrapper type?
-   (reverse (sort-by xs identity))) 
+   (reverse (sort-by identity xs))) 
   ;; ...
   )
 
-(to (sort-by sequence key<-)
+(to (sort-by key<- sequence)
 
   (to (merge-sort seq)
     (begin splitting ((seq seq) (xs '()) (ys '()))

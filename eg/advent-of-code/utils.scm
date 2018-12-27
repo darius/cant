@@ -6,7 +6,7 @@
   (surely (not numbers.empty?) "Average of an empty list")
   (/ (sum numbers) numbers.count))
 
-(to (all-mins-by xs fn)
+(to (all-mins-by fn xs)
   (for foldl ((best (list<- xs.first))
               (x xs.rest))
     (match ((fn best.first) .compare (fn x))

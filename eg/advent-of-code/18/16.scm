@@ -1,8 +1,8 @@
 (import (use "eg/advent-of-code/utils")
   grammar<- parson-parse)
 
-;(let input (with-input-file '.read-all "advent16.test"))
-(let input (with-input-file '.read-all "advent16"))
+;(let input (with-input-file '.read-all "eg/advent-of-code/18/data/advent16.test"))
+(let input (with-input-file '.read-all "eg/advent-of-code/18/data/advent16"))
 
 (let grammar (grammar<- "
 main: clause* :hug '\n\n' program.  # N.B. no :end
@@ -16,8 +16,7 @@ insn:    :nat ' ' :nat ' ' :nat ' ' :nat '\n' :hug.
 (let semantics (grammar (map<-)))
 (let parse-main (semantics 'main))
 (to (parse string)
-  (let outcome (parson-parse parse-main string))
-  ('.results outcome))
+  ('.results (parson-parse parse-main string)))
 
 (let `(,observations ,program) (parse input))
 (each! print program)
@@ -109,7 +108,8 @@ insn:    :nat ' ' :nat ' ' :nat ' ' :nat '\n' :hug.
   ;; Trivial constraint satisfaction turns out to be good enough:
   (let assignments (map<-))
   (begin pruning ()
-    (let opcode (min-by candidates.keys (given (op) ('.count (candidates op)))))
+    (let opcode (min-by (compose '.count candidates)
+                        candidates.keys))
     (when (= 1 ('.count (candidates opcode)))
       (let op-name (((candidates opcode) .keys) .first)) ;clumsy
       (assignments .set! opcode op-name)

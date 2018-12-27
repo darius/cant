@@ -114,7 +114,7 @@
     (format "seeking at ~w, distance ~w\n" p d)
     (if (< d margin)
         p
-        (seeking (min-by (neighbors-8<- p) total-distance)))))
+        (seeking (min-by total-distance (neighbors-8<- p))))))
 
 '(let seed
   ('.first 

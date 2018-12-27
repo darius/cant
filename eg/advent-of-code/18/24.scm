@@ -38,19 +38,19 @@
   (let result (flexarray<-))
   (let enemies (call flexarray<- enemy-groups)) ;; clumsy: probably ought to be a set
   (let enemy-nums (call flexarray<- (as-list (1 .up-to enemy-groups.count))))  ;; just for the messages
-  (for each! ((`(,i ,group) (sort-by my-groups.items
-                                     (given (`(,_ ,group)) group.target-selection-key))))
+  (for each! ((`(,i ,group) (sort-by (given (`(,_ ,group)) group.target-selection-key)
+                                     my-groups.items)))
     (unless enemies.empty?
       (let damages (for each ((enemy enemies.values))
                      (group .would-damage enemy)))
 ;;      (for each! ((`(,j ,damage) damages.items))
 ;;        (format "~d group ~w would deal defending group ~w ~w damage\n"
 ;;                my-name (+ i 1) (enemy-nums j) damage))
-      (let j (max-by enemies.keys (given (j)
-                                    (let enemy (enemies j))
-                                    (list<- (damages j)   ;; or just compute it here
-                                            enemy.effective-power
-                                            enemy.initiative))))
+      (let j (for max-by ((j enemies.keys))
+               (let enemy (enemies j))
+               (list<- (damages j)   ;; or just compute it here
+                       enemy.effective-power
+                       enemy.initiative)))
       (when (< 0 (damages j))
         (result .push! `(,group ,(enemies j)))
         (enemies .pop! j)
@@ -58,7 +58,8 @@
   result.values)
 
 (to (attacking selections)
-  (for each! ((group (sort-by selections.keys (given (g) (- g.initiative)))))
+  (for each! ((group (sort-by (given (g) (- g.initiative))
+                              selections.keys)))
     (when group.alive?
       (match (selections .get group)
         (#no)

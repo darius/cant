@@ -16,7 +16,7 @@
 (display "\nPart 1\n")
 
 (to (part1)
-  (max-by (patches) patch-level<-))
+  (max-by patch-level<- (patches)))
 
 (to (patch-level<- `(,x ,y))
   (sum (for gather ((i (x .up-to (+ x 2))))
@@ -72,7 +72,7 @@
   (to (cvt-coords `(,x ,y ,d))
     `(,(+ x 1) ,(+ y 1) ,d))
 
-;  (cvt-coords (max-by (subsquares) power<-)))
+;  (cvt-coords (max-by power<- (subsquares))))
 ; out of memory
 
   (to (corners)

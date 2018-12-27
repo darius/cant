@@ -53,7 +53,7 @@ p .combine states states -> p
   (to (best-problem<- states)
     (make best-problem
       ({.combine old new} (best-problem<-
-                           (sort-by (chain new old) prototype.cost-fn)))
+                           (sort-by prototype.cost-fn (chain new old))))
       ({.states} states)
       (message   (call prototype message)))))
 

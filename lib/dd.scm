@@ -44,7 +44,7 @@
 (let memo-choice
   (memoize
    (given (node branches)
-     (let top (min-by `(,node ,@branches) '.rank))
+     (let top (min-by '.rank `(,node ,@branches)))
      (let rank top.rank)
      (make-node rank
                 (for each ((c top.branches.keys))

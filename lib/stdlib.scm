@@ -8,10 +8,14 @@
   (`(,a ,b) (if (< a b) b a))
   (`(,a ,b ,@rest) (call max `(,(max a b) ,@rest))))
 
-(to (min-by xs key) (foldr1 (given (x y) (if (< (key x) (key y)) x y))
-                            xs))
-(to (max-by xs key) (foldr1 (given (x y) (if (> (key x) (key y)) x y))
-                            xs))
+(to (min-by key<- xs) (foldr1 (given (x y) (if (< (key<- x) (key<- y)) x y))
+                              xs))
+(to (max-by key<- xs) (foldr1 (given (x y) (if (> (key<- x) (key<- y)) x y))
+                              xs))
+
+(to ((compound-key<- @key-fns) x)   ;; TODO shorter name?
+  (for each ((f key-fns))
+    (f x)))
 
 (to (remove xs unwanted) ;TODO different arg order? N.B. almost unused
   (for those ((x xs))
