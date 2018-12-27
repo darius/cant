@@ -10,7 +10,7 @@
 (import (use "lib/parson") parse grammar<- feed)
 
 (to (trm-parse program)
-  (array<-list ((parse parser program) .opt-results)))
+  (array<-list ((parse parser program) .results)))
 
 (let grammar (grammar<- "
 program: insn* :end.
@@ -97,9 +97,9 @@ insn:    {'1'+} {'#' '#'? '#'? '#'? '#'?} :make_insn.
     (if (every '.empty? lists)
         '()
         `(,(for each ((list lists))
-             (if list.empty? padding list.first))
+             (list .get 0 padding))
           ,@(zipping (for each ((list lists))
-                       (if list.empty? '() list.rest)))))))
+                       (list .slice 1)))))))
 
 ;; Smoke test
 (to (main _)
