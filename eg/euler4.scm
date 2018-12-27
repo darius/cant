@@ -3,9 +3,9 @@
 
 (to (euler4 lo bound)
   (call max (for gather ((i (range<- lo bound)))
-              (for each ((j (range<- i bound)))
+              (for filter ((j (range<- i bound)))
                 (let p (* i j))
-                (if (palindrome? p) p 0)))))
+                (and (palindrome? p) p)))))
 
 (to (palindrome? n)
   (let s (string<-number n))      ;TODO use a string port instead
