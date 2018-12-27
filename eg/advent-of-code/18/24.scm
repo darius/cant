@@ -10,32 +10,33 @@
 (let input (with-input-file '.read-all "eg/advent-of-code/18/data/advent24"))
 ;(let input (with-input-file '.read-all "eg/advent-of-code/18/data/advent24.test"))
 
-(to (battle)
-  (format "Round: ~w vs. ~w\n" 
-          (each '.count (armies "Infection"))
-          (each '.count (armies "Immune System")))
-  (unless (some '.empty? armies.values)
-    (unless (stalemate?)
-      (fight-round)
-      (battle))))
-
-(to (stalemate?)
-  (let immune-system (armies "Immune System"))
-  (let infection     (armies "Infection"))
-  (let a1 (select-targets "Infection"     infection immune-system))
-  (let a2 (select-targets "Immune System" immune-system infection))
-  (when (and a1.empty? a2.empty?)
-    (display "stalemate!\n"))
-  (and a1.empty? a2.empty?))
-
-(to (fight-round)
-  (let immune-system (armies "Immune System"))
-  (let infection     (armies "Infection"))
-  (let a1 (select-targets "Infection"     infection immune-system))
-  (let a2 (select-targets "Immune System" immune-system infection))
-  (attacking (map<- (chain a1 a2)))
-  (for each! ((`(,army ,groups) armies.items))
-    (armies .set! army (those '.alive? groups))))
+;; Return yes if Immune System wins.
+(to (battle armies)
+  (begin battling ()
+    (let immune-system (armies "Immune System"))
+    (let infection     (armies "Infection"))
+    (format "Round: ~w vs. ~w\n" 
+            (each '.count infection)
+            (each '.count immune-system))
+;    (when (= (each '.count infection) '(1273))
+;      (error "break"))
+    (let a1 (select-targets "Infection"     infection immune-system))
+    (let a2 (select-targets "Immune System" immune-system infection))
+    (let counts-before (for each ((groups armies.values))
+                         (sum (each '.count groups))))
+    (case ((some '.empty? armies.values)
+           (not immune-system.empty?))
+          (else
+           ;; Fight a round.
+           (attacking (map<- (chain a1 a2)))
+           (for each! ((`(,army ,groups) armies.items))
+             (armies .set! army (those '.alive? groups)))
+          
+           (let counts-after (for each ((groups armies.values))
+                               (sum (each '.count groups))))
+           (if (= counts-before counts-after)
+               #no      ; Stalemate
+               (battling))))))
 
 (to (select-targets my-name my-groups enemy-groups)
   (let result (flexarray<-))
@@ -75,10 +76,12 @@
                ("immune" immunities)
                ("weak"   weaknesses)))
     (set .add-all! (each symbol<- attack-strings)))
-  (group<- n-units hit-points immunities weaknesses
-           attack-damage (symbol<- attack-type) initiative))
+  (given (army-boost)
+    (group<- n-units hit-points immunities weaknesses
+             (+ army-boost attack-damage) (symbol<- attack-type) initiative)))
 
-(to (group<- initial-n-units hit-points immunities weaknesses attack-damage attack-type initiative)
+(to (group<- initial-n-units hit-points immunities weaknesses
+             attack-damage attack-type initiative)
   (let n-units (box<- initial-n-units))
   (to (effective-power) (* n-units.^ attack-damage))
   (surely (not (immunities .intersects? weaknesses)))  ; TODO method .disjoint?
@@ -92,6 +95,7 @@
     ({.would-damage target}
      (target .damage-from attack-type (effective-power)))
     ({.attack! target}
+;;     (format "attack: ~w ~w\n" attack-type (effective-power))
      (target .receive! attack-type (effective-power)))
     ({.damage-from attacker-attack-type attack-power}
      (match (qualities .get attacker-attack-type)
@@ -131,33 +135,66 @@ separator: '\n'.
 (to (parse string)
   ('.results (parson-parse parse-main string)))
 
-(let armies (map<- (parse input)))
+(let matchup (parse input))
 
-(each! '.show (armies "Immune System"))
-(newline)
-(each! '.show (armies "Infection"))
 
 (display "\nPart 1\n")
 
-(to (show-count)
+(to (show-count armies)
   (for each! ((`(,army ,groups) (sort armies.items)))
     (format "~d:\n" army)
     (for each! ((`(,i ,group) groups.items))
       (format "Group ~w contains ~w units\n" (+ i 1) group.count))))
 
-(show-count)
-
 (to (part-1)
-  (battle)
+  (let armies (map<- (for each ((`(,name ,group-makers) matchup))
+                       `(,name ,(for each ((group-maker group-makers))
+                                  (group-maker 0))))))
+  (show-count armies)
+  (battle armies)
   (sum (for gather ((groups armies.values))
          (each '.count groups))))
 
-(format "~w\n" (part-1))
+(format "Part 1: ~w\n" (part-1))
 
 
 (display "\nPart 2\n")
 
 (to (part-2)
-  'xxx)
+  (begin bounding ((low 0))
+    (let high (max 1 (* low 2)))
+    (if (enough-boost? high)
+        (binary-search enough-boost? low high)
+        (bounding high))))
 
-(format "~w\n" (part-2))
+(to (enough-boost? boost)
+  (let armies (map<- (for each ((`(,name ,group-makers) matchup))
+                       `(,name ,(do (let my-boost (match name
+                                                    ("Immune System" boost)
+                                                    (_               0)))
+                                    (for each ((group-maker group-makers))
+                                      (group-maker my-boost)))))))
+  (format "Trying immune boost of ~w\n" boost)
+  (let win? (battle armies))
+  (format "Immune boost of ~w ~d\n" boost (if win? "WORKED!" "failed"))
+  (when win?
+    (format "leaving ~w units\n" (sum (each '.count (armies "Immune System")))))
+  (newline)
+  win?)
+
+;; Return the least number in (low..high] that's `ok?`.
+;; Pre: low is not ok, and high is.
+;; Pre: there's just one cross-over point.
+;; TODO redesign, extract to lib
+(to (binary-search ok? low high)
+  (begin searching ((L low) (H high))
+    (surely (< L H))
+    (if (= (+ L 1) H)
+        H
+        (do (let M ((+ L H) .quotient 2))
+            (surely (< M H))
+            (if (ok? M)
+                (searching L M)
+                (searching M H))))))
+
+(format "Part 2: ~w\n" (part-2))
