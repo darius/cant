@@ -7,18 +7,30 @@
 (import (use "lib/sort")
   sort-by-key)
 
-;(let input (with-input-file '.read-all "advent24"))
-(let input (with-input-file '.read-all "advent24.test"))
+(let input (with-input-file '.read-all "eg/advent-of-code/18/data/advent24"))
+;(let input (with-input-file '.read-all "eg/advent-of-code/18/data/advent24.test"))
 
 (to (battle)
   (format "Round: ~w vs. ~w\n" 
           (each '.count (armies "Infection"))
           (each '.count (armies "Immune System")))
   (unless (some '.empty? armies.values)
-    (fight-round)
-    (battle)))
+    (unless (stalemate?)
+      (fight-round)
+      (battle))))
+
+(to (stalemate?)
+  (let immune-system (armies "Immune System"))
+  (let infection     (armies "Infection"))
+  (let a1 (select-targets "Infection"     infection immune-system))
+  (let a2 (select-targets "Immune System" immune-system infection))
+  (when (and a1.empty? a2.empty?)
+    (display "stalemate!\n"))
+  (and a1.empty? a2.empty?))
 
 (to (fight-round)
+  (let immune-system (armies "Immune System"))
+  (let infection     (armies "Infection"))
   (let a1 (select-targets "Infection"     infection immune-system))
   (let a2 (select-targets "Immune System" immune-system infection))
   (attacking (map<- (chain a1 a2)))
@@ -90,8 +102,9 @@
      (let damage (group .damage-from attacker-attack-type attack-power))
      (let mortality (min n-units.^ (damage .quotient hit-points)))
      (n-units .^= (- n-units.^ mortality))
-     (format "power ~w, damage ~w, killing ~w units, leaving ~w\n"
-             attack-power damage mortality n-units.^))
+;;     (format "power ~w, damage ~w, killing ~w units, leaving ~w\n"
+;;             attack-power damage mortality n-units.^)
+     )
     ({.alive?} (< 0 n-units.^))
     ({.show}
      (pp {group {size n-units.^}
@@ -120,12 +133,9 @@ separator: '\n'.
 
 (let armies (map<- (parse input)))
 
-(let immune-system (armies "Immune System"))
-(let infection     (armies "Infection"))
-
-(each! '.show immune-system)
+(each! '.show (armies "Immune System"))
 (newline)
-(each! '.show infection)
+(each! '.show (armies "Infection"))
 
 (display "\nPart 1\n")
 
