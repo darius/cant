@@ -1,5 +1,5 @@
 (let input (list<-string                ;ugh
-            ('.name (with-input-file read "advent05"))))
+            ('.name (with-input-file read "eg/advent-of-code/18/data/advent05"))))
 
 (to (reacts? c d)
   (and (= c.uppercase d.uppercase)
@@ -21,7 +21,4 @@
 (to (try atom)
   ('.count (reduce (scour atom))))
 
-(let letters (for each ((i (range<- 26))) ;TODO char-range<- ?  succ on chars?
-               (char<- (+ 65 i))))
-
-(format "part 2 ~w\n" (call min (each try letters)))
+(format "part 2 ~w\n" (call min (each try (#\A .up-to #\Z))))

@@ -12,8 +12,8 @@
 
 (let inputs (each parse input))
 
-(let `(,strongest-p ,strongest-r) (arg-max inputs
-                                           (given (`(,p ,r)) r)))
+(let `(,strongest-p ,strongest-r) (max-by inputs
+                                          (given (`(,p ,r)) r)))
 (let n-near-strongest ('.count (for those ((`(,p ,_) inputs))
                                  (<= (manhattan-distance<- p strongest-p)
                                      strongest-r))))

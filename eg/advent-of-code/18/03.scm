@@ -1,7 +1,7 @@
 (import (use "advent-utils")
   simple-parser<-)
 
-(let input (with-input-file '.read-lines "03.txt"))
+(let input (with-input-file '.read-lines "eg/advent-of-code/18/data/03.txt"))
 
 (let parser
   (simple-parser<- "'#' :nat ' @ ' :nat ',' :nat ': ' :nat 'x' :nat"))

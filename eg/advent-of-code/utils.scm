@@ -6,7 +6,7 @@
   (surely (not numbers.empty?) "Average of an empty list")
   (/ (sum numbers) numbers.count))
 
-(to (all-arg-mins xs fn)
+(to (all-mins-by xs fn)
   (for foldl ((best (list<- xs.first))
               (x xs.rest))
     (match ((fn best.first) .compare (fn x))
@@ -107,6 +107,6 @@
 
 (export
   get/init! cycle scanl/lazy where pairs<- filter/lazy first-duplicate deletions
-  chain-lines all-arg-mins average neighbors<-
+  chain-lines all-mins-by average neighbors<-
   simple-parser<- product<- manhattan-distance<-
   grammar<- parson-parse feed take-1)

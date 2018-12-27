@@ -4,12 +4,10 @@
 ;;    r, s   regex (i.e. a thing built by the constructors below)
 ;;    Ns     set of nonnegative integers (i.e. lengths)
 
-(import (use "lib/sort") sort-by-key)
-
 ;; Return the strings matching r whose length is in Ns.
 (to (regex-generate r Ns)
-  (sort-by-key ((r Ns) .keys)
-               (given (str) `(,str.count ,str))))
+  (sort-by ((r Ns) .keys)
+           (given (str) `(,str.count ,str))))
 
 (let none   (set<-))
 (let just-0 (set<- 0))

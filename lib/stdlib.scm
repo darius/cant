@@ -8,10 +8,10 @@
   (`(,a ,b) (if (< a b) b a))
   (`(,a ,b ,@rest) (call max `(,(max a b) ,@rest))))
 
-(to (arg-min xs key) (foldr1 (given (x y) (if (< (key x) (key y)) x y))
-                             xs))
-(to (arg-max xs key) (foldr1 (given (x y) (if (> (key x) (key y)) x y))
-                             xs))
+(to (min-by xs key) (foldr1 (given (x y) (if (< (key x) (key y)) x y))
+                            xs))
+(to (max-by xs key) (foldr1 (given (x y) (if (> (key x) (key y)) x y))
+                            xs))
 
 (to (remove xs unwanted) ;TODO different arg order? N.B. almost unused
   (for those ((x xs))

@@ -9,9 +9,9 @@
   peek)
 
 (let margin 10000)
-(let input (with-input-file '.read-lines "advent06"))
+(let input (with-input-file '.read-lines "eg/advent-of-code/18/data/advent06"))
 ;(let margin 32)
-;(let input (with-input-file '.read-lines "advent06.test"))
+;(let input (with-input-file '.read-lines "eg/advent-of-code/18/data/advent06.test"))
 
 (let parser (simple-parser<- ":nat ', ' :nat"))
 
@@ -114,7 +114,7 @@
     (format "seeking at ~w, distance ~w\n" p d)
     (if (< d margin)
         p
-        (seeking (arg-min (neighbors-8<- p) total-distance)))))
+        (seeking (min-by (neighbors-8<- p) total-distance)))))
 
 '(let seed
   ('.first 

@@ -2,16 +2,15 @@
 
 (make sort
   (`(,xs)
-   (sort-by xs compare))
+   (sort-by xs identity))
   (`(,xs {reverse})          ;TODO design a better keyword-args scheme
-   (sort-by xs compare-reversed))
+   ;; TODO sort by 'negation' of key instead, but allowing for
+   ;; non-numbers. Make up a negation-wrapper type?
+   (reverse (sort-by xs identity))) 
   ;; ...
   )
 
-(to (compare-reversed x y)
-  (compare y x))
-
-(to (sort-by sequence cmp)
+(to (sort-by sequence key<-)
 
   (to (merge-sort seq)
     (begin splitting ((seq seq) (xs '()) (ys '()))
@@ -24,16 +23,11 @@
   (to (merge xs ys)
     (case (xs.empty? ys)
           (ys.empty? xs)
-          (else (if (<= (cmp xs.first ys.first) 0) ;TODO error if cmp result is not in -1..1?
+          (else (if (<= (key<- xs.first) (key<- ys.first))
                     `(,xs.first ,@(merge xs.rest ys))
                     `(,ys.first ,@(merge xs ys.rest))))))
 
   (merge-sort sequence))
 
-(to (sort-by-key sequence get-key)
-  (to (cmp x y)
-    (compare (get-key x) (get-key y)))
-  (sort-by sequence cmp))
-
 (export
-  sort sort-by sort-by-key)
+  sort sort-by)

@@ -9,13 +9,13 @@
                       (if-any (known (edits1 word)))
                       (if-any (known-edits2 word))
                       (set<- word)))
-  (arg-max candidates.keys (given (w) (NWORDS .get w 0))))
+  (max-by candidates.keys (given (w) (WORDS .get w 1))))
 
 (to (if-any xs)
   (if xs.empty? #no xs))
 
 (to (known words)
-  (words .intersect NWORDS))
+  (words .intersect WORDS))
 
 (to (known-edits2 word)
   (union-over (for each ((e1 ((edits1 word) .keys)))
@@ -44,6 +44,7 @@
 
 (let alphabet "abcdefghijklmnopqrstuvwxyz")
 
+;; TODO we aren't actually smoothing, so we could just use a bag
 (to (train features)
   (let model (map<-))                   ;TODO almost a bag, but with a bias
   (for each! ((f features))
@@ -54,7 +55,7 @@
   ;;  (re:findall "[a-z]+" string.lowercase))  ;TODO
   string.lowercase.split)
 
-(let NWORDS
+(let WORDS
   (train (words<-string (with-input-file '.read-all "eg/spelling.train.text"))))
 
 (each! (compose print correct) (words<-string "a lowsy spelur zzz"))

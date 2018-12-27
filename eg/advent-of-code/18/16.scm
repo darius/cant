@@ -1,5 +1,4 @@
-(import (use "advent-utils")
-  simple-parser<-
+(import (use "eg/advent-of-code/utils")
   grammar<- parson-parse)
 
 ;(let input (with-input-file '.read-all "advent16.test"))
@@ -110,7 +109,7 @@ insn:    :nat ' ' :nat ' ' :nat ' ' :nat '\n' :hug.
   ;; Trivial constraint satisfaction turns out to be good enough:
   (let assignments (map<-))
   (begin pruning ()
-    (let opcode (arg-min candidates.keys (given (op) ('.count (candidates op)))))
+    (let opcode (min-by candidates.keys (given (op) ('.count (candidates op)))))
     (when (= 1 ('.count (candidates opcode)))
       (let op-name (((candidates opcode) .keys) .first)) ;clumsy
       (assignments .set! opcode op-name)

@@ -7,8 +7,6 @@ p .successors state -> states
 p .combine states states -> p
 "
 
-(import (use "lib/sort") sort-by-key)
-
 (to (main _)
   (eg1)
   (eg3))
@@ -55,7 +53,7 @@ p .combine states states -> p
   (to (best-problem<- states)
     (make best-problem
       ({.combine old new} (best-problem<-
-                           (sort-by-key (chain new old) prototype.cost-fn)))
+                           (sort-by (chain new old) prototype.cost-fn)))
       ({.states} states)
       (message   (call prototype message)))))
 

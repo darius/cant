@@ -2,7 +2,7 @@
   chain-lines
   grammar<- parson-parse)
 
-(let input (with-input-file '.read-lines "advent04"))
+(let input (with-input-file '.read-lines "eg/advent-of-code/18/data/advent04"))
 
 (let grammar (grammar<- "
 shifts:    shift* :end.
@@ -45,9 +45,9 @@ _:         :whitespace.
 
 (to (max-winks guard)
   (let bag (zzzs guard))
-  (arg-max bag.keys bag))
+  (max-by bag.keys bag))
 
-(let guard1 (arg-max guards tally-winks))
+(let guard1 (max-by guards tally-winks))
 (print `(the sleepiest is ,guard1 at ,(tally-winks guard1) minutes))
 
 (let minute1 (max-winks guard1))
@@ -60,7 +60,7 @@ _:         :whitespace.
 (to (winks-at-max guard)
   ((zzzs guard) (max-winks guard)))
 
-(let guard2 (arg-max guards winks-at-max))
+(let guard2 (max-by guards winks-at-max))
 (let minute2 (max-winks guard2))
 
 (print `(count ,(winks-at-max guard2) minute ,minute2 guard ,guard2))

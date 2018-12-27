@@ -2,8 +2,6 @@
   grammar<- parson-parse feed)
 (import (use "lib/pretty-print")
   pp)
-(import (use "lib/sort")
-  sort-by-key)
 
 (let input (with-input-file '.read-all "eg/advent-of-code/18/data/advent24"))
 ;(let input (with-input-file '.read-all "eg/advent-of-code/18/data/advent24.test"))
@@ -40,19 +38,19 @@
   (let result (flexarray<-))
   (let enemies (call flexarray<- enemy-groups)) ;; clumsy: probably ought to be a set
   (let enemy-nums (call flexarray<- (as-list (1 .up-to enemy-groups.count))))  ;; just for the messages
-  (for each! ((`(,i ,group) (sort-by-key my-groups.items
-                                         (given (`(,_ ,group)) group.target-selection-key))))
+  (for each! ((`(,i ,group) (sort-by my-groups.items
+                                     (given (`(,_ ,group)) group.target-selection-key))))
     (unless enemies.empty?
       (let damages (for each ((enemy enemies.values))
                      (group .would-damage enemy)))
 ;;      (for each! ((`(,j ,damage) damages.items))
 ;;        (format "~d group ~w would deal defending group ~w ~w damage\n"
 ;;                my-name (+ i 1) (enemy-nums j) damage))
-      (let j (arg-max enemies.keys (given (j)
-                                     (let enemy (enemies j))
-                                     (list<- (damages j)   ;; or just compute it here
-                                             enemy.effective-power
-                                             enemy.initiative))))
+      (let j (max-by enemies.keys (given (j)
+                                    (let enemy (enemies j))
+                                    (list<- (damages j)   ;; or just compute it here
+                                            enemy.effective-power
+                                            enemy.initiative))))
       (when (< 0 (damages j))
         (result .push! `(,group ,(enemies j)))
         (enemies .pop! j)
@@ -60,7 +58,7 @@
   result.values)
 
 (to (attacking selections)
-  (for each! ((group (sort-by-key selections.keys (given (g) (- g.initiative)))))
+  (for each! ((group (sort-by selections.keys (given (g) (- g.initiative)))))
     (when group.alive?
       (match (selections .get group)
         (#no)

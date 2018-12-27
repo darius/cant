@@ -1,4 +1,4 @@
-(let input (with-input-file read "advent11"))
+(let input (with-input-file read "eg/advent-of-code/18/data/advent11"))
 
 (to (level<- x y)
   (let rack-id (+ x 10))
@@ -16,7 +16,7 @@
 (display "\nPart 1\n")
 
 (to (part1)
-  (arg-max (patches) patch-level<-))
+  (max-by (patches) patch-level<-))
 
 (to (patch-level<- `(,x ,y))
   (sum (for gather ((i (x .up-to (+ x 2))))
@@ -72,7 +72,7 @@
   (to (cvt-coords `(,x ,y ,d))
     `(,(+ x 1) ,(+ y 1) ,d))
 
-;  (cvt-coords (arg-max (subsquares) power<-)))
+;  (cvt-coords (max-by (subsquares) power<-)))
 ; out of memory
 
   (to (corners)
