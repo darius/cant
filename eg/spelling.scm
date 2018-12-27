@@ -2,6 +2,8 @@
 ;; http://norvig.com/spell-correct.html
 ;; TODO: try imitating https://en.wikibooks.org/wiki/Clojure_Programming/Examples/Norvig_Spelling_Corrector
 
+(import (use "lib/hashset") union-over)
+
 (to (correct word)
   (let candidates (or (if-any (known (set<- word)))
                       (if-any (known (edits1 word)))
@@ -12,15 +14,12 @@
 (to (if-any xs)
   (if xs.empty? #no xs))
 
-;; TODO: NWORDS.keys should be a set, which we just intersect with words.
-(to (known words)  ;TODO: iter instead of list? set comprehension?
-  (call set<- (for those ((w words.keys))
-                (NWORDS .maps? w))))
+(to (known words)
+  (words .intersect NWORDS))
 
 (to (known-edits2 word)
-  (call set<- (for gather ((e1 ((edits1 word) .keys))) ;TODO unugh
-                (for those ((e2 ((edits1 e1) .keys)))
-                  (NWORDS .maps? e2)))))
+  (union-over (for each ((e1 ((edits1 word) .keys)))
+                (known (edits1 e1)))))
 
 ;; TODO real list comprehensions would be nice to have.
 (to (edits1 word)
@@ -46,7 +45,7 @@
 (let alphabet "abcdefghijklmnopqrstuvwxyz")
 
 (to (train features)
-  (let model (map<-))
+  (let model (map<-))                   ;TODO almost a bag, but with a bias
   (for each! ((f features))
     (model .set! f (+ 1 (model .get f 1))))
   model)
