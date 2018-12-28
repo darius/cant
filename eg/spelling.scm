@@ -9,8 +9,8 @@
                       (if-any (known (edits1 word)))
                       (if-any (known-edits2 word))
                       (set<- word)))
-  (for max-by ((w candidates.keys))
-    (WORDS .get w 1)))
+  (for max-by ((word candidates.keys))
+    (WORDS .get word 0)))
 
 (to (if-any xs)
   (if xs.empty? #no xs))
@@ -45,12 +45,8 @@
 
 (let alphabet "abcdefghijklmnopqrstuvwxyz")
 
-;; TODO we aren't actually smoothing, so we could just use a bag
 (to (train features)
-  (let model (map<-))                   ;TODO almost a bag, but with a bias
-  (for each! ((f features))
-    (model .set! f (+ 1 (model .get f 1))))
-  model)
+  (call bag<- features))
 
 (to (words<-string string)
   ;;  (re:findall "[a-z]+" string.lowercase))  ;TODO
