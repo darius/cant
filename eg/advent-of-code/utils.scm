@@ -18,11 +18,6 @@
   (for each! ((i (range<- array.count)))
     (array .set! i value)))
 
-(to (get/init! map key init)            ;TODO better name
-  (unless (map .maps? key)
-    (map .set! key (init)))
-  (map key))                            ;TODO inefficient
-
 (to (cycle xs)
   (begin cycling ((ys xs))
     (if ys.empty?
@@ -106,7 +101,7 @@
   (sum (zip-with (compose abs -) p q)))
 
 (export
-  get/init! cycle scanl/lazy where pairs<- filter/lazy first-duplicate deletions
+  cycle scanl/lazy where pairs<- filter/lazy first-duplicate deletions
   chain-lines all-mins-by average neighbors<-
   simple-parser<- product<- manhattan-distance<-
   grammar<- parson-parse feed take-1)

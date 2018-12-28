@@ -1,7 +1,7 @@
 ;; TODO: keep cleaning this up
 
 (import (use "eg/advent-of-code/utils")
-  simple-parser<- get/init!)
+  simple-parser<-)
 
 (let `(,n-workers ,min-delay)
 ;  '(2 1))
@@ -22,7 +22,7 @@
 (let succs-set (map<- (for each ((node nodes))
                         `(,node ,(set<-)))))
 (for each! ((`(,pre ,post) ordering))   ;TODO use a mapreduce
-  ((succs-set pre) .add! post))             ;TODO use get/init!
+  ((succs-set pre) .add! post))             ;TODO maybe use .get-set!
 
 (let succs (map<- (for each ((`(,node ,set) succs-set.items))
                     `(,node ,(sort set.keys)))))
