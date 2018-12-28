@@ -240,11 +240,12 @@
   ({.values}      (__vector->list me))
   ({.slice i}     (__subvector me i me.count))
   ({.slice i j}   (__subvector me i j))
-  ({.move! dst source lo bound}
+  ((and {.move! dst source lo bound}
+        message)
    ;; Block-copy source[lo..bound) to me[dst..dst+(bound-lo)).
    (if (array? source)
        (__vector-move! me dst source lo bound)
-       (array-trait me {.move! dst source lo bound}))) ;TODO we want to just name the message
+       (array-trait me message)))
   ({.copy}        (__vector-copy me))
   ({.selfie sink}
    (sink .display "#")
