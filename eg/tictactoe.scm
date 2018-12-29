@@ -19,7 +19,7 @@
   (to (continue)
     (tty-playing opponent player (player grid)))
   (to (render-grid message)
-    (render `(,(tty-show grid) "\n\n" ,message)))
+    (render `(,(show grid) "\n\n" ,message)))
   (case ((won? grid)
          (render-grid ("~d wins." .format (last-to-move grid))))
         ((drawn? grid)
@@ -40,7 +40,7 @@
    (begin asking ((plaint #no))
      (render `(,(or plaint "")
                "\n\n"
-               ,(if plaint (view-valid-moves grid) (tty-show grid))
+               ,(if plaint (show-with-moves grid) (show grid))
                "\n\n"
                ,prompt ,cursor))
      (let key (get-key))
@@ -50,27 +50,17 @@
        (#no (asking "Hey, that's not a move. Give me one of the digits below."))
        (successor successor)))))
 
+(to (show-with-moves grid)
+  (each (highlight-if '.digit?) (show grid (1 .up-to 9))))
+
+(to ((highlight-if yes?) x)
+  (if (yes? x) (green x) x))
+
 (to (move<-key digit-char)
   (- #\9 digit-char))
 
-(to (view-valid-moves grid)
-  ;; TODO use fold
-  (begin walking ((cs (tty-show grid))
-                  (moves (1 .up-to 9)))
-    (if cs.empty?
-        '()
-        (do (let c cs.first)
-            (if c.whitespace?
-                `(,cs.first ,@(walking cs.rest moves))
-                (do (let blank? (= cs.first #\.))
-                    `(,(if blank?
-                           (green (string<-number moves.first)) ;ughish
-                           c)
-                      ,@(walking cs.rest moves.rest))))))))
-
 (to (tic-tac-toe player opponent grid)
-  (show grid)
-  (newline)
+  (format "~d\n\n" (show grid))
   (case ((won? grid)   (format "~d wins.\n" (last-to-move grid)))
         ((drawn? grid) (format "A draw.\n"))
         (else
@@ -148,27 +138,17 @@
 (to (last-to-move grid)
   ((player-marks grid) 1))
 
-(to (show {grid p q})
+(to (show {grid p q} @(optional opt-spaces))
+  (let spaces (or opt-spaces ("." .repeat 9)))
   (let marks (player-marks {grid p q}))
-  (let values (for each ((pair (zip (player-bits p)
-                                    (player-bits q))))
-                (match pair
-                  ('(1 0) (marks 0))
-                  ('(0 1) (marks 1))
-                  ('(0 0) #\.))))
-  (call format `(,grid-format ,@(reverse values)))
-  (newline))
-
-(to (tty-show {grid p q})               ;XXX dupe
-  (let marks (player-marks {grid p q}))
-  (let values (for each ((pair (zip (player-bits p)
-                                    (player-bits q))))
-                (match pair
-                  ('(1 0) (marks 0))
-                  ('(0 1) (marks 1))
-                  ('(0 0) #\.))))
-  (call grid-format `{.format ,@(reverse values)})) ;ugh
-
+  (let values (for each ((slot (zip (reverse (player-bits p))
+                                    (reverse (player-bits q))
+                                    spaces)))
+                (match slot
+                  (`(1 0 ,_) (marks 0))
+                  (`(0 1 ,_) (marks 1))
+                  (`(0 0 ,s) s))))
+  (call grid-format `{.format ,@values})) ;ugh
 
 (let grid-format ("\n" .join ('(" ~d ~d ~d") .repeat 3)))
 

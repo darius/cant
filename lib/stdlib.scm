@@ -26,14 +26,17 @@
       '()
       (cons seq.first (as-list seq.rest))))
 
-(to (zip xs ys)
-  (to (mismatch)
-    (error "zip: mismatched arguments" xs ys))
-  (begin zipping ((xs xs) (ys ys))
-    (case (xs.empty? (if ys.empty? '() (mismatch)))
-          (ys.empty? (mismatch))
-          (else `((,xs.first ,ys.first)
-                  ,@(zipping xs.rest ys.rest))))))
+(make zip
+  (`(,xs ,ys)                           ;specialized for speed
+   (to (mismatch)
+     (error "zip: mismatched arguments" xs ys))
+   (begin zipping ((xs xs) (ys ys))
+     (case (xs.empty? (if ys.empty? '() (mismatch)))
+           (ys.empty? (mismatch))
+           (else `((,xs.first ,ys.first)
+                   ,@(zipping xs.rest ys.rest))))))
+  (`(,@lists)  ; ugly
+   (transpose lists)))
 
 (to (zip-with fn xs ys)
   (for each ((`(,x ,y) (zip xs ys)))
