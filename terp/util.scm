@@ -83,48 +83,6 @@
                  head
                  (append head tween (appending (cdr ls))))))))))
 
-(define (expand-mlambda subject clauses)
-  (letrec
-      ((expand-clause 
-        (lambda (clause else-exp)
-          (let ((pattern (car clause))
-                (then-exp `(begin . ,(cdr clause)))
-                (fail (gensym)))
-            `(let ((,fail (lambda () ,else-exp)))
-               ,(expand-pattern pattern then-exp `(,fail))))))
-
-       (expand-pattern
-        (lambda (pattern then-exp else-exp)
-          (let ((test-constant
-                 (lambda (constant)
-                   `(if (eqv? ,subject ',constant) ,then-exp ,else-exp))))
-            (cond ((eqv? pattern '_)
-                   then-exp)
-                  ((starts-with? pattern 'quote)
-                   (test-constant (cadr pattern)))
-                  ((symbol? pattern)
-                   `(let ((,pattern ,subject)) ,then-exp))
-                  ((starts-with? pattern ':)
-                   (let ((name (cadr pattern)) (predicate (caddr pattern)))
-                     `(if (,predicate ,subject)
-                          (let ((,name ,subject)) ,then-exp)
-                          ,else-exp)))
-                  ((pair? pattern)
-                   `(if (pair? ,subject)
-                        (mcase (car ,subject)
-                          (,(car pattern) (mcase (cdr ,subject)
-                                            (,(cdr pattern) ,then-exp)
-                                            (_ ,else-exp)))
-                          (_ ,else-exp))
-                        ,else-exp))
-                  (else
-                   (test-constant pattern)))))))
-
-    (foldr expand-clause `(%match-error ,subject) clauses)))
-
-(define (%match-error subject)
-  (error 'mcase "Match failure" subject))
-
 ;; XXX better name? record? struct? row? tagged tuple? glom? functor? (hah)
 ;(define-structure term tag parts)
 (define-record-type term (fields tag parts))
