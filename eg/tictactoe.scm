@@ -1,16 +1,36 @@
-;; tic-tac-toe, as a warmup.
+;; Tic-tac-toe game
 
 (import (use "lib/memoize") memoize)
 (import (use "lib/sturm") cbreak-mode render get-key cursor green)
 
-(to (main args)
-  (let g {grid 0o000 0o000})
-  (tty-ttt human-play spock-play g))
+(to (main `(,me ,@args))
+  (let players
+    (case (args.empty? (list<- human-play spock-play))
+          ((= args.count 2) (each parse-player args)) ;TODO catch errors
+          (else
+           (format "Usage: ~d [X-player O-player]\n" me)
+           (format "Available players: ~d\n" (" " .join (sort parse-player.keys)))
+           (os-exit 1))))
+  (call tty-ttt `(,@players ,empty-grid)))
 
 (to (quick-test)
   (let g {grid 0o610 0o061})
   (tic-tac-toe spock-play spock-play g))
 
+;; Text-stream interface
+(to (tic-tac-toe player opponent grid)
+  (format "~d\n\n" (show grid))
+  (case ((won? grid)   (format "~d wins.\n" (last-to-move grid)))
+        ((drawn? grid) (format "A draw.\n"))
+        (else
+         (unless (`(,player ,opponent) .find? human-play)
+           (format "~w to move ~d. (Press a key.)\n"
+                   player (whose-move grid))
+;           (get-key)                    ;XXX
+           )
+         (tic-tac-toe opponent player (player grid)))))
+
+;; Graphical TTY interface
 (to (tty-ttt player opponent grid)
   (for cbreak-mode ()
     (tty-playing player opponent grid)))
@@ -53,23 +73,11 @@
 (to (show-with-moves grid)
   (each (highlight-if '.digit?) (show grid (1 .up-to 9))))
 
-(to ((highlight-if yes?) x)
-  (if (yes? x) (green x) x))
+(to ((highlight-if special?) x)
+  (if (special? x) (green x) x))
 
 (to (move<-key digit-char)
   (- #\9 digit-char))
-
-(to (tic-tac-toe player opponent grid)
-  (format "~d\n\n" (show grid))
-  (case ((won? grid)   (format "~d wins.\n" (last-to-move grid)))
-        ((drawn? grid) (format "A draw.\n"))
-        (else
-         (unless (`(,player ,opponent) .find? human-play)
-           (format "~w to move ~d. (Press a key.)\n"
-                   player (whose-move grid))
-;           (get-key)                    ;XXX
-           )
-         (tic-tac-toe opponent player (player grid)))))
 
 (make drunk-play
   ({.name} 'Drunk)
@@ -84,7 +92,11 @@
   (`(,grid)
    (min-by (compound-key<- spock-value drunk-value)
            (successors grid))))
-           
+
+(let parse-player
+  (map<- (for each ((player (list<- human-play drunk-play spock-play max-play)))
+           (let string player.name.name.lowercase)
+           `(,string ,player))))
 
 (let drunk-value
   (memoize (given (grid)
