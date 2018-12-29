@@ -14,6 +14,24 @@
 (define-record-type script (fields name trait clauses))
 (define script<- make-script)
 
+(define-enum
+  k-halt 
+  k-match-clause
+  k-ev-make-cont-script
+  k-ev-do-rest
+  k-ev-let-match
+  k-ev-let-check
+  k-ev-arg
+  k-ev-call
+  k-ev-rest-args
+  k-ev-tag
+  k-ev-and-pat
+  k-ev-view-call
+  k-ev-view-match
+  k-ev-match-rest
+  k-unwind
+  k-replace-answer)
+
 
 ;; Primitive depiction
 
@@ -178,14 +196,16 @@
 (define-record-type cps-script (fields name procedure))
 (define cps-script<- make-cps-script)
 
-;; For less inefficiency, a continuation is just a vector, whose zeroth
-;; element is the continuation procedure. This representation must
-;; never be exposed directly to Squeam code, only wrapped as an object
-;; with an appropriate wrapper script.
+;; A continuation is just a vector, whose zeroth element is a small
+;; integer denoting which continuation procedure. Previously this
+;; element was the Scheme procedure itself, which had to never be
+;; exposed directly to Squeam code, only wrapped as an object with an
+;; appropriate wrapper script. Let's hope the new extra indirection
+;; isn't too costly.
 (define (answer k value)
 ;  (dbg `(answer ,value ,k))
 ;  (dbg `(answer))
-  ((vector-ref k 0) value k))
+  ((vector-ref methods/cont (vector-ref k 0)) value k))
 
 (define (call object message k)
 ;  (dbg `(call))
@@ -205,7 +225,7 @@
                       (eq? '.answer (term-tag message))
                       (= 1 (length (term-parts message))))
                  (let ((unwrapped-k (list->vector (cons (cont-script-answerer script) datum))))
-                   ((cont-script-answerer script)
+                   ((vector-ref methods/cont (cont-script-answerer script))
                     (car (term-parts message))
                     unwrapped-k))
                  (delegate (get-prim (cont-script-name script))
@@ -309,7 +329,7 @@
 
 (define (unwind-cont value k0)
   (unpack k0 (k unwind-action)
-    (unwind-action k0 (cont<- replace-answer-cont k value))))
+    (unwind-action k0 (cont<- k-replace-answer k value))))
 
 (define (replace-answer-cont value-to-ignore k0)
   (unpack k0 (k value)
@@ -348,7 +368,7 @@
             (parent-k (vector-ref k 1)))
         (if (eq? k-action unwind-cont)
             (let ((unwind-action (vector-ref k 2)))
-              (unwind-action k (cont<- keep-unwinding parent-k ejector-k value)))
+              (unwind-action k (cont<- k-keep-unwinding parent-k ejector-k value)))
             (ejector-unwinding parent-k ejector-k value)))))
 
 (define (keep-unwinding value-to-ignore k0)
@@ -359,7 +379,7 @@
   ;;XXX check arity
   (let ((thunk (car message))
         (unwind-thunk (cadr message)))
-    (call thunk '() (cont<- unwind-cont k call-unwinder unwind-thunk))))
+    (call thunk '() (cont<- k-unwind k call-unwinder unwind-thunk))))
 
 (define (call-unwinder k0 k)
   (let ((unwind-thunk (vector-ref k0 3)))
@@ -383,7 +403,7 @@
                           (lambda (datum message k)
                             ;;XXX check arity
                             (let* ((ejector-k
-                                    (cont<- unwind-cont k unwind-ejector #t))
+                                    (cont<- k-unwind k unwind-ejector #t))
                                    (ejector (ejector<- ejector-k)))
                               (call (car message) (list ejector) ejector-k))))
             #f))
@@ -596,7 +616,7 @@
    (lambda (e r k)                          ;e-term
      (unpack e (tag es)
        (ev-args es r '()
-                (cont<- ev-tag-cont k tag))))
+                (cont<- k-ev-tag k tag))))
    (lambda (e r k)                          ;e-list
      (unpack e (es)
        (ev-args es r '() k)))
@@ -606,16 +626,16 @@
            (answer k (object<- (script<- name #f clauses)
                                r))
            (ev-exp trait r
-                   (cont<- ev-make-cont-script k r name clauses)))))
+                   (cont<- k-ev-make-cont-script k r name clauses)))))
    (lambda (e r k)                          ;e-do
      (unpack e (e1 e2)
-       (ev-exp e1 r (cont<- ev-do-rest-cont k r e2))))
+       (ev-exp e1 r (cont<- k-ev-do-rest k r e2))))
    (lambda (e r k)                          ;e-let
      (unpack e (p e1)
-       (ev-exp e1 r (cont<- ev-let-match-cont k r p))))
+       (ev-exp e1 r (cont<- k-ev-let-match k r p))))
    (lambda (e r k)                          ;e-call
      (unpack e (e1 e2)
-       (ev-exp e1 r (cont<- ev-arg-cont k r e2))))
+       (ev-exp e1 r (cont<- k-ev-arg k r e2))))
    (lambda (e r k)                          ;e-global
      (unpack e (var)
        (global-lookup var k)))
@@ -625,7 +645,7 @@
   (if (null? es)
       (answer k (reverse vals))
       (ev-exp (car es) r
-              (cont<- ev-rest-args-cont k r (cdr es) vals))))
+              (cont<- k-ev-rest-args k r (cdr es) vals))))
 
 (define (ev-pat subject p r k)
 ;  (dbg `(match)) ; ,subject ,p))
@@ -658,11 +678,11 @@
    (lambda (subject p r k)              ;p-and
      (unpack p (p1 p2)
        (ev-pat subject p1 r
-               (cont<- ev-and-pat-cont k r subject p2))))
+               (cont<- k-ev-and-pat k r subject p2))))
    (lambda (subject p r k)              ;p-view
      (unpack p (e p1)
        (ev-exp e r
-               (cont<- ev-view-call-cont k r subject p1))))))
+               (cont<- k-ev-view-call k r subject p1))))))
 
 (define (ev-match-all subjects ps r k)
   (cond ((null? ps)
@@ -671,14 +691,14 @@
          (answer k #f))
         (else
          (ev-pat (car subjects) (car ps) r
-                 (cont<- ev-match-rest-cont k r (cdr subjects) (cdr ps))))))
+                 (cont<- k-ev-match-rest k r (cdr subjects) (cdr ps))))))
 
 (define cont<- vector)
 
 (define-record-type cont-script (fields name answerer))
 
 (define (halt-cont-fn value k0) value)
-(define halt-cont (cont<- halt-cont-fn))
+(define halt-cont (cont<- k-halt))
 
 (define (run-script object script datum message k)
   (matching (script-clauses script) object script datum message k))
@@ -691,7 +711,7 @@
     (((pattern pat-vars . body) . rest-clauses)
      (let ((pat-r (env-extend-promises datum pat-vars)))
        (ev-pat message pattern pat-r
-               (cont<- match-clause-cont k pat-r body rest-clauses object script datum message))))))  ;XXX geeeez
+               (cont<- k-match-clause k pat-r body rest-clauses object script datum message))))))  ;XXX geeeez
 
 (define (match-clause-cont matched? k0)
 ;     (dbg `(match-clause-cont))
@@ -717,7 +737,7 @@
 ;     (dbg `(ev-let-match-cont))
   (unpack k0 (k r p)
     (ev-pat val p r
-            (cont<- ev-let-check-cont k val))))
+            (cont<- k-ev-let-check k val))))
 
 (define (ev-let-check-cont matched? k0)
 ;     (dbg `(ev-let-check-cont))
@@ -730,7 +750,7 @@
 ;     (dbg `(ev-arg-cont))
   (unpack k0 (k r e2)
     (ev-exp e2 r
-            (cont<- ev-call-cont k receiver))))
+            (cont<- k-ev-call k receiver))))
 
 (define (ev-call-cont message k0)
 ;     (dbg `(ev-call-cont ,receiver ,message))
@@ -758,7 +778,7 @@
 ;     (dbg `(ev-view-call-cont))
   (unpack k0 (k r subject p)
     (call convert (list subject)
-          (cont<- ev-view-match-cont k r p))))
+          (cont<- k-ev-view-match k r p))))
 
 (define (ev-view-match-cont new-subject k0)
 ;     (dbg `(ev-view-match-cont))
@@ -773,28 +793,49 @@
         (answer k #f))))
 
 
+(define methods/cont
+  (vector
+   halt-cont-fn
+   match-clause-cont
+   ev-make-cont-script
+   ev-do-rest-cont
+   ev-let-match-cont
+   ev-let-check-cont
+   ev-arg-cont
+   ev-call-cont
+   ev-rest-args-cont
+   ev-tag-cont
+   ev-and-pat-cont
+   ev-view-call-cont
+   ev-view-match-cont
+   ev-match-rest-cont
+   unwind-cont
+   replace-answer-cont))
+
+(define cont-tags
+  '#(__halt-cont
+     __match-clause-cont
+     __ev-make-cont
+     __ev-do-rest-cont
+     __ev-let-match-cont
+     __ev-let-check-cont
+     __ev-arg-cont
+     __ev-call-cont
+     __ev-rest-args-cont
+     __ev-tag-cont
+     __ev-and-pat-cont
+     __ev-view-call-cont
+     __ev-view-match-cont
+     __ev-match-rest-cont
+     __unwind-cont
+     __replace-answer-cont))
+
+;; TODO Better to do this in Squeam, but let's not change too much at once.
+;; (We shouldn't need to wrap it at all anymore.)
 (define (wrap-cont k)
-  (let* ((f (vector-ref k 0))
-         (name
-          (cond
-           ((eq? f halt-cont-fn)         '__halt-cont)
-           ((eq? f match-clause-cont)    '__match-clause-cont)
-           ((eq? f ev-make-cont-script)  '__ev-make-cont)
-           ((eq? f ev-do-rest-cont)      '__ev-do-rest-cont)
-           ((eq? f ev-let-match-cont)    '__ev-let-match-cont)
-           ((eq? f ev-let-check-cont)    '__ev-let-check-cont)
-           ((eq? f ev-arg-cont)          '__ev-arg-cont)
-           ((eq? f ev-call-cont)         '__ev-call-cont)
-           ((eq? f ev-rest-args-cont)    '__ev-rest-args-cont)
-           ((eq? f ev-tag-cont)          '__ev-tag-cont)
-           ((eq? f ev-and-pat-cont)      '__ev-and-pat-cont)
-           ((eq? f ev-view-call-cont)    '__ev-view-call-cont)
-           ((eq? f ev-view-match-cont)   '__ev-view-match-cont)
-           ((eq? f ev-match-rest-cont)   '__ev-match-rest-cont)
-           ((eq? f unwind-cont)          '__unwind-cont)
-           ((eq? f replace-answer-cont)  '__replace-answer-cont)
-           (else '__XXX-cont))))        ;TODO panic hard
-    (object<- (make-cont-script name f) ;XXX script should be static
+  (let* ((tag (vector-ref k 0))
+         (name (vector-ref cont-tags tag)))
+    (object<- (make-cont-script name tag) ;XXX script should be static
               (cdr (vector->list k))))) ;TODO keep Squeam code from ever accessing an unwrapped cont at (cadr k) via extract-datum
 
 

@@ -12,6 +12,18 @@
      (let ((var (vector-ref t i)))
        (vector-let-each vars (+ i 1) t body)))))
 
+(define-syntax define-enum
+  (syntax-rules ()
+    ((_ var ...)
+     (define-enum-from 0 var ...))))
+
+(define-syntax define-enum-from
+  (syntax-rules ()
+    ((_ k)
+     (begin))
+    ((_ k var var1 ...)
+     (begin (define var k) (define-enum-from (+ k 1) var1 ...)))))
+
 (define-syntax mcase
   (syntax-rules ()
     ((_ subject clause ...)
