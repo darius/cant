@@ -336,7 +336,7 @@
     ('export (mlambda
               ((__ . names)
                (insist (all symbol? names) "bad syntax" names)
-               (list `',the-map<-
+               (list 'map<-   ;; XXX unhygienic; was `',the-map<- but that requires importing from terp.scm
                      (list 'quasiquote
                            (map (lambda (name) (list name (list 'unquote name)))
                                 names))))))

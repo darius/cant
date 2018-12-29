@@ -881,8 +881,6 @@
 (set! script-script (get-script 'script-primitive))
 (set! ejector-script (get-script 'ejector-primitive))
 
-(define the-map<- (get-prim 'map<-))
-
 
 ;; For tuning later.
 
