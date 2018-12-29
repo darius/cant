@@ -1,3 +1,10 @@
+(library (terp env)
+(export primitive-env repl-env
+        global-defined? really-global-lookup global-init! really-global-define!
+        missing
+        )
+(import (chezscheme) (terp util))
+
 ;; The global environment
 ;; This organization is a hacky breaking of a dependency cycle
 
@@ -28,3 +35,5 @@
       (write v)
       (newline)))
   (eq-hashtable-set! globals v value))
+
+)

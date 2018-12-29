@@ -1,3 +1,12 @@
+(library (terp primitives)
+(export hash squeam=? char-compare number-compare string-compare hashmap-place
+        as-cons box<- vector-append subvector copy-range! vector-move!
+        maybe-macroexpand-expr maybe-macroexpand-patt prim-halp-log
+        prim-nano-now prim-nanosleep prim-*/mod prim-string-maps? 
+        prim-substring prim-vector-maps? prim-read-all 
+        )
+(import (chezscheme) (terp util) (terp parse))
+
 ;; Hashing and equality
 
 ;; For now, I'm gonna assume Squeam-defined objects are equal iff
@@ -182,3 +191,5 @@
       (if (eof-object? c)
           (list->string (reverse cs))
           (reading (cons c cs))))))
+
+)

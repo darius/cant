@@ -1,3 +1,7 @@
+(library (terp macros)
+(export unpack define-enum mcase mlambda)
+(import (chezscheme))
+
 (define-syntax unpack
   (syntax-rules ()
     ((_ vec vars exp1 exp2 ...)
@@ -48,6 +52,9 @@
                          (%match-clauses subject . clauses))))
        (%match subject pattern (begin . body) (match-rest))))))
     
+(define (%match-error subject)
+  (error 'mcase "Match failure" subject))
+
 (define-syntax %match
   (syntax-rules (__ : quote)                    ;N.B. __ was _
     ((_ subject (: __ ok?) then-exp else-exp)
@@ -76,3 +83,5 @@
     ;; we're not using it and I don't see how to implement it in
     ;; syntax-rules anyway.
     ))
+
+)

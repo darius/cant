@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euo pipefail; shopt -s failglob  # 'Bash strict mode'
 
-# Test runner. Usage: t foo.scm
+# Test runner. Usage: for test/test-foo.scm, say `t foo`
 
-time scheme --script $1 >$1.out
+time ./squeam.scm test/test-$1.scm >$1.out
 diff -u $1.expected $1.out

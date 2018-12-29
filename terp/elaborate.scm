@@ -1,3 +1,9 @@
+(library (terp elaborate)
+(export elaborate-e elaborate-p
+        outer-scope<-
+        )
+(import (chezscheme) (terp util) (terp macros) (terp parse) (terp env))
+
 ;; Analyze and transform a parsed AST.
 
 (define (elaborate-e e s)
@@ -111,3 +117,5 @@
 (define (scope-extend scope vars)
   (make-scope (scope-outer scope)
               (cons vars (scope-inner scope))))
+
+)

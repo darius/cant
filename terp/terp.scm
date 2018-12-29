@@ -1,3 +1,16 @@
+#!chezscheme
+(library (terp terp)
+(export run-load squeam-interpret)
+(import (chezscheme)
+  (terp util)
+  (terp macros)
+  (terp read)
+  (terp parse)
+  (terp env)
+  (terp elaborate)
+  (terp primitives)
+  )
+
 ;; (define (set-dbg! debug?)
 ;;   (set! dbg (if debug? pp (lambda (x) #f))))
 
@@ -30,6 +43,7 @@
   k-ev-view-match
   k-ev-match-rest
   k-unwind
+  k-keep-unwinding
   k-replace-answer)
 
 (define miranda-trait    '*forward-ref*)
@@ -51,6 +65,17 @@
 (define eof-script       '*forward-ref*)
 (define script-script    '*forward-ref*)
 (define ejector-script   '*forward-ref*)
+
+(define cont<- vector)
+
+(define-record-type cont-script (fields name answerer))
+
+(define halt-cont (cont<- k-halt))
+
+(define (get-prim name)
+  (really-global-lookup name))
+
+(define mask32 (- (expt 2 32) 1))
 
 
 ;; Primitive depiction
@@ -409,6 +434,273 @@
                               (call (car message) (list ejector) ejector-k))))
             #f))
 
+
+;; A small-step interpreter
+
+(define (evaluate e r)
+;  (report `(evaluate ,e))
+  (evaluate-exp e r halt-cont))
+
+(define (evaluate-exp e r k)
+  (if (and (object? e) (eq? (object-script e) expression-script))
+      (let* ((parsed (object-datum e))
+             (vars (exp-vars-defined parsed))
+             (elaborated (elaborate-e parsed (outer-scope<- vars))))
+        (ev-exp elaborated r k))
+      (evaluate-exp (parse-exp e) r k))) ;XXX need to supply a lexical env from `r`, so unbound-var warnings are accurate
+
+(define (ev-exp e r k)
+;  (dbg `(ev-exp)) ; ,e))
+  ((vector-ref methods/ev-exp (pack-tag e))
+   e r k))
+
+(define methods/ev-exp
+  (vector
+   (lambda (e r k)                          ;e-constant
+     (unpack e (value)
+       (answer k value)))
+   (lambda (e r k)                          ;e-variable
+     (unpack e (var)
+       (env-lookup r var k)))
+   (lambda (e r k)                          ;e-term
+     (unpack e (tag es)
+       (ev-args es r '()
+                (cont<- k-ev-tag k tag))))
+   (lambda (e r k)                          ;e-list
+     (unpack e (es)
+       (ev-args es r '() k)))
+   (lambda (e r k)                          ;e-make
+     (unpack e (name trait clauses)
+       (if (eq? trait none-exp) ; Just fast-path tuning; this IF is not logically necessary.
+           (answer k (object<- (script<- name #f clauses)
+                               r))
+           (ev-exp trait r
+                   (cont<- k-ev-make-cont-script k r name clauses)))))
+   (lambda (e r k)                          ;e-do
+     (unpack e (e1 e2)
+       (ev-exp e1 r (cont<- k-ev-do-rest k r e2))))
+   (lambda (e r k)                          ;e-let
+     (unpack e (p e1)
+       (ev-exp e1 r (cont<- k-ev-let-match k r p))))
+   (lambda (e r k)                          ;e-call
+     (unpack e (e1 e2)
+       (ev-exp e1 r (cont<- k-ev-arg k r e2))))
+   (lambda (e r k)                          ;e-global
+     (unpack e (var)
+       (global-lookup var k)))
+   ))
+
+(define (ev-args es r vals k)
+  (if (null? es)
+      (answer k (reverse vals))
+      (ev-exp (car es) r
+              (cont<- k-ev-rest-args k r (cdr es) vals))))
+
+(define (ev-pat subject p r k)
+;  (dbg `(match)) ; ,subject ,p))
+  ((vector-ref methods/ev-pat (pack-tag p))
+   subject p r k))
+
+(define methods/ev-pat
+  (vector
+   (lambda (subject p r k)              ;p-constant
+     (unpack p (value)
+       (answer k (squeam=? subject value))))
+   (lambda (subject p r k)              ;p-any
+     (answer k #t))
+   (lambda (subject p r k)              ;p-variable
+     (unpack p (name)
+       (env-resolve! r name subject k)))
+   (lambda (subject p r k)              ;p-term
+     (unpack p (tag args)
+       (if (not (and (term? subject)
+                     (squeam=? (term-tag subject) tag)))
+           (answer k #f)
+           (ev-match-all (term-parts subject) args r k))))
+   (lambda (subject p r k)              ;p-list
+     (unpack p (args)
+       (if (or (and (pair? args) (pair? subject)
+                    (= (length args) (length subject))) ;TODO move this into ev-match-all
+               (and (null? args) (null? subject)))      ;TODO answer right away here
+           (ev-match-all subject args r k)
+           (answer k #f))))
+   (lambda (subject p r k)              ;p-and
+     (unpack p (p1 p2)
+       (ev-pat subject p1 r
+               (cont<- k-ev-and-pat k r subject p2))))
+   (lambda (subject p r k)              ;p-view
+     (unpack p (e p1)
+       (ev-exp e r
+               (cont<- k-ev-view-call k r subject p1))))))
+
+(define (ev-match-all subjects ps r k)
+  (cond ((null? ps)
+         (answer k (null? subjects)))
+        ((null? subjects)
+         (answer k #f))
+        (else
+         (ev-pat (car subjects) (car ps) r
+                 (cont<- k-ev-match-rest k r (cdr subjects) (cdr ps))))))
+
+(define (halt-cont-fn value k0) value)
+
+(define (run-script object script datum message k)
+  (matching (script-clauses script) object script datum message k))
+
+(define (matching clauses object script datum message k)
+;  (dbg `(matching)) ; ,clauses))
+  (mcase clauses
+    (()
+     (delegate (script-trait script) object message k))
+    (((pattern pat-vars . body) . rest-clauses)
+     (let ((pat-r (env-extend-promises datum pat-vars)))
+       (ev-pat message pattern pat-r
+               (cont<- k-match-clause k pat-r body rest-clauses object script datum message))))))  ;XXX geeeez
+
+(define (match-clause-cont matched? k0)
+;     (dbg `(match-clause-cont))
+  (unpack k0 (k pat-r body rest-clauses object script datum message)
+               ;; TODO don't unpack it all till needed
+  ;; body is now a list (body-vars body-exp)
+    (if matched?
+        (ev-exp (cadr body) (env-extend-promises pat-r (car body)) k)
+        (matching rest-clauses object script datum message k))))
+
+(define (ev-make-cont-script trait-val k0)
+;     (dbg `(ev-make-cont))
+  (unpack k0 (k r name clauses)
+    (answer k (object<- (script<- name trait-val clauses)
+                        r))))
+
+(define (ev-do-rest-cont _ k0)
+;     (dbg `(ev-do-rest-cont))
+  (unpack k0 (k r e2)
+    (ev-exp e2 r k)))
+
+(define (ev-let-match-cont val k0)
+;     (dbg `(ev-let-match-cont))
+  (unpack k0 (k r p)
+    (ev-pat val p r
+            (cont<- k-ev-let-check k val))))
+
+(define (ev-let-check-cont matched? k0)
+;     (dbg `(ev-let-check-cont))
+  (unpack k0 (k val)
+    (if matched?
+        (answer k val)
+        (signal k "Match failure" val))))
+
+(define (ev-arg-cont receiver k0)
+;     (dbg `(ev-arg-cont))
+  (unpack k0 (k r e2)
+    (ev-exp e2 r
+            (cont<- k-ev-call k receiver))))
+
+(define (ev-call-cont message k0)
+;     (dbg `(ev-call-cont ,receiver ,message))
+  (unpack k0 (k receiver)
+    (call receiver message k)))
+
+(define (ev-rest-args-cont val k0)
+;     (dbg `(ev-rest-args-cont))
+  (unpack k0 (k r es vals)
+    (ev-args es r (cons val vals) k)))
+
+(define (ev-tag-cont vals k0)
+;     (dbg `(ev-tag-cont))
+  (unpack k0 (k tag)
+    (answer k (make-term tag vals))))
+
+(define (ev-and-pat-cont matched? k0)
+;     (dbg `(ev-and-pat-cont))
+  (unpack k0 (k r subject p2)
+    (if matched?
+        (ev-pat subject p2 r k)
+        (answer k #f))))
+
+(define (ev-view-call-cont convert k0)
+;     (dbg `(ev-view-call-cont))
+  (unpack k0 (k r subject p)
+    (call convert (list subject)
+          (cont<- k-ev-view-match k r p))))
+
+(define (ev-view-match-cont new-subject k0)
+;     (dbg `(ev-view-match-cont))
+  (unpack k0 (k r p)
+    (ev-pat new-subject p r k)))
+
+(define (ev-match-rest-cont matched? k0)
+;     (dbg `(ev-match-rest-cont))
+  (unpack k0 (k r subjects ps)
+    (if matched?
+        (ev-match-all subjects ps r k)
+        (answer k #f))))
+
+
+(define methods/cont
+  (vector
+   halt-cont-fn
+   match-clause-cont
+   ev-make-cont-script
+   ev-do-rest-cont
+   ev-let-match-cont
+   ev-let-check-cont
+   ev-arg-cont
+   ev-call-cont
+   ev-rest-args-cont
+   ev-tag-cont
+   ev-and-pat-cont
+   ev-view-call-cont
+   ev-view-match-cont
+   ev-match-rest-cont
+   unwind-cont
+   keep-unwinding
+   replace-answer-cont))
+
+(define cont-tags
+  '#(__halt-cont
+     __match-clause-cont
+     __ev-make-cont
+     __ev-do-rest-cont
+     __ev-let-match-cont
+     __ev-let-check-cont
+     __ev-arg-cont
+     __ev-call-cont
+     __ev-rest-args-cont
+     __ev-tag-cont
+     __ev-and-pat-cont
+     __ev-view-call-cont
+     __ev-view-match-cont
+     __ev-match-rest-cont
+     __unwind-cont
+     __keep-unwinding                   ;XXX not defined yet in runtime.scm
+     __replace-answer-cont))
+
+;; TODO Better to do this in Squeam, but let's not change too much at once.
+;; (We shouldn't need to wrap it at all anymore.)
+(define (wrap-cont k)
+  (let* ((tag (vector-ref k 0))
+         (name (vector-ref cont-tags tag)))
+    (object<- (make-cont-script name tag) ;XXX script should be static
+              (cdr (vector->list k))))) ;TODO keep Squeam code from ever accessing an unwrapped cont at (cadr k) via extract-datum
+
+
+;; Interpreter top level
+
+(define (run-load filename)
+  (let ((forms (snarf filename squeam-read)))
+    (squeam-interpret `(do ,@forms))))
+
+;; TODO add optional context
+(define (squeam-interpret e)
+  (evaluate (parse-exp e) repl-env))
+
+
+;; Install the primitives, load the scripts and runtime env
+
+(define (get-script name)
+  (script<- name (get-prim name) primitive-env))
+
 (for-each (lambda (pair)
             (let ((key (car pair)) (value (cadr pair)))
               (global-init! key value)))
@@ -584,281 +876,6 @@
     (os-exit ,exit)
     ))
 
-(define mask32 (- (expt 2 32) 1))
-
-
-;; A small-step interpreter
-
-(define (evaluate e r)
-;  (report `(evaluate ,e))
-  (evaluate-exp e r halt-cont))
-
-(define (evaluate-exp e r k)
-  (if (and (object? e) (eq? (object-script e) expression-script))
-      (let* ((parsed (object-datum e))
-             (vars (exp-vars-defined parsed))
-             (elaborated (elaborate-e parsed (outer-scope<- vars))))
-        (ev-exp elaborated r k))
-      (evaluate-exp (parse-exp e) r k))) ;XXX need to supply a lexical env from `r`, so unbound-var warnings are accurate
-
-(define (ev-exp e r k)
-;  (dbg `(ev-exp)) ; ,e))
-  ((vector-ref methods/ev-exp (pack-tag e))
-   e r k))
-
-(define methods/ev-exp
-  (vector
-   (lambda (e r k)                          ;e-constant
-     (unpack e (value)
-       (answer k value)))
-   (lambda (e r k)                          ;e-variable
-     (unpack e (var)
-       (env-lookup r var k)))
-   (lambda (e r k)                          ;e-term
-     (unpack e (tag es)
-       (ev-args es r '()
-                (cont<- k-ev-tag k tag))))
-   (lambda (e r k)                          ;e-list
-     (unpack e (es)
-       (ev-args es r '() k)))
-   (lambda (e r k)                          ;e-make
-     (unpack e (name trait clauses)
-       (if (eq? trait none-exp) ; Just fast-path tuning; this IF is not logically necessary.
-           (answer k (object<- (script<- name #f clauses)
-                               r))
-           (ev-exp trait r
-                   (cont<- k-ev-make-cont-script k r name clauses)))))
-   (lambda (e r k)                          ;e-do
-     (unpack e (e1 e2)
-       (ev-exp e1 r (cont<- k-ev-do-rest k r e2))))
-   (lambda (e r k)                          ;e-let
-     (unpack e (p e1)
-       (ev-exp e1 r (cont<- k-ev-let-match k r p))))
-   (lambda (e r k)                          ;e-call
-     (unpack e (e1 e2)
-       (ev-exp e1 r (cont<- k-ev-arg k r e2))))
-   (lambda (e r k)                          ;e-global
-     (unpack e (var)
-       (global-lookup var k)))
-   ))
-
-(define (ev-args es r vals k)
-  (if (null? es)
-      (answer k (reverse vals))
-      (ev-exp (car es) r
-              (cont<- k-ev-rest-args k r (cdr es) vals))))
-
-(define (ev-pat subject p r k)
-;  (dbg `(match)) ; ,subject ,p))
-  ((vector-ref methods/ev-pat (pack-tag p))
-   subject p r k))
-
-(define methods/ev-pat
-  (vector
-   (lambda (subject p r k)              ;p-constant
-     (unpack p (value)
-       (answer k (squeam=? subject value))))
-   (lambda (subject p r k)              ;p-any
-     (answer k #t))
-   (lambda (subject p r k)              ;p-variable
-     (unpack p (name)
-       (env-resolve! r name subject k)))
-   (lambda (subject p r k)              ;p-term
-     (unpack p (tag args)
-       (if (not (and (term? subject)
-                     (squeam=? (term-tag subject) tag)))
-           (answer k #f)
-           (ev-match-all (term-parts subject) args r k))))
-   (lambda (subject p r k)              ;p-list
-     (unpack p (args)
-       (if (or (and (pair? args) (pair? subject)
-                    (= (length args) (length subject))) ;TODO move this into ev-match-all
-               (and (null? args) (null? subject)))      ;TODO answer right away here
-           (ev-match-all subject args r k)
-           (answer k #f))))
-   (lambda (subject p r k)              ;p-and
-     (unpack p (p1 p2)
-       (ev-pat subject p1 r
-               (cont<- k-ev-and-pat k r subject p2))))
-   (lambda (subject p r k)              ;p-view
-     (unpack p (e p1)
-       (ev-exp e r
-               (cont<- k-ev-view-call k r subject p1))))))
-
-(define (ev-match-all subjects ps r k)
-  (cond ((null? ps)
-         (answer k (null? subjects)))
-        ((null? subjects)
-         (answer k #f))
-        (else
-         (ev-pat (car subjects) (car ps) r
-                 (cont<- k-ev-match-rest k r (cdr subjects) (cdr ps))))))
-
-(define cont<- vector)
-
-(define-record-type cont-script (fields name answerer))
-
-(define (halt-cont-fn value k0) value)
-(define halt-cont (cont<- k-halt))
-
-(define (run-script object script datum message k)
-  (matching (script-clauses script) object script datum message k))
-
-(define (matching clauses object script datum message k)
-;  (dbg `(matching)) ; ,clauses))
-  (mcase clauses
-    (()
-     (delegate (script-trait script) object message k))
-    (((pattern pat-vars . body) . rest-clauses)
-     (let ((pat-r (env-extend-promises datum pat-vars)))
-       (ev-pat message pattern pat-r
-               (cont<- k-match-clause k pat-r body rest-clauses object script datum message))))))  ;XXX geeeez
-
-(define (match-clause-cont matched? k0)
-;     (dbg `(match-clause-cont))
-  (unpack k0 (k pat-r body rest-clauses object script datum message)
-               ;; TODO don't unpack it all till needed
-  ;; body is now a list (body-vars body-exp)
-    (if matched?
-        (ev-exp (cadr body) (env-extend-promises pat-r (car body)) k)
-        (matching rest-clauses object script datum message k))))
-
-(define (ev-make-cont-script trait-val k0)
-;     (dbg `(ev-make-cont))
-  (unpack k0 (k r name clauses)
-    (answer k (object<- (script<- name trait-val clauses)
-                        r))))
-
-(define (ev-do-rest-cont _ k0)
-;     (dbg `(ev-do-rest-cont))
-  (unpack k0 (k r e2)
-    (ev-exp e2 r k)))
-
-(define (ev-let-match-cont val k0)
-;     (dbg `(ev-let-match-cont))
-  (unpack k0 (k r p)
-    (ev-pat val p r
-            (cont<- k-ev-let-check k val))))
-
-(define (ev-let-check-cont matched? k0)
-;     (dbg `(ev-let-check-cont))
-  (unpack k0 (k val)
-    (if matched?
-        (answer k val)
-        (signal k "Match failure" val))))
-
-(define (ev-arg-cont receiver k0)
-;     (dbg `(ev-arg-cont))
-  (unpack k0 (k r e2)
-    (ev-exp e2 r
-            (cont<- k-ev-call k receiver))))
-
-(define (ev-call-cont message k0)
-;     (dbg `(ev-call-cont ,receiver ,message))
-  (unpack k0 (k receiver)
-    (call receiver message k)))
-
-(define (ev-rest-args-cont val k0)
-;     (dbg `(ev-rest-args-cont))
-  (unpack k0 (k r es vals)
-    (ev-args es r (cons val vals) k)))
-
-(define (ev-tag-cont vals k0)
-;     (dbg `(ev-tag-cont))
-  (unpack k0 (k tag)
-    (answer k (make-term tag vals))))
-
-(define (ev-and-pat-cont matched? k0)
-;     (dbg `(ev-and-pat-cont))
-  (unpack k0 (k r subject p2)
-    (if matched?
-        (ev-pat subject p2 r k)
-        (answer k #f))))
-
-(define (ev-view-call-cont convert k0)
-;     (dbg `(ev-view-call-cont))
-  (unpack k0 (k r subject p)
-    (call convert (list subject)
-          (cont<- k-ev-view-match k r p))))
-
-(define (ev-view-match-cont new-subject k0)
-;     (dbg `(ev-view-match-cont))
-  (unpack k0 (k r p)
-    (ev-pat new-subject p r k)))
-
-(define (ev-match-rest-cont matched? k0)
-;     (dbg `(ev-match-rest-cont))
-  (unpack k0 (k r subjects ps)
-    (if matched?
-        (ev-match-all subjects ps r k)
-        (answer k #f))))
-
-
-(define methods/cont
-  (vector
-   halt-cont-fn
-   match-clause-cont
-   ev-make-cont-script
-   ev-do-rest-cont
-   ev-let-match-cont
-   ev-let-check-cont
-   ev-arg-cont
-   ev-call-cont
-   ev-rest-args-cont
-   ev-tag-cont
-   ev-and-pat-cont
-   ev-view-call-cont
-   ev-view-match-cont
-   ev-match-rest-cont
-   unwind-cont
-   replace-answer-cont))
-
-(define cont-tags
-  '#(__halt-cont
-     __match-clause-cont
-     __ev-make-cont
-     __ev-do-rest-cont
-     __ev-let-match-cont
-     __ev-let-check-cont
-     __ev-arg-cont
-     __ev-call-cont
-     __ev-rest-args-cont
-     __ev-tag-cont
-     __ev-and-pat-cont
-     __ev-view-call-cont
-     __ev-view-match-cont
-     __ev-match-rest-cont
-     __unwind-cont
-     __replace-answer-cont))
-
-;; TODO Better to do this in Squeam, but let's not change too much at once.
-;; (We shouldn't need to wrap it at all anymore.)
-(define (wrap-cont k)
-  (let* ((tag (vector-ref k 0))
-         (name (vector-ref cont-tags tag)))
-    (object<- (make-cont-script name tag) ;XXX script should be static
-              (cdr (vector->list k))))) ;TODO keep Squeam code from ever accessing an unwrapped cont at (cadr k) via extract-datum
-
-
-;; Interpreter top level
-
-(define (run-load filename)
-  (let ((forms (snarf filename squeam-read)))
-    (squeam-interpret `(do ,@forms))))
-
-;; TODO add optional context
-(define (squeam-interpret e)
-  (evaluate (parse-exp e) repl-env))
-
-
-;; Primitive types
-
-(define (get-script name)
-  (script<- name (get-prim name) primitive-env))
-
-(define (get-prim name)
-  (env-lookup primitive-env name halt-cont))
-
 (run-load "lib/runtime.scm")
 
 (set! miranda-trait (get-prim 'miranda-trait))
@@ -884,5 +901,7 @@
 
 ;; For tuning later.
 
-(define (report-stats)
-  'ok)
+;(define (report-stats)
+;  'ok)
+
+)

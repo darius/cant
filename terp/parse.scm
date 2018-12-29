@@ -1,3 +1,31 @@
+#!chezscheme
+(library (terp parse)
+(export pack<- pack-tag 
+        e-constant
+        e-variable
+        e-term
+        e-list
+        e-make
+        e-do
+        e-let
+        e-call
+        e-global
+        p-constant
+        p-any
+        p-variable
+        p-term
+        p-list
+        p-and
+        p-view
+        parse-e parse-p
+        exp-vars-defined pat-vars-defined
+        look-up-macro look-up-pat-macro 
+        optional-context
+        none-exp
+        self-evaluating?
+        )
+(import (chezscheme) (terp util) (terp macros))
+
 ;; Parse expressions and patterns to ASTs
 
 (define pack<- vector)
@@ -480,3 +508,5 @@
      (unpack p (e1 p1)
        (append (exp-vars-defined e1)
                (pat-vars-defined p1))))))
+
+)

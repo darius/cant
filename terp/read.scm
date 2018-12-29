@@ -1,3 +1,8 @@
+#!chezscheme
+(library (terp read)
+(export squeam-read)
+(import (chezscheme) (terp util))
+
 ;; Adapted from my UTS Scheme reader.
 ;; This relies on char->integer returning a number in [0..255].
 
@@ -289,3 +294,5 @@
 
     (lambda opt:in-port
       (read (optional-arg opt:in-port (current-input-port))))))
+
+)
