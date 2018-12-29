@@ -130,14 +130,14 @@
 (define (pattern<- vec)    (object<- pattern-script vec))
 
 (define (__expr thing)
-  (assert (and (vector? thing)
+  (insist (and (vector? thing)
                (< 0 (vector-length thing))
                (number? (vector-ref thing 0)))
           "Must be an internal expression" thing)
   (expression<- thing))
 
 (define (__patt thing)
-  (assert (and (vector? thing)
+  (insist (and (vector? thing)
                (< 0 (vector-length thing))
                (number? (vector-ref thing 0)))
           "Must be an internal pattern" thing)
@@ -156,10 +156,10 @@
   (let ((form (car (snarf (string-append module-name ".scm") squeam-read))))
     (let ((e (parse-e form `(,module-name))))
       ;; This stands in for calling `evaluate`, which we don't have yet:
-      (assert (equal? (pack-tag e) e-make) "Script must be `make`" e)
+      (insist (equal? (pack-tag e) e-make) "Script must be `make`" e)
       (unpack e (name trait clauses)
-;;        (assert (eq? stamp none-exp) "simple script" e)
-        (assert (eq? trait none-exp) "simple script" e)
+;;        (insist (eq? stamp none-exp) "simple script" e)
+        (insist (eq? trait none-exp) "simple script" e)
         (let ((prim (object<- (script<- name #f clauses)
                               primitive-env)))
           (script<- 'script-name prim primitive-env))))))
@@ -171,7 +171,7 @@
   (load-ast-script 'pattern-primitive "terp/ast-pattern"))
 
 (define (unwrap-ast ast)
-  (assert (and (object? ast)
+  (insist (and (object? ast)
                (or (eq? (object-script ast) expression-script)
                    (eq? (object-script ast) pattern-script)))
           "Not an ast object" ast)
@@ -351,9 +351,9 @@
                  (if (and (object? ejector)
                           (eq? (object-script ejector) ejector-script))
                      (let ((ejector-k (object-datum ejector)))
-                       (assert (vector? ejector-k) "ejector-eject vector"
+                       (insist (vector? ejector-k) "ejector-eject vector"
                                ejector-k)
-                       (assert (eq? unwind-cont (vector-ref ejector-k 0))
+                       (insist (eq? unwind-cont (vector-ref ejector-k 0))
                                "Ejector cont is a cont" ejector-k)
                        (if (vector-ref ejector-k 3) ;still enabled?
                            (ejector-unwinding k ejector-k value)

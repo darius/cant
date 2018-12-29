@@ -19,12 +19,13 @@
 (define (boolean<- x)                   
   (not (not x)))
 
-(define (assert ok? plaint irritant)
+;;TODO Chez has a built-in (assert ok?)
+(define (insist ok? plaint irritant)
   (if (not ok?)
-      (error 'assert plaint irritant)))
+      (error 'insist plaint irritant)))
 
 (define (should= x expected)
-  (assert (equal? x expected) "Expected" expected))
+  (insist (equal? x expected) "Expected" expected))
 
 (define (identity x) x)
 

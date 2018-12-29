@@ -231,8 +231,8 @@
            (qualified-name (string-join ":" ctx)))
       (mcase stuff
         (((: decl term?) . clauses)
-         (assert (eq? (term-tag decl) 'extending) "bad syntax" decl)
-         (assert (= (length (term-parts decl)) 1) "bad syntax" decl)
+         (insist (eq? (term-tag decl) 'extending) "bad syntax" decl)
+         (insist (= (length (term-parts decl)) 1) "bad syntax" decl)
          (pack<- e-make qualified-name
                  (parse-e (car (term-parts decl)) ctx)
                  (parse-clauses clauses ctx)))
@@ -267,7 +267,7 @@
     ('match  (mlambda
               ((__ subject . clauses)
                `((make _ ,@(map (lambda (clause)
-                                  (assert (pair? clause)
+                                  (insist (pair? clause)
                                           "invalid clause" clause)
                                   `((list<- ,(car clause)) ,@(cdr clause)))
                                 clauses))
@@ -327,7 +327,7 @@
                    ,e)))))
     ('import (mlambda
               ((__ m . names)
-               (assert (all symbol? names) "bad syntax" names)
+               (insist (all symbol? names) "bad syntax" names)
                (let ((map-var (gensym)))
                  `(let (list<- ,@names)
                     (hide (let ,map-var ,m)
@@ -335,7 +335,7 @@
                                          names))))))))
     ('export (mlambda
               ((__ . names)
-               (assert (all symbol? names) "bad syntax" names)
+               (insist (all symbol? names) "bad syntax" names)
                (list `',the-map<-
                      (list 'quasiquote
                            (map (lambda (name) (list name (list 'unquote name)))
