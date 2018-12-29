@@ -4,6 +4,7 @@
 (load "terp/macros.so")
 (load "terp/read.so")
 (load "terp/parse.so")
+(load "terp/env.so")
 (load "terp/elaborate.so")
 (load "terp/primitives.so")
 (load "terp/terp.so")

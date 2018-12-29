@@ -1,9 +1,9 @@
-(define (set-dbg! debug?)
-  (set! dbg (if debug? pp (lambda (x) #f))))
+;; (define (set-dbg! debug?)
+;;   (set! dbg (if debug? pp (lambda (x) #f))))
 
-(define (dbg x)
-;  (pp x))
-  #f)
+;; (define (dbg x)
+;; ;  (pp x))
+;;  #f)
 
 
 ;; Bootstrap prereqs
@@ -85,34 +85,15 @@
 
 ;; Environments
 
-(define primitive-env '())
-(define repl-env '())
-
-(define globals (make-eq-hashtable))
-(define missing (list '*missing*))
-
-(define (global-defined? v)
-  ;;XXX or (not (eq? value uninitialized))
-  (eq-hashtable-contains? globals v))
+(define (global-define! v value k)
+  (really-global-define! v value)
+  (answer k #t))
 
 (define (global-lookup v k)
-  (let ((value (eq-hashtable-ref globals v missing)))
+  (let ((value (really-global-lookup v)))
     (if (eq? value missing)
         (signal k "Unbound variable" v)
         (answer k value))))
-
-(define (global-define! v value k)
-  ;;XXX as a hack, allow global redefinition for
-  ;; now. This aids development at the repl, but we
-  ;; need a more systematic solution.
-  ;;(signal k "Global redefinition" v)
-  (let ((value (eq-hashtable-ref globals v missing)))
-    (unless (eq? value missing)
-      (display "\nWarning: redefined ")
-      (write v)
-      (newline)))
-  (eq-hashtable-set! globals v value)
-  (answer k #t))
 
 (define (env-defined? r v)
   (define (succeed pair) #t)  ;XXX or (not (eq? (cadr pair) uninitialized)))
@@ -430,7 +411,7 @@
 
 (for-each (lambda (pair)
             (let ((key (car pair)) (value (cadr pair)))
-              (eq-hashtable-set! globals key value)))
+              (global-init! key value)))
   `((__as-cons ,as-cons)
     (= ,squeam=?)
     (out ,(current-output-port))
@@ -476,7 +457,7 @@
     (open-binary-file-sink ,open-file-output-port)  ; but let's just hack it in for now. 
     (__get-u8 ,get-u8)
     (__put-u8 ,put-u8)
-    (__set-dbg! ,set-dbg!)
+;;    (__set-dbg! ,set-dbg!)
     (with-ejector ,with-ejector)
     (__eject ,ejector-eject)
     (ejector-protect ,ejector-protect)
@@ -907,5 +888,3 @@
 
 (define (report-stats)
   'ok)
-
-
