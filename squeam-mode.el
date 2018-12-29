@@ -17,7 +17,6 @@
 (put 'match 'scheme-indent-function 1)
 (put 'to 'scheme-indent-function 1)
 (put 'unless 'scheme-indent-function 1)
-(put 'with 'scheme-indent-function 1)
 (put 'when 'scheme-indent-function 1)
 
 (defconst squeam-font-lock-keywords 
@@ -33,7 +32,7 @@
                   (list
                    (regexp-opt
                     '("export" "for" "given" "hide" "import" "make"
-                      "make-trait" "match" "to" "unless" "with" "when")
+                      "make-trait" "match" "to" "unless" "when")
                     'symbols)
                    ))))
   (setq font-lock-defaults
