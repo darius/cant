@@ -9,13 +9,13 @@
           ((= args.count 2) (each parse-player args)) ;TODO catch errors
           (else
            (format "Usage: ~d [X-player O-player]\n" me)
-           (format "Available players: ~d\n" (" " .join (sort parse-player.keys)))
+           (format "Available players: ~d\n"
+                   (" " .join (sort player-registry.keys)))
            (os-exit 1))))
   (call tty-ttt `(,@players ,empty-grid)))
 
 (to (quick-test)
-  (let g {grid 0o610 0o061})
-  (tic-tac-toe spock-play spock-play g))
+  (tic-tac-toe spock-play spock-play {grid 0o610 0o061}))
 
 ;; Text-stream interface
 (to (tic-tac-toe player opponent grid)
@@ -36,39 +36,52 @@
     (tty-playing player opponent grid)))
 
 (to (tty-playing player opponent grid)
+
   (to (continue)
-    (tty-playing opponent player (player grid)))
-  (to (render-grid message)
-    (render `(,(show grid) "\n\n" ,message)))
+    (match (player grid)
+      (#no
+       (refresh ("~w resigns." .format player.name)))
+      (next-grid
+       (tty-playing opponent player next-grid))))
+
+  (to (refresh message)
+    (ttt-render (show grid) message))
+
   (case ((won? grid)
-         (render-grid ("~d wins." .format (last-to-move grid))))
+         (refresh ("~w (playing ~d) wins."
+                   .format opponent.name (last-to-move grid))))
         ((drawn? grid)
-         (render-grid "A draw."))
-        ((`(,player.name ,opponent.name) .find? 'Human)
+         (refresh "A draw."))
+        ((= player.name 'Human)
          (continue))
         (else
-         (render-grid ("~w to move ~d.\n(Press a key.)"
-                       .format player.name (whose-move grid)))
-         (unless (= (get-key) 'esc)  ;XXX sturm doesn't return 'esc
-           ;; TODO erase the to-move msg while it's thinking
+         (let quit?
+           (and (not= opponent.name 'Human)
+                (do (refresh ("~w to move ~d. (Press a key; Q to quit.)"
+                              .format player.name (whose-move grid)))
+                    (= (get-key) #\Q))))
+         (unless quit?
+           (refresh ("~w ponders..." .format player.name))
            (continue)))))
+
+(to (ttt-render shown-grid message @(optional plaint))
+  (render `(,(or plaint "") "\n\n" ,shown-grid "\n\n" ,message "\n\n")))
 
 (make human-play
   ({.name} 'Human)
   (`(,grid) 
-   (let prompt ("~d move? [1-9] " .format (whose-move grid)))
+   (let prompt ("~d move? [1-9; Q to quit] " .format (whose-move grid)))
    (begin asking ((plaint #no))
-     (render `(,(or plaint "")
-               "\n\n"
-               ,(if plaint (show-with-moves grid) (show grid))
-               "\n\n"
-               ,prompt ,cursor))
-     (let key (get-key))
-     (match (and (char? key)
-                 (<= #\1 key #\9)
-                 (apply-move grid (move<-key key)))
-       (#no (asking "Hey, that's not a move. Give me one of the digits below."))
-       (successor successor)))))
+     (ttt-render (if plaint (show-with-moves grid) (show grid))
+                 `(,prompt ,cursor)
+                 plaint)
+     (match (get-key)
+       (#\Q #no)
+       (key (match (and (char? key)
+                        (<= #\1 key #\9)
+                        (apply-move grid (move<-key key)))
+              (#no (asking "Hey, that's not a move. Give me one of the digits below."))
+              (successor successor)))))))
 
 (to (show-with-moves grid)
   (each (highlight-if '.digit?) (show grid (1 .up-to 9))))
@@ -93,7 +106,10 @@
    (min-by (compound-key<- spock-value drunk-value)
            (successors grid))))
 
-(let parse-player
+(to (parse-player name)
+  (player-registry name.lowercase))
+
+(let player-registry
   (map<- (for each ((player (list<- human-play drunk-play spock-play max-play)))
            (let string player.name.name.lowercase)
            `(,string ,player))))
