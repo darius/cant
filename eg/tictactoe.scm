@@ -17,7 +17,9 @@
 (to (quick-test)
   (tic-tac-toe spock-play spock-play {grid 0o610 0o061}))
 
+
 ;; Text-stream interface
+
 (to (tic-tac-toe player opponent grid)
   (format "~d\n\n" (show grid))
   (case ((won? grid)   (format "~d wins.\n" (last-to-move grid)))
@@ -30,7 +32,9 @@
            )
          (tic-tac-toe opponent player (player grid)))))
 
+
 ;; Graphical TTY interface
+
 (to (tty-ttt player opponent grid)
   (for cbreak-mode ()
     (tty-playing player opponent grid)))
@@ -92,6 +96,9 @@
 (to (move<-key digit-char)
   (- #\9 digit-char))
 
+
+;; 'AI' players
+
 (make drunk-play
   ({.name} "Drunk")
   (`(,grid) (min-by drunk-value (successors grid))))
@@ -133,11 +140,9 @@
   (/ (sum numbers) numbers.count))
 
 
-(to (player-marks {grid p q})
-  (if (= (sum (player-bits p))
-         (sum (player-bits q)))
-      "XO"
-      "OX"))
+;; Basic grid ops
+
+(let empty-grid {grid 0 0})
 
 (to (player-bits bits)
   (for each ((i (0 .up-to 8)))
@@ -146,6 +151,8 @@
 (to (won? {grid p q})
   (for some ((way ways-to-win))
     (= way (way .and q))))
+
+(let ways-to-win '(0o700 0o070 0o007 0o444 0o222 0o111 0o421 0o124))
 
 (to (drawn? grid)
   ((successors grid) .empty?))
@@ -159,11 +166,20 @@
   (and (= 0 (bit .and (p .or q)))
        {grid q (p .or bit)}))
 
+
+;; The presentation layer
+
 (to (whose-move grid)
   ((player-marks grid) 0))
 
 (to (last-to-move grid)
   ((player-marks grid) 1))
+
+(to (player-marks {grid p q})
+  (if (= (sum (player-bits p))
+         (sum (player-bits q)))
+      "XO"
+      "OX"))
 
 (to (show {grid p q} @(optional opt-spaces))
   (let spaces (or opt-spaces ("." .repeat 9)))
@@ -179,8 +195,5 @@
 
 (let grid-format ("\n" .join ('(" ~d ~d ~d") .repeat 3)))
 
-(let ways-to-win '(0o700 0o070 0o007 0o444 0o222 0o111 0o421 0o124))
-
-(let empty-grid {grid 0 0})
 
 (export main quick-test)
