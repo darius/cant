@@ -44,7 +44,7 @@
   (to (continue)
     (match (player grid)
       (#no
-       (refresh ("~d resigns." .format player.name)))
+       (refresh ("~d (~d) resigns." .format player.name (whose-move grid))))
       (next-grid
        (tty-playing opponent player next-grid))))
 
