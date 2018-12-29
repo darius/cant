@@ -16,8 +16,7 @@
       ((? integer?)         (exp-f {literal exp}))
       ({hereafter}          (exp-f exp))
       ({arg @_}             (exp-f exp))
-      ({op rator arg1 arg2} (exp-f
-                             {op rator (walking arg1) (walking arg2)})))))
+      ({op rator arg1 arg2} (exp-f {op rator (walking arg1) (walking arg2)})))))
 
 (to ((unit v) args k)
   (k args v))

@@ -83,7 +83,7 @@
           doc-string
           uses))
 
-;; Return true iff X is an unsigned byte.
+;; Is x an unsigned byte?
 (to (byte? x)
   (and (integer? x) (<= 0 x 255)))
 
@@ -121,7 +121,7 @@
         (Ex-param extended-opcode arg))))))
 
 ;; Pre: XS and YS are lists.
-;; Return a list of all pairs (x . y) where x in XS and y in YS.
+;; Return a list of all pairs (x y) where x in XS and y in YS.
 (to (outer-product xs ys)
   (for gather ((x xs))
     (for each ((y ys))
