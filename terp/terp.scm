@@ -32,6 +32,26 @@
   k-unwind
   k-replace-answer)
 
+(define miranda-trait    '*forward-ref*)
+
+(define boolean-script   '*forward-ref*)
+(define number-script    '*forward-ref*)
+(define nil-script       '*forward-ref*)
+(define pair-script      '*forward-ref*)
+(define symbol-script    '*forward-ref*)
+(define char-script      '*forward-ref*)
+(define string-script    '*forward-ref*)
+(define array-script     '*forward-ref*)
+(define box-script       '*forward-ref*)
+(define source-script    '*forward-ref*)
+(define sink-script      '*forward-ref*)
+(define term-script      '*forward-ref*)
+(define procedure-script '*forward-ref*)
+(define void-script      '*forward-ref*)
+(define eof-script       '*forward-ref*)
+(define script-script    '*forward-ref*)
+(define ejector-script   '*forward-ref*)
+
 
 ;; Primitive depiction
 
@@ -860,25 +880,25 @@
 
 (run-load "lib/runtime.scm")
 
-(define miranda-trait (get-prim 'miranda-trait))
+(set! miranda-trait (get-prim 'miranda-trait))
 
-(define boolean-script (get-script 'claim-primitive))
-(define number-script (get-script 'number-primitive))
-(define nil-script    (get-script 'nil-primitive))
-(define pair-script   (get-script 'cons-primitive))
-(define symbol-script (get-script 'symbol-primitive))
-(define char-script   (get-script 'char-primitive))
-(define string-script (get-script 'string-primitive))
-(define array-script  (get-script 'array-primitive))
-(define box-script    (get-script 'box-primitive))
-(define source-script (get-script 'source-primitive))
-(define sink-script   (get-script 'sink-primitive))
-(define term-script   (get-script 'term-primitive))
-(define procedure-script (get-script 'procedure-primitive))
-(define void-script   (get-script 'void-primitive))
-(define eof-script    (get-script 'eof-primitive))
-(define script-script (get-script 'script-primitive))
-(define ejector-script (get-script 'ejector-primitive))
+(set! boolean-script (get-script 'claim-primitive))
+(set! number-script (get-script 'number-primitive))
+(set! nil-script    (get-script 'nil-primitive))
+(set! pair-script   (get-script 'cons-primitive))
+(set! symbol-script (get-script 'symbol-primitive))
+(set! char-script   (get-script 'char-primitive))
+(set! string-script (get-script 'string-primitive))
+(set! array-script  (get-script 'array-primitive))
+(set! box-script    (get-script 'box-primitive))
+(set! source-script (get-script 'source-primitive))
+(set! sink-script   (get-script 'sink-primitive))
+(set! term-script   (get-script 'term-primitive))
+(set! procedure-script (get-script 'procedure-primitive))
+(set! void-script   (get-script 'void-primitive))
+(set! eof-script    (get-script 'eof-primitive))
+(set! script-script (get-script 'script-primitive))
+(set! ejector-script (get-script 'ejector-primitive))
 
 (define the-map<- (get-prim 'map<-))
 
