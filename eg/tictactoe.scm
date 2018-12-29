@@ -40,7 +40,7 @@
   (to (continue)
     (match (player grid)
       (#no
-       (refresh ("~w resigns." .format player.name)))
+       (refresh ("~d resigns." .format player.name)))
       (next-grid
        (tty-playing opponent player next-grid))))
 
@@ -48,27 +48,27 @@
     (ttt-render (show grid) message))
 
   (case ((won? grid)
-         (refresh ("~w (playing ~d) wins."
+         (refresh ("~d (playing ~d) wins."
                    .format opponent.name (last-to-move grid))))
         ((drawn? grid)
          (refresh "A draw."))
-        ((= player.name 'Human)
+        ((= player.name "Human")
          (continue))
         (else
          (let quit?
-           (and (not= opponent.name 'Human)
-                (do (refresh ("~w to move ~d. (Press a key; Q to quit.)"
+           (and (not= opponent.name "Human")
+                (do (refresh ("~d to move ~d. (Press a key; Q to quit.)"
                               .format player.name (whose-move grid)))
                     (= (get-key) #\Q))))
          (unless quit?
-           (refresh ("~w ponders..." .format player.name))
+           (refresh ("~d ponders..." .format player.name))
            (continue)))))
 
 (to (ttt-render shown-grid message @(optional plaint))
   (render `(,(or plaint "") "\n\n" ,shown-grid "\n\n" ,message "\n\n")))
 
 (make human-play
-  ({.name} 'Human)
+  ({.name} "Human")
   (`(,grid) 
    (let prompt ("~d move? [1-9; Q to quit] " .format (whose-move grid)))
    (begin asking ((plaint #no))
@@ -93,15 +93,15 @@
   (- #\9 digit-char))
 
 (make drunk-play
-  ({.name} 'Drunk)
+  ({.name} "Drunk")
   (`(,grid) (min-by drunk-value (successors grid))))
 
 (make spock-play
-  ({.name} 'Spock)
+  ({.name} "Spock")
   (`(,grid) (min-by spock-value (successors grid))))
 
 (make max-play
-  ({.name} 'Max)
+  ({.name} "Max")
   (`(,grid)
    (min-by (compound-key<- spock-value drunk-value)
            (successors grid))))
@@ -111,8 +111,7 @@
 
 (let player-registry
   (map<- (for each ((player (list<- human-play drunk-play spock-play max-play)))
-           (let string player.name.name.lowercase)
-           `(,string ,player))))
+           `(,player.name.lowercase ,player))))
 
 (let drunk-value
   (memoize (given (grid)
