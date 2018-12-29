@@ -50,8 +50,8 @@
        (#no (asking "Hey, that's not a move. Give me one of the digits below."))
        (successor successor)))))
 
-(to (move<-key char)
-  (- 9 (number<-string (string<- char))))
+(to (move<-key digit-char)
+  (- #\9 digit-char))
 
 (to (view-valid-moves grid)
   ;; TODO use fold
