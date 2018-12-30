@@ -17,7 +17,7 @@
 (let centers (each parse input))
 
 (let names (map<- (zip centers
-                       (as-list (#\a .up-to< (+ #\a centers.count)))))) ;still clumsy
+                       (#\a .up-to< (+ #\a centers.count)))))
 
 (let `((,xl ,yl) (,xh ,yh)) (bounds<- centers))
 (format "bounds ~w\n" (bounds<- centers))
