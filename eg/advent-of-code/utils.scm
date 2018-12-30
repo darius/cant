@@ -80,6 +80,7 @@
   (let grammar (grammar<- (chain "start: " template " :end.\n"
                                  "_ = :whitespace*.")))
   (let peg ((grammar (map<-)) 'start))
+  ;; TODO: return an object which passes on to .results by default
   (given (string)
     (parson-parse peg string)))
 

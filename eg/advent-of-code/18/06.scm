@@ -2,7 +2,7 @@
 ;; starting from the centroid (hoping that's within the area).
 
 (import (use "eg/advent-of-code/utils")
-  simple-parser<- average filter/lazy)
+  simple-parser<- average filter/lazy bounds<- manhattan-distance<-)
 (import (use "lib/queue")
   empty empty?
   push extend
@@ -19,16 +19,10 @@
   ('.results (parser coords)))
 
 (let centers (each parse input))
-(each! print centers)
+;;(each! print centers)
 
-(let names (map<- (zip centers (for each ((i (range<- centers.count)))
-                                 (char<- (+ 65 32 i)))))) ;XXXchar-range<- again
-
-(to (bounds<- points)
-  (transpose (each bounds-1d<- (transpose points))))
-
-(to (bounds-1d<- ns)
-  `(,(call min ns) ,(call max ns)))
+(let names (map<- (zip centers
+                       (as-list (#\a .up-to< (+ #\a centers.count)))))) ;still clumsy
 
 (let `((,xl ,yl) (,xh ,yh)) (bounds<- centers))
 (format "bounds ~w\n" (bounds<- centers))
@@ -37,8 +31,8 @@
   (for each! ((y (yl .up-to yh)))
     (for each! ((x (xl .up-to xh)))
       (let p `(,x ,y))
-      (let name (names .get p))
-      (display (or name (if (included? p) #\# #\.))))
+      (display (or (names .get p)
+                   (if (included? p) #\# #\.))))
     (newline)))
 
 (to (included? p)
@@ -46,11 +40,7 @@
 
 (to (total-distance p)
   (sum (for each ((c centers))
-         (distance<- c p))))
-
-(to (distance<- `(,x0 ,y0) `(,x1 ,y1))
-  (+ (abs (- x1 x0))
-     (abs (- y1 y0))))
+         (manhattan-distance<- c p))))
 
 
 (display "\nPart 2\n")
@@ -59,18 +49,13 @@
 
 ;; This would take like a week for the non-test question.
 ;; But the code can help us test its successor.
-(let area-1 (sum
-             '()))
-;;             (for each ((y ((- yl margin) .up-to (+ yh margin))))
-;;               (sum (for each ((x ((- xl margin) .up-to (+ xh margin))))
-;;                      (if (included? `(,x ,y)) 1 0)))))) ;TODO duplication
+(to (area-1)
+  (sum (for each ((y ((- yl margin) .up-to (+ yh margin))))
+         (sum (for each ((x ((- xl margin) .up-to (+ xh margin))))
+                ('.count (included? `(,x ,y)))))))) ;TODO duplication
 
 (to (integer<- n)
   (exact<-inexact (floor n)))
-
-(to (wtf x)
-  (format "wtf: ~w\n" x)
-  x)
 
 (let centroid (each (compose integer<- average)
                     (transpose centers)))
@@ -116,22 +101,15 @@
         p
         (seeking (min-by total-distance (neighbors-8<- p))))))
 
-'(let seed
-  ('.first 
-   (for gather/lazy ((y (range<- (- yl 0) (+ yh margin) 10)))
-     (let row
-       (for filter ((x ((- xl margin) .up-to (+ xh margin))))
-         (let p `(,x ,y))
-         `(,(total-distance p) ,p)))
-     (let `(,best-d ,p) (call min row))
-     (format "checking for seed, next row: ~w distance ~w\n" p best-d)
-     (if (< best-d margin)
-         `(,p)
-         '()))))
-
 (format "centroid ~w, seed ~w\n" centroid seed)
 
 (grow-from seed)
+;(grow-from centroid)
+
+;; That's interesting: grow-from centroid was considerably slower than grow-from seed.
+;; Why? They're both in the `included?` area.
+;; Hm, no, I guess the slowdown was from using the more generic manhattan-distance<-.
+;; Change one thing at a time.
 
 ;;(let area-2 (sum
 ;;             (for each ((y ((- (seed 1) margin) .up-to (+ (seed 1) margin))))
@@ -139,5 +117,5 @@
 ;;               (sum (for each ((x ((- (seed 0) margin) .up-to (+ (seed 0) margin))))
 ;;                      (if (included? `(,x ,y)) 1 0))))))
 
-;(format "result 2 (slow): ~w\n" area-1)
+;(format "result 2 (slow): ~w\n" (area-1))
 (format "result 2: ~w\n" region.count)
