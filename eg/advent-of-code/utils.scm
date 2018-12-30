@@ -38,6 +38,10 @@
 
 (to (count include? xs)
   (sum (each (compose '.count include?) xs)))
+;; TODO hm, include? could be any function that returns a countable thing,
+;;  which might be a collection instead of a claim. So `include?` could be
+;;  a misnomer, if you want to think of it that way. What's a good name for
+;;  this from that point of view? total-count ? total ? sum-by ? count-by ?
 
 ;; TODO is this worth it? sometimes what you want is the filter/lazy equivalent
 (to (detect include? xs)

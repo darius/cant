@@ -1,5 +1,5 @@
 (import (use "eg/advent-of-code/utils")
-  simple-parser<-
+  simple-parser<- count
   manhattan-distance<-
 )
 
@@ -13,9 +13,9 @@
 (let `(,strongest-p ,strongest-r) (max-by (given (`(,p ,r)) r)
                                           inputs))
 
-(let n-near-strongest ('.count (for those ((`(,p ,_) inputs))
-                                 (<= (manhattan-distance<- p strongest-p)
-                                     strongest-r))))
+(let n-near-strongest (for count ((`(,p ,_) inputs))
+                        (<= (manhattan-distance<- p strongest-p)
+                            strongest-r)))
                         
 
 (display "\nPart 1\n")
