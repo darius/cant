@@ -5,10 +5,8 @@
 
 (let input (with-input-file '.read-lines "eg/advent-of-code/18/data/advent23"))
 
-(let parser
+(let parse
   (simple-parser<- "'pos=<' [:int ',' :int ',' :int :hug] '>, r=' :int"))
-(to (parse string)
-  ('.results (parser string)))
 
 (let inputs (each parse input))
 

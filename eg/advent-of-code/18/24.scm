@@ -149,6 +149,7 @@ separator: '\n'.
                                   (group-maker 0))))))
   (show-count armies)
   (battle armies)
+;;  (sum (each '.count (call chain armies.values)))  TODO is this nicer?
   (sum (for gather ((groups armies.values))
          (each '.count groups))))
 

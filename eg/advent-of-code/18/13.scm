@@ -24,7 +24,7 @@
 (let S 2)
 (let W 3)
 
-(to (step width dir)                    ; we could prob. pass an array around instead of width
+(to (step width dir) ; we could prob. pass an array around instead of width
   (match dir
     (0 (- width))
     (1 1)

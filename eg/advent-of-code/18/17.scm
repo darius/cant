@@ -1,17 +1,15 @@
 ;; Starting from 17.scm, starting over on the flooding code.
 
 (import (use "eg/advent-of-code/utils")
-  simple-parser<- vector+ bounds<- bounds-1d<-)
+  simple-parser<- vector+ bounds<-)
 (import (use "lib/grid-2d")
   grid-2d<-)
 
 ;(let input (with-input-file '.read-lines "eg/advent-of-code/18/data/advent17.test"))
 (let input (with-input-file '.read-lines "eg/advent-of-code/18/data/advent17"))
 
-(let parser
+(let parse
   (simple-parser<- ":anyone '=' :int ', ' :anyone '=' :int '..' :int"))
-(to (parse string)
-  ('.results (parser string)))
 
 (let inputs (each parse input))
 
@@ -56,8 +54,8 @@
 
 ;; (show-map)
 
-(to (under p) (vector+ p '(0 1)))
-(to (above p) (vector+ p '(0 -1)))
+(to (under p)
+  (vector+ p '(0 1)))
 
 (to (flood)
   (let under-spring `(,(spring 0) ,yl))

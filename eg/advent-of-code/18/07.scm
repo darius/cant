@@ -9,10 +9,8 @@
   '(5 61))
 (let input (with-input-file '.read-lines "eg/advent-of-code/18/data/advent07"))
 
-(let parser (simple-parser<- "'Step ' :anyone ' must be finished before step ' :anyone ' can begin.'"))
-
-(to (parse coords)
-  ('.results (parser coords)))
+(let parse
+  (simple-parser<- "'Step ' :anyone ' must be finished before step ' :anyone ' can begin.'"))
 
 (let ordering (each parse input))
 ;(each! print ordering)
@@ -40,7 +38,7 @@
 
 (to (delay<- node)                ;maybe go back to calling them steps
   (let letter (node 0))            ;symbols aren't looking so great now
-  (+ min-delay (- letter.code 65)))    ;TODO #\A.code
+  (+ min-delay (- letter #\A)))
 
 ;; I think we could've kept more of the original structure.
 ;; semischedule: retirement stream -> available-jobs-list stream

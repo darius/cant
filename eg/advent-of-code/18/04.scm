@@ -33,7 +33,7 @@ _:         :whitespace.
 
 (let guards zzzs.keys)
 
-;; another idea: mapreduce the shifts to concatenate the naps for each guard,
+;; TODO another idea: mapreduce the shifts to concatenate the naps for each guard,
 ;; producing an overall map guard -> naps
 
 

@@ -1,3 +1,6 @@
+(import (use "eg/advent-of-code/utils")
+  product<-)
+
 (let input (with-input-file read "eg/advent-of-code/18/data/advent11"))
 
 (to (level<- x y)
@@ -19,14 +22,13 @@
   (max-by patch-level<- (patches)))
 
 (to (patch-level<- `(,x ,y))
-  (sum (for gather ((i (x .up-to (+ x 2))))
-         (for each ((j (y .up-to (+ y 2))))
-           (level<- i j)))))
+  (sum (for each ((`(,x ,y) (product<- (x .up-to (+ x 2))
+                                       (y .up-to (+ y 2)))))
+         (level<- x y))))
 
 (to (patches)
-  (for gather ((x (1 .up-to 298)))
-    (for each ((y (1 .up-to 298)))
-      `(,x ,y))))
+  (product<- (1 .up-to 298)
+             (1 .up-to 298)))
 
 (format "~w\n" (part1))
 
@@ -76,9 +78,7 @@
 ; out of memory
 
   (to (corners)
-    (for gather ((i side))
-      (for each ((j side))
-        `(,i ,j))))
+    (product<- side side))
 
   (let `(,power ,triple)
     (call max

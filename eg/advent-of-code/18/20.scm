@@ -1,5 +1,5 @@
 (import (use "eg/advent-of-code/utils")
-  grammar<- parson-parse feed)
+  grammar<- parson-parse feed vector+)
 (import (use "lib/memoize")
   memoize)
 
@@ -40,7 +40,7 @@ dir:  {'N' | 'S' | 'E' | 'W'} :Dir.
     (rooms .set! p (min d (rooms .get p infinity)))
     (match exp
       ({dir ch}
-       (visit (vec+ p (step ch))
+       (visit (vector+ p (step ch))
               (+ d 1)
               {seq '()}))
       ({alt es}
@@ -83,9 +83,6 @@ dir:  {'N' | 'S' | 'E' | 'W'} :Dir.
                        (#no v2)
                        (v1 (min v1 v2)))))
   result)
-
-(to (vec+ p q)
-  (zip-with + p q))
 
 (let step (map<- '((#\N (0 -1))
                    (#\S (0  1))

@@ -1,18 +1,17 @@
 (import (use "eg/advent-of-code/utils")
-  simple-parser<-)
+  simple-parser<- vector+ bounds<-)
 
 (let input (with-input-file '.read-lines "eg/advent-of-code/18/data/advent10"))
 
-(let parser
+(let parse
   (simple-parser<- "'position=<'_ :int ','_ :int :hug ['> velocity=<'_ :int ','_ :int '>' :hug]"))
-
-(to (parse string)
-  ('.results (parser string)))
 
 (let states (each parse input))
 
 
 (display "\nPart 1\n")
+
+;; TODO just skip ahead using x = v*t
 
 (to (part1)
   (let `(,ps0 ,vs) (transpose states))
@@ -20,7 +19,7 @@
   (begin stepping ((t 1) (ps ps0))
     (when (= 0 (t .modulo 100))
       (format "time ~w\n" t))
-    (let next (zip-with point+ ps vs))
+    (let next (zip-with vector+ ps vs))
     (when (< 10500 t)
       (format "After ~w seconds:\n" t)
       (if #yes ;(compact? next)
@@ -29,14 +28,8 @@
     (when (< t 11000)
       (stepping (+ t 1) next))))
 
-(to (point+ `(,x ,y) `(,dx ,dy))
-  `(,(+ x dx)
-    ,(+ y dy)))
-;(to (point+ p q) (zip-with + p q))
-
 (to (compact? ps)
   (let `((,xl ,yl) (,xh ,yh)) (bounds<- ps))
-  (let dx (- xh xl))
   (let dy (- yh yl))
   (< dy 50))
 ;;that could use zip-with too
@@ -53,11 +46,5 @@
         (display (if (set `(,x ,y)) #\# #\.)))
       (newline))
     (newline)))
-
-(to (bounds<- points)
-  (transpose (each bounds-1d<- (transpose points))))
-
-(to (bounds-1d<- ns)
-  `(,(call min ns) ,(call max ns)))
 
 (format "~w\n" (part1))

@@ -2,7 +2,7 @@
 ;; starting from the centroid (hoping that's within the area).
 
 (import (use "eg/advent-of-code/utils")
-  simple-parser<- average filter/lazy bounds<- manhattan-distance<-)
+  simple-parser<- average count bounds<- manhattan-distance<-)
 (import (use "lib/queue")
   empty empty?
   push extend
@@ -13,13 +13,8 @@
 ;(let margin 32)
 ;(let input (with-input-file '.read-lines "eg/advent-of-code/18/data/advent06.test"))
 
-(let parser (simple-parser<- ":nat ', ' :nat"))
-
-(to (parse coords)
-  ('.results (parser coords)))
-
+(let parse (simple-parser<- ":nat ', ' :nat"))
 (let centers (each parse input))
-;;(each! print centers)
 
 (let names (map<- (zip centers
                        (as-list (#\a .up-to< (+ #\a centers.count)))))) ;still clumsy
@@ -50,9 +45,8 @@
 ;; This would take like a week for the non-test question.
 ;; But the code can help us test its successor.
 (to (area-1)
-  (sum (for each ((y ((- yl margin) .up-to (+ yh margin))))
-         (sum (for each ((x ((- xl margin) .up-to (+ xh margin))))
-                ('.count (included? `(,x ,y)))))))) ;TODO duplication
+  (count included? (product<- ((- xl margin) .up-to (+ xh margin))
+                              ((- yl margin) .up-to (+ yh margin)))))
 
 (to (integer<- n)
   (exact<-inexact (floor n)))
@@ -69,11 +63,11 @@
     (match (peek queue)
       ({empty})
       ({nonempty p queue-1}
-;       (format "pop ~w ~w\n" p queue-1)
        (if (region p)
            (format "dupe ~w\n" p)
            (do (region .add! p)
-               (format "add ~w distance ~w count ~w\n" p (total-distance p) region.count)))
+;;               (format "add ~w distance ~w count ~w\n" p (total-distance p) region.count)
+               ))
        (growing (extend queue-1 
                         (for those ((p1 (neighbors<- p)))
                           (and (not (already p1))
@@ -86,25 +80,28 @@
     (,x ,(- y 1))
     (,x ,(+ y 1))))
 
-(to (neighbors-8<- `(,x ,y))
-  (chain (neighbors<- `(,x ,y))
-         `((,(- x 1) ,(- y 1))
-           (,(+ x 1) ,(- y 1))
-           (,(- x 1) ,(+ y 1))
-           (,(+ x 1) ,(+ y 1)))))
+(grow-from centroid)
 
-(let seed
-  (begin seeking ((p centroid))
-    (let d (total-distance p))
-    (format "seeking at ~w, distance ~w\n" p d)
-    (if (< d margin)
-        p
-        (seeking (min-by total-distance (neighbors-8<- p))))))
+;; Detritus from the bug-hunt
 
-(format "centroid ~w, seed ~w\n" centroid seed)
+;; (to (neighbors-8<- `(,x ,y))
+;;   (chain (neighbors<- `(,x ,y))
+;;          `((,(- x 1) ,(- y 1))
+;;            (,(+ x 1) ,(- y 1))
+;;            (,(- x 1) ,(+ y 1))
+;;            (,(+ x 1) ,(+ y 1)))))
 
-(grow-from seed)
-;(grow-from centroid)
+;; (let seed
+;;   (begin seeking ((p centroid))
+;;     (let d (total-distance p))
+;;     (format "seeking at ~w, distance ~w\n" p d)
+;;     (if (< d margin)
+;;         p
+;;         (seeking (min-by total-distance (neighbors-8<- p))))))
+
+;; (format "centroid ~w, seed ~w\n" centroid seed)
+
+;; (grow-from seed)
 
 ;; That's interesting: grow-from centroid was considerably slower than grow-from seed.
 ;; Why? They're both in the `included?` area.
@@ -118,4 +115,5 @@
 ;;                      (if (included? `(,x ,y)) 1 0))))))
 
 ;(format "result 2 (slow): ~w\n" (area-1))
+
 (format "result 2: ~w\n" region.count)

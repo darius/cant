@@ -1,4 +1,4 @@
-(import (use "eg/advent-of-code/utils") first-duplicate deletions)
+(import (use "eg/advent-of-code/utils") count duplicates<- deletions<-)
 
 (let input (with-input-file '.read-lines "eg/advent-of-code/18/data/02.txt"))
 
@@ -10,12 +10,12 @@
               (call bag<- (list<-string id))))
   (to ((having n) bag)
     (bag.values .find? n))
-  (* ('.count (those (having 2) bags))
-     ('.count (those (having 3) bags))))
+  (* (count (having 2) bags)
+     (count (having 3) bags)))
 
 (print (checksum input))
 
 
 (display "Part 2\n")
 
-(print (call chain (first-duplicate (gather deletions input))))
+(print (call chain ('.first (duplicates<- (gather deletions<- input)))))

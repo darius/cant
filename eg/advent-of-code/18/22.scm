@@ -10,10 +10,8 @@
 (let input (with-input-file '.read-all "eg/advent-of-code/18/data/advent22"))
 ;(let input (with-input-file '.read-all "eg/advent-of-code/18/data/advent22.test"))
 
-(let parser
+(let parse
   (simple-parser<- "'depth: ' :nat '\ntarget: ' [:nat ',' :nat :hug] '\n'"))
-(to (parse string)
-  ('.results (parser string)))
 
 (let `(,depth ,target) (parse input))
 (print depth)
@@ -137,6 +135,7 @@
     ,@(if (< 0 x) `((,(- x 1) ,y)) '())
     ,@(if (< 0 y) `((,x ,(- y 1))) '())))
 
+;; (specialized from utils for speed)
 (to (manhattan-distance p q)
   (+ (abs (- (p 0) (q 0)))
      (abs (- (p 1) (q 1)))))

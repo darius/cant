@@ -1,14 +1,12 @@
 (import (use "eg/advent-of-code/utils")
-  simple-parser<-)
+  simple-parser<- bounds-1d<-)
 
 (let input (with-input-file '.read-lines "eg/advent-of-code/18/data/advent12"))
 
 (let initial-lineup (input.first .slice ("initial state: " .count)))
 
-(let parser
+(let parse
   (simple-parser<- "{:skip :skip :skip :skip :skip} ' => ' :anyone"))
-(to (parse string)
-  ('.results (parser string)))
 
 (let inputs (each parse input.rest.rest))
 
@@ -57,9 +55,6 @@
 
 (to (at state pot)
   (if (state pot) #\# #\.))
-
-(to (bounds-1d<- ns)
-  `(,(call min ns) ,(call max ns)))
 
 (format "~w\n" (part1))
 

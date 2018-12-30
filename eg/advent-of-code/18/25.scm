@@ -10,19 +10,20 @@
 
 (to (parse line)
   (each number<-string (line.trim .split ","))) ;TODO I thought it was #\,
+;; TODO number<-string should probably allow spaces
 
 (let inputs (each parse input))
 ;;(each! print inputs)
 
 (to (constellate ps)
-  (let sets (disjoint-sets<- ps))
+  (let sets (partitioning<- ps))
   (for each! ((`(,p ,q) (unordered-pairs<- ps)))
 ;    (print `(,p ,q)))
     (when (<= (manhattan-distance<- p q) 3)
-      (sets .union! p q)))
+      (sets .join! p q)))
   sets)
 
-(to (disjoint-sets<- elements)
+(to (partitioning<- elements)
   (let rep (map<- (zip elements elements.keys))) ;; TODO map.inverse method?
   (let next (array<-count elements.count #no))
   (to (chase element)
@@ -30,8 +31,8 @@
       (match (next i)
         (#no i)
         (j (chasing j)))))
-  (make disjoint-sets
-    ({.union! x y}
+  (make partitioning
+    ({.join! x y}
      (let xi (chase x))
      (let yi (chase y))
      ;; TODO path compression, etc.

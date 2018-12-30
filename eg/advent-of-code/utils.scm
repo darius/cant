@@ -36,6 +36,14 @@
   (for filter ((`(,i ,x) xs.items))
     (and (ok? x) i)))
 
+(to (count include? xs)
+  (sum (each (compose '.count include?) xs)))
+
+;; TODO is this worth it? sometimes what you want is the filter/lazy equivalent
+(to (detect include? xs)
+  ((those/lazy include? xs) .first))
+
+;; TODO I reimplemented this in 18/25.scm
 (to (pairs<- xs)
   (begin outer ((outers xs))
     (unless outers.empty?
@@ -56,17 +64,18 @@
               xs
               (given () '())))
 
-;; prob. too specific, but a lazy duplicates<- might be handier
-(to (first-duplicate xs)
+(to (duplicates<- xs)
   (let seen (set<-))
   (begin looking ((xs xs))
-    (let x xs.first)
-    (if (seen x)
-        x
-        (do (seen .add! x)
-            (looking xs.rest)))))
+    (if xs.empty?
+        '()
+        (do (let x xs.first)
+            (if (seen x)
+                (cons/lazy x (given () (looking xs.rest)))
+                (do (seen .add! x)
+                    (looking xs.rest)))))))
 
-(to (deletions s)
+(to (deletions<- s)
   (for each ((i (range<- s.count)))
     `(,(s .slice 0 i)
       ,(s .slice (+ i 1)))))
@@ -80,9 +89,9 @@
   (let grammar (grammar<- (chain "start: " template " :end.\n"
                                  "_ = :whitespace*.")))
   (let peg ((grammar (map<-)) 'start))
-  ;; TODO: return an object which passes on to .results by default
-  (given (string)
-    (parson-parse peg string)))
+  (make parser
+    (`(,string)     ((parson-parse peg string) .results))
+    ({.parse string} (parson-parse peg string))))
 
 (to (deduplicate xs)
   ('.keys (call set<- xs)))
@@ -98,8 +107,8 @@
       (and (not= `(,dx ,dy) '(0 0))
            `(,(+ x dx) ,(+ y dy))))))
 
-(to (vector+ p q)
-  (zip-with + p q))
+(to (vector+ p q) (zip-with + p q))
+(to (vector- p q) (zip-with - p q))
 
 (to (manhattan-distance<- p q)
   (sum (zip-with (compose abs -) p q)))
@@ -111,9 +120,10 @@
   `(,(call min ns) ,(call max ns)))
 
 (export
-  cycle scanl/lazy where pairs<- filter/lazy first-duplicate deletions
+  cycle scanl/lazy where count detect pairs<- filter/lazy 
+  duplicates<- deletions<-
   chain-lines all-mins-by average neighbors<-
-  simple-parser<- product<- vector+ manhattan-distance<-
+  simple-parser<- product<- vector+ vector- manhattan-distance<-
   grammar<- parson-parse feed take-1
   bounds<- bounds-1d<- 
   )

@@ -3,13 +3,10 @@
 
 (let input (with-input-file '.read-all "eg/advent-of-code/18/data/advent09"))
 
-(let parser (simple-parser<- ":nat ' players; last marble is worth ' :nat ' points\n'"))
-
-(to (parse string)
-  ('.results (parser string)))
+(let parse
+  (simple-parser<- ":nat ' players; last marble is worth ' :nat ' points\n'"))
 
 (let `(,n-players ,n-points) (parse input))
-;(print `(,n-players ,n-points))
 
 
 (display "\nPart 1\n")
