@@ -97,11 +97,22 @@
       (and (not= `(,dx ,dy) '(0 0))
            `(,(+ x dx) ,(+ y dy))))))
 
+(to (vector+ p q)
+  (zip-with + p q))
+
 (to (manhattan-distance<- p q)
   (sum (zip-with (compose abs -) p q)))
+
+(to (bounds<- points)
+  (transpose (each bounds-1d<- (transpose points))))
+
+(to (bounds-1d<- ns)
+  `(,(call min ns) ,(call max ns)))
 
 (export
   cycle scanl/lazy where pairs<- filter/lazy first-duplicate deletions
   chain-lines all-mins-by average neighbors<-
-  simple-parser<- product<- manhattan-distance<-
-  grammar<- parson-parse feed take-1)
+  simple-parser<- product<- vector+ manhattan-distance<-
+  grammar<- parson-parse feed take-1
+  bounds<- bounds-1d<- 
+  )

@@ -1,7 +1,7 @@
 ;; Starting from 17.scm, starting over on the flooding code.
 
 (import (use "eg/advent-of-code/utils")
-  simple-parser<-)
+  simple-parser<- vector+ bounds<- bounds-1d<-)
 (import (use "lib/grid-2d")
   grid-2d<-)
 
@@ -26,12 +26,6 @@
       ('("y" "x") (for each ((j (lo .up-to hi)))
                     `(,j ,val1))))))
 
-(to (bounds<- points)
-  (transpose (each bounds-1d<- (transpose points))))
-
-(to (bounds-1d<- ns)
-  `(,(call min ns) ,(call max ns)))
-
 (let `((,xl0 ,yl) (,xh0 ,yh)) (bounds<- clay-spots))
 
 ;; Extend the x-bounds by 1 each way to allow for flow off the sides.
@@ -48,12 +42,6 @@
 (to (clay? p)
   (= (grid .get p) #\#))
 
-(to (water? p)
-  (match (grid .get p)
-    (#\| #yes)
-    (#\~ #yes)
-    (_   #no)))
-
 (to (show-map)
   (for each! ((y ((spring 1) .up-to< yl)))
     (for each! ((x (xl .up-to xh)))
@@ -66,13 +54,10 @@
                 (newline)))
   (newline))
 
-(show-map)
+;; (show-map)
 
-(to (point+ p q)
-  (zip-with + p q))
-
-(to (under p) (point+ p '(0 1)))
-(to (above p) (point+ p '(0 -1)))
+(to (under p) (vector+ p '(0 1)))
+(to (above p) (vector+ p '(0 -1)))
 
 (to (flood)
   (let under-spring `(,(spring 0) ,yl))
