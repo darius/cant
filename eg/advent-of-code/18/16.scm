@@ -19,7 +19,7 @@ insn:    :nat ' ' :nat ' ' :nat ' ' :nat '\n' :hug.
   ('.results (parson-parse parse-main string)))
 
 (let `(,observations ,program) (parse input))
-(each! print program)
+;(each! print program)
 (format "#obs: ~w\n" observations.count)
 
 
@@ -81,7 +81,7 @@ insn:    :nat ' ' :nat ' ' :nat ' ' :nat '\n' :hug.
       (for filter ((op-name all-op-names))
         (let vm (vm<- (array<-list regs-pre)))
         (vm .do op-name a b c)
-        (and (= regs-post (as-list vm.get-regs))
+        (and (<=> regs-post vm.get-regs)
              op-name)))
 ;;    (format "~w: ~w\n" op (sort compatible-ops))
     `(,op ,compatible-ops)))
