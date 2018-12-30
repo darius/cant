@@ -3,12 +3,10 @@
   grammar<- parson-parse)
 
 (let input (with-input-file '.read-lines "advent"))
-(each! print (input .slice 0 5))
+;(each! print (input .slice 0 5))
 
-(let parser
+(let parse
   (simple-parser<- "(:int | :skip)*"))
-(to (parse string)
-  ('.results (parser string)))
 
 (let grammar (grammar<- "
 main: '#' :nat ' @ ' :nat ',' :nat ': ' :nat 'x' :nat :end.
@@ -19,7 +17,7 @@ main: '#' :nat ' @ ' :nat ',' :nat ': ' :nat 'x' :nat :end.
   ('.results (parson-parse parse-main string)))
 
 (let inputs (each parse input))
-(print inputs)
+;(print inputs)
 
 
 (display "\nPart 1\n")
@@ -30,9 +28,9 @@ main: '#' :nat ' @ ' :nat ',' :nat ': ' :nat 'x' :nat :end.
 (format "~w\n" (part-1))
 
 
-(display "\nPart 2\n")
+;(display "\nPart 2\n")
 
 (to (part-2)
   'xxx)
 
-(format "~w\n" (part-2))
+;(format "~w\n" (part-2))
