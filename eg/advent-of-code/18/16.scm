@@ -53,13 +53,14 @@ insn:    :nat ' ' :nat ' ' :nat ' ' :nat '\n' :hug.
          ('setr  (regs a))
          ('seti  a)
        
-         ('gtir  (if (> a (regs b)) 1 0))
-         ('gtri  (if (> (regs a) b) 1 0))
-         ('gtrr  (if (> (regs a) (regs b)) 1 0))
+         ; TODO I'm not sure about this method name claim.count
+         ('gtir  ('.count (> a (regs b))))
+         ('gtri  ('.count (> (regs a) b)))
+         ('gtrr  ('.count (> (regs a) (regs b))))
        
-         ('eqir  (if (= a (regs b)) 1 0))
-         ('eqri  (if (= (regs a) b) 1 0))
-         ('eqrr  (if (= (regs a) (regs b)) 1 0))
+         ('eqir  ('.count (= a (regs b))))
+         ('eqri  ('.count (= (regs a) b)))
+         ('eqrr  ('.count (= (regs a) (regs b))))
        
          ))
      (regs .set! c result))
