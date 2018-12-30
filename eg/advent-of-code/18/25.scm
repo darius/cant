@@ -23,7 +23,7 @@
   sets)
 
 (to (disjoint-sets<- elements)
-  (let rep (map<- (zip elements (range<- elements.count)))) ;couldn't this be eleganter?
+  (let rep (map<- (zip elements elements.keys))) ;; TODO map.inverse method?
   (let next (array<-count elements.count #no))
   (to (chase element)
     (begin chasing ((i (rep element)))
