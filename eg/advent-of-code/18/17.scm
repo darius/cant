@@ -4,10 +4,6 @@
   simple-parser<-)
 (import (use "lib/grid-2d")
   grid-2d<-)
-(import (use "lib/queue")
-  empty empty?
-  push extend
-  peek)
 
 ;(let input (with-input-file '.read-lines "eg/advent-of-code/18/data/advent17.test"))
 (let input (with-input-file '.read-lines "eg/advent-of-code/18/data/advent17"))
