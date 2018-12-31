@@ -15,6 +15,69 @@
   ({.selfie sink} (sink .display (__depict me)))
   (message (error "Match failure" me message)))
 
+;; Generic map trait
+;; requires:
+;;  .get key default
+;;  .count
+;;  .items
+
+;; TODO untested, unused yet
+;; TODO mutable-map trait?
+
+;(make missing)
+;; Problem: (map .get key missing) might save `missing` for later.
+;; For now, we'll make a new `missing` every time, though that's
+;; uglyish and kinda expensive.
+
+(make-trait map-trait map
+  (`(,key)
+   (make missing)
+   (let answer (map .get key missing))
+   (if (= answer missing)
+       (error "Missing key" map key)
+       answer))
+  ({.get key}
+   (map .get key #no))
+  ({.maps? key}
+   (make missing)
+   (not= (map .get key missing) missing))
+  ({.empty?} (= map.count 0))
+  ({.keys}   (each '.first map.items))
+  ({.values} (each (given (`(,_ ,v)) v) map.items))
+  ({.find? value}
+   (map.values .find? value))
+  ({.find value default}
+   (begin searching ((items map.items))
+     (if items.empty?
+         default
+         (match items.first
+           (`(,k ,v) (if (= v value) k (searching items.rest)))
+           (else (searching items.rest))))))
+  ({.find value}
+   (map .find value #no))
+  ({.copy}
+   (map<- map.items))
+  ({.intersects? map2}
+   ;; TODO: maybe iterate over the one with smaller .count ?
+   (for some ((k map.keys))
+     (map2 .maps? k)))
+  ({.disjoint? map2}                    ;too trivial?
+   (not (map .intersects? map2)))
+
+  ;; What's the right definition & interface for these for maps?
+  ;; TODO also, rename to .or, .and ?
+  ({.union other}
+   (error "unimplemented .union"))
+  ({.intersect other}                 
+   (error "unimplemented .intersect"))
+  ({.difference other}
+   (error "unimplemented .difference"))
+
+;;  ({.compare xs}
+;;  ({.slice keys}
+  )
+
+;; TODO extend map-trait
 (make-trait list-trait list
   (`(,i)
    (if (= i 0)
@@ -417,6 +480,7 @@
   ({.up-to b}     (range<- me (+ b 1))) ;if they're a good idea at all...
   )
 
+;; TODO: should a box be a collection?
 (make-trait box-primitive me
   ({.^}           (__box-value me))
   ({.^= val}      (__box-value-set! me val))
@@ -648,9 +712,10 @@
 ;; This is defined in the runtime, here, because the form
 ;; (export foo bar) gets expanded into code like
 ;;   (map<- `((foo ,foo) (bar ,bar))) 
-;; (but hygienic).
+;; (but hygienic, when I get to fixing the current bad hygiene).
 
 ;; TODO:
+;;   extend map-trait
 ;;   test deletion more
 ;;   nonlinear probing -- how about xor probing?
 ;;   preserving insertion order
@@ -801,7 +866,7 @@
   (s .add-all! vals)
   s)
 
-(to (hash-set<-)
+(to (hash-set<-)                        ;XXX shouldn't be a global
   (let map (map<-)) ;TODO would be nice to avoid storing all the #yes values
   (make hash-set
     ({.empty?}        map.empty?)
