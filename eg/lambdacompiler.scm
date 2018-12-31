@@ -20,7 +20,7 @@
   (let free-vars (body.free-vars .difference (set<- v)))
   (make ({.free-vars} free-vars)
         ({.compile s k}
-         (let code (body .compile (static-env<- v free-vars.keys) '(return)))
+         (let code (body .compile (static-env<- v free-vars.keys.inverse) '(return)))
          `(make-closure
            ,free-vars.count ,code.count ,@(each s free-vars.keys)
            ,@code ,@k))))
@@ -40,10 +40,10 @@
 (to (global-static-env v)
   (error "Unbound variable" v))
 
-(to ((static-env<- param free-vars) v)
+(to ((static-env<- param var-offsets) v)
   (if (= v param)
       'local
-      (+ 1 (free-vars .find v))))
+      (+ 1 (var-offsets v))))
 
 
 ;; Smoke test

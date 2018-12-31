@@ -16,6 +16,7 @@
   (call chain (for each ((token ((parse parser text) .results)))
                 (expand token probability))))
 
+;;TODO use simple-parser<- or something
 (let grammar (grammar<- "
 phrase: (word | :anyone)*.
 word:   :letter+ {'!'}? :join.

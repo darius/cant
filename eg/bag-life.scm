@@ -39,18 +39,18 @@
            `(,(+ x dx) ,(+ y dy))))))
 
 (to (show grid)
-  (let `(,y-lo ,y-hi) (bounds (for each ((`(,x ,y) grid.keys)) y)))
-  (let `(,x-lo ,x-hi) (bounds (for each ((`(,x ,y) grid.keys)) x)))
+  (let `((,x-lo ,x-hi) (,y-lo ,y-hi))
+    (each bounds<- (transpose grid.keys)))
   (for each! ((y (y-lo .up-to y-hi)))
     (for each! ((x (x-lo .up-to x-hi)))
       (display (if (grid .maps? `(,x ,y)) "O " "  ")))
     (newline)))
 
-(to (bounds numbers)
+(to (bounds<- numbers)
   `(,(call min numbers)
     ,(call max numbers)))
 
-(to (paint lines)
+(to (paint lines)              ;TODO maybe use a `where` function
   (call set<- (for gather ((`(,row ,line) lines.items))
                 (for filter ((`(,col ,ch) line.items))
                   (and (not ch.whitespace?)

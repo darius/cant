@@ -18,7 +18,7 @@
 ;; Generic map trait
 ;; requires:
 ;;  .get key default
-;;  .count
+;;  .count -- hm, we could impl as .items.count
 ;;  .items
 
 ;; TODO untested, unused yet
@@ -41,7 +41,7 @@
   ({.maps? key}
    (make missing)
    (not= (map .get key missing) missing))
-  ({.empty?} (= map.count 0))
+  ({.empty?} (= map.count 0))  ; or map.items.empty? - is that better?
   ({.keys}   (each '.first map.items))
   ({.values} (each (given (`(,_ ,v)) v) map.items))
   ({.find? value}
@@ -54,7 +54,11 @@
            (`(,k ,v) (if (= v value) k (searching items.rest)))
            (else (searching items.rest))))))
   ({.find value}
-   (map .find value #no))
+   (make missing)
+   (let key (map .find value missing))
+   (when (= key missing)
+     (error "Missing value" value))
+   key)
   ({.copy}
    (map<- map.items))
   ({.intersects? map2}
@@ -63,6 +67,17 @@
      (map2 .maps? k)))
   ({.disjoint? map2}                    ;too trivial?
    (not (map .intersects? map2)))
+  ({.domain}
+   (call set<- map.keys))             ;TODO usually worth specializing
+  ({.range}  ; TODO rename range<- to something else
+   (call set<- map.values))
+  ({.inverse}
+   (let inverse (map<-))
+   (for each! ((`(,k ,v) map.items))
+     (when (inverse .maps? v)
+       (error ".inverse of noninvertible map" map))  ; or just allow it?
+     (inverse .set! v k))
+   inverse)
 
   ;; What's the right definition & interface for these for maps?
   ;; TODO also, rename to .or, .and ?
@@ -77,7 +92,6 @@
 ;;  ({.slice keys}
   )
 
-;; TODO extend map-trait
 (make-trait list-trait list
   (`(,i)
    (if (= i 0)
@@ -124,8 +138,6 @@
    list)
   ({.items}
    (enumerate list))
-  ({.get key}
-   (list .get key #no))
   ({.get key default}
    (if (and (integer? key) (<= 0 key))
        (begin walking ((k key) (xs list))
@@ -160,7 +172,8 @@
      (0 '())             
      (_ (call chain (for each ((_ (range<- n)))
                       list)))))
-  )
+  (message
+   (map-trait list message)))
 
 (make-trait claim-primitive me
   ({.count}       (if me 1 0))
@@ -779,7 +792,7 @@
              (keys.^ .set! j key)
              (vals.^ .set! j (old-vals i)))))
        
-       (make hashmap
+       (make hashmap {extending map-trait}
          (`(,key)
           (match (place key)
             ({at i} (vals.^ i))
@@ -827,11 +840,6 @@
              (count .^= (- count.^ 1))
              #no)
             (_ #no)))
-         ({.intersects? map2}
-          ;; TODO: maybe iterate over the one with smaller .count ?
-          (let ks keys.^)
-          (for some ((j (occupants)))
-            (map2 .maps? (ks j))))
          ({.find? value}
           (hashmap.values .find? value))
          ({.find value default}
@@ -868,7 +876,7 @@
 
 (to (hash-set<-)                        ;XXX shouldn't be a global
   (let map (map<-)) ;TODO would be nice to avoid storing all the #yes values
-  (make hash-set
+  (make hash-set {extending map-trait}
     ({.empty?}        map.empty?)
     ({.count}         map.count)
     ({.keys}          map.keys)

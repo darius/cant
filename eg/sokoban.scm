@@ -121,7 +121,7 @@ Level ~w ~d Move ~w")
   ;; Remove any thing (crate or player) from pos.
   (to (clear! pos)
     (let target? (".@I" .find? (grid pos)))
-    (grid .set! pos (if target? #\. #\space)))
+    (grid .set! pos (" ." target?.count)))
 
   ;; Into a clear square, put thing.
   (to (drop! thing pos)

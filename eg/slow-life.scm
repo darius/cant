@@ -85,7 +85,7 @@
     (copy! (at 0 0)       (at n-rows 0) C)
     (copy! (at (- R 1) 0) (at 1 0)      C))
 
-  (to (copy! dest lo n)  ;TODO wanted a similar method in lib/text.scm
+  (to (copy! dest lo n)  ;TODO use array-trait .move!
    (for each! ((i (range<- n)))
      (G .set! (+ dest i) (G (+ lo i)))))
 
