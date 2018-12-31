@@ -115,17 +115,12 @@ Level ~w ~d Move ~w")
   (to (move! thing here there)
     (when (and (thing .find? (grid here))
                (" ." .find? (grid there)))
-      (clear! here)
-      (drop! thing there)))
+      (put! " ." here)
+      (put! thing there)))
 
-  ;; Remove any thing (crate or player) from pos.
-  (to (clear! pos)
+  ;; Into the square at pos, put thing.
+  (to (put! thing pos)
     (let target? (".@I" .find? (grid pos)))
-    (grid .set! pos (" ." target?.count)))
-
-  ;; Into a clear square, put thing.
-  (to (drop! thing pos)
-    (let target? (= #\. (grid pos)))
     (grid .set! pos (thing target?.count)))
 
   (make _
