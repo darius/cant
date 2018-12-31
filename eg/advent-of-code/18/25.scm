@@ -24,10 +24,11 @@
   sets)
 
 (to (partitioning<- elements)
-  (let rep (map<- (zip elements elements.keys))) ;; TODO map.inverse method?
+  (surely (list? elements))
+  (let index elements.inverse)
   (let next (array<-count elements.count #no))
   (to (chase element)
-    (begin chasing ((i (rep element)))
+    (begin chasing ((i (index element)))
       (match (next i)
         (#no i)
         (j (chasing j)))))
