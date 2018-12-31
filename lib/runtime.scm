@@ -68,9 +68,9 @@
   ({.disjoint? map2}                    ;too trivial?
    (not (map .intersects? map2)))
   ({.domain}
-   (call set<- map.keys))             ;TODO usually worth specializing
+   (call set<- (as-list map.keys)))   ;TODO usually worth specializing
   ({.range}  ; TODO rename range<- to something else
-   (call set<- map.values))
+   (call set<- (as-list map.values)))
   ({.inverse}
    (let inverse (map<-))
    (for each! ((`(,k ,v) map.items))
@@ -881,7 +881,7 @@
     ({.count}         map.count)
     ({.keys}          map.keys)
     ({.maps? key}     (map .maps? key))
-    ({.copy}          (call set<- map.keys)) ;TODO tune
+    ({.copy}          (call set<- (as-list map.keys))) ;TODO tune
     ({.add! key}      (map .set! key #yes))
     ({.add-all! vals} (for each! ((v vals)) (hash-set .add! v)))
     ({.union! other}  (hash-set .add-all! other.keys))
@@ -969,6 +969,14 @@
 
 ;;XXX so should some of these be in list-trait?
 
+(to (as-list seq)            ;XXX naming convention for coercions?
+  (if (list? seq)
+      seq
+      (begin copying ((seq seq))
+        (if seq.empty?
+            '()
+            (cons seq.first (copying seq.rest))))))
+
 (to (reverse xs)
   (for foldl ((ys '()) (x xs))
     (cons x ys)))
@@ -1051,6 +1059,7 @@
           (and (integer? i)
                (do (let j (+ first i))
                    (and (<= first j) (< j limit)))))
+         ;; TODO: .compare
          )))
   (`(,limit)
    (range<- 0 limit))

@@ -7,7 +7,7 @@
 
 (to (hash-bag<-)
   (let map (map<-))
-  (make bag
+  (make bag {extending map-trait} ;; XXX make sure map-trait methods are OK
     ({.empty?}        map.empty?)
     ({.count}         map.count)
     ({.keys}          map.keys)

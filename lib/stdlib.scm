@@ -21,11 +21,6 @@
   (for those ((x xs))
     (not= x unwanted)))
 
-(to (as-list seq)            ;XXX naming convention for coercions?
-  (if seq.empty?
-      '()
-      (cons seq.first (as-list seq.rest))))
-
 (make zip
   (`(,xs ,ys)                           ;specialized for speed
    (to (mismatch)

@@ -18,8 +18,7 @@
     (`(,@nodes)        (nodes value))))
 
 (to (all-same? xs)
-  (let set (call set<- xs))
-  (= 1 set.count))
+  (= 1 xs.range.count))
 
 (to (choice<- rank branches)
   (surely (< rank infinity))
@@ -30,8 +29,13 @@
     ({.branches}       branches)
     (`(,@nodes)        (case ((all-same? nodes)
                               nodes.first)
-                             ((= (each '.constant-value nodes)
-                                 (as-list nodes.keys))
+                             ;; TODO how to write this elegantly?
+                             ;; Can't be this because it requires comparability of constants/none:
+                             ;; ((<=> nodes.keys (each '.constant-value nodes))
+                             ;; This is ok but wordier:
+                             ;; ((for every ((`(,i ,node) nodes.items)) (= i node.constant-value))
+                             ;; So for now we end up with:
+                             ((= (as-list nodes.keys) (each '.constant-value nodes))
                               choice)
                              (else
                               (memo-choice choice nodes))))))

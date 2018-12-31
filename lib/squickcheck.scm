@@ -90,6 +90,7 @@
 
 ;; Helpers for gens
 
+;; TODO extract something like this to random.scm
 (to (weighted-choice choices)
   (let total (sum (each '.first choices)))
   (given (g)

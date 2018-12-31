@@ -24,6 +24,7 @@
 ;; by a set of states, its start states. The input NFA might not be
 ;; fully constructed yet at the time we build the output, because of
 ;; the loop for the Kleene star -- so we need a mutable set.
+;; XXX wrong again, argh.
 (to (empty succs)         succs)
 (to ((lit-char ch) succs) (set<- (expect ch succs)))
 (to ((either r s) succs)  ((r succs) .union (s succs)))

@@ -3,6 +3,7 @@
 (let values
   (map<- '((#\M 1000) (#\D 500) (#\C 100) (#\L 50) (#\X 10) (#\V 5) (#\I 1))))
 
+;; TODO: expose as a parson grammar, too?
 (to (int<-roman str)
   (let `(,_ ,total)
     (for foldr ((digit (each values str.uppercase))
@@ -27,7 +28,7 @@
 
 (to (main args)
   (for each! ((x args.rest))
-    (let converted (if (every '.digit? x) ;TODO string method?
+    (let converted (if (every '.digit? x) ;TODO string method? it's there in parson, at least.
                        (roman<-int (number<-string x))
                        (int<-roman x)))
     (format "~d: ~d\n" x converted)))

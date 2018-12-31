@@ -4,8 +4,8 @@
 
 (to (help vocab)
   (for each! ((`(,short ,full ,text) vocab))
-    (format "~d ~-9d - ~d\n"
-            short full.name text)))
+    (format "~d ~-9w - ~d\n"
+            short full text)))
 
 (to (collect-abbrevs vocab)
   (map<- (for each ((`(,short ,full ,_) vocab))

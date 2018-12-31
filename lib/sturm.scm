@@ -146,8 +146,7 @@
 ;; TODO optional timeout
 
 (to (ctrl ch)
-  (let code ch.uppercase.code)
-  (char<- (- code 64)))
+  (- ch.uppercase 64))
 
 (let key-map
   (map<- `((,(string<- (ctrl #\X))   esc) ;XXX a hack until the timeout works
@@ -181,7 +180,7 @@
 
 (let key-map-prefixes
   (call set<- (for gather ((full-key key-map.keys))
-                (for each ((i (range<- 1 full-key.count)))
+                (for each ((i (1 .up-to< full-key.count)))
                   (full-key .slice 0 i)))))
 
 (let key-stack (flexarray<-))
@@ -203,7 +202,7 @@
                (keys .push! next-key)
                (matching))
               (else
-               (key-stack .extend! (reverse keys))
+               (key-stack .extend! (reverse keys)) ;TODO use a FIFO instead of this reversed LIFO
                key-stack.pop!)))))
 
 (export

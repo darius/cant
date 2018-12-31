@@ -22,6 +22,7 @@
 
 ;; The buffer accumulates a sequence of procedures to send the final
 ;; formatted text to the destination sink.
+;; TODO I think this logic could be simpler
 
 (to (cycle-sink<- tags buffer)
   (let counter (box<- 0))

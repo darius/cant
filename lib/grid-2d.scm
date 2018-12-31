@@ -43,7 +43,7 @@
        (for each! ((x (xl .up-to xh)))
          (A .set! (at x y) (f `(,x ,y)))))))
 
-  (make grid-2d                         ;TODO extend a map-trait?
+  (make grid-2d {extending map-trait}  ; TODO check OK with map-trait 
     
     (`((,x ,y))
      (check x y)
@@ -63,7 +63,7 @@
           (<= yl y yh)))
 
     ({.keys}
-     (for gather ((y (yl .up-to yh)))
+     (for gather ((y (yl .up-to yh)))   ;TODO tensor-product
        (for each ((x (xl .up-to xh)))
          `(,x ,y))))
     ({.values}

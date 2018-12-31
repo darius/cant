@@ -38,17 +38,17 @@
   ;; 0..max(Ns). (And we call neither r nor s if there are no Ns.)
   (case (Ns.empty? none)
         (else
-         ;; TODO wow this is pretty horrible
-         (let r-matches (r (call set<- (as-list (0 .up-to (call max Ns.keys))))))
-         (let Ns-r (call set<- (each '.count r-matches.keys)))
-         (let Ns-s (call set<- (for gather ((n Ns.keys))
-                                 (for filter ((m Ns-r.keys))
-                                   (and (<= m n) (- n m))))))
-         (let s-matches (s Ns-s))
-         (call set<- (for gather ((m1 r-matches.keys))
-                       (for filter ((m2 s-matches.keys))
-                         (and (Ns .maps? (+ m1.count m2.count))
-                              (chain m1 m2))))))))
+         ;; TODO still pretty ugly
+         (let r-matches ('.keys (r ('.range (0 .up-to (call max Ns.keys))))))
+         (let r-lengths ('.keys ('.range (each '.count r-matches))))
+         (let Ns-s ('.range (for gather ((n Ns.keys))
+                              (for filter ((m r-lengths))
+                                (and (<= m n) (- n m))))))
+         (let s-matches ('.keys (s Ns-s)))
+         ('.range (for gather ((m1 r-matches))
+                    (for filter ((m2 s-matches))
+                      (and (Ns .maps? (+ m1.count m2.count))
+                           (chain m1 m2))))))))
 
 ;; Extras
 
