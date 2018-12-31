@@ -1,4 +1,4 @@
-(import (use "eg/miasma/registers") registers register-number)
+(import (use "eg/miasma/registers") register-number)
 (import (use "eg/miasma/parse") the-specs setup-spec-table)
 (import (use "eg/miasma/walk") walk-code walk-exp unit bind swapping eating)
 
@@ -23,7 +23,7 @@
   (for with-input-file ((source "eg/miasma/python/x86_stub.py"))
     (copy-file source sink))
   (say-to sink)
-  (say-to sink (py-enum registers.keys (each register-number registers.keys)))
+  (say-to sink (py-enum (sort register-number.items)))
   (say-to sink)
   (for each! ((mnemonic (sort the-specs.keys)))
     (let spec (the-specs mnemonic))
@@ -117,8 +117,8 @@
 
 ;; Python code constructors
 
-(to (py-enum symbols values)
-  ("\n" .join (for each ((`(,sym ,val) (zip symbols values)))
+(to (py-enum items)
+  ("\n" .join (for each ((`(,sym ,val) items))
                 (chain (as-legal-py-identifier sym.name)
                        " = "
                        (py-int-literal val)))))

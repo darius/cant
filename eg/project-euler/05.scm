@@ -16,7 +16,7 @@
     ( 0 (cons/lazy xs.first
                    (given () (intersect xs.rest ys.rest))))))
 
-(to (multiples<- n)
+(to (multiples<- n)                     ;TODO infinite range<- with stride
   (begin listing ((k n))
     (cons/lazy k (given () (listing (+ k n))))))
 

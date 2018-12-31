@@ -122,6 +122,7 @@
 
 ;; Pre: XS and YS are lists.
 ;; Return a list of all pairs (x y) where x in XS and y in YS.
+;; TODO extract to stdlib
 (to (outer-product xs ys)
   (for gather ((x xs))
     (for each ((y ys))

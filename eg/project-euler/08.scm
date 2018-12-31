@@ -34,7 +34,7 @@
 (to (euler8 n)
   (call max (each product<- (k-slices<- digits n))))
 
-(to (product<- ns) ;ugly: the asymmetry of this name and `sum`
+(to (product<- ns) ;ugly: the asymmetry of this name and `sum`. also, wanted for tensor product.
   (foldl * 1 ns))
 
 (print (euler8 4))

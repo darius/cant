@@ -11,7 +11,7 @@
 
 ;; An array of strings, one per screen row.
 (to (display-buffer<-)
-  (array<-list (for each ((_ (range<- rows))) "")))
+  (array<-list ('("") .repeat rows)))
 
 ;; Track what's on the screen, to avoid redundant writes.
 (let showing (display-buffer<-))
@@ -19,9 +19,9 @@
 ;; Return a string of glyphs representing character ch at column x.
 (to (render-glyph ch x)
    (let b ch.code)
-   (if (and (<= 32 b) (< b 127))
+   (if (and (<= 32 b) (< b 127))  ;; TODO char.printable?
        (string<- ch)
-       ("\\~03d" .format (string<-number b 8)))) ;XXX format should know octal
+       ("\\x~02x" .format b)))
 
 ;; Compute how to show `text` from coordinate `start` with cursor at
 ;; `point`. Return an object that can say whether the cursor is visible

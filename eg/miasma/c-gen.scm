@@ -1,4 +1,4 @@
-(import (use "eg/miasma/registers") registers register-number)
+(import (use "eg/miasma/registers") register-number)
 (import (use "eg/miasma/parse") the-specs setup-spec-table)
 (import (use "eg/miasma/walk") walk-code walk-exp unit bind swapping eating)
 
@@ -24,7 +24,7 @@
   (for with-input-file ((source "eg/miasma/c/asm_stuff.h"))
     (copy-file source sink))
   (say-to sink)
-  (say-to sink (c-enum registers.keys (each register-number registers.keys)))
+  (say-to sink (c-enum (sort register-number.items)))
   (say-to sink)
   (for each! ((mnemonic (sort the-specs.keys)))
     (let spec (the-specs mnemonic))
@@ -118,10 +118,10 @@
 
 ;; C code constructors
 
-(to (c-enum symbols values)
+(to (c-enum items)
   (call chain                           ;XXX a little clumsy
         `("enum {\n"
-          ,@(for each ((`(,sym ,val) (zip symbols values)))
+          ,@(for each ((`(,sym ,val) items))
               ("  ~d = ~d,\n" .format (as-legal-c-identifier sym.name)
                                       (c-int-literal val)))
           "};")))

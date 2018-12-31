@@ -16,7 +16,7 @@
   (cons/lazy p (given ()
                  (filter-prime
                   (for those/lazy ((k ns.rest))
-                    (not= 0 (k .remainder p)))))))
+                    (not= 0 (k .remainder p)))))))  ;TODO p .divides? k
 
 ;(print (euler7 5))
 (print (euler7 100))

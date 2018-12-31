@@ -15,14 +15,13 @@
            (%dr0 0) (%dr1 1) (%dr2 2) (%dr3 3) (%dr6 6) (%dr7 7))))
 
 (for each! ((registers possible-registers.values))
-  ;; TODO use an .update! method
+  ;; TODO use an .update! method along with registers.inverse
   (for each! ((`(,num ,name) registers.items))
     (surely (not (register-number .maps? name)))
     (register-number .set! name num)))
 
 ;; The set of all registers that can appear as instruction arguments.
-(let registers (call set<- register-number.keys))
-;; TODO the .keys should be a kind of set already
+(let registers register-number.domain)
 
 (to (register? x)
   (registers .maps? x))
