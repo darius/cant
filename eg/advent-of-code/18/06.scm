@@ -2,7 +2,7 @@
 ;; starting from the centroid (hoping that's within the area).
 
 (import (use "eg/advent-of-code/utils")
-  simple-parser<- average count bounds<- manhattan-distance<-)
+  simple-parser<- average bounds<- manhattan-distance<-)
 (import (use "lib/queue")
   empty empty?
   push extend
@@ -45,7 +45,7 @@
 ;; This would take like a week for the non-test question.
 ;; But the code can help us test its successor.
 (to (area-1)
-  (count included? (product<- ((- xl margin) .up-to (+ xh margin))
+  (tally included? (product<- ((- xl margin) .up-to (+ xh margin))
                               ((- yl margin) .up-to (+ yh margin)))))
 
 (to (integer<- n)

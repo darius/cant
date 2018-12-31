@@ -1,5 +1,5 @@
 (import (use "eg/advent-of-code/utils")
-  simple-parser<- product<- count)
+  simple-parser<- product<-)
 
 (let input (with-input-file '.read-lines "eg/advent-of-code/18/data/advent03"))
 
@@ -17,7 +17,7 @@
 
 (let covered-area (call bag<- (gather area<- claims)))
 
-(let n-conflicts (for count ((n covered-area.values))
+(let n-conflicts (for tally ((n covered-area.values))
                    (< 1 n)))
 (print `(the area is ,n-conflicts))
 

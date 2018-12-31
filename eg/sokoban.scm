@@ -93,9 +93,9 @@ Level ~w ~d Move ~w")
        (playing level)))))
 
 (to (parse initial-config)
-  (let lines initial-config.split-lines)
-  (surely (for every ((line lines))     ;XXX require
-            (= line.count ((lines 0) .count))))
+  (surely (do (let lines initial-config.split-lines) ;XXX require
+              (let lengths (each '.count lines))  
+              (= 1 lengths.range.count)))
   (array<-list (list<-string initial-config))) ;XXX list<-string shouldn't be needed
 
 (to (sokoban-grid<- grid)

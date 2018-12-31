@@ -7,8 +7,9 @@
 (to (format-table rows @(optional opt-spacer opt-justify))
   (let spacer  (or opt-spacer  " "))
   (let justify (or opt-justify '.left-justify))
-  (surely (for every ((row rows))
-            (= row.count ((rows 0) .count))))
+  (surely (hide (let lengths (each '.count rows))
+                (<= lengths.range.count 1))
+          "Rows must be the same length" rows)
   (let widths (for each ((column (transpose rows)))
                 (call max (each '.count column))))
   (for each ((row rows))
@@ -23,7 +24,7 @@
   (let n-rows (max 1 ((+ strings.count n-cols -1) .quotient n-cols)))
   (let padded (chain strings
                      ('("") .repeat (- (* n-rows n-cols) strings.count))))
-  (transpose (for each ((i (range<- 0 strings.count n-rows)))
+  (transpose (for each ((i (range<- 0 strings.count n-rows))) ;TODO `chunk` function?
                (padded .slice i (+ i n-rows)))))
 
 (export format-table tabulate)

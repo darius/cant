@@ -45,7 +45,7 @@
     ({.opt-results}      vals)
     ({.results}          vals)
     ({.result}
-     (if (= 1 vals.count)
+     (if (= 1 vals.count)               ;TODO list.maybe method
          vals.first
          (error "Wrong # of results" vals)))
     ({.display}

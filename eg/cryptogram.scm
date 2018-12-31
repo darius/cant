@@ -74,7 +74,7 @@
   (let lines (each clean cryptogram.uppercase.split-lines))
   (let line-starts
     (running-sum (for each ((line lines))
-                   ('.count (those '.letter? line)))))
+                   (tally '.letter? line))))
 
   (to (shift-by offset)
     (point .^= ((+ point.^ offset) .modulo code.count)))
@@ -159,7 +159,7 @@
 
 (to (running-sum numbers)
   (let sums (flexarray<- 0))
-  (for each! ((n numbers))
+  (for each! ((n numbers))              ;TODO scanl
     (sums .push! (+ sums.last n)))
   sums)
 

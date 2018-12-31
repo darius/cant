@@ -1,5 +1,5 @@
 (import (use "eg/advent-of-code/utils")
-  grammar<- parson-parse count)
+  grammar<- parson-parse)
 
 ;(let input (with-input-file '.read-all "eg/advent-of-code/18/data/advent16.test"))
 (let input (with-input-file '.read-all "eg/advent-of-code/18/data/advent16"))
@@ -87,7 +87,7 @@ insn:    :nat ' ' :nat ' ' :nat ' ' :nat '\n' :hug.
     `(,op ,compatible-ops)))
 
 (to (part-1)
-  (for count ((`(,_ ,compatible-ops) constraints))
+  (for tally ((`(,_ ,compatible-ops) constraints))
     (<= 3 compatible-ops.count)))
 
 ;(format "~w\n" (part-1))

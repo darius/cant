@@ -446,4 +446,4 @@
       (chain xs `(,x))))
 
 (to (set? xs)
-  (= xs.count ((call set<- xs) .count)))
+  (= xs.count xs.range.count))

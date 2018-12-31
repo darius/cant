@@ -33,6 +33,8 @@
 (to (field<- field-string elf-attack-power)
 
   (let width (+ 1 field-string.split-lines.first.count))
+  ;; TODO I *want* to write it like this, but it's ugly! --
+  ;; (surely (= 1 (((each '.count field-string.split-lines) .range) .count)))
   (surely (for every ((line field-string.split-lines))
             (= width (+ line.count 1))))
 
