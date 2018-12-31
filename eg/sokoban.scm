@@ -124,21 +124,22 @@ Level ~w ~d Move ~w")
     (grid .set! pos (thing target?.count)))
 
   (make _
-    ({.unparse}
-     ((" " .join (each string<- grid)) .replace "\n " "\n"))
-
-    ({.copy}
-     (sokoban-grid<- grid.copy))
-
-    ({.won?}
-     (not (grid .find? #\o)))
-
     ;; Try to move the player in the direction.
     ({.push dir}
      (let d (directions dir))
      (let p (find-player))
      (move! "o@" (+ p d) (+ p d d))
-     (move! "iI" p (+ p d)))))
+     (move! "iI" p (+ p d)))
+
+    ({.won?}
+     (not (grid .find? #\o)))
+
+    ({.unparse}
+     ((" " .join (each string<- grid)) .replace "\n " "\n"))
+
+    ({.copy}
+     (sokoban-grid<- grid.copy))))
+
 
 (export
   main read-collection
