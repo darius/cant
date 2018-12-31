@@ -140,7 +140,7 @@
          (emit (color ch)))
        (emit #\newline))
 
-     (as-list view))))
+     view.values)))
 
 ;; Expand tabs; blank out other control characters.
 (to (clean str)
@@ -155,7 +155,7 @@
            (r .push! #\space))
           (else
            (r .push! ch))))
-  (string<-list (as-list r)))           ;XXX clumsy
+  (string<-list r.values))           ;XXX clumsy
 
 (to (running-sum numbers)
   (let sums (flexarray<- 0))
