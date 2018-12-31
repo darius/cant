@@ -96,6 +96,13 @@
 (to (sum ns)
   (foldl + 0 ns))
 
+;; TODO too specialized for the stdlib
+(to (union-over sets)
+  (let result (set<-))
+  (for each! ((set sets))
+    (result .union! set))
+  result)
+
 ;; Split xs at its first element where split-point? is true.
 ;; That is, return `(,head ,tail), where (chain head tail) = xs,
 ;; and either tail is () or (split-point? tail.first) is true

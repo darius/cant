@@ -1,8 +1,6 @@
 ;; Regular expression matching.
 ;; Like nfa_simplest_set.py using a first straw man of a set datatype.
 
-(import (use "lib/hashset") union-over)
-
 ;; Does regex match chars? (Anchored matching at both ends.)
 (to (regex-match regex chars)
   (let ending-states

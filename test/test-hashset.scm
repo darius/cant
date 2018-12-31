@@ -1,4 +1,2 @@
-(import (use "lib/hashset") set<- union)
-
 (let a (set<-))
-(print ((union (set<- 1) (set<- 3)) .keys))
+(print (((set<- 1) .union (set<- 3)) .keys))

@@ -1,10 +1,6 @@
 ;; Parson's concrete language-independent syntax
-;; XXX untested
 ;; XXX leaving out regexes, fnord, anonymous start
-;; XXX need to parameterize by semantics
 
-(import (use "lib/hashset")
-  union-over)
 (import (use "lib/parson-core")
   invert capture either then feed-list feed push seclude delay
   maybe many at-least-1

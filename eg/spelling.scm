@@ -2,8 +2,6 @@
 ;; http://norvig.com/spell-correct.html
 ;; TODO: try imitating https://en.wikibooks.org/wiki/Clojure_Programming/Examples/Norvig_Spelling_Corrector
 
-(import (use "lib/hashset") union-over)
-
 (to (correct word)
   (let candidates (or (if-any (known (set<- word)))
                       (if-any (known (edits1 word)))
