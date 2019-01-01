@@ -1,5 +1,3 @@
-;; Starting from 17.scm, starting over on the flooding code.
-
 (import (use "eg/advent-of-code/utils")
   simple-parser<- vector+ bounds<-)
 (import (use "lib/grid-2d")
@@ -17,12 +15,10 @@
 (let spring '(500 0))
 
 (let clay-spots
-  (for gather ((`(,var1 ,val1 ,var2 ,lo ,hi) inputs))
-    (match `(,var1 ,var2)
-      ('("x" "y") (for each ((j (lo .to hi)))
-                    `(,val1 ,j)))
-      ('("y" "x") (for each ((j (lo .to hi)))
-                    `(,j ,val1))))))
+  (for gather ((input inputs))
+    (match input
+      (`("x" ,x "y" ,lo ,hi) (tensor* `(,x) (lo .to hi)))
+      (`("y" ,y "x" ,lo ,hi) (tensor* (lo .to hi) `(,y))))))
 
 (let `((,xl0 ,yl) (,xh0 ,yh)) (bounds<- clay-spots))
 
