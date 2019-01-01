@@ -184,6 +184,7 @@
 (to (show {grid p q} @(optional opt-spaces))
   (let spaces (or opt-spaces ("." .repeat 9)))
   (let marks (player-marks {grid p q}))
+  ;; TODO: could become a 'map union' operation on the lists
   (let values (for each ((slot (zip (reverse (player-bits p))
                                     (reverse (player-bits q))
                                     spaces)))
