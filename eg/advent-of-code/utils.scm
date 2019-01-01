@@ -90,9 +90,6 @@
     (`(,string)     ((parson-parse peg string) .results))
     ({.parse string} (parson-parse peg string))))
 
-(to (deduplicate xs)
-  ('.keys (call set<- xs)))
-
 ;; TODO how much slower is this?
 ;; (to (neighbors<- p)
 ;;   (for filter ((d (tensor* '(-1 0 1) '(-1 0 1))))
