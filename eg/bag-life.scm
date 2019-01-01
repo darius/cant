@@ -41,8 +41,8 @@
 (to (show grid)
   (let `((,x-lo ,x-hi) (,y-lo ,y-hi))
     (each bounds<- (transpose grid.keys)))
-  (for each! ((y (y-lo .up-to y-hi)))
-    (for each! ((x (x-lo .up-to x-hi)))
+  (for each! ((y (y-lo .to y-hi)))
+    (for each! ((x (x-lo .to x-hi)))
       (display (if (grid .maps? `(,x ,y)) "O " "  ")))
     (newline)))
 

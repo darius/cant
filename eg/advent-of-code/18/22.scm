@@ -47,8 +47,8 @@
   (sum (each risk<- area)))
 
 (to (rectangle<- `(,xl ,yl) `(,xh ,yh))
-  (product<- (xl .up-to xh)
-             (yl .up-to yh)))
+  (product<- (xl .to xh)
+             (yl .to yh)))
 
 (format "~w\n" (part-1))
 

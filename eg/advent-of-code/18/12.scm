@@ -33,7 +33,7 @@
   (sum state.keys))
 
 (to (after-generations n state0)
-  (for foldl ((state state0) (i (0 .up-to< n)))
+  (for foldl ((state state0) (i (0 .to< n)))
     (format "~w: sum ~w\n" i (sum state.keys))
     (generate state)))
 
@@ -41,7 +41,7 @@
   (if state.empty?
       state
       (do (let `(,lo ,hi) (bounds-1d<- state.keys))
-          (call set<- (for filter ((pot ((- lo 2) .up-to (+ hi 2))))
+          (call set<- (for filter ((pot ((- lo 2) .to (+ hi 2))))
                         (generate-1 state pot))))))
 
 (to (generate-1 state pot)

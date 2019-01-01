@@ -39,8 +39,8 @@
   (match initializer
     ({constant _})
     ({map f}
-     (for each! ((y (yl .up-to yh)))
-       (for each! ((x (xl .up-to xh)))
+     (for each! ((y (yl .to yh)))
+       (for each! ((x (xl .to xh)))
          (A .set! (at x y) (f `(,x ,y)))))))
 
   (make grid-2d {extending map-trait}  ; TODO check OK with map-trait 
@@ -63,15 +63,15 @@
           (<= yl y yh)))
 
     ({.keys}
-     (for gather ((y (yl .up-to yh)))   ;TODO tensor-product
-       (for each ((x (xl .up-to xh)))
+     (for gather ((y (yl .to yh)))   ;TODO tensor-product
+       (for each ((x (xl .to xh)))
          `(,x ,y))))
     ({.values}
      A.values)
 
     ({.show print-line!}
-     (for each! ((y (yl .up-to yh)))
-       (print-line! (for each ((x (xl .up-to xh)))
+     (for each! ((y (yl .to yh)))
+       (print-line! (for each ((x (xl .to xh)))
                       (A (at x y))))))
     ({.show}
      (grid-2d .show print))

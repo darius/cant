@@ -17,14 +17,14 @@
 (let centers (each parse input))
 
 (let names (map<- (zip centers
-                       (#\a .up-to< (+ #\a centers.count)))))
+                       (#\a .to< (+ #\a centers.count)))))
 
 (let `((,xl ,yl) (,xh ,yh)) (bounds<- centers))
 (format "bounds ~w\n" (bounds<- centers))
 
 (to (show-map)
-  (for each! ((y (yl .up-to yh)))
-    (for each! ((x (xl .up-to xh)))
+  (for each! ((y (yl .to yh)))
+    (for each! ((x (xl .to xh)))
       (let p `(,x ,y))
       (display (or (names .get p)
                    (if (included? p) #\# #\.))))
@@ -45,8 +45,8 @@
 ;; This would take like a week for the non-test question.
 ;; But the code can help us test its successor.
 (to (area-1)
-  (tally included? (product<- ((- xl margin) .up-to (+ xh margin))
-                              ((- yl margin) .up-to (+ yh margin)))))
+  (tally included? (product<- ((- xl margin) .to (+ xh margin))
+                              ((- yl margin) .to (+ yh margin)))))
 
 (to (integer<- n)
   (exact<-inexact (floor n)))
@@ -109,9 +109,9 @@
 ;; Change one thing at a time.
 
 ;;(let area-2 (sum
-;;             (for each ((y ((- (seed 1) margin) .up-to (+ (seed 1) margin))))
+;;             (for each ((y ((- (seed 1) margin) .to (+ (seed 1) margin))))
 ;;               (format "y ~w of ~w\n" y (+ (seed 1) margin))
-;;               (sum (for each ((x ((- (seed 0) margin) .up-to (+ (seed 0) margin))))
+;;               (sum (for each ((x ((- (seed 0) margin) .to (+ (seed 0) margin))))
 ;;                      (if (included? `(,x ,y)) 1 0))))))
 
 ;(format "result 2 (slow): ~w\n" (area-1))

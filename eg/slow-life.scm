@@ -79,7 +79,7 @@
   ;; row #1 effectively neighbors row #n-rows, and likewise for the
   ;; columns.
   (to (copy-edges)
-    (for each! ((r (1 .up-to n-rows)))
+    (for each! ((r (1 .to n-rows)))
       (G .set! (at r 0)       (G (at r n-cols)))
       (G .set! (at r (- C 1)) (G (at r 1))))
     (copy! (at 0 0)       (at n-rows 0) C)
@@ -96,14 +96,14 @@
      (surely ('(0 1) .find? value))
      (G .set! (at r c) value))
     ({.view}
-     (for each ((r (1 .up-to n-rows)))
-       (for each ((c (1 .up-to n-cols)))
+     (for each ((r (1 .to n-rows)))
+       (for each ((c (1 .to n-cols)))
          (G (at r c)))))
     ({.next}
      (copy-edges)
      (let new (grid<- n-rows n-cols))
-     (for each! ((r (1 .up-to n-rows)))
-       (for each! ((c (1 .up-to n-cols)))
+     (for each! ((r (1 .to n-rows)))
+       (for each! ((c (1 .to n-cols)))
          (new .set! r c (update (at r c)))))
      new)
     ))

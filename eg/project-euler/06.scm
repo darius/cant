@@ -9,6 +9,6 @@
 (to (square n)
   (* n n))
 
-(print (euler6 (1 .up-to 10)))
-;(print (euler6 (1 .up-to 100)))
+(print (euler6 (1 .to 10)))
+;(print (euler6 (1 .to 100)))
 

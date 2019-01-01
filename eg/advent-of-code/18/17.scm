@@ -19,9 +19,9 @@
 (let clay-spots
   (for gather ((`(,var1 ,val1 ,var2 ,lo ,hi) inputs))
     (match `(,var1 ,var2)
-      ('("x" "y") (for each ((j (lo .up-to hi)))
+      ('("x" "y") (for each ((j (lo .to hi)))
                     `(,val1 ,j)))
-      ('("y" "x") (for each ((j (lo .up-to hi)))
+      ('("y" "x") (for each ((j (lo .to hi)))
                     `(,j ,val1))))))
 
 (let `((,xl0 ,yl) (,xh0 ,yh)) (bounds<- clay-spots))
@@ -41,8 +41,8 @@
   (= (grid .get p) #\#))
 
 (to (show-map)
-  (for each! ((y ((spring 1) .up-to< yl)))
-    (for each! ((x (xl .up-to xh)))
+  (for each! ((y ((spring 1) .to< yl)))
+    (for each! ((x (xl .to xh)))
       (let p `(,x ,y))
       (display (if (= spring p) #\+ #\.)))
     (newline))
@@ -93,7 +93,7 @@
           (_   (surely #no "Even less happenable"))))
       (let x-min (spilling x0 -1))
       (let x-max (spilling x0 1))
-      (let span (for each ((x (x-min .up-to x-max)))
+      (let span (for each ((x (x-min .to x-max)))
                   `(,x ,y0)))
       (when (and (every (compose blocked? under) span)  ;; TODO I think this logic is now performed above
                  (blocked? `(,(- x-min 1) ,y0))

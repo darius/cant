@@ -21,4 +21,4 @@
 (to (try atom)
   ('.count (reduce (scour atom))))
 
-(format "part 2 ~w\n" (call min (each try (#\A .up-to #\Z))))
+(format "part 2 ~w\n" (call min (each try (#\A .to #\Z))))

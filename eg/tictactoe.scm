@@ -88,7 +88,7 @@
               (successor successor)))))))
 
 (to (show-with-moves grid)
-  (each (highlight-if '.digit?) (show grid (1 .up-to 9))))
+  (each (highlight-if '.digit?) (show grid (1 .to 9))))
 
 (to ((highlight-if special?) x)
   (if (special? x) (green x) x))
@@ -145,7 +145,7 @@
 (let empty-grid {grid 0 0})
 
 (to (player-bits bits)
-  (for each ((i (0 .up-to 8)))
+  (for each ((i (0 .to 8)))
     (1 .and (bits .>> i))))
 
 (to (won? {grid p q})
@@ -158,7 +158,7 @@
   ((successors grid) .empty?))
 
 (to (successors grid)
-  (for filter ((move (0 .up-to 8)))
+  (for filter ((move (0 .to 8)))
     (apply-move grid move)))
 
 (to (apply-move {grid p q} move)

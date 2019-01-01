@@ -20,6 +20,6 @@
   (begin listing ((k n))
     (cons/lazy k (given () (listing (+ k n))))))
 
-(print (euler5 (2 .up-to 10)))
-;(print (euler5 (2 .up-to 20)))
+(print (euler5 (2 .to 10)))
+;(print (euler5 (2 .to 20)))
 ;; XXX way too slow again

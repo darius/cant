@@ -39,10 +39,10 @@
     (let found?  (box<- #no))
     (let wire    (chain inputs L-input))
     (begin sweeping ((gate 0))
-      (for each! ((L (0 .up-to< (+ n-inputs gate))))
+      (for each! ((L (0 .to< (+ n-inputs gate))))
         (let L-wire (wire L))
         (L-input .set! gate L)          ;XXX how about .:= or .<- or something?
-        (for each! ((R (0 .up-to L)))
+        (for each! ((R (0 .to L)))
           (let value (nand L-wire (wire R)))
           (R-input .set! gate R)
           (wire .set! (+ n-inputs gate) value)
@@ -53,7 +53,7 @@
                  (print-formula L-input R-input))))))
     found?.^)
 
-  (some find-for-n (1 .up-to max-gates)))
+  (some find-for-n (1 .to max-gates)))
 
 (to (nand x y)
   ((x .and y) .not))     ;XXX why bitwise not here? only 1 bit, right?

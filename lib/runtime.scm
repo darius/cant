@@ -204,8 +204,8 @@
   ({.and b}       (__bit-and me b))
   ({.or b}        (__bit-or  me b))
   ({.xor b}       (__bit-xor me b))
-  ({.up-to< b}    (range<- me b))
-  ({.up-to b}     (range<- me (+ b 1)))
+  ({.to< b}       (range<- me b))
+  ({.to b}        (range<- me (+ b 1)))
   ({.even?}       (surely (integer? me)) (= 0 (me .modulo 2)))
   ({.odd?}        (surely (integer? me)) (not= 0 (me .modulo 2)))
   ;; XXX sketchy support for 32-bit word ops:
@@ -488,8 +488,8 @@
    (case ((integer? b) (char<- (- me.code b)))
          ((char? b)    (- me.code b.code))
          (else (error "Bad arg type" b))))
-  ({.up-to< b}    (range<- me b))       ;These methods should be in a trait
-  ({.up-to b}     (range<- me (+ b 1))) ;if they're a good idea at all...
+  ({.to< b}       (range<- me b))       ;These methods should be in a trait
+  ({.to b}        (range<- me (+ b 1))) ;if they're a good idea at all...
   )
 
 ;; TODO: should a box be a collection?

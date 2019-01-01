@@ -22,7 +22,7 @@
          (string<-number (+ x 1)) "H"))
 
 (let `(,black ,red ,green ,yellow ,blue ,magenta ,cyan ,white)
-  (as-list (0 .up-to 7)))              ;TODO ugly
+  (as-list (0 .to 7)))              ;TODO ugly
 
 (to (bright color)
   (+ 60 color))

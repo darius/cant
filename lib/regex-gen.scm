@@ -39,7 +39,7 @@
   (case (Ns.empty? none)
         (else
          ;; TODO still pretty ugly
-         (let r-matches ('.keys (r ('.range (0 .up-to (call max Ns.keys))))))
+         (let r-matches ('.keys (r ('.range (0 .to (call max Ns.keys))))))
          (let r-lengths ('.keys ('.range (each '.count r-matches))))
          (let Ns-s ('.range (for gather ((n Ns.keys))
                               (for filter ((m r-lengths))

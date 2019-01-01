@@ -129,10 +129,10 @@
       (paint cursor-seen? (wanted-state .add-style mask) subscene))))
 
 (let `(,black ,red ,green ,yellow ,blue ,magenta ,cyan ,white)
-  (each foreground-color<- (30 .up-to 37)))
+  (each foreground-color<- (30 .to 37)))
 
 (let `(,on-black ,on-red ,on-green ,on-yellow ,on-blue ,on-magenta ,on-cyan ,on-white)
-  (each background-color<- (40 .up-to 47)))
+  (each background-color<- (40 .to 47)))
 
 (let bold       (style<- 1))
 (let underlined (style<- 4))
@@ -179,9 +179,9 @@
            )))
 
 (let key-map-prefixes
-  (call set<- (for gather ((full-key key-map.keys))
-                (for each ((i (1 .up-to< full-key.count)))
-                  (full-key .slice 0 i)))))
+  ('.range (for gather ((full-key key-map.keys))
+             (for each ((i (1 .to< full-key.count)))
+               (full-key .slice 0 i)))))
 
 (let key-stack (flexarray<-))
 
