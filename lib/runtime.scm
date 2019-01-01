@@ -452,7 +452,7 @@
                       me)))))
   ({.format @arguments}
    (let sink (string-sink<-))
-   (call format `{.to ,sink ,me ,@arguments})
+   (call format `{.to-sink ,sink ,me ,@arguments})
    sink.output-string)
   ({.split-lines}
    (me .split "\n"))
@@ -1200,7 +1200,7 @@
     (make format
       (`(,format-string ,@arguments)
        (scanning out format-string arguments))
-      ({.to sink format-string @arguments}
+      ({.to-sink sink format-string @arguments}
        (scanning sink format-string arguments)))
 
     ;;TODO actually design the format language

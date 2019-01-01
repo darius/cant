@@ -38,7 +38,7 @@
             (buffer .push! (given (sink)
                              (let id (tags thing))
                              (unless (= 0 id)
-                               (format .to sink "#~w=" id))))
+                               (format .to-sink sink "#~w=" id))))
             (thing .selfie cycle-sink))
            (else
             (let id (case ((= tag 0)
@@ -50,6 +50,6 @@
                            ;; Thereafter.
                            tag)))
             (buffer .push! (given (sink)
-                             (format .to sink "#~w" id))))))))
+                             (format .to-sink sink "#~w" id))))))))
 
 (export cycle-write)
