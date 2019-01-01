@@ -140,19 +140,6 @@
                                             (follow-prems path e thm)))
       e))
 
-;; Rewrite focus according to concl-inst if concl-inst is an equality.
-(to (equality/equation focus concl-inst)
-  (match concl-inst
-    (`{call = (,arg1 ,arg2)} (equality focus arg1 arg2))
-    (_                       focus)))
-
-;; Taking "a=b" as a rewrite rule, rewrite focus if possible.
-(to (equality focus a b)
-  (case ((= focus a) b)
-        ((= focus b) a)
-        (else        focus)))
-
-
 ;; "Check the premises against the instantiated conclusion." (?)
 ;; As far as possible, remove any top-level if-then-elses from thm.
 ;; It's possible when the if-question appears also as the question of
@@ -179,6 +166,18 @@
                     ({if q _ _} (= q prem))
                     (_          #no)))
              (matching path.rest (get-at-direction e path.first))))))
+
+;; Rewrite focus according to concl-inst if concl-inst is an equality.
+(to (equality/equation focus concl-inst)
+  (match concl-inst
+    (`{call = (,arg1 ,arg2)} (equality focus arg1 arg2))
+    (_                       focus)))
+
+;; Taking "a=b" as a rewrite rule, rewrite focus if possible.
+(to (equality focus a b)
+  (case ((= focus a) b)
+        ((= focus b) a)
+        (else        focus)))
 
 
 ;; Substitute vars -> args in an expression.

@@ -12,8 +12,7 @@
 (display "Part 1\n")
 
 (to (area<- `(,_ ,x0 ,y0 ,w ,h))
-  (product<- (range<- x0 (+ x0 w))
-             (range<- y0 (+ y0 h))))
+  (product<- (x0 .span w) (y0 .span h)))
 
 (let covered-area (call bag<- (gather area<- claims)))
 
