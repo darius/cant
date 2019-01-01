@@ -1,7 +1,7 @@
 ;; Simple least-cost search was too slow.
 
 (import (use "eg/advent-of-code/utils")
-  simple-parser<- product<-)
+  simple-parser<-)
 (import (use "lib/memoize")
   memoize)
 (import (use "lib/pairing-heap")
@@ -47,8 +47,8 @@
   (sum (each risk<- area)))
 
 (to (rectangle<- `(,xl ,yl) `(,xh ,yh))
-  (product<- (xl .to xh)
-             (yl .to yh)))
+  (tensor* (xl .to xh)
+           (yl .to yh)))
 
 (format "~w\n" (part-1))
 

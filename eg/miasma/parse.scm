@@ -120,14 +120,6 @@
         (let extended-opcode (extended-opcode-tags .find foo))
         (Ex-param extended-opcode arg))))))
 
-;; Pre: XS and YS are lists.
-;; Return a list of all pairs (x y) where x in XS and y in YS.
-;; TODO extract to stdlib
-(to (outer-product xs ys)
-  (for gather ((x xs))
-    (for each ((y ys))
-      `(,x ,y))))
-
 ;; Return a symbol whose name is the concatenation of ATOMS.
 (to (concat-symbol @atoms)
   (symbol<- (foldr chain (each coerce-string atoms) "")))
@@ -135,8 +127,8 @@
 ;;XXX finish porting
 (let abbrevs
   (for each ((`((,a ,b) (,x ,y))
-              (zip (outer-product '(E G I U M R J O S) '(b w v d))
-                   (outer-product '(E G I U E E J O S) '(1 2 4 4)))))
+              (zip (tensor* '(E G I U M R J O S) '(b w v d))
+                   (tensor* '(E G I U E E J O S) '(1 2 4 4)))))
     `(,(concat-symbol a b) ,x ,y)))
 
 ; XXX: preserve semantics of M, R, v

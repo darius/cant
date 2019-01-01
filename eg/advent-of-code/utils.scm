@@ -93,11 +93,11 @@
 (to (deduplicate xs)
   ('.keys (call set<- xs)))
 
-(to (product<- xs ys)                     ;TODO generalize
-  (for gather ((x xs))
-    (for each ((y ys))
-      `(,x ,y))))
-
+;; TODO how much slower is this?
+;; (to (neighbors<- p)
+;;   (for filter ((d (tensor* '(-1 0 1) '(-1 0 1))))
+;;     (and (not= d '(0 0))
+;;          (vector+ p d))))
 (to (neighbors<- `(,x ,y))
   (for gather ((dx '(-1 0 1)))
     (for filter ((dy '(-1 0 1)))
@@ -120,7 +120,7 @@
   cycle scanl/lazy where detect pairs<- filter/lazy 
   duplicates<- deletions<-
   chain-lines all-mins-by average neighbors<-
-  simple-parser<- product<- vector+ vector- manhattan-distance<-
+  simple-parser<- vector+ vector- manhattan-distance<-
   grammar<- parson-parse feed take-1
   bounds<- bounds-1d<- 
   )

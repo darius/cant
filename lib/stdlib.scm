@@ -44,6 +44,11 @@
       `(,(each '.first rows)
         ,@(transpose (each '.rest rows)))))
 
+(to (tensor* xs ys)                     ;TODO generalize
+  (for gather ((x xs))
+    (for each ((y ys))
+      `(,x ,y))))
+
 (to (intercalate between elements)      ;TODO unify with .join
   (if elements.empty?
       elements

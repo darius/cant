@@ -51,10 +51,10 @@
     ,(call max numbers)))
 
 (to (paint lines)              ;TODO maybe use a `where` function
-  (call set<- (for gather ((`(,row ,line) lines.items))
-                (for filter ((`(,col ,ch) line.items))
-                  (and (not ch.whitespace?)
-                       `(,row ,col))))))
+  ('.range (for gather ((`(,row ,line) lines.items))
+             (for filter ((`(,col ,ch) line.items))
+               (and (not ch.whitespace?)
+                    `(,row ,col))))))
 
 (let r-pentomino (paint '(" **"
                           "** "

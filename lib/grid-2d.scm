@@ -63,7 +63,9 @@
           (<= yl y yh)))
 
     ({.keys}
-     (for gather ((y (yl .to yh)))   ;TODO tensor-product
+     ;; Could be a one-liner: (tensor* (xl .to xh) (yl .to yh))
+     ;; except that'd be column-major order. Hm, hm.
+     (for gather ((y (yl .to yh)))
        (for each ((x (xl .to xh)))
          `(,x ,y))))
     ({.values}

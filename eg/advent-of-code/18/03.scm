@@ -1,5 +1,5 @@
 (import (use "eg/advent-of-code/utils")
-  simple-parser<- product<-)
+  simple-parser<-)
 
 (let input (with-input-file '.read-lines "eg/advent-of-code/18/data/advent03"))
 
@@ -12,7 +12,7 @@
 (display "Part 1\n")
 
 (to (area<- `(,_ ,x0 ,y0 ,w ,h))
-  (product<- (x0 .span w) (y0 .span h)))
+  (tensor* (x0 .span w) (y0 .span h)))
 
 (let covered-area (call bag<- (gather area<- claims)))
 

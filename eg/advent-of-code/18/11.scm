@@ -1,6 +1,3 @@
-(import (use "eg/advent-of-code/utils")
-  product<-)
-
 (let input (with-input-file read "eg/advent-of-code/18/data/advent11"))
 
 (to (level<- x y)
@@ -22,13 +19,11 @@
   (max-by patch-level<- (patches)))
 
 (to (patch-level<- `(,x ,y))
-  (sum (for each ((`(,x ,y) (product<- (x .span 3)
-                                       (y .span 3))))
+  (sum (for each ((`(,x ,y) (tensor* (x .span 3) (y .span 3))))
          (level<- x y))))
 
 (to (patches)
-  (product<- (1 .to 298)
-             (1 .to 298)))
+  (tensor* (1 .to 298) (1 .to 298)))
 
 (format "~w\n" (part1))
 
@@ -78,7 +73,7 @@
 ; out of memory
 
   (to (corners)
-    (product<- side side))
+    (tensor* side side))
 
   (let `(,power ,triple)
     (call max
