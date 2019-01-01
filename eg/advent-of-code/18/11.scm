@@ -22,8 +22,8 @@
   (max-by patch-level<- (patches)))
 
 (to (patch-level<- `(,x ,y))
-  (sum (for each ((`(,x ,y) (product<- (x .to (+ x 2))
-                                       (y .to (+ y 2)))))
+  (sum (for each ((`(,x ,y) (product<- (x .span 3)
+                                       (y .span 3))))
          (level<- x y))))
 
 (to (patches)

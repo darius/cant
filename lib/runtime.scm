@@ -206,6 +206,7 @@
   ({.xor b}       (__bit-xor me b))
   ({.to< b}       (range<- me b))
   ({.to b}        (range<- me (+ b 1)))
+  ({.span n}      (range<- me (+ me n)))
   ({.even?}       (surely (integer? me)) (= 0 (me .modulo 2)))
   ({.odd?}        (surely (integer? me)) (not= 0 (me .modulo 2)))
   ;; XXX sketchy support for 32-bit word ops:
@@ -490,6 +491,7 @@
          (else (error "Bad arg type" b))))
   ({.to< b}       (range<- me b))       ;These methods should be in a trait
   ({.to b}        (range<- me (+ b 1))) ;if they're a good idea at all...
+  ({.span n}      (range<- me (+ me n)))
   )
 
 ;; TODO: should a box be a collection?
