@@ -85,7 +85,7 @@
 
 ;; Is x an unsigned byte?
 (to (byte? x)
-  (and (integer? x) (<= 0 x 255)))
+  (and (count? x) (<= x 255)))
 
 ;; TODO This might make a good use case for nested-list Parson.
 (to (parse-param param)

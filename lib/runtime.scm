@@ -293,8 +293,7 @@
    (for each ((i (range<- me.count)))
      `(,i ,(me i))))
   ({.get key default}
-   (case ((not (integer? key)) default)
-         ((< key 0) default)
+   (case ((not (count? key)) default)
          ((<= me.count key) default)
          (else (me key))))
   ({.swap! i j}
@@ -357,7 +356,7 @@
        (me key)
        default))
   ({.maps? key}                         ;XXX duplicate, see above
-   (and (integer? key) (<= 0 key) (< key me.count)))
+   (and (count? key) (< key me.count)))
   ({.trim-left}
    (if me.empty?
        me
@@ -919,6 +918,9 @@
 (to (surely ok? @arguments)
   (unless ok?
     (call error (if arguments.empty? '("Assertion failed") arguments))))
+
+(to (count? x)
+  (and (integer? x) (<= 0 x)))
 
 (to (not= x y)
   (not (= x y)))
