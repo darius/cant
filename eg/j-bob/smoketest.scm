@@ -48,21 +48,21 @@
                 '(((defun pair (x y)
                      (cons x (cons y '())))
                    #no))))
-;(print `(defun-pair ,defun-pair))
+(print `(defun-pair ,defun-pair))
 
 (let defun-first-of
   (J-Bob/define defun-pair
                 '(((defun first-of (x)
                      (car x))
                    #no))))
-;(print defun-first-of)
+(print defun-first-of)
 
 (let defun-second-of
   (J-Bob/define defun-first-of
                 '(((defun second-of (x)
                      (car (cdr x)))
                    #no))))
-;(print defun-second-of)
+(print defun-second-of)
 
 (let dethm-first-of-pair
   (J-Bob/define defun-second-of
@@ -73,7 +73,7 @@
                    ((1) (first-of (cons a (cons b '()))))
                    ((1) (car/cons a (cons b '())))
                    (() (equal-same a))))))
-;(pp (each unparse-def dethm-first-of-pair))
+(pp (each unparse-def dethm-first-of-pair))
 
 (let dethm-second-of-pair
   (J-Bob/define dethm-first-of-pair
@@ -85,7 +85,7 @@
                    ((1 1) (cdr/cons a (cons b '())))
                    ((1) (car/cons b '()))
                    (() (equal-same b))))))
-;(pp (each unparse-def dethm-second-of-pair))
+(pp (each unparse-def dethm-second-of-pair))
 
 (let defun-in-pair?
   (J-Bob/define dethm-second-of-pair

@@ -134,17 +134,17 @@
 ;; Rewrite the subexpression of e at path according to thm, if possible.
 ;; thm must be an equality perhaps nested in if-then-elses.
 (to (equality/path e path thm)
-  (if (focus-is-at-path? path e)        ;N.B. reverse order of args
-      (set-at-path path e
-                   (trace equality/equation (get-at-path path e)
-                                      (follow-prems path e thm)))
+  (if (focus-is-at-path? e path)
+      (set-at-path e path
+                   (trace equality/equation (get-at-path e path)
+                                            (follow-prems path e thm)))
       e))
 
 ;; Rewrite focus according to concl-inst if concl-inst is an equality.
 (to (equality/equation focus concl-inst)
   (match concl-inst
-    ({call '= `(,arg1 ,arg2)} (equality focus arg1 arg2))
-    (_                        focus)))
+    (`{call = (,arg1 ,arg2)} (equality focus arg1 arg2))
+    (_                       focus)))
 
 ;; Taking "a=b" as a rewrite rule, rewrite focus if possible.
 (to (equality focus a b)
@@ -167,7 +167,7 @@
            (else                       thm)))
     (_ thm)))
 
-;; Somewhere along path through e, does some if have a question equal to
+;; Somewhere along path through e, does some `if` have a question equal to
 ;; prem, followed by dir as the next step in the path?
 ;; TODO more efficient to check that the next step is either 'A or 'E
 ;;      and return that, or #no. Then we wouldn't have to call this twice.
@@ -178,28 +178,21 @@
                   (match e
                     ({if q _ _} (= q prem))
                     (_          #no)))
-             (matching path.rest (get-at-direction path.first e))))))
+             (matching path.rest (get-at-direction e path.first))))))
 
 
 ;; Substitute vars -> args in an expression.
 
 (to (sub-e vars args e)
-  (match e
-    ({constant _}    e)
-    ({variable name} (sub-var vars args name))
-    ({if q a e}      {if (sub-e vars args q)
-                         (sub-e vars args a)
-                         (sub-e vars args e)})
-    ({call f es}     {call f (sub-es vars args es)})))
-
-(to (sub-es vars args es)
-  (for each ((e es))
-    (sub-e vars args e)))
-
-(to (sub-var vars args name)
-  (case (vars.empty?         {variable name})
-        ((= vars.first name) args.first)
-        (else                (sub-var vars.rest args.rest name))))
+  (let subst (map<- (zip vars args)))
+  (begin subbing ((e e))
+    (match e
+      ({constant _}    e)
+      ({variable name} (subst .get name e))
+      ({if q a e}      {if (subbing q)
+                           (subbing a)
+                           (subbing e)})
+      ({call f es}     {call f (each subbing es)}))))
 
 
 ;; Check okayness of proofs.
@@ -297,61 +290,63 @@
 
 
 ;; Rewriting.
-;; TODO ought to be shorter
+;; Is there some lensy way this could be shorter?
+;; Well, get-at-path is only used together with set-at-path, so maybe we could combine them...
 
-(to (set-at-path path e1 e2)
-  (if path.empty?
-      e2
-      (set-at-direction path.first e1
-                        (set-at-path path.rest (get-at-direction path.first e1)
-                                     e2))))
+(to (get-at-path e path)
+  (foldl get-at-direction e path))
 
-(to (get-at-path path e)                ;TODO: foldl
-  (if path.empty?
-      e
-      (get-at-path path.rest (get-at-direction path.first e))))
+(to (set-at-path e1 path e2)
+  (begin walking ((e1 e1) (path path))
+    (if path.empty?
+        e2
+        (set-at-direction e1 path.first
+                          (walking (get-at-direction e1 path.first)
+                                   path.rest)))))
 
-(to (get-at-direction dir e)
+(to (get-at-direction e dir)
   (match dir
     ('Q       (match e ({if q _ _}    q)))
     ('A       (match e ({if _ a _}    a)))
     ('E       (match e ({if _ _ e}    e)))
-    ((? nat?) (match e ({call _ args} (get-arg dir args))))))
+    ((? nat?) (match e ({call _ args} (get-arg args dir))))))
 
-(to (set-at-direction dir e1 e2)
+(to (set-at-direction e1 dir e2)
   (match dir
     ('Q       (match e1 ({if q a e}    {if e2 a e})))
     ('A       (match e1 ({if q a e}    {if q e2 e})))
     ('E       (match e1 ({if q a e}    {if q a e2})))
-    ((? nat?) (match e1 ({call f args} {call f (set-arg dir args e2)})))))
+    ((? nat?) (match e1 ({call f args} {call f (set-arg args dir e2)})))))
 
-(to (get-arg n args)
+(to (get-arg args n)
   (args (- n 1)))
 
-(to (set-arg n args e)
+(to (set-arg args n e)
   (if (= n 1)
       (cons e args.rest)
-      (cons args.first (set-arg (- n 1) args.rest e))))
+      (cons args.first (set-arg args.rest (- n 1) e))))
 
 
 ;; Check okayness of a path.
 
-(to (focus-is-at-path? path e)
+(to (focus-is-at-path? e path)
   (or path.empty?
-      (and (focus-is-at-direction? path.first e)
-           (focus-is-at-path? path.rest
-                              (get-at-direction path.first e)))))
+      (and (focus-is-at-direction? e path.first)
+           (focus-is-at-path? (get-at-direction e path.first)
+                              path.rest))))
+                              
   
-(to (focus-is-at-direction? dir e)
+(to (focus-is-at-direction? e dir)
   (match dir
-    ('Q       (match e ({if _ _ _}    #yes) (_ #no)))
-    ('A       (match e ({if _ _ _}    #yes) (_ #no)))
-    ('E       (match e ({if _ _ _}    #yes) (_ #no)))
+    ('Q       (match e ({if _ _ _} #yes) (_ #no)))
+    ('A       (match e ({if _ _ _} #yes) (_ #no)))
+    ('E       (match e ({if _ _ _} #yes) (_ #no)))
     ((? nat?) (match e ({call _ args} (<= 1 dir args.count))
                        (_ #no)))))
 
 
 ;; Some expression helpers.
+;; TODO generic map or fold
 
 (let yes-c {constant #yes})
 (let no-c  {constant #no})
@@ -439,6 +434,7 @@
 
 
 ;; Lists as sets with order.
+;; TODO use a map once we have them preserving insertion order
 
 (to (append xs x)
   (if (xs .find? x)
