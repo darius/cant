@@ -7,8 +7,7 @@
                       (if-any (known (edits1 word)))
                       (if-any (known-edits2 word))
                       (set<- word)))
-  (for max-by ((word candidates.keys))
-    (WORDS .get word 0)))
+  (max-by WORDS candidates.keys))
 
 (to (if-any xs)
   (if xs.empty? #no xs))

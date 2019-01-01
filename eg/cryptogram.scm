@@ -73,8 +73,8 @@
 
   (let lines (each clean cryptogram.uppercase.split-lines))
   (let line-starts
-    (running-sum (for each ((line lines))
-                   (tally '.letter? line))))
+    ('.range (running-sum (for each ((line lines))
+                            (tally '.letter? line)))))
 
   (to (shift-by offset)
     (point .^= ((+ point.^ offset) .modulo code.count)))
@@ -98,7 +98,7 @@
      (shift-by offset))
 
     ({.shift-line offset}
-     (shift-till offset (given () (line-starts .find? point.^))))
+     (shift-till offset (given () (line-starts point.^))))
 
     ({.shift-to-space offset}
      (when (decoder.values .find? #\space)

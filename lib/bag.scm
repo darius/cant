@@ -14,7 +14,7 @@
     ({.values}        map.values)
     ({.items}         map.items)
     ({.maps? key}     (map .maps? key))
-    (`(,key)          (map key)) ;TODO mayyybe instead: (map .get key 0)
+    (`(,key)          (map .get key 0)) ; TODO (map key) would be safer... revisit this
     ({.get key default} (map .get key default))
     ({.get key}       (map .get key))
     ({.add! key}      (map .set! key
