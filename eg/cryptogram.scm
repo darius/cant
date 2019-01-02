@@ -114,8 +114,6 @@
                          (if (counts .maps? ch) #\space ch)))
      (let clashes ('.range (for filter ((`(,v ,n) counts.items))
                              (and (< 1 n) (not= v #\space) v))))
-;     (let clashes ('.range (for where ((`(,v ,n) counts))  ; not quite applicable
-;                             (and (< 1 n) (not= v #\space)))))
 
      (let pos (box<- 0))
 
