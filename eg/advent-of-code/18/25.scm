@@ -23,6 +23,7 @@
       (sets .join! p q)))
   sets)
 
+;; Union/find on disjoint sets
 (to (partitioning<- elements)
   (surely (list? elements))
   (let index elements.inverse)
@@ -43,7 +44,8 @@
        (+1 (next .set! xi yi))))
     ({.count}
      ;; TODO: there's a trickier but more efficient method looking only at the next array, right?
-     ('.count (call set<- (each chase elements))))
+     (let representatives (each chase elements))
+     representatives.range.count)
     ))
 
 (to (unordered-pairs<- ps)
