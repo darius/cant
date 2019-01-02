@@ -24,11 +24,9 @@
 (display "\nPart 1\n")
 
 (to (part-1)
-  (begin stepping ((t 0) (grid input-grid))
-    (show grid)
-    (if (= t 10)
-        (result-code grid)
-        (stepping (+ t 1) (step grid)))))
+  (result-code (for foldl ((grid input-grid) (_ (1 .to 10)))
+                 (show grid)
+                 (step grid))))
 
 (to (step grid)
   (grid-2d<- '(0 0)
