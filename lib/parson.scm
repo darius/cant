@@ -191,8 +191,8 @@
   (unless undefined.empty?
     (error "Undefined rules" (sort undefined.keys)))
   (let counts (call bag<- lhses))
-  (let dups (for filter ((`(,lhs ,n) counts.items))
-              (and (< 1 n) lhs)))
+  (let dups (for where ((n counts))
+              (< 1 n)))
   (unless dups.empty?
     (error "Multiply-defined rules" (sort dups)))
   skeletons)

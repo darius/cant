@@ -32,10 +32,6 @@
                      '()
                      (scanning (f z xs.first) xs.rest))))))
 
-(to (where ok? xs)
-  (for filter ((`(,i ,x) xs.items))
-    (and (ok? x) i)))
-
 ;; TODO is this worth it? sometimes what you want is the filter/lazy equivalent
 (to (detect include? xs)
   ((those/lazy include? xs) .first))
@@ -114,7 +110,7 @@
   `(,(call min ns) ,(call max ns)))
 
 (export
-  cycle scanl/lazy where detect pairs<- filter/lazy 
+  cycle scanl/lazy detect pairs<- filter/lazy 
   duplicates<- deletions<-
   chain-lines all-mins-by average neighbors<-
   simple-parser<- vector+ vector- manhattan-distance<-

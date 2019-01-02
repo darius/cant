@@ -112,8 +112,10 @@
      (let counts (call bag<- decoder.values))
      (let letters-left (for each ((ch alphabet))
                          (if (counts .maps? ch) #\space ch)))
-     (let clashes (call set<- (for filter ((`(,v ,n) counts.items))
-                                (and (< 1 n) (not= v #\space) v))))
+     (let clashes ('.range (for filter ((`(,v ,n) counts.items))
+                             (and (< 1 n) (not= v #\space) v))))
+;     (let clashes ('.range (for where ((`(,v ,n) counts))
+;                             (and (< 1 n) (not= v #\space)))))
 
      (let pos (box<- 0))
 

@@ -14,18 +14,18 @@
 (display "\nPart 1\n")
 
 (let rules
-  (call set<- (for filter ((`(,pattern ,outcome) inputs))
-                (match outcome
-                  ("." #no)
-                  ("#" pattern)))))
+  ('.range (for filter ((`(,pattern ,outcome) inputs))
+             (match outcome
+               ("." #no)
+               ("#" pattern)))))
 
-;; In retrospect, I could've used a vector instead of lib/hashset
+;; In retrospect, I could've used a vector instead of hashset
 ;; (would've needed to track an offset for the left end, and if it got
 ;; big then left out the empty head and tail segments during
 ;; generate). Not really any simpler.
 (to (state<-lineup lineup)
-  (call set<- (for filter ((`(,pot ,ch) lineup.items))
-                (and (= ch #\#) pot))))
+  ('.range (for where ((ch lineup))
+             (= ch #\#))))
 
 (to (part1)
   (let state0 (state<-lineup initial-lineup))
@@ -41,8 +41,8 @@
   (if state.empty?
       state
       (do (let `(,lo ,hi) (bounds-1d<- state.keys))
-          (call set<- (for filter ((pot ((- lo 2) .to (+ hi 2))))
-                        (generate-1 state pot))))))
+          ('.range (for filter ((pot ((- lo 2) .to (+ hi 2))))
+                     (generate-1 state pot))))))
 
 (to (generate-1 state pot)
   (let key (string<- (at state (- pot 2))

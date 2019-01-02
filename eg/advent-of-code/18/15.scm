@@ -62,9 +62,8 @@
   ;; initially 200. (A unit's species is known by its G or E on the
   ;; map.)
   (let units 
-    (map<- (for filter ((`(,p ,ch) area.items))
-             (and (unit? ch)
-                  `(,p 200)))))
+    (map<- (for each ((p (where unit? area)))
+             `(,p 200))))
 
   ;; For each unit, do a turn. Return yes if the round completed.
   (to (do-round)
@@ -92,13 +91,13 @@
          (let spot chosen-path.first)
          (move! p spot)
          (unless (maybe-attack spot)
-           (format "unit ~d did not attack\n" (coords<- spot))))))
+;           (format "unit ~d did not attack\n" (coords<- spot))
+           'ok))))
     (not targets.empty?))
 
   (to (find-targets species)
-    (for filter ((q units.keys))
-      (and (not= species (area q))
-           q)))
+    (for where ((q units))
+      (not= species (area q))))
 
   (to (maybe-attack p)
     (let enemy (enemy<- (area p)))
@@ -118,8 +117,8 @@
                     (match (area p)
                       (#\G 3)
                       (#\E elf-attack-power))))                      
-    (format "attack: from ~d@~d to ~d@~d leaving ~w hp\n"
-            (area p) (coords<- p) (area target) (coords<- target) hp-left)
+;    (format "attack: from ~d@~d to ~d@~d leaving ~w hp\n"
+;            (area p) (coords<- p) (area target) (coords<- target) hp-left)
     (case ((<= hp-left 0)
            (units .delete! target)
            (area .set! target #\.))
