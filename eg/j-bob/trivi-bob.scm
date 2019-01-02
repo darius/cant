@@ -146,6 +146,8 @@
 ;;   (let e    (parse-e '(if foo 1 apple)))
 ;;   (let path '(E))
 ;;   (let thm  (parse-e '(if foo #no (= banana apple))))
+;; but not
+;;   (let thm  (parse-e '(if BAR #no (= banana apple))))
 ;; Yields
 ;;   (unparse-e (equality/path e path thm)) => (if foo '1 banana)
 

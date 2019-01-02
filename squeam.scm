@@ -12,6 +12,9 @@
 
 ;; The Squeam interpreter and global environment.
 
+(define (repl . opt-args)
+  (squeam-interpret `(call repl ',opt-args)))
+
 (run-load "lib/stdlib.scm")
 (squeam-interpret
  '(do
@@ -22,9 +25,6 @@
     (import (use "lib/flexarray")  flexarray<-)
     (import (use "lib/sort")       sort sort-by)
     (import (use "lib/bag")        bag<-)))
-
-(define (repl . opt-args)
-  (squeam-interpret `(call repl ',opt-args)))
 
 ;(unless (squeam-interpret '(the-last-error .^))
 (repl (cdr (command-line)))
