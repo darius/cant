@@ -78,11 +78,10 @@ insn:    :nat ' ' :nat ' ' :nat ' ' :nat '\n' :hug.
   (for each ((sample observations))
     (let `(,regs-pre (,op ,a ,b ,c) ,regs-post) sample)
     (let compatible-ops
-      (for filter ((op-name all-op-names))
+      (for those ((op-name all-op-names))
         (let vm (vm<- (array<-list regs-pre)))
         (vm .do op-name a b c)
-        (and (<=> regs-post vm.get-regs)
-             op-name)))
+        (<=> regs-post vm.get-regs)))
 ;;    (format "~w: ~w\n" op (sort compatible-ops))
     `(,op ,compatible-ops)))
 
@@ -90,7 +89,7 @@ insn:    :nat ' ' :nat ' ' :nat ' ' :nat '\n' :hug.
   (for tally ((`(,_ ,compatible-ops) constraints))
     (<= 3 compatible-ops.count)))
 
-;(format "~w\n" (part-1))
+(format "~w\n" (part-1))
 
 
 (display "\nPart 2\n")
