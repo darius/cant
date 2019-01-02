@@ -1,6 +1,6 @@
 (import (use "eg/sokoban") read-collection)
 
-(let `(,grids ,name) (read-collection (string-source<- ;XXX
+(let `(,grids ,name) (read-collection (string-source<-
 "Microban, by David Skinner (just #2)
  #######
  #     #

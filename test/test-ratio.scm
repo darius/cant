@@ -8,7 +8,7 @@
 (to (rationalize float)
   (if (< float 0)
       (each/lazy - (rationalize (- float)))
-      XXX))
+      (error "XXX unimplemented")))
 
 (let pi (r/ (ratio<- 355) (ratio<- 113)))
 (let tau (r+ pi pi))

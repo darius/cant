@@ -25,10 +25,6 @@
   (for filter ((`(,i ,x) xs.items))
     (and (ok? x) i)))
 
-(to (remove xs unwanted) ;TODO different arg order? N.B. almost unused
-  (for those ((x xs))
-    (not= x unwanted)))
-
 (make zip
   (`(,xs ,ys)                           ;specialized for speed
    (to (mismatch)

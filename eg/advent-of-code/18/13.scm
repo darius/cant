@@ -1,7 +1,9 @@
 (let inputs (with-input-file '.read-all "eg/advent-of-code/18/data/advent13"))
 
 (to (parse world-str)
-  (let width (+ 1 world-str.split-lines.first.count)) ;XXX check same others
+  (surely (hide (let widths (each '.count world-str.split-lines))
+                (= 1 widths.range.count)))
+  (let width (+ 1 world-str.split-lines.first.count))
   (let carts (map<-))
   (let tracks (flexarray<-))
   (to (add-cart! i dir)
