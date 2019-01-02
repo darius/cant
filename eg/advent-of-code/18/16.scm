@@ -96,13 +96,13 @@ insn:    :nat ' ' :nat ' ' :nat ' ' :nat '\n' :hug.
 
 (to (part-2)
   ;; TODO: map-reduce with intersection
-  (let op-name-set (call set<- all-op-names))
-  (let opcodes (call set<- (each '.first constraints)))
+  (let op-name-set all-op-names.range)
+  (let opcodes ((each '.first constraints) .range))
   (let candidates (map<- (for each ((opcode opcodes.keys))
                            `(,opcode ,op-name-set))))
   (for each! ((`(,opcode ,op-names) constraints))
-    (let set (candidates opcode))
-    (candidates .set! opcode (set .intersect (call set<- op-names))))
+    (candidates .set! opcode
+                ((candidates opcode) .intersect op-names.range)))
 
   ;; Trivial constraint satisfaction turns out to be good enough:
   (let assignments (map<-))
