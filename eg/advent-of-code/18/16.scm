@@ -114,7 +114,7 @@ insn:    :nat ' ' :nat ' ' :nat ' ' :nat '\n' :hug.
       (assignments .set! opcode op-name)
       (candidates .delete! opcode)
       (for each! ((`(,op2 ,names2) candidates.items))
-        (candidates .set! op2 (names2 .difference (set<- op-name)))) ;XXX missing .delete!
+        (names2 .delete! op-name))
       (unless candidates.empty?
         (pruning))))
   (surely candidates.empty?)

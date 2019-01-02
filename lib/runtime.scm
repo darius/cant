@@ -841,7 +841,7 @@
              (keys.^ .set! i deleted)
              (count .^= (- count.^ 1))
              #no)
-            (_ #no)))
+            (_ #no)))   ;XXX error instead? It is in Python.
          ({.find? value}
           (hashmap.values .find? value))
          ({.find value default}
@@ -908,6 +908,7 @@
     ({.clear!}        map.clear!)
     ({.get key}       (map .maps? key))
     (`(,key)          (map .maps? key))
+    ({.delete! key}   (map .delete! key))
     ;; XXX fill in rest of set interface (just the map interface, I guess)
     ({.selfie sink}
      (sink .display "#<set")
