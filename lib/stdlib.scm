@@ -244,22 +244,21 @@
     (`(,k ,@evil) (inspect-continuation k))
     (_ (display "No error to debug.\n"))))
 
-(let the-modules (box<- '()))
+(let the-modules (map<-))
 
 ;; To make it possible to reload a module by calling (use file-stem)
 ;; again afterward. N.B. that won't mutate the existing module object.
 (to (unuse file-stem)                   ;TODO better name
-  (the-modules .^= (for those ((`(,stem ,mod) the-modules.^))
-                     (not= stem file-stem))))
+  (the-modules .delete! file-stem))
 
 (to (use file-stem)                  ;TODO a realer module system
   ;; N.B. could sort of just use memoize if that were already loaded.
-  (match (assoc file-stem the-modules.^)
-    (`(,_ ,mod) mod)
+  (match (the-modules .get file-stem)
     (#no
      (let mod (load-module (chain file-stem ".scm") `(,file-stem)))
-     (the-modules .^= `((,file-stem ,mod) ,@the-modules.^))
-     mod)))
+     (the-modules .set! file-stem mod)
+     mod)
+    (mod mod)))
 
 (to (load filename @(optional context-arg))
   ;; XXX duplication
