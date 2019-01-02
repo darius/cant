@@ -209,6 +209,7 @@
   ({.span n}      (range<- me (+ me n)))
   ({.even?}       (surely (integer? me)) (= 0 (me .modulo 2)))
   ({.odd?}        (surely (integer? me)) (not= 0 (me .modulo 2)))
+  ({.divides? b}  (surely (integer? me)) (= 0 (b .modulo me)))
   ;; XXX sketchy support for 32-bit word ops:
   ({.u+ a}        (__u+ me a))
   ({.u- a}        (__u- me a))

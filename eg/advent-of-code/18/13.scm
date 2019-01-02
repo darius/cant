@@ -122,7 +122,7 @@
   (begin ticking ((state world0) (t 0))
     (when (< t 200000000)
       (let {world _ _ pre-carts} state)
-      (when (= 0 (t .modulo 1000))
+      (when (1000 .divides? t)
         (format "time ~w pop ~w\n" t pre-carts.count))
       (if (= pre-carts.count 1)
           (xy-coords state pre-carts.keys.first)

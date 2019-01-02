@@ -17,7 +17,7 @@
   (let `(,ps0 ,vs) (transpose states))
   (show ps0)
   (begin stepping ((t 1) (ps ps0))
-    (when (= 0 (t .modulo 100))
+    (when (100 .divides? t)
       (format "time ~w\n" t))
     (let next (zip-with vector+ ps vs))
     (when (< 10500 t)

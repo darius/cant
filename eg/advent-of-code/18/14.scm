@@ -51,7 +51,7 @@
   (let pc pattern.count)
   (format "pattern: ~w\n" pattern)
   (begin working ((i 0))
-    (when (= 0 (i .modulo 10000))
+    (when (1000 .divides? i)
       (format "working ~w\n" i))
 ;    (show)
     (begin checking ((j i))

@@ -16,7 +16,7 @@
   (let p (box<- 0))                     ; current marble position
   (let scores (array<-count n))
   (begin playing ((elf 0) (marble 1))
-    (case ((= 0 (marble .modulo 23))
+    (case ((23 .divides? marble)
            (print marble)
            (scores .set! elf (+ (scores elf) marble))
            (let other ((- p.^ 7) .modulo circle.count))
