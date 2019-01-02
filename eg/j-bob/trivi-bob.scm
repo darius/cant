@@ -132,7 +132,23 @@
     {variable name}))
 
 ;; Rewrite the subexpression of e at path according to thm, if possible.
-;; thm must be an equality perhaps nested in if-then-elses.
+;; (If not, leave e alone.)
+
+;; thm must be an equality perhaps nested in if-then-elses. For the
+;; rewrite to succeed, the path must go through branches of thm's
+;; if-then-elses and in parallel through e, with the corresponding
+;; if-tests being the same in thm and e. Then at the leaves picked out
+;; of thm and e, an equality rewrite succeeds.
+
+;; N.B. despite the name, thm is syntactically an expression.
+
+;; For example,
+;;   (let e    (parse-e '(if foo 1 apple)))
+;;   (let path '(E))
+;;   (let thm  (parse-e '(if foo #no (= banana apple))))
+;; Yields
+;;   (unparse-e (equality/path e path thm)) => (if foo '1 banana)
+
 (to (equality/path e path thm)
   (if (focus-is-at-path? e path)
       (set-at-path e path
