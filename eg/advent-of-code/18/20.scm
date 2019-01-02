@@ -60,8 +60,8 @@ dir:  {'N' | 'S' | 'E' | 'W'} :Dir.
   (let visit (memoize really-visit))
   (let visit-seq (memoize really-visit-seq))
   (visit '(0 0) 0 exp)
-  (let how-many ('.count (for those ((dist rooms.values))
-                           (<= 1000 dist))))
+  (let how-many (for tally ((dist rooms.values))
+                  (<= 1000 dist)))
   (format "count for >= 1000 distance: ~w\n" how-many)
   (call max rooms.values))
 
