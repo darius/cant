@@ -19,7 +19,8 @@
 
 ;; Not sure this is the most useful design:
 ;;  - Most often we want result.range
-;;  - Sometimes it's *almost* applicable, but ok? needs to take `(,i ,x) as the argument
+;;  - Sometimes it's *almost* applicable, but ok? needs to take `(,i ,x) as the argument.
+;;    But if we made it like that, it's barely different from filter.
 (to (where ok? xs)
   (for filter ((`(,i ,x) xs.items))
     (and (ok? x) i)))
