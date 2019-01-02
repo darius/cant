@@ -7,9 +7,9 @@
 (let height input.count)
 (let bottom-right `(,(- width 1) ,(- height 1)))
 
-(let grid (grid-2d<- '(0 0)
-                     bottom-right
-                     {map (given (`(,x ,y)) ((input y) x))}))
+(let input-grid (grid-2d<- '(0 0)
+                           bottom-right
+                           {map (given (`(,x ,y)) ((input y) x))}))
 
 (to (show grid)
   (grid .show (given (row)
@@ -17,24 +17,24 @@
                 (newline)))
   (newline))
 
-(show grid)
+(show input-grid)
 ;; open ground (.), trees (|), or a lumberyard (#)
 
 
 (display "\nPart 1\n")
 
 (to (part-1)
-  (begin stepping ((t 0) (grid grid))
+  (begin stepping ((t 0) (grid input-grid))
     (show grid)
     (if (= t 10)
         (result-code grid)
         (stepping (+ t 1) (step grid)))))
 
 (to (step grid)
-  (let new (grid-2d<- '(0 0)
-                      bottom-right
-                      {map (update grid)})))
-  
+  (grid-2d<- '(0 0)
+             bottom-right
+             {map (update grid)}))
+
 (to (result-code grid)
   (let bag (call bag<- grid.values))
   (* (bag #\#) (bag #\|)))
@@ -67,13 +67,13 @@
              #\#
              #\.))))
 
-;;(format "~w\n" (part-1))
+(format "~w\n" (part-1))
 
 
 (display "\nPart 2\n")
 
 (to (part-2)
-  (begin stepping ((t 0) (grid grid))
+  (begin stepping ((t 0) (grid input-grid))
     (let bag (call bag<- grid.values))
     (format "After ~w minutes: ~w trees, ~w lumber\n" t (bag #\|) (bag #\#))
     (stepping (+ t 1) (step grid))))
