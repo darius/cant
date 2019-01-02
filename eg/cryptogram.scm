@@ -101,7 +101,7 @@
      (shift-till offset (given () (line-starts point.^))))
 
     ({.shift-to-space offset}
-     (when (decoder.values .find? #\space)
+     (when (decoder .find? #\space)
        (shift-till offset (given () (= #\space (decoder (code point.^)))))))
 
     ({.shift-to-code offset letter}
@@ -149,7 +149,7 @@
     (case ((= ch #\tab)
            (begin padding ()
              (r .push! #\space)
-             (unless (= 0 (r.count .modulo 8))
+             (unless (8 .divides? r.count)
                (padding))))
           ((< ch #\space)
            (r .push! #\space))
