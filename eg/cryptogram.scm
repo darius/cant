@@ -110,10 +110,11 @@
 
     ({.view show-cursor?}
      (let counts (bag<- decoder.values))
+     (counts .delete! #\space)
      (let letters-left (for each ((ch alphabet))
                          (if (counts .maps? ch) #\space ch)))
-     (let clashes ('.range (for filter ((`(,v ,n) counts.items))
-                             (and (< 1 n) (not= v #\space) v))))
+     (let clashes ('.range (for where ((n counts))
+                             (< 1 n))))
 
      (let pos (box<- 0))
 
@@ -155,7 +156,7 @@
            (r .push! #\space))
           (else
            (r .push! ch))))
-  (string<-list r.values))           ;XXX clumsy
+  (string<-list r.values))
 
 (to (running-sum numbers)
   (let sums (flexarray<- 0))
