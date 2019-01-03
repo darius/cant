@@ -40,7 +40,7 @@
   (let dy (- yh yl))
   (format "spread: ~w ~w\n" dx dy)
   (when (< dx 100)
-    (let set (call set<- points))
+    (let set (set<-list points))
     (for each! ((y (yl .to yh)))
       (for each! ((x (xl .to xh)))
         (display (if (set `(,x ,y)) #\# #\.)))

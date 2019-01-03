@@ -82,7 +82,7 @@
     (let targets (find-targets (area p)))
     (unless (maybe-attack p)
       ;;  (format "targets for ~w: ~w\n" p (sort targets))
-      (let goals (call set<- (gather open-neighbors<- targets)))
+      (let goals (set<-list (gather open-neighbors<- targets)))
       (match (find-shortest-paths p goals)
         ('())
         (paths

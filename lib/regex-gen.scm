@@ -28,7 +28,7 @@
 (to ((either r s) Ns) ((r Ns) .union (s Ns)))
 
 (to (one-of chars)
-  (let set (call set<- (each string<- chars)))
+  (let set (set<-list (each string<- chars)))
   (given (Ns)
     (if (Ns .maps? 1) set none)))
 

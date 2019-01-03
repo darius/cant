@@ -68,9 +68,9 @@
   ({.disjoint? map2}                    ;too trivial?
    (not (map .intersects? map2)))
   ({.domain}
-   (call set<- (as-list map.keys)))   ;TODO usually worth specializing
+   (set<-list map.keys))   ;TODO usually worth specializing
   ({.range}  ; TODO rename range<- to something else
-   (call set<- (as-list map.values)))
+   (set<-list map.values))
   ({.inverse}
    (let inverse (map<-))
    (for each! ((`(,k ,v) map.items))
@@ -876,6 +876,11 @@
   (s .add-all! vals)
   s)
 
+(to (set<-list vals)            ;XXX this name is better saved for frozen sets
+  (let s (hash-set<-))
+  (s .add-all! vals)
+  s)
+
 (to (hash-set<-)                        ;XXX shouldn't be a global
   (let map (map<-)) ;TODO would be nice to avoid storing all the #yes values
   (make hash-set {extending map-trait}
@@ -883,7 +888,7 @@
     ({.count}         map.count)
     ({.keys}          map.keys)
     ({.maps? key}     (map .maps? key))
-    ({.copy}          (call set<- (as-list map.keys))) ;TODO tune
+    ({.copy}          (set<-list map.keys)) ;TODO tune
     ({.add! key}      (map .set! key #yes))
     ({.add-all! vals} (for each! ((v vals)) (hash-set .add! v)))
     ({.union! other}  (hash-set .add-all! other.keys))

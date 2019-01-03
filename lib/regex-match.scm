@@ -38,7 +38,7 @@
 
 (to (anyone succs) (set<- (shift succs)))
 (to (one-of str)
-  (let char-set (call set<- (as-list str)))
+  (let char-set (set<-list str))
   (given (succs)
     (set<- (expect-any-of char-set succs))))
 

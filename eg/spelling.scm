@@ -38,7 +38,7 @@
   (let inserts    (for gather ((`(,a ,b) splits))
                     (for each ((c alphabet))
                       (chain a (string<- c) b))))
-  (call set<- (chain deletes transposes replaces inserts)))
+  (set<-list (chain deletes transposes replaces inserts)))
 
 (let alphabet "abcdefghijklmnopqrstuvwxyz")
 

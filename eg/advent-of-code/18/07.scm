@@ -15,7 +15,7 @@
 (let ordering (each parse input))
 ;(each! print ordering)
 
-(let all-steps (call set<- (call chain ordering)))
+(let all-steps (set<-list (call chain ordering)))
 (let nodes all-steps.keys)
 (let succs-set (map<- (for each ((node nodes))
                         `(,node ,(set<-)))))
