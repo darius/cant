@@ -17,10 +17,6 @@
   ('.range (for where ((outcome (map<- inputs)))
              (= outcome "#"))))
 
-;; In retrospect, I could've used a vector instead of hashset
-;; (would've needed to track an offset for the left end, and if it got
-;; big then left out the empty head and tail segments during
-;; generate). Not really any simpler.
 (to (state<-lineup lineup)
   ('.range (for where ((ch lineup))
              (= ch #\#))))
@@ -39,7 +35,7 @@
   (if state.empty?
       state
       (do (let `(,lo ,hi) (bounds-1d<- state.keys))
-          ('.range (for filter ((pot ((- lo 2) .to (+ hi 2))))
+          ('.range (for those ((pot ((- lo 2) .to (+ hi 2))))
                      (generate-1 state pot))))))
 
 (to (generate-1 state pot)
@@ -48,8 +44,7 @@
                      (at state pot)
                      (at state (+ pot 1))
                      (at state (+ pot 2))))
-  (and (rules key)
-       pot))
+  (rules key))
 
 (to (at state pot)
   (if (state pot) #\# #\.))
