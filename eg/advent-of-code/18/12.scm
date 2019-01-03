@@ -14,10 +14,8 @@
 (display "\nPart 1\n")
 
 (let rules
-  ('.range (for filter ((`(,pattern ,outcome) inputs))
-             (match outcome
-               ("." #no)
-               ("#" pattern)))))
+  ('.range (for where ((outcome (map<- inputs)))
+             (= outcome "#"))))
 
 ;; In retrospect, I could've used a vector instead of hashset
 ;; (would've needed to track an offset for the left end, and if it got

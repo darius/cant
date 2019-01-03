@@ -38,6 +38,7 @@
   (to (at x y)
     (+ (* y N1) x))
 
+  ;; TODO use grid-2d now that we have it
   (let S (array<-count (* N1 N1) 0))
   ;; (S (at x y)) = sum of (A i j) for i,j above and left of x,y.
 

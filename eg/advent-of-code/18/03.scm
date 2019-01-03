@@ -23,8 +23,8 @@
 
 (display "Part 2\n")
 
-(to (ok? claim)
+(to (undisputed? claim)
   (for every ((point (area<- claim)))
     (= 1 (covered-area point))))
 
-(print `(the undisputed claims are ,(those ok? claims)))
+(print `(the undisputed claims are ,(those undisputed? claims)))

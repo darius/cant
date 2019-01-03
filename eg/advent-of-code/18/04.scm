@@ -41,7 +41,7 @@ _:         :whitespace.
 
 (to (tally-winks guard)
   (let bag (zzzs guard))
-  (sum bag.values))
+  (sum bag.values))                     ;TODO bag.total or something
 
 (to (max-winks guard)
   (let bag (zzzs guard))
