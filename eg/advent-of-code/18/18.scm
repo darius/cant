@@ -28,14 +28,14 @@
                  (show grid)
                  (step grid))))
 
+(to (result-code grid)
+  (let bag (call bag<- grid.values))
+  (* (bag #\#) (bag #\|)))
+
 (to (step grid)
   (grid-2d<- '(0 0)
              bottom-right
              {map (update grid)}))
-
-(to (result-code grid)
-  (let bag (call bag<- grid.values))
-  (* (bag #\#) (bag #\|)))
 
 (to ((update grid) p)
   (let wood (box<- 0))
