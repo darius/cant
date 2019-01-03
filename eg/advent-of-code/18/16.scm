@@ -104,6 +104,13 @@ insn:    :nat ' ' :nat ' ' :nat ' ' :nat '\n' :hug.
     (candidates .set! opcode
                 ((candidates opcode) .intersect op-names.range)))
 
+;; It turns out the above could've been just
+;;  (let candidates
+;;    (map<- (for each ((`(,opcode ,op-names) constraints))
+;;             `(,opcode ,op-names.range))))
+;; even though `constraints` has multiple entries per opcode, sometimes
+;; different ones. But the above could've been needed, depending on the data.
+
   ;; Trivial constraint satisfaction turns out to be good enough:
   (let assignments (map<-))
   (begin pruning ()
