@@ -36,8 +36,8 @@
 
 (to (select-targets my-name my-groups enemy-groups)
   (let result (flexarray<-))
-  (let enemies (call flexarray<- enemy-groups)) ;; clumsy: probably ought to be a set
-  (let enemy-nums (call flexarray<- (as-list (1 .to enemy-groups.count))))  ;; just for the messages
+  (let enemies (flexarray<-list enemy-groups)) ;; clumsy? probably ought to be a set
+  (let enemy-nums (flexarray<-list (1 .to enemy-groups.count)))  ;; just for the messages
   (for each! ((`(,i ,group) (sort-by (given (`(,_ ,group)) group.target-selection-key)
                                      my-groups.items)))
     (unless enemies.empty?

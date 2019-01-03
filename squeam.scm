@@ -22,7 +22,7 @@
     ;; Let's default to traceback-on-error:
     ;; TODO: also stash the error in the-last-error for below
 ;    (push-signal-handler ((use "lib/traceback") 'on-error-traceback))
-    (import (use "lib/flexarray")  flexarray<-)
+    (import (use "lib/flexarray")  flexarray<- flexarray<-list)
     (import (use "lib/sort")       sort sort-by)
     (import (use "lib/bag")        bag<-)))
 

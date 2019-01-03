@@ -2,7 +2,10 @@
 ;; TODO: shrink capacity sometimes
 
 (to (flexarray<- @arguments)
-  (flexarray<-array (call array<- arguments)))
+  (flexarray<-array (array<-list arguments)))
+
+(to (flexarray<-list arguments)
+  (flexarray<-array (array<-list arguments)))
 
 (to (flexarray<-count start-count start-value)
   (flexarray<-array (array<-count start-count start-value)))
@@ -90,4 +93,4 @@
     ))
 
 (export
-  flexarray<- flexarray<-count)
+  flexarray<- flexarray<-count flexarray<-list)

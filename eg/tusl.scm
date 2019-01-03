@@ -53,7 +53,7 @@
               (code .push! (or (compile-local frames word)
                                (dictionary word)))
               (compiling frames tokens.rest))))))
-  (as-list code))
+  code.values)
 
 (to (compile-local frames word)
   (let locals (call chain frames))      ;I think
