@@ -11,7 +11,7 @@
   (let start (nano-now))
   (begin typing ()
     (show (/ (- (nano-now) start) 1000000000)
-          (string<-list (as-list strokes))) ;XXX ugly
+          (string<-list strokes))
     (case (stdin.ready?
            (match (get-key)
              ('esc
@@ -36,6 +36,6 @@
                (/ (- body.count 1) t)))
   (let wpm (/ (* cps 60) 5))
   (render `(,("~w seconds  ~w words/minute"
-              .format t wpm)
+              .format (floor t) (floor wpm))
             "   (Hit Esc to quit.)\n\n"
             ,body ,cursor)))

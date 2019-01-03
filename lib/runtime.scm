@@ -988,6 +988,9 @@
             '()
             (cons seq.first (copying seq.rest))))))
 
+(to (string<-list chars) (__string<-list (as-list chars)))
+(to (array<-list xs)     (__array<-list (as-list xs)))
+
 (to (reverse xs)
   (for foldl ((ys '()) (x xs))
     (cons x ys)))

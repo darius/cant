@@ -195,7 +195,7 @@
 (to (get-key)
   (let keys (flexarray<- (get-key-unmapped)))
   (begin matching ()
-    (let s (string<-list (as-list keys))) ;XXX clumsy
+    (let s (string<-list keys))
     (or (key-map .get s)
         (case ((key-map-prefixes .maps? s)
                (let next-key (get-key-unmapped))

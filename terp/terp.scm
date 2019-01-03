@@ -730,7 +730,7 @@
     (symbol<- ,string->symbol)
     (term<- ,make-term)       ;TODO check that arguments arg is a list
     (char<- ,integer->char)
-    (string<-list ,list->string) ; TODO make foo<-list call as-list on argument
+    (__string<-list ,list->string)
     (array<-count ,make-vector)
     (inexact<-exact ,exact->inexact)  ;XXX rename or something
     (exact<-inexact ,inexact->exact)  ;XXX rename or something
@@ -760,7 +760,7 @@
     (expt ,expt)
     (abs ,abs)
     (gcd ,gcd)
-    (array<-list ,list->vector)
+    (__array<-list ,list->vector)
     (read ,squeam-read)
     (parse-exp ,parse-exp)
     (parse-pat ,parse-pat)

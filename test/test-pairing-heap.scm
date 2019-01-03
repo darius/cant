@@ -31,7 +31,7 @@
   (begin shrinking ((pq (growing empty numbers))
                     (ns numbers))
     (if (empty? pq)
-        (as-list history)
+        history.values
         (shrinking (remove-min (remove-min (insert pq ns.first)))
                    ns.rest))))
 

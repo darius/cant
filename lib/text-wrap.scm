@@ -10,7 +10,7 @@
   (wrap-into (flexarray<-) (parse-tokens text) width))
 
 (to (flush buffer)
-  (string<-list (as-list buffer))) ;XXX clumsy
+  (string<-list buffer))
 
 (to (parse-tokens text)
   (if text.empty?
