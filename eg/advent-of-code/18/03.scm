@@ -14,7 +14,7 @@
 (to (area<- `(,_ ,x0 ,y0 ,w ,h))
   (tensor* (x0 .span w) (y0 .span h)))
 
-(let covered-area (call bag<- (gather area<- claims)))
+(let covered-area (bag<- (gather area<- claims)))
 
 (let n-conflicts (for tally ((n covered-area.values))
                    (< 1 n)))

@@ -190,7 +190,7 @@
   (let undefined (all-refs .difference (call set<- lhses)))
   (unless undefined.empty?
     (error "Undefined rules" (sort undefined.keys)))
-  (let counts (call bag<- lhses))
+  (let counts (bag<- lhses))
   (let dups (for where ((n counts))
               (< 1 n)))
   (unless dups.empty?

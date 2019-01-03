@@ -42,14 +42,11 @@
 
 (let alphabet "abcdefghijklmnopqrstuvwxyz")
 
-(to (train features)
-  (call bag<- features))
-
 (to (words<-string string)
   ;;  (re:findall "[a-z]+" string.lowercase))  ;TODO
   string.lowercase.split)
 
 (let WORDS
-  (train (words<-string (with-input-file '.read-all "eg/spelling.train.text"))))
+  (bag<- (words<-string (with-input-file '.read-all "eg/spelling.train.text"))))
 
 (each! (compose print correct) (words<-string "a lowsy spelur zzz"))

@@ -187,7 +187,7 @@
     ({.do-round!}        (do-round))
     ({.show}             (show))
     ({.total-hit-points} (sum units.values))
-    ({.census}           (call bag<- area.values))
+    ({.census}           (bag<- area.values))
     ))
 
 (let enemy<- (map<- '((#\G #\E)

@@ -6,8 +6,7 @@
 (display "Part 1\n")
 
 (to (checksum ids)
-  (let bags (for each ((id ids))
-              (call bag<- (list<-string id))))
+  (let bags (each bag<- ids))
   (to ((having n) bag)
     (bag.values .find? n))
   (* (tally (having 2) bags)

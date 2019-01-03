@@ -24,7 +24,7 @@
     (display cursor-show)))
 
 (to (update grid)
-  (let active (call bag<- (gather neighbors grid.keys)))
+  (let active (bag<- (gather neighbors grid.keys)))
   ('.range (for filter ((`(,pos ,n-live) active.items))
              (match n-live
                (3 pos)

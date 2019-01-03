@@ -29,7 +29,7 @@
                  (step grid))))
 
 (to (result-code grid)
-  (let bag (call bag<- grid.values))
+  (let bag (bag<- grid.values))
   (* (bag #\#) (bag #\|)))
 
 (to (step grid)
@@ -73,7 +73,7 @@
 
 (to (part-2)
   (begin stepping ((t 0) (grid input-grid))
-    (let bag (call bag<- grid.values))
+    (let bag (bag<- grid.values))
     (format "After ~w minutes: ~w trees, ~w lumber\n" t (bag #\|) (bag #\#))
     (stepping (+ t 1) (step grid))))
 
