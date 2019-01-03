@@ -38,6 +38,7 @@
              {map (update grid)}))
 
 (to ((update grid) p)
+  ;; Somewhat clumsy code for 'speed'
   (let wood (box<- 0))
   (let lumber (box<- 0))
   (to (count-at x1 y1)
