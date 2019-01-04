@@ -2,22 +2,24 @@
 ;; http://norvig.com/spell-correct.html
 ;; TODO: try imitating https://en.wikibooks.org/wiki/Clojure_Programming/Examples/Norvig_Spelling_Corrector
 
+;; Try to find a word in WORDS that's similar to `word`. Prefer the most common.
 (to (correct word)
-  (let candidates (or (if-any (known (set<- word)))
-                      (if-any (known (edits1 word)))
-                      (if-any (known-edits2 word))
-                      (set<- word)))
-  (max-by WORDS candidates.keys))
+  (if (WORDS .maps? word)
+      word
+      (match (candidates<- word)
+        ((? '.empty?) word)
+        (candidates (max-by WORDS candidates.keys)))))
 
-(to (if-any xs)
-  (if xs.empty? #no xs))
+;; Edits of `word`, within distance 1 or 2, which are known in WORDS.
+(to (candidates<- word)
+  (let neighbors (edits1 word))
+  (match (known neighbors)
+    ((? '.empty?) (union-over (for each ((e1 neighbors.keys))
+                                (known (edits1 e1)))))
+    (candidates candidates)))
 
 (to (known words)
   (words .intersect WORDS))
-
-(to (known-edits2 word)
-  (union-over (for each ((e1 ((edits1 word) .keys)))
-                (known (edits1 e1)))))
 
 ;; TODO real list comprehensions would be nice to have.
 (to (edits1 word)
