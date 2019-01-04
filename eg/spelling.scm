@@ -1,6 +1,11 @@
 ;; Norvig's (simpler) spelling corrector
 ;; http://norvig.com/spell-correct.html
-;; TODO: try imitating https://en.wikibooks.org/wiki/Clojure_Programming/Examples/Norvig_Spelling_Corrector
+;; TODO: Try imitating https://en.wikibooks.org/wiki/Clojure_Programming/Examples/Norvig_Spelling_Corrector
+
+;; TODO: While I know performance was never a big priority in this
+;; code, it kind of bugs me that WORDS lookups are repeated: first to
+;; filter the edits into the candidates, and secondly to rank them. What
+;; collections API would make for nice code without that drawback?
 
 ;; Try to find a word in WORDS that's similar to `word`. Prefer the most common.
 (to (correct word)
