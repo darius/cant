@@ -1,3 +1,5 @@
+;; (Use run.scm to run this.)
+
 ;; TODO: use parson instead? semantic feedback is awkward
 (to (read-tree source)
   (begin parsing ()
@@ -12,7 +14,7 @@
   (reverse (for foldl ((results '()) (x xs))
              `(,(f x) ,@results))))
 
-(let input (with-input-file read-tree "eg/advent-of-code/18/data/advent08"))
+(let input (with-input-file read-tree data-file))
 
 (format "Part 1\n")
 

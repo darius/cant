@@ -1,7 +1,6 @@
-(import (use "eg/advent-of-code/utils")
-  simple-parser<-)
+;; (Use run.scm to run this.)
 
-(let input (with-input-file '.read-lines "eg/advent-of-code/18/data/advent03"))
+(let input (with-input-file '.read-lines data-file))
 
 (let parse
   (simple-parser<- "'#' :nat ' @ ' :nat ',' :nat ': ' :nat 'x' :nat"))

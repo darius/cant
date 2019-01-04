@@ -1,9 +1,6 @@
-(import (use "eg/advent-of-code/utils")
-  simple-parser<-
-  manhattan-distance<-
-)
+;; (Use run.scm to run this.)
 
-(let input (with-input-file '.read-lines "eg/advent-of-code/18/data/advent23"))
+(let input (with-input-file '.read-lines data-file))
 
 (let parse
   (simple-parser<- "'pos=<' [:int ',' :int ',' :int :hug] '>, r=' :int"))

@@ -1,4 +1,6 @@
-(let inputs (with-input-file '.read-all "eg/advent-of-code/18/data/advent13"))
+;; (Use run.scm to run this.)
+
+(let inputs (with-input-file '.read-all data-file))
 
 (to (parse world-str)
   (surely (hide (let widths (each '.count world-str.split-lines))

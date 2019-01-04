@@ -1,13 +1,11 @@
+;; (Use run.scm to run this.)
 ;; TODO: keep cleaning this up
-
-(import (use "eg/advent-of-code/utils")
-  simple-parser<-)
 
 (let `(,n-workers ,min-delay)
 ;  '(2 1))
 ;  '(2 61))
   '(5 61))
-(let input (with-input-file '.read-lines "eg/advent-of-code/18/data/advent07"))
+(let input (with-input-file '.read-lines data-file))
 
 (let parse
   (simple-parser<- "'Step ' :anyone ' must be finished before step ' :anyone ' can begin.'"))

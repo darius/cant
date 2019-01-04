@@ -1,6 +1,6 @@
-(import (use "eg/advent-of-code/utils") duplicates<- deletions<-)
+;; (Use run.scm to run this.)
 
-(let input (with-input-file '.read-lines "eg/advent-of-code/18/data/02.txt"))
+(let input (with-input-file '.read-lines data-file))
 
 
 (display "Part 1\n")

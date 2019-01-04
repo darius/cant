@@ -1,7 +1,6 @@
-(import (use "eg/advent-of-code/utils")
-  simple-parser<-)
+;; (Use run.scm to run this.)
 
-(let input (with-input-file '.read-all "eg/advent-of-code/18/data/advent09"))
+(let input (with-input-file '.read-all data-file))
 
 (let parse
   (simple-parser<- ":nat ' players; last marble is worth ' :nat ' points\n'"))

@@ -1,4 +1,6 @@
-(let input (with-input-file read "eg/advent-of-code/18/data/advent11"))
+;; (Use run.scm to run this.)
+
+(let input (with-input-file read data-file))
 
 (to (level<- x y)
   (let rack-id (+ x 10))

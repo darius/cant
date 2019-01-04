@@ -1,9 +1,9 @@
-(import (use "eg/advent-of-code/utils")
-  grammar<- parson-parse feed vector+)
+;; (Use run.scm to run this.)
+
 (import (use "lib/memoize")
   memoize)
 
-(let input (with-input-file '.read-all "eg/advent-of-code/18/data/advent20"))
+(let input (with-input-file '.read-all data-file))
 
 (to (alt<- @es) {alt es})
 (to (seq<- @es) {seq es})

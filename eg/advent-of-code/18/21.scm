@@ -1,4 +1,6 @@
-(let input (with-input-file '.read-lines "eg/advent-of-code/18/data/advent21"))
+;; (Use run.scm to run this.)
+
+(let input (with-input-file '.read-lines data-file))
 
 (let the-ip (number<-string (input.first.split 1)))
 (print the-ip)

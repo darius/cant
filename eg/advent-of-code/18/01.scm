@@ -1,6 +1,6 @@
-(import (use "eg/advent-of-code/utils") cycle scanl/lazy detect duplicates<-)
+;; (Use run.scm to run this.)
 
-(let changes (with-input-file read-all "eg/advent-of-code/18/data/01.txt"))
+(let changes (with-input-file read-all data-file))
 
 
 (display "Part 1\n")

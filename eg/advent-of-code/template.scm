@@ -1,8 +1,4 @@
-(import (use "advent-utils")
-  simple-parser<-
-  grammar<- parson-parse)
-
-(let input (with-input-file '.read-lines "advent"))
+(let input (with-input-file '.read-lines data-file))
 ;(each! print (input .slice 0 5))
 
 (let parse

@@ -1,14 +1,12 @@
+;; (Use run.scm to run this.)
 ;; Simple least-cost search was too slow.
 
-(import (use "eg/advent-of-code/utils")
-  simple-parser<-)
 (import (use "lib/memoize")
   memoize)
 (import (use "lib/pairing-heap")
   priority-queues<-)
 
-(let input (with-input-file '.read-all "eg/advent-of-code/18/data/advent22"))
-;(let input (with-input-file '.read-all "eg/advent-of-code/18/data/advent22.test"))
+(let input (with-input-file '.read-all data-file))
 
 (let parse
   (simple-parser<- "'depth: ' :nat '\ntarget: ' [:nat ',' :nat :hug] '\n'"))

@@ -1,8 +1,6 @@
-(import (use "eg/advent-of-code/utils")
-  grammar<- parson-parse)
+;; (Use run.scm to run this.)
 
-;(let input (with-input-file '.read-all "eg/advent-of-code/18/data/advent16.test"))
-(let input (with-input-file '.read-all "eg/advent-of-code/18/data/advent16"))
+(let input (with-input-file '.read-all data-file))
 
 (let grammar (grammar<- "
 main: clause* :hug '\n\n' program.  # N.B. no :end

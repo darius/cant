@@ -1,8 +1,6 @@
-(import (use "eg/advent-of-code/utils")
-  chain-lines
-  grammar<- parson-parse)
+;; (Use run.scm to run this.)
 
-(let input (with-input-file '.read-lines "eg/advent-of-code/18/data/advent04"))
+(let input (with-input-file '.read-lines data-file))
 
 (let grammar (grammar<- "
 shifts:    shift* :end.

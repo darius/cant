@@ -1,10 +1,9 @@
-(import (use "eg/advent-of-code/utils")
-  grammar<- parson-parse feed)
+;; (Use run.scm to run this.)
+
 (import (use "lib/pretty-print")
   pp)
 
-(let input (with-input-file '.read-all "eg/advent-of-code/18/data/advent24"))
-;(let input (with-input-file '.read-all "eg/advent-of-code/18/data/advent24.test"))
+(let input (with-input-file '.read-all data-file))
 
 ;; Return yes if Immune System wins.
 (to (battle armies)

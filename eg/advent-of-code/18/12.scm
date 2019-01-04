@@ -1,7 +1,6 @@
-(import (use "eg/advent-of-code/utils")
-  simple-parser<- bounds-1d<-)
+;; (Use run.scm to run this.)
 
-(let input (with-input-file '.read-lines "eg/advent-of-code/18/data/advent12"))
+(let input (with-input-file '.read-lines data-file))
 
 (let initial-lineup (input.first .slice ("initial state: " .count)))
 

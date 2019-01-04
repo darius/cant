@@ -1,3 +1,5 @@
+;; (Use run.scm to run this.)
+
 (import (use "lib/queue")
   empty empty?                          ;TODO too-generic names
   push extend
@@ -11,7 +13,7 @@
 ;(let input (with-input-file '.read-all "advent15.combat3"))
 ;(let input (with-input-file '.read-all "advent15.combat4"))
 ;(let input (with-input-file '.read-all "advent15.combat5"))
-(let input (with-input-file '.read-all "eg/advent-of-code/18/data/advent15"))
+(let input (with-input-file '.read-all data-file))
 
 (to (part-1)
   (let field (field<- input 3))

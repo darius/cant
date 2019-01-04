@@ -1,17 +1,17 @@
+;; (Use run.scm to run this.)
+
 ;; This version, for part 2: breadth-first search for the frontier,
 ;; starting from the centroid (hoping that's within the area).
 
-(import (use "eg/advent-of-code/utils")
-  simple-parser<- average bounds<- manhattan-distance<-)
 (import (use "lib/queue")
   empty empty?
   push extend
   peek)
 
-(let margin 10000)
-(let input (with-input-file '.read-lines "eg/advent-of-code/18/data/advent06"))
-;(let margin 32)
-;(let input (with-input-file '.read-lines "eg/advent-of-code/18/data/advent06.test"))
+(let margin (match data-name
+              ("06" 10000)
+              ("06.test" 32)))
+(let input (with-input-file '.read-lines data-file))
 
 (let parse (simple-parser<- ":nat ', ' :nat"))
 (let centers (each parse input))

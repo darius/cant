@@ -1,6 +1,8 @@
 (import (use "lib/parson-core") feed take-1)
-(import (use "lib/parson") grammar<- parse)
-(let parson-parse parse)
+
+(let parson (use "lib/parson"))
+(import parson grammar<-)
+(let parson-parse (parson 'parse))
 
 (to (average numbers)
   (surely (not numbers.empty?) "Average of an empty list")
@@ -91,7 +93,7 @@
 ;;   (for filter ((d (tensor* '(-1 0 1) '(-1 0 1))))
 ;;     (and (not= d '(0 0))
 ;;          (vector+ p d))))
-(to (neighbors<- `(,x ,y))
+(to (neighbors8<- `(,x ,y))
   (for gather ((dx '(-1 0 1)))
     (for filter ((dy '(-1 0 1)))
       (and (not= `(,dx ,dy) '(0 0))
@@ -112,7 +114,7 @@
 (export
   cycle scanl/lazy detect pairs<- filter/lazy 
   duplicates<- deletions<-
-  chain-lines all-mins-by average neighbors<-
+  chain-lines all-mins-by average neighbors8<-
   simple-parser<- vector+ vector- manhattan-distance<-
   grammar<- parson-parse feed take-1
   bounds<- bounds-1d<- 

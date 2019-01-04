@@ -1,13 +1,14 @@
-(let input (with-input-file '.read-lines "eg/advent-of-code/18/data/advent19"))
-;(let input (with-input-file '.read-lines "eg/advent-of-code/18/data/advent19.test"))
+;; (Use run.scm to run this.)
+
+(let input (with-input-file '.read-lines data-file))
 
 (let the-ip (number<-string (input.first.split 1)))
 (print the-ip)
 
-(let the-program (call array<-
-                       (for each ((line input.rest))
-                         (let v line.split)
-                         `(,(symbol<- v.first) ,@(each number<-string v.rest)))))
+(let the-program (array<-list
+                  (for each ((line input.rest))
+                    (let v line.split)
+                    `(,(symbol<- v.first) ,@(each number<-string v.rest)))))
 (each! print the-program)
 
 (to (show insn)

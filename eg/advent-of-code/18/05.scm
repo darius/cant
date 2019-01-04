@@ -1,5 +1,7 @@
+;; (Use run.scm to run this.)
+
 (let input (list<-string                ;ugh
-            ('.name (with-input-file read "eg/advent-of-code/18/data/advent05"))))
+            ('.name (with-input-file read data-file))))
 
 (to (reacts? c d)
   (and (= c.uppercase d.uppercase)
