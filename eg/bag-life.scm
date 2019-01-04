@@ -50,11 +50,14 @@
   `(,(call min numbers)
     ,(call max numbers)))
 
-(to (paint lines)              ;TODO maybe use a `where` function
-  ('.range (for gather ((`(,row ,line) lines.items))
-             (for filter ((`(,col ,ch) line.items))
-               (and (not ch.whitespace?)
-                    `(,row ,col))))))
+(to (paint lines)
+  ('.range (for where ((ch (map<-lines lines)))
+             (not ch.whitespace?))))
+
+(to (map<-lines lines)
+  (map<- (for gather ((`(,row ,line) lines.items))
+           (for each ((`(,col ,ch) line.items))
+             `((,col ,(- row)) ,ch))))) ; minus so y-coordinates increase upwards
 
 (let r-pentomino (paint '(" **"
                           "** "
