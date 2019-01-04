@@ -5,7 +5,7 @@
 (import (use "lib/sturm")
   cbreak-mode)
 (import (use "lib/ansi-term")
-  home clear-screen cursor-show cursor-hide)
+  clear-screen cursor-show cursor-hide)
 
 (to (main args)
   (let n-steps (match args
@@ -20,7 +20,6 @@
 (to (run grid n-steps)
   (for foldl ((grid grid) (_ (1 .to n-steps)))
     (display clear-screen)
-    (display home)
     (show grid)
     (update grid)))
 
