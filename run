@@ -1,6 +1,0 @@
-#!/bin/bash
-set -euo pipefail; shopt -s failglob  # 'Bash strict mode'
-
-# Run a squeam script.
-
-scheme --script run.scm "$@"
