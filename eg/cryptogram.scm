@@ -111,10 +111,10 @@
     ({.view show-cursor?}
      (let counts (bag<- decoder.values))
      (counts .delete! #\space)
-     (let letters-left (for each ((ch alphabet))
-                         (if (counts .maps? ch) #\space ch)))
      (let clashes ('.range (for where ((n counts))
                              (< 1 n))))
+     (let letters-left (for each ((ch alphabet))
+                         (if (counts .maps? ch) #\space ch)))
 
      (let pos (box<- 0))
 
