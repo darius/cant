@@ -48,7 +48,8 @@
       `(,(each '.first rows)
         ,@(transpose (each '.rest rows)))))
 
-(to (tensor* xs ys)                     ;TODO generalize
+;; What's a good name for this? I like 'cartesian*' even less.
+(to (grid* xs ys)                     ;TODO generalize
   (for gather ((x xs))
     (for each ((y ys))
       `(,x ,y))))

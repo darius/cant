@@ -45,8 +45,8 @@
 ;; This would take like a week for the non-test question.
 ;; But the code can help us test its successor.
 (to (area-1)
-  (tally included? (tensor* ((- xl margin) .to (+ xh margin))
-                            ((- yl margin) .to (+ yh margin)))))
+  (tally included? (grid* ((- xl margin) .to (+ xh margin))
+                          ((- yl margin) .to (+ yh margin)))))
 
 (to (integer<- n)
   (exact<-inexact (floor n)))

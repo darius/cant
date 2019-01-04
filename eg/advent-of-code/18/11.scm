@@ -21,11 +21,11 @@
   (max-by patch-level<- (patches)))
 
 (to (patch-level<- `(,x ,y))
-  (sum (for each ((`(,x ,y) (tensor* (x .span 3) (y .span 3))))
+  (sum (for each ((`(,x ,y) (grid* (x .span 3) (y .span 3))))
          (level<- x y))))
 
 (to (patches)
-  (tensor* (1 .to 298) (1 .to 298)))
+  (grid* (1 .to 298) (1 .to 298)))
 
 (format "~w\n" (part1))
 
@@ -76,7 +76,7 @@
 ; out of memory
 
   (to (corners)
-    (tensor* side side))
+    (grid* side side))
 
   (let `(,power ,triple)
     (call max

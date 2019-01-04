@@ -63,7 +63,7 @@
           (<= yl y yh)))
 
     ({.keys}
-     ;; Could be a one-liner: (tensor* (xl .to xh) (yl .to yh))
+     ;; Could be a one-liner: (grid* (xl .to xh) (yl .to yh))
      ;; except that'd be column-major order. Hm, hm.
      (for gather ((y (yl .to yh)))
        (for each ((x (xl .to xh)))

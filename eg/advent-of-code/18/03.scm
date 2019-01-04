@@ -11,7 +11,7 @@
 (display "Part 1\n")
 
 (to (area<- `(,_ ,x0 ,y0 ,w ,h))
-  (tensor* (x0 .span w) (y0 .span h)))
+  (grid* (x0 .span w) (y0 .span h)))
 
 (let covered-area (bag<- (gather area<- claims)))
 

@@ -45,8 +45,8 @@
   (sum (each risk<- area)))
 
 (to (rectangle<- `(,xl ,yl) `(,xh ,yh))
-  (tensor* (xl .to xh)
-           (yl .to yh)))
+  (grid* (xl .to xh)
+         (yl .to yh)))
 
 (format "~w\n" (part-1))
 

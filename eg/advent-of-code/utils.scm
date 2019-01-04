@@ -90,7 +90,7 @@
 
 ;; TODO how much slower is this?
 ;; (to (neighbors<- p)
-;;   (for filter ((d (tensor* '(-1 0 1) '(-1 0 1))))
+;;   (for filter ((d (grid* '(-1 0 1) '(-1 0 1))))
 ;;     (and (not= d '(0 0))
 ;;          (vector+ p d))))
 (to (neighbors8<- `(,x ,y))

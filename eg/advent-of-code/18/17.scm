@@ -16,8 +16,8 @@
 (let clay-spots
   (for gather ((input inputs))
     (match input
-      (`("x" ,x "y" ,lo ,hi) (tensor* `(,x) (lo .to hi)))
-      (`("y" ,y "x" ,lo ,hi) (tensor* (lo .to hi) `(,y))))))
+      (`("x" ,x "y" ,lo ,hi) (grid* `(,x) (lo .to hi)))
+      (`("y" ,y "x" ,lo ,hi) (grid* (lo .to hi) `(,y))))))
 
 (let `((,xl0 ,yl) (,xh0 ,yh)) (bounds<- clay-spots))
 

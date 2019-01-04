@@ -127,8 +127,8 @@
 ;;XXX finish porting
 (let abbrevs
   (for each ((`((,a ,b) (,x ,y))
-              (zip (tensor* '(E G I U M R J O S) '(b w v d))
-                   (tensor* '(E G I U E E J O S) '(1 2 4 4)))))
+              (zip (grid* '(E G I U M R J O S) '(b w v d))
+                   (grid* '(E G I U E E J O S) '(1 2 4 4)))))
     `(,(concat-symbol a b) ,x ,y)))
 
 ; XXX: preserve semantics of M, R, v
