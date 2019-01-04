@@ -15,7 +15,7 @@
         ((? '.empty?) word)
         (candidates (max-by WORDS candidates.keys)))))
 
-;; Edits of `word`, within distance 1 or 2, which are known in WORDS.
+;; Edits of `word`, within distance 1 or 2, that are known in WORDS.
 (to (candidates<- word)
   (let neighbors (edits1 word))
   (match (known neighbors)
