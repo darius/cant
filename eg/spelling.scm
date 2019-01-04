@@ -40,7 +40,7 @@
                       (chain a (string<- c) b))))
   (set<-list (chain deletes transposes replaces inserts)))
 
-(let alphabet "abcdefghijklmnopqrstuvwxyz")
+(let alphabet (#\a .to #\z))
 
 (to (words<-string string)
   ;;  (re:findall "[a-z]+" string.lowercase))  ;TODO
