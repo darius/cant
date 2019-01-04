@@ -9,6 +9,8 @@ You can try it out with:
 
 $ ./squeam.scm
 
+There's no documentation, though there's example code in eg/ and lib/.
+
 
 ## The motive, roughly
 
