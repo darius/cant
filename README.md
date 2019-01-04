@@ -7,7 +7,7 @@ So object-oriented, it'll turn your stomach!
 Running, for the moment, on [Chez Scheme](https://github.com/cisco/ChezScheme).
 You can try it out with:
 
-$ scheme --script testme.scm
+$ ./squeam.scm
 
 
 ## The motive, roughly
