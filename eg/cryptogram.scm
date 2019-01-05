@@ -66,9 +66,8 @@
 
   (let code (those '.letter? cryptogram.uppercase))
   (surely (not code.empty?))            ;XXX 'require' or something
-  (let decoder
-    (map<- (for each ((ch code.range.keys))
-             `(,ch #\space))))
+  (let decoder (for map-by ((_ code.range.keys))
+                 #\space))
   (let point (box<- 0))                ; Index in `code` of the cursor
 
   (let lines (each clean cryptogram.uppercase.split-lines))

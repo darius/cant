@@ -48,6 +48,10 @@
       `(,(each '.first rows)
         ,@(transpose (each '.rest rows)))))
 
+(to (map-by f keys) ;maybe name it map<-keys ? along with a map<-values ?
+  (map<- (for each ((key keys))
+           `(,key ,(f key)))))
+
 ;; What's a good name for this? I like 'cartesian*' even less.
 (to (grid* xs ys)                     ;TODO generalize
   (for gather ((x xs))

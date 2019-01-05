@@ -63,9 +63,8 @@
   ;; Map from each remaining unit's position to its hit points,
   ;; initially 200. (A unit's species is known by its G or E on the
   ;; map.)
-  (let units 
-    (map<- (for each ((p (where unit? area)))
-             `(,p 200))))
+  (let units (for map-by ((_ (where unit? area)))
+               200))
 
   ;; For each unit, do a turn. Return yes if the round completed.
   (to (do-round)

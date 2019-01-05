@@ -15,13 +15,13 @@
 
 (let all-steps (set<-list (call chain ordering)))
 (let nodes all-steps.keys)
-(let succs-set (map<- (for each ((node nodes))
-                        `(,node ,(set<-)))))
+(let succs-set (for map-by ((_ nodes))
+                 (set<-)))
 (for each! ((`(,pre ,post) ordering))   ;TODO use a mapreduce
   ((succs-set pre) .add! post))             ;TODO maybe use .get-set!
 
-(let succs (map<- (for each ((`(,node ,set) succs-set.items))
-                    `(,node ,(sort set.keys)))))
+(let succs (for map-by ((node nodes))
+             (sort ('.keys (succs-set node)))))
 
 (to (merge xs ys)                       ;TODO should be in a sort module or something
   (foldr insert ys xs))
@@ -43,8 +43,8 @@
 ;; then fill workers from available jobs, and send retirement notices
 
 (to (schedule)
-  (let pred-count (map<- (for each ((node nodes))
-                           `(,node 0))))
+  (let pred-count (for map-by ((_ nodes))
+                    0))
   (for each! ((ss succs.values))
     (for each! ((s ss))
       (pred-count .set! s (+ (pred-count s) 1))))   ;TODO maybe incr a box instead
