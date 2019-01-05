@@ -2,29 +2,18 @@
 ;; http://norvig.com/spell-correct.html
 ;; TODO: Try imitating https://en.wikibooks.org/wiki/Clojure_Programming/Examples/Norvig_Spelling_Corrector
 
-;; TODO: While I know performance was never a big priority in this
-;; code, it kind of bugs me that WORDS lookups are repeated: first to
-;; filter the edits into the candidates, and secondly to rank them. What
-;; collections API would make for nice code without that drawback?
-
-;; Try to find a word in WORDS that's similar to `word`. Prefer the most common.
+;; Try to find a word in WORDS that's similar to `word`.
+;; Prefer the most common word with the fewest edits.
 (to (correct word)
-  (if (WORDS .maps? word)
-      word
-      (match (candidates<- word)
-        ((? '.empty?) word)
-        (candidates (max-by WORDS candidates.keys)))))
+  (or (pick-dictionary-word `(,word))
+      (do (let neighbors1 (edits1 word))
+          (or (pick-dictionary-word neighbors1)
+              (pick-dictionary-word (gather edits1 neighbors1))
+              word))))
 
-;; Edits of `word`, within distance 1 or 2, that are known in WORDS.
-(to (candidates<- word)
-  (let neighbors (edits1 word))
-  (match (known neighbors)
-    ((? '.empty?) (union-over (for each ((e1 neighbors.keys))
-                                (known (edits1 e1)))))
-    (candidates candidates)))
-
-(to (known words)
-  (words .intersect WORDS))
+(to (pick-dictionary-word candidates)
+  (let best (max-by WORDS candidates))
+  (and (WORDS .maps? best) best))
 
 (to (edits1 word)
   (let splits     (for each ((i (0 .to word.count)))
@@ -43,7 +32,7 @@
   (let transposes (for filter ((`(,a ,b) del-splits))
                     (and (< 1 b.count)
                          (chain a (string<- (b 1) (b 0)) (b .slice 2)))))
-  (set<-list (chain inserts deletes replaces transposes)))
+  (chain inserts deletes replaces transposes)) ;N.B. may include duplicates
 
 (let alphabet (each string<- (#\a .to #\z)))
 
