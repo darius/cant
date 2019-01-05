@@ -94,8 +94,8 @@
                  (blocked? `(,(- x-min 1) ,y0))
                  (blocked? `(,(+ x-max 1) ,y0)))
         (for each! ((spot span))
-           (surely (= #\| (grid .get spot)) "Converting flowing to still water")
-           (grid .set! spot #\~))))))
+          (surely (= #\| (grid .get spot)) "Converting flowing to still water")
+          (grid .set! spot #\~))))))
 
 
 (do
