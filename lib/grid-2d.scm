@@ -20,10 +20,10 @@
   (surely (<= 0 x-extent))
   (surely (<= 0 y-extent))
 
-  (let N (* x-extent y-extent))
-  (let A (array<-count N (match initializer
-                           ({constant value} value)
-                           ({map _} #no))))
+  (let A (array<-count (* x-extent y-extent)
+                       (match initializer
+                         ({constant value} value)
+                         ({map _} #no))))
   (let at
     (if (and (= xl 0) (= yl 0))
         (given (x y)                    ;special-cased for speed
@@ -43,7 +43,7 @@
        (for each! ((x (xl .to xh)))
          (A .set! (at x y) (f `(,x ,y)))))))
 
-  (make grid-2d {extending map-trait}  ; TODO check OK with map-trait 
+  (make grid-2d {extending map-trait}
     
     (`((,x ,y))
      (check x y)
@@ -56,12 +56,15 @@
               (<= yl y yh))
          (A (at x y))
          default))
-    ({.get pos}
-     (grid-2d .get pos #no))
     ({.maps? `(,x ,y)}
      (and (<= xl x xh)
           (<= yl y yh)))
 
+    ({.count}
+     A.count)
+
+    ({.items}
+     (zip grid-2d.keys A.values))
     ({.keys}
      ;; Could be a one-liner: (grid* (xl .to xh) (yl .to yh))
      ;; except that'd be column-major order. Hm, hm.
