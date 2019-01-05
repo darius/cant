@@ -32,7 +32,10 @@
   (let transposes (for filter ((`(,a ,b) del-splits))
                     (and (< 1 b.count)
                          (chain a (string<- (b 1) (b 0)) (b .slice 2)))))
-  (chain inserts deletes replaces transposes)) ;N.B. may include duplicates
+  (uniquify (chain inserts deletes replaces transposes)))
+
+(to (uniquify xs)
+  xs.range.keys)
 
 (let alphabet (each string<- (#\a .to #\z)))
 
@@ -43,4 +46,5 @@
 (let WORDS
   (bag<- (words<-string (with-input-file '.read-all "eg/spelling.train.text"))))
 
-(each! (compose print correct) (words<-string "a lowsy spelur zzz"))
+(to (main _)
+  (each! (compose print correct) (words<-string "a lowsy spelur zzz")))
