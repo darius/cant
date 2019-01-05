@@ -5,13 +5,13 @@
 ;; Try to find a word in WORDS that's similar to `word`.
 ;; Prefer the most common word with the fewest edits.
 (to (correct word)
-  (or (pick-dictionary-word `(,word))
+  (or (pick-known-word `(,word))
       (do (let neighbors1 (edits1 word))
-          (or (pick-dictionary-word neighbors1)
-              (pick-dictionary-word (gather edits1 neighbors1))
+          (or (pick-known-word neighbors1)
+              (pick-known-word (gather edits1 neighbors1))
               word))))
 
-(to (pick-dictionary-word candidates)
+(to (pick-known-word candidates)
   (let best (max-by WORDS candidates))
   (and (WORDS .maps? best) best))
 
