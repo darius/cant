@@ -1,7 +1,7 @@
 ;; Compile call-by-value lambda calculus to a machine with flat closures.
 
 (to (compile lexp)
-  ((parse lexp) .compile global-static-env '(halt)))
+  ((parse lexp) .compile global-scope '(halt)))
 
 (to (parse lexp)
   (match lexp
@@ -20,7 +20,7 @@
   (let free-vars (body.free-vars .difference (set<- v)))
   (make ({.free-vars} free-vars)
         ({.compile s k}
-         (let code (body .compile (static-env<- v free-vars.keys.inverse) '(return)))
+         (let code (body .compile (scope<- v free-vars.keys.inverse) '(return)))
          `(make-closure
            ,free-vars.count ,code.count ,@(each s free-vars.keys)
            ,@code ,@k))))
@@ -35,12 +35,12 @@
              `(pushcont ,code.count ,@code ,@k)))))
 
 
-;; Static environments (called 's' above)
+;; Scopes (called 's' above)
 
-(to (global-static-env v)
+(to (global-scope v)
   (error "Unbound variable" v))
 
-(to ((static-env<- param var-offsets) v)
+(to ((scope<- param var-offsets) v)
   (if (= v param)
       'local
       (+ 1 (var-offsets v))))
