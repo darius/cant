@@ -52,6 +52,6 @@
 ;  '(lambda (x) x)
 ;  '(lambda (x) (x x))
 ;  '(lambda (x) y)
-  '((lambda (x) (lambda (y) x)) (lambda (z) z))  ; XXX is output wrong?
+  '((lambda (x) (lambda (y) x)) (lambda (z) z))
 ;        'x
 ))
