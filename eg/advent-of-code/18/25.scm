@@ -18,6 +18,9 @@
   sets)
 
 ;; Union/find on disjoint sets
+;; TODO: even though this worked, it doesn't appear to match the usual
+;; algorithm:
+;; https://beta.observablehq.com/@bryangingechen/union-find-data-structure
 (to (partitioning<- elements)
   (surely (list? elements))
   (let index elements.inverse)
