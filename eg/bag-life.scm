@@ -32,10 +32,11 @@
                (_ #no)))))
 
 (to (neighbors `(,x ,y))
-  (for gather ((dx '(-1 0 1)))
-    (for filter ((dy '(-1 0 1)))
-      (and (not= `(,dx ,dy) '(0 0))
-           `(,(+ x dx) ,(+ y dy))))))
+  (for each ((`(,dx ,dy) neighborhood))
+    `(,(+ x dx) ,(+ y dy))))
+
+(let neighborhood (for those ((d (grid* '(-1 0 1) '(-1 0 1))))
+                    (not= d '(0 0))))
 
 (to (show grid)
   (let `((,x-lo ,x-hi) (,y-lo ,y-hi))
