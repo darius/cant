@@ -35,9 +35,10 @@
   (show gen1.next))
 
 (to (paint grid top left lines)
+  (let bottom (+ top lines.count -1))
   (for each! ((`(,i ,line) lines.items))
     (for each! ((`(,j ,ch) line.items))
-      (grid .set! (+ top i) (+ left j)
+      (grid .set! (- bottom i) (+ left j)
             (if ch.whitespace? 0 1)))))
 
 (to (show grid)
