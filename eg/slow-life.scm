@@ -80,8 +80,8 @@
     (copy! (at (- R 1) 0) (at 1 0)      C))
 
   (to (copy! dest lo n)  ;TODO use array-trait .move!
-   (for each! ((i (range<- n)))
-     (G .set! (+ dest i) (G (+ lo i)))))
+    (for each! ((i (range<- n)))
+      (G .set! (+ dest i) (G (+ lo i)))))
 
   (make life-grid
     (`(,r ,c)
