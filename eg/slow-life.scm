@@ -19,7 +19,7 @@
     (begin running ((grid grid) (step 0))
       (display clear-screen)
       (display home)
-      (show grid)
+      grid.show
       (when (< step n-steps)
         (running grid.next (+ step 1))))
     (display cursor-show)))
@@ -29,10 +29,10 @@
   (paint grid 3 3 '(" **"
                     "** "
                     " * "))
-  (show grid)
+  grid.show
   (let gen1 grid.next)
-  (show gen1)
-  (show gen1.next))
+  gen1.show
+  gen1.next.show)
 
 (to (paint grid top left lines)
   (let bottom (+ top lines.count -1))
@@ -40,13 +40,6 @@
     (for each! ((`(,j ,ch) line.items))
       (grid .set! (- bottom i) (+ left j)
             (if ch.whitespace? 0 1)))))
-
-(to (show grid)
-  (for each! ((row grid.view))
-    (for each! ((value row))
-      (display (" O" value))
-      (display " "))
-    (newline)))
 
 (to (grid<- n-rows n-cols)
 
@@ -96,10 +89,12 @@
     ({.set! r c value}
      (surely ('(0 1) .find? value))
      (G .set! (at r c) value))
-    ({.view}
-     (for each ((r (1 .to n-rows)))
-       (for each ((c (1 .to n-cols)))
-         (G (at r c)))))
+    ({.show}
+     (for each! ((r (1 .to n-rows)))
+       (for each! ((c (1 .to n-cols)))
+         (display (" O" (G (at r c))))
+         (display " "))
+       (newline)))
     ({.next}
      (copy-edges)
      (let new (grid<- n-rows n-cols))
@@ -109,4 +104,4 @@
      new)
     ))
 
-(export grid<- paint show smoke-test)
+(export grid<- paint smoke-test)
