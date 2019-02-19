@@ -42,12 +42,17 @@
             (if ch.whitespace? 0 1)))))
 
 (to (grid<- n-rows n-cols)
-
   ;; G is an array storing, for each Life grid cell, its value (0 or
   ;; 1). It has two extra rows and columns for the edges.
   (let R (+ n-rows 2))
   (let C (+ n-cols 2))
   (let G (array<-count (* R C) 0))
+  (grid<-array n-rows n-cols G))
+
+(to (grid<-array n-rows n-cols G)
+
+  (let R (+ n-rows 2))
+  (let C (+ n-cols 2))
 
   (let N (- C))
   (let S C)
@@ -97,11 +102,11 @@
        (newline)))
     ({.next}
      (copy-edges)
-     (let new (grid<- n-rows n-cols))
+     (let new-G (array<-count (* R C) 0))
      (for each! ((r (1 .to n-rows)))
-       (for each! ((c (1 .to n-cols)))
-         (new .set! r c (update (at r c)))))
-     new)
+       (for each! ((i ((at r 1) .span n-cols)))
+         (new-G .set! i (update i))))
+     (grid<-array n-rows n-cols new-G))
     ))
 
 (export grid<- paint smoke-test)
