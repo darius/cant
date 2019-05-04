@@ -139,7 +139,7 @@
 ;; if-then-elses and in parallel through e, with the corresponding
 ;; if-tests being the same in thm and e. Then at the leaves picked out
 ;; of thm and e, an equality rewrite succeeds.
-;; XXX not quite; see prem-match?
+;; XXX not quite; see find-premise
 ;; XXX also, the premises don't have to occur in the same downward order
 
 ;; N.B. despite the name, thm is syntactically an expression.
