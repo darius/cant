@@ -116,14 +116,14 @@
   (let {call _ args} app)
   (let result
     (equality/path claim path
-                 (match meaning
-                   ;; TODO do these constructed (= foo bar) exprs ever cause rewriting-in-reverse?
-                   ;;   Or is this just a fancy way of substituting (eval-op app), etc.?
-                   ({op fn}    `{call = (,app ,(eval-op fn args))})
-                   ({fun body} (sub-e formals args
-                                      `{call = ({call ,name ,(express-variables formals)}
-                                                ,body)}))
-                   ({thm body} (sub-e formals args body)))))
+                   (match meaning
+                     ;; TODO do these constructed (= foo bar) exprs ever cause rewriting-in-reverse?
+                     ;;   Or is this just a fancy way of substituting (eval-op app), etc.?
+                     ({op fn}    `{call = (,app ,(eval-op fn args))})
+                     ({fun body} (sub-e formals args
+                                        `{call = ({call ,name ,(express-variables formals)}
+                                                  ,body)}))
+                     ({thm body} (sub-e formals args body)))))
   (when loud? (pp `(equality/def : ,(unparse-e result))))
   result)
 
