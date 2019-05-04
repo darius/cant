@@ -180,8 +180,7 @@
        (dir (follow-prems path e1 (get-at-direction thm dir)))))
     (_ thm)))
 
-;; Consider the prefix of path which steps through A's or E's of if's.
-;; Seek an `if` in e, somewhere along that prefix, having a question
+;; Seek an `if` in e, somewhere along the path, having a question
 ;; equal to premise. If found, return the dir of the path's next step
 ;; from there -- i.e. the A or E of the if having that premise.
 (to (find-premise premise path e)
