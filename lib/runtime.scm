@@ -389,6 +389,7 @@
                      (else (scanning (+ i 1)))))))))
   ({.split delimiter}
    ;; TODO deduplicate code
+   ;; TODO define a strstr and use that
    (begin splitting ((s me))
      (if s.empty?
          '()
@@ -412,6 +413,7 @@
          (else
           (let limit me.count)
           (string<-list
+           ;; TODO define a strstr and use that
            (begin scanning ((i 0))
              (case ((= i limit) '())
                    ((= pattern (me .slice i (+ i pattern.count)))
