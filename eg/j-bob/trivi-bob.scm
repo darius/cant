@@ -139,6 +139,8 @@
 ;; if-then-elses and in parallel through e, with the corresponding
 ;; if-tests being the same in thm and e. Then at the leaves picked out
 ;; of thm and e, an equality rewrite succeeds.
+;; XXX not quite; see prem-match?
+;; XXX also, the premises don't have to occur in the same downward order
 
 ;; N.B. despite the name, thm is syntactically an expression.
 
@@ -150,6 +152,13 @@
 ;;   (let thm  (parse-e '(if BAR #no (= banana apple))))
 ;; Yields
 ;;   (unparse-e (equality/path e path thm)) => (if foo '1 banana)
+
+;; Fancier example:
+;;   (let e    (parse-e '(if bar 2 (if foo 1 apple))))
+;;   (let path '(E E))
+;;   (let thm  (parse-e '(if foo #no (= banana apple))))
+;; Yields
+;;   (unparse-e (equality/path e path thm)) => (if bar '2 (if foo '1 banana))
 
 (to (equality/path e path thm)
   (if (focus-is-at-path? e path)
@@ -163,25 +172,24 @@
 ;; It's possible when the if-question appears also as the question of
 ;; some 'if' in path through e1; then dig out the branch of thm's 'if'
 ;; corresponding to the next branch of the path through e1's 'if'.
-;; TODO check that this makes sense on some examples
 (to (follow-prems path e1 thm)          ;TODO rename e1?
   (match thm
-    ({if q a e}
-     (case ((prem-match? 'A q path e1) (follow-prems path e1 a))
-           ((prem-match? 'E q path e1) (follow-prems path e1 e))
-           (else                       thm)))
+    ({if q _ _}
+     (match (find-premise q path e1)
+       (#no thm)
+       (dir (follow-prems path e1 (get-at-direction thm dir)))))
     (_ thm)))
 
-;; Somewhere along path through e, does some `if` have a question equal to
-;; prem, followed by dir as the next step in the path?
-;; TODO more efficient to check that the next step is either 'A or 'E
-;;      and return that, or #no. Then we wouldn't have to call this twice.
-(to (prem-match? dir prem path e)
+;; Consider the prefix of path which steps through A's or E's of if's.
+;; Seek an `if` in e, somewhere along that prefix, having a question
+;; equal to premise. If found, return the dir of the path's next step
+;; from there -- i.e. the A or E of the if having that premise.
+(to (find-premise premise path e)
   (begin matching ((path path) (e e))
     (and (not path.empty?)
-         (or (and (= path.first dir)
+         (or (and ('(A E) .find? path.first)
                   (match e
-                    ({if q _ _} (= q prem))
+                    ({if q _ _} (and (= q premise) path.first))
                     (_          #no)))
              (matching path.rest (get-at-direction e path.first))))))
 
