@@ -147,8 +147,8 @@
           (if (any (mlambda (('@ __) #t) (__ #f)) parts)  ;XXX really only need to check the last one
               (pack<- p-view
                       explode-term-exp
-                      (pack<- p-term 'term (list (pack<- p-constant tag)
-                                                 (parse-list-pat parts ctx))))
+                      (make-cons-pat (pack<- p-constant tag)
+                                     (parse-list-pat parts ctx)))
               (pack<- p-term tag (parse-ps parts ctx)))))
        (('@ __)                      ;XXX make @vars be some disjoint type
         (error 'parse "An @-pattern must be at the end of a list" p))
@@ -213,7 +213,7 @@
 
 (define (explode-term thing)
   (and (term? thing)
-       (term<- 'term (term-tag thing) (term-parts thing))))
+       (cons (term-tag thing) (term-parts thing))))
 
 (define explode-term-exp
   (pack<- e-constant explode-term))
@@ -401,13 +401,14 @@
 (define (expand-qq-term-pat term)
   (let ((tag (term-tag term))
         (parts (term-parts term)))
-    (unless (symbol? tag)
-      ;; XXX for now:
-      (error 'parse "A term pattern must be tagged with a constant symbol" term))
     ;; XXX duplicate and ugly code. also, TESTME.
-    (if (any (mlambda (('unquote-splicing __) #t) (__ #f)) parts)
-        `(view ',explode-term ,(make-term tag (expand-quasiquote-pat parts)))
-;XXX        `(: ',explode-term {term ',tag ,(expand-quasiquote-pat parts)})
+    (if (or (not (symbol? tag))
+            (any (mlambda (('unquote-splicing __) #t) (__ #f)) parts))
+        (let* ((foo (cons tag parts))
+               (result (list 'view
+                             `',explode-term
+                             (list 'quasiquote foo))))
+          result)
         (make-term tag (map expand-quasiquote-pat parts)))))
 
 (define (expand-quasiquote e)
