@@ -16,7 +16,7 @@
 (to (max-by key<- xs) (foldr1 (given (x y) (if (> (key<- x) (key<- y)) x y))
                               xs))
 
-(to ((compound-key<- @key-fns) x)   ;; TODO shorter name?
+(to ((compound-key<- @key-fns) x)   ;; TODO shorter name? combo-key?
   (for each ((f key-fns))
     (f x)))
 
