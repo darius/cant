@@ -1,3 +1,6 @@
+(to (yeah? x)
+  (not= x #no))
+
 ;; XXX float contagion
 (make min
   (`(,a) a)
