@@ -131,16 +131,8 @@
   (for each ((name names))
     {variable name}))
 
-;; Rewrite the subexpression of e at path according to thm, if possible.
-;; (If not, leave e alone.)
-
-;; thm must be an equality perhaps nested in if-then-elses. For the
-;; rewrite to succeed, the path must go through branches of thm's
-;; if-then-elses and in parallel through e, with the corresponding
-;; if-tests being the same in thm and e. Then at the leaves picked out
-;; of thm and e, an equality rewrite succeeds.
-;; XXX not quite; see find-premise
-;; XXX also, the premises don't have to occur in the same downward order
+;; If thm after premise snipping is an equality applying to e at path,
+;; then apply it; else leave e alone.
 
 ;; N.B. despite the name, thm is syntactically an expression.
 
@@ -164,20 +156,20 @@
   (if (focus-is-at-path? e path)
       (set-at-path e path
                    (trace equality/equation (get-at-path e path)
-                                            (follow-prems path e thm)))
+                                            (snip-premises path e thm)))
       e))
 
-;; "Check the premises against the instantiated conclusion." (?)
 ;; As far as possible, remove any top-level if-then-elses from thm.
-;; It's possible when the if-question appears also as the question of
-;; some 'if' in path through e1; then dig out the branch of thm's 'if'
-;; corresponding to the next branch of the path through e1's 'if'.
-(to (follow-prems path e1 thm)          ;TODO rename e1?
+;; This is possible when the if-question appears also as the question
+;; of some 'if' in path through e1; then dig out the branch of thm's
+;; 'if' corresponding to the next branch of the path through e1's 'if'.
+;; TODO why are the args in a different order?
+(to (snip-premises path e1 thm)          ;TODO rename e1?
   (match thm
     ({if q _ _}
      (match (find-premise q path e1)
        (#no thm)
-       (dir (follow-prems path e1 (get-at-direction thm dir)))))
+       (dir (snip-premises path e1 (get-at-direction thm dir)))))
     (_ thm)))
 
 ;; Seek an `if` in e, somewhere along the path, having a question
