@@ -131,7 +131,7 @@
   (for each ((name names))
     {variable name}))
 
-;; If thm after premise snipping is an equality applying to e at path,
+;; If thm after premise-snipping is an equality applying to e at path,
 ;; then apply it; else leave e alone.
 
 ;; N.B. despite the name, thm is syntactically an expression.
@@ -156,33 +156,32 @@
   (if (focus-is-at-path? e path)
       (set-at-path e path
                    (trace equality/equation (get-at-path e path)
-                                            (snip-premises path e thm)))
+                                            (snip-premises e path thm)))
       e))
 
 ;; As far as possible, remove any top-level if-then-elses from thm.
 ;; This is possible when the if-question appears also as the question
 ;; of some 'if' in path through e1; then dig out the branch of thm's
 ;; 'if' corresponding to the next branch of the path through e1's 'if'.
-;; TODO why are the args in a different order?
-(to (snip-premises path e1 thm)          ;TODO rename e1?
+(to (snip-premises e path thm)
   (match thm
     ({if q _ _}
-     (match (find-premise q path e1)
+     (match (find-premise e path q)
        (#no thm)
-       (dir (snip-premises path e1 (get-at-direction thm dir)))))
+       (dir (snip-premises e path (get-at-direction thm dir)))))
     (_ thm)))
 
 ;; Seek an `if` in e, somewhere along the path, having a question
 ;; equal to premise. If found, return the dir of the path's next step
 ;; from there -- i.e. the A or E of the if having that premise.
-(to (find-premise premise path e)
-  (begin matching ((path path) (e e))
+(to (find-premise e path premise)
+  (begin matching ((e e) (path path))
     (and (not path.empty?)
          (or (and ('(A E) .find? path.first)
                   (match e
                     ({if q _ _} (and (= q premise) path.first))
                     (_          #no)))
-             (matching path.rest (get-at-direction e path.first))))))
+             (matching (get-at-direction e path.first) path.rest)))))
 
 ;; Rewrite focus according to concl-inst if concl-inst is an equality.
 (to (equality/equation focus concl-inst)
