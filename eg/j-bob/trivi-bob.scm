@@ -7,10 +7,11 @@
 
 (import (use "lib/pretty-print") pp)    ;XXX for debugging
 
+;; N.B. specialized to args and result all being expressions
 (to (trace fn @args)
-  (when loud? (pp `(>>> ,fn ,@args)))
+  (when loud? (pp `(>>> ,fn ,@(each unparse-e args))))
   (let result (call fn args))
-  (when loud? (pp `(<<< ,fn : ,result)))
+  (when loud? (pp `(<<< ,fn : ,(unparse-e result))))
   result)
 
 (let loud? #no)
@@ -109,7 +110,7 @@
 ;; Equality... TODO explain me
 ;; N.B. their 'claim' is not a Squeam claim type
 
-;; TODO incohesion in that we're assuming the def corresponds to the app
+;; Pre: the app is a call with same name as the def.
 (to (equality/def claim path app {def name formals meaning})
   (when loud?
     (pp `(equality/def ,(unparse-e claim) ,path ,(unparse-e app) ,(unparse-def {def name formals meaning}))))
