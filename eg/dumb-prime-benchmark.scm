@@ -1,0 +1,29 @@
+;; http://www.retroprogramming.com/2010/01/8-bit-home-computer-benchmarks.html
+;; user	0m0.560s
+;; vs. Apple IIe, 1.0 MHz 6502, Applesoft BASIC: 211s
+;; TI 99/4A, 3.0 MHz: 226s
+;; So no, we're no longer quite *that* slow, if we ever were.
+
+(let w 500)
+(let f (array<-count (+ w 1) 0))
+
+(to (square n)
+  (* n n))
+
+(begin L20 ((a 3) (p 1))
+  (f .set! p a)
+  (when (< p w)
+    (begin L30 ((a0 a))
+      (let a (+ a0 2))
+      (begin L40 ((x 1))
+        (if ((f x) .divides? a)
+            (L30 a)
+            (do (let x1 (+ x 1))
+                (if (and (<= x1 p)
+                         (<= (square (f x1)) a))
+                    (L40 x1)
+                    (L20 a (+ p 1)))))))))
+
+(when #no
+  (for each! ((`(,i ,fi) f.items))
+    (format "~3w ~w\n" i fi)))
