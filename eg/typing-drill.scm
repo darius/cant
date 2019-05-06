@@ -12,7 +12,12 @@
   (begin typing ()
     (show (/ (- (nano-now) start) 1000000000)
           (string<-list strokes))
-    (case (stdin.ready?
+    (case ((not stdin.ready?)
+           ;; XXX This polling/sleeping approach sucks, but it's
+           ;; supported by the underlying Scheme.
+           (nanosleep 50000000)  ; 1/20 sec
+           (typing))
+          (else
            (match (get-key)
              ('esc
               'done)
@@ -20,15 +25,11 @@
               (unless strokes.empty?
                 strokes.pop!)
               (typing))
-             (key
-              (when (char? key)
-                (strokes .push! key))
-              (typing))))
-          (else
-           ;; XXX This polling/sleeping approach sucks, but it's
-           ;; supported by the underlying Scheme.
-           (nanosleep 50000000)  ; 1/20 sec
-           (typing)))))
+             ((? char? key)
+              (strokes .push! key)
+              (typing))
+             (_
+              (typing)))))))
 
 (to (show t body)
   (let cps (if (or (= t 0) body.empty?)
