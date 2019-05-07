@@ -63,7 +63,7 @@
            (and (not= opponent.name "Human")
                 (do (refresh ("~d to move ~d. (Press a key; Q to quit.)"
                               .format player.name (whose-move grid)))
-                    (= (get-key) #\Q))))
+                    (= #\Q ((get-key) .uppercase)))))
          (unless quit?
            (refresh ("~d ponders..." .format player.name))
            (continue)))))
@@ -79,7 +79,7 @@
      (ttt-render (if plaint (show-with-moves grid) (show grid))
                  `(,prompt ,cursor)
                  plaint)
-     (match (get-key)
+     (match ((get-key) .uppercase)
        (#\Q #no)
        (key (match (and (char? key)
                         (<= #\1 key #\9)
