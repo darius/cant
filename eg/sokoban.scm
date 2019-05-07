@@ -96,7 +96,7 @@ Level ~w ~d Move ~w")
   (surely (do (let lines initial-config.split-lines) ;XXX require
               (let lengths (each '.count lines))  
               (= 1 lengths.range.count)))
-  (array<-list (list<-string initial-config))) ;XXX list<-string shouldn't be needed
+  (array<-list initial-config))
 
 (to (sokoban-grid<- grid)
   ;; We represent a grid as a mutable array of characters, including
