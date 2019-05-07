@@ -83,7 +83,7 @@
        (#\Q #no)
        (key (match (and (char? key)
                         (<= #\1 key #\9)
-                        (apply-move grid (move<-key key)))
+                        (update grid (move<-key key)))
               (#no (asking "Hey, that's not a move. Give me one of the digits below."))
               (successor successor)))))))
 
@@ -99,45 +99,42 @@
 
 ;; 'AI' players
 
-(make drunk-play
-  ({.name} "Drunk")
-  (`(,grid) (min-by drunk-value (successors grid))))
+(to (ai<- name evaluate)
+  (make ai
+    ({.name} name)
+    (`(,grid) (min-by evaluate (successors grid)))))
 
-(make spock-play
-  ({.name} "Spock")
-  (`(,grid) (min-by spock-value (successors grid))))
-
-(make max-play
-  ({.name} "Max")
-  (`(,grid)
-   (min-by (compound-key<- spock-value drunk-value)
-           (successors grid))))
-
-(to (parse-player name)
-  (player-registry name.lowercase))
-
-(let player-registry
-  (map<- (for each ((player (list<- human-play drunk-play spock-play max-play)))
-           `(,player.name.lowercase ,player))))
-
-(let drunk-value
+(let spock-evaluate
   (memoize (given (grid)
              (if (won? grid)
                  -1
                  (match (successors grid)
                    ('() 0)
-                   (succs (- (average (each drunk-value succs)))))))))
+                   (succs (- (call min (each spock-evaluate succs)))))))))
 
-(let spock-value
+(let spock-play (ai<- "Spock" spock-evaluate))
+
+(let drunk-evaluate
   (memoize (given (grid)
              (if (won? grid)
                  -1
                  (match (successors grid)
                    ('() 0)
-                   (succs (- (call min (each spock-value succs)))))))))
+                   (succs (- (average (each drunk-evaluate succs)))))))))
 
 (to (average numbers)
   (/ (sum numbers) numbers.count))
+
+(let player-registry
+  (for map<-values ((player `(,human-play
+                              ,spock-play
+                              ,(ai<- "Drunk" drunk-evaluate)
+                              ,(ai<- "Max" (compound-key<- spock-evaluate
+                                                           drunk-evaluate)))))
+    player.name.lowercase))
+
+(to (parse-player name)
+  (player-registry name.lowercase))
 
 
 ;; Basic grid ops
@@ -159,9 +156,9 @@
 
 (to (successors grid)
   (for filter ((move (0 .to 8)))
-    (apply-move grid move)))
+    (update grid move)))
 
-(to (apply-move {grid p q} move)
+(to (update {grid p q} move)
   (let bit (1 .<< move))
   (and (= 0 (bit .and (p .or q)))
        {grid q (p .or bit)}))
