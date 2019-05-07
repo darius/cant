@@ -17,13 +17,13 @@
 
   (make turer
 
-    ({reset! marks}
+    ({.reset! marks}
      (let `(,h ,@R) (peek marks))
      (tape .^= `(() ,h ,R))
      (state-id .^= start-state-id))
 
-    ({run} (turer .run #no))
-    ({run option}
+    ({.run} (turer .run #no))
+    ({.run option}
      (begin running ()
        (when (= option 'loudly)
          (print turer.show-config))
@@ -31,7 +31,7 @@
          turer.step
          (running))))
 
-    ({step}
+    ({.step}
      (let `(,_ ,h ,_) tape.^)
      (let `(,acts ,next-state-id) ((states state-id.^) h))
      (tape .^= (for foldl ((t tape.^) (act acts))
@@ -44,7 +44,7 @@
                    (mark `(,L ,mark ,R)))))
      (state-id .^= next-state-id))
 
-    ({show-config}
+    ({.show-config}
      (let `(,L ,h ,R) tape.^)
      `(,@(reverse L) (,state-id.^ h) ,@R))
     ))
