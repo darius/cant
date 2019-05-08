@@ -23,10 +23,9 @@
     ((? list?)
      (group (<> (text "(") (nest 1 (docs<- x)) (text ")"))))
     ((? term?)
-     (surely (symbol? x.tag) "Weird term" x)
      (group (<> (text "{")
                 (if x.arguments.empty?
-                    (text x.tag.name)
+                    (doc<-sx x.tag)
                     (nest 1 (doc<-tagged x.tag.name x.arguments)))
                 (text "}"))))
     ((? array?)
