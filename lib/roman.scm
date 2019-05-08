@@ -28,9 +28,9 @@
 
 (to (main args)
   (for each! ((x args.rest))
-    (let converted (if (every '.digit? x) ;TODO string method? it's there in parson, at least.
-                       (roman<-int (number<-string x))
-                       (int<-roman x)))
+    (let converted (match (number<-string x)
+                     (#no (int<-roman x))
+                     (n   (roman<-int n))))
     (format "~d: ~d\n" x converted)))
 
 (export int<-roman roman<-int main)
