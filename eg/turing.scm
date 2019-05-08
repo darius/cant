@@ -2,60 +2,44 @@
 ;; XXX untested
 
 ;; mark = value that can appear in a tape square.
-;; state = function from mark to `(,actions ,state-id).
-;; action = '< | '> | mark
+;; transit = map from `(,state ,mark) to `(,acts ,state).
+;; act = '< | '> | mark
 ;;   (< = step left, > = right)
 
-(to (turer<- states start-state-id)
-  (let state-id (box<- start-state-id))
-  (let tape (box<- '(() - ()))) ;; `(,ls ,head ,rs) where:
-  ;; ls   = reverse of the list of tape squares to the left of the tape head.
-  ;; head = the value of the square under the tape head.
-  ;; rs   = the squares to the right of the tape head.
-  ;; The lists ls and rs only extend so far as has been visited up to now.
-  ;; Visited blank squares are symbolized as '-'.
+;; {tape ls head rs} where:
+;; ls   = reverse of the list of tape squares to the left of the tape head.
+;; head = the value of the square under the tape head.
+;; rs   = the squares to the right of the tape head.
+;; The lists ls and rs only extend so far as has been visited up to now.
+;; Visited blank squares are symbolized as '-'.
 
-  (make turer
+(to (run machine @(optional option))
+  (begin running ((machine machine))
+    (when (= option 'loudly)
+      (print (show-config machine)))
+    (match (step machine)
+      (#no machine)
+      (updated (running updated)))))
 
-    ({.reset! marks}
-     (let `(,h ,@R) (peek marks))
-     (tape .^= `(() ,h ,R))
-     (state-id .^= start-state-id))
+(to (show-config {machine _ state {tape L h R}})
+  `(,@(reverse L) (,state ,h) ,@R))
 
-    ({.run} (turer .run #no))
-    ({.run option}
-     (begin running ()
-       (when (= option 'loudly)
-         (print turer.show-config))
-       (when (states .maps? state-id.^)
-         turer.step
-         (running))))
+(to (step {machine transit state (and tape {tape _ head _})})
+  (match (transit .get `(,state ,head))
+    (#no #no)
+    (`(,acts ,next-state) 
+     {machine transit next-state (foldl perform tape acts)})))
 
-    ({.step}
-     (let `(,_ ,h ,_) tape.^)
-     (let `(,acts ,next-state-id) ((states state-id.^) h))
-     (tape .^= (for foldl ((t tape.^) (act acts))
-                 (let `(,L ,h ,R) t)
-                 (match act
-                   ('< (let `(,l0 ,@ls) (peek L))
-                       `(,ls ,l0 (,h ,@R)))
-                   ('> (let `(,r0 ,@rs) (peek R))
-                       `((,h ,@L) ,r0 ,rs))
-                   (mark `(,L ,mark ,R)))))
-     (state-id .^= next-state-id))
-
-    ({.show-config}
-     (let `(,L ,h ,R) tape.^)
-     `(,@(reverse L) (,state-id.^ h) ,@R))
-    ))
+(to (perform {tape L h R} act)
+  (match act
+    ('<   (let `(,l0 ,@ls) (peek L)) {tape ls l0 `(,h ,@R)})
+    ('>   (let `(,r0 ,@rs) (peek R)) {tape `(,h ,@L) r0 rs})
+    (mark {tape L mark R})))
 
 (to (peek marks)
-  (match marks
-    ('() '(-))
-    (_   marks)))
+  (if marks.empty? '(-) marks))
 
 ;; TODO a canonicalizer that rewrites to an equiv turing machine
 ;; that steps one square at a time.
 
-;; TODO maybe: a states-table maker that goes from list of (state-id mark actions next-state-id)
-;;  to map of state-id to function from mark to pair (actions next-state-id).
+;; TODO maybe: a transit maker that takes a list of (state mark actions next-state)
