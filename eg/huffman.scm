@@ -42,13 +42,13 @@
 (to (encode encoder symbols)
   (gather encoder symbols))
 
-(to (decode tree bits)
-  (begin stepping ((subtree tree) (bits bits))
+(to (decode root bits)
+  (begin stepping ((tree root) (bits bits))
     (if bits.empty?
         '()
-        (do (let {branch @branches} subtree)
-            (match (branches bits.first)
-              ({leaf symbol} `(,symbol ,@(stepping tree bits.rest)))
-              (next-branch   (stepping next-branch bits.rest)))))))
+        (do (let {branch @subtrees} tree)
+            (match (subtrees bits.first)
+              ({leaf symbol} `(,symbol ,@(stepping root bits.rest)))
+              (subtree       (stepping subtree bits.rest)))))))
 
 (export build-tree show-tree encoder<- encode decode)
