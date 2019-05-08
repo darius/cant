@@ -16,7 +16,7 @@
 (let mask32 (- (expt 2 32) 1))
 
 (to (run program sink source)
-  (let mem (flexarray<-))         ;TODO: shorter name? flexlist?
+  (let mem (flexarray<-))
   (mem .push! program)
   (let free-list (flexarray<-))
   (let reg (array<-count 8 0))         ;TODO: typed array, for efficiency
