@@ -5,9 +5,9 @@
   lit0 lit1 build-choice)
 
 (to (main args)
-  (match args
-    (`(,_ ,n) (queens (number<-string n)))
-    (`(,prog ,@_) (format "Usage: ~d board-size" prog))))
+  (match args.rest
+    (`(,n) (queens (number<-string n)))
+    (_     (format "Usage: ~d board-size\n" (args 0)))))
 
 (to (queens n)
   (match (satisfy-first (queens-problem n) 1)
