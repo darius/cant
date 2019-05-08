@@ -1013,9 +1013,32 @@
       xs.first
       (f xs.first (foldr1 f tail))))
 
-(to (each f xs)
-  (for foldr ((x xs) (ys '()))
-    (cons (f x) ys)))
+(make each
+  (`(,f ,xs)
+   (for foldr ((x xs) (ys '()))
+     (cons (f x) ys)))
+  (`(,f ,@lists)
+   (for each ((args (call zip lists)))
+     (call f args))))
+
+(make zip
+  (`(,xs ,ys)                           ;specialized for speed
+   (to (mismatch)
+     (error "zip: mismatched arguments" xs ys))
+   (begin zipping ((xs xs) (ys ys))
+     (case (xs.empty? (if ys.empty? '() (mismatch)))
+           (ys.empty? (mismatch))
+           (else `((,xs.first ,ys.first)
+                   ,@(zipping xs.rest ys.rest))))))
+  (`(,@lists)  ; ugly
+   (transpose lists)))
+
+;; TODO: name it (zip @rows) instead, like Python?
+(to (transpose rows)
+  (if (every '.empty? rows)   ; and make it (some '.empty? rows)?
+      '()
+      `(,(each '.first rows)
+        ,@(transpose (each '.rest rows)))))
 
 (to (gather f xs)
   (for foldr ((x xs) (ys '()))

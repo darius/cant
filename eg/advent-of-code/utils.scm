@@ -99,11 +99,11 @@
       (and (not= `(,dx ,dy) '(0 0))
            `(,(+ x dx) ,(+ y dy))))))
 
-(to (vector+ p q) (zip-with + p q))
-(to (vector- p q) (zip-with - p q))
+(to (vector+ p q) (each + p q))
+(to (vector- p q) (each - p q))
 
 (to (manhattan-distance<- p q)
-  (sum (zip-with (compose abs -) p q)))
+  (sum (each (compose abs -) p q)))
 
 (to (bounds<- points)
   (transpose (each bounds-1d<- (transpose points))))

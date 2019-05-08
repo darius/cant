@@ -16,7 +16,7 @@
 (to (max-by key<- xs) (foldr1 (given (x y) (if (> (key<- x) (key<- y)) x y))
                               xs))
 
-(to ((compound-key<- @key-fns) x)   ;; TODO shorter name? combo-key?
+(to ((compound-key<- @key-fns) x)   ;; TODO shorter name? combo-key? call-each?
   (for each ((f key-fns))
     (f x)))
 
@@ -27,29 +27,6 @@
 (to (where ok? xs)
   (for filter ((`(,i ,x) xs.items))
     (and (ok? x) i)))
-
-(make zip
-  (`(,xs ,ys)                           ;specialized for speed
-   (to (mismatch)
-     (error "zip: mismatched arguments" xs ys))
-   (begin zipping ((xs xs) (ys ys))
-     (case (xs.empty? (if ys.empty? '() (mismatch)))
-           (ys.empty? (mismatch))
-           (else `((,xs.first ,ys.first)
-                   ,@(zipping xs.rest ys.rest))))))
-  (`(,@lists)  ; ugly
-   (transpose lists)))
-
-(to (zip-with fn xs ys)
-  (for each ((`(,x ,y) (zip xs ys)))
-    (fn x y)))
-
-;; TODO: name it (zip @rows) instead, like Python?
-(to (transpose rows)
-  (if (every '.empty? rows)   ; and make it (some '.empty? rows)?
-      '()
-      `(,(each '.first rows)
-        ,@(transpose (each '.rest rows)))))
 
 (to (map-by f keys) ;TODO maybe name it map<-keys ? along with a map<-values ?
   (map<- (for each ((key keys))

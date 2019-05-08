@@ -18,7 +18,7 @@
   (begin stepping ((t 1) (ps ps0))
     (when (100 .divides? t)
       (format "time ~w\n" t))
-    (let next (zip-with vector+ ps vs))
+    (let next (each vector+ ps vs))
     (when (< 10500 t)
       (format "After ~w seconds:\n" t)
       (if #yes ;(compact? next)
@@ -31,7 +31,7 @@
   (let `((,xl ,yl) (,xh ,yh)) (bounds<- ps))
   (let dy (- yh yl))
   (< dy 50))
-;;that could use zip-with too
+;;couldn't that use `each` too?
 
 (to (show points)
   (let `((,xl ,yl) (,xh ,yh)) (bounds<- points))
