@@ -18,4 +18,8 @@
 
 (pp eg2 50)
 
-;(pp (box<- 'b) 10)
+(pp '#({.foo}) 10)
+
+(pp '`{,foo bar} 10)
+
+(pp (box<- 'b) 10)
