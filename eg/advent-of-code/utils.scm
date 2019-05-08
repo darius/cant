@@ -88,16 +88,16 @@
     (`(,string)     ((parson-parse peg string) .results))
     ({.parse string} (parson-parse peg string))))
 
-;; TODO how much slower is this?
+;; TODO how much slower is this? Doesn't matter since it's no longer used!
 ;; (to (neighbors<- p)
-;;   (for filter ((d (grid* '(-1 0 1) '(-1 0 1))))
-;;     (and (not= d '(0 0))
-;;          (vector+ p d))))
-(to (neighbors8<- `(,x ,y))
-  (for gather ((dx '(-1 0 1)))
-    (for filter ((dy '(-1 0 1)))
-      (and (not= `(,dx ,dy) '(0 0))
-           `(,(+ x dx) ,(+ y dy))))))
+;;   (for each ((d neighborhood-8))
+;;     (vector+ p d))))
+(to (neighbors-8<- `(,x ,y))
+  (for each ((`(,dx ,dy) neighborhood-8))
+    `(,(+ x dx) ,(+ y dy))))
+
+(let neighborhood-8 (for those ((d (grid* '(-1 0 1) '(-1 0 1))))
+                      (not= d '(0 0))))
 
 (to (vector+ p q) (each + p q))
 (to (vector- p q) (each - p q))
@@ -114,7 +114,7 @@
 (export
   cycle scanl/lazy detect pairs<- filter/lazy 
   duplicates<- deletions<-
-  chain-lines all-mins-by average neighbors8<-
+  chain-lines all-mins-by average neighbors-8<-
   simple-parser<- vector+ vector- manhattan-distance<-
   grammar<- parson-parse feed take-1
   bounds<- bounds-1d<- 

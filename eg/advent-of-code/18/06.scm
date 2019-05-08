@@ -84,13 +84,6 @@
 
 ;; Detritus from the bug-hunt
 
-;; (to (neighbors-8<- `(,x ,y))
-;;   (chain (neighbors<- `(,x ,y))
-;;          `((,(- x 1) ,(- y 1))
-;;            (,(+ x 1) ,(- y 1))
-;;            (,(- x 1) ,(+ y 1))
-;;            (,(+ x 1) ,(+ y 1)))))
-
 ;; (let seed
 ;;   (begin seeking ((p centroid))
 ;;     (let d (total-distance p))
