@@ -26,8 +26,8 @@
         ((drawn? grid) (format "A draw.\n"))
         (else
          (unless (`(,player ,opponent) .find? human-play)
-           (format "~w to move ~d. (Press a key.)\n"
-                   player (whose-move grid))
+           (format "~d to move ~d. (Press a key.)\n"
+                   player.name (whose-move grid))
 ;           (get-key)                    ;XXX
            )
          (tic-tac-toe opponent player (player grid)))))
