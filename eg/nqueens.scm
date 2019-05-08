@@ -67,6 +67,7 @@
   ;; Return a 2-d array of distinct variables: each means there's a
   ;; queen at its position. Row/column numbers start from 0.
   (for each ((r (range<- n)))
-    (range<- (+ 2 (* r n)) (+ 2 (* (+ r 1) n)))))
+    (range<- (+ 2 (* n r))
+             (+ 2 (* n (+ r 1))))))
 
 (export queens queens-problem print-board)
