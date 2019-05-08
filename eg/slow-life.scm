@@ -5,11 +5,11 @@
 (import (use "lib/ansi-term")
   home clear-screen cursor-show cursor-hide)
 
-(to (main `(,prog ,@args))
-  (let n-steps (match args
+(to (main args)
+  (let n-steps (match args.rest
                  ('() 20)
                  (`(,n-str) (number<-string n-str))
-                 (_ (error ("Usage: ~d [#steps]" .format prog)))))
+                 (_ (error ("Usage: ~d [#steps]" .format (args 0))))))
   (let grid (grid<- 24 39))
   (paint grid 10 18 '(" **"             ;TODO: read in a pattern
                       "** "
