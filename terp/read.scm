@@ -35,7 +35,7 @@
   (define (symbol-terminator? c)
     (or (eof-object? c)
 	(char-whitespace? c)
-	(memv c '(#\| #\( #\) #\; #\" #\' #\` #\, #\@ #\{ #\}))))
+	(memv c '(#\| #\( #\) #\; #\" #\' #\` #\, #\@ #\{ #\} #\[ #\]))))
 
   (define (atomize L len)
     (let ((s (make-string len #\space)))
@@ -206,6 +206,10 @@
                       (else
                        (read-error port "Bad syntax after '.'" atom))))
               (read-error port "Lone '.'" c)))))
+
+    (install-read-macro #\[
+      (lambda (port c)
+        (list->vector (read-seq #\] port c))))
 
     (install-read-macro #\#
       (lambda (port c)

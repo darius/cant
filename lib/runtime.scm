@@ -325,8 +325,14 @@
        (array-trait me message)))
   ({.copy}        (__vector-copy me))
   ({.selfie sink}
-   (sink .display "#")
-   (sink .print (__vector->list me)))
+   (sink .display "[")
+   (when (< 0 me.count)
+     (sink .print (me 0))
+     (for each! ((x ((__vector->list me) .rest)))
+       (sink .display #\space)
+       (sink .print x)))
+   (sink .display "]"))
+;   (sink .print (__vector->list me)))
   (message
    (array-trait me message))) ;XXX use trait syntax instead
 
