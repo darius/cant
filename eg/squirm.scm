@@ -158,7 +158,7 @@ app:    (expr expr*)
   (print (assemble {fndef name n-params assembly}))
   (newline))
 
-(to (assemble {fndef name n-params assembly})
+(to (assemble {fndef entry-name n-params assembly})
   (let buf (flexarray<-))
   (let labels (map<-))
   (let constants (flexarray<-))
@@ -181,6 +181,9 @@ app:    (expr expr*)
     (let offset (- buf.count target)) ;XXX right? wrong?
     offset)
 
+  (to (emit-call name)
+    (emit 5 (idx<-constant name)))                    ;XXX right?
+
   (for each! ((`(,i ,insn) ((reverse assembly) .items)))
     (match insn
       ({halt}
@@ -194,8 +197,7 @@ app:    (expr expr*)
       ({if-no label}
        (emit 4 (offset<-label label)))
       ({fndef name arity}               ;XXX check arity somewhere
-       (let idx (idx<-constant name))
-       (emit 5 idx))                    ;XXX right?
+       (emit-call name))
       ({nip m n}
        (emit 6 m n))
       ({frame label}
@@ -208,16 +210,32 @@ app:    (expr expr*)
        (emit opcode))
       )
     (labels .set! (+ i 1) buf.count))
-  (array<-list (reverse buf)))
+
+  (labels .set! buf.count buf.count)  ;; XXX um what?
+  (let entry-map (map<- `((,entry-name ,buf.count)
+                          (main ,buf.count) ;XXX for now
+                          )))
+
+  (emit 0)                              ;halt
+  (labels .set! 'halt-at buf.count)
+  (emit-call 'main)
+  (emit 7 (offset<-label 'halt-at))
+
+  (let code (array<-list (reverse buf)))
+  (let literals (array<-list constants))
+  (let entry-points (for each ((`(,name ,label) entry-map.items))
+                      `(,name ,(offset<-label label))))  ;TODO some sort of map.each method?
+  {object-module code literals entry-points})
 
 
 ;; Virtual machine interpreter
 
-(to (run {object-module code literals entry-points})
+(to (run {object-module code literals entry-points} fn-name)
   (let entry-table (map<- entry-points))  ;; TODO pre-link the entry-points (until a module reload)
   (let stack (array<-count 100))        ;XXX for the moment
   ;; The stack grows upwards; sp is the index of the top element.
   (begin running ((pc 0) (sp -1))       ;gonna need a closure-pointer too
+;    (print `(running ,pc ,sp : ,(code pc) <> ,(stack .slice 0 (+ sp 1))))
     (match (code pc)
       (0  ; halt
        (stack sp))
@@ -258,7 +276,7 @@ app:    (expr expr*)
        (running (+ pc 3) (- sp m)))
       (7  ; frame n -- push a return address
        (let offset (code (+ pc 1)))
-       (stack .set! (+ sp 1) (+ pc 1 offset))
+       (stack .set! (+ sp 1) (+ pc 2 offset))
        (running (+ pc 2) (+ sp 1)))
       (8  ; local n
        ;; XXX need a frame pointer or smarter compiler
@@ -289,5 +307,13 @@ app:    (expr expr*)
 ;(print (compile-fndef '(to (f x) x)))
 
 (let eg-scope {global-scope})
-(dump (compile-fndef eg-scope '(to (g x) (if (= x x) 'yes 'no))))
-(dump (compile-fndef eg-scope '(to (h x y) (if (= x y) 'yes (h (+ x 1) (- y 1))))))
+(let eg (compile-fndef eg-scope '(to (g) 'x)))
+(dump eg)
+(print (run (assemble eg) 'g))
+
+;; (dump (compile-fndef eg-scope '(to (g x) (if (= x x) 'yes 'no))))
+;; (dump (compile-fndef eg-scope '(to (h x y) (if (= x y) 'yes (h (+ x 1) (- y 1))))))
+
+;; (let eg (compile-fndef eg-scope '(to (g) 'x)))
+;; (dump eg)
+;; (print (run (assemble eg)))
