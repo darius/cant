@@ -149,20 +149,21 @@ app:    (expr expr*)
 ;; OTOH if we'll have a closure pointer then it doesn't feel so
 ;; excessive to save/restore a frame pointer as well.
 
-(to (dump {fndef name n-params assembly})
+(to (dump (and def {fndef name n-params assembly}))
   (format "def: ~d ~w\n" name n-params)
   (let n assembly.count)
   (for each! ((`(,i ,insn) assembly.items))
     (format "  ~2w ~w\n" (- n i) insn))
   (newline)
-  (print (assemble {fndef name n-params assembly}))
+  (print (assemble `(,def)))
   (newline))
 
-(to (assemble {fndef entry-name n-params assembly})
+(to (assemble fndefs)
   (let buf (flexarray<-))
-  (let labels (map<-))
   (let constants (flexarray<-))
   (let constant-index (map<-))
+  (let entry-map (map<-))
+  (let labels (map<-))
 
   (to (idx<-constant value)
     (or (constant-index .get value)
@@ -172,9 +173,13 @@ app:    (expr expr*)
             i)))
 
   (to (emit opcode @args)
+    (print `(emit ,opcode ,@args))
     (for each! ((arg (reverse args)))
       (buf .push! arg))
     (buf .push! opcode))
+
+  (to (def-label label)
+    (labels .set! label buf.count))
 
   (to (offset<-label label)
     (let target (labels label))
@@ -184,47 +189,53 @@ app:    (expr expr*)
   (to (emit-call name)
     (emit 5 (idx<-constant name)))                    ;XXX right?
 
-  (for each! ((`(,i ,insn) ((reverse assembly) .items)))
-    (match insn
-      ({halt}
-       (emit 0))
-      ({return}
-       (emit 1 0))    ; return n  XXX supposed to be an arg to {return}
-      ({literal value}
-       (emit 2 (idx<-constant value)))
-      ({skip label}
-       (emit 3 (offset<-label label)))
-      ({if-no label}
-       (emit 4 (offset<-label label)))
-      ({fndef name arity}               ;XXX check arity somewhere
-       (emit-call name))
-      ({nip m n}
-       (emit 6 m n))
-      ({frame label}
-       (emit 7 (offset<-label label)))
-      ({local n}
-       (emit 8 n))
-      ({pop}
-       (emit 9))
-      ({primitive name arity opcode}
-       (emit opcode))
-      )
-    (labels .set! (+ i 1) buf.count))
+  (to (assemble-fndef {fndef entry-name n-params assembly})
+    (for each! ((`(,i ,insn) ((reverse assembly) .items)))
+      (print `(assembling ,insn))
+      (match insn
+        ({halt}
+         (emit 0))
+        ({return}
+         (emit 1 0))    ; return n  XXX supposed to be an arg to {return}
+        ({literal value}
+         (emit 2 (idx<-constant value)))
+        ({skip label}
+         (emit 3 (offset<-label label)))
+        ({if-no label}
+         (emit 4 (offset<-label label)))
+        ({fndef name arity}               ;XXX check arity somewhere
+         (emit-call name))
+        ({nip m n}
+         (emit 6 m n))
+        ({frame label}
+         (emit 7 (offset<-label label)))
+        ({local n}
+         (emit 8 n))
+        ({pop}
+         (emit 9))
+        ({primitive name arity opcode}
+         (emit opcode))
+        )
+      (def-label (+ i 1)))
+    (entry-map .set! entry-name buf.count))
 
-  (labels .set! buf.count buf.count)  ;; XXX um what?
-  (let entry-map (map<- `((,entry-name ,buf.count)
-                          (main ,buf.count) ;XXX for now
-                          )))
-
+  (each assemble-fndef fndefs)
   (emit 0)                              ;halt
-  (labels .set! 'halt-at buf.count)
-  (emit-call 'main)
+  (print `(assembling init))
+  (def-label 'halt-at)
+  (print `(def halt-at))
+  (emit-call (if (entry-map .maps? 'main)
+                 'main
+                 (do (let {fndef name _ _} fndefs.first)
+                     name)))
+  (print `(call))
   (emit 7 (offset<-label 'halt-at))
+  (print `(used halt-at))
 
   (let code (array<-list (reverse buf)))
   (let literals (array<-list constants))
-  (let entry-points (for each ((`(,name ,label) entry-map.items))
-                      `(,name ,(offset<-label label))))  ;TODO some sort of map.each method?
+  (let entry-points (for each ((`(,name ,rev-addr) entry-map.items))
+                      `(,name ,(- buf.count rev-addr))))  ;TODO some sort of map.each method?
   {object-module code literals entry-points})
 
 
@@ -246,7 +257,7 @@ app:    (expr expr*)
        (let new-pc (stack new-sp))
        (stack .set! new-sp result)
        (running new-pc new-sp))
-      (2  ; constant n
+      (2  ; literal n
        (let value (literals (code (+ pc 1))))
        (let new-sp (+ sp 1))
        (stack .set! new-sp value)
@@ -306,13 +317,15 @@ app:    (expr expr*)
 ;(print (compile-exp {global-scope} '(if 'a 'b 'c) '({return})))
 ;(print (compile-fndef '(to (f x) x)))
 
+;(to (run x y) x)
+
 (let eg-scope {global-scope})
 (let eg (compile-fndef eg-scope '(to (g) 'x)))
 (dump eg)
-(print (run (assemble eg) 'g))
+(print (run (assemble `(,eg)) 'g))
 
 (let eg2 (compile-fndef eg-scope '(to (f) (if (= 1 2) 'yes 'no))))
-(print (run (assemble eg2) 'f))
+(print (run (assemble `(,eg2)) 'f))
 
 ;; (dump (compile-fndef eg-scope '(to (g x) (if (= x x) 'yes 'no))))
 ;; (dump (compile-fndef eg-scope '(to (h x y) (if (= x y) 'yes (h (+ x 1) (- y 1))))))
