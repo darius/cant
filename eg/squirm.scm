@@ -311,6 +311,8 @@ app:    (expr expr*)
 (dump eg)
 (print (run (assemble eg) 'g))
 
+(print (run (assemble (compile-fndef eg-scope '(to (f) (if (= 1 2) 'yes 'no))))))
+
 ;; (dump (compile-fndef eg-scope '(to (g x) (if (= x x) 'yes 'no))))
 ;; (dump (compile-fndef eg-scope '(to (h x y) (if (= x y) 'yes (h (+ x 1) (- y 1))))))
 
