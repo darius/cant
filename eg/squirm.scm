@@ -98,7 +98,7 @@ app:    (expr expr*)
   (match (and (symbol? operator) (maybe-known-call scope operator))
     (#no
      (error "Only known calls for now" operator)) ;XXX
-    ((and known {primitive prim n-params})
+    ((and known {primitive prim n-params opcode})
      (surely (= n-params operands.count))
      (compile-operands scope operands `(,known ,@then)))
     ((and known {fndef name n-params})
@@ -109,12 +109,14 @@ app:    (expr expr*)
                          (_                   `(,known ,@then)))))))
 
 (to (maybe-known-call scope operator)
-  (match operator                       ;XXX stub
-    ('= {primitive '= 2})
-    ('- {primitive '- 2})
-    ('+ {primitive '+ 2})
-    ('h {fndef 'h 2})                   ;XXX stub
-    (_  #no)))
+  (match (primitives-2 .get operator)
+    ((? yeah? index) {primitive operator 2 (+ index first-prim2-opcode)})
+    (#no (match operator
+           ('h {fndef 'h 2})                   ;XXX stub
+           (_  #no)))))
+
+(let primitives-2 ('#(= - +) .inverse))
+(let first-prim2-opcode 10)
 
 (to (compile-operands scope operands then)
   (begin compiling ((operands operands)) ;of course this could currently be a foldr
@@ -202,12 +204,8 @@ app:    (expr expr*)
        (emit 8 n))
       ({pop}
        (emit 9))
-      ({primitive name arity}
-       (match name
-         ('= (emit 10))
-         ('- (emit 11))
-         ('+ (emit 12))
-         ))
+      ({primitive name arity opcode}
+       (emit opcode))
       )
     (labels .set! (+ i 1) buf.count))
   (array<-list (reverse buf)))
