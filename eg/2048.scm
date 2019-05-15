@@ -24,23 +24,22 @@
                      ((won? board)  "You win!")
                      (else          "")))
     (frame board score)
-    (let key ((get-key) .lowercase))
-    (case ((= #\q key) 'quitting)
-          ((= #\u key)
-           (if history.empty?
+    (match ((get-key) .lowercase)
+      (#\q 'quitting)
+      (#\u (if history.empty?
                (continue)
                (playing history.pop! #yes)))
-          ((arrows .maps? key)
-           (let sliding ((arrows key) board))
-           (case (sliding.empty? (continue))
-                 (else
-                  (history .push! board)
-                  (animate sliding score)
-                  (let small? (< (rng .random-integer 10) 9))
-                  (let next-board (plop rng sliding.last (if small? 2 4)))
-                  (playing next-board forfeit?))))
-          (else
-           (continue)))))
+      (key (match (arrows .get key)
+             (#no (continue))
+             (direction
+              (match (direction board)
+                ('() (continue))
+                (sliding
+                 (history .push! board)
+                 (animate sliding score)
+                 (let small? (< (rng .random-integer 10) 9))
+                 (let next-board (plop rng sliding.last (if small? 2 4)))
+                 (playing next-board forfeit?)))))))))
 
 (let heading "Use the arrow keys, U to undo (and forfeit), or Q to quit.\n\n")
 
