@@ -198,8 +198,8 @@ app:    (expr expr*)
     (let offset (- buf.count target)) ;XXX right? wrong?
     offset)
 
-  (to (emit-call name)
-    (emit 5 (idx<-constant name)))                    ;XXX right?
+  (to (emit-invoke name arity)
+    (emit 5 (idx<-constant name) arity))
 
   (to (assemble-fndef {fndef entry-name n-params assembly})
     (for each! ((`(,i ,insn) ((reverse assembly) .items)))
@@ -210,7 +210,7 @@ app:    (expr expr*)
         ({literal value}        (emit 2 (idx<-constant value)))
         ({skip label}           (emit 3 (offset<-label label)))
         ({if-no label}          (emit 4 (offset<-label label)))
-        ({fndef name arity}     (emit-call name))              ;XXX check arity somewhere
+        ({fndef name arity}     (emit-invoke name arity)) ;XXX check arity somewhere
         ({nip m n}              (emit 6 m n))
         ({frame label}          (emit 7 (offset<-label label)))
         ({local n}              (emit 8 n))
@@ -225,11 +225,12 @@ app:    (expr expr*)
   (print `(assembling init))
   (def-label 'halt-at)
   (print `(def halt-at))
-  (emit-call (if (entry-map .maps? 'main)
-                 'main
-                 (do (let {fndef name _ _} fndefs.first)
-                     name)))
-  (print `(call))
+  (emit-invoke (if (entry-map .maps? 'main)
+                   'main
+                   (do (let {fndef name _ _} fndefs.first)
+                       name))
+               0)
+  (print `(invoke))
   (emit 7 (offset<-label 'halt-at))
   (print `(used halt-at))
 
@@ -246,35 +247,41 @@ app:    (expr expr*)
   (let entry-table (map<- entry-points))  ;; TODO pre-link the entry-points (until a module reload)
   (let stack (array<-count 100))        ;XXX for the moment
   ;; The stack grows upwards; sp is the index of the top element.
-  (begin running ((pc 0) (sp -1))       ;gonna need a closure-pointer too
-    (print `(running ,pc ,sp : ,(code pc) <> ,(stack .slice 0 (+ sp 1))))
+  (begin running ((fp -1) (pc 0) (sp -1))       ;gonna need a closure-pointer too
+    (print `(running ,fp ,pc ,sp : ,(code pc) <> ,(stack .slice 0 (+ sp 1))))
     (match (code pc)
       (0  ; halt
        (stack sp))
       (1  ; return n
-       (let height (code (+ pc 1)))
+       (let height (code (+ pc 1)))     ;XXX not needed with fp now
+       (print `(return ,height : fp ,fp sp ,sp ,stack))
        (let result (stack sp))
-       (let new-sp (- sp 1 height))
-       (let new-pc (stack new-sp))
+       (let new-sp (- fp 2))
+       (let new-fp (stack new-sp))
+       (let new-pc (stack (+ new-sp 1)))
        (stack .set! new-sp result)
-       (running new-pc new-sp))
+       (running new-fp new-pc new-sp))
       (2  ; literal n
        (let value (literals (code (+ pc 1))))
        (let new-sp (+ sp 1))
        (stack .set! new-sp value)
-       (running (+ pc 2) new-sp))
+       (running fp (+ pc 2) new-sp))
       (3  ; skip n
        (let offset (code (+ pc 1)))
-       (running (+ pc 2 offset) sp))
+       (running fp (+ pc 2 offset) sp))
       (4  ; if-no n
        (let offset (code (+ pc 1)))
        (match (stack sp)
-         (#no (running (+ pc 2 offset) (- sp 1)))
-         (_   (running (+ pc 2)        (- sp 1)))))
-      (5  ; invoke n -- jump to the defn named by (literals n)
-       (let new-pc (entry-table (literals (code (+ pc 1)))))
-       (running new-pc sp))
+         (#no (running fp (+ pc 2 offset) (- sp 1)))
+         (_   (running fp (+ pc 2)        (- sp 1)))))
+      (5  ; invoke m n -- jump to the defn named by (literals m) with a frame of n args
+       (let m (code (+ pc 1)))
+       (let n (code (+ pc 2)))
+       (let new-pc (entry-table (literals m)))
+       (let new-fp (+ sp 1 (- n)))
+       (running new-fp new-pc sp))
       (6  ; nip m n -- keep the top n stack elements; drop the next m. (preparing for a tailcall.)
+       ;; XXX I guess we'll switch to CALL and TAILCALL ops
        (let m (code (+ pc 1)))
        (let n (code (+ pc 2)))
        ;; example: nip 3 2
@@ -285,34 +292,34 @@ app:    (expr expr*)
        (let hi (+ sp 1))
        (stack .move! (- hi n m)
               stack (- hi n) hi)
-       (running (+ pc 3) (- sp m)))
+       (running fp (+ pc 3) (- sp m)))
       (7  ; frame n -- push a return address
        (let offset (code (+ pc 1)))
-       (stack .set! (+ sp 1) (+ pc 2 offset))
-       (running (+ pc 2) (+ sp 1)))
+       (stack .set! (+ sp 1) fp)              ; saved frame pointer
+       (stack .set! (+ sp 2) (+ pc 2 offset)) ; return address
+       (running fp (+ pc 2) (+ sp 2)))
       (8  ; local n
-       ;; XXX need a frame pointer or smarter compiler
        (let n (code (+ pc 1)))
-       (stack .set! (+ sp 1) (stack (- sp n)))
-       (running (+ pc 2) (+ sp 1)))
+       (stack .set! (+ sp 1) (stack (+ fp n)))
+       (running fp (+ pc 2) (+ sp 1)))
       (9  ; pop
-       (running (+ pc 1) (- sp 1)))
+       (running fp (+ pc 1) (- sp 1)))
       (10 ; primitive =
        (let result (= (stack (- sp 1)) (stack sp)))
        (stack .set! (- sp 1) result)
-       (running (+ pc 1) (- sp 1)))
+       (running fp (+ pc 1) (- sp 1)))
       (11 ; primitive -
        (let result (- (stack (- sp 1)) (stack sp)))
        (stack .set! (- sp 1) result)
-       (running (+ pc 1) (- sp 1)))
+       (running fp (+ pc 1) (- sp 1)))
       (12 ; primitive +
        (let result (+ (stack (- sp 1)) (stack sp)))
-       (stack .set! (+ sp 1) result)
-       (running (+ pc 1) (- sp 1)))
+       (stack .set! (- sp 1) result)
+       (running fp (+ pc 1) (- sp 1)))
       (13 ; primitive *
        (let result (* (stack (- sp 1)) (stack sp)))
-       (stack .set! (+ sp 1) result)
-       (running (+ pc 1) (- sp 1)))
+       (stack .set! (- sp 1) result)
+       (running fp (+ pc 1) (- sp 1)))
       )))
 
 
@@ -327,9 +334,11 @@ app:    (expr expr*)
 (let eg (compile-module '((to (g) 'x))))
 (dump eg.first)
 (print (run (assemble eg) 'g))
+(print '---)
 
 (let eg2 (compile-module '((to (f) (if (= 1 2) 'yes 'no)))))
 (print (run (assemble eg2) 'f))
+(print '---)
 
 ;; (dump (compile-fndef eg-scope '(to (g x) (if (= x x) 'yes 'no))))
 ;; (dump (compile-fndef eg-scope '(to (h x y) (if (= x y) 'yes (h (+ x 1) (- y 1))))))
@@ -338,9 +347,9 @@ app:    (expr expr*)
 ;; (dump eg)
 ;; (print (run (assemble eg)))
 
-(when #no
-(let eg3 (compile-module '((to (main) (f 1))
+(when #yes
+(let eg3 (compile-module '((to (main) (f 10))
 ;                           (to (f n) (if (= n 0) 1 42)))))  ;;(* n (f (- n 1))))))))
-                           (to (f n) (if (= n 0) 1 (* n (f (- n 1))))))))
+                           (to (f n) (if (= n 1) 1 (* n (f (- n 1))))))))
 (print (run (assemble eg3) 'main))
 )
