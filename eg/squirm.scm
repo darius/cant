@@ -25,11 +25,12 @@ app:    (expr expr*)
 
 ;; In the "assembly" language:
 ;; The label of an instruction is the count of instructions from itself to the end of code.
-;; For example, in: A B {if-no 4} C {skip 2} D {return} E {return}
+;; For example, in: A B {if-no 4} C {skip 2} D {return 0} E {return 0}
 ;;  the {if-no 4} branches to D; the {skip 2} jumps to E.
 
 (to (compile-module module)
-  (let scope {global-scope})
+  (let scope {module-scope (map<- (for each ((`(to (,f ,@params) ,@_) module))
+                                    `(,f {fndef ,f ,params.count})))})
   (for each ((def module))
     (compile-fndef scope def)))
 
@@ -37,7 +38,7 @@ app:    (expr expr*)
   {fndef name params.count
          (compile-seq {scope scope params} ;XXX params are patterns, not just var names
                       body
-                      '({return}))})
+                      `({return ,params.count}))})
 
 (to (compile-seq scope seq then)
   (match seq
@@ -73,6 +74,8 @@ app:    (expr expr*)
   (match scope
     ({global-scope}
      (error "Unbound variable" name))   ;XXX
+    ({module-scope _}
+     (error "Unbound variable" name))   ;XXX
     ({scope parent frame}
      (match (frame .find name #no)
        (#no (error "Unbound variable" name)) ;XXX
@@ -95,27 +98,36 @@ app:    (expr expr*)
     (_ (compile-call scope exp.first exp.rest then))))
 
 (to (compile-call scope operator operands then)
-  (match (and (symbol? operator) (maybe-known-call scope operator))
+  (match (and (symbol? operator) (scope-lookup scope operator))
     (#no
      (error "Only known calls for now" operator)) ;XXX
     ((and known {primitive prim n-params opcode})
-     (surely (= n-params operands.count))
+     (surely (= n-params operands.count)) ;XXX stub
      (compile-operands scope operands `(,known ,@then)))
     ((and known {fndef name n-params})
-     (surely (= n-params operands.count))
-     (compile-operands scope operands
-                       (match then
-                         (`({return} ,@then2) `(,known ,@then2))
-                         (_                   `(,known ,@then)))))))
+     (surely (= n-params operands.count)) ;XXX stub
+     (match then
+       (`({return ,_} ,@then2)
+        (compile-operands scope operands
+                          `(,known ,@then2))) ;XXX needs tailcall adjustment
+       (_
+        `({frame ,then.count}
+          ,@(compile-operands scope operands `(,known ,@then))))))))
 
-(to (maybe-known-call scope operator)
-  (match (primitives-2 .get operator)
-    ((? yeah? index) {primitive operator 2 (+ index first-prim2-opcode)})
-    (#no (match operator
-           ('h {fndef 'h 2})                   ;XXX stub
-           (_  #no)))))
+(to (scope-lookup scope name)
+  (match scope
+    ({module-scope defs-map}
+     (or (defs-map .get name)
+         (match (primitives-2 .get name)
+           ((? yeah? index) {primitive name 2 (+ index first-prim2-opcode)})
+           (#no (error "Unbound variable" name)))))
+    ({scope parent frame}
+     (match (frame .find name #no)
+       (#no (scope-lookup parent name))
+       (n `({local ,n} ,@then))))))                    ;TODO generalize
 
-(let primitives-2 ('#(= - +) .inverse))
+
+(let primitives-2 ('#(= - + *) .inverse))
 (let first-prim2-opcode 10)
 
 (to (compile-operands scope operands then)
@@ -130,12 +142,12 @@ app:    (expr expr*)
 
 (to (return? then)
   (match then
-    (`({return} ,@_) #yes)
-    (_               #no)))
+    (`({return ,_} ,@_) #yes)
+    (_                  #no)))
 
 (to (skip code)
   (if (return? code) 
-      {return}
+      code.first
       {skip (target code)}))
 
 (to (target code)
@@ -193,28 +205,17 @@ app:    (expr expr*)
     (for each! ((`(,i ,insn) ((reverse assembly) .items)))
       (print `(assembling ,insn))
       (match insn
-        ({halt}
-         (emit 0))
-        ({return}
-         (emit 1 0))    ; return n  XXX supposed to be an arg to {return}
-        ({literal value}
-         (emit 2 (idx<-constant value)))
-        ({skip label}
-         (emit 3 (offset<-label label)))
-        ({if-no label}
-         (emit 4 (offset<-label label)))
-        ({fndef name arity}               ;XXX check arity somewhere
-         (emit-call name))
-        ({nip m n}
-         (emit 6 m n))
-        ({frame label}
-         (emit 7 (offset<-label label)))
-        ({local n}
-         (emit 8 n))
-        ({pop}
-         (emit 9))
-        ({primitive name arity opcode}
-         (emit opcode))
+        ({halt}                 (emit 0))
+        ({return n}             (emit 1 n))
+        ({literal value}        (emit 2 (idx<-constant value)))
+        ({skip label}           (emit 3 (offset<-label label)))
+        ({if-no label}          (emit 4 (offset<-label label)))
+        ({fndef name arity}     (emit-call name))              ;XXX check arity somewhere
+        ({nip m n}              (emit 6 m n))
+        ({frame label}          (emit 7 (offset<-label label)))
+        ({local n}              (emit 8 n))
+        ({pop}                  (emit 9))
+        ({primitive _ _ opcode} (emit opcode))
         )
       (def-label (+ i 1)))
     (entry-map .set! entry-name buf.count))
@@ -246,7 +247,7 @@ app:    (expr expr*)
   (let stack (array<-count 100))        ;XXX for the moment
   ;; The stack grows upwards; sp is the index of the top element.
   (begin running ((pc 0) (sp -1))       ;gonna need a closure-pointer too
-;    (print `(running ,pc ,sp : ,(code pc) <> ,(stack .slice 0 (+ sp 1))))
+    (print `(running ,pc ,sp : ,(code pc) <> ,(stack .slice 0 (+ sp 1))))
     (match (code pc)
       (0  ; halt
        (stack sp))
@@ -269,7 +270,7 @@ app:    (expr expr*)
        (let offset (code (+ pc 1)))
        (match (stack sp)
          (#no (running (+ pc 2 offset) (- sp 1)))
-         (_   (running (+ pc (code (+ pc 1))) (- sp 1)))))
+         (_   (running (+ pc 2)        (- sp 1)))))
       (5  ; invoke n -- jump to the defn named by (literals n)
        (let new-pc (entry-table (literals (code (+ pc 1)))))
        (running new-pc sp))
@@ -305,7 +306,11 @@ app:    (expr expr*)
        (stack .set! (- sp 1) result)
        (running (+ pc 1) (- sp 1)))
       (12 ; primitive +
-       (let result (= (stack (- sp 1)) (stack sp)))
+       (let result (+ (stack (- sp 1)) (stack sp)))
+       (stack .set! (+ sp 1) result)
+       (running (+ pc 1) (- sp 1)))
+      (13 ; primitive *
+       (let result (* (stack (- sp 1)) (stack sp)))
        (stack .set! (+ sp 1) result)
        (running (+ pc 1) (- sp 1)))
       )))
@@ -314,7 +319,7 @@ app:    (expr expr*)
 ;; Smoke test
 
 ;(print (compile-fndef '(to (foo x) (if 'a 'b 'c))))
-;(print (compile-exp {global-scope} '(if 'a 'b 'c) '({return})))
+;(print (compile-exp {global-scope} '(if 'a 'b 'c) '({return 0})))
 ;(print (compile-fndef '(to (f x) x)))
 
 ;(to (run x y) x)
@@ -332,3 +337,10 @@ app:    (expr expr*)
 ;; (let eg (compile-fndef eg-scope '(to (g) 'x)))
 ;; (dump eg)
 ;; (print (run (assemble eg)))
+
+(when #no
+(let eg3 (compile-module '((to (main) (f 1))
+;                           (to (f n) (if (= n 0) 1 42)))))  ;;(* n (f (- n 1))))))))
+                           (to (f n) (if (= n 0) 1 (* n (f (- n 1))))))))
+(print (run (assemble eg3) 'main))
+)
