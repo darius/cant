@@ -39,8 +39,8 @@
 (to (read-collection source)
   (let name source.read-line)
   (let levels-str source.read-all)
-  (let grids (for each ((initial-config (levels-str .split "\n\n")))
-               (sokoban-grid<- (parse initial-config))))
+  (let grids (for each ((floor-plan (levels-str .split "\n\n")))
+               (sokoban-grid<- (parse floor-plan))))
   `(,grids ,name))
 
 (to (start grids name)
@@ -92,11 +92,11 @@ Level ~w ~d Move ~w")
            (trail .push! after)))
        (playing level)))))
 
-(to (parse initial-config)
-  (surely (do (let lines initial-config.split-lines) ;XXX require
+(to (parse floor-plan)
+  (surely (do (let lines floor-plan.split-lines) ;XXX require
               (let lengths (each '.count lines))  
               (= 1 lengths.range.count)))
-  (array<-list initial-config))
+  (array<-list floor-plan))
 
 (to (sokoban-grid<- grid)
   ;; We represent a grid as a mutable array of characters, including
