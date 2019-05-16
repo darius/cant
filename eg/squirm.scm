@@ -84,7 +84,7 @@ app:    (expr expr*)
      (let `',value exp)
      (compile-constant value then))
     ('if
-     (let `(if ,test ,yeah ,nope) exp)
+     (let `(if ,test ,yeah ,@(optional nope)) exp)
      (let n (compile-exp scope nope then))
      (let y (compile-exp scope yeah `(,(skip then) ,@n)))
      (compile-exp scope test `({if-no ,(target n)} ,@y)))
