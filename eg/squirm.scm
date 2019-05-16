@@ -319,13 +319,12 @@ app:    (expr expr*)
 
 ;(to (run x y) x)
 
-(let eg-scope {global-scope})
-(let eg (compile-fndef eg-scope '(to (g) 'x)))
-(dump eg)
-(print (run (assemble `(,eg)) 'g))
+(let eg (compile-module '((to (g) 'x))))
+(dump eg.first)
+(print (run (assemble eg) 'g))
 
-(let eg2 (compile-fndef eg-scope '(to (f) (if (= 1 2) 'yes 'no))))
-(print (run (assemble `(,eg2)) 'f))
+(let eg2 (compile-module '((to (f) (if (= 1 2) 'yes 'no)))))
+(print (run (assemble eg2) 'f))
 
 ;; (dump (compile-fndef eg-scope '(to (g x) (if (= x x) 'yes 'no))))
 ;; (dump (compile-fndef eg-scope '(to (h x y) (if (= x y) 'yes (h (+ x 1) (- y 1))))))
