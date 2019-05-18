@@ -25,7 +25,7 @@ app:    (expr expr*)
 
 ;; In the "assembly" language:
 ;; The label of an instruction is the count of instructions from itself to the end of code.
-;; For example, in: A B {if-no 4} C {skip 2} D {return 0} E {return 0}
+;; For example, in: A B {if-no 4} C {skip 2} D {return} E {return}
 ;;  the {if-no 4} branches to D; the {skip 2} jumps to E.
 
 (to (compile-module module)
@@ -38,7 +38,7 @@ app:    (expr expr*)
   {fndef name params.count
          (compile-seq {scope scope params} ;XXX params are patterns, not just var names
                       body
-                      `({return ,params.count}))})
+                      '({return}))})
 
 (to (compile-seq scope seq then)
   (match seq
@@ -72,8 +72,6 @@ app:    (expr expr*)
 
 (to (compile-var-ref scope name then)
   (match scope
-    ({global-scope}
-     (error "Unbound variable" name))   ;XXX
     ({module-scope _}
      (error "Unbound variable" name))   ;XXX
     ({scope parent frame}
@@ -107,7 +105,7 @@ app:    (expr expr*)
     ((and known {fndef name n-params})
      (surely (= n-params operands.count)) ;XXX stub
      (match then
-       (`({return ,_} ,@then2)
+       (`({return} ,@then2)
         (compile-operands scope operands
                           `(,known ,@then2))) ;XXX needs tailcall adjustment
        (_
@@ -142,8 +140,8 @@ app:    (expr expr*)
 
 (to (return? then)
   (match then
-    (`({return ,_} ,@_) #yes)
-    (_                  #no)))
+    (`({return} ,@_) #yes)
+    (_               #no)))
 
 (to (skip code)
   (if (return? code) 
@@ -206,7 +204,7 @@ app:    (expr expr*)
       (print `(assembling ,insn))
       (match insn
         ({halt}                 (emit 0))
-        ({return n}             (emit 1 n))
+        ({return}               (emit 1))
         ({literal value}        (emit 2 (idx<-constant value)))
         ({skip label}           (emit 3 (offset<-label label)))
         ({if-no label}          (emit 4 (offset<-label label)))
@@ -252,9 +250,7 @@ app:    (expr expr*)
     (match (code pc)
       (0  ; halt
        (stack sp))
-      (1  ; return n
-       (let height (code (+ pc 1)))     ;XXX not needed with fp now
-       (print `(return ,height : fp ,fp sp ,sp ,stack))
+      (1  ; return
        (let result (stack sp))
        (let new-sp (- fp 2))
        (let new-fp (stack new-sp))
@@ -326,7 +322,7 @@ app:    (expr expr*)
 ;; Smoke test
 
 ;(print (compile-fndef '(to (foo x) (if 'a 'b 'c))))
-;(print (compile-exp {global-scope} '(if 'a 'b 'c) '({return 0})))
+;(print (compile-exp {global-scope} '(if 'a 'b 'c) '({return})))
 ;(print (compile-fndef '(to (f x) x)))
 
 ;(to (run x y) x)
@@ -349,7 +345,6 @@ app:    (expr expr*)
 
 (when #yes
 (let eg3 (compile-module '((to (main) (f 10))
-;                           (to (f n) (if (= n 0) 1 42)))))  ;;(* n (f (- n 1))))))))
                            (to (f n) (if (= n 1) 1 (* n (f (- n 1))))))))
 (print (run (assemble eg3) 'main))
 )

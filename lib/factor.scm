@@ -7,7 +7,7 @@
   (if (= n 1)
       '()
       (begin trying ((d 2) (n n))
-        (if (= 0 (n .remainder d))      ;TODO .divides?
+        (if (d .divides? n)
             (cons d (if (= d n) '() (trying d (n .quotient d))))
             (trying (+ d 1) n)))))
 
