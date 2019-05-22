@@ -59,6 +59,8 @@
     (`(,operator ,@operands)
      {call (exp-parse operator) (each exp-parse operands)})))
 
+;; TODO: macros
+
 ;; sev: squirm evaluate
 ;; exp: expression
 ;; r: environment
@@ -128,8 +130,24 @@
        (#no (env-get parent name))
        (value value)))))
 
+;; TODO renamings: s/array/tuple
+;; TODO special prims: ! spawn eval apply error me throw catch ...
+;; TODO file I/O, networks, time
+;; TODO squeam methods as prims
+
+(let primitives-from-squeam
+  '(print display newline read
+    cons chain 
+    null? cons? list? number? integer? symbol? claim? char? string? array?
+    symbol<- char<-
+    number<-string string<-number list<-string self-evaluating? 
+    inexact<-exact exact<-inexact floor not assoc sqrt
+    < = > <= >= not= 
+    * / + - expt abs gcd
+    ))
+
 (let global-map
-  (map<- (for each ((name '(cons print = * -)))
+  (map<- (for each ((name primitives-from-squeam))
            `(,name {primitive ,(evaluate name '())}))))
 
 (to (module-env<- module)
