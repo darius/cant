@@ -29,7 +29,10 @@
 
 (to (enqueue q state)
   (match state
-    ({go _ _} (push q state))
+    ({go _ _}
+     (push q state))
+    ({fork state1 state2}
+     (enqueue (enqueue q state1) state2))
     ({halt}   q)))
 
 (to (module-parse module)
@@ -127,7 +130,13 @@
      (surely (= args.count ps.count))
      (sev e (env-extend r ps args) k))
     ({primitive p}
-     {go k (call p args)})))
+     {go k (call p args)})
+    ({spawn}
+     (let `(,f1) args)
+     (let new-pid 'XXX)                 ;TODO
+     {fork {go k new-pid}
+           (apply f1 '() {halt})})
+    ))
 
 (to (env-extend r ps vals)
   (surely (every symbol? ps))      ;TODO patterns
@@ -147,7 +156,7 @@
        (value value)))))
 
 ;; TODO renamings: s/array/tuple
-;; TODO special prims: ! spawn eval apply error me throw catch ...
+;; TODO special prims: ! eval apply error me throw catch ...
 ;; TODO file I/O, networks, time
 ;; TODO squeam methods as prims
 
@@ -166,13 +175,17 @@
   (map<- (for each ((name primitives-from-squeam))
            `(,name {primitive ,(evaluate name '())}))))
 
+(global-map .set! 'spawn {spawn})
+
 (to (module-env<- module)
   {module-env (map<- (for each ((def module))
                        (match def
                          ({to name _ _} `(,name ,def)))))})
 
 (to (smoke-test)
-  (run '((to (main) (print (f 10)))
+  (run '((to (main)
+           (spawn (given () (print "hey") (print (f 15))))
+           (print (f 10)))
          (to (f n)
            (if (= n 0)
                1
