@@ -60,8 +60,18 @@
      {if (exp-parse t) (exp-parse y) (exp-parse n)})
     (`(do ,@es)
      (seq-parse es))
+    (`(? ,@clauses)
+     {receive (each clause-parse clauses)})
     (`(,operator ,@operands)
      {call (exp-parse operator) (each exp-parse operands)})))
+
+(to (clause-parse clause)
+  (let `(,pattern ,@seq) clause)
+  {clause (pattern-parse pattern) (seq-parse seq)})
+
+(to (pattern-parse pattern)
+  (match pattern
+    ((? symbol?) pattern)))             ;TODO: more
 
 ;; TODO: macros
 
