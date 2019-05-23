@@ -94,7 +94,9 @@
      (sev e r {branch exp r k}))
     ({then e1 e2}
      (sev e1 r {then-drop e2 r k}))
-    ;; TODO: ? match
+    ({receive clauses}
+     (error "TODO")) 
+   ;; TODO: match
     ))
 
 (to (go k value)
