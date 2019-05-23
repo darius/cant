@@ -28,7 +28,6 @@
         (running (enqueue q2 (go k value))))))))
 
 (to (enqueue q state)
-;;  (print `(enqueue q ,state))
   (match state
     ({go _ _} (push q state))
     ({halt}   q)))
@@ -52,9 +51,9 @@
 
 (to (exp-parse e)
   (match e
+    ((? symbol?)          {var e})
     ((? self-evaluating?) {const e})
     (`',value             {const value})
-    ((? symbol?)          {var e})
     (`(given ,ps ,@body)
      {given ps (seq-parse body)}) ;TODO patterns
     (`(if ,t ,y ,n)
