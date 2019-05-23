@@ -33,7 +33,8 @@
      (push q state))
     ({fork state1 state2}
      (enqueue (enqueue q state1) state2))
-    ({halt}   q)))
+    ({halt}
+     q)))
 
 (to (module-parse module)
   (each def-parse module))
