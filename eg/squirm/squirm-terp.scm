@@ -42,10 +42,13 @@
      {to name params (seq-parse body)})))
 
 (to (seq-parse exps)
-  ;; TODO let
   (match exps
-    (`(,e) (exp-parse e))
-    (`(,e ,@es) {then (exp-parse e) (seq-parse es)})))
+    (`(,e)
+     (exp-parse e))
+    (`((let ,p ,e) ,@es)
+     (exp-parse `((given (,p) ,@es) ,e)))
+    (`(,e ,@es)
+     {then (exp-parse e) (seq-parse es)})))
 
 (to (exp-parse e)
   (match e
@@ -56,6 +59,8 @@
      {given ps (seq-parse body)}) ;TODO patterns
     (`(if ,t ,y ,n)
      {if (exp-parse t) (exp-parse y) (exp-parse n)})
+    (`(do ,@es)
+     (seq-parse es))
     (`(,operator ,@operands)
      {call (exp-parse operator) (each exp-parse operands)})))
 
@@ -157,5 +162,9 @@
 
 (to (smoke-test)
   (run '((to (main) (print (f 10)))
-         (to (f n) (if (= n 0) 1 (* n (f (- n 1))))))))
+         (to (f n)
+           (if (= n 0)
+               1
+               (do (let x (f (- n 1)))
+                   (* n x)))))))
 (smoke-test)
