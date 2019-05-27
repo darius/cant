@@ -1,12 +1,5 @@
 ;; Trivial Squirm interpreter, trampolined style
 
-;; TODO:
-;; * how to represent processes with mailboxes? that part won't naturally
-;;   be purely functional
-;;   * I guess it is natural to stick the current process structure
-;;     (mutable) in the current k. It could be a pair of ID and inbox.
-;;     A language-level PID datum could be the same object.
-
 (import (use "lib/queue")
   empty push peek)
 
@@ -14,26 +7,45 @@
   (squirm-run module (or entry 'main) (or arguments '())))
 
 (to (squirm-run module entry arguments)
-  (let state {go {start entry (module-env<- (module-parse module))}
-                 arguments})
-  (running (enqueue empty state)))
+  (let pid (process<- {go {start entry (module-env<- (module-parse module))}
+                          arguments}))
+  (run-queue .^= (push empty pid))
+  (running))
 
-(to (running q)
-  (match (peek q)
-    ({empty} 'done)
-    ({nonempty state q2}
-     (match state
+(let pid-counter (box<- 0))
+
+(to (process<- start-state)
+  (let pid pid-counter.^)
+  (pid-counter .^= (+ pid 1))
+  (let state (box<- start-state))
+  (let inbox (box<- empty))
+  (make process
+    ({.selfie sink}
+     (format .to-sink sink "#<pid ~w>" pid))
+    ({.enqueue message}
+     (inbox .^= (push inbox.^ message)))
+    ({.run-a-slice}
+     (match state.^
        ({go k value}
-        (running (enqueue q2 (go k value))))))))
+        (the-running-process .^= process)
+        (let state2 (go k value))
+        (the-running-process .^= #no)
+        (state .^= state2)
+        (not= state2 {halt}))
+       ({halt}                          ;TODO does this come up?
+        #no)))))
 
-(to (enqueue q state)
-  (match state
-    ({go _ _}
-     (push q state))
-    ({fork state1 state2}
-     (enqueue (enqueue q state1) state2))
-    ({halt}
-     q)))
+(let run-queue (box<- empty))
+(let the-running-process (box<- #no))
+
+(to (running)
+  (match (peek run-queue.^)
+    ({empty} 'done)
+    ({nonempty pid q2}
+     (run-queue .^= q2)
+     (when pid.run-a-slice
+       (run-queue .^= (push run-queue.^ pid)))
+     (running))))
 
 (to (module-parse module)
   (each def-parse module))
@@ -113,6 +125,8 @@
      (sev (if value y n) r k))
     ({then-drop e2 r k}
      (sev e2 r k))
+    ({spawn f}
+     (apply f value {halt}))
     ({start entry r}
      (sev {call {var entry} (for each ((arg value)) {const arg})}
           r
@@ -137,10 +151,9 @@
      {go k (call p args)})
     ({spawn}
      (let `(,f1) args)
-     (let new-pid 'XXX)                 ;TODO
-     {fork {go k new-pid}
-           (apply f1 '() {halt})})
-    ))
+     (let new-process (process<- {go {spawn f1} '()}))
+     (run-queue .^= (push run-queue.^ new-process))
+     {go k new-process})))
 
 (to (env-extend r ps vals)
   (surely (every symbol? ps))      ;TODO patterns
