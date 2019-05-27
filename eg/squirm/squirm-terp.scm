@@ -14,9 +14,8 @@
   (squirm-run module (or entry 'main) (or arguments '())))
 
 (to (squirm-run module entry arguments)
-  (let state (sev {call {var entry} (for each ((arg arguments)) {const arg})}
-                  (module-env<- (module-parse module))
-                  {halt}))
+  (let state {go {start entry (module-env<- (module-parse module))}
+                 arguments})
   (running (enqueue empty state)))
 
 (to (running q)
@@ -114,6 +113,10 @@
      (sev (if value y n) r k))
     ({then-drop e2 r k}
      (sev e2 r k))
+    ({start entry r}
+     (sev {call {var entry} (for each ((arg value)) {const arg})}
+          r
+          {halt}))
     ({halt}
      {halt})
     ))
