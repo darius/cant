@@ -1,7 +1,7 @@
 ;; Trivial Squirm interpreter, trampolined style
 
 (import (use "lib/queue")
-  empty push peek)
+  empty empty? push peek)
 
 (to (run module @(optional entry arguments))
   (squirm-run module (or entry 'main) (or arguments '())))
@@ -23,7 +23,13 @@
     ({.selfie sink}
      (format .to-sink sink "#<pid ~w>" pid))
     ({.enqueue message}
-     (inbox .^= (push inbox.^ message)))
+     (inbox .^= (push inbox.^ message))
+     (match state.^
+       ({blocked a b c}
+        (run-queue .^= (push run-queue.^ process))
+        (state .^= {go {unblocked a b c} #no})) ;XXX clumsy
+       (_)))
+    ({.inbox} inbox)                    ;XXX ugh
     ({.run-a-slice}
      (match state.^
        ({go k value}
@@ -31,9 +37,20 @@
         (let state2 (go k value))
         (the-running-process .^= #no)
         (state .^= state2)
-        (not= state2 {halt}))
-       ({halt}                          ;TODO does this come up?
-        #no)))))
+        (match state2
+          ({blocked a b c}
+           (surely (empty? inbox.^)))
+          ({halt})
+          (_ (run-queue .^= (push run-queue.^ process)))))
+       ({halt})                          ;TODO does this come up?
+       ({blocked _ _ _}                 ;or this?
+        (surely (empty? inbox.^)))
+       ))))
+
+(to (! pid message)
+  ;; TODO make sure pid is a pid
+  (pid .enqueue message)
+  #no)
 
 (let run-queue (box<- empty))
 (let the-running-process (box<- #no))
@@ -43,8 +60,7 @@
     ({empty} 'done)
     ({nonempty pid q2}
      (run-queue .^= q2)
-     (when pid.run-a-slice
-       (run-queue .^= (push run-queue.^ pid)))
+     pid.run-a-slice
      (running))))
 
 (to (module-parse module)
@@ -110,7 +126,17 @@
     ({then e1 e2}
      (sev e1 r {then-drop e2 r k}))
     ({receive clauses}
-     (error "TODO")) 
+     (surely (= 1 clauses.count))
+     (let {clause p e} clauses.first)
+     (surely (symbol? p))
+     (let me the-running-process.^)
+     (let inbox me.inbox)
+     (match (peek inbox.^)
+       ({empty}
+        {blocked exp r k})
+       ({nonempty msg rest}
+        (inbox .^= rest)
+        (apply {closure r `(,p) e} `(,msg) k))))
    ;; TODO: match
     ))
 
@@ -131,8 +157,12 @@
      (sev {call {var entry} (for each ((arg value)) {const arg})}
           r
           {halt}))
+    ({unblocked exp r k}
+     (sev exp r k))
     ({halt}
      {halt})
+    ({blocked exp r k}
+     (surely #no))
     ))
 
 (to (ev-operands f rev-args operands r k)
@@ -173,9 +203,12 @@
        (value value)))))
 
 ;; TODO renamings: s/array/tuple
-;; TODO special prims: ! eval apply error me throw catch ...
+;; TODO special prims: eval apply error throw catch ...
 ;; TODO file I/O, networks, time
 ;; TODO squeam methods as prims
+
+(to (me)
+  the-running-process.^)
 
 (let primitives-from-squeam
   '(print display newline read
@@ -186,6 +219,7 @@
     inexact<-exact exact<-inexact floor not assoc sqrt
     < = > <= >= not= 
     * / + - expt abs gcd
+    ! me
     ))
 
 (let global-map
@@ -201,8 +235,17 @@
 
 (to (smoke-test)
   (run '((to (main)
-           (spawn (given () (print "hey") (print (f 15))))
-           (print (f 10)))
+           (let pid (spawn (given ()
+                             (report "hey")
+                             (report "dud")
+                             (? (msg (report (cons 'got (cons msg '())))))
+                             (report "dude")
+                             (report (f 15)))))
+           (report (cons 'pid (cons pid '())))
+           (! pid 'yoohoo)
+           (report (f 10)))
+         (to (report x)
+           (print (cons (me) (cons x '()))))
          (to (f n)
            (if (= n 0)
                1
