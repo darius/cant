@@ -3,6 +3,10 @@
 (import (use "lib/queue")
   empty empty? push peek)
 
+(to (run-file filename @(optional entry arguments))
+  (let module (with-input-file read-all filename))
+  (run module entry arguments))
+
 (to (run module @(optional entry arguments))
   (squirm-run module (or entry 'main) (or arguments '())))
 
@@ -234,21 +238,6 @@
                          ({to name _ _} `(,name ,def)))))})
 
 (to (smoke-test)
-  (run '((to (main)
-           (let pid (spawn (given ()
-                             (report "hey")
-                             (report "dud")
-                             (? (msg (report (cons 'got (cons msg '())))))
-                             (report "dude")
-                             (report (f 15)))))
-           (report (cons 'pid (cons pid '())))
-           (! pid 'yoohoo)
-           (report (f 10)))
-         (to (report x)
-           (print (cons (me) (cons x '()))))
-         (to (f n)
-           (if (= n 0)
-               1
-               (do (let x (f (- n 1)))
-                   (* n x)))))))
+  (run-file "eg/squirm/smoke-test.scm"))
+
 (smoke-test)
