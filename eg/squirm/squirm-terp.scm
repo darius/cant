@@ -214,9 +214,12 @@
 (to (me)
   the-running-process.^)
 
+(to (car x) x.first)
+(to (cdr x) x.rest)
+
 (let primitives-from-squeam
   '(print display newline read
-    cons chain 
+    cons car cdr chain 
     null? cons? list? number? integer? symbol? claim? char? string? array?
     symbol<- char<-
     number<-string string<-number list<-string self-evaluating? 
@@ -239,5 +242,6 @@
 
 (to (smoke-test)
   (run-file "eg/squirm/smoke-test.scm"))
+;  (run-file "eg/squirm/eg/universal_server_v0.scm"))
 
 (smoke-test)
