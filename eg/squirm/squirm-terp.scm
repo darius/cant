@@ -206,10 +206,6 @@
        (#no (env-get parent name))
        (value value)))))
 
-;; TODO special prims: eval apply error throw catch ...
-;; TODO file I/O, networks, time
-;; TODO squeam methods as prims
-
 (to (me)
   the-running-process.^)
 
