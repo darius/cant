@@ -206,7 +206,6 @@
        (#no (env-get parent name))
        (value value)))))
 
-;; TODO renamings: s/array/tuple
 ;; TODO special prims: eval apply error throw catch ...
 ;; TODO file I/O, networks, time
 ;; TODO squeam methods as prims
@@ -217,10 +216,12 @@
 (to (car x) x.first)
 (to (cdr x) x.rest)
 
+(let tuple? array?)
+
 (let primitives-from-squeam
   '(print display newline read
     cons car cdr chain 
-    null? cons? list? number? integer? symbol? claim? char? string? array?
+    null? cons? list? number? integer? symbol? claim? char? string? tuple?
     symbol<- char<-
     number<-string string<-number list<-string self-evaluating? 
     inexact<-exact exact<-inexact floor not assoc sqrt
