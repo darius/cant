@@ -1,4 +1,4 @@
-;; Trivial Squirm interpreter, trampolined style
+;; Trivial Squirm interpreter
 
 (import (use "lib/queue")
   empty empty? push peek)
