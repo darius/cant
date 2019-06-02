@@ -24,8 +24,10 @@
   (let state (box<- start-state))
   (let inbox (box<- empty))
   (make process
+
     ({.selfie sink}
      (format .to-sink sink "#<pid ~w>" pid))
+
     ({.enqueue message}
      (inbox .^= (push inbox.^ message))
      (match state.^
@@ -33,7 +35,18 @@
         (run-queue .^= (push run-queue.^ process))
         (state .^= {go {unblocked a b c} #no})) ;XXX clumsy
        (_)))
-    ({.inbox} inbox)                    ;XXX ugh
+
+    ({.receive (and exp {receive clauses}) r k}
+     (surely (= 1 clauses.count))
+     (let {clause p e} clauses.first)
+     (surely (symbol? p))
+     (match (peek inbox.^)
+       ({empty}
+        {blocked exp r k})
+       ({nonempty msg rest}
+        (inbox .^= rest)
+        (apply {closure r `(,p) e} `(,msg) k))))
+
     ({.run-a-slice}
      (match state.^
        ({go k value}
@@ -129,18 +142,8 @@
      (sev e r {branch exp r k}))
     ({then e1 e2}
      (sev e1 r {then-drop e2 r k}))
-    ({receive clauses}
-     (surely (= 1 clauses.count))
-     (let {clause p e} clauses.first)
-     (surely (symbol? p))
-     (let me the-running-process.^)
-     (let inbox me.inbox)
-     (match (peek inbox.^)
-       ({empty}
-        {blocked exp r k})
-       ({nonempty msg rest}
-        (inbox .^= rest)
-        (apply {closure r `(,p) e} `(,msg) k))))
+    ({receive _}
+     (the-running-process.^ .receive exp r k))
    ;; TODO: match
     ))
 
