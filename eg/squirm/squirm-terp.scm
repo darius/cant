@@ -37,14 +37,14 @@
        (_)))
 
     ({.receive (and exp {receive clauses}) r k}
-     (surely (= 1 clauses.count))
-     (let {clause p e} clauses.first)
-     (surely (symbol? p))
      (match (peek inbox.^)
        ({empty}
         {blocked exp r k})
        ({nonempty msg rest}
         (inbox .^= rest)
+        (surely (= 1 clauses.count))    ;restrictions just for now
+        (let {clause p e} clauses.first)
+        (surely (symbol? p))
         (apply {closure r `(,p) e} `(,msg) k))))
 
     ({.run-a-slice}
