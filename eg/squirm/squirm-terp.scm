@@ -3,6 +3,9 @@
 (import (use "lib/queue")
   empty empty? push peek)
 
+
+;; Main
+
 (to (run-file filename @(optional entry arguments))
   (let module (with-input-file read-all filename))
   (run module entry arguments))
@@ -15,6 +18,9 @@
                           arguments}))
   (run-queue .^= (push empty pid))
   (running))
+
+
+;; Processes, scheduling, message passing
 
 (let pid-counter (box<- 0))
 
@@ -80,6 +86,9 @@
      pid.run-a-slice
      (running))))
 
+
+;; Language syntax
+
 (to (module-parse module)
   (each def-parse module))
 
@@ -122,6 +131,9 @@
     ((? symbol?) pattern)))             ;TODO: more
 
 ;; TODO: macros
+
+
+;; Interpreter in trampolined style
 
 ;; sev: squirm evaluate
 ;; exp: expression
@@ -190,6 +202,9 @@
      (run-queue .^= (push run-queue.^ new-process))
      {go k new-process})))
 
+
+;; Environments
+
 (to (env-extend r ps vals)
   (surely (every symbol? ps))      ;TODO patterns
   {local-env (map<- (zip ps vals))
@@ -206,6 +221,9 @@
      (match (map .get name)
        (#no (env-get parent name))
        (value value)))))
+
+
+;; Primitive procedures and the global environment
 
 (to (me)
   the-running-process.^)
@@ -237,6 +255,9 @@
   {module-env (map<- (for each ((def module))
                        (match def
                          ({to name _ _} `(,name ,def)))))})
+
+
+;; Does it all work?
 
 (to (smoke-test)
   (run-file "eg/squirm/smoke-test.scm"))
