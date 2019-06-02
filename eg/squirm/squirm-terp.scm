@@ -31,9 +31,9 @@
     ({.enqueue message}
      (inbox .^= (push inbox.^ message))
      (match state.^
-       ({blocked a b c}
+       ((and {blocked _ _ _} thunk)
         (run-queue .^= (push run-queue.^ process))
-        (state .^= {go {unblocked a b c} #no})) ;XXX clumsy
+        (state .^= {go thunk #no})) ;(TODO still a bit clumsy)
        (_)))
 
     ({.receive (and exp {receive clauses}) r k}
@@ -164,12 +164,10 @@
      (sev {call {var entry} (for each ((arg value)) {const arg})}
           r
           {halt}))
-    ({unblocked exp r k}
+    ({blocked exp r k}
      (sev exp r k))
     ({halt}
      {halt})
-    ({blocked exp r k}
-     (surely #no))
     ))
 
 (to (ev-operands f rev-args operands r k)
