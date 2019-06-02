@@ -6,6 +6,10 @@
 
 ;; Main
 
+(to (main argv)
+  (let `(,_ ,filename) argv)
+  (run-file filename))
+
 (to (run-file filename @(optional entry arguments))
   (let module (with-input-file read-all filename))
   (run module entry arguments))
@@ -260,7 +264,7 @@
 ;; Does it all work?
 
 (to (smoke-test)
-  (run-file "eg/squirm/smoke-test.scm"))
-;  (run-file "eg/squirm/eg/universal_server_v0.scm"))
+  (run-file "eg/squirm/smoke-test.scm")
+  (run-file "eg/squirm/eg/universal_server_v0.scm"))
 
-(smoke-test)
+;;(smoke-test)
