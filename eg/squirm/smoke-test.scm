@@ -2,15 +2,15 @@
   (let pid (spawn (given ()
                     (report "hey")
                     (report "dud")
-                    (? (msg (report (cons 'got (cons msg '())))))
+                    (? (msg (report (list 'got msg))))
                     (report "dude")
                     (report (fact 15)))))
-  (report (cons 'pid (cons pid '())))
+  (report (list 'pid pid))
   (! pid 'yoohoo)
   (report (fact 10)))
 
 (to (report x)
-  (print (cons (me) (cons x '()))))
+  (print (list (me) x)))
 
 (to (fact n)
   (if (= n 0)

@@ -232,15 +232,19 @@
   (pid .enqueue message)
   #no)
 
-(to (car x) x.first)
-(to (cdr x) x.rest)
+(to (first x) x.first)
+(to (rest x) x.rest)
+(let link cons)
+(let link? cons?)
+(let nil? null?)
+(to (list @xs) xs)
 
 (let tuple? array?)
 
 (let primitives-from-squeam
   '(print display newline read
-    cons car cdr chain 
-    null? cons? list? number? integer? symbol? claim? char? string? tuple?
+    link first rest list chain 
+    nil? link? list? number? integer? symbol? claim? char? string? tuple?
     symbol<- char<-
     number<-string string<-number list<-string self-evaluating? 
     inexact<-exact exact<-inexact floor not assoc sqrt
