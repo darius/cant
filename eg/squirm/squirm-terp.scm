@@ -74,11 +74,6 @@
         (surely (empty? inbox.^)))
        ))))
 
-(to (! pid message)
-  ;; TODO make sure pid is a pid
-  (pid .enqueue message)
-  #no)
-
 (let run-queue (box<- empty))
 (let the-running-process (box<- #no))
 
@@ -231,6 +226,11 @@
 
 (to (me)
   the-running-process.^)
+
+(to (! pid message)
+  ;; TODO make sure pid is a pid
+  (pid .enqueue message)
+  #no)
 
 (to (car x) x.first)
 (to (cdr x) x.rest)
