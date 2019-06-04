@@ -215,9 +215,9 @@
      {go k new-process})))
 
 (to (match-pats r map ps vals)
-  (for each! ((`(,p ,val) (zip ps vals)))
-    (match-pat r map p val))
-  {local-env map r})
+  (and (for every ((`(,p ,val) (zip ps vals))) ;TODO ensure left-to-right order
+         (match-pat r map p val))
+       {local-env map r}))
 
 (to (match-pat r map p val)
 ;;  (print `(match-pat ,map ,p ,val))
