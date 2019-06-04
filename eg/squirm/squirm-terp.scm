@@ -18,13 +18,19 @@
   (squirm-run module (or entry 'main) (or arguments '())))
 
 (to (squirm-run module entry arguments)
-  (let pid (process<- {go {start entry (module-env<- (module-parse module))}
-                          arguments}))
-  (run-queue .^= (push empty pid))
+  (run-queue .^= empty)
+  (spawn (env-get (module-env<- (module-parse module)) entry)
+         arguments)
   (running))
 
 
 ;; Processes, scheduling, message passing
+
+(to (spawn f @(optional arguments))
+  (let new-process (process<- {go {spawn f}
+                                  (or arguments '())}))
+  (run-queue .^= (push run-queue.^ new-process))
+  new-process)
 
 (to (running)
   (match (peek run-queue.^)
@@ -189,10 +195,6 @@
      (sev e2 r k))
     ({spawn f}
      (apply f value {halt}))
-    ({start entry r}
-     (sev {call {var entry} (for each ((arg value)) {const arg})}
-          r
-          {halt}))
     ({blocked exp r k}
      (sev exp r k))
     ({halt}
@@ -269,11 +271,6 @@
   ;; TODO make sure pid is a pid
   (pid .enqueue message)
   #no)
-
-(to (spawn f)
-  (let new-process (process<- {go {spawn f} '()}))
-  (run-queue .^= (push run-queue.^ new-process))
-  new-process)
 
 (to (first x) x.first)
 (to (rest x) x.rest)
