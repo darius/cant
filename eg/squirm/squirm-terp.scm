@@ -109,6 +109,9 @@
     ((? symbol?)          {var e})
     ((? self-evaluating?) {const e})
     (`',value             {const value})
+    ((? array?)
+     {call {const {primitive tuple<-}}  ;TODO uniquify {primitive ...}
+           (each exp-parse e)})
     (`(given ,ps ,@body)
      {given (each pat-parse ps) (seq-parse body)})
     (`(if ,t ,y ,n)
@@ -130,10 +133,14 @@
      (if (pattern.name .starts-with? "_")
          {ignore}
          {bind pattern}))
-    (`(link ,pf ,pr)
-     {link (pat-parse pf) (pat-parse pr)})
+    ((? self-evaluating?)
+     {expect pattern})
+    ((? array?)
+     {tuple-pat (each pat-parse pattern)})
     (`',value
      {expect value})
+    (`(link ,pf ,pr)
+     {link (pat-parse pf) (pat-parse pr)})
     (`(list ,@ps)
      (pat-parse (if ps.empty?
                     ''()
@@ -224,7 +231,7 @@
 (to (match-pat r map p val)
 ;;  (print `(match-pat ,map ,p ,val))
   (match p
-    ({bind name}      ;TODO more patterns
+    ({bind name}
      (surely (not (map .maps? name)))
      (map .set! name val)
      #yes)
@@ -236,6 +243,10 @@
      (and (cons? val)
           (match-pat r map pf val.first)
           (match-pat r map pr val.rest)))
+    ({tuple-pat ps}
+     (and (array? val)
+          (= ps.count val.count)
+          (match-pats r map ps val)))
     ))
 
 
@@ -272,12 +283,13 @@
 (to (list @xs) xs)
 
 (let tuple? array?)
+(let tuple<- array<-)
 
 (let primitives-from-squeam
   '(print display newline read
     link first rest list chain 
     nil? link? list? number? integer? symbol? claim? char? string? tuple?
-    symbol<- char<-
+    symbol<- char<- tuple<-
     number<-string string<-number list<-string self-evaluating? 
     inexact<-exact exact<-inexact floor not assoc sqrt
     < = > <= >= not= 
