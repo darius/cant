@@ -203,9 +203,12 @@
   (match f
     ({closure r ps e}
      (surely (= args.count ps.count))
-     (match (match-pats r (map<-) ps args)
-       ((? yeah? new-r)
-        (sev e new-r k))))
+     (let map (map<-))
+     (match (match-pats r map ps args)
+       (#no
+        (error "Match failure"))        ;TODO error handling
+       (#yes
+        (sev e {local-env map r} k))))
     ({primitive p}
      {go k (call p args)})
     ({spawn}
@@ -215,9 +218,8 @@
      {go k new-process})))
 
 (to (match-pats r map ps vals)
-  (and (for every ((`(,p ,val) (zip ps vals))) ;TODO ensure left-to-right order
-         (match-pat r map p val))
-       {local-env map r}))
+  (for every ((`(,p ,val) (zip ps vals))) ;TODO ensure left-to-right order
+    (match-pat r map p val)))
 
 (to (match-pat r map p val)
 ;;  (print `(match-pat ,map ,p ,val))
