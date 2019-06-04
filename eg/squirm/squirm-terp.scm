@@ -217,12 +217,7 @@
        (#yes
         (sev e {local-env map r} k))))
     ({primitive p}
-     {go k (call p args)})
-    ({spawn}
-     (let `(,f1) args)
-     (let new-process (process<- {go {spawn f1} '()}))
-     (run-queue .^= (push run-queue.^ new-process))
-     {go k new-process})))
+     {go k (call p args)})))
 
 (to (match-pats r map ps vals)
   (for every ((`(,p ,val) (zip ps vals))) ;TODO ensure left-to-right order
@@ -275,6 +270,11 @@
   (pid .enqueue message)
   #no)
 
+(to (spawn f)
+  (let new-process (process<- {go {spawn f} '()}))
+  (run-queue .^= (push run-queue.^ new-process))
+  new-process)
+
 (to (first x) x.first)
 (to (rest x) x.rest)
 (let link cons)
@@ -294,14 +294,12 @@
     inexact<-exact exact<-inexact floor not assoc sqrt
     < = > <= >= not= 
     * / + - expt abs gcd
-    ! me
+    ! me spawn
     ))
 
 (let global-map
   (map<- (for each ((name primitives-from-squeam))
            `(,name {primitive ,(evaluate name '())}))))
-
-(global-map .set! 'spawn {spawn})
 
 (to (module-env<- module)
   {module-env (map<- (for each ((def module))
