@@ -26,6 +26,17 @@
 
 ;; Processes, scheduling, message passing
 
+(to (running)
+  (match (peek run-queue.^)
+    ({empty} 'done)
+    ({nonempty pid q2}
+     (run-queue .^= q2)
+     pid.run-a-slice
+     (running))))
+
+(let run-queue (box<- empty))
+(let the-running-process (box<- #no))
+
 (let pid-counter (box<- 0))
 
 (to (process<- start-state)
@@ -72,17 +83,6 @@
        ({blocked _ _ _}                 ;or this?
         (surely (empty? inbox.^)))
        ))))
-
-(let run-queue (box<- empty))
-(let the-running-process (box<- #no))
-
-(to (running)
-  (match (peek run-queue.^)
-    ({empty} 'done)
-    ({nonempty pid q2}
-     (run-queue .^= q2)
-     pid.run-a-slice
-     (running))))
 
 
 ;; Language syntax
