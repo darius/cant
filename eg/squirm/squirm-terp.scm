@@ -54,7 +54,6 @@
         (inbox .^= rest)
         (surely (= 1 clauses.count))    ;restrictions just for now
         (let {clause p e} clauses.first)
-        (surely (symbol? p))
         (apply {closure r `(,p) e} `(,msg) k))))
 
     ({.run-a-slice}
@@ -94,7 +93,7 @@
 (to (def-parse def)
   (match def
     (`(to (,name ,@params) ,@body)
-     {to name params (seq-parse body)})))
+     {to name (each pat-parse params) (seq-parse body)})))
 
 (to (seq-parse exps)
   (match exps
@@ -111,7 +110,7 @@
     ((? self-evaluating?) {const e})
     (`',value             {const value})
     (`(given ,ps ,@body)
-     {given ps (seq-parse body)}) ;TODO patterns
+     {given (each pat-parse ps) (seq-parse body)})
     (`(if ,t ,y ,n)
      {if (exp-parse t) (exp-parse y) (exp-parse n)})
     (`(do ,@es)
@@ -123,11 +122,23 @@
 
 (to (clause-parse clause)
   (let `(,pattern ,@seq) clause)
-  {clause (pattern-parse pattern) (seq-parse seq)})
+  {clause (pat-parse pattern) (seq-parse seq)})
 
-(to (pattern-parse pattern)
+(to (pat-parse pattern)
   (match pattern
-    ((? symbol?) pattern)))             ;TODO: more
+    ((? symbol?)
+     (if (pattern.name .starts-with? "_")
+         {ignore}
+         {bind pattern}))
+    (`(link ,pf ,pr)
+     {link (pat-parse pf) (pat-parse pr)})
+    (`',value
+     {expect value})
+    (`(list ,@ps)
+     (pat-parse (if ps.empty?
+                    ''()
+                    `(link ,ps.first (list ,@ps.rest)))))
+    ))             ;TODO: more
 
 ;; TODO: macros
 
@@ -192,7 +203,9 @@
   (match f
     ({closure r ps e}
      (surely (= args.count ps.count))
-     (sev e (env-extend r ps args) k))
+     (match (match-pats r (map<-) ps args)
+       ((? yeah? new-r)
+        (sev e new-r k))))
     ({primitive p}
      {go k (call p args)})
     ({spawn}
@@ -201,13 +214,30 @@
      (run-queue .^= (push run-queue.^ new-process))
      {go k new-process})))
 
+(to (match-pats r map ps vals)
+  (for each! ((`(,p ,val) (zip ps vals)))
+    (match-pat r map p val))
+  {local-env map r})
+
+(to (match-pat r map p val)
+;;  (print `(match-pat ,map ,p ,val))
+  (match p
+    ({bind name}      ;TODO more patterns
+     (surely (not (map .maps? name)))
+     (map .set! name val)
+     #yes)
+    ({ignore}
+     #yes)
+    ({expect constant}
+     (= constant val))
+    ({link pf pr}
+     (and (cons? val)
+          (match-pat r map pf val.first)
+          (match-pat r map pr val.rest)))
+    ))
+
 
 ;; Environments
-
-(to (env-extend r ps vals)
-  (surely (every symbol? ps))      ;TODO patterns
-  {local-env (map<- (zip ps vals))
-             r})
 
 (to (env-get r name)
   (match r
