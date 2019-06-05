@@ -2,6 +2,8 @@
   (let pid (spawn (given ()
                     (report "hey")
                     (report "dud")
+                    (! (me) 'not-this)
+                    (? ('not-this (report "not this")))
                     (? (msg (report ['got msg])))
                     (report "dude")
                     (report (fact 15)))))

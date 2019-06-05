@@ -25,7 +25,10 @@
         (else
          {nonempty h.first {queue h.rest t}})))
 
+(to (list<-queue {queue h t})
+  (chain h (reverse t)))
+
 (export
   empty empty?
   push extend
-  peek)
+  peek list<-queue)

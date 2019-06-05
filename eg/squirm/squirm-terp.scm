@@ -1,7 +1,7 @@
 ;; Trivial Squirm interpreter
 
 (import (use "lib/queue")
-  empty empty? push peek)
+  empty empty? push peek extend list<-queue)
 
 
 ;; Main
@@ -49,14 +49,15 @@
   (let pid pid-counter.^)
   (pid-counter .^= (+ pid 1))
   (let state (box<- start-state))
-  (let inbox (box<- empty))
+  (let inbox-checked (box<- empty))
+  (let inbox-unchecked (box<- empty))
   (make process
 
     ({.selfie sink}
      (format .to-sink sink "#<pid ~w>" pid))
 
     ({.enqueue message}
-     (inbox .^= (push inbox.^ message))
+     (inbox-unchecked .^= (push inbox-unchecked.^ message))
      (match state.^
        ((and {blocked _ _ _} thunk)
         (run-queue .^= (push run-queue.^ process))
@@ -64,14 +65,21 @@
        (_)))
 
     ({.receive (and exp {receive clauses}) r k}
-     (match (peek inbox.^)
-       ({empty}
-        {blocked exp r k})
-       ({nonempty msg rest}
-        (inbox .^= rest)
-        (surely (= 1 clauses.count))    ;restrictions just for now
-        (let {clause p e} clauses.first)
-        (apply {closure r `(,p) e} `(,msg) k))))
+     (begin checking ()  ;; TODO finer time-slicing
+       (match (peek inbox-unchecked.^)
+         ({empty}
+          {blocked exp r k})
+         ({nonempty msg rest}
+          (inbox-unchecked .^= rest)
+          (let map (map<-))
+          (match (match-clauses r map clauses msg)
+            (#no
+             (inbox-checked .^= (push inbox-checked.^ msg))
+             (checking))
+            ({clause _ exp}
+             (inbox-unchecked .^= (extend inbox-checked.^ (list<-queue rest)))
+             (inbox-checked .^= empty)
+             (sev exp {local-env map r} k)))))))
 
     ({.run-a-slice}
      (match state.^
@@ -82,12 +90,12 @@
         (state .^= state2)
         (match state2
           ({blocked a b c}
-           (surely (empty? inbox.^)))
+           (surely (empty? inbox-unchecked.^) "inbox populated"))
           ({halt})
           (_ (run-queue .^= (push run-queue.^ process)))))
        ({halt})                          ;TODO does this come up?
        ({blocked _ _ _}                 ;or this?
-        (surely (empty? inbox.^)))
+        (surely (empty? inbox-unchecked.^) "I'm supposed to be blocked"))
        ))))
 
 
@@ -116,8 +124,7 @@
     ((? self-evaluating?) {const e})
     (`',value             {const value})
     ((? array?)
-     {call {const {primitive tuple<-}}  ;TODO uniquify {primitive ...}
-           (each exp-parse e)})
+     {call {const prim-tuple<-} (each exp-parse e)})
     (`(given ,ps ,@body)
      {given (each pat-parse ps) (seq-parse body)})
     (`(if ,t ,y ,n)
@@ -211,7 +218,7 @@
 (to (apply f args k)
   (match f
     ({closure r ps e}
-     (surely (= args.count ps.count))
+     (surely (= args.count ps.count) "arity mismatch")
      (let map (map<-))
      (match (match-pats r map ps args)
        (#no
@@ -221,6 +228,16 @@
     ({primitive p}
      {go k (call p args)})))
 
+(to (match-clauses r map clauses datum)
+  (begin matching ((clauses clauses))
+    (match clauses
+      ('() #no)
+      (`(,(and clause {clause p e}) ,@rest)
+       map.clear!
+       (match (match-pat r map p datum)
+         (#no (matching rest))
+         (#yes clause))))))
+
 (to (match-pats r map ps vals)
   (for every ((`(,p ,val) (zip ps vals))) ;TODO ensure left-to-right order
     (match-pat r map p val)))
@@ -229,7 +246,7 @@
 ;;  (print `(match-pat ,map ,p ,val))
   (match p
     ({bind name}
-     (surely (not (map .maps? name)))
+     (surely (not (map .maps? name)) "already set")
      (map .set! name val)
      #yes)
     ({ignore}
@@ -281,6 +298,8 @@
 
 (let tuple? array?)
 (let tuple<- array<-)
+
+(let prim-tuple<- {primitive tuple<-})
 
 (let primitives-from-squeam
   '(print display newline read
