@@ -238,7 +238,12 @@
        (#yes
         (sev e {local-env map r} k))))
     ({primitive p}
-     {go k (call p args)})))
+     {go k (call p args)})
+    ({apply}
+     (match args
+       (`(,f1 ,args1)
+        (apply f1 args1 k))))
+    ))
 
 (to (match-clauses r map clauses datum)
   (begin matching ((clauses clauses))
@@ -330,6 +335,8 @@
 (let global-map
   (map<- (for each ((name primitives-from-squeam))
            `(,name {primitive ,(evaluate name '())}))))
+
+(global-map .set! 'apply {apply})
 
 (to (module-env<- module)
   {module-env (map<- (for each ((def module))

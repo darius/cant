@@ -9,7 +9,7 @@
                     (report (factorial 15)))))
   (report ['pid pid])
   (! pid 'yoohoo)
-  (report (factorial 10))
+  (report (apply factorial '(10)))
   (report (match pid
             ('42 'nope)
             ((: factorial) 'nope-nope)
