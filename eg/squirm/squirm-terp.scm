@@ -243,6 +243,10 @@
      (match args
        (`(,f1 ,args1)
         (apply f1 args1 k))))
+    ({eval}
+     (match args
+       (`(,e)  ;; TODO env param
+        (sev (exp-parse e) {module-env (map<-)} k))))
     ))
 
 (to (match-clauses r map clauses datum)
@@ -337,6 +341,7 @@
            `(,name {primitive ,(evaluate name '())}))))
 
 (global-map .set! 'apply {apply})
+(global-map .set! 'eval  {eval})
 
 (to (module-env<- module)
   {module-env (map<- (for each ((def module))

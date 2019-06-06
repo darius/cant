@@ -8,7 +8,7 @@
                     (report "dude")
                     (report (factorial 15)))))
   (report ['pid pid])
-  (! pid 'yoohoo)
+  ((eval '!) pid 'yoohoo)
   (report (apply factorial '(10)))
   (report (match pid
             ('42 'nope)
