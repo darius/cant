@@ -104,9 +104,14 @@
 
 (let modules (map<-))
 
-(to (module-ref symbol)
-  (surely #no))
+(to (module-ref mod-name var-name)
+  (env-get (modules mod-name) var-name)) ;TODO lazy loading, reloading, etc.
 
+(to (module-load mod-name filename)
+  (surely (not (modules .maps? mod-name))) ;XXX for now
+  (let defs (with-input-file read-all filename))  
+  (modules .set! mod-name (module-env<- (module-parse defs))))
+  
 
 ;; Language syntax
 
@@ -157,7 +162,7 @@
 
 (to (module-ref-parse symbol)
   (let `(,mod ,var) (symbol.name .split ":"))
-  {module-ref mod var})
+  {module-ref (symbol<- mod) (symbol<- var)})
 
 (to (clause-parse clause)
   (let `(,pattern ,@seq) clause)
@@ -357,6 +362,7 @@
     < = > <= >= not= 
     * / + - expt abs gcd
     ! me spawn
+    module-load   ;; for now
     ))
 
 (let global-map
