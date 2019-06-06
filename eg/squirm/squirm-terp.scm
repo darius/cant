@@ -54,7 +54,7 @@
   (make process
 
     ({.selfie sink}
-     (format .to-sink sink "#<pid ~w>" pid))
+     (format .to-sink sink "#<~w>" pid))
 
     ({.enqueue message}
      (inbox-unchecked .^= (push inbox-unchecked.^ message))
