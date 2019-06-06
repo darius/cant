@@ -161,6 +161,8 @@
      (pat-parse (if ps.empty?
                     ''()
                     `(link ,ps.first (list ,@ps.rest)))))
+    (`(: ,(? symbol? name))
+     {expect-var name})
     ))             ;TODO: more
 
 ;; TODO: macros
@@ -271,6 +273,8 @@
      (and (array? val)
           (= ps.count val.count)
           (match-pats r map ps val)))
+    ({expect-var name}
+     (= (env-get r name) val))
     ))
 
 
