@@ -65,7 +65,7 @@
        (_)))
 
     ({.receive (and exp {receive clauses}) r k}
-     (begin checking ()  ;; TODO finer time-slicing
+     (begin checking ()  ;; TODO finer time-slicing?
        (match (peek inbox-unchecked.^)
          ({empty}
           {blocked exp r k})
@@ -93,7 +93,8 @@
            (surely (empty? inbox-unchecked.^) "inbox populated"))
           ({halt})
           (_ (run-queue .^= (push run-queue.^ process)))))
-       ({halt})                          ;TODO does this come up?
+       ({halt}
+        (surely #no))                          ;TODO does this come up?
        ({blocked _ _ _}                 ;or this?
         (surely (empty? inbox-unchecked.^) "I'm supposed to be blocked"))
        ))))
@@ -133,6 +134,8 @@
      (seq-parse es))
     (`(? ,@clauses)
      {receive (each clause-parse clauses)})
+    (`(match ,e ,@clauses)
+     {match (exp-parse e) (each clause-parse clauses)})
     (`(,operator ,@operands)
      {call (exp-parse operator) (each exp-parse operands)})))
 
@@ -186,7 +189,8 @@
      (sev e1 r {then-drop e2 r k}))
     ({receive _}
      (the-running-process.^ .receive exp r k))
-   ;; TODO: match
+    ({match e clauses}
+     (sev e r {matching clauses r k}))
     ))
 
 (to (go k value)
@@ -204,6 +208,12 @@
      (apply f value {halt}))
     ({blocked exp r k}
      (sev exp r k))
+    ({matching clauses r k}
+     (let map (map<-))                  ;TODO factor dupe?
+     (match (match-clauses r map clauses value)
+       (#no (error "Match failure" value))
+       ({clause _ e}
+        (sev e {local-env map r} k))))
     ({halt}
      {halt})
     ))

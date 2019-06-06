@@ -6,16 +6,16 @@
                     (? ('not-this (report "not this")))
                     (? (msg (report ['got msg])))
                     (report "dude")
-                    (report (fact 15)))))
+                    (report (factorial 15)))))
   (report ['pid pid])
   (! pid 'yoohoo)
-  (report (fact 10)))
+  (report (factorial 10)))
 
 (to (report x)
   (print [(me) x]))
 
-(to (fact n)
-  (if (= n 0)
-      1
-      (do (let x (fact (- n 1)))
-          (* n x))))
+(to (factorial n)
+  (match n
+    (0 1)
+    (_ (let x (factorial (- n 1)))
+       (* n x))))
