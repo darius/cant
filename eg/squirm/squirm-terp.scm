@@ -100,6 +100,14 @@
        ))))
 
 
+;; Modules
+
+(let modules (map<-))
+
+(to (module-ref symbol)
+  (surely #no))
+
+
 ;; Language syntax
 
 (to (module-parse module)
@@ -121,7 +129,10 @@
 
 (to (exp-parse e)
   (match e
-    ((? symbol?)          {var e})
+    ((? symbol?)
+     (if (module-ref? e)
+         (module-ref-parse e)
+         {var e}))
     ((? self-evaluating?) {const e})
     (`',value             {const value})
     ((? array?)
@@ -139,6 +150,15 @@
     (`(,operator ,@operands)
      {call (exp-parse operator) (each exp-parse operands)})))
 
+;; Transform foo:bar to {module-ref foo bar}
+;; (TODO better to do this in the reader in the real system.)
+(to (module-ref? symbol)
+  (symbol.name .find? #\:))
+
+(to (module-ref-parse symbol)
+  (let `(,mod ,var) (symbol.name .split ":"))
+  {module-ref mod var})
+
 (to (clause-parse clause)
   (let `(,pattern ,@seq) clause)
   {clause (pat-parse pattern) (seq-parse seq)})
@@ -146,6 +166,7 @@
 (to (pat-parse pattern)
   (match pattern
     ((? symbol?)
+     (surely (not (module-ref? pattern)))
      (if (pattern.name .starts-with? "_")
          {ignore}
          {bind pattern}))
@@ -181,6 +202,8 @@
      {go k value})
     ({var name}
      {go k (env-get r name)})           ;TODO error handling
+    ({module-ref mod-name var-name}
+     {go k (module-ref mod-name var-name)}) ;XXX module-ref might error or block
     ({given ps e}
      {go k {closure r ps e}})
     ({call e es}
