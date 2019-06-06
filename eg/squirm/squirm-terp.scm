@@ -163,7 +163,7 @@
                     `(link ,ps.first (list ,@ps.rest)))))
     (`(: ,(? symbol? name))
      {expect-var name})
-    ))             ;TODO: more
+    ))
 
 ;; TODO: macros
 
@@ -347,12 +347,3 @@
   {module-env (map<- (for each ((def module))
                        (match def
                          ({to name _ _} `(,name ,def)))))})
-
-
-;; Does it all work?
-
-(to (smoke-test)
-  (run-file "eg/squirm/smoke-test.scm")
-  (run-file "eg/squirm/eg/universal_server_v0.scm"))
-
-;;(smoke-test)
