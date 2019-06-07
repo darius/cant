@@ -66,7 +66,8 @@
      (watchers .delete! watcher))
 
     ({.receive-signal pid}
-     (surely #no))                      ;TODO
+     ;; TODO: links vs. monitors
+     (process .enqueue (array<- 'DOWN pid)))
 
     ({.enqueue message}
      (inbox-unchecked .^= (push inbox-unchecked.^ message))
@@ -380,6 +381,12 @@
   (pid .enqueue message)
   #no)
 
+(to (monitor pid)             ;TODO flesh out more of what Erlang does
+  (pid .subscribe (me)))
+
+(to (unmonitor pid)
+  (pid .unsubscribe (me)))
+
 (to (first x) x.first)
 (to (rest x) x.rest)
 (let link cons)
@@ -401,7 +408,7 @@
     inexact<-exact exact<-inexact floor not assoc sqrt
     < = > <= >= not= 
     * / + - expt abs gcd
-    ! me spawn
+    ! me spawn monitor unmonitor
     module-load   ;; for now
     ))
 
