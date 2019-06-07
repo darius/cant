@@ -92,9 +92,9 @@
         (match state2
           ({blocked a b c}
            (surely (empty? inbox-unchecked.^) "inbox populated"))
-          ({halt})
+          ({exit})
           (_ (run-queue .^= (push run-queue.^ process)))))
-       ({halt}
+       ({exit}
         (surely #no))                   ;TODO does this come up?
        ({blocked _ _ _}                 ;or this?
         (surely (empty? inbox-unchecked.^) "I'm supposed to be blocked"))
@@ -250,7 +250,7 @@
     ({catch-frame k}
      (go k value))              ;TODO distinguish from thrown outcome?
     ({halt}
-     {halt})
+     {exit})
     ))
 
 (to (ev-operands f rev-args operands r k)
