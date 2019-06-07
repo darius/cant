@@ -8,6 +8,7 @@
 
 (to (main argv)
   (let `(,_ ,filename) argv)
+  (print filename)                      ;for now
   (run-file filename))
 
 (to (run-file filename @(optional entry arguments))
@@ -150,8 +151,10 @@
      (seq-parse es))
     (`(? ,@clauses)
      {receive (each clause-parse clauses)})
-    (`(match ,e ,@clauses)
-     {match (exp-parse e) (each clause-parse clauses)})
+    (`(match ,subject ,@clauses)
+     {match (exp-parse subject) (each clause-parse clauses)})
+    (`(catch ,@es)   ;; TODO macroexpand into (%catch (given () e)) ?
+     {catch (seq-parse es)})
     (`(,operator ,@operands)
      {call (exp-parse operator) (each exp-parse operands)})))
 
@@ -191,8 +194,6 @@
      {expect-var name})
     ))
 
-;; TODO: macros
-
 
 ;; Interpreter in trampolined style
 
@@ -221,11 +222,13 @@
      (the-running-process.^ .receive exp r k))
     ({match e clauses}
      (sev e r {matching clauses r k}))
+    ({catch e}
+     (sev e r {catch-frame k}))
     ))
 
-(to (go k value)
-;;  (print `(go ,k ,value))
-  (match k
+(to (go kk value)
+;;  (print `(go ,kk ,value))
+  (match kk
     ({ev-operands es r k}
      (ev-operands value '() es r k))
     ({ev-more-operands f rev-args es r k}
@@ -244,6 +247,8 @@
        (#no (error "Match failure" value))
        ({clause _ e}
         (sev e {local-env map r} k))))
+    ({catch-frame k}
+     (go k value))              ;TODO distinguish from thrown outcome?
     ({halt}
      {halt})
     ))
@@ -275,7 +280,28 @@
      (match args
        (`(,e)  ;; TODO env param
         (sev (exp-parse e) {module-env (map<-)} k))))
+    ({throw}
+     (match args
+       (`(,outcome)
+        (throw k outcome))))
     ))
+
+(to (throw kk outcome)
+  (match kk                             ;TODO generic walk through k's
+    ({ev-operands es r k}
+     (throw k outcome))
+    ({ev-more-operands f rev-args es r k}
+     (throw k outcome))
+    ({branch _ _ k}
+     (throw k outcome))
+    ({then-drop e2 r k}
+     (throw k outcome))
+    ({matching clauses r k}
+     (throw k outcome))
+    ({catch-frame k}
+     (go k outcome))                    ;TODO distinguish from non-exception result?
+    (_
+     (error "Throw to top level" outcome)))) ;TODO
 
 (to (match-clauses r map clauses datum)
   (begin matching ((clauses clauses))
@@ -371,6 +397,7 @@
 
 (global-map .set! 'apply {apply})
 (global-map .set! 'eval  {eval})
+(global-map .set! 'throw {throw})
 
 (to (module-env<- module)
   {module-env (map<- (for each ((def module))
