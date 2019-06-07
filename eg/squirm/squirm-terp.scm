@@ -65,9 +65,9 @@
     ({.unsubscribe watcher}
      (watchers .delete! watcher))
 
-    ({.receive-signal pid}
+    ({.receive-signal pid outcome}
      ;; TODO: links vs. monitors
-     (process .enqueue (array<- 'DOWN pid)))
+     (process .enqueue (array<- 'DOWN pid outcome)))
 
     ({.enqueue message}
      (inbox-unchecked .^= (push inbox-unchecked.^ message))
@@ -105,11 +105,11 @@
         (match state2
           ({blocked a b c}
            (surely (empty? inbox-unchecked.^) "inbox populated"))
-          ({exit}
+          ({exit outcome}
            (for each! ((watcher watchers.keys))
-             (watcher .receive-signal process))) ;TODO pass more info
+             (watcher .receive-signal process outcome))) ;TODO pass more info
           (_ (run-queue .^= (push run-queue.^ process)))))
-       ({exit}
+       ({exit _}
         (surely #no))                   ;TODO does this come up?
        ({blocked _ _ _}                 ;or this?
         (surely (empty? inbox-unchecked.^) "I'm supposed to be blocked"))
@@ -265,7 +265,7 @@
     ({catch-frame k}
      (go k value))              ;TODO distinguish from thrown outcome?
     ({halt}
-     {exit})
+     {exit 'normal})                    ;TODO design for exit data
     ))
 
 (to (throw kk outcome)
@@ -283,7 +283,7 @@
     ({catch-frame k}
      (go k outcome))                    ;TODO distinguish from non-exception result?
     ({halt}
-     {exit})))                          ;XXX give reason
+     {exit outcome})))
 
 (to (ev-operands f rev-args operands r k)
   (match operands
