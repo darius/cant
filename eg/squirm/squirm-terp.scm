@@ -253,6 +253,23 @@
      {exit})
     ))
 
+(to (throw kk outcome)
+  (match kk                             ;TODO generic walk through k's
+    ({ev-operands es r k}
+     (throw k outcome))
+    ({ev-more-operands f rev-args es r k}
+     (throw k outcome))
+    ({branch _ _ k}
+     (throw k outcome))
+    ({then-drop e2 r k}
+     (throw k outcome))
+    ({matching clauses r k}
+     (throw k outcome))
+    ({catch-frame k}
+     (go k outcome))                    ;TODO distinguish from non-exception result?
+    ({halt}
+     {exit})))                          ;XXX give reason
+
 (to (ev-operands f rev-args operands r k)
   (match operands
     ('()
@@ -285,23 +302,6 @@
        (`(,outcome)
         (throw k outcome))))
     ))
-
-(to (throw kk outcome)
-  (match kk                             ;TODO generic walk through k's
-    ({ev-operands es r k}
-     (throw k outcome))
-    ({ev-more-operands f rev-args es r k}
-     (throw k outcome))
-    ({branch _ _ k}
-     (throw k outcome))
-    ({then-drop e2 r k}
-     (throw k outcome))
-    ({matching clauses r k}
-     (throw k outcome))
-    ({catch-frame k}
-     (go k outcome))                    ;TODO distinguish from non-exception result?
-    (_
-     (error "Throw to top level" outcome)))) ;TODO
 
 (to (match-clauses r map clauses datum)
   (begin matching ((clauses clauses))
