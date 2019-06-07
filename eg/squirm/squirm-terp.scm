@@ -47,15 +47,26 @@
 (let pid-counter (box<- 0))
 
 (to (process<- start-state)
-  (let pid pid-counter.^)
-  (pid-counter .^= (+ pid 1))
-  (let state (box<- start-state))
-  (let inbox-checked (box<- empty))
-  (let inbox-unchecked (box<- empty))
+  (let pid-num pid-counter.^)           ; Just for display.
+  (pid-counter .^= (+ pid-num 1))
+  (let state (box<- start-state))       ; State of execution.
+  (let inbox-checked (box<- empty))     ; Messages that didn't match the current receive.
+  (let inbox-unchecked (box<- empty))   ; Messages not yet checked against the current receive.
+  (let watchers (set<-))                ; Monitors to notify on my exit.
+
   (make process
 
     ({.selfie sink}
-     (format .to-sink sink "#<~w>" pid))
+     (format .to-sink sink "#<~w>" pid-num))
+
+    ({.subscribe watcher}
+     (watchers .add! watcher))
+
+    ({.unsubscribe watcher}
+     (watchers .delete! watcher))
+
+    ({.receive-signal pid}
+     (surely #no))                      ;TODO
 
     ({.enqueue message}
      (inbox-unchecked .^= (push inbox-unchecked.^ message))
@@ -66,6 +77,7 @@
        (_)))
 
     ({.receive (and exp {receive clauses}) r k}
+     ;; TODO: error if exited? Probably not.
      (begin checking ()  ;; TODO finer time-slicing?
        (match (peek inbox-unchecked.^)
          ({empty}
@@ -92,7 +104,9 @@
         (match state2
           ({blocked a b c}
            (surely (empty? inbox-unchecked.^) "inbox populated"))
-          ({exit})
+          ({exit}
+           (for each! ((watcher watchers.keys))
+             (watcher .receive-signal process))) ;TODO pass more info
           (_ (run-queue .^= (push run-queue.^ process)))))
        ({exit}
         (surely #no))                   ;TODO does this come up?
