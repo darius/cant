@@ -281,7 +281,7 @@
     ({matching clauses r k}
      (throw k outcome))
     ({catch-frame k}
-     (go k outcome))                    ;TODO distinguish from non-exception result?
+     {go k outcome})                    ;TODO distinguish from non-exception result?
     ({halt}
      {exit outcome})))
 
