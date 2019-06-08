@@ -259,7 +259,7 @@
     ({matching clauses r k}
      (let map (map<-))                  ;TODO factor dupe?
      (match (match-clauses r map clauses value)
-       (#no (error "Match failure" value))
+       (#no (exit "Match failure"))
        ({clause _ e}
         (sev e {local-env map r} k))))
     ({catch-frame k}
