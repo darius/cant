@@ -303,7 +303,7 @@
        (#yes
         (sev e {local-env map r} k))))
     ({primitive p}
-     {go k (call p args)})
+     (apply-primitive p args k))
     ({apply}
      (match args
        (`(,f1 ,args1)
@@ -317,6 +317,21 @@
        (`(,outcome)
         (throw k outcome))))
     ))
+
+(to (apply-primitive p args k)
+  ;; Ugh, Squeam's error-catching stuff is clumsy as hell.
+  ;; I'm not going to try to handle errors everywhere; only in these
+  ;; primitive calls (mostly). We can wait to do things properly until
+  ;; we're making a VM in C for real.
+  (match (with-signal-handler
+          (given (squeam-k @evil)
+            (squeam-k .answer {error evil}))
+          (given ()
+            (call p args)))
+    ({error evil}
+     (throw k (array<- 'exit evil)))
+    (result
+     {go k result})))
 
 (to (match-clauses r map clauses datum)
   (begin matching ((clauses clauses))
