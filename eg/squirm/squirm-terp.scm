@@ -263,7 +263,7 @@
        ({clause _ e}
         (sev e {local-env map r} k))))
     ({catch-frame k}
-     (go k value))              ;TODO distinguish from thrown outcome?
+     {go k value})              ;TODO distinguish from thrown outcome?
     ({halt}
      {exit 'normal})                    ;TODO design for exit data
     ))
