@@ -285,6 +285,9 @@
     ({halt}
      {exit outcome})))
 
+(to (exit k reason)
+  (throw k (array<- 'exit reason)))
+
 (to (ev-operands f rev-args operands r k)
   (match operands
     ('()
@@ -299,7 +302,7 @@
      (let map (map<-))
      (match (match-pats r map ps args)
        (#no
-        (error "Match failure"))        ;TODO error handling
+        (exit k "Match failure"))
        (#yes
         (sev e {local-env map r} k))))
     ({primitive p}
@@ -316,10 +319,14 @@
      (match args
        (`(,outcome)
         (throw k outcome))))
+    ({exit}
+     (match args
+       (`(,outcome)
+        (exit k outcome))))
     ))
 
 (to (apply-primitive p args k)
-  ;; Ugh, Squeam's error-catching stuff is clumsy as hell.
+  ;; Ugh, Squeam's error-catching stuff is pretty clumsy.
   ;; I'm not going to try to handle errors everywhere; only in these
   ;; primitive calls (mostly). We can wait to do things properly until
   ;; we're making a VM in C for real.
@@ -329,7 +336,7 @@
           (given ()
             (call p args)))
     ({error evil}
-     (throw k (array<- 'exit evil)))
+     (exit k evil))
     (result
      {go k result})))
 
@@ -434,6 +441,7 @@
 (global-map .set! 'apply {apply})
 (global-map .set! 'eval  {eval})
 (global-map .set! 'throw {throw})
+(global-map .set! 'exit  {exit})
 
 (to (module-env<- module)
   {module-env (map<- (for each ((def module))
