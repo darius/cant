@@ -135,6 +135,7 @@
   (each def-parse module))
 
 (to (def-parse def)
+;;  (print `(def-parse ,def))
   (match def
     (`(to (,(? symbol? name) ,@params) ,@body)
      {to name (each pat-parse params) (seq-parse body)})
@@ -143,7 +144,11 @@
     ))
 
 (to (seq-parse exps)
+;;  (print `(seq-parse ,exps))
   (match exps
+;; Not sure we want this:
+;;    ('()
+;;     (exp-parse #no))
     (`(,e)
      (exp-parse e))
     (`((let ,p ,e) ,@es)
@@ -153,7 +158,7 @@
     (`((to ,@_) ,@es)
      (seq-parse `((define ,exps.first) ,@es)))
     (`(,e ,@es)
-     {then (exp-parse e) (seq-parse es)})))
+     {then (exp-parse e) (seq-parse es)}))) ;TODO parse as ((let _ ,e) .@es) ?
 
 (to (exp-parse e)
   (match e
@@ -233,12 +238,12 @@
        (`(,test ,@body)
         `(match ,test
            (#no ,@body)
-           (_)))))
+           (_ #no)))))
     ('when
      (match operands
        (`(,test ,@body)
         `(match ,test
-           (#no)
+           (#no #no)
            (_ ,@body)))))
     (_ #no)))
 
@@ -385,7 +390,7 @@
     ({eval}
      (match args
        (`(,e)  ;; TODO env param
-        (sev (exp-parse e) {global-env} k))))
+        (sev (exp-parse e) global-env k))))
     ({throw}
      (match args
        (`(,outcome)
@@ -521,9 +526,18 @@
 (global-map .set! 'exit  {exit})
 
 (to (module-env<- module)
-  {recursive-env (map<-defs module) {global-env}})
+  {recursive-env (map<-defs module) global-env})
 
 (to (map<-defs defs)
   (map<- (for each ((def defs))
            (match def
              ({to name _ _} `(,name ,def))))))
+
+;; Add the prelude to the global environment. This code is almost just
+;; calling module-load on prelude.scm, except we can't call that yet,
+;; because global-env needs to exist first.
+(let global-env
+  (hide
+    (let defs (with-input-file read-all "eg/squirm/prelude.scm"))
+    (let module (module-parse defs))
+    {recursive-env (map<-defs module) {global-env}}))
