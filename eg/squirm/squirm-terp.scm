@@ -6,7 +6,7 @@
 
 ;; Main
 
-(to (main argv)
+(to (squirm-main argv)
   (let `(,_ ,filename) argv)
   (print filename)                      ;for now
   (run-file filename))
