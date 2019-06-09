@@ -467,8 +467,8 @@
        (#no (env-get parent name))
        ({to f params body}
         {closure r params body})))
-    ({global-env}
-     (global-map name))
+    ({builtins-env}
+     (builtins-map name))
     ))
 
 
@@ -516,14 +516,14 @@
     write print display newline read
     ))
 
-(let global-map
+(let builtins-map
   (map<- (for each ((name primitives-from-squeam))
            `(,name {primitive ,(evaluate name '())}))))
 
-(global-map .set! 'apply {apply})
-(global-map .set! 'eval  {eval})
-(global-map .set! 'throw {throw})
-(global-map .set! 'exit  {exit})
+(builtins-map .set! 'apply {apply})
+(builtins-map .set! 'eval  {eval})
+(builtins-map .set! 'throw {throw})
+(builtins-map .set! 'exit  {exit})
 
 (to (module-env<- module)
   {recursive-env (map<-defs module) global-env})
@@ -540,4 +540,4 @@
   (hide
     (let defs (with-input-file read-all "eg/squirm/prelude.scm"))
     (let module (module-parse defs))
-    {recursive-env (map<-defs module) {global-env}}))
+    {recursive-env (map<-defs module) {builtins-env}}))
