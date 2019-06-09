@@ -136,8 +136,11 @@
 
 (to (def-parse def)
   (match def
-    (`(to (,name ,@params) ,@body)
-     {to name (each pat-parse params) (seq-parse body)})))
+    (`(to (,(? symbol? name) ,@params) ,@body)
+     {to name (each pat-parse params) (seq-parse body)})
+    (`(to (,(? cons? nested) ,@params) ,@body)
+     (def-parse `(to ,nested (given ,params ,@body))))
+    ))
 
 (to (seq-parse exps)
   (match exps
@@ -504,7 +507,7 @@
     module-load   ;; for now
     ;; From Squeam stdlib:
     reverse zip transpose identity format
-    yeah? min max grid* intercalate sum 
+    count? yeah? min max grid* intercalate sum 
     write print display newline read
     ))
 
