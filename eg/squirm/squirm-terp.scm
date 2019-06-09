@@ -493,16 +493,19 @@
 (let prim-tuple<- {primitive tuple<-})
 
 (let primitives-from-squeam
-  '(print display newline read
-    link first rest list chain 
+  '(link first rest list chain 
     nil? link? list? number? integer? symbol? claim? char? string? tuple?
     symbol<- char<- tuple<-
     number<-string string<-number list<-string self-evaluating? 
     inexact<-exact exact<-inexact floor not assoc sqrt
-    < = > <= >= not= 
+    = not= < <=> > <= >= 
     * / + - expt abs gcd
     ! me spawn monitor unmonitor
     module-load   ;; for now
+    ;; From Squeam stdlib:
+    reverse zip transpose identity format
+    yeah? min max grid* intercalate sum 
+    write print display newline read
     ))
 
 (let global-map
