@@ -8,7 +8,6 @@
 
 (to (squirm-main argv)
   (let `(,_ ,filename) argv)
-  (print filename)                      ;for now
   (run-file filename))
 
 (to (run-file filename @(optional entry arguments))
