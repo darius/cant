@@ -376,7 +376,7 @@
     ({eval}
      (match args
        (`(,e)  ;; TODO env param
-        (sev (exp-parse e) {module-env (map<-)} k))))
+        (sev (exp-parse e) {global-env} k))))
     ({throw}
      (match args
        (`(,outcome)
@@ -444,15 +444,18 @@
 
 (to (env-get r name)
   (match r
-    ({module-env map}
-     (match (map .get name)
-       (#no (global-map name))          ;TODO error handling
-       ({to f params body}
-        {closure r params body})))
     ({local-env map parent}
      (match (map .get name)
        (#no (env-get parent name))
-       (value value)))))
+       (value value)))
+    ({recursive-env map parent}
+     (match (map .get name)
+       (#no (env-get parent name))
+       ({to f params body}
+        {closure r params body})))
+    ({global-env}
+     (global-map name))
+    ))
 
 
 ;; Primitive procedures and the global environment
@@ -506,6 +509,7 @@
 (global-map .set! 'exit  {exit})
 
 (to (module-env<- module)
-  {module-env (map<- (for each ((def module))
-                       (match def
-                         ({to name _ _} `(,name ,def)))))})
+  {recursive-env (map<- (for each ((def module))
+                          (match def
+                            ({to name _ _} `(,name ,def)))))
+                 {global-env}})
