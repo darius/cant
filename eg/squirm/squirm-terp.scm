@@ -145,6 +145,10 @@
      (exp-parse e))
     (`((let ,p ,e) ,@es)
      (exp-parse `((given (,p) ,@es) ,e)))
+    (`((define ,@defs) ,@es)
+     {define (each def-parse defs) (seq-parse es)})
+    (`((to ,@_) ,@es)
+     (seq-parse `((define ,exps.first) ,@es)))
     (`(,e ,@es)
      {then (exp-parse e) (seq-parse es)})))
 
@@ -301,6 +305,8 @@
      (sev e r {matching clauses r k}))
     ({catch e}
      (sev e r {catch-frame k}))
+    ({define defs e}
+     (sev e {recursive-env (map<-defs defs) r} k))
     ))
 
 (to (go kk value)
@@ -509,7 +515,9 @@
 (global-map .set! 'exit  {exit})
 
 (to (module-env<- module)
-  {recursive-env (map<- (for each ((def module))
-                          (match def
-                            ({to name _ _} `(,name ,def)))))
-                 {global-env}})
+  {recursive-env (map<-defs module) {global-env}})
+
+(to (map<-defs defs)
+  (map<- (for each ((def defs))
+           (match def
+             ({to name _ _} `(,name ,def))))))
