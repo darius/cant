@@ -1,6 +1,6 @@
 (to (main)
   (let pid (spawn (given ()
-                    (report "hey")
+                    (report (or #no "hey"))
                     (report "dud")
                     (! (me) 'not-this)
                     (? ('not-this (report "not this")))

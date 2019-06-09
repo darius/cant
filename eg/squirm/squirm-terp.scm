@@ -1,4 +1,4 @@
-;; Trivial Squirm interpreter
+;; Basic Squirm interpreter as a testable sketch of the semantics
 
 (import (use "lib/queue")
   empty empty? push peek extend list<-queue)
@@ -110,8 +110,8 @@
              (watcher .receive-signal process outcome))) ;TODO pass more info
           (_ (run-queue .^= (push run-queue.^ process)))))
        ({exit _}
-        (surely #no))                   ;TODO does this come up?
-       ({blocked _ _ _}                 ;or this?
+        (surely #no))
+       ({blocked _ _ _}
         (surely (empty? inbox-unchecked.^) "I'm supposed to be blocked"))
        ))))
 
@@ -161,6 +161,7 @@
     (`(given ,ps ,@body)
      {given (each pat-parse ps) (seq-parse body)})
     (`(if ,t ,y ,n)
+     ;; TODO macroexpand to a (match ...) instead?
      {if (exp-parse t) (exp-parse y) (exp-parse n)})
     (`(do ,@es)
      (seq-parse es))
@@ -171,7 +172,68 @@
     (`(catch ,@es)   ;; TODO macroexpand into (%catch (given () e)) ?
      {catch (seq-parse es)})
     (`(,operator ,@operands)
-     {call (exp-parse operator) (each exp-parse operands)})))
+     (match (exp-macro-expand operator operands)
+       (#no {call (exp-parse operator) (each exp-parse operands)})
+       (expanded (exp-parse expanded))))))
+
+(to (exp-macro-expand operator operands) ;TODO: make it extensible
+  ;; TODO: quasiquote
+  (match operator
+    ('and
+     (match operands
+       ('() #no)
+       (`(,e) e)
+       (`(,e ,@es) `(if ,e (and ,@es) #no))))
+    ('begin
+        ;; (begin f ((x a) (y b)) e) => (hide (to (f a b) e) (f x y))
+     (match operands
+       (`(,f ,pairs ,@body)
+        (for each! ((pair pairs))
+          (surely (and (list? pair) (= pair.count 2))))
+        `(do
+           ;; TODO local to-defs in seqs
+           (to (,f ,@(each '.first pairs))
+             ,@body)
+           (f ,@(for each ((pair pairs)) (pair 1)))))))
+    ('case
+     (match operands
+       ('()
+        '(exit "No true case")) ;TODO hygiene, & settle on what to exit with
+       (`((else ,@seq))
+        `(do ,@seq))
+       (`((,test ,@seq) ,@clauses)
+        `(if ,test
+             (do ,@seq)
+             (case ,@clauses)))))
+    ('for
+        ;;(for f ((x a) (y b)) e) => (f (given (a b) e) x y)
+     (match operands
+       (`(,f ,pairs ,@body)
+        (for each! ((pair pairs))
+          (surely (and (list? pair) (= pair.count 2))))
+        `(,f (given ,(each '.first pairs) ,@body)
+             ,@(for each ((pair pairs)) (pair 1))))))
+    ('or
+     (match operands
+       ('() #yes)
+       (`(,e) e)
+       (`(,e ,@es)
+        `(match ,e
+           (#no (or ,@es))
+           (yeah yeah)))))
+    ('unless
+     (match operands
+       (`(,test ,@body)
+        `(match ,test
+           (#no ,@body)
+           (_)))))
+    ('when
+     (match operands
+       (`(,test ,@body)
+        `(match ,test
+           (#no)
+           (_ ,@body)))))
+    (_ #no)))
 
 ;; Transform foo:bar to {module-ref foo bar}
 ;; (TODO better to do this in the reader in the real system.)
