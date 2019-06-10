@@ -119,8 +119,17 @@
 
 (let modules (map<-))
 
+(let autoload-base "eg/squirm/lib/")
+
 (to (module-ref mod-name var-name)
-  (env-get (modules mod-name) var-name)) ;TODO lazy loading, reloading, etc.
+  (match (modules .get mod-name)
+    (#no
+     (let filename (chain autoload-base mod-name.name ".scm"))
+     (module-load mod-name filename)
+     (env-get (modules mod-name)
+              var-name))
+    (mod-env 
+     (env-get mod-env var-name))))
 
 (to (module-load mod-name filename)
   (surely (not (modules .maps? mod-name))) ;XXX for now
