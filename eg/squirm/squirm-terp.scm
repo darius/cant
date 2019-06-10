@@ -505,20 +505,47 @@
 (let link? cons?)
 (let nil? null?)
 (to (list @xs) xs)
+(to (length x) x.count)
+(to (nth x n)                           ;TODO better name?
+  (surely (sequence? x))
+  (surely (count? n))
+  (x n))
+(make slice
+  (`(,x ,n)
+   (surely (sequence? x))
+   (surely (count? n))
+   (x .slice n))
+  (`(,x ,m ,n)
+   (surely (sequence? x))
+   (surely (count? m))
+   (surely (count? n))
+   (x .slice m n)))
+
+(to (sequence? x) (or (array? x) (string? x) (list? x)))
 
 (let tuple? array?)
 (let tuple<- array<-)
+(let tuple<-list array<-list)
 
 (let prim-tuple<- {primitive tuple<-})
 
+(to (quotient n d)  (n .quotient d))
+(to (remainder n d) (n .remainder d))
+(to (modulo n d)    (n .modulo d))
+
+(to (string<-symbol sym)
+  (surely (symbol? sym))
+  sym.name)
+
 (let primitives-from-squeam
-  '(link first rest list chain 
+  '(link first rest list chain length nth slice
     nil? link? list? number? integer? symbol? claim? char? string? tuple?
-    symbol<- char<- tuple<-
-    number<-string string<-number list<-string self-evaluating? 
+    symbol<- char<- tuple<- tuple<-list
+    number<-string string<-number list<-string string<-list self-evaluating? 
     inexact<-exact exact<-inexact floor not assoc sqrt
     = not= < <=> > <= >= 
-    * / + - expt abs gcd
+    * / + - expt abs gcd quotient remainder modulo
+    string<-symbol
     ! me spawn monitor unmonitor
     module-load   ;; for now
     ;; From Squeam stdlib:
