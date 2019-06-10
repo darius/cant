@@ -124,8 +124,11 @@
 
 (to (module-load mod-name filename)
   (surely (not (modules .maps? mod-name))) ;XXX for now
+  (modules .set! mod-name (module-read filename global-env)))
+  
+(to (module-read filename env)
   (let defs (with-input-file read-all filename))  
-  (modules .set! mod-name (module-env<- (module-parse defs))))
+  (module-env<- (module-parse defs) env))
   
 
 ;; Language syntax
@@ -524,19 +527,14 @@
 (builtins-map .set! 'throw {throw})
 (builtins-map .set! 'exit  {exit})
 
-(to (module-env<- module)
-  {recursive-env (map<-defs module) global-env})
+(to (module-env<- module @(optional env))
+  {recursive-env (map<-defs module) (or env global-env)})
 
 (to (map<-defs defs)
   (map<- (for each ((def defs))
            (match def
              ({to name _ _} `(,name ,def))))))
 
-;; Add the prelude to the global environment. This code is almost just
-;; calling module-load on prelude.scm, except we can't call that yet,
-;; because global-env needs to exist first.
+;; Add the prelude to the global environment.
 (let global-env
-  (hide
-    (let defs (with-input-file read-all "eg/squirm/prelude.scm"))
-    (let module (module-parse defs))
-    {recursive-env (map<-defs module) {builtins-env}}))
+  (module-read "eg/squirm/prelude.scm" {builtins-env}))
