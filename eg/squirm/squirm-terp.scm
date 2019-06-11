@@ -208,13 +208,12 @@
        (`(,e) e)
        (`(,e ,@es) `(if ,e (and ,@es) #no))))
     ('begin
-        ;; (begin f ((x a) (y b)) e) => (hide (to (f a b) e) (f x y))
+        ;; (begin f ((x a) (y b)) e) => (do (to (f a b) e) (f x y))
      (match operands
        (`(,f ,pairs ,@body)
         (for each! ((pair pairs))
           (surely (and (list? pair) (= pair.count 2))))
         `(do
-           ;; TODO local to-defs in seqs
            (to (,f ,@(each '.first pairs))
              ,@body)
            (f ,@(for each ((pair pairs)) (pair 1)))))))
