@@ -85,6 +85,7 @@
          ({nonempty msg rest}
           (inbox-unchecked .^= rest)
           (let map (map<-))
+          ;; TODO handle {after ...} clauses
           (match (match-clauses r map clauses msg)
             (#no
              (inbox-checked .^= (push inbox-checked.^ msg))
@@ -268,7 +269,11 @@
 
 (to (clause-parse clause)
   (let `(,pattern ,@seq) clause)
-  {clause (pat-parse pattern) (seq-parse seq)})
+  (match pattern
+    (`(after ,e)
+     {after (exp-parse e) (seq-parse seq)})
+    (_
+     {clause (pat-parse pattern) (seq-parse seq)})))
 
 (to (pat-parse pattern)
   (match pattern
