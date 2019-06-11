@@ -76,7 +76,7 @@
         (state .^= {go thunk #no})) ;(TODO still a bit clumsy)
        (_)))
 
-    ({.receive (and exp {receive clauses}) r k}
+    ({.receive (and exp {receive clauses #no}) r k}
      ;; TODO: error if exited? Probably not.
      (begin checking ()  ;; TODO finer time-slicing?
        (match (peek inbox-unchecked.^)
@@ -190,7 +190,20 @@
     (`(do ,@es)
      (seq-parse es))
     (`(? ,@clauses)
-     {receive (each clause-parse clauses)})
+     ;; TODO less clumsy way to code this?
+     (begin collecting ((cs (each clause-parse clauses))
+                        (pattern-cs '())
+                        (after-c #no))
+       (match cs
+         ('()
+          {receive (reverse pattern-cs) after-c})
+         (`(,c ,@rest)
+          (match c
+            ({after _ _}
+             (surely (not after-c) "Multiple after clauses")
+             (collecting rest pattern-cs c))
+            ({clause _ _}
+             (collecting rest (cons c pattern-cs) after-c)))))))
     (`(match ,subject ,@clauses)
      {match (exp-parse subject) (each clause-parse clauses)})
     (`(catch ,@es)   ;; TODO macroexpand into (%catch (given () e)) ?
@@ -322,7 +335,7 @@
      (sev e r {branch exp r k}))
     ({then e1 e2}
      (sev e1 r {then-drop e2 r k}))
-    ({receive _}
+    ({receive _ _}
      (the-running-process.^ .receive exp r k))
     ({match e clauses}
      (sev e r {matching clauses r k}))
