@@ -1,0 +1,8 @@
+(to (main)
+;  (to ((compose f g) x)  ;; TODO varargs
+;    (f (g x)))
+  (print ((compose not nil?) '()))
+  (print (do (define
+               (to (even? n) (or (= n 0) (odd? (- n 1))))
+               (to (odd? n)  (and (< 0 n) (even? (- n 1)))))
+             (odd? 7))))

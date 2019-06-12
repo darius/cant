@@ -1,0 +1,11 @@
+(to (main)
+  (print 0)
+  (spawn (given ()
+           (print (catch
+                   (print 1)
+                   (throw 2)
+                   (print 3)))
+           (print 4)
+           (throw 5)
+           (print 6)))
+  (print 7))

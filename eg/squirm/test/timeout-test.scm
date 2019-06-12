@@ -1,0 +1,5 @@
+(to (main)
+  (print 0)
+  (? (msg (print "got 1"))
+     ((after 50) (print "after delay")))
+  (print "done"))
