@@ -562,7 +562,8 @@
   pid)
 
 (to (unregister name)
-  (registry .delete! name))             ;TODO what if not registered?
+  (surely (registry .maps? name))
+  (registry .delete! name))
 
 (to (monitor pid)             ;TODO flesh out more of what Erlang does
   ((as-pid pid) .subscribe (me)))
