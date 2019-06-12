@@ -18,6 +18,7 @@
   (squirm-run module (or entry 'main) (or arguments '())))
 
 (to (squirm-run module entry arguments)
+  registry.clear!
   (run-queue .^= empty)
   (spawn (env-get (module-env<- (module-parse module)) entry)
          arguments)
@@ -549,15 +550,29 @@
   the-running-process.^)
 
 (to (! pid message)
-  ;; TODO make sure pid is a pid
-  (pid .enqueue message)
+  ((as-pid pid) .enqueue message)
   #no)
 
+(to (as-pid pid)
+  ;; TODO error if not a pid in the end
+  (if (symbol? pid) (registry pid) pid))
+
+(let registry (map<-))
+
+(to (register name pid)
+  (registry .set! name (as-pid pid)) ;; TODO is the as-pid a good idea?
+  ;; TODO what if already set?
+  ;; TODO unregister when it dies?
+  pid)
+
+(to (unregister name)
+  (registry .delete! name))             ;TODO what if not registered?
+
 (to (monitor pid)             ;TODO flesh out more of what Erlang does
-  (pid .subscribe (me)))
+  ((as-pid pid) .subscribe (me)))
 
 (to (unmonitor pid)
-  (pid .unsubscribe (me)))
+  ((as-pid pid) .unsubscribe (me)))
 
 (to (first x) x.first)
 (to (rest x) x.rest)
@@ -607,6 +622,7 @@
     * / + - expt abs gcd quotient remainder modulo
     string<-symbol
     ! me spawn monitor unmonitor
+    register unregister
     module-load   ;; for now
     ;; From Squeam stdlib:
     reverse zip transpose identity format
