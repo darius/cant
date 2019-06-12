@@ -6,10 +6,6 @@
 
 ;; Main
 
-(to (squirm-main argv)
-  (let `(,_ ,filename) argv)
-  (run-file filename))
-
 (to (run-file filename @(optional entry arguments))
   (let module (with-input-file read-all filename))
   (run module entry arguments))
@@ -613,7 +609,8 @@
   sym.name)
 
 (let primitives-from-squeam
-  '(link first rest list chain length nth slice
+  (export
+    link first rest list chain length nth slice
     nil? link? list? number? integer? symbol? claim? char? string? tuple?
     symbol<- char<- tuple<- tuple<-list
     number<-string string<-number list<-string string<-list self-evaluating? 
@@ -624,15 +621,14 @@
     ! me spawn monitor unmonitor
     register unregister
     module-load   ;; for now
-    ;; From Squeam stdlib:
     reverse zip transpose identity format
     count? yeah? min max grid* intercalate sum 
     write print display newline read
     ))
 
 (let builtins-map
-  (map<- (for each ((name primitives-from-squeam))
-           `(,name {primitive ,(evaluate name '())}))))
+  (map<- (for each ((`(,name ,value) primitives-from-squeam.items))
+           `(,name {primitive ,value}))))
 
 (builtins-map .set! 'apply {apply})
 (builtins-map .set! 'eval  {eval})
@@ -650,3 +646,7 @@
 ;; Add the prelude to the global environment.
 (let global-env
   (module-read "eg/squirm/prelude.scm" {builtins-env}))
+
+
+(export
+  run-file)
