@@ -21,7 +21,7 @@
   (run-queue .^= empty)
   (spawn (env-get (module-env<- (module-parse module)) entry)
          arguments)
-  (running))
+  (running wait-check-interval))
 
 
 ;; Processes, scheduling, message passing
@@ -32,16 +32,37 @@
   (run-queue .^= (push run-queue.^ new-process))
   new-process)
 
-(to (running)
+(to (running wait-check-in)
+  (when (= 0 wait-check-in)
+    (check-timeouts))
   (match (peek run-queue.^)
-    ({empty} 'done)
+    ({empty}
+     (unless waiting-timeouts.empty?
+       (let deadline (call min waiting-timeouts.values))
+       (nanosleep (- deadline (nano-now)))
+       (running 0)))
     ({nonempty pid q2}
      (run-queue .^= q2)
      pid.run-a-slice
-     (running))))
+     (running (- wait-check-in 1)))))
+
+(let wait-check-interval 10)
 
 (let run-queue (box<- empty))
 (let the-running-process (box<- #no))
+(let waiting-timeouts (map<-))
+
+(to (check-timeouts)
+  (let now (nano-now))
+  (for each! ((`(,process ,time) waiting-timeouts.items))
+;;    (format "time ~w: checking ~w\n" (msecs now) (msecs time))
+    (when (<= time now)
+      (waiting-timeouts .delete! process)
+      ;; TODO: wake it specifically as hitting the timeout, instead of re-evaluating the receive?
+      process.wake)))
+
+(let base ((nano-now) .quotient 1000000))
+(to (msecs n) (- (n .quotient 1000000) base))
 
 (let pid-counter (box<- 0))
 
@@ -69,19 +90,30 @@
      (process .enqueue (array<- 'DOWN pid outcome)))
 
     ({.enqueue message}
+     ;; TODO: error if exited? Probably not.
      (inbox-unchecked .^= (push inbox-unchecked.^ message))
+     process.wake)
+
+    ({.wake}
      (match state.^
-       ((and {blocked _ _ _} thunk)
+       ((and {blocked _ _ _ _ _} thunk)
         (run-queue .^= (push run-queue.^ process))
         (state .^= {go thunk #no})) ;(TODO still a bit clumsy)
        (_)))
 
-    ({.receive (and exp {receive clauses #no}) r k}
-     ;; TODO: error if exited? Probably not.
+    ({.receive deadline after-e clauses r k}
      (begin checking ()  ;; TODO finer time-slicing?
        (match (peek inbox-unchecked.^)
          ({empty}
-          {blocked exp r k})
+          (if deadline
+              (case ((<= deadline (nano-now))
+;                     (format "time ~w: deadline ~w\n" (msecs (nano-now)) (msecs deadline))
+                     (waiting-timeouts .delete! process) ;TODO might not be needed?
+                     (sev after-e r k))
+                    (else
+                     (waiting-timeouts .set! process deadline)
+                     {blocked deadline after-e clauses r k}))
+              {blocked deadline after-e clauses r k}))
          ({nonempty msg rest}
           (inbox-unchecked .^= rest)
           (let map (map<-))
@@ -93,6 +125,8 @@
             ({clause _ exp}
              (inbox-unchecked .^= (extend inbox-checked.^ (list<-queue rest)))
              (inbox-checked .^= empty)
+             (when deadline
+               (waiting-timeouts .delete! process)) ;TODO might not be needed?
              (sev exp {local-env map r} k)))))))
 
     ({.run-a-slice}
@@ -103,7 +137,7 @@
         (the-running-process .^= #no)
         (state .^= state2)
         (match state2
-          ({blocked a b c}
+          ({blocked _ _ _ _ _}
            (surely (empty? inbox-unchecked.^) "inbox populated"))
           ({exit outcome}
            (for each! ((watcher watchers.keys))
@@ -111,7 +145,7 @@
           (_ (run-queue .^= (push run-queue.^ process)))))
        ({exit _}
         (surely #no))
-       ({blocked _ _ _}
+       ({blocked _ _ _ _ _}
         (surely (empty? inbox-unchecked.^) "I'm supposed to be blocked"))
        ))))
 
@@ -335,8 +369,12 @@
      (sev e r {branch exp r k}))
     ({then e1 e2}
      (sev e1 r {then-drop e2 r k}))
-    ({receive _ _}
-     (the-running-process.^ .receive exp r k))
+    ({receive clauses after-clause}
+     (match after-clause
+       (#no
+        (the-running-process.^ .receive #no #no clauses r k))
+       ({after n-exp e}
+        (sev n-exp r {receive-timeout e clauses r k}))))
     ({match e clauses}
      (sev e r {matching clauses r k}))
     ({catch e}
@@ -358,14 +396,19 @@
      (sev e2 r k))
     ({spawn f}
      (apply f value {halt}))
-    ({blocked exp r k}
-     (sev exp r k))
+    ({blocked deadline after-e clauses r k}
+     (the-running-process.^ .receive deadline after-e clauses r k))
     ({matching clauses r k}
      (let map (map<-))                  ;TODO factor dupe?
      (match (match-clauses r map clauses value)
        (#no (exit "Match failure"))
        ({clause _ e}
         (sev e {local-env map r} k))))
+    ({receive-timeout e clauses r k}
+     (match value
+       ((? count?)
+        (let deadline (+ (nano-now) (* 1000000 value)))
+        (the-running-process.^ .receive deadline e clauses r k))))
     ({catch-frame k}
      {go k value})              ;TODO distinguish from thrown outcome?
     ({halt}
