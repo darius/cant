@@ -70,6 +70,16 @@
   (let inbox-checked (box<- empty))     ; Messages that didn't match the current receive.
   (let inbox-unchecked (box<- empty))   ; Messages not yet checked against the current receive.
   (let watchers (set<-))                ; Monitors to notify on my exit.
+  (let partners (set<-))                ; Partners, whose fate is linked with mine.
+  ;; TODO: just one set of a sum type of watchers and partners?
+
+  (to (on-death outcome)
+    (for each! ((watcher watchers.keys))
+      (watchers .delete! watcher)
+      (watcher .receive-signal process outcome)) ;TODO pass more info
+    (for each! ((partner partners.keys))
+      (partners .delete! partner)
+      (partner .partner-died process outcome))) ;TODO pass more info or what?
 
   (make process
 
@@ -78,13 +88,26 @@
 
     ({.subscribe watcher}
      (watchers .add! watcher))
-
     ({.unsubscribe watcher}
      (watchers .delete! watcher))
 
     ({.receive-signal pid outcome}
-     ;; TODO: links vs. monitors
      (process .enqueue (array<- 'DOWN pid outcome)))
+
+    ({.partner pid}
+     (partners .add! pid))
+    ({.unpartner pid}
+     (surely (partners .maps? pid))
+     (partners .delete! pid))
+
+    ({.partner-died pid outcome}
+     (surely (partners .maps? pid))     ;uh right?
+     (partners .delete! pid)
+     (match state.^
+       ({exit _})
+       (_                            ;TODO check process_flag for trap
+        (state .^= {exit 'partner-died}) ;TODO or whatever
+        (on-death 'partner-died))))      ;TODO or whatever
 
     ({.enqueue message}
      ;; TODO: error if exited? Probably not.
@@ -137,8 +160,7 @@
           ({blocked _ _ _ _ _}
            (surely (empty? inbox-unchecked.^) "inbox populated"))
           ({exit outcome}
-           (for each! ((watcher watchers.keys))
-             (watcher .receive-signal process outcome))) ;TODO pass more info
+           (on-death outcome))
           (_ (run-queue .^= (push run-queue.^ process)))))
        ({exit _}
         (surely #no))
@@ -571,6 +593,25 @@
 (to (unmonitor pid)
   ((as-pid pid) .unsubscribe (me)))
 
+(to (partner pid)
+  (let m (me))
+  (let p (as-pid pid))
+  (m .partner pid)
+  (pid .partner m)
+  #no)                                  ;TODO what return value?
+
+(to (unpartner pid)
+  (let m (me))
+  (let p (as-pid pid))
+  (m .unpartner pid)
+  (pid .unpartner m)
+  #no)                                  ;TODO what return value?
+
+(to (spawn-partner f @(optional arguments))
+  (let pid (spawn f arguments))
+  (partner pid)
+  pid)
+
 (to (first x) x.first)
 (to (rest x) x.rest)
 (let link cons)
@@ -619,7 +660,7 @@
     = not= < <=> > <= >= 
     * / + - expt abs gcd quotient remainder modulo
     string<-symbol
-    ! me spawn monitor unmonitor
+    ! me spawn monitor unmonitor partner unpartner spawn-partner
     register unregister
     module-load   ;; for now
     reverse zip transpose identity format

@@ -7,6 +7,7 @@
                   "test/mod-test.scm"
                   "test/throw-test.scm"
                   "test/monitor-test.scm"
+                  "test/partner-test.scm"
                   "test/error-test.scm"
                   "test/recur-test.scm"
                   "test/timeout-test.scm"
