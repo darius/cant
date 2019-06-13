@@ -2,6 +2,7 @@
   run-file)
 
 (let test-names '("test/smoke-test.scm"
+                  "eg/hello.scm"
                   "eg/universal_server.scm"
                   "test/mod-test.scm"
                   "test/throw-test.scm"
