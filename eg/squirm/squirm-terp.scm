@@ -58,9 +58,6 @@
       ;; TODO: wake it specifically as hitting the timeout, instead of re-evaluating the receive?
       process.wake)))
 
-(let base ((nano-now) .quotient 1000000))
-(to (msecs n) (- (n .quotient 1000000) base))
-
 (let pid-counter (box<- 0))
 
 (to (process<- start-state)
