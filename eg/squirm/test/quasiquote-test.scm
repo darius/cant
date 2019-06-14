@@ -1,0 +1,8 @@
+(to (main)
+  (let d 7)
+  (let f 11)
+  (print `(a b [c ,d] e ,@f))
+  (let `(x [,u] ,@v) '(x [hey] jude))
+  (print u)
+  (print v)
+  )

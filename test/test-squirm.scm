@@ -11,6 +11,7 @@
                   "test/error-test.scm"
                   "test/recur-test.scm"
                   "test/timeout-test.scm"
+                  "test/quasiquote-test.scm"
                   ))
 
 (for each! ((test test-names))

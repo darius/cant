@@ -307,6 +307,9 @@
         `(match ,e
            (#no (or ,@es))
            (yeah yeah)))))
+    ('quasiquote
+     (match operands
+       (`(,sexpr) (qq-expand sexpr))))
     ('unless
      (match operands
        (`(,test ,@body)
@@ -320,6 +323,26 @@
            (#no #no)
            (_ ,@body)))))
     (_ #no)))
+
+;; Expand a quasiquoted expression or pattern (either one).
+(to (qq-expand sexpr)
+  ;; N.B. unquote-splicing only at the end
+  (match sexpr
+    ((list<- 'unquote e)
+     e)
+    ((list<- (list<- 'unquote-splicing e))
+     e)
+    ((cons 'unquote _)          (error "Bad quasiquote"))
+    ((cons 'unquote-splicing _) (error "Bad quasiquote"))
+    ((cons first rest)
+     ;; TODO quote if both parts are constant
+     `(link ,(qq-expand first) ;XXX unhygienic but works for both exp and pat
+            ,(qq-expand rest)))
+    ((? array?)
+     ;; TODO quote if all parts are constant
+     (array<-list (each qq-expand sexpr)))
+    (_
+     `',sexpr)))
 
 ;; Transform foo:bar to {module-ref foo bar}
 ;; (TODO better to do this in the reader in the real system.)
@@ -359,6 +382,8 @@
                     `(link ,ps.first (list ,@ps.rest)))))
     (`(: ,(? symbol? name))
      {expect-var name})
+    ((list<- 'quasiquote sexpr)
+     (pat-parse (qq-expand sexpr)))
     ))
 
 
