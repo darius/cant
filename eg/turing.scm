@@ -16,13 +16,23 @@
 (to (run machine @(optional option))
   (begin running ((machine machine))
     (when (= option 'loudly)
-      (print (show-config machine)))
+      (show-config machine)
+      (newline))
     (match (step machine)
       (#no machine)
       (updated (running updated)))))
 
-(to (show-config {machine _ state {tape L h R}})
-  `(,@(reverse L) (,state ,h) ,@R))
+(to (show-config {machine transit state {tape L h R}})
+  (to (show-squares squares)
+    (" " .join (for each ((s squares))
+                 ("~w" .format s))))
+  (let next-acts (match (transit .get `(,state ,h))
+                   (#no '())
+                   (`(,acts ,_) acts)))
+
+  (let before (show-squares (reverse L)))
+  (format "~d ~d ~d\n" before (show-squares `(,h)) (show-squares R))
+  (format "~d ~w ~w\n" (" " .repeat before.count) state next-acts))
 
 (to (step {machine transit state (and tape {tape _ head _})})
   (match (transit .get `(,state ,head))
@@ -39,7 +49,47 @@
 (to (peek marks)
   (if marks.empty? '(-) marks))
 
+
+;; Conveniences
+
 ;; TODO a canonicalizer that rewrites to an equiv turing machine
 ;; that steps one square at a time.
 
-;; TODO maybe: a transit maker that takes a list of (state mark actions next-state)
+;; Make a transit function from a list of (state mark actions next-state)
+(to (transit<- entries)
+  (map<- (for each ((`(,state ,mark ,acts ,next-state) entries))
+           `((,state ,mark) (,acts ,next-state)))))
+
+
+;; Examples
+;; https://en.wikipedia.org/wiki/Turing_machine_examples
+
+;; "1. A machine can be constructed to compute the sequence 0 1 0 1 0 1..."
+;; (0 <blank> 1 <blank> 0...)
+;; (Undecidable p. 119)
+(let turing-example-1
+  '((b -  (0 >) c)
+    (c -  (>)   e)
+    (e -  (1 >) f)
+    (f -  (>)   b)))
+
+;; On the tape, 0 is represented by - (blank):
+(let copy-subroutine
+  '(
+;;  (1 -  () halt)
+    (s1 1  (- <) s2)
+    (s2 -  (- <) s3)
+    (s2 1  (1 <) s2)
+    (s3 -  (1 >) s4)
+    (s3 1  (1 <) s3)
+    (s4 -  (- >) s5)
+    (s4 1  (1 >) s4)
+    (s5 -  (1 <) s1)
+    (s5 1  (1 >) s5)
+    ))
+
+;; Compare to the trace at
+;; https://en.wikipedia.org/wiki/Turing_machine_examples#A_copy_subroutine
+(to (smoke-test)
+  (let eg-copy {machine (transit<- copy-subroutine) 's1 '{tape (1) 1 ()}})
+  (run eg-copy 'loudly))

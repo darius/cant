@@ -173,7 +173,7 @@
                 (out .display #\newline)
                 (printing xs.rest)))))
 
-(to (break @values)
+(to (breakpoint @values)
   (call error `("Breakpoint" ,@values)))
 
 (to (system/must-succeed command)
