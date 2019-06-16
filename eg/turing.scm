@@ -1,5 +1,4 @@
 ;; Turing machine interpreter
-;; XXX untested
 
 ;; mark = value that can appear in a tape square.
 ;; transit = map from `(,state ,mark) to `(,acts ,state).
