@@ -41,12 +41,9 @@
 
 (to (perform {tape L h R} act)
   (match act
-    ('<   (let `(,l0 ,@ls) (peek L)) {tape ls l0 `(,h ,@R)})
-    ('>   (let `(,r0 ,@rs) (peek R)) {tape `(,h ,@L) r0 rs})
+    ('<   {tape (L .slice 1) (L .get 0 '-) `(,h ,@R)})
+    ('>   {tape `(,h ,@L)    (R .get 0 '-) (R .slice 1)})
     (mark {tape L mark R})))
-
-(to (peek marks)
-  (if marks.empty? '(-) marks))
 
 
 ;; Conveniences

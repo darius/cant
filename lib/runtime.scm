@@ -111,9 +111,9 @@
          (counting list.rest (+ count 1)))))
   ({.slice i}
    (surely (<= 0 i))
-   (if (= i 0)
-       list
-       (list.rest .slice (- i 1))))
+   (case ((= i 0) list)
+         (list.empty? list)
+         (else (list.rest .slice (- i 1)))))
   ({.slice i bound}     ;XXX result is a cons-list; be more generic?
    (surely (<= 0 i))
    (case (list.empty? list)
