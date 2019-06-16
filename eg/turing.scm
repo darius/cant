@@ -93,3 +93,8 @@
 (to (smoke-test)
   (let eg-copy {machine (transit<- copy-subroutine) 's1 '{tape (1) 1 ()}})
   (run eg-copy 'loudly))
+
+
+(export
+  run step show-config transit<-
+  smoke-test)
