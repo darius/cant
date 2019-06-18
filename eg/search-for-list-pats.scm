@@ -29,9 +29,9 @@
   (let p (macroexpand-outer-patt patt))
   (match p
     (`(,s ,@_)
-     (or (and (not ('(list<- cons quote and view @ quasiquote) .find? s))
-              (do (format "This subpattern is bad: ~w\n" patt)
-                  #yes))
+     (if (not ('(list<- cons quote and view @ quasiquote) .find? s))
+         (do (format "This subpattern is bad: ~w\n" patt)
+             #yes)
          (bad-part? (patt-subparts p))))
     (_ (bad-part? (patt-subparts p)))))
 
