@@ -14,6 +14,7 @@
     ((? term? t)                    `(,t.arguments ()))
     (`(let ,p ,e)                   `((,e) (,p)))
     (`(make ,(? symbol?) ,@clauses) (make-subparts clauses))
+    (`(make ,(? string?) ,@clauses) (make-subparts clauses))
     (`(make ,@clauses)              (make-subparts clauses))
     (`(do ,@es)                     `(,es ()))
     (`(call ,e1 ,e2)                `((,e1 ,e2) ()))
