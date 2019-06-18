@@ -30,7 +30,7 @@
 
 (to (clauses-subparts clauses)
   (match (transpose (each clause-subparts clauses))
-    (() none)
+    ('() none)
     (`(,es-lists ,ps-lists) `(,(call chain es-lists)
                               ,(call chain ps-lists)))))
 
