@@ -70,7 +70,7 @@
                ))
        (growing (extend queue-1 
                         (for those ((p1 (neighbors<- p)))
-                          (and (not (already p1))
+                          (and (not (already .maps? p1))
                                (do (already .add! p1)
                                    (included? p1))))))))))
 
