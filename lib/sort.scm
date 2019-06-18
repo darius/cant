@@ -18,7 +18,7 @@
           (if xs.empty?
               ys
               (merge (merge-sort xs) (merge-sort ys)))
-          (splitting seq.rest ys (cons seq.first xs)))))
+          (splitting seq.rest ys (link seq.first xs)))))
 
   (to (merge xs ys)
     (case (xs.empty? ys)

@@ -8,7 +8,7 @@
       '()
       (begin trying ((d 2) (n n))
         (if (d .divides? n)
-            (cons d (if (= d n) '() (trying d (n .quotient d))))
+            (link d (if (= d n) '() (trying d (n .quotient d))))
             (trying (+ d 1) n)))))
 
 (export factor)

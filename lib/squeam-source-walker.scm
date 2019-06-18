@@ -72,7 +72,7 @@
     ((list<- (list<- 'unquote-splicing p)) `(,p))
     ((list<- 'unquote-splicing p)
      (error "A ,@-pattern must be at the end of a list" q))
-    ((cons qcar qcdr) `(',qcar ,@(quasiquote-subpatts qcdr)))
+    ((link qcar qcdr) `(',qcar ,@(quasiquote-subpatts qcdr)))
     ((? term?) (qq-term-subpatts q))
     (_ '())))
 

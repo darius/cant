@@ -114,16 +114,16 @@
    (case ((= i 0) list)
          (list.empty? list)
          (else (list.rest .slice (- i 1)))))
-  ({.slice i bound}     ;XXX result is a cons-list; be more generic?
+  ({.slice i bound}     ;XXX result is a link-list; be more generic?
    (surely (<= 0 i))
    (case (list.empty? list)
          ((<= bound i) '())
-         ((= i 0) (cons list.first (list.rest .slice 0 (- bound 1))))
+         ((= i 0) (link list.first (list.rest .slice 0 (- bound 1))))
          (else (list.rest .slice (- i 1) (- bound 1)))))
   ({.chain seq}                         ;TODO self if seq is ()
    (if list.empty?
        seq
-       (cons list.first (list.rest .chain seq))))
+       (link list.first (list.rest .chain seq))))
   ({.compare xs}
    ;; N.B. mutable arrays compare by this method, so it's really a comparison as of right now
    (case (list.empty? (if xs.empty? 0 -1))
@@ -242,7 +242,7 @@
   ({.selfie sink} (sink .display "()"))
   (message        (list-trait me message))) ;XXX use trait syntax instead
 
-(make-trait cons-primitive me
+(make-trait link-primitive me
   ({.empty?}      #no)
   ({.first}       (__car me))
   ({.rest}        (__cdr me))
@@ -258,7 +258,7 @@
       (sink .display "(")
       (sink .print me.first)
       (begin printing ((r me.rest))
-        (case ((cons? r)
+        (case ((link? r)
                (sink .display " ")
                (sink .print r.first)
                (printing r.rest))
@@ -390,7 +390,7 @@
              (begin scanning ((i 1))
                (case ((= i limit) `(,s))
                      (((s i) .whitespace?)
-                      (cons (s .slice 0 i)
+                      (link (s .slice 0 i)
                             (splitting ((s .slice (+ i 1)) .trim-left))))
                      (else (scanning (+ i 1)))))))))
   ({.split delimiter}
@@ -403,7 +403,7 @@
              (begin scanning ((i 0))
                (case ((= i limit) `(,s))
                      ((= delimiter (s .slice i (+ i delimiter.count)))
-                      (cons (s .slice 0 i)
+                      (link (s .slice 0 i)
                             (splitting (s .slice (+ i delimiter.count)))))
                      (else (scanning (+ i 1)))))))))
   ({.lowercase} (string<-list (for each ((c me)) c.lowercase)))
@@ -425,7 +425,7 @@
                    ((= pattern (me .slice i (+ i pattern.count)))
                     (chain (list<-string replacement)
                            (scanning (+ i pattern.count))))
-                   (else (cons (me i) (scanning (+ i 1))))))))))
+                   (else (link (me i) (scanning (+ i 1))))))))))
   ({.justify n}
    (me .justify n #\space))
   ({.justify n pad}
@@ -527,7 +527,7 @@
         (begin reading ((ch ch))
           (if (or (eof? ch) (= ch #\newline))
               '()
-              (cons ch (reading me.read-char)))))))
+              (link ch (reading me.read-char)))))))
   ({.read-lines}
    me.read-all.split-lines)  ;; TODO inefficient. also, maybe include the newlines?
   )
@@ -777,7 +777,7 @@
                (do (let k (keys.^ i))
                    (case ((= k none) (walking (- i 1)))
                          ((= k deleted) (walking (- i 1)))
-                         (else (cons i (walking (- i 1)))))))))
+                         (else (link i (walking (- i 1)))))))))
 
        (to (place key)
          (__place key keys.^ none deleted))
@@ -994,14 +994,14 @@
       (begin copying ((seq seq))
         (if seq.empty?
             '()
-            (cons seq.first (copying seq.rest))))))
+            (link seq.first (copying seq.rest))))))
 
 (to (string<-list chars) (__string<-list (as-list chars)))
 (to (array<-list xs)     (__array<-list (as-list xs)))
 
 (to (reverse xs)
   (for foldl ((ys '()) (x xs))
-    (cons x ys)))
+    (link x ys)))
 
 (to (foldl f z xs)
   (if xs.empty?
@@ -1022,7 +1022,7 @@
 (make each
   (`(,f ,xs)
    (for foldr ((x xs) (ys '()))
-     (cons (f x) ys)))
+     (link (f x) ys)))
   (`(,f ,@lists)
    (for each ((args (call zip lists)))
      (call f args))))
@@ -1052,7 +1052,7 @@
 
 (to (those ok? xs)
   (for foldr ((x xs) (ys '()))
-    (if (ok? x) (cons x ys) ys)))
+    (if (ok? x) (link x ys) ys)))
 
 (to (filter f xs)             ;TODO is this worth defining? good name?
   (those identity (each f xs)))
@@ -1196,9 +1196,9 @@
       (let es
         (begin unparsing ((tail e2))
           (match tail.term
-            ({do e3 e4} (cons e3 (unparsing e4)))
+            ({do e3 e4} (link e3 (unparsing e4)))
             (_ `(,tail)))))
-      `(do ,@(each unparse-exp (cons e1 es))))
+      `(do ,@(each unparse-exp (link e1 es))))
 
     (to (unparse-make name stamp trait-term clauses)
       (surely (= {constant #no} stamp.term)) ;XXX

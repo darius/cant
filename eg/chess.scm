@@ -230,9 +230,9 @@
                (do (let r1 (+ r (* dr i)))
                    (let c1 (+ c (* dc i)))
                    (case ((empty? r1 c1)
-                          (cons (move-to r1 c1) (stepping (+ i 1))))
+                          (link (move-to r1 c1) (stepping (+ i 1))))
                          ((has-opponent? r1 c1)
-                          (cons (move-to r1 c1) '()))
+                          (link (move-to r1 c1) '()))
                          (else
                           '())))))))
 
@@ -242,10 +242,10 @@
         ;; XXX do en passant too
         (let dr (if white? -1 1))
         (chain (if (empty? (+ r dr) c)
-                   (cons (move-to (+ r dr) c)
+                   (link (move-to (+ r dr) c)
                          (if (and (= r (if white? 7 2))   ; initial 2 steps
                                   (empty? (+ r (* dr 2)) c))
-                             (cons (move-to (+ r (* dr 2)) c) '())
+                             (link (move-to (+ r (* dr 2)) c) '())
                              '()))
                    '())
                (if (has-opponent? (+ r dr) (- c 1))

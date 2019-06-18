@@ -49,7 +49,7 @@
         ,@(for gather ((x elements.rest)) ;TODO more efficient
             `(,between ,x)))))
 
-(to (cons/lazy x thunk)
+(to (link/lazy x thunk)
   (make lazy-list {extending list-trait}
     ({.empty?} #no)
     ({.first}  x)
@@ -61,13 +61,13 @@
   (if xs.empty?
       '()
       (if (ok? xs.first)
-          (cons/lazy xs.first (given () (those/lazy ok? xs.rest)))
+          (link/lazy xs.first (given () (those/lazy ok? xs.rest)))
           (those/lazy ok? xs.rest))))
 
 (to (each/lazy f xs)
   (for foldr/lazy ((x xs)
                    (rest-thunk (given () '())))
-    (cons/lazy (f x) rest-thunk)))
+    (link/lazy (f x) rest-thunk)))
 
 (to (gather/lazy f xs)
   (for foldr/lazy ((x xs)
@@ -75,7 +75,7 @@
     (chain/lazy (f x) rest-thunk)))
 
 (to (chain/lazy xs ys-thunk)
-  (foldr/lazy cons/lazy xs ys-thunk))
+  (foldr/lazy link/lazy xs ys-thunk))
 
 (to (foldr/lazy f xs z-thunk)
   (if xs.empty?
@@ -274,6 +274,6 @@
   (let thing (read source))
   (if (eof? thing)
       '()
-      (cons thing (read-all source))))
+      (link thing (read-all source))))
 
 (the-signal-handler .^= fallback-signal-handler)

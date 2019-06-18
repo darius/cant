@@ -32,7 +32,7 @@
 
     (to (push new-focus)
       (print new-focus)           ;XXX pretty-print? cycle-print? ...?
-      (interacting new-focus (cons focus trail)))
+      (interacting new-focus (link focus trail)))
 
     (display "inspect> ")
     (let input (read))
@@ -105,7 +105,7 @@
        (let caller frame.rest)
        (if caller.empty?
            (continue "At top.\n")
-           (interacting caller (cons frame callees)))) ;TODO show the new current frame
+           (interacting caller (link frame callees)))) ;TODO show the new current frame
       ('down
        (if callees.empty?
            (continue "At bottom.\n")

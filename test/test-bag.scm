@@ -39,6 +39,6 @@
     (surely (= m-val a-val) "mismatch" key m-val a-val)
 
     (m .add! key)
-    (a .^= (cons key a.^))))
+    (a .^= (link key a.^))))
 
 (random-tests 13)

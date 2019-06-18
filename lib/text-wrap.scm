@@ -33,14 +33,14 @@
         (if line.empty? '() `(,(flush line)))
         (match tokens.first
           ({break}
-           (cons (flush line) (wrap-into (flexarray<-) tokens.rest width)))
+           (link (flush line) (wrap-into (flexarray<-) tokens.rest width)))
           ({space}
            (scanning (+ spaces 1) tokens.rest))
           ({word s}
            (if (<= (+ line.count spaces s.count) width)
                (do (line .extend! (chain (" " .repeat spaces) s))
                    (scanning 0 tokens.rest))
-               (cons (flush line)
+               (link (flush line)
                      (hide
                        (let new-line (flexarray<-))
                        (new-line .extend! s)

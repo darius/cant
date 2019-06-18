@@ -139,7 +139,7 @@
        ;; XXX complain if you see a bare , or ,@. but this will fall out of disallowing defaulty lists.
        (('list<- . ps)
         (parse-list-pat ps ctx))
-       (('cons car-p cdr-p)
+       (('link car-p cdr-p)
         (make-cons-pat (parse-p car-p ctx) (parse-p cdr-p ctx)))
        ((: __ term?)
         (let ((tag (term-tag p))
@@ -241,8 +241,8 @@
         (unpack cdr-pat (cdr-value)
           (pack<- p-constant (cons car-value cdr-value)))) ;TODO avoid re-consing when possible
       (pack<- p-view
-              (pack<- e-variable '__as-cons)
-              (pack<- p-term 'cons (list car-pat cdr-pat)))))
+              (pack<- e-variable '__as-link)
+              (pack<- p-term 'link (list car-pat cdr-pat)))))
 
 (define (self-evaluating? x)
   (or (boolean? x)
@@ -390,7 +390,7 @@
      (error 'parse "A ,@-pattern must be at the end of a list" qq))
     ((qcar . qcdr)
      ;; TODO optimize simple list patterns into p-list forms
-     `(cons ,(expand-quasiquote-pat qcar)
+     `(link ,(expand-quasiquote-pat qcar)
             ,(expand-quasiquote-pat qcdr)))
     ((: __ term?)
      (expand-qq-term-pat qq))

@@ -22,7 +22,7 @@
 (to (interleave xs ys)
   (if xs.empty?
       ys
-      (cons/lazy xs.first
+      (link/lazy xs.first
                  (given () (interleave ys xs.rest)))))
 
 (to ((both goal1 goal2) s)

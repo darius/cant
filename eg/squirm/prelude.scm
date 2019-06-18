@@ -25,7 +25,7 @@
 
 (to (those ok? xs)
   (for foldr ((x xs) (ys '()))
-    (if (ok? x) (cons x ys) ys)))
+    (if (ok? x) (link x ys) ys)))
 
 (to (filter f xs)             ;TODO is this worth defining? good name?
   (those identity (each f xs)))
@@ -48,7 +48,7 @@
 
 (to (each f xs)
   (for foldr ((x xs) (ys '()))
-    (cons (f x) ys)))
+    (link (f x) ys)))
 
 (to (surely ok? msg)
   (unless ok?

@@ -105,6 +105,6 @@
      (error "Tried to change immutable env" var))))
   
 (let global-env
-  (env<-map (export __as-cons + - * /)))   ; etc.
+  (env<-map (export __as-link + - * /)))   ; etc.
 
 (export eval env<-map env-extend global-env)

@@ -39,8 +39,8 @@
 
   (to (insert-sorted ns n)
     (if (or ns.empty? (<= n ns.first))
-        (cons n ns)
-        (cons ns.first
+        (link n ns)
+        (link ns.first
               (insert-sorted ns.rest n))))
 
   (let history-1

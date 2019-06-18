@@ -201,7 +201,7 @@
   (match def
     (`(to (,(? symbol? name) ,@params) ,@body)
      {to name (each pat-parse params) (seq-parse body)})
-    (`(to (,(? cons? nested) ,@params) ,@body)
+    (`(to (,(? link? nested) ,@params) ,@body)
      (def-parse `(to ,nested (given ,params ,@body))))
     ))
 
@@ -253,7 +253,7 @@
              (surely (not after-c) "Multiple after clauses")
              (collecting rest pattern-cs c))
             ({clause _ _}
-             (collecting rest (cons c pattern-cs) after-c)))))))
+             (collecting rest (link c pattern-cs) after-c)))))))
     (`(match ,subject ,@clauses)
      {match (exp-parse subject) (each clause-parse clauses)})
     (`(catch ,@es)   ;; TODO macroexpand into (%catch (given () e)) ?
@@ -332,9 +332,9 @@
      e)
     ((list<- (list<- 'unquote-splicing e))
      e)
-    ((cons 'unquote _)          (error "Bad quasiquote"))
-    ((cons 'unquote-splicing _) (error "Bad quasiquote"))
-    ((cons first rest)
+    ((link 'unquote _)          (error "Bad quasiquote"))
+    ((link 'unquote-splicing _) (error "Bad quasiquote"))
+    ((link first rest)
      ;; TODO quote if both parts are constant
      `(link ,(qq-expand first) ;XXX unhygienic but works for both exp and pat
             ,(qq-expand rest)))
@@ -430,7 +430,7 @@
     ({ev-operands es r k}
      (ev-operands value '() es r k))
     ({ev-more-operands f rev-args es r k}
-     (ev-operands f (cons value rev-args) es r k))
+     (ev-operands f (link value rev-args) es r k))
     ({branch {if _ y n} r k}
      (sev (if value y n) r k))
     ({then-drop e2 r k}
@@ -554,7 +554,7 @@
     ({expect constant}
      (= constant val))
     ({link pf pr}
-     (and (cons? val)
+     (and (link? val)
           (match-pat r map pf val.first)
           (match-pat r map pr val.rest)))
     ({tuple-pat ps}
@@ -636,8 +636,6 @@
 
 (to (first x) x.first)
 (to (rest x) x.rest)
-(let link cons)
-(let link? cons?)
 (let nil? null?)
 (to (list @xs) xs)
 (to (length x) x.count)

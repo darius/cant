@@ -13,7 +13,7 @@
               (x xs.rest))
     (match ((fn best.first) .compare (fn x))
       (-1 best)
-      ( 0 (cons x best))
+      ( 0 (link x best))
       (+1 (list<- x)))))
          
 (to (fill! array value)                 ;TODO should be a mutable-map-trait method
@@ -24,11 +24,11 @@
   (begin cycling ((ys xs))
     (if ys.empty?
         (cycling xs)
-        (cons/lazy ys.first (given () (cycling ys.rest))))))
+        (link/lazy ys.first (given () (cycling ys.rest))))))
 
 (to (scanl/lazy f z xs)
   (begin scanning ((z z) (xs xs))
-    (cons/lazy z
+    (link/lazy z
                (given ()
                  (if xs.empty?
                      '()
@@ -47,14 +47,14 @@
         (if inners.empty?
             (outer outers.rest)
             (do (let x2 inners.first)
-                (cons/lazy `(,x1 ,x2)
+                (link/lazy `(,x1 ,x2)
                            (given () (inner inners.rest)))))))))
 
 (to (filter/lazy f xs)
   (foldr/lazy (given (x z-thunk)
                 (let fx (f x))
                 (if fx
-                    (cons/lazy fx z-thunk)
+                    (link/lazy fx z-thunk)
                     (z-thunk)))
               xs
               (given () '())))
@@ -66,7 +66,7 @@
         '()
         (do (let x xs.first)
             (if (seen x)
-                (cons/lazy x (given () (looking xs.rest)))
+                (link/lazy x (given () (looking xs.rest)))
                 (do (seen .add! x)
                     (looking xs.rest)))))))
 

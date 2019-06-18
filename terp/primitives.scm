@@ -1,6 +1,6 @@
 (library (terp primitives)
 (export hash squeam=? char-compare number-compare string-compare hashmap-place
-        as-cons box<- vector-append subvector copy-range! vector-move!
+        as-link box<- vector-append subvector copy-range! vector-move!
         maybe-macroexpand-expr maybe-macroexpand-patt prim-halp-log
         prim-nano-now prim-nanosleep prim-*/mod prim-string-maps? 
         prim-substring prim-vector-maps? prim-read-all 
@@ -101,9 +101,9 @@
                         (+ q 1)
                         (or slot (and (eq? k deleted) i)))))))))
 
-(define (as-cons x)
+(define (as-link x)
   (and (pair? x)
-       (term<- 'cons (car x) (cdr x))))
+       (term<- 'link (car x) (cdr x))))
 
 (define box<- box)
       

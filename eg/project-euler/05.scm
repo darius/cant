@@ -13,12 +13,12 @@
   (match (xs.first .compare ys.first)
     (-1 (intersect xs.rest ys))
     (+1 (intersect xs ys.rest))
-    ( 0 (cons/lazy xs.first
+    ( 0 (link/lazy xs.first
                    (given () (intersect xs.rest ys.rest))))))
 
 (to (multiples<- n)                     ;TODO infinite range<- with stride
   (begin listing ((k n))
-    (cons/lazy k (given () (listing (+ k n))))))
+    (link/lazy k (given () (listing (+ k n))))))
 
 (print (euler5 (2 .to 10)))
 ;(print (euler5 (2 .to 20)))

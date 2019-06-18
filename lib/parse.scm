@@ -18,7 +18,7 @@
     (case (needed.empty?
            ;; Return parse and upward extensions.
            (let tree (tree<- lhs rhs))
-           (cons (parse<- tree rest)
+           (link (parse<- tree rest)
                  (for gather ((rule (rules-starting-with lhs)))
                    (extend-parse rule.lhs `(,tree)
                                  rest rule.rhs.rest))))

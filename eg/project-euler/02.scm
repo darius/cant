@@ -8,7 +8,7 @@
 (to (fibs n)
   (begin fibbing ((a 1) (b 1))
     (if (<= a n)
-        (cons a (fibbing b (+ a b)))
+        (link a (fibbing b (+ a b)))
         '())))
 
 ;(print (euler2 10))

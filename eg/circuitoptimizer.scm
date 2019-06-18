@@ -68,7 +68,7 @@
   (if (= n-inputs 0)
       '()
       (do (let shift (pow2 (- n-inputs 1)))
-          (cons (- (pow2 shift) 1)
+          (link (- (pow2 shift) 1)
                 (for each ((iv (tabulate-inputs (- n-inputs 1))))
                   (iv .or (iv .<< shift)))))))
 

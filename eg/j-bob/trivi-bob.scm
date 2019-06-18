@@ -339,8 +339,8 @@
 
 (to (set-arg args n e)
   (if (= n 1)
-      (cons e args.rest)
-      (cons args.first (set-arg args.rest (- n 1) e))))
+      (link e args.rest)
+      (link args.first (set-arg args.rest (- n 1) e))))
 
 
 ;; Check okayness of a path.

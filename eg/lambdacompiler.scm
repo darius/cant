@@ -33,15 +33,15 @@
         ((? number?) (closure insn))))
     (match code
       (`(make-closure ,m ,n ,@rest)
-       (let new-closure (array<-list (cons (rest .slice m)
+       (let new-closure (array<-list (link (rest .slice m)
                                            (each access (rest .slice 0 m)))))
-       (running (rest .slice (+ m n)) local closure ret (cons new-closure stack)))
+       (running (rest .slice (+ m n)) local closure ret (link new-closure stack)))
       (`(invoke ,@_)
        (let `(,argument ,callee ,@old-stack) stack)
        (running (callee 0) argument callee ret `(,local ,closure ,@old-stack)))
       (`(return ,@_)
        (let `(,return-value ,new-local ,new-closure ,new-ret ,@new-stack) stack)
-       (running ret new-local new-closure new-ret (cons return-value new-stack)))
+       (running ret new-local new-closure new-ret (link return-value new-stack)))
       (`(pushcont ,n ,@code1)
        (let new-ret (code1 .slice n))
        (let new-stack `(,local ,closure ,ret ,@stack))
@@ -49,7 +49,7 @@
       (`(halt ,@_)                      ;XXX need to emit this somewhere
        stack.first)
       (`(,accessor ,@code1)    ;; ugh, defaulty representation
-       (running code1 local closure ret (cons (access accessor) stack)))))
+       (running code1 local closure ret (link (access accessor) stack)))))
 
   (running code argument 'XXX 'XXX '()))
 
@@ -66,7 +66,7 @@
 ;; Variable reference
 (to (var-ref<- v)
   (make ({.free-vars} (set<- v))
-        ({.compile s k} (cons (s v) k))))
+        ({.compile s k} (link (s v) k))))
 
 ;; Lambda expression
 (to (abstraction<- v body)
