@@ -897,7 +897,7 @@
     ({.keys}          map.keys)
     ({.maps? key}     (map .maps? key))
     ({.copy}          (set<-list map.keys)) ;TODO tune
-    ({.add! key}      (map .set! key #yes))
+    ({.add! key}      (map .set! key 1))    ;N.B. matching the bag type here
     ({.add-all! vals} (for each! ((v vals)) (hash-set .add! v)))
     ({.union! other}  (hash-set .add-all! other.keys))
     ({.union other}
@@ -920,11 +920,11 @@
      (map .intersects? map2))
     ({.clear!}        map.clear!)
     ({.get key}       (map .maps? key))
-    (`(,key)
-     (error "XXX I think I misdefined this method and it should be changed for an interface compatible with teh bag type")
-     ;; XXX that goes for .value and .items too. N.B. they're not yet implemented.
-     (map .maps? key))
+    (`(,key)          (map .get key 0)) ;I'm not sure this is a good idea, but it's to match the bag type
+    ({.items}         map.items)
+    ({.values}        map.values)
     ({.delete! key}   (map .delete! key))
+    ({.total}         map.count)        ;like bags again
     ;; XXX fill in rest of set interface (just the map interface, I guess)
     ({.selfie sink}
      (sink .display "#<set")
