@@ -42,7 +42,7 @@
     (let set (set<-list points))
     (for each! ((y (yl .to yh)))
       (for each! ((x (xl .to xh)))
-        (display (if (set `(,x ,y)) #\# #\.)))
+        (display (if (set .maps? `(,x ,y)) #\# #\.)))
       (newline))
     (newline)))
 

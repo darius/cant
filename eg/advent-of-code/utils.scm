@@ -65,7 +65,7 @@
     (if xs.empty?
         '()
         (do (let x xs.first)
-            (if (seen x)
+            (if (seen .maps? x)
                 (link/lazy x (given () (looking xs.rest)))
                 (do (seen .add! x)
                     (looking xs.rest)))))))

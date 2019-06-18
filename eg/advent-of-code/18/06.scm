@@ -9,7 +9,7 @@
   peek)
 
 (let margin (match data-name
-              ("06" 10000)
+              ("06.in" 10000)
               ("06.test" 32)))
 (let input (with-input-file '.read-lines data-file))
 
@@ -63,7 +63,7 @@
     (match (peek queue)
       ({empty})
       ({nonempty p queue-1}
-       (if (region p)
+       (if (region .maps? p)
            (format "dupe ~w\n" p)
            (do (region .add! p)
 ;;               (format "add ~w distance ~w count ~w\n" p (total-distance p) region.count)

@@ -920,7 +920,10 @@
      (map .intersects? map2))
     ({.clear!}        map.clear!)
     ({.get key}       (map .maps? key))
-    (`(,key)          (map .maps? key))
+    (`(,key)
+     (error "XXX I think I misdefined this method and it should be changed for an interface compatible with teh bag type")
+     ;; XXX that goes for .value and .items too. N.B. they're not yet implemented.
+     (map .maps? key))
     ({.delete! key}   (map .delete! key))
     ;; XXX fill in rest of set interface (just the map interface, I guess)
     ({.selfie sink}
