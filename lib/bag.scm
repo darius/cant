@@ -19,6 +19,7 @@
                          (bag .add! v)))
      ({.delete! key}   (map .delete! key))
      ({.clear!}        map.clear!)
+     ({.total}         (sum map.values))
      ;; XXX fill in rest of bag interface (just the map interface, I guess)
      ({.selfie sink}
       (sink .display "#<bag (")

@@ -39,7 +39,7 @@
               `(,choice ,@(spewing next-state))))))
 
 (to (sample-from-bag rng bag)
-  (let n (sum bag.values))  ;; Pre: n > 0   ;TODO should be a method
+  (let n bag.total)  ;; Pre: n > 0
   (begin counting ((k (rng .random-integer n))
                    (items bag.items))
     (let `(,key ,count) items.first)
