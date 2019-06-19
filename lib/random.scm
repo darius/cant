@@ -18,7 +18,7 @@
     r)
 
   (make rng
-    ({.random-integer n}
+    ({.random-integer n}                ;TODO rename .random-count or something
      ((next) .modulo n))                ;XXX could be better
     ({.random-range lo hi}
      (+ lo (rng .random-integer (- hi lo))))
