@@ -150,6 +150,8 @@
                       (make-cons-pat (pack<- p-constant tag)
                                      (parse-list-pat parts ctx)))
               (pack<- p-term tag (parse-ps parts ctx)))))
+       ((: __ vector?)
+        (error 'parse "Array patterns not yet implemented" p))
        (('@ __)                      ;XXX make @vars be some disjoint type
         (error 'parse "An @-pattern must be at the end of a list" p))
        ((: __ list?)
@@ -394,7 +396,9 @@
             ,(expand-quasiquote-pat qcdr)))
     ((: __ term?)
      (expand-qq-term-pat qq))
-    ;; TODO what about e.g. vectors with a ,pat inside?
+    ((: __ vector?)
+     (error 'parse "Array patterns not yet implemented" qq))
+    ;; TODO any other datatypes like vectors with a ,pat inside?
     ;;  We should probably at least try to notice them and complain.
     (__ `',qq)))
 
@@ -420,9 +424,13 @@
     ((qcar . qcdr)
      (qq-cons e (expand-quasiquote qcar)
                 (expand-quasiquote qcdr)))
-    (__ (if (term? e)
-            (expand-qq-term e)
-            `',e))))
+    (__ (cond ((term? e) (expand-qq-term e))
+              ((vector? e) (expand-qq-vector e))
+              (else `',e)))))
+
+(define (expand-qq-vector vec)
+  ;;XXX unhygienic, optimizable, doesn't handle ,@vector as opposed to ,@list
+  (list '__array<-list (list 'quasiquote (vector->list vec))))
 
 (define (expand-qq-term term)
   (let ((tag (term-tag term))
