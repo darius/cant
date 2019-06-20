@@ -77,8 +77,21 @@
   (print (terp eg)))
 
 (let eg
-  '(do (to (add2 x) (add1 (add1 x)))
-       (let no  ([p x y] (p x)))
-       (let yes ([p x y] (p y)))
-       (to (if pred y n) (pred n y))
-       (add2 (add1 5))))
+  '(do 
+
+     (let no  ([p x y] (p x)))
+     (let yes ([p x y] (p y)))
+     (to (if pred y n) (pred n y))
+
+     (to (zero f x) x)
+     (to (succ n f x) (f (n f x)))
+     (to (+ m n f x) (m f (n f x)))
+     (to (* m n f x) (m (n f) x))
+     (to (expt m n) (n m))
+
+     (to (int<-church n) (n add1 0))
+
+     (to (one f x) (f x))
+     (let two (+ one one))
+     (let three (+ one two))
+     (int<-church (expt two three))))
