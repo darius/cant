@@ -106,8 +106,8 @@
      (to (claim<-church p) (p #no #yes))
 
      (to (if pred y n) (pred n y))
-     (to (and p q if-no if-yes) (p if-no (q if-no if-yes)))
-     (to (or p q if-no if-yes) (p (q if-no if-yes) if-yes))
+     (to (and p q) (if p q no))
+     (to (or p q) (if p yes q))
 
      (to (zero f x) x)
      (to (succ n f x) (f (n f x)))
