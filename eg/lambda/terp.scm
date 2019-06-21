@@ -75,10 +75,21 @@
       (0 zero)
       ((? count?) (apply succ (counting (- n 1)))))))
 
+(to (church<-list xs)
+  (let ch-nil (lookup prelude-env 'nil))
+  (let ch-link (lookup prelude-env 'link))
+  (begin linking ((xs xs))
+    (match xs
+      ('() ch-nil)
+      (`(,h ,@t) (apply (apply ch-link h) (linking t))))))
+
 (let builtins
   (map<- `(
            (add1 {primitive ,(given (n) (+ n 1))})
            (church<-count {primitive ,church<-count})
+           (squeam-link {primitive ,(given (h)
+                                      {primitive (given (t) (link h t))})})
+           (church<-list {primitive ,church<-list})
            )))
 
 (let prelude
@@ -95,7 +106,13 @@
      (to (+ m n f x) (m f (n f x)))
      (to (* m n f x) (m (n f) x))
      (to (expt m n) (n m))
-     
+
+     (to (nil if-nil if-link) if-nil)
+     (to (link h t if-nil if-link) (if-link h (t if-nil if-link)))
+     (to (list<-church xs) (xs '() squeam-link))
+
+     (to (chain xs ys) (xs ys link))
+
      (the-environment)))
 
 (let prelude-env (terp prelude {builtins}))
@@ -104,7 +121,7 @@
 ;; Main
 
 (to (main _)
-  (print (terp eg)))
+  (print (terp eg2)))
 
 (let eg
   '(do 
@@ -112,3 +129,7 @@
      (let two (+ one one))
      (let three (church<-count 3))
      (count<-church (expt two three))))
+
+(let eg2
+  '(list<-church (chain (church<-list '(x y z))
+                        (link 'a (link 'b nil)))))
