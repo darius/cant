@@ -67,6 +67,11 @@
     ({builtins}
      (builtins v))))
 
+(to (church<-claim claim)
+  (match claim
+    (#no (lookup prelude-env 'no))
+    (#yes (lookup prelude-env 'yes))))
+
 (to (church<-count n)
   (let zero (lookup prelude-env 'zero))
   (let succ (lookup prelude-env 'succ))
@@ -85,6 +90,7 @@
 
 (let builtins
   (map<- `(
+           (church<-claim {primitive ,church<-claim})
            (add1 {primitive ,(given (n) (+ n 1))})
            (church<-count {primitive ,church<-count})
            (squeam-link {primitive ,(given (h)
@@ -95,9 +101,13 @@
 (let prelude
   '(do 
 
-     (let no  ([p x y] (p x)))
-     (let yes ([p x y] (p y)))
+     (to (no if-no if-yes) if-no)
+     (to (yes if-no if-yes) if-yes)
+     (to (claim<-church p) (p #no #yes))
+
      (to (if pred y n) (pred n y))
+     (to (and p q if-no if-yes) (p if-no (q if-no if-yes)))
+     (to (or p q if-no if-yes) (p if-yes (q if-no if-yes)))
 
      (to (zero f x) x)
      (to (succ n f x) (f (n f x)))
@@ -121,6 +131,8 @@
 ;; Main
 
 (to (main _)
+  (print (terp '(claim<-church (and (church<-claim #yes) (church<-claim #no)))))
+  (print (terp eg))
   (print (terp eg2)))
 
 (let eg
@@ -128,7 +140,7 @@
      (to (one f x) (f x))
      (let two (+ one one))
      (let three (church<-count 3))
-     (count<-church (expt two three))))
+     (count<-church (expt two (* two (+ two three))))))
 
 (let eg2
   '(list<-church (chain (church<-list '(x y z))
