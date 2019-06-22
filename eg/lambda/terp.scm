@@ -108,6 +108,8 @@
      (to (if pred y n) (pred n y))
      (to (and p q) (if p q no))
      (to (or p q) (if p yes q))
+     (to (not1 p) (p yes no)) ;; Right? Wikipedia sez "only correct for normal order"
+     (to (not p a b) (p b a))  ;; What Wikipedia sez is right for applicative order.
 
      (to (zero f x) x)
      (to (succ n f x) (f (n f x)))
@@ -131,7 +133,7 @@
 ;; Main
 
 (to (main _)
-  (print (terp '(claim<-church (and (church<-claim #yes) (church<-claim #no)))))
+  (print (terp '(claim<-church (not (and (church<-claim #yes) (church<-claim #no))))))
   (print (terp eg))
   (print (terp eg2)))
 
