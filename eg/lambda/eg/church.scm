@@ -1,0 +1,4 @@
+(to (one f x) (f x))
+(let two (+ one one))
+(let three (church<-count 3))
+(count<-church (expt two (* two (+ two three))))
