@@ -142,3 +142,5 @@
 (to (run filename)
   (let es (with-input-file read-all filename))
   (terp `(do ,@es)))
+
+(export run)
