@@ -125,6 +125,8 @@
 
      (to (chain xs ys) (xs ys link))
 
+     (to (compose f g x) (f (g x)))
+
      (the-environment)))
 
 (let prelude-env (terp prelude {builtins}))
