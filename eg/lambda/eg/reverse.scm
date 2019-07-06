@@ -1,0 +1,11 @@
+(to (chain-reverse xs)
+  ;; step: return a function that takes a tail and chains my reverse to it
+  (to (step x rest-fn)
+    (compose rest-fn (link x)))
+  (xs identity step))
+
+(to (reverse xs)
+  (chain-reverse xs nil))
+
+(list<-church (reverse (chain-reverse (church<-list '(1 2 4 8))
+                                      (church<-list '(a b c)))))

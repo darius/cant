@@ -5,6 +5,7 @@
                   "trivial2.scm"
                   "church.scm"
                   "factorial.scm"
+                  "reverse.scm"
                   ))
 
 (for each! ((test test-names))

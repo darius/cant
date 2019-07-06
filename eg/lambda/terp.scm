@@ -126,6 +126,7 @@
      (to (chain xs ys) (xs ys link))
 
      (to (compose f g x) (f (g x)))
+     (to (identity x) x)
 
      (the-environment)))
 
