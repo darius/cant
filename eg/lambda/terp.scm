@@ -113,7 +113,7 @@
      (to (succ n f x) (f (n f x)))
      (to (count<-church n) (n add1 0))
 
-     (to (+ m n) (m succ n))
+     (to (+ m) (m succ))
      (to (* m n) (m (+ n) zero))
      (to (expt m n) (n m))
 
