@@ -128,6 +128,10 @@
      (to (compose f g x) (f (g x)))
      (to (identity x) x)
 
+     (to (fix maker)
+       (to (r recur) (maker ([x] (recur recur x))))
+       (r r))
+
      (the-environment)))
 
 (let prelude-env (terp prelude {builtins}))
