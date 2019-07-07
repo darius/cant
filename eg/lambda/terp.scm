@@ -119,11 +119,11 @@
      (to (* m n) (m (+ n) zero))
      (to (expt m n) (n m))
 
-     (to (nil if-nil if-link) if-nil)
-     (to (link h t if-nil if-link) (if-link h (t if-nil if-link)))
-     (to (list<-church xs) (xs '() squeam-link))
+     (to (nil if-link if-nil) if-nil)
+     (to (link h t if-link if-nil) (if-link h (t if-link if-nil)))
+     (to (list<-church xs) (xs squeam-link '()))
 
-     (to (chain xs ys) (xs ys link))
+     (to (chain xs ys) (xs link ys))
 
      (to (compose f g x) (f (g x)))
      (to (identity x) x)
