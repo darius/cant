@@ -23,11 +23,9 @@
     (`',c                  {const c})
     (`(do ,@es)            (seq-parse es))
     (`(,(? array?) ,@_)    (lambda-parse lexp))
-    (`(,operator ,@operands)
-     (match operands
-       (`(,e) {app (exp-parse operator)
-                   (exp-parse e)})
-       (`(,e1 ,@es) (exp-parse `((,operator ,e1) ,@es)))))))
+    (`(,operator ,e)       {app (exp-parse operator)
+                                (exp-parse e)})
+    (`(,operator ,e1 ,@es) (exp-parse `((,operator ,e1) ,@es)))))
 
 (to (lambda-parse `(,(? array? params) ,@body))
   ;; TODO this is clumsy without array patterns
