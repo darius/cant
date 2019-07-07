@@ -101,14 +101,14 @@
 (let prelude
   '(do 
 
-     (to (no if-no if-yes) if-no)
-     (to (yes if-no if-yes) if-yes)
-     (to (claim<-church p) (p #no #yes))
+     (to (no if-yes if-no) if-no)
+     (to (yes if-yes if-no) if-yes)
+     (to (claim<-church p) (p #yes #no))
 
-     (to (if pred y n) (pred n y))
+     (to (if pred y n) (pred y n))
      (to (and p q) (if p q no))
      (to (or p q) (if p yes q))
-     (to (not1 p) (p yes no)) ;; Right? Wikipedia sez "only correct for normal order". Why?
+     (to (not1 p) (p no yes)) ;; Right? Wikipedia sez "only correct for normal order". Why?
      (to (not p a b) (p b a))  ;; What they say is right for applicative order.
 
      (to (zero f x) x)
