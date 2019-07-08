@@ -353,7 +353,7 @@
   ({.join ss}   ;should this be a function, not a method?
    (if ss.empty?
        ""
-       (foldr1 (given (x y) (chain x me y)) ss)))
+       (foldr1 (given (x y) (chain x me y)) ss))) ;XXX quadratic
   ;;XXX below mostly from list-trait, until .selfie
   ({.keys}        (range<- me.count))
   ({.values}      me)
