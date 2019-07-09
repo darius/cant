@@ -9,11 +9,9 @@
      (step state))))
 
 (to (neighborhoods bits)
-  (begin neighing ((a 0) (b 0) (bits bits))
-    (if bits.empty?
-        `((,a ,b 0) (,b 0 0))
-        `((,a ,b ,bits.first)
-          ,@(neighing b bits.first bits.rest)))))
+  (zip `(0 0 ,@bits)
+       `(0 ,@bits 0)
+       `(,@bits 0 0)))
 
 (to (show bits)
   (let line (string<-list (each "-*" bits)))
