@@ -94,6 +94,7 @@
            (squeam-link {primitive ,(given (h)
                                       {primitive (given (t) (link h t))})})
            (church<-list {primitive ,church<-list})
+           (display {primitive ,display})
            )))
 
 (let prelude
