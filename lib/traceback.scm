@@ -3,6 +3,8 @@
 ;; We try to call on less of the library than usual, to work better
 ;; when the system is borked.
 
+(import (use "lib/cycle-write") cycle-write)
+
 (to (on-error-traceback k @evil)
   (display "Error! Traceback:\n")
   (print-traceback k)
@@ -14,7 +16,16 @@
 
 (to (print-traceback k)
   (for each! ((frame (reverse k)))
-    (format "  ~w\n" frame)))
+    (format "  ~d\n" (write-to-bounded-string frame 77))))
+
+(to (write-to-bounded-string frame width)
+  ;; TODO custom sink type, using an ejector to quit early, don't bother about cycles
+  (let s (with-output-string (given (sink)
+                               (cycle-write frame sink))))
+  ;; TODO make it unambiguous whether it's truncated, somehow
+  (if (< s.count width)
+      s
+      (chain (s .slice 0 (- width 2)) "..")))
 
 (to (complain @evil)
   (match evil
