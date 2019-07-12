@@ -6,7 +6,7 @@
     (`(,e)                 (exp-parse e))
     (`((let ,p ,e) ,@es)   (exp-parse `(([,p] ,@es) ,e)))
     (`((to ,@_) ,@_)       (def-parse lexps.first lexps.rest))
-    (`(,(? array?) ,@_)    (exp-parse lexps)) ;XXX is this a terrible idea?
+;;    (`(,(? array?) ,@_)    (exp-parse lexps)) ;XXX is this a terrible idea?
     ))
 
 (to (def-parse def seq)
