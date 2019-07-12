@@ -95,6 +95,8 @@
                                       {primitive (given (t) (link h t))})})
            (church<-list {primitive ,church<-list})
            (display {primitive ,display})
+           (error {primitive ,(make lambda-error
+                                (`(,_) (error "Error in lambda-calculus program")))})
            )))
 
 (let prelude
