@@ -370,7 +370,8 @@
   (object<- (cps-script<-
              '__eject
              (lambda (datum message k)
-               ;;XXX check arity
+               (insist (= (length message) 2) "ejector-eject wrong #arguments"
+                       (- (length message) 1))
                (let ((ejector (car message))
                      (value (cadr message)))
                  (if (and (object? ejector)
@@ -378,7 +379,7 @@
                      (let ((ejector-k (object-datum ejector)))
                        (insist (vector? ejector-k) "ejector-eject vector"
                                ejector-k)
-                       (insist (eq? unwind-cont (vector-ref ejector-k 0))
+                       (insist (= 14 (vector-ref ejector-k 0))    ;; 14 = unwind-cont XXX omg you shouldn't have to write it that way
                                "Ejector cont is a cont" ejector-k)
                        (if (vector-ref ejector-k 3) ;still enabled?
                            (ejector-unwinding k ejector-k value)
@@ -392,7 +393,7 @@
       (answer ejector-k value)
       (let ((k-action (vector-ref k 0))
             (parent-k (vector-ref k 1)))
-        (if (eq? k-action unwind-cont)
+        (if (= k-action 14)               ;; XXX 14 = unwind-cont
             (let ((unwind-action (vector-ref k 2)))
               (unwind-action k (cont<- k-keep-unwinding parent-k ejector-k value)))
             (ejector-unwinding parent-k ejector-k value)))))
@@ -653,7 +654,11 @@
    ev-view-call-cont
    ev-view-match-cont
    ev-match-rest-cont
-   unwind-cont
+   unwind-cont             ;; XXX this is 14, plugged in above in
+                           ;; ejector-unwinding and ejector-eject. You
+                           ;; have to update those if you change
+                           ;; anything here in methods/cont. Sheesh on
+                           ;; a stick.
    keep-unwinding
    replace-answer-cont))
 
