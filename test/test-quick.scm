@@ -71,5 +71,6 @@
 (((loud-use "eg/tusl") 'main) '(_))
 (((loud-use "eg/turing") 'smoke-test))
 (loud-use "eg/elem-ca")
+(loud-use "eg/floyd-triangle")
 
 (loud-use "test/test-metaterp")
