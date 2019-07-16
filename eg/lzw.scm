@@ -33,27 +33,25 @@
       '()
       (do
         (let chunks (flexarray<-list codebook))
-        (let chunk-1 (chunks codes.first))
         (let output (flexarray<-))
-        (begin decoding ((chunk chunk-1)
+        (begin decoding ((chunk (chunks codes.first))
                          (codes codes.rest)) ;TODO not a great idea, reusing the name
-          (chunks .push! chunk)
           (output .push! chunk)
           (if codes.empty?
               output.values
               (do (let code codes.first)
+                  (chunks .push! chunk)
                   (let new-chunk (chunks code))
-                  (chunks .set! (- chunks.count 1) (chain chunk (string<- new-chunk.first)))
+                  (chunks .set! (- chunks.count 1)
+                          (chain chunk (string<- new-chunk.first)))
                   (decoding (chunks code) codes.rest)))))))
 
 (print (show-lzw "TOBEORNOTTOBEORTOBEORNOT"))
 
 (let m "XXXXXXXXXXXX")
 (print (show-lzw m))
-;; ['X', 256, 257, 258, 256]
 (let x (encode m))
 (print (chunked-decode x default-codebook))
-;; ['X', 'XX', 'XXX', 'XXXX', 'XX']
 
 (surely (= m (decode x)))
 
