@@ -72,5 +72,6 @@
 (((loud-use "eg/turing") 'smoke-test))
 (loud-use "eg/elem-ca")
 (loud-use "eg/floyd-triangle")
+(loud-use "eg/lzw")
 
 (loud-use "test/test-metaterp")
