@@ -56,7 +56,8 @@
 ;; The left and right subtapes are Scott lists of squares; the left
 ;; one is represented reversed, and `head` is the square between them.
 ;; Each square is a tuple-getter that selects the square's printed
-;; representation from an n-tuple.
+;; representation from an n-tuple, or the column from a transit table
+;; (also an n-tuple).
 
 (to (Tape left head right take)
   (take left head right))
