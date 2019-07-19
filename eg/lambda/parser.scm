@@ -1,36 +1,48 @@
 ;; Parsing
 
 (to (seq-parse lexps)
+  (seq-parsing lexps `(do ,@lexps)))
+
+(to (exp-parse lexp)
+  (exp-parsing lexp lexp))
+
+(to (seq-parsing lexps src)
   (match lexps
     ('((the-environment))  {the-env})   ;TODO not meant as part of the actual language
-    (`(,e)                 (exp-parse e))
-    (`((let ,p ,e) ,@es)   (exp-parse `(([,p] ,@es) ,e)))
-    (`((to ,@_) ,@_)       (def-parse lexps.first lexps.rest))
-;;    (`(,(? array?) ,@_)    (exp-parse lexps)) ;XXX is this a terrible idea?
+    (`(,e)                 (exp-parsing e (src-seq-first src)))
+    (`((let ,p ,e) ,@es)   (exp-parsing `(([,p] ,@es) ,e) `(do ,@src)))
+    (`((to ,@_) ,@_)       (def-parsing lexps.first lexps.rest src))
     ))
 
-(to (def-parse def seq)
+(to (src-seq-first src)
+  (match src
+    (`(do ,e ,@_) e)
+    (_ (error "I don't know how to unparse this sequence" src))))
+
+(to (def-parsing def seq src)
   (match def
     (`(to (,(? symbol? name) ,@params) ,@body)
      (let ps (array<-list params))
-     (seq-parse `((let ,name (,ps ,@body))
-                  ,@seq)))))
+     (seq-parsing `((let ,name (,ps ,@body))
+                    ,@seq)
+                  src))))
 
-(to (exp-parse lexp)
+(to (exp-parsing lexp src)
   (match lexp
     ((? symbol?)           {var lexp})
     ((? self-evaluating?)  {const lexp})
     (`',c                  {const c})
-    (`(do ,@es)            (seq-parse es))
-    (`(,(? array?) ,@_)    (lambda-parse lexp))
-    (`(,operator ,e)       {app (exp-parse operator)
-                                (exp-parse e)})
-    (`(,operator ,e1 ,@es) (exp-parse `((,operator ,e1) ,@es)))))
+    (`(do ,@es)            (seq-parsing es src))
+    (`(,(? array?) ,@_)    (lambda-parsing lexp src))
+    (`(,operator ,e)       {app (exp-parse operator) ;TODO try to pass along (src 0) pre-expansion 
+                                (exp-parse e)
+                                src})
+    (`(,operator ,e1 ,@es) (exp-parse `((,operator ,e1) ,@es))))) ;TODO ditto
 
-(to (lambda-parse `(,(? array? params) ,@body))
+(to (lambda-parsing `(,(? array? params) ,@body) src)
   ;; TODO this is clumsy without array patterns
   (match params.values
-    (`(,(? symbol? v))     {lam v (seq-parse body)})
-    (`(,(? symbol? v) ,@vs) {lam v (exp-parse `(,(array<-list vs) ,@body))})))
+    (`(,(? symbol? v))     {lam v (seq-parse body) src})
+    (`(,(? symbol? v) ,@vs) {lam v (exp-parse `(,(array<-list vs) ,@body)) src})))
 
 (export seq-parse exp-parse)

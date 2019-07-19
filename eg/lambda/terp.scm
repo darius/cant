@@ -9,15 +9,15 @@
 (to (ev e r)
   (match e
     ({const c} c)
-    ({var v}   (lookup r v))
-    ({lam _ _} {closure e r})
-    ({app f a} (apply (ev f r) (ev a r)))
-    ({the-env} r)))
+    ({var v}     (lookup r v))
+    ({lam _ _ _} {closure e r})
+    ({app f a _} (apply (ev f r) (ev a r)))
+    ({the-env}   r)))
 
 (to (apply fn val)
   (match fn
-    ({closure {lam v e} r} (ev e {extend v val r}))
-    ({primitive p}         (p val))
+    ({closure {lam v e _} r} (ev e {extend v val r}))
+    ({primitive p}           (p val))
     ))
 
 
