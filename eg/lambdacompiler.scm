@@ -24,6 +24,9 @@
 ;;   (INVOKE)     - ...
 
 ;; XXX unfinished untested
+;; See eg/lambda/compiler1.scm for essentially the same with a running VM interpreter.
+;; TODO just delete this now?
+
 (to (run-machine code argument)
 
   (to (running code local closure ret stack)
