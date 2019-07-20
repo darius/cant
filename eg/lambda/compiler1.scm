@@ -3,15 +3,14 @@
 (import (use "eg/lambda/parser") exp-parse)
 
 (to (run lexp)
-  (run-code (assemble (compile lexp))))
+  (run-code (compile lexp)))
 
 (to (compile e)
   (codegen global-scope (exp-parse e) '({halt})))
 
-;; In the "assembly" language:
-;; The 'label' of an instruction is just the tail of the list of all
-;; instructions, starting at that particular one. The assembler
-;; converts that to an address.
+;; In the "assembly" language: The 'label' of an instruction is its
+;; distance from the end of the list of all instructions. This is
+;; easiest since we generate code back-to-front.
 
 (to (free-vars<- e)
   (match e
@@ -30,7 +29,7 @@
      (link {fetch (s v)} then))
     ({lam v body src}
      (let fv (free-vars<- e))
-     (link {enclose then (each s fv.keys) src}
+     (link {enclose then.count (each s fv.keys) src}
            (codegen (scope<- v fv.keys.inverse) body
                     (link {return} then))))
     ({app f a src}
@@ -38,7 +37,7 @@
      (let code (codegen s a
                         (codegen s f
                                  (link {invoke src} (if tail? then.rest then)))))
-     (if tail? code (link {push-cont then} code)))))
+     (if tail? code (link {push-cont then.count} code)))))
 
 
 ;; Scopes (called 's' above)
@@ -52,28 +51,15 @@
       (var-offsets v)))
 
 
-;; Assembler
-
-(to (assemble assembly)
-  (let end assembly.count)
-  (to (resolve label)
-    (- end label.count))
-  (for each ((insn assembly))
-    (match insn
-      ({push-cont then}      {push-cont (resolve then)})
-      ({enclose then fs src} {enclose (resolve then) fs src})
-      (_                     insn))))
+;; VM
 
 (to (show code)
   (for each! ((`(,i ,insn) code.items))
-    (format "~2w ~w\n" i insn)))
-
-
-;; VM
+    (format "~2w ~w\n" (- code.count i) insn)))
 
 (to (run-code insns)
-  (let code (array<-list insns))
-  (begin running ((pc 0)           ; program counter
+  (let code (array<-list (reverse insns)))  ; reverse so that labels index from the start
+  (begin running ((pc code.count)  ; program counter + 1
                   (r {bad-env})    ; "environment"
                   (st '())         ; local stack
                   (k {bad-frame})) ; "continuation"
@@ -83,13 +69,13 @@
         ('local     argument)
         ((? count?) (vals f))))
     (to (restack stack)
-      (running (+ pc 1) r stack k))
+      (running (- pc 1) r stack k))
     (to (return result)
       (let {frame ret-pc ret-r ret-st ret-k} k)
       (running ret-pc ret-r (link result ret-st) ret-k))
 
-;;    (format "at ~w: ~w\n" pc (code pc))
-    (match (code pc)
+;;    (format "at ~w: ~w\n" pc (code (- pc 1)))
+    (match (code (- pc 1))
       ({halt}
        (surely (= st.count 1))
        st.first)
@@ -98,10 +84,10 @@
       ({fetch f}
        (restack (link (fetch f) st)))
       ({enclose addr fs _}
-       (let closure {compiled-closure (+ pc 1) (each fetch fs)}) ;TODO link to src annotation somewhere
+       (let closure {compiled-closure (- pc 1) (each fetch fs)}) ;TODO link to src annotation somewhere
        (running addr r (link closure st) k))
       ({push-cont addr}
-       (running (+ pc 1) r st {frame addr r st k}))
+       (running (- pc 1) r st {frame addr r st k}))
       ({return}
        (return st.first))
       ({invoke _}
@@ -118,6 +104,6 @@
 
 (let eg '(([x y] x) ([z] z)))
 (print eg)
-(show (assemble (compile eg)))
+(show (compile eg))
 
 (print (run eg))
