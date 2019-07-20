@@ -68,8 +68,6 @@
       (match f
         ('local     argument)
         ((? count?) (vals f))))
-    (to (restack stack)
-      (running (- pc 1) r stack k))
     (to (return result)
       (let {frame ret-pc ret-r ret-st ret-k} k)
       (running ret-pc ret-r (link result ret-st) ret-k))
@@ -80,9 +78,9 @@
        (surely (= st.count 1))
        st.first)
       ({const c}
-       (restack (link c st)))
+       (running (- pc 1) r (link c st) k))
       ({fetch f}
-       (restack (link (fetch f) st)))
+       (running (- pc 1) r (link (fetch f) st) k))
       ({enclose addr fs _}
        (let closure {compiled-closure (- pc 1) (each fetch fs)}) ;TODO link to src annotation somewhere
        (running addr r (link closure st) k))
