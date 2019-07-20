@@ -1,4 +1,4 @@
-;; Yet another bytecode compiler
+;; Yet another compiler: lambda to VM.
 
 (import (use "eg/lambda/parser") exp-parse)
 
