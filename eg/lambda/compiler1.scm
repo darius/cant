@@ -2,6 +2,9 @@
 
 (import (use "eg/lambda/parser") exp-parse)
 
+(to (run lexp)
+  (run-code (assemble (compile lexp))))
+
 (to (compile e)
   (codegen global-scope (exp-parse e) '({halt})))
 
@@ -67,9 +70,6 @@
 
 
 ;; VM
-
-(to (run lexp)
-  (run-code (assemble (compile lexp))))
 
 (to (run-code insns)
   (let code (array<-list insns))
