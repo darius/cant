@@ -20,10 +20,11 @@
 ;; overflows `width`.
 (to (write-to-bounded-string thing width)
   (let buffer (flexarray<-))
+  (let total (box<- 0)) ;; Kept equal to (sum '.count buffer)
   (to (output)
     (let s ("" .join buffer))
     ;; TODO make it unambiguous whether it's truncated, somehow
-    (if (< s.count width)
+    (if (< total.^ width)
         s
         (chain (s .slice 0 (- width 2)) "..")))
   (with-ejector
@@ -31,7 +32,8 @@
      (let ss (string-sink<-))
      (to (cut-off)
        (buffer .push! ss.output-string) ;TODO worth checking to skip if output-string empty?
-       (when (<= width (sum (each '.count buffer)))
+       (total .^= (+ total.^ buffer.last.count))
+       (when (<= width total.^)
          (ejector .eject (output))))
      (make bounded-sink
        ({.display a}   (ss .display a)   (cut-off))
@@ -46,7 +48,7 @@
     (`(,(? string? plaint) ,@values)
      (display plaint)
      (display ": ")
-     (write values))
+     (display (write-to-bounded-string values (* 80 20))))
     (_
      (display "Nonstandard evil: ")
      (write evil)))
