@@ -18,8 +18,7 @@
 (to (apply fn val)
   (match fn
     ({closure {lam v e _} r} (ev e {extend v val r}))
-    ({primitive p}           (p val))
-    ))
+    ({primitive p}           (p val))))
 
 
 ;; Environments
