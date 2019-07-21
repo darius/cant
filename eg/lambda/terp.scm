@@ -21,7 +21,7 @@
     ))
 
 
-;; Environments, built-ins
+;; Environments
 
 (to (lookup r v)
   (match r
@@ -29,44 +29,20 @@
      (if (= v v1)
          val
          (lookup r1 v)))
-    ({builtins}
-     (builtins v))))
+    ({module map r1}
+     (let value (map .get v not-an-lc-value))
+     (if (= not-an-lc-value value)
+         (lookup r1 v)
+         value))
+    ({empty-env}
+     (error "Unbound variable" v))))
 
-(to (church<-claim claim)
-  (match claim
-    (#no (lookup prelude-env 'no))
-    (#yes (lookup prelude-env 'yes))))
+(make not-an-lc-value)
 
-(to (church<-count n)
-  (let zero (lookup prelude-env 'zero))
-  (let succ (lookup prelude-env 'succ))
-  (begin counting ((n n))
-    (match n
-      (0 zero)
-      ((? count?) (apply succ (counting (- n 1)))))))
 
-(to (church<-list xs)
-  (let ch-nil (lookup prelude-env 'nil))
-  (let ch-link (lookup prelude-env 'link))
-  (begin linking ((xs xs))
-    (match xs
-      ('() ch-nil)
-      (`(,h ,@t) (apply (apply ch-link h) (linking t))))))
+;; Prelude, built-ins
 
-(let builtins
-  (map<- `(
-           (church<-claim {primitive ,church<-claim})
-           (add1 {primitive ,(given (n) (+ n 1))})
-           (church<-count {primitive ,church<-count})
-           (squeam-link {primitive ,(given (h)
-                                      {primitive (given (t) (link h t))})})
-           (church<-list {primitive ,church<-list})
-           (display {primitive ,display})
-           (error {primitive ,(make lambda-error
-                                (`(,_) (error "Error in lambda-calculus program")))})
-           )))
-
-(let prelude
+(let prelude-sans-builtins
   '(do 
 
      (to (no if-yes if-no) if-no)
@@ -81,7 +57,6 @@
 
      (to (zero f x) x)
      (to (succ n f x) (f (n f x)))
-     (to (count<-church n) (n add1 0))
 
      (to (+ m) (m succ))
      (to (* m n) (m (+ n) zero))
@@ -89,7 +64,6 @@
 
      (to (nil if-link if-nil) if-nil)
      (to (link h t if-link if-nil) (if-link h (t if-link if-nil)))
-     (to (list<-church xs) (xs squeam-link '()))
 
      (to (chain xs ys) (xs link ys))
 
@@ -102,7 +76,59 @@
 
      (the-environment)))
 
-(let prelude-env (terp prelude {builtins}))
+(let prelude-sans-builtins-env (terp prelude-sans-builtins {empty-env}))
+
+(let lc-no  (lookup prelude-sans-builtins-env 'no))
+(let lc-yes (lookup prelude-sans-builtins-env 'yes))
+
+(to (church<-claim claim)
+  (match claim
+    (#no  lc-no)
+    (#yes lc-yes)))
+
+(let lc-zero (lookup prelude-sans-builtins-env 'zero))
+(let lc-succ (lookup prelude-sans-builtins-env 'succ))
+
+(to (church<-count n)
+  (begin counting ((n n))
+    (match n
+      (0          lc-zero)
+      ((? count?) (apply lc-succ (counting (- n 1)))))))
+
+(let lc-nil  (lookup prelude-sans-builtins-env 'nil))
+(let lc-link (lookup prelude-sans-builtins-env 'link))
+
+(to (church<-list xs)
+  (begin linking ((xs xs))
+    (match xs
+      ('()       lc-nil)
+      (`(,h ,@t) (apply (apply lc-link h) (linking t))))))
+
+(let builtins-env
+  {module
+   (map<- `(
+            (church<-claim {primitive ,church<-claim})
+
+            (add1 {primitive ,(given (n) (+ n 1))})
+            (church<-count {primitive ,church<-count})
+
+            (squeam-link {primitive ,(given (h)
+                                       {primitive (given (t) (link h t))})})
+            (church<-list {primitive ,church<-list})
+
+            (display {primitive ,display})
+            (error {primitive ,(make lambda-error
+                                 (`(,_) (error "Error in lambda-calculus program")))})
+            ))
+   prelude-sans-builtins-env})
+
+(let prelude-using-builtins
+  '(do 
+     (to (count<-church n) (n add1 0))
+     (to (list<-church xs) (xs squeam-link '()))
+     (the-environment)))
+
+(let prelude-env (terp prelude-using-builtins builtins-env))
 
 
 ;; Main
