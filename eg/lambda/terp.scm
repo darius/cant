@@ -29,17 +29,10 @@
      (if (= v v1)
          val
          (lookup r1 v)))
-    ({module map r1}
-     (let value (map .get v not-an-lc-value))
-     (if (= not-an-lc-value value)
-         (lookup r1 v)
-         value))
-    ({empty-env}
-     (error "Unbound variable" v))))
+    ({module map}
+     (map v))))
 
-(make not-an-lc-value)
-
-(let prelude-env (build-prelude terp lookup apply))
+(let prelude-env (build-prelude terp apply))
 
 
 ;; Main
