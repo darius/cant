@@ -10,11 +10,11 @@
 
   (to (fill e)
     (match e
-      ({const c}        e)
-      ({var v}          e)
-      ({lam v body src} {lam v (fill body) src}) ;N.B. src isn't updated correspondingly
-      ({app f a src}    {app (fill f) (fill a) src}) ;ditto
-      ({the-env}        exp)))
+      ({const c}        (const<- c))
+      ({var v}          (var<- v))
+      ({lam v body src} (lam<- v (fill body) src)) ;N.B. src isn't updated correspondingly
+      ({app f a src}    (app<- (fill f) (fill a) src)) ;ditto
+      ({the-env}        (fill exp))))  ; TODO this is pretty janky
 
   (to (apply fn arg)
     (invoke fn arg {halt}))
@@ -28,8 +28,8 @@
 
   (to (return result k)
     (match k
-      ({frame ret-pc ret-r ret-st ret-k}
-       (running ret-pc ret-r (link result ret-st) ret-k))
+      ({frame pc r st ret-k}
+       (running pc r (link result st) ret-k))
       ({halt}
        result)))
 
@@ -62,7 +62,7 @@
   (to (interpret prelude {module builtins}) ;TODO rename
     (let scope (module-scope<- (map<- (for each ((`(,k ,v) builtins.items))
                                         `(,k ,{const v})))))
-    (codegen scope (fill (exp-parse prelude)) '({return})))
+    ((fill (exp-parse prelude)) .gen scope '({return})))
 
   (let the-insns (build-prelude interpret apply))
 ;;  (show the-insns)
@@ -79,37 +79,44 @@
 ;; easiest since we generate code back-to-front.
 ;; TODO: well, that's simple but it's O(n) time
 
-(to (codegen s e then)
-  (match e
-    ({const c}
-     (link {const c} then))
-    ({var v}
-     (link (s v) then))
-    ({lam v body src}
-     (let fv ((free-vars<- e) .difference (set<-list s.known.keys)))
-     (let fetches (for each ((v fv.keys))
+(to (const<- c)
+  (make constant
+    ({.fvs} empty-set)
+    ({.gen s then} (link {const c} then))))
+
+(to (var<- v)
+  (make variable
+    ({.fvs} (set<- v))
+    ({.gen s then} (link (s v) then))))
+
+(to (lam<- v body src)
+  (let fvs (body.fvs .difference (set<- v)))
+  (make lambda
+    ({.fvs} fvs)
+    ({.gen s then}
+     (let cvs ;; closure variables
+       (sort ((fvs .difference (set<-list s.known.keys)) .keys)))
+     (let fetches (for each ((v cvs))
                     (let {fetch f} (s v))
                     f))
      (link {enclose then.count fetches src}
-           (codegen (scope<- v fv.keys.inverse s.known) body
-                    (link {return} then))))
-    ({app f a src}
+           (body .gen
+                 (scope<- v cvs.inverse s.known)
+                 (link {return} then))))))
+
+(to (app<- f a src)
+  (make application
+    ({.fvs} (f.fvs .union a.fvs))
+    ({.gen s then}
      (let tail? (= then.first {return}))
-     (let code (codegen s a
-                        (codegen s f
-                                 (link {invoke src} (if tail? then.rest then)))))
+     (let code (a .gen s
+                  (f .gen s
+                     (link {invoke src} (if tail? then.rest then)))))
      (if tail? code (link {push-cont then.count} code)))))
 
 (to (show insns)
   (for each! ((`(,i ,insn) insns.items))
     (format "~2w ~w\n" (- insns.count i) insn)))
-
-(to (free-vars<- e)
-  (match e
-    ({const c}      empty-set)
-    ({var v}        (set<- v))
-    ({lam v body _} ((free-vars<- body) .difference (set<- v)))
-    ({app f a _}    ((free-vars<- f) .union (free-vars<- a)))))
 
 (let empty-set (set<-))
 
