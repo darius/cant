@@ -1,7 +1,7 @@
 ;; Yet another compiler: lambda to VM.
 
-(import (use "lib/ssets")
-  sset<- sset<-list sset-elements sset-insert sset-remove sset-union sset-difference)
+(import (use "lib/ssets")  
+sset<- sset<-list sset-elements sset-remove sset-union sset-difference)
 
 (import (use "eg/lambda/parser") exp-parse)
 (import (use "eg/lambda/prelude") build-prelude)
