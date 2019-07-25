@@ -272,7 +272,7 @@
        (`(,e) e)
        (`(,e ,@es) `(if ,e (and ,@es) #no))))
     ('begin
-        ;; (begin f ((x a) (y b)) e) => (do (to (f a b) e) (f x y))
+        ;; (begin f ((x a) (y b)) e) => (do (to (f a b) e) (f x y))  ;; TODO tighter scope for f
      (match operands
        (`(,f ,pairs ,@body)
         (for each! ((pair pairs))
