@@ -121,7 +121,6 @@
     ({.gen s then}
      (let cvs ;; closure variables
        (sset-elements (sset-difference fvs (sset<-list s.known.keys))))
-;;     (format "hey, cvs = ~w\n" cvs)
      (let fetches (for each ((v cvs))
                     (let {fetch f} (s v))
                     f))
