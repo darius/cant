@@ -62,12 +62,12 @@
   (to (interpret prelude {module builtins}) ;TODO rename
     (let scope (module-scope<- (map<- (for each ((`(,k ,v) builtins.items))
                                         `(,k ,{const v})))))
-    ((fill (exp-parse prelude)) .gen scope '({return})))
+    ((fill (exp-parse prelude)) .gen scope (prepend {return} nil-seq)))
 
-  (let the-insns (build-prelude interpret apply))
-;;  (show the-insns)
+  (let assembly (build-prelude interpret apply))
+;;  (show assembly)
 
-  (let code (array<-list (reverse the-insns)))  ; reverse so that labels index from the start
+  (let code (array<-list (reverse assembly.insns)))  ; reverse so that labels index from the start
   (running code.count  ; program counter + 1
            {bad-env}   ; "environment"
            '()         ; local stack
@@ -77,17 +77,39 @@
 ;; In the "assembly" language: The 'label' of an instruction is its
 ;; distance from the end of the list of all instructions. This is
 ;; easiest since we generate code back-to-front.
-;; TODO: well, that's simple but it's O(n) time
+;; We cache the label in an object to keep constant-time access.
+
+(make nil-seq
+  ({.label} 0)
+  ({.tail?} #no)
+  ({.insns} '()))
+
+(to (prepend insn rest)
+  (let label (+ rest.label 1))
+  (let insns (link insn rest.insns))
+  (make link-seq
+    ({.label} label)
+    ({.tail?} (= insn {return}))
+    ({.insns} insns)
+    ({.rest}  rest)))                   ;kinda funky
+
+;;XXX 
+;;(to (show assembly)
+;;  (for each! ((insn insns))
+;;    (format "~2w ~w\n" insn.label insn)))
+
+
+;; Expression objects cache the free-variable sets, again to avoid algorithmic blow-up.
 
 (to (const<- c)
   (make constant
     ({.fvs} empty-set)
-    ({.gen s then} (link {const c} then))))
+    ({.gen s then} (prepend {const c} then))))
 
 (to (var<- v)
   (make variable
     ({.fvs} (set<- v))
-    ({.gen s then} (link (s v) then))))
+    ({.gen s then} (prepend (s v) then))))
 
 (to (lam<- v body src)
   (let fvs (body.fvs .difference (set<- v)))
@@ -99,24 +121,19 @@
      (let fetches (for each ((v cvs))
                     (let {fetch f} (s v))
                     f))
-     (link {enclose then.count fetches src}
-           (body .gen
-                 (scope<- v cvs.inverse s.known)
-                 (link {return} then))))))
+     (prepend {enclose then.label fetches src}
+              (body .gen
+                    (scope<- v cvs.inverse s.known)
+                    (prepend {return} then))))))
 
 (to (app<- f a src)
   (make application
     ({.fvs} (f.fvs .union a.fvs))
     ({.gen s then}
-     (let tail? (= then.first {return}))
      (let code (a .gen s
                   (f .gen s
-                     (link {invoke src} (if tail? then.rest then)))))
-     (if tail? code (link {push-cont then.count} code)))))
-
-(to (show insns)
-  (for each! ((`(,i ,insn) insns.items))
-    (format "~2w ~w\n" (- insns.count i) insn)))
+                     (prepend {invoke src} (if then.tail? then.rest then)))))
+     (if then.tail? code (prepend {push-cont then.label} code)))))
 
 (let empty-set (set<-))
 
