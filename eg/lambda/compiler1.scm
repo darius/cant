@@ -1,5 +1,8 @@
 ;; Yet another compiler: lambda to VM.
 
+(import (use "lib/ssets")
+  sset<- sset<-list sset-elements sset-insert sset-remove sset-union sset-difference)
+
 (import (use "eg/lambda/parser") exp-parse)
 (import (use "eg/lambda/prelude") build-prelude)
 
@@ -108,16 +111,17 @@
 
 (to (var<- v)
   (make variable
-    ({.fvs} (set<- v))
+    ({.fvs} (sset<- v))
     ({.gen s then} (prepend (s v) then))))
 
 (to (lam<- v body src)
-  (let fvs (body.fvs .difference (set<- v)))
+  (let fvs (sset-remove body.fvs v))
   (make lambda
     ({.fvs} fvs)
     ({.gen s then}
      (let cvs ;; closure variables
-       (sort ((fvs .difference (set<-list s.known.keys)) .keys)))
+       (sset-elements (sset-difference fvs (sset<-list s.known.keys))))
+;;     (format "hey, cvs = ~w\n" cvs)
      (let fetches (for each ((v cvs))
                     (let {fetch f} (s v))
                     f))
@@ -128,14 +132,14 @@
 
 (to (app<- f a src)
   (make application
-    ({.fvs} (f.fvs .union a.fvs))
+    ({.fvs} (sset-union f.fvs a.fvs))
     ({.gen s then}
      (let code (a .gen s
                   (f .gen s
                      (prepend {invoke src} (if then.tail? then.rest then)))))
      (if then.tail? code (prepend {push-cont then.label} code)))))
 
-(let empty-set (set<-))
+(let empty-set (sset<-))
 
 
 ;; Scopes (called 's' above)
