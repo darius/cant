@@ -14,10 +14,8 @@
 (print (sset-difference s1 s2))
 (print (sset-difference s2 s1))
 
-;;XXX
-'(for all ((x (a-list-of a-nat)))
+(for all ((x (a-list-of a-nat)))
   (let sx (sset<-list x))
   (let mx (set<-list x))
-  (format "hey ~w ~w\n" (sset-elements sx) (sort mx.keys))
   (should = (sset-elements sx) (sort mx.keys)))
 ;; TODO more

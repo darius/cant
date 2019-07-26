@@ -15,6 +15,8 @@
 (loud-use "lib/unify")
 (((loud-use "lib/roman") 'main) '(_ "mcmlxix" "1969" "i" "0"))
 
+(loud-use "eg/squickcheck-examples")
+
 (loud-use "test/test-export-import")
 (loud-use "test/test-quasiquote")
 (loud-use "test/test-strings")
@@ -64,7 +66,6 @@
 (loud-use "eg/lambdaterp")
 (((loud-use "eg/tictactoe") 'quick-test))
 (loud-use "eg/max-path-sum")
-(loud-use "eg/squickcheck-examples")
 (((loud-use "eg/slow-life") 'smoke-test))
 (((loud-use "eg/oodles") 'main) '(_ "garlic"))
 (((loud-use "eg/trivial72") 'main) '(_))
