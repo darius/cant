@@ -73,5 +73,6 @@
 (loud-use "eg/elem-ca")
 (loud-use "eg/floyd-triangle")
 (loud-use "eg/lzw")
+(loud-use "eg/csv")
 
 (loud-use "test/test-metaterp")
