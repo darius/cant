@@ -1,10 +1,11 @@
 ;; Immutable sorted sets
 
 (to (sset<- @xs)
-  (sort xs))
+  (sset<-list xs))
 
 (to (sset<-list xs)
-  (sort xs))
+  (for foldr ((x xs) (ss '()))
+    (sset-insert ss x)))
 
 (to (sset-elements xs)
   xs)
@@ -41,7 +42,5 @@
                 (-1 `(,xs.first ,@(diff xs.rest ys)))
                 ( 0 (diff xs.rest ys.rest))
                 ( 1 (diff xs ys.rest))))))
-
-;(print (diff '(1 3 5 7) '(0 2 3 4 5 9)))
 
 (export sset<- sset<-list sset-elements sset-insert sset-remove sset-union sset-difference)
