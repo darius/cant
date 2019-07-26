@@ -38,7 +38,7 @@
       (choice (let next-state `(,@(state .slice 1) ,choice))
               `(,choice ,@(spewing next-state))))))
 
-(to (sample-from-bag rng bag)
+(to (sample-from-bag rng bag)           ;TODO dedupe: similar in squickcheck.scm
   (let n bag.total)  ;; Pre: n > 0
   (begin counting ((k (rng .random-integer n))
                    (items bag.items))
