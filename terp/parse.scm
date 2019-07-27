@@ -93,7 +93,7 @@
        (('do e1 . es)
         (pack<- e-do (parse-e e1 ctx) (parse-e `(do ,@es) ctx)))
        (('do)
-        (pack<- e-constant #f))          ;I guess
+        (pack<- e-constant (void)))          ;I guess
        (('call e1 e2)
         (pack<- e-call (parse-e e1 ctx) (parse-e e2 ctx)))
        ((addressee (: cue cue?) . operands)
@@ -334,12 +334,12 @@
                   (_ ,if-so)))))
     ('when   (mlambda
               ((__ test . body)
-               `(if ,test (do ,@body) #f))))
+               `(if ,test (do ,@body) ',(void)))))
     ('unless (mlambda
               ((__ test . body)
-               `(if ,test #f (do ,@body)))))
+               `(if ,test ',(void) (do ,@body)))))
     ('case   (mlambda
-              ((__) #f)                 ;TODO: generate an error-raising?
+              ((__) `',(void))                 ;TODO: generate an error-raising?
               ((__ ('else . es)) `(do ,@es))
 ;;              ((__ (e) . clauses) `(or ,e (case ,@clauses))) ;TODO: do I ever use this?
               ((__ (e e1 . es) . clauses)
