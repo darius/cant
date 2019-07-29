@@ -203,10 +203,13 @@
     (display "sqm> ")
     (match (read)
       ((? eof?) (newline))
-      (sexpr (let value (evaluate sexpr '())) ;XXX reify a proper env object
-             (unless (= value void)
-               (print value))
-             (interact))))
+      (sexpr (print-result (evaluate sexpr '()))))) ;XXX reify a proper env object
+
+  ;; A separate function just to make the top of tracebacks cleaner.
+  (to (print-result value)
+    (unless (= value void)
+      (print value))
+    (interact))
 
   (match cmd-line-args
     (#no (interact))
