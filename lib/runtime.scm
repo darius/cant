@@ -396,16 +396,18 @@
   ({.split delimiter}
    ;; TODO deduplicate code
    ;; TODO define a strstr and use that
-   (begin splitting ((s me))
-     (if s.empty?
-         '()
-         (do (let limit s.count)
-             (begin scanning ((i 0))
-               (case ((= i limit) `(,s))
-                     ((= delimiter (s .slice i (+ i delimiter.count)))
-                      (link (s .slice 0 i)
-                            (splitting (s .slice (+ i delimiter.count)))))
-                     (else (scanning (+ i 1)))))))))
+   (if me.empty?
+       '()
+       (begin splitting ((s me))
+         (if s.empty?
+             '("")
+             (do (let limit s.count)
+                 (begin scanning ((i 0))
+                   (case ((= i limit) `(,s))
+                         ((= delimiter (s .slice i (+ i delimiter.count)))
+                          (link (s .slice 0 i)
+                                (splitting (s .slice (+ i delimiter.count)))))
+                         (else (scanning (+ i 1))))))))))
   ({.lowercase} (string<-list (for each ((c me)) c.lowercase)))
   ({.uppercase} (string<-list (for each ((c me)) c.uppercase)))
   ({.capitalize} (chain ((me .slice 0 1) .uppercase) (me .slice 1)))
@@ -464,7 +466,13 @@
    (call format `{.to-sink ,sink ,me ,@arguments})
    sink.output-string)
   ({.split-lines}
-   (me .split "\n"))
+   (let lines (me .split "\n"))
+   ;; TODO ugly. This 'if' is needed because we want a final "\n" to
+   ;; yield the same output as a string with no final "\n". N.B. while
+   ;; that's convenient it's also information-destroying.
+   (if (and (not lines.empty?) (= lines.last ""))
+       (lines .slice 0 (- lines.count 1))
+       lines))
   ({.selfie sink}
    (sink .display #\")
    (for each! ((c me))
