@@ -1,6 +1,6 @@
 ;; Pretty printing s-expressions
 
-(import (use "lib/pretty-layout")
+(import (use 'pretty-layout)
   pretty-print <> text line nest group)
 
 (to (pp sexpr @(optional width))

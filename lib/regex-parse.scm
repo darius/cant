@@ -1,6 +1,6 @@
 ;; Parse regular expressions
 
-(import (use "lib/parson") feed push parse grammar<-)
+(import (use 'parson) feed push parse grammar<-)
 
 ;; TODO: something like Python's raw string literals. \\\\ is awful.
 (let grammar (grammar<- "

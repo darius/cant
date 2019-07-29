@@ -1,4 +1,4 @@
-(import (use "lib/pretty-print") pp)
+(import (use 'pretty-print) pp)
 
 (let eg1
   '(to (fact n)

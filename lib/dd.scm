@@ -3,7 +3,7 @@
 ;; #branches-1. Each variable is also represented by a number, its 'rank'
 ;; -- lower rank numbers are placed nearer the root of the tree.
 
-(import (use "lib/memoize") memoize)
+(import (use 'memoize) memoize)
 
 (let infinity 999999)  ;; N.B. we don't have floats yet
 

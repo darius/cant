@@ -1,4 +1,4 @@
-(import (use "lib/squickcheck")
+(import (use 'squickcheck)
   a-claim a-nat an-int a-char a-printable-char a-printable-string a-list-of a-tuple a-choice
   weighted-choice
   all should  ;; I dunno what to call it yet

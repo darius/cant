@@ -1,6 +1,6 @@
-(import (use "lib/parson-core") feed take-1)
+(import (use 'parson-core) feed take-1)
 
-(let parson (use "lib/parson"))
+(let parson (use 'parson))
 (import parson grammar<-)
 (let parson-parse (parson 'parse))
 

@@ -1,4 +1,4 @@
-(import (use "lib/regex-match") regex-match regex-parse)
+(import (use 'regex-match) regex-match regex-parse)
 
 (to (test regex inputs)
   (let r (regex-parse regex))

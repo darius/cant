@@ -1,6 +1,6 @@
 ;; (Use run.scm to run this.)
 
-(import (use "lib/pretty-print")
+(import (use 'pretty-print)
   pp)
 
 (let input (with-input-file '.read-all data-file))

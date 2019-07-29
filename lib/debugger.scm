@@ -1,6 +1,6 @@
 ;; Interactively explore the call stack or an arbitrary object.
 
-(import (use "lib/traceback") print-traceback)
+(import (use 'traceback) print-traceback)
 
 (to (help vocab)
   (for each! ((`(,short ,full ,text) vocab))

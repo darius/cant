@@ -1,6 +1,6 @@
 ;; The top-level text editor
 
-(import (use "lib/sturm")                raw-mode)
+(import (use 'sturm)                     raw-mode)
 (import (use "eg/dole/keyboard")         read-key)
 (import (use "eg/dole/fundamental-mode") fundamental-mode<-)
 

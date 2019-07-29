@@ -182,7 +182,7 @@
     (error "Failed system command" command)))
 
 (to (repl @(optional cmd-line-args))    ;TODO rename
-  (import (use "lib/traceback") on-error-traceback)
+  (import (use 'traceback) on-error-traceback)
 
   (let parent-handler the-signal-handler.^)
 
@@ -228,7 +228,7 @@
     ((evaluate 'main '()) args)))
 
 (to (debug)
-  (import (use "lib/debugger") inspect-continuation)
+  (import (use 'debugger) inspect-continuation)
   (match the-last-error.^
     (`(,k ,@evil) (inspect-continuation k))
     (_ (display "No error to debug.\n"))))
@@ -242,10 +242,13 @@
 
 (to (use file-stem)                  ;TODO a realer module system
   ;; N.B. could sort of just use memoize if that were already loaded.
-  (match (the-modules .get file-stem)
+  (let stem (if (symbol? file-stem)
+                (chain "lib/" file-stem.name)
+                file-stem))
+  (match (the-modules .get stem)
     (#no
-     (let mod (load-module (chain file-stem ".scm") `(,file-stem)))
-     (the-modules .set! file-stem mod)
+     (let mod (load-module (chain stem ".scm") `(,stem)))
+     (the-modules .set! stem mod)
      mod)
     (mod mod)))
 

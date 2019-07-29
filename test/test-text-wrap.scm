@@ -1,7 +1,7 @@
-(import (use "lib/text-wrap") wrap)
+(import (use 'text-wrap) wrap)
 
 (let text "
-  How to explain?  How to describe?  Even the omniscient viewpoint fails.
+  How to explain?  How to describe?  Even the omniscient viewpoint quails.
 ")
 
 (each! print (wrap text 30))

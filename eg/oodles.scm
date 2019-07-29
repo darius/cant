@@ -3,10 +3,10 @@
 ;; N.B. expressing probabilities as a fraction of 1000, since we don't yet
 ;; do floating point numbers.
 
-(import (use "lib/parson")    parse grammar<-)
-(import (use "lib/text-wrap") fill)
+(import (use 'parson)    parse grammar<-)
+(import (use 'text-wrap) fill)
 
-(import (use "lib/random") rng)         ;TODO pass it in
+(import (use 'random) rng)         ;TODO pass it in
 
 (to (main `(,_ ,@words))
   (let expanded (expand-text (" " .join words) 1000))

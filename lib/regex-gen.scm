@@ -59,7 +59,7 @@
 
 ;; Concrete syntax
 
-(import (use "lib/regex-parse") regex-parser<-)
+(import (use 'regex-parse) regex-parser<-)
 
 (let regex-parse
   (regex-parser<- (export

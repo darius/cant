@@ -5,7 +5,7 @@
 ;;    g    generator context: includes an RNG and a size
 ;;    gen  generates a value of a type, given a g
 
-(import (use "lib/random") rng<-)
+(import (use 'random) rng<-)
 (let default-rng (rng<- 1234567))    ;TODO don't use this all the time
 
 ;; TODO report which property failed

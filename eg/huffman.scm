@@ -1,6 +1,6 @@
 ;; Huffman coding
 
-(import (use "lib/pairing-heap") priority-queues<-)
+(import (use 'pairing-heap) priority-queues<-)
 
 (import (priority-queues<- <=)
   pq-empty? pq-min

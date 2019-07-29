@@ -1,4 +1,4 @@
-(import (use "lib/regex-gen") regex-generate regex-parse)
+(import (use 'regex-gen) regex-generate regex-parse)
 
 (to (test regex n)
   (let r (regex-parse regex))

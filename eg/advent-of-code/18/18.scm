@@ -1,6 +1,6 @@
 ;; (Use run.scm to run this.)
 
-(import (use "lib/grid-2d")
+(import (use 'grid-2d)
   grid-2d<-)
 
 (let input (with-input-file '.read-lines data-file))

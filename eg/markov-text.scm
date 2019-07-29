@@ -2,8 +2,8 @@
 ;; TODO:
 ;; - separate a module from the main program
 
-(import (use "lib/random") random-rng<-)
-(import (use "lib/text-wrap") fill)
+(import (use 'random) random-rng<-)
+(import (use 'text-wrap) fill)
 
 (let order 2) ; Length of the context. TODO parameterize at command line
 (let start ('("START") .repeat order)) 

@@ -21,10 +21,10 @@
 ;    (use "test/smoke-test")
     ;; Let's default to traceback-on-error:
     ;; TODO: also stash the error in the-last-error for below
-;    (push-signal-handler ((use "lib/traceback") 'on-error-traceback))
-    (import (use "lib/flexarray")  flexarray<- flexarray<-list)
-    (import (use "lib/sort")       sort sort-by)
-    (import (use "lib/bag")        bag<-)))
+;    (push-signal-handler ((use 'traceback) 'on-error-traceback))
+    (import (use 'flexarray)  flexarray<- flexarray<-list)
+    (import (use 'sort)       sort sort-by)
+    (import (use 'bag)        bag<-)))
 
 ;(unless (squeam-interpret '(the-last-error .^))
 (repl (cdr (command-line)))

@@ -8,12 +8,12 @@
   (newline)
   (use filename))
 
-(loud-use "lib/memoize")
-(loud-use "lib/parson-core")
-(loud-use "lib/regex-match")
-(loud-use "lib/parse")
-(loud-use "lib/unify")
-(((loud-use "lib/roman") 'main) '(_ "mcmlxix" "1969" "i" "0"))
+(loud-use 'memoize)
+(loud-use 'parson-core)
+(loud-use 'regex-match)
+(loud-use 'parse)
+(loud-use 'unify)
+(((loud-use 'roman) 'main) '(_ "mcmlxix" "1969" "i" "0"))
 
 (loud-use "eg/squickcheck-examples")
 

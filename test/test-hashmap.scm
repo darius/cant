@@ -19,7 +19,7 @@
 
 ;; TODO more tests
 
-(import (use "lib/random") rng)
+(import (use 'random) rng)
 
 (to (random-tests n-trials)            ;TODO use squickcheck
   (for each! ((_ (range<- n-trials)))

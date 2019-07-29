@@ -39,7 +39,7 @@
 ;; * I don't like 'E' as the tag for an if's else-branch, because
 ;;   there's also 'e' as the abbrev for an expression.
 
-(import (use "lib/pretty-print") pp)    ;XXX for debugging
+(import (use 'pretty-print) pp)    ;XXX for debugging
 
 
 ;; Types:

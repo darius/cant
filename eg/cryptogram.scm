@@ -1,10 +1,10 @@
 ;; A UI for cryptogram puzzles.
 ;; Ported from github.com/darius/sturm.
 
-(import (use "lib/sturm")
+(import (use 'sturm)
   cbreak-mode get-key render
   cursor green red unstyled)
-(import (use "lib/random")
+(import (use 'random)
   random-rng<-)
 
 (to (main args)

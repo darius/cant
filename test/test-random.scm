@@ -1,4 +1,4 @@
-(import (use "lib/random") rng<-)
+(import (use 'random) rng<-)
 
 (let rng (rng<- 1234567))
 

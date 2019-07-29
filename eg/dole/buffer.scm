@@ -2,7 +2,7 @@
 ;; A buffer is a text with a current point of editing, a display, and
 ;; a key-map.
 
-(import (use "lib/text")         text<- backward forward)
+(import (use 'text)              text<- backward forward)
 (import (use "eg/dole/char-set") char-set<-)
 (import (use "eg/dole/display")  render rows cols)   ; XXX rename to num-rows or something
 (import (use "eg/dole/key-map")  key-map<-)

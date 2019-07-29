@@ -1,4 +1,4 @@
-(import (use "lib/parson") parse grammar<-)
+(import (use 'parson) parse grammar<-)
 
 (to (try grammar-text start-symbol subs inputs)
   (let parser ((grammar<- grammar-text) subs))

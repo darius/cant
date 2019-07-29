@@ -2,8 +2,8 @@
 ;; from an actual application: finding instances of the pattern syntax
 ;; I'm about to outlaw. I.e., patterns like (a b) instead of `(,a ,b).
 
-(import (use "lib/pretty-print") pp)
-(import (use "lib/squeam-source-walker")
+(import (use 'pretty-print) pp)
+(import (use 'squeam-source-walker)
   expr-subparts patt-subparts macroexpand-outer-patt)
 
 (to (main `(,_ ,@filenames))

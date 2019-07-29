@@ -1,4 +1,4 @@
-(import (use "lib/factor") factor)
+(import (use 'factor) factor)
 
 (print (factor 1))
 (print (factor 2))

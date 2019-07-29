@@ -3,7 +3,7 @@
 ;; This version, for part 2: breadth-first search for the frontier,
 ;; starting from the centroid (hoping that's within the area).
 
-(import (use "lib/queue")
+(import (use 'queue)
   empty empty?
   push extend
   peek)

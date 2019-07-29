@@ -1,9 +1,9 @@
 ;; (Use run.scm to run this.)
 ;; Simple least-cost search was too slow.
 
-(import (use "lib/memoize")
+(import (use 'memoize)
   memoize)
-(import (use "lib/pairing-heap")
+(import (use 'pairing-heap)
   priority-queues<-)
 
 (let input (with-input-file '.read-all data-file))

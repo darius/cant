@@ -1,6 +1,6 @@
 ;; (Use run.scm to run this.)
 
-(import (use "lib/memoize")
+(import (use 'memoize)
   memoize)
 
 (let input (with-input-file '.read-all data-file))

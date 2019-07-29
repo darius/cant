@@ -6,12 +6,12 @@
 ;; eliminate one of the variables, and continue. Nonlinear expressions
 ;; get put off to try again later.
 
-(import (use "lib/queue")
+(import (use 'queue)
   empty empty?
   push extend
   peek)
 
-(let ratio-m (use "lib/ratio"))
+(let ratio-m (use 'ratio))
 (import ratio-m ratio<-)
 
 (let `(,r+ ,r- ,r* ,r/) (each ratio-m '(+ - * /)))

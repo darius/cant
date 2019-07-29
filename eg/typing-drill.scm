@@ -1,6 +1,6 @@
 ;; How fast do you type?
 
-(import (use "lib/sturm") cbreak-mode render cursor get-key)
+(import (use 'sturm) cbreak-mode render cursor get-key)
 
 (to (main _)
   (cbreak-mode interact))

@@ -1,4 +1,4 @@
-(import (use "lib/text") text<- backward)
+(import (use 'text) text<- backward)
 
 (hide
   (let t (text<-))

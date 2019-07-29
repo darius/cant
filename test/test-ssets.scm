@@ -1,7 +1,7 @@
-(import (use "lib/ssets")  
+(import (use 'ssets)
   sset<- sset<-list sset-elements sset-insert sset-remove sset-union sset-difference)
 
-(import (use "lib/squickcheck")
+(import (use 'squickcheck)
   a-nat a-list-of
   all should)
 

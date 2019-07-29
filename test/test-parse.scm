@@ -1,4 +1,4 @@
-(import (use "lib/parse") grammar<-)
+(import (use 'parse) grammar<-)
 
 ;; Example grammars
 

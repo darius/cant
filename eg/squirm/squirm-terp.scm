@@ -1,6 +1,6 @@
 ;; Basic Squirm interpreter as a testable sketch of the semantics
 
-(import (use "lib/queue")
+(import (use 'queue)
   empty empty? push peek extend list<-queue)
 
 

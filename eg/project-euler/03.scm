@@ -1,7 +1,7 @@
 ;; https://projecteuler.net/problem=3
 ;; The largest prime factor of 600851475143.
 
-(import (use "lib/factor") factor)
+(import (use 'factor) factor)
 
 (to (euler3 n)
   (call max (factor n)))

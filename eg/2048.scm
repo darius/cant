@@ -1,8 +1,8 @@
 ;; Ported from github.com/darius/sturm
 
-(import (use "lib/random")
+(import (use 'random)
   rng<- random-seed<-)
-(import (use "lib/sturm")
+(import (use 'sturm)
   cbreak-mode get-key render
   ;;XXX import is finally a pain:
   bold underlined blinking inverted unstyled

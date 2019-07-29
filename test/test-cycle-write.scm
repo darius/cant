@@ -1,4 +1,4 @@
-(import (use "lib/cycle-write") cycle-write)
+(import (use 'cycle-write) cycle-write)
 
 (to (cp x)
   (cycle-write x)

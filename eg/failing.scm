@@ -1,7 +1,7 @@
 ;; An example failing computation, to exercise the debugger.
 ;; This turned into essentially a repeat of test-continuations.scm.
 
-(import (use "lib/traceback") on-error-traceback)
+(import (use 'traceback) on-error-traceback)
 
 (to (factorial n)
   (if (= 0 n)

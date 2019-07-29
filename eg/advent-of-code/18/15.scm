@@ -1,6 +1,6 @@
 ;; (Use run.scm to run this.)
 
-(import (use "lib/queue")
+(import (use 'queue)
   empty empty?                          ;TODO too-generic names
   push extend
   peek)

@@ -1,8 +1,8 @@
 ;; Game of Life
 
-(import (use "lib/sturm")
+(import (use 'sturm)
   cbreak-mode)
-(import (use "lib/ansi-term")
+(import (use 'ansi-term)
   home clear-screen cursor-show cursor-hide)
 
 (to (main args)

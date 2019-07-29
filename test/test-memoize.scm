@@ -1,4 +1,4 @@
-(import (use "lib/memoize") memoize)
+(import (use 'memoize) memoize)
 
 (let fib (memoize
           (given (n)

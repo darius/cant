@@ -1,7 +1,7 @@
 ;; Tic-tac-toe game
 
-(import (use "lib/memoize") memoize)
-(import (use "lib/sturm") cbreak-mode render get-key cursor green)
+(import (use 'memoize) memoize)
+(import (use 'sturm) cbreak-mode render get-key cursor green)
 
 (to (main `(,me ,@args))
   (let players

@@ -1,4 +1,4 @@
-(import (use "lib/unify") variable<- unify empty-subst reify)
+(import (use 'unify) variable<- unify empty-subst reify)
 
 (let a (variable<- "a" 0))
 (let b (variable<- "b" 0))

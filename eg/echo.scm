@@ -2,9 +2,9 @@
 ;; We quit on Q instead of the escape key because there are still
 ;; unmapped keys with escape sequences.
 
-(import (use "lib/sturm")
+(import (use 'sturm)
   cbreak-mode get-key render cursor screen-width)
-(import (use "lib/text-wrap")
+(import (use 'text-wrap)
   fill)
 
 (to (main _)

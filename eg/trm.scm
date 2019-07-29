@@ -7,7 +7,7 @@
 ;;   n     argument part of instruction
 ;;   reg   register
 
-(import (use "lib/parson") parse grammar<- feed)
+(import (use 'parson) parse grammar<- feed)
 
 (to (trm-parse program)
   (array<-list ((parse parser program) .results)))
@@ -68,7 +68,7 @@ insn:    {'1'+} {'#' '#'? '#'? '#'? '#'?} :make_insn.
                (#\1 2)
                (#\# 3))))))))
 
-;; (import (use "lib/pretty-layout") ...)
+;; (import (use 'pretty-layout) ...)
 ;;XXX use me
 
 (to (show insns @(optional opt-pc opt-regs))
