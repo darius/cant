@@ -252,18 +252,17 @@
      mod)
     (mod mod)))
 
-(to (load filename @(optional context-arg))
-  ;; XXX duplication
-  (let context (or context-arg '()))
-  (let code `(do ,@(with-input-file read-all filename)))
-  (let code1 (parse-exp code context))
-  (evaluate code1 '()))
+(to (load filename @(optional context))
+  (load-exp `(do ,@(with-input-file read-all filename))
+            context))
 
-(to (load-module filename @(optional context-arg))
-  (let context (or context-arg '()))
-  (let code `(hide ,@(with-input-file read-all filename)))
-  (let code1 (parse-exp code context))
-  (evaluate code1 '()))
+(to (load-module filename @(optional context))
+  (load-exp `(hide ,@(with-input-file read-all filename))
+            context))
+
+(to (load-exp exp context)
+  (let code (parse-exp exp (or context '())))
+  (evaluate code '()))
 
 (to (with-input-file fn filename)
   (let source (open-input-file filename))
