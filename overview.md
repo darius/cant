@@ -245,7 +245,7 @@ The accessors on lists above are all generic. They apply to arrays too, for a st
 | `(vector a b c)`              | `(array<- a b c)`       |  |
 | `(make-vector n init)`        | `(array<-count n init)`     |  |
 | `(vector-length v)`           | `v.count`     |  Same as above. |
-| `(vector-ref v n)`            | `(v n)`     |  |
+| `(vector-ref v n)`            | `(v n)`     | Ditto. |
 | `(vector-set! v n x)`         | `(v .set! n x)`     | There's nothing like Common Lisp setf, so far. |
 | `(list->vector xs)`           | `(array<-list xs)`       |  |
 | `(vector->list v)`            | `v.values`       |  |
@@ -257,7 +257,8 @@ collections does the library offer, and what's their protocol?
 Collections fit in this hierarchy:
 ```
   map
-    set, bag
+    bag
+      set
     sequence
       list    -- special in being a 'value' type already. N.B. immutable.
       string  -- ditto
