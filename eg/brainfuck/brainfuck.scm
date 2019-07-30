@@ -42,7 +42,11 @@
       (_   stack)))
   jump)
 
-;; smoke test
+
+;; Smoke test
 
 (to (main _)
   (bf-interpret (with-input-file '.read-all "eg/brainfuck/hello.bf")))
+
+
+(export bf-interpret)
