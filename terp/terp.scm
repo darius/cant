@@ -148,6 +148,9 @@
 
 (define uninitialized (object<- (script<- '<uninitialized> #f '()) '*uninitialized*))
 
+(define (env-variables r)
+  (map car r))
+
 
 ;; Parser bootstrap
 
@@ -421,8 +424,9 @@
 (define evaluate-prim
   (object<- (cps-script<- 'evaluate
                           (lambda (datum message k)
-                            ;;XXX check arity
-                            (apply evaluate-exp `(,@message ,k))))
+                            (if (= (length message) 2)
+                                (apply evaluate-exp `(,@message ,k))
+                                (signal k "Wrong number of arguments -- evaluate" message))))
             #f))
 
 (define with-ejector
@@ -445,10 +449,16 @@
 (define (evaluate-exp e r k)
   (if (and (object? e) (eq? (object-script e) expression-script))
       (let* ((parsed (object-datum e))
-             (vars (exp-vars-defined parsed))
+             ;; XXX Here we just jam the vars-defined of e together
+             ;; with r's variables. This is adequate for warning about
+             ;; unbound variables in e, which is all we're currently
+             ;; using this scope for, but it won't be adequate when we
+             ;; compile to lexical addresses, etc.:
+             (vars (append (exp-vars-defined parsed)
+                           (env-variables r)))
              (elaborated (elaborate-e parsed (outer-scope<- vars))))
         (ev-exp elaborated r k))
-      (evaluate-exp (parse-exp e) r k))) ;XXX need to supply a lexical env from `r`, so unbound-var warnings are accurate
+      (evaluate-exp (parse-exp e) r k)))
 
 (define (ev-exp e r k)
 ;  (dbg `(ev-exp)) ; ,e))
