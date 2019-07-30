@@ -110,12 +110,17 @@ include what changes when you change the code.
 
 Thus:
 
-** Determinism. (Cf. the importance of replication in science.)
-** Time travel.
-** Easy prettyprinting of everything.
-** Live update of code.
-** Halp.
-** (what else?)
+* Determinism. (Cf. the importance of replication in science.)
+
+* Time travel.
+
+* Easy prettyprinting of everything.
+
+* Live update of code.
+
+* Halp.
+
+* (what else?)
 
 2. Be itself understandable, as an explorable explanation of
 computing.
@@ -151,21 +156,25 @@ There's plenty of unfinished crap in this repo, not clearly marked.
 
 ## Quick start for Schemers
 
+```
 $ squeam
 sqm> (to (I-am name) (format "Hi, ~w!\n" name))
 #<I-am>
 sqm> (I-am 'Alice)
 Hi, Alice!
 sqm> 
+```
 
 The less-happy path:
 
+```
 sqm> (I-am 'but 'human)
 Error! Traceback:
   (call '#<print-result:repl> ^)
   (^)
 Match failure: (#<I-am> (but human))
 Enter (debug) for more.
+```
 
 That is, `I-am` was called with the message `(but human)` but it
 expected a length-1 message like `(Alice)`. (The traceback doesn't
@@ -174,6 +183,7 @@ structures.)
 
 This debugger is almost useless, but it's there as a last resort:
 
+```
 sqm> (debug)
 Enter ? for help.
 debug> ?
@@ -187,6 +197,7 @@ v value     - evaluate an expression in the current environment
 b backtrace - show all of the stack up from here
 debug> q
 ok
+```
 
 
 ## The bikeshedding
@@ -195,24 +206,27 @@ Let's start with the equivalents of familiar Scheme syntax:
 
 | Scheme                        | Squeam        | Note          |
 | ----------------------------- | ------------- | ------------- |
-| (define x 42)                 | (let x 42)       |  Returns 42 as the value. Definitions are expressions.  |
-| (define (f x) e)              | (to (f x) e)     |   |
-| (define (f x) (lambda (y) x)) | (to ((f x) y) x) |   |
-| (lambda (x y) e)              | (given (x y) e)  |   |
-| (begin a b c)                 | (do a b c)       |   |
-| (let () a b c)                | (hide a b c)     |   |
-| (if t p q)                    | (if t p q)       | p and q are in nested scopes, as if in hide blocks. |
-| (and x y)                     | (and x y)        | Similarly, y is in a nested scope. |
-| (or x y)                      | (or x y)         | Ditto. |
-| (if p (begin a b))            | (when p a b)     | a and b are in their own common nested scope.  |
-| (if (not p) (begin a b))      | (unless p a b)   |   |
-| (cond (p a) (else b))         | (case (p a) (else b))  |  'case' isn't the greatest name. Suggestions? |
-| #t                            | #yes  |   |
-| #f                            | #no  |   |
-| (let looping ((v init)) body) | (begin looping ((v init)) body) |  The 'ing' is a convention. |
+| `(define x 42)`                 | `(let x 42)`       |  Returns 42 as the value. Definitions are expressions.  |
+| `(define (f x) e)`              | `(to (f x) e)`     |   |
+| `(define (f x) (lambda (y) x))` | `(to ((f x) y) x)` |   |
+| `(lambda (x y) e)`              | `(given (x y) e)`  |   |
+| `(begin a b c)`                 | `(do a b c)`       |   |
+| `(let () a b c)`                | `(hide a b c)`     |   |
+| `(if t p q)`                    | `(if t p q)`       | `p` and `q` are in nested scopes, as if in `hide` blocks. |
+| `(and x y)`                     | `(and x y)`        | Similarly, `y` is in a nested scope. |
+| `(or x y)`                      | `(or x y)`         | Ditto. |
+| `(if p (begin a b))`            | `(when p a b)`     | `a` and `b` are in their own common nested scope.  |
+| `(if (not p) (begin a b))`      | `(unless p a b)`   |   |
+| `(cond (p a) (else b))`         | `(case (p a) (else b))`  |  `case` isn't the greatest name. Suggestions? |
+| `#t`                            | `#yes`  |   |
+| `#f`                            | `#no`  |   |
+| `(let looping ((v init)) body)` | `(begin looping ((v init)) body)` |  The 'ing' is a convention. |
 
+```
 (for foo (...) ...)
+```
 
+```
 link chain .empty? .first .rest .count
 collections protocols
   map
@@ -224,20 +238,25 @@ collections protocols
     grid-2d
 each each! those gather filter where tally every some zip foldr foldl
 delayed seqs too
+```
 
+```
 more std types
   source, sink, string-sink, eof
   box
   term
   void
   meta-stuff
+```
 
 import export
 
 =, not=, compare
 
+```
 term data and match: (match e (p e) ...)
 message passing and make
+```
 
 traits
 miranda methods
@@ -267,9 +286,9 @@ exceptions, ejectors
 list of biggest lacunae
 
 request for ideas:
-collections read syntax
-module refs without listing them all at import
-better support for mutables?
+- collections read syntax
+- module refs without listing them all at import
+- better support for mutables?
 
 cheat sheet, like https://github.com/jeapostrophe/racket-cheat/blob/master/racket-cheat.scrbl
 squeam-mode.el
