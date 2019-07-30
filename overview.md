@@ -222,6 +222,21 @@ Let's start with the equivalents of familiar Scheme syntax:
 | `#f`                            | `#no`  |   |
 | `(let looping ((v init)) body)` | `(begin looping ((v init)) body)` |  The 'ing' is a convention. |
 
+Scheme functions on lists:
+
+| Scheme                        | Squeam        | Note          |
+| ----------------------------- | ------------- | ------------- |
+| `(cons x xs)`                 | `(link x xs)`       |  |
+| `(append xs ys)`              | `(chain xs ys)`     |  |
+| `(null? xs)`                  | `xs.empty?` or `(xs .empty?)`     | The former is reader sugar for the latter. |
+| `(car xs)`                    | `xs.first` or etc.     |  |
+| `(cdr xs)`                    | `xs.rest`     |  |
+| `(length xs)`                 | `xs.count`     |  |
+| `(list-ref xs n)`             | `(xs n)`     |  |
+| `(list-tail xs n)`            | `(xs .slice n)`     |  There's also `(xs .slice start-index after-index)` |
+| `(member x xs)`               | `(xs .slice (xs .find x))`     |  (Provided `x` is in `xs`. More on `.find` below, TODO) |
+| `(cadr (assoc 'x '((a b) (x y))))`   | `((map<- '((a b) (x y))) 'x)`     |  |
+
 ```
 (for foo (...) ...)
 ```
