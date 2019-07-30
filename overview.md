@@ -242,7 +242,6 @@ Scheme functions on lists:
 ```
 
 ```
-link chain .empty? .first .rest .count
 collections protocols
   map
     set, bag
