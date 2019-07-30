@@ -1,4 +1,4 @@
-(Taken from the wikipedia page for Brainfuck; which doesn't name an author)
+(This example's from the Wikipedia page for Brainfuck; which doesn't name an author)
 
 [ This program prints "Hello World!" and a newline to the screen, its
   length is 106 active command characters. [It is not the shortest.]
