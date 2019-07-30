@@ -8,8 +8,8 @@
   (begin running ((i 0)                 ; instruction pointer
                   (d 0))                ; data pointer
     (match (program .get i)
-      (#\> (running (+ i 1) (+ d 1)))
       (#\< (running (+ i 1) (- d 1)))
+      (#\> (running (+ i 1) (+ d 1)))
       (#\+ (data .set! d (+ (data .get d 0) 1))
            (running (+ i 1) d))
       (#\- (data .set! d (- (data .get d 0) 1))
