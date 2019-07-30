@@ -236,22 +236,43 @@ Scheme functions on lists:
 | `(list-tail xs n)`            | `(xs .slice n)`     |  There's also `(xs .slice start-index after-index)` |
 | `(member x xs)`               | `(xs .slice (xs .find x))`     |  (Provided `x` is in `xs`. More on `.find` below, TODO) |
 | `(cadr (assoc 'x '((a b) (x y))))`   | `((map<- '((a b) (x y))) 'x)`     |  |
+| `(list? x)`                   | `(list? x)`     |  Squeam doesn't plan to support improper lists, though I haven't got around to making them an error. |
 
-```
-(for foo (...) ...)
-```
+The accessors on lists above are all generic. They apply to arrays too, for a start:
 
+| Scheme                        | Squeam        | Note          |
+| ----------------------------- | ------------- | ------------- |
+| `(vector a b c)`              | `(array<- a b c)`       |  |
+| `(make-vector n init)`        | `(array<-count n init)`     |  |
+| `(vector-length v)`           | `v.count`     |  Same as above. |
+| `(vector-ref v n)`            | `(v n)`     |  |
+| `(vector-set! v n x)`         | `(v .set! n x)`     | There's nothing like Common Lisp setf, so far. |
+| `(list->vector xs)`           | `(array<-list xs)`       |  |
+| `(vector->list v)`            | `v.values`       |  |
+| `(vector? x)`                 | `(array? x)`       |  |
+
+So you access a collection by sending a message. What kinds of
+collections does the library offer, and what's their protocol?
+
+Collections fit in this hierarchy:
 ```
-collections protocols
   map
     set, bag
     sequence
-      list  -- special in being a 'value' type already. N.B. immutable.
+      list    -- special in being a 'value' type already. N.B. immutable.
+      string  -- ditto
       array, flexarray
-      string
-    grid-2d
+    grid-2d   -- Just because this came up a lot in Advent of Code;
+              -- we don't have general multidimensional arrays yet.
+```
+
+```
 each each! those gather filter where tally every some zip foldr foldl
 delayed seqs too
+```
+
+```
+(for foo (...) ...)
 ```
 
 ```
