@@ -228,6 +228,7 @@ Scheme functions on lists:
 | ----------------------------- | ------------- | ------------- |
 | `(cons x xs)`                 | `(link x xs)`       |  |
 | `(append xs ys)`              | `(chain xs ys)`     |  |
+| `(list x y z)`                | `(list<- x y z)`    | Though it's more common to use quasiquoting. |
 | `(null? xs)`                  | `(null? xs)`, `xs.empty?`, or `(xs .empty?)`     | `xs.empty?` is reader sugar for the last expression. All collections answer this message, though not all objects. `null?` would be useful when you don't know if the argument is a collection. |
 | `(pair? x)`                   | `(link? x)`      |  |
 | `(list? x)`                   | `(list? x)`     |  Squeam doesn't plan to support improper lists, though I haven't got around to making them an error. |
@@ -239,18 +240,31 @@ Scheme functions on lists:
 | `(member x xs)`               | `(xs .slice (xs .find x))`     |  (Provided `x` is in `xs`. More on `.find` below, TODO) |
 | `(cadr (assoc 'x '((a b) (x y))))`   | `((map<- '((a b) (x y))) 'x)`     |  |
 
-The accessors on lists above are all generic. They apply to arrays too, for a start:
+The accessors on lists above are all generic. They apply to strings too, for a start:
+
+| Scheme                        | Squeam        | Note          |
+| ----------------------------- | ------------- | ------------- |
+| `(string a b c)`              | `(string<- a b c)`       |  |
+| `(string? x)`                 | `(string? x)`       |  |
+| `(string-length s)`           | `s.count`     |  Same as above. |
+| `(string-ref s n)`            | `(s n)`       | Ditto. |
+| `(string->list s)`            | `s.values`       | `.values` in general returns a sequence which needn't be a list: but it should be efficient to walk through with `.first`/`.rest`. |
+| `(list->string chars)`            | `(string<-list chars)`       |  `chars` may be any sequence. I guess the function's misnamed. |
+| `(string-append s1 s2)`       | `(chain s1 s2)`       |  |
+| `(substring s i1 i2)`         | `(s .slice i1 i2)`     |  |
+
+Same drill with vectors:
 
 | Scheme                        | Squeam        | Note          |
 | ----------------------------- | ------------- | ------------- |
 | `(vector a b c)`              | `(array<- a b c)`       |  |
 | `(make-vector n init)`        | `(array<-count n init)`     |  |
+| `(vector? x)`                 | `(array? x)`       |  |
 | `(vector-length v)`           | `v.count`     |  Same as above. |
 | `(vector-ref v n)`            | `(v n)`     | Ditto. |
 | `(vector-set! v n x)`         | `(v .set! n x)`     | There's nothing like Common Lisp setf, so far. |
-| `(list->vector xs)`           | `(array<-list xs)`       |  |
 | `(vector->list v)`            | `v.values`       |  |
-| `(vector? x)`                 | `(array? x)`       |  |
+| `(list->vector xs)`           | `(array<-list xs)`       |  `xs` may be any sequence. |
 
 So you access a collection by sending a message. What kinds of
 collections does the library offer, and what's their protocol?
