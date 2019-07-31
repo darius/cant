@@ -244,12 +244,12 @@ The accessors on lists above are all generic. They apply to strings too, for a s
 
 | Scheme                        | Squeam        | Note          |
 | ----------------------------- | ------------- | ------------- |
-| `(string a b c)`              | `(string<- a b c)`       |  |
 | `(string? x)`                 | `(string? x)`       |  |
+| `(string a b c)`              | `(string<- a b c)`       |  |
+| `(list->string chars)`        | `(string<-list chars)`       |  `chars` may be any sequence. I guess the function's misnamed. |
+| `(string->list s)`            | `s.values`       | `.values` in general returns a sequence which needn't be a list: but it should be efficient to walk through with `.first`/`.rest`. |
 | `(string-length s)`           | `s.count`     |  Same as above. |
 | `(string-ref s n)`            | `(s n)`       | Ditto. |
-| `(string->list s)`            | `s.values`       | `.values` in general returns a sequence which needn't be a list: but it should be efficient to walk through with `.first`/`.rest`. |
-| `(list->string chars)`            | `(string<-list chars)`       |  `chars` may be any sequence. I guess the function's misnamed. |
 | `(string-append s1 s2)`       | `(chain s1 s2)`       |  |
 | `(substring s i1 i2)`         | `(s .slice i1 i2)`     |  |
 
@@ -257,14 +257,14 @@ Same drill with vectors:
 
 | Scheme                        | Squeam        | Note          |
 | ----------------------------- | ------------- | ------------- |
-| `(vector a b c)`              | `(array<- a b c)`       |  |
-| `(make-vector n init)`        | `(array<-count n init)`     |  |
 | `(vector? x)`                 | `(array? x)`       |  |
+| `(vector a b c)`              | `(array<- a b c)`       |  |
+| `(list->vector xs)`           | `(array<-list xs)`       |  |
+| `(make-vector n init)`        | `(array<-count n init)`     |  |
+| `(vector->list v)`            | `v.values`       |  |
 | `(vector-length v)`           | `v.count`     |  |
 | `(vector-ref v n)`            | `(v n)`     |  |
 | `(vector-set! v n x)`         | `(v .set! n x)`     | There's nothing like Common Lisp setf, so far. |
-| `(vector->list v)`            | `v.values`       |  |
-| `(list->vector xs)`           | `(array<-list xs)`       |  |
 
 So you access a collection by sending a message. What kinds of
 collections does the library offer, and what's their protocol?
