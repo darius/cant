@@ -1,5 +1,6 @@
 ;; https://en.wikipedia.org/wiki/Brainfuck
 ;; Doing it two ways: interpreter and compiler.
+;; See also http://rosettacode.org/wiki/Execute_Brain****
 
 ;; Interpreter
 
