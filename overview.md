@@ -260,11 +260,11 @@ Same drill with vectors:
 | `(vector a b c)`              | `(array<- a b c)`       |  |
 | `(make-vector n init)`        | `(array<-count n init)`     |  |
 | `(vector? x)`                 | `(array? x)`       |  |
-| `(vector-length v)`           | `v.count`     |  Same as above. |
-| `(vector-ref v n)`            | `(v n)`     | Ditto. |
+| `(vector-length v)`           | `v.count`     |  |
+| `(vector-ref v n)`            | `(v n)`     |  |
 | `(vector-set! v n x)`         | `(v .set! n x)`     | There's nothing like Common Lisp setf, so far. |
 | `(vector->list v)`            | `v.values`       |  |
-| `(list->vector xs)`           | `(array<-list xs)`       |  `xs` may be any sequence. |
+| `(list->vector xs)`           | `(array<-list xs)`       |  |
 
 So you access a collection by sending a message. What kinds of
 collections does the library offer, and what's their protocol?
