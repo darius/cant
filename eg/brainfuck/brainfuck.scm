@@ -47,6 +47,8 @@
 
 
 ;; Compiler
+;; One semantic difference from the intepreter:
+;; bounded memory (using an array instead of a hashmap).
 
 (to (bf-compile program)
   (let meaningful (set<-list "<>-+.,[]"))
