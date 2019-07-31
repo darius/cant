@@ -246,7 +246,7 @@ The accessors on lists above are all generic. They apply to strings too, for a s
 | ----------------------------- | ------------- | ------------- |
 | `(string? x)`                 | `(string? x)`       |  |
 | `(string a b c)`              | `(string<- a b c)`       |  |
-| `(list->string chars)`        | `(string<-list chars)`       |  `chars` may be any sequence. I guess the function's misnamed. |
+| `(list->string chars)`        | `(string<-list chars)`       |  `chars` may be any sequence. I guess the function's misnamed. Or, really, we should call the concrete type 'link-list' and the abstract one 'list' instead of 'sequence'. TODO? |
 | `(string->list s)`            | `s.values`       | `.values` in general returns a sequence which needn't be a list: but it should be efficient to walk through with `.first`/`.rest`. |
 | `(string-length s)`           | `s.count`     | Just like `.count` on lists. |
 | `(string-ref s n)`            | `(s n)`       | Likewise. |
