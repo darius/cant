@@ -47,7 +47,7 @@
 
 
 ;; Compiler
-;; One semantic difference from the intepreter:
+;; One semantic difference from the interpreter:
 ;; bounded memory (using an array instead of a hashmap).
 
 (to (bf-compile program)
