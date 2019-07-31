@@ -228,7 +228,7 @@ Scheme functions on lists:
 | ----------------------------- | ------------- | ------------- |
 | `(cons x xs)`                 | `(link x xs)`       |  |
 | `(append xs ys)`              | `(chain xs ys)`     |  |
-| `(null? xs)`                  | `(null? xs)`, `xs.empty?`, or `(xs .empty?)`     | `xs.empty?` is reader sugar for the last expression. All collections answer this message, though not all objects. `null?` tests the concrete type. |
+| `(null? xs)`                  | `(null? xs)`, `xs.empty?`, or `(xs .empty?)`     | `xs.empty?` is reader sugar for the last expression. All collections answer this message, though not all objects. `null?` would be useful when you don't know if the argument is a collection. |
 | `(pair? x)`                   | `(link? x)`      |  |
 | `(list? x)`                   | `(list? x)`     |  Squeam doesn't plan to support improper lists, though I haven't got around to making them an error. |
 | `(car xs)`                    | `xs.first` or etc.     |  |
