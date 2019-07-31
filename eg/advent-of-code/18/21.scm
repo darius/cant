@@ -5,10 +5,10 @@
 (let the-ip (number<-string (input.first.split 1)))
 (print the-ip)
 
-(let the-program (call array<-
-                       (for each ((line input.rest))
-                         (let v line.split)
-                         `(,(symbol<- v.first) ,@(each number<-string v.rest)))))
+(let the-program (array<-list
+                  (for each ((line input.rest))
+                    (let v line.split)
+                    `(,(symbol<- v.first) ,@(each number<-string v.rest)))))
 (to (print-insn (list<- op a b c))
   (format "[~w,~w,~w,~w],\n" op a b c))
 

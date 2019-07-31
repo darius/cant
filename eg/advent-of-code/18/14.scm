@@ -49,7 +49,7 @@
 
 ;; takes over 2 hrs
 (to (part-2)
-  (let pattern (call array<- (digits<- input)))
+  (let pattern (array<-list (digits<- input)))
   (let pc pattern.count)
   (format "pattern: ~w\n" pattern)
   (begin working ((i 0))

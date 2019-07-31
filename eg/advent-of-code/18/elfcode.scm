@@ -6,10 +6,10 @@
 
 (to (parse lines)
   (let ip-reg (number<-string (lines.first.split 1)))
-  (let program (call array<-
-                     (for each ((line lines.rest))
-                       (let v line.split)
-                       `(,(symbol<- v.first) ,@(each number<-string v.rest)))))
+  (let program (array<-list
+                (for each ((line lines.rest))
+                  (let v line.split)
+                  `(,(symbol<- v.first) ,@(each number<-string v.rest)))))
   {elfcode ip-reg program})
 
 (to (itsy-dump {elfcode ip-reg program})

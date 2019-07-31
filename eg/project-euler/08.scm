@@ -29,7 +29,7 @@
     (xs .slice i (+ i k))))
 
 (let digits
-  (call array<- (each number<-string (k-slices<- input 1))))
+  (array<-list (each number<-string (k-slices<- input 1))))
 
 (to (euler8 n)
   (call max (each product<- (k-slices<- digits n))))
