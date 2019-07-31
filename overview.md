@@ -228,7 +228,9 @@ Scheme functions on lists:
 | ----------------------------- | ------------- | ------------- |
 | `(cons x xs)`                 | `(link x xs)`       |  |
 | `(append xs ys)`              | `(chain xs ys)`     |  |
-| `(null? xs)`                  | `xs.empty?` or `(xs .empty?)`     | The former is reader sugar for the latter. |
+| `(null? xs)`                  | `(null? xs)`, `xs.empty?`, or `(xs .empty?)`     | `xs.empty?` is reader sugar for the last expression. All collections answer this message, though not all objects. `null?` tests the concrete type. |
+| `(pair? x)`                   | `(link? x)`      |  |
+| `(list? x)`                   | `(list? x)`     |  Squeam doesn't plan to support improper lists, though I haven't got around to making them an error. |
 | `(car xs)`                    | `xs.first` or etc.     |  |
 | `(cdr xs)`                    | `xs.rest`     |  |
 | `(length xs)`                 | `xs.count`     |  |
@@ -236,7 +238,6 @@ Scheme functions on lists:
 | `(list-tail xs n)`            | `(xs .slice n)`     |  There's also `(xs .slice start-index after-index)` |
 | `(member x xs)`               | `(xs .slice (xs .find x))`     |  (Provided `x` is in `xs`. More on `.find` below, TODO) |
 | `(cadr (assoc 'x '((a b) (x y))))`   | `((map<- '((a b) (x y))) 'x)`     |  |
-| `(list? x)`                   | `(list? x)`     |  Squeam doesn't plan to support improper lists, though I haven't got around to making them an error. |
 
 The accessors on lists above are all generic. They apply to arrays too, for a start:
 
