@@ -4,25 +4,11 @@
 ;; Interpreter
 
 (to (bf-interpret program)
-
   (let data (map<-))                    ; run-time data store
   (let jump (match-brackets program))   ; jump targets
-
   (begin running ((i 0)                 ; instruction pointer
                   (d 0))                ; data pointer
     (match (program .get i)
-      (#\< (running (+ i 1) (- d 1)))
-      (#\> (running (+ i 1) (+ d 1)))
-      (#\- (data .set! d (- (data .get d 0) 1))
-           (running (+ i 1) d))
-      (#\+ (data .set! d (+ (data .get d 0) 1))
-           (running (+ i 1) d))
-      (#\. (display (char<- (data .get d 0)))
-           (running (+ i 1) d))
-      (#\, (data .set! d (match stdin.read-char
-                           ((? eof?) -1)
-                           (ch ch.code)))
-           (running (+ i 1) d))
       (#\[ (running (if (= 0 (data .get d 0))
                         (jump i)
                         (+ i 1))
@@ -32,7 +18,21 @@
                         (jump i))
                     d))
       (#no 'done)
-      (_   (running (+ i 1) d)))))
+      (ch  (running (+ i 1)
+                    (match ch
+                      (#\< (- d 1))
+                      (#\> (+ d 1))
+                      (#\- (data .set! d (- (data .get d 0) 1))
+                           d)
+                      (#\+ (data .set! d (+ (data .get d 0) 1))
+                           d)
+                      (#\. (display (char<- (data .get d 0)))
+                           d)
+                      (#\, (data .set! d (match stdin.read-char
+                                           ((? eof?) -1)
+                                           (ch ch.code)))
+                           d)
+                      (_   d)))))))
 
 (to (match-brackets program)
   (let jump (map<-))
