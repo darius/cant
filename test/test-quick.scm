@@ -51,11 +51,6 @@
 (loud-use "test/test-text-wrap")
 (loud-use "test/test-unify")
 
-(loud-use "test/test-huffman")
-(loud-use "test/test-2048")
-(loud-use "test/test-kernel")
-(loud-use "test/test-sokoban")
-
 (loud-use "eg/automata/elem-ca")
 (((loud-use "eg/automata/slow-life") 'smoke-test))
 (((loud-use "eg/automata/trm") 'main) '(_))
@@ -65,9 +60,13 @@
 (loud-use "eg/failing")   ;; tests lib/traceback
 (loud-use "eg/fizzbuzz")
 (loud-use "eg/floyd-triangle")
+(loud-use "test/test-2048")
+(loud-use "test/test-sokoban")
 (((loud-use "eg/games/tictactoe") 'quick-test))
+(loud-use "test/test-huffman")
 (loud-use "eg/intset1")
 (loud-use "eg/intset2")
+(loud-use "test/test-kernel")
 (loud-use "eg/lambda/compact-lambda")
 (loud-use "eg/lambda/lambdacompiler")
 (loud-use "eg/lambda/lambdaterp")
