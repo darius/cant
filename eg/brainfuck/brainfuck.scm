@@ -1,4 +1,7 @@
 ;; https://en.wikipedia.org/wiki/Brainfuck
+;; Doing it two ways: interpreter and compiler.
+
+;; Interpreter
 
 (to (bf-interpret program)
 
@@ -43,10 +46,63 @@
   jump)
 
 
+;; Compiler
+
+(to (bf-compile program)
+  (let meaningful (set<-list "<>-+.,[]"))
+  (let real-program (for those ((ch program)) (meaningful .maps? ch)))
+  (let expr-stack
+    (for foldl ((stack '(0)) (ch real-program))
+      (match ch
+        (#\[ (link 'd stack))
+        (#\] (let `(,top ,next ,@rest) stack)
+             (let new-top
+               `(begin looping ((d ,next))
+                  (if (= 0 (data d))
+                      d
+                      (looping ,top))))
+             `(,new-top ,@rest))
+        (_ (let `(,top ,@rest) stack)
+           (link (match ch
+                   (#\< `(- ,top 1))
+                   (#\> `(+ ,top 1))
+                   (#\- `(decr ,top))
+                   (#\+ `(incr ,top))
+                   (#\. `(emit ,top))
+                   (#\, `(absorb ,top)))
+                 rest)))))
+  (surely (= 1 expr-stack.count))
+  (bf-complete-program expr-stack.first))
+
+(to (bf-complete-program body)
+  `(to (run)
+     (let data (array<-count 30000 0))
+     (to (decr d)
+       (data .set! d (- (data d) 1))
+       d)
+     (to (incr d)
+       (data .set! d (+ (data d) 1))
+       d)
+     (to (emit d)
+       (display (char<- (data d)))
+       d)
+     (to (absorb d)
+       (data .set! d (match stdin.read-char
+                       ((? eof?) -1)
+                       (ch ch.code)))
+       d)
+     ,body))
+
+
 ;; Smoke test
 
 (to (main _)
-  (bf-interpret (with-input-file '.read-all "eg/brainfuck/hello.bf")))
+  (let source (with-input-file '.read-all "eg/brainfuck/hello.bf"))
+  (bf-interpret source)
+  (let code (bf-compile source))
+;;  (print code)
+  ((evaluate code '()))
+  )
 
 
-(export bf-interpret)
+(export bf-interpret bf-compile)
