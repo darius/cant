@@ -66,7 +66,7 @@
 (loud-use "test/test-huffman")
 (loud-use "eg/intset1")
 (loud-use "eg/intset2")
-(loud-use "test/test-kernel")
+(loud-use "test/test-metaterp")   ;; misnamed: test-kernel
 (loud-use "eg/lambda/compact-lambda")
 (loud-use "eg/lambda/lambdacompiler")
 (loud-use "eg/lambda/lambdaterp")
@@ -78,4 +78,3 @@
 (((loud-use "eg/trivial72") 'main) '(_))
 (((loud-use "eg/tusl") 'main) '(_))
 
-(loud-use "test/test-metaterp")
