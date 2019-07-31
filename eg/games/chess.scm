@@ -178,6 +178,8 @@
      (let possibles `({resign} ,@board.gen-legal-moves))  ;; isn't this poor factoring?
      (unless (possibles .find? move)
        (error "Bad move" move))
+     (unless (= player human-player)
+       (format "~w plays ~d.\n\n" mover (unparse-move move)))
      (update move board))
 
     ({.parse-move string}    ;N.B. #no if invalid, unlike in my Python
