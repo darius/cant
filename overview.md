@@ -248,8 +248,8 @@ The accessors on lists above are all generic. They apply to strings too, for a s
 | `(string a b c)`              | `(string<- a b c)`       |  |
 | `(list->string chars)`        | `(string<-list chars)`       |  `chars` may be any sequence. I guess the function's misnamed. |
 | `(string->list s)`            | `s.values`       | `.values` in general returns a sequence which needn't be a list: but it should be efficient to walk through with `.first`/`.rest`. |
-| `(string-length s)`           | `s.count`     |  Same as above. |
-| `(string-ref s n)`            | `(s n)`       | Ditto. |
+| `(string-length s)`           | `s.count`     | Just like `.count` on lists. |
+| `(string-ref s n)`            | `(s n)`       | Likewise. |
 | `(string-append s1 s2)`       | `(chain s1 s2)`       |  |
 | `(substring s i1 i2)`         | `(s .slice i1 i2)`     |  |
 
@@ -279,7 +279,7 @@ Collections fit in this hierarchy:
       string  -- ditto
       array, flexarray
     grid-2d   -- Just because this came up a lot in Advent of Code;
-              -- we don't have general multidimensional arrays yet.
+              -- we don't have general multidimensional arrays as yet.
 ```
 
 ```
