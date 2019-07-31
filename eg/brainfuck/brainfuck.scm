@@ -76,7 +76,7 @@
   (bf-complete-program expr-stack.first))
 
 (to (bf-complete-program body)
-  `(to (run)
+  `(given ()
      (let data (array<-count 30000 0))
      (to (decr d)
        (data .set! d (- (data d) 1))
