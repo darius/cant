@@ -56,12 +56,11 @@
       (match ch
         (#\[ (link 'd stack))
         (#\] (let `(,top ,next ,@rest) stack)
-             (let new-top
-               `(begin looping ((d ,next))
-                  (if (= 0 (data d))
-                      d
-                      (looping ,top))))
-             `(,new-top ,@rest))
+             (link `(begin looping ((d ,next))
+                      (if (= 0 (data d))
+                          d
+                          (looping ,top)))
+                   rest))
         (_ (let `(,top ,@rest) stack)
            (link (match ch
                    (#\< `(- ,top 1))
