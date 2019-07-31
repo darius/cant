@@ -24,17 +24,15 @@
                     (match ch
                       (#\< (- d 1))
                       (#\> (+ d 1))
-                      (#\- (data .set! d (- (data .get d 0) 1))
-                           d)
-                      (#\+ (data .set! d (+ (data .get d 0) 1))
-                           d)
-                      (#\. (display (char<- (data .get d 0)))
-                           d)
-                      (#\, (data .set! d (match stdin.read-char
-                                           ((? eof?) -1)
-                                           (ch ch.code)))
-                           d)
-                      (_   d)))))))
+                      (_ (match ch
+                           (#\- (data .set! d (- (data .get d 0) 1)))
+                           (#\+ (data .set! d (+ (data .get d 0) 1)))
+                           (#\. (display (char<- (data .get d 0))))
+                           (#\, (data .set! d (match stdin.read-char
+                                                ((? eof?) -1)
+                                                (ch ch.code))))
+                           (_))
+                         d)))))))
 
 (to (match-brackets program)
   (let jump (map<-))
@@ -51,7 +49,7 @@
 ;; Compiler
 ;; One semantic difference from the interpreter:
 ;; bounded memory (using an array instead of a hashmap).
-;; You know, since this compiler is as short as the interpreter
+;; You know, since this compiler is about as short as the interpreter
 ;; there's not much point to the former's existence...
 
 (to (bf-compile program)
