@@ -1,4 +1,4 @@
-(import (use "eg/2048") left down)
+(import (use "eg/games/2048") left down)
 
 (to (exercise board)
   (show-move left board)

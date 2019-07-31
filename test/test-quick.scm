@@ -64,7 +64,7 @@
 (loud-use "eg/fizzbuzz")
 (loud-use "eg/failing")
 (loud-use "eg/lambdaterp")
-(((loud-use "eg/tictactoe") 'quick-test))
+(((loud-use "eg/games/tictactoe") 'quick-test))
 (loud-use "eg/max-path-sum")
 (((loud-use "eg/slow-life") 'smoke-test))
 (((loud-use "eg/oodles") 'main) '(_ "garlic"))
