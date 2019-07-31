@@ -98,9 +98,9 @@
 ;; Smoke test
 
 (to (main _)
-  (let source (with-input-file '.read-all "eg/brainfuck/hello.bf"))
-  (bf-interpret source)
-  (let code (bf-compile source))
+  (let text (with-input-file '.read-all "eg/brainfuck/hello.bf"))
+  (bf-interpret text)
+  (let code (bf-compile text))
 ;;  (print code)
   ((evaluate code '()))
   )
