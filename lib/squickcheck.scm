@@ -75,10 +75,10 @@
     (gen g)))
 
 (to (a-string g)
-  (call string<- ((a-list-of a-char) g)))
+  (string<-list ((a-list-of a-char) g)))
 
 (to (a-printable-string g)
-  (call string<- ((a-list-of a-printable-char) g)))
+  (string<-list ((a-list-of a-printable-char) g)))
 
 (to ((a-tuple @gens) g)
   (for each ((gen gens))

@@ -23,7 +23,7 @@
          (digits ones)))
 
 (to (times-X numeral)
-  (call string<- (each places numeral)))
+  (string<-list (each places numeral)))
 
 
 (to (main args)
