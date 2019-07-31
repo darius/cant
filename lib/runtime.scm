@@ -356,7 +356,7 @@
        (foldr1 (given (x y) (chain x me y)) ss))) ;XXX quadratic
   ;;XXX below mostly from list-trait, until .selfie
   ({.keys}        (range<- me.count))
-  ({.values}      me)
+  ({.values}      (list<-string me))
   ({.items}       (enumerate me))
   ({.get key}     (me .get key #no))
   ({.get key default}
