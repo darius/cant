@@ -19,7 +19,7 @@
 
 (to (human-player board)
   (begin asking ()
-    (display ("~d, your move? " .format board.mover.name.capitalize))
+    (display ("~d, your move? " .format (side-name board.mover)))
     (match stdin.read-line  ;TODO extract the stdin cap
       ((? eof?) {resign})
       (answer (or (board .parse-move answer)
@@ -103,9 +103,9 @@
      (format .to-sink sink " +----------------\n")
      (format .to-sink sink "   a b c d e f g h    ~d\n"
              (match board.outcome
-               (#no   ("~w to move" .format mover))
+               (#no   ("~d to move" .format (side-name mover)))
                ('draw "A draw.")
-               (w     ("~d wins!" .format w.name.capitalize)))))
+               (w     ("~d wins!" .format (side-name w))))))
 
     ;; Return #no, draw, black, or white (meaning the winner).
     ({.outcome}
@@ -179,7 +179,7 @@
      (unless (possibles .find? move)
        (error "Bad move" move))
      (unless (= player human-player)
-       (format "~w plays ~d.\n\n" mover (unparse-move move)))
+       (format "~d plays ~d.\n\n" (side-name mover) (unparse-move move)))
      (update move board))
 
     ({.parse-move string}    ;N.B. #no if invalid, unlike in my Python
@@ -292,6 +292,9 @@
 
 (let knight-jumps '(( 2  1) ( 2 -1) ( 1  2) ( 1 -2)
                     (-2  1) (-2 -1) (-1  2) (-1 -2)))
+
+(to (side-name side)
+  side.name.capitalize)
 
 (to (opponent side)
   (match side
