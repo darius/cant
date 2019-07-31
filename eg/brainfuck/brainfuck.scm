@@ -51,6 +51,8 @@
 ;; Compiler
 ;; One semantic difference from the interpreter:
 ;; bounded memory (using an array instead of a hashmap).
+;; You know, since this compiler is as short as the interpreter
+;; there's not much point to the former's existence...
 
 (to (bf-compile program)
   (let meaningful (set<-list "<>-+.,[]"))
