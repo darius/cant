@@ -294,7 +294,7 @@ like bags/sets/sequences also understand the same messages.
 | `m.empty?`                    | Does `m` have any keys? `#yes` or `#no`. |
 | `m.keys`                      | A sequence of the keys, in some defined order. If `m` is mutable, the result should present a snapshot of the state as of this call. (For a hashmap, currently, the order is arbitrary, but I intend to make it insertion order when I get around to it.) |
 | `m.values`                    | A sequence of the values corresponding to the keys, in the same order. |
-| `m.items`                     | A sequence of key-value pairs. (The name `items` is from Python; any ideas for a better name? `Mappings`?) |
+| `m.items`                     | A sequence of key-value pairs. (The name `items` is from Python; any ideas for a better name? `mappings`?) |
 | `(m .maps? key)`              | Is `key` one of `m`'s keys? |
 | `(m .find? value)`            | Is `value` one of `m`'s values? |
 | `(m .find value)`             | A key corresponding to `value`, if any; else an error. If `m` is a sequence, then the result should be the *first* corresponding key in `m.items`. I haven't thought about whether that should be expected in general or if it may be any corresponding key at m's discretion. |
