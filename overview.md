@@ -329,9 +329,9 @@ key that's absent from the bag's explicit set of keys, `(bag key)` is
 
 (I'll need to revisit all this when we make collections immutable.)
 
-A set is a bag whose nonzero counts are 1. This is another case of
-this design prioritizing substitutability over specializing every
-subtype's interface.
+A set is a kind of bag whose nonzero counts are 1. This is another
+case of this design prioritizing substitutability over specializing
+every subtype's interface.
 
 A list or sequence is a map whose keys are natural numbers. (Squeam
 calls a natural number a 'count', in its ridiculous stamp-out-jargon
