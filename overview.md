@@ -317,9 +317,21 @@ In mutable maps:
 Equality of mutable maps, as for any object that's not pure data, is
 by identity.
 
-You can create a mutable map with `(map<-)` (initially empty), `(map<-
+You can create a mutable hash-map with `(map<-)` (initially empty), `(map<-
 association-list)`, or `(export name1 name2 ...)` which is like
 ```(map<- `((name1 ,name1) (name2 ,name2) ...))```.
+
+keys which are purely identity-based (a mutable object as a key)
+
+(Warning: the current implementation in Chez Scheme can't hash
+consistently with the equality test, in general. You're safe using
+keys that are purely data (such as a link-list all of whose elements
+are pure data as well, and so on recursively). A mutable object or
+e.g. a list of mutable objects is not guaranteed in this interim
+implementation to work. This is because Chez Scheme doesn't offer a
+way to make a hashtable keying on a mix of identity (`eq?`) hashing
+and a user-defined equality predicate. A mythical future production
+Squeam system needs to define its hashmaps primitively.)
 
 A bag is a kind of mutable map whose values are all counts. (Maybe we
 should support negative values too, like Python's `Counter`?) For a
@@ -447,3 +459,6 @@ and
 (plus a handful of other modules). Not that these make great example
 code necessarily, but they're the first places to look to clear up
 questions you may have.
+
+The underlying interpreter in Scheme lives in
+[terp/](https://github.com/darius/squeam/tree/master/terp).
