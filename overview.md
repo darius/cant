@@ -156,8 +156,10 @@ There's plenty of unfinished crap in this repo, not clearly marked.
 
 ## Quick start for Schemers
 
+Be in this directory (the one holding the file `squeam.scm`) and then:
+
 ```
-$ squeam
+$ ./squeam.scm
 sqm> (to (I-am name) (format "Hi, ~w!\n" name))
 #<I-am>
 sqm> (I-am 'Alice)
@@ -204,10 +206,9 @@ ok
 There are example programs in
 [eg/](https://github.com/darius/squeam/tree/master/eg) and
 [lib/](https://github.com/darius/squeam/tree/master/lib). To run an
-example, be in this directory (the one holding the file `squeam.scm`)
-and invoke it like so (for the
+example (
 [FizzBuzz](https://github.com/darius/squeam/blob/master/eg/fizzbuzz.scm)
-example):
+here):
 
 ```
 $ ./squeam.scm eg/fizzbuzz.scm
