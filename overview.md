@@ -321,8 +321,6 @@ You can create a mutable hash-map with `(map<-)` (initially empty), `(map<-
 association-list)`, or `(export name1 name2 ...)` which is like
 ```(map<- `((name1 ,name1) (name2 ,name2) ...))```.
 
-keys which are purely identity-based (a mutable object as a key)
-
 (Warning: the current implementation in Chez Scheme can't hash
 consistently with the equality test, in general. You're safe using
 keys that are purely data (such as a link-list all of whose elements
