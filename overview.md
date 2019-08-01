@@ -428,6 +428,18 @@ example):
 $ ./squeam.scm eg/fizzbuzz.scm
 ```
 
+Or load it in the listener:
+
+```
+$ ./squeam.scm
+sqm> (load "eg/fizzbuzz.scm")
+1
+2
+Fizz
+...
+
+```
+
 The global environment at startup is populated from
 [runtime.scm](https://github.com/darius/squeam/blob/master/lib/runtime.scm)
 and
