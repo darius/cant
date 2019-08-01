@@ -319,7 +319,7 @@ by identity.
 
 You can create a mutable map with `(map<-)` (initially empty), `(map<-
 association-list)`, or `(export name1 name2 ...)` which is like
-`(map<- \`((name1 ,name1) (name2 ,name2) ...))`.
+```(map<- `((name1 ,name1) (name2 ,name2) ...))```.
 
 A bag is a kind of mutable map whose values are all counts. (Maybe we
 should support negative values too, like Python's `Counter`?) For a
