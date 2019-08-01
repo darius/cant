@@ -294,6 +294,9 @@
                     (match ,msg
                       ,@clauses
                       (_ (miranda-trait ,self ,msg)))))))) ;XXX hygiene, and XXX make it overridable
+    ('be     (mlambda  ; TODO do I like this better than 'match'?
+              ((__ subject . clauses)
+               `(match ,subject ,@clauses))))
     ('match  (mlambda
               ((__ subject . clauses)
                `((make _ ,@(map (lambda (clause)

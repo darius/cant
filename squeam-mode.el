@@ -3,6 +3,8 @@
 
 ;; Basing this on http://community.schemewiki.org/?emacs-syntax-hilight
 
+;; TODO keep only one of 'be' and 'match' -- decide which
+(put 'be 'scheme-indent-function 1)
 (put 'begin 'scheme-indent-function 2)
 (put 'case 'scheme-indent-function 0)
 (put 'do 'scheme-indent-function 0)
@@ -31,7 +33,7 @@
                 (eval-when-compile
                   (list
                    (regexp-opt
-                    '("export" "for" "given" "hide" "import" "make"
+                    '("be" "export" "for" "given" "hide" "import" "make"
                       "make-trait" "match" "to" "unless" "when")
                     'symbols)
                    ))))
