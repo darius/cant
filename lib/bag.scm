@@ -17,7 +17,7 @@
                             (+ (map .get key 0) 1)))
      ({.add-all! vals} (for each! ((v vals))
                          (bag .add! v)))
-     ({.delete! key}   (map .delete! key))
+     ({.delete! key}   (map .delete! key))  ; TODO should this decrement the value instead? Or should that be a different method?
      ({.clear!}        map.clear!)
      ({.total}         (sum map.values))
      ;; XXX fill in rest of bag interface (just the map interface, I guess)

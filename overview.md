@@ -282,14 +282,83 @@ Collections fit in this hierarchy:
               -- we don't have general multidimensional arrays as yet.
 ```
 
+The most general kind of collection, a map `m` from keys to values,
+can take the following messages. More-specialized collection types
+like bags/sets/sequences also understand the same messages.
+
+| Expression                    | Result          |
+| ----------------------------- | ------------- |
+| `(m key)`                     | The value for this particular key, or raise an error if it's absent. The primitive `=` function defines sameness between the map's key and the value `key` provided in the message. |
+| `(m .get key)`                | Ditto, except the result is `#no` if the key is absent. |
+| `(m .get key default)`        | Ditto, except `default` instead of `#no`. |
+| `m.empty?`                    | Does `m` have any keys? `#yes` or `#no`. |
+| `m.keys`                      | A sequence of the keys, in some defined order. If `m` is mutable, the result should present a snapshot of the state as of this call. (For a hashmap, currently, the order is arbitrary, but I intend to make it insertion order when I get around to it.) |
+| `m.values`                    | A sequence of the values corresponding to the keys, in the same order. |
+| `m.items`                     | A sequence of key-value pairs. (The name `items` is from Python; any ideas for a better name? `Mappings`?) |
+| `(m .maps? key)`              | Is `key` one of `m`'s keys? |
+| `(m .find? value)`            | Is `value` one of `m`'s values? |
+| `(m .find value)`             | A key corresponding to `value`, if any; else an error. If `m` is a sequence, then the result should be the *first* corresponding key in `m.items`. I haven't thought about whether that should be expected in general or if it may be any corresponding key at m's discretion. |
+| `(m .find value default)`     | Ditto, except if `value` is missing then answer `default`. (Hm, it's a bit of a wart that `.find` doesn't work exactly like `.get` in reverse: i.e. `.get` is not an error on missing.) |
+| `m.domain`                    | `m`'s keys as a set. (Maybe not the best name, since 'domain' could be taken to be the type of values the keys must have. Would `key-set` or something be better?) |
+| `m.range`                     | `m`'s values as a set. |
+| `m.inverse`                   | A map from each of `m`'s values to a corresponding key. If this is ambiguous, then error. |
+| `(m .intersects? m2)`         | Do `m` and `m2` have any key in common? |
+| `(m .disjoint? m2)`           | Do `m` and `m2` have no key in common? |
+
+In mutable maps:
+
+| Expression                    | Result          |
+| `(m .set! key value)`         | Update so `key` maps to `value`. |
+| `(m .delete! key)`            | Remove `key` and its value. No effect if `key` already absent. (Should that be an error?) |
+| `(m .get-set! key make-value)` | Like `(m key)` except inserting `(make-value)` first if `key` is absent. |
+| `m.clear!`                    | Reset the whole map to empty. |
+
+Equality of mutable maps, as for any object that's not pure data, is
+by identity.
+
+You can create a mutable map with `(map<-)` (initially empty), `(map<-
+association-list)`, or `(export name1 name2 ...)` which is like
+`(map<- \`((name1 ,name1) (name2 ,name2) ...))`.
+
+A bag is a kind of mutable map whose values are all counts. (Maybe we
+should support negative values too, like Python's `Counter`?) For a
+key that's absent from the bag's explicit set of keys, `(bag key)` is
+0 rather than an error. `(bag .add! key)` increments the count for
+`key`. There are some more convenience methods I'll document later.
+
+(I'll need to revisit all this when we make collections immutable.)
+
+A set is a bag whose nonzero counts are 1. This is another case of
+this design prioritizing substitutability over specializing every
+subtype's interface.
+
+A list or sequence is a map whose keys are natural numbers. (Squeam
+calls a natural number a 'count', in its ridiculous stamp-out-jargon
+reform campaign.) There are a few extra operations like chaining two
+sequences.
+
+You can make lazy sequences with `link/lazy`, like `cons-stream` in
+SICP. (It doesn't memoize, so 'lazy' is a bit of a misnomer -- sorry,
+I should change the name or the behavior.)
+
+Lists are immutable, arrays are mutable. A flexarray can grow and
+shrink, a plain array has fixed length.
+
+The `for` form is syntactic sugar primarily for iterating over
+sequences, though it has other uses as well. For instance, `(for each
+((x xs)) (foo x))` is equivalent to `(each (given (x) (foo x)) xs)`
+which is mostly equivalent to `(each foo xs)`, which is Squeam's name
+for Scheme's `(map foo xs)`.
+
+The `for` form, `(for fn ((x e) ...) body ...)`, just rearranges its
+parts in the same way that Scheme's `let` rearranges `(let ((x e) ...)
+body ...)`, but with `fn` stuck in front.
+
+Some functions useful with `for`:
 ```
 each each! those gather filter where tally every some zip foldr foldl
-delayed seqs too
 ```
 
-```
-(for foo (...) ...)
-```
 
 ```
 more std types
