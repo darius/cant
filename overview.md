@@ -413,3 +413,25 @@ request for ideas:
 
 cheat sheet, like https://github.com/jeapostrophe/racket-cheat/blob/master/racket-cheat.scrbl
 squeam-mode.el
+
+## What to read next
+
+There are example programs in
+[eg/](https://github.com/darius/squeam/tree/master/eg) and
+[lib/](https://github.com/darius/squeam/tree/master/lib). To run an
+example, be in this directory (the one holding the file `squeam.scm`)
+and invoke it like so (for the
+[FizzBuzz](https://github.com/darius/squeam/blob/master/eg/fizzbuzz.scm)
+example):
+
+```
+$ ./squeam.scm eg/fizzbuzz.scm
+```
+
+The global environment at startup is populated from
+[runtime.scm](https://github.com/darius/squeam/blob/master/lib/runtime.scm)
+and
+[stdlib.scm](https://github.com/darius/squeam/blob/master/lib/stdlib.scm)
+(plus a handful of other modules). Not that these make great example
+code necessarily, but they're the first places to look to clear up
+questions you may have.
