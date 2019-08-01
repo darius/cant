@@ -238,7 +238,7 @@ Scheme functions on lists:
 | `(list-ref xs n)`             | `(xs n)`     |  |
 | `(list-tail xs n)`            | `(xs .slice n)`     |  There's also `(xs .slice start-index after-index)` |
 | `(member x xs)`               | `(xs .slice (xs .find x))`     |  (Provided `x` is in `xs`. More on `.find` below.) |
-| `(cadr (assoc 'x '((a b) (x y))))`   | `((map<- '((a b) (x y))) 'x)`     |  |
+| `(cadr (assoc 'x '((a b) (x y))))`   | `((map<- '((a b) (x y))) 'x)`     |  More on `map<-` below. |
 
 The accessors on lists above are all generic. They apply to strings too, for a start:
 
