@@ -64,6 +64,8 @@
      (vec.^ .set! i value)
      (count .^= (+ c 1))
      i)                                 ;TODO what's a good return value?
+    ({.values} ;; more efficient than array-trait's
+     (each vec.^ (range<- count.^)))
     ({.snapshot}
      (vec.^ .slice 0 count.^))         ;XXX make immutable
     ({.move! dst source lo bound}
