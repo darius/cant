@@ -140,7 +140,7 @@
     (let already (set<-)) ; Spots not to enqueue again.
 
     (to (expand trail)
-      (for filter ((q (sort (open-neighbors<- trail.first))))
+      (for yeahs ((q (sort (open-neighbors<- trail.first))))
         (and (not (already .maps? q))
              (do (already .add! q)
                  `(,q ,@trail)))))

@@ -89,7 +89,7 @@
 
 (to (random-empty-square rng rows)
   (rng .pick (for gather ((`(,r ,row) rows.items))
-               (for filter ((`(,c ,v) row.items))
+               (for yeahs ((`(,c ,v) row.items))
                  (and (= v 0) `(,r ,c))))))
 
 (to (update rows at new-value)

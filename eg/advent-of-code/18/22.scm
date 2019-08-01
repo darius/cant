@@ -115,7 +115,7 @@
             (if (and (= p target) (= tool 'torch))
                 t ; Final result: time to reach the target with torch equipped.
                 (do (let moves
-                      (for filter ((q (neighbors<- p)))
+                      (for yeahs ((q (neighbors<- p)))
                         (and (usable? tool q)
                              {at (+ t 1) {state q tool}})))
                     (let swap (equip effort (swap-tool p tool)))

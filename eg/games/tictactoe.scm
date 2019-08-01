@@ -155,7 +155,7 @@
   ((successors grid) .empty?))
 
 (to (successors grid)
-  (for filter ((move (0 .to 8)))
+  (for yeahs ((move (0 .to 8)))
     (update grid move)))
 
 (to (update {grid p q} move)

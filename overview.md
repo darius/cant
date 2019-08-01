@@ -405,7 +405,7 @@ body ...)`, but with `fn` stuck in front.
 
 Some functions useful with `for`:
 ```
-each each! those gather filter where tally every some zip foldr foldl
+each each! those gather yeahs where tally every some zip foldr foldl
 ```
 
 

@@ -34,7 +34,7 @@
                      '()
                      (scanning (f z xs.first) xs.rest))))))
 
-;; TODO is this worth it? sometimes what you want is the filter/lazy equivalent
+;; TODO is this worth it? sometimes what you want is the yeahs/lazy equivalent
 (to (detect include? xs)
   ((those/lazy include? xs) .first))
 
@@ -50,7 +50,7 @@
                 (link/lazy `(,x1 ,x2)
                            (given () (inner inners.rest)))))))))
 
-(to (filter/lazy f xs)
+(to (yeahs/lazy f xs)
   (foldr/lazy (given (x z-thunk)
                 (let fx (f x))
                 (if fx
@@ -112,7 +112,7 @@
   `(,(call min ns) ,(call max ns)))
 
 (export
-  cycle scanl/lazy detect pairs<- filter/lazy 
+  cycle scanl/lazy detect pairs<- yeahs/lazy 
   duplicates<- deletions<-
   chain-lines all-mins-by average neighbors-8<-
   simple-parser<- vector+ vector- manhattan-distance<-

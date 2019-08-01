@@ -29,7 +29,7 @@
   (let replaces   (for gather ((`(,a ,b) del-splits))
                     (for each ((c alphabet))
                       (chain a c (b .slice 1)))))
-  (let transposes (for filter ((`(,a ,b) del-splits))
+  (let transposes (for yeahs ((`(,a ,b) del-splits))
                     (and (< 1 b.count)
                          (chain a (string<- (b 1) (b 0)) (b .slice 2)))))
   (uniquify (chain inserts deletes replaces transposes)))

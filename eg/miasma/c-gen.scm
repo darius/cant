@@ -160,7 +160,7 @@
 ;; Return `str`, but munging out any characters that are used in our 
 ;; mnemonics but aren't legal in C identifiers.
 (to (as-legal-c-identifier str)
-  (string<-list (for filter ((ch str))
+  (string<-list (for yeahs ((ch str))
                   (and (not (":%" .find? ch))
                        (case (("-." .find? ch) #\_)
                              ((= #\? ch) #\c)

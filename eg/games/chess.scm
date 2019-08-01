@@ -258,7 +258,7 @@
                    '())))
 
        (#\K
-        (for filter ((`(,dr ,dc) queen-dirs))
+        (for yeahs ((`(,dr ,dc) queen-dirs))
           (let r1 (+ r dr))
           (let c1 (+ c dc))
           ;; XXX also castling
@@ -266,7 +266,7 @@
                (move-to r1 c1))))
 
        (#\N
-        (for filter ((`(,dr ,dc) knight-jumps))
+        (for yeahs ((`(,dr ,dc) knight-jumps))
           (let r1 (+ r dr))
           (let c1 (+ c dc))
           (and (<= 1 r1 8)

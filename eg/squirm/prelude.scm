@@ -27,7 +27,7 @@
   (for foldr ((x xs) (ys '()))
     (if (ok? x) (link x ys) ys)))
 
-(to (filter f xs)             ;TODO is this worth defining? good name?
+(to (yeahs f xs)             ;TODO better name?
   (those identity (each f xs)))
 
 (to (foldl f z xs)

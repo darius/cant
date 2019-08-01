@@ -42,11 +42,11 @@
          (let r-matches ('.keys (r ('.range (0 .to (call max Ns.keys))))))
          (let r-lengths ('.keys ('.range (each '.count r-matches))))
          (let Ns-s ('.range (for gather ((n Ns.keys))
-                              (for filter ((m r-lengths))
+                              (for yeahs ((m r-lengths))
                                 (and (<= m n) (- n m))))))
          (let s-matches ('.keys (s Ns-s)))
          ('.range (for gather ((m1 r-matches))
-                    (for filter ((m2 s-matches))
+                    (for yeahs ((m2 s-matches))
                       (and (Ns .maps? (+ m1.count m2.count))
                            (chain m1 m2))))))))
 

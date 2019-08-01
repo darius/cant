@@ -25,7 +25,7 @@
 
 (to (update grid)
   (let active (bag<- (gather neighbors grid.keys)))
-  ('.range (for filter ((`(,pos ,n-live) active.items))
+  ('.range (for yeahs ((`(,pos ,n-live) active.items))
              (match n-live
                (3 pos)
                (2 (and (grid .maps? pos) pos))
