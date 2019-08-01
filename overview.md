@@ -308,6 +308,7 @@ like bags/sets/sequences also understand the same messages.
 In mutable maps:
 
 | Expression                    | Result          |
+| ----------------------------- | ------------- |
 | `(m .set! key value)`         | Update so `key` maps to `value`. |
 | `(m .delete! key)`            | Remove `key` and its value. No effect if `key` already absent. (Should that be an error?) |
 | `(m .get-set! key make-value)` | Like `(m key)` except inserting `(make-value)` first if `key` is absent. |
