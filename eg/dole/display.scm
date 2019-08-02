@@ -37,19 +37,17 @@
         (point-y .^= y))
       (let ch (text .get p 1))
       (let pp (+ p 1))
-      (case ((or (= ch "") (= ch "\n"))
-             ;; TODO flexarray to string, i guess
-             (rendering pp 0 (+ y 1)))
-            (else
-             (begin appending ((glyphs (render-glyph ch.first x))
-                               (x x)
-                               (y y))
-               (case (glyphs.empty? (rendering pp x y))
-                     (else
-                      (lines .set! y (chain (lines y) (string<- glyphs.first))) ;XXX quadratic
-                      (case ((< (+ x 1) cols) (appending glyphs.rest (+ x 1) y))
-                            ((< (+ y 1) rows) (appending glyphs.rest 0 (+ y 1)))
-                            (else 'done)))))))))
+      (if (or (= ch "") (= ch "\n"))
+          (rendering pp 0 (+ y 1))  ;; TODO flexarray to string, i guess
+          (begin appending ((glyphs (render-glyph ch.first x))
+                            (x x)
+                            (y y))
+            (case (glyphs.empty? (rendering pp x y))
+                  (else
+                   (lines .set! y (chain (lines y) (string<- glyphs.first))) ;XXX quadratic
+                   (case ((< (+ x 1) cols) (appending glyphs.rest (+ x 1) y))
+                         ((< (+ y 1) rows) (appending glyphs.rest 0 (+ y 1)))
+                         (else 'done))))))))
   (make _
     ({.point-visible?}  (not (not point-y.^)))
     ;; XXX doesn't mean 'is centered' any more:
