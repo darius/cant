@@ -199,8 +199,7 @@
     (let s (string<-list keys))
     (or (key-map .get s)
         (case ((key-map-prefixes .maps? s)
-               (let next-key (get-key-unmapped))
-               (keys .push! next-key)
+               (keys .push! (get-key-unmapped))
                (matching))
               (else
                (key-stack .extend! (reverse keys)) ;TODO use a FIFO instead of this reversed LIFO
