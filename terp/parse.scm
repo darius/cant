@@ -350,6 +350,17 @@
 ;;              ((__ (e) . clauses) `(or ,e (case ,@clauses))) ;TODO: do I ever use this?
               ((__ (e e1 . es) . clauses)
                `(if ,e (do ,e1 ,@es) (case ,@clauses)))))
+    ('so     (mlambda                   ;TODO yet another experiment to toss or keep, replacing 'case'
+              ((__)
+               `',(void))      ;TODO: generate an error-raising instead?
+              ((__ ('do . es))
+               `(do ,@es))
+              ((__ ('else . es))
+               `(do ,@es))
+              ((__ ('when e e1 . es) . clauses)
+               `(if ,e (do ,e1 ,@es) (so ,@clauses)))
+              ((__ ('unless e e1 . es) . clauses)
+               `(if ,e (so ,@clauses) (do ,e1 ,@es)))))
     ('and    (mlambda
               ((__) #t)
               ((__ e) e)

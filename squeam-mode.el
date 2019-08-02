@@ -18,6 +18,7 @@
 (put 'make 'scheme-indent-function 1)
 (put 'make-trait 'scheme-indent-function 2)
 (put 'match 'scheme-indent-function 1)
+(put 'so 'scheme-indent-function 0);; TODO keep only one of 'so' and 'case' -- decide which
 (put 'to 'scheme-indent-function 1)
 (put 'unless 'scheme-indent-function 1)
 (put 'when 'scheme-indent-function 1)
@@ -35,7 +36,7 @@
                   (list
                    (regexp-opt
                     '("be" "export" "for" "given" "hide" "import" "make"
-                      "make-trait" "match" "on" "to" "unless" "when")
+                      "make-trait" "match" "on" "so" "to" "unless" "when")
                     'symbols)
                    ))))
   (setq font-lock-defaults
