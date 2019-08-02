@@ -60,7 +60,7 @@
        (let env `((*focus* ,focus) ,@focus-env))
        (print (evaluate (read) env))
        (continue))
-      ((? integer?)
+      ((? count?)
        (push (focus input))) ;TODO handle out-of-range
       (else
        (continue "Huh? Enter 'help' for help.")))))

@@ -127,7 +127,7 @@
           "};")))
 
 (to (c-int-literal n)
-  (if (and (<= 0 n) (integer? n))
+  (if (count? n)
       ("0x~d" .format (string<-number n 16)) ;TODO ~h format or something
       (string<-number n)))
 

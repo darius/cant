@@ -548,7 +548,7 @@
 (to (atom? x)   (not (link? x)))                      ;XXX right?
 (to (bob-car x) (and (link? x) x.first))
 (to (bob-cdr x) (and (link? x) x.rest))
-(to (nat? x)    (and (number? x) (integer? x) (<= 0 x)))
+(to (nat? x)    (count? x))
 (to (bob+ x y)  (and (number? x) (number? y) (+ x y)))
 (to (bob< x y)  (and (number? x) (number? y) (< x y)))
 

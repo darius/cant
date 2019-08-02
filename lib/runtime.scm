@@ -139,7 +139,7 @@
   ({.items}
    (enumerate list))
   ({.get key default}
-   (if (and (integer? key) (<= 0 key))
+   (if (count? key)
        (begin walking ((k key) (xs list))
          (case (xs.empty? default)
                ((= k 0) xs.first)
