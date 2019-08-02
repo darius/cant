@@ -314,6 +314,9 @@
     ('given  (mlambda
               ((__ dp . body)
                `(to (_ ,@dp) ,@body))))
+    ('on     (mlambda  ; TODO do I like this better than 'given'?
+              ((__ dp . body)
+               `(to (_ ,@dp) ,@body))))
     ('for    (mlambda
               ((__ fn bindings . body)
                (let ((name-for (if (symbol? fn)
