@@ -1061,12 +1061,12 @@
   (for foldr ((x xs) (ys '()))
     (chain (f x) ys)))
 
-(to (those ok? xs)
-  (for foldr ((x xs) (ys '()))
-    (if (ok? x) (link x ys) ys)))
+(to (those keep? xs)
+  (for foldr ((x xs) (kept '()))
+    (if (keep? x) (link x kept) kept)))
 
-(to (yeahs f xs)             ;TODO is this worth defining? good name?
-  (those identity (each f xs)))
+(to (yeahs maybe xs)             ;TODO is this worth defining? good name?
+  (those identity (each maybe xs)))
 
 (to (list<- @arguments)
   arguments)
@@ -1077,15 +1077,15 @@
   (`(,xs ,ys) (xs .chain ys))
   (`(,@arguments) (foldr1 '.chain arguments)))
 
-(to (some ok? xs)
+(to (some pass? xs)
   (and (not xs.empty?)
-       (or (ok? xs.first)
-           (some ok? xs.rest))))
+       (or (pass? xs.first)
+           (some pass? xs.rest))))
 
-(to (every ok? xs)
+(to (every pass? xs)
   (or xs.empty?
-      (and (ok? xs.first)
-           (every ok? xs.rest))))
+      (and (pass? xs.first)
+           (every pass? xs.rest))))
 
 (to (each! f xs)
   (unless xs.empty?
