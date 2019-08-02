@@ -50,7 +50,8 @@
                  (sweeping (+ gate 1)))
                 ((= wanted (mask .and value))
                  (found? .^= #yes)
-                 (print-formula L-input R-input))))))
+                 (print-formula L-input R-input))
+                (else)))))
     found?.^)
 
   (some find-for-n (1 .to max-gates)))

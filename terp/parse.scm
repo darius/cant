@@ -345,14 +345,14 @@
               ((__ test . body)
                `(if ,test ',(void) (do ,@body)))))
     ('case   (mlambda
-              ((__) `',(void))                 ;TODO: generate an error-raising?
+              ((__) '(error "No default case")) ;XXX hygiene
               ((__ ('else . es)) `(do ,@es))
 ;;              ((__ (e) . clauses) `(or ,e (case ,@clauses))) ;TODO: do I ever use this?
               ((__ (e e1 . es) . clauses)
                `(if ,e (do ,e1 ,@es) (case ,@clauses)))))
     ('so     (mlambda                   ;TODO yet another experiment to toss or keep, replacing 'case'
               ((__)
-               `',(void))      ;TODO: generate an error-raising instead?
+               '(error "No case taken in 'so'")) ;XXX hygiene
               ((__ ('do . es))
                `(do ,@es))
               ((__ ('else . es))
