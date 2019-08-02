@@ -95,18 +95,19 @@
 
 (to (paint cursor-seen? wanted-state scene)
   ;; TODO: skip any terminal codes in the scene's strings/chars
-  (case ((string? scene)
-         (screen-state .establish! wanted-state)
-         (for each! ((ch scene))
-           (display (if (= ch #\newline) cr-lf ch))))
-        ((char? scene)
-         (screen-state .establish! wanted-state)
-         (display (if (= scene #\newline) cr-lf scene)))
-        ((list? scene)
-         (for each! ((subscene scene))
-           (paint cursor-seen? wanted-state subscene)))
-        (else
-         (scene .paint cursor-seen? wanted-state))))
+  (match scene
+    ((? string?)
+     (screen-state .establish! wanted-state)
+     (for each! ((ch scene))
+       (display (if (= ch #\newline) cr-lf ch))))
+    ((? char?)
+     (screen-state .establish! wanted-state)
+     (display (if (= scene #\newline) cr-lf scene)))
+    ((? list?)
+     (for each! ((subscene scene))
+       (paint cursor-seen? wanted-state subscene)))
+    (_
+     (scene .paint cursor-seen? wanted-state))))
 
 (to (cursor .paint cursor-seen? _)
   (display cursor-pos-save)
