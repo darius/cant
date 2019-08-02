@@ -357,6 +357,8 @@
                `(do ,@es))
               ((__ ('else . es))
                `(do ,@es))
+              ((__ ('if e e1) . clauses)
+               `(if ,e ,e1 (so ,@clauses)))
               ((__ ('when e e1 . es) . clauses)
                `(if ,e (do ,e1 ,@es) (so ,@clauses)))
               ((__ ('unless e e1 . es) . clauses)

@@ -41,22 +41,22 @@
       (build-choice rank if0 if1)))
 
 (to (bdd-evaluate node env)
-  (case ((<= node lit1) node)
-        (else
-         (let value (env (ranks node)))
-         (bdd-evaluate ((ifs value) node) env))))
+  (if (<= node lit1)
+      node
+      (do (let value (env (ranks node)))
+          (bdd-evaluate ((ifs value) node) env))))
 
 (to (do-choose node if0 if1)
-  (case ((<= node lit1)
-         (match node
-           (0 if0)                      ;N.B. 0 == lit0
-           (1 if1)))
-        ((= if0 if1)
-         if0)
-        ((and (= if0 lit0) (= if1 lit1))
-         node)
-        (else
-         (choose node if0 if1))))
+  (so (if (<= node lit1)
+          (match node
+            (0 if0)                      ;N.B. 0 == lit0
+            (1 if1)))
+      (if (= if0 if1)
+          if0)
+      (if (and (= if0 lit0) (= if1 lit1))
+          node)
+      (else
+          (choose node if0 if1))))
 
 (to (subst rank replacement node)
   (match (rank .compare (ranks node))
@@ -83,18 +83,19 @@
           (memo-table .set! if1 result)
           result)))
 
+;; Return the lexicographically first env which makes node evaluate to
+;; goal, if possible; else #no.
 (to (satisfy-first node goal)
   (let goal-node (constant<- goal))
   (let env (map<-))
   (begin walking ((node node))
-    (case ((<= node lit1)
-           (and (= node goal-node) env))
-          (else
-           (let if0 (if0s node))
-           (case ((or (< lit1 if0) (= if0 goal-node))
+    (if (<= node lit1)
+        (and (= node goal-node) env)
+        (do (let if0 (if0s node))
+            (so (when (or (< lit1 if0) (= if0 goal-node))
                   (env .set! (ranks node) 0)
                   (walking if0))
-                 (else
+                (else
                   (env .set! (ranks node) 1)
                   (walking (if1s node))))))))
 
