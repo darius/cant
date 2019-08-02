@@ -405,9 +405,83 @@ body ...)`, but with `fn` stuck in front.
 
 Some functions useful with `for`:
 ```
-each each! those gather yeahs where tally every some zip foldr foldl
+each each! those gather yeahs every some zip foldr foldl where tally 
 ```
 
+
+## Terms, patterns, and objects
+
+Expressions like `m.keys` and `(bag .add! key)` are syntactic sugar:
+
+| Expression          | After reading | After parsing | Note |
+| ------------------- | ------------- | ------------- | ---- |
+| `m.keys`            | `(m .keys)`        | `(call m {.keys})` |   |
+| `(bag .add! key)`   | `(bag .add! key)`  | `(call bag {.add! key})` |   |
+| `(f x y z)`         | `(f x y z)`        | ```(call f `(,x ,y ,z))``` | (Assuming `f` is not defined as syntax.) |
+
+The subexpression `{tag e1 e2 e3}` evaluates its subexpressions `e1`,
+`e2`, `e3`, and creates a datum called a *term*. A term has a tag and
+arguments. A term is data, not an object with identity; its equality
+test is structural. If the arguments can be ordered, then so can the
+term. Terms are distinct from all other data types.
+
+In squeam, `(call receiver message)` is a special form. It evaluates
+the receiver, evaluates the message, and sends the latter to the
+former.
+
+When parsing an implicit call (that is, where the first element of a
+compound expression is not the name of a special form or macro), if
+there's a dotted symbol as the second element, it's parsed as a call
+with a term as the message, as in the first two lines above; else the
+message is a list, as in the third line.
+
+The `make` special form creates and returns a new object:
+
+```
+sqm> (make alice
+       ({.greet someone} `("hey" ,someone))
+       ({.scram}         "see ya"))
+#<alice>
+sqm> (alice .greet "bob")
+("hey" "bob")
+sqm> alice.scram
+"see ya"
+```
+
+This definition had a name and a list of clauses. At creation time,
+the name was bound to the new object. At call time, the message gets
+matched against the pattern of each clause in turn until a matchb
+succeeds. A match may bind variables (such as `someone`). Then the
+corresponding body is evaluated in the environment created by the
+match.
+
+You can use terms and patterns in non-OO code as well. For instance,
+patterns work in `let` forms and function parameters:
+
+```
+(to (c+ {complex x1 y1} {complex x2 y2})    ;; from lib/complex.scm
+  {complex (+ x1 x2)
+           (+ y1 y2)})
+
+(let {pq min1 rest1} pq1)                   ;; from lib/pairing-heap.scm
+```
+
+The `match` form, like `make`, finds the first successful match in a
+sequence of clauses and then evaluates the body of that clause:
+
+```
+(match (m .get key)
+  (#no   "Missing key")
+  (value `("The result is" ,value)))
+```
+
+The difference is that the subject being matched against is the value
+of the first subexpression, `(m .get key)` here.
+
+TODO more about patterns
+
+
+## Miscellany
 
 ```
 more std types
@@ -421,11 +495,6 @@ more std types
 import export
 
 =, not=, compare
-
-```
-term data and match: (match e (p e) ...)
-message passing and make
-```
 
 traits
 miranda methods
