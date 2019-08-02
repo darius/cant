@@ -235,7 +235,7 @@
     (`(on ,ps ,@body)
      {on (each pat-parse ps) (seq-parse body)})
     (`(if ,t ,y ,n)
-     ;; TODO macroexpand to a (match ...) instead?
+     ;; TODO macroexpand to a (be ...) instead?
      {if (exp-parse t) (exp-parse y) (exp-parse n)})
     (`(do ,@es)
      (seq-parse es))
@@ -254,7 +254,7 @@
              (collecting rest pattern-cs c))
             ({clause _ _}
              (collecting rest (link c pattern-cs) after-c)))))))
-    (`(match ,subject ,@clauses)
+    (`(be ,subject ,@clauses)
      {match (exp-parse subject) (each clause-parse clauses)})
     (`(catch ,@es)   ;; TODO macroexpand into (%catch (on () e)) ?
      {catch (seq-parse es)})
@@ -304,7 +304,7 @@
        ('() #yes)
        (`(,e) e)
        (`(,e ,@es)
-        `(match ,e
+        `(be ,e
            (#no (or ,@es))
            (yeah yeah)))))
     ('quasiquote
@@ -313,13 +313,13 @@
     ('unless
      (match operands
        (`(,test ,@body)
-        `(match ,test
+        `(be ,test
            (#no ,@body)
            (_ #no)))))
     ('when
      (match operands
        (`(,test ,@body)
-        `(match ,test
+        `(be ,test
            (#no #no)
            (_ ,@body)))))
     (_ #no)))

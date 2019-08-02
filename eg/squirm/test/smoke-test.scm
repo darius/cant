@@ -10,7 +10,7 @@
   (report ['pid pid])
   ((eval '!) pid 'yoohoo)
   (report (apply factorial '(10)))
-  (report (match pid
+  (report (be pid
             ('42 'nope)
             ((: factorial) 'nope-nope)
             ((: pid) 'yep))))
@@ -19,7 +19,7 @@
   (print [(me) x]))
 
 (to (factorial n)
-  (match n
+  (be n
     (0 1)
     (_ (let x (factorial (- n 1)))
        (* n x))))
