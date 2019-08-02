@@ -1058,8 +1058,8 @@
         ,@(transpose (each '.rest rows)))))
 
 (to (gather f xs)
-  (for foldr ((x xs) (ys '()))
-    (chain (f x) ys)))
+  (for foldr ((x xs) (gathered '()))
+    (chain (f x) gathered)))
 
 (to (those keep? xs)
   (for foldr ((x xs) (kept '()))
@@ -1067,6 +1067,9 @@
 
 (to (yeahs maybe xs)             ;TODO is this worth defining? good name?
   (those identity (each maybe xs)))
+
+(to (identity x)
+  x)
 
 (to (list<- @arguments)
   arguments)
@@ -1091,9 +1094,6 @@
   (unless xs.empty?
     (f xs.first)
     (each! f xs.rest)))
-
-(to (identity x)
-  x)
 
 (make range<-
   (`(,first ,limit)
