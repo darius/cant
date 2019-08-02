@@ -57,12 +57,12 @@
     ;; XXX override parts of list-trait that need it for laziness
     ))
 
-(to (those/lazy ok? xs)
+(to (those/lazy pass? xs)
   (if xs.empty?
       '()
-      (if (ok? xs.first)
-          (link/lazy xs.first (given () (those/lazy ok? xs.rest)))
-          (those/lazy ok? xs.rest))))
+      (if (pass? xs.first)
+          (link/lazy xs.first (given () (those/lazy pass? xs.rest)))
+          (those/lazy pass? xs.rest))))
 
 (to (each/lazy f xs)
   (for foldr/lazy ((x xs)
