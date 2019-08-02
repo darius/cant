@@ -1,5 +1,5 @@
 (to (main)
   (let parent (me))
-  (spawn (given ()
+  (spawn (on ()
            (! parent "Hello, Mother!")))
   (? (greeting (print greeting))))

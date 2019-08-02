@@ -202,7 +202,7 @@
     (`(to (,(? symbol? name) ,@params) ,@body)
      {to name (each pat-parse params) (seq-parse body)})
     (`(to (,(? link? nested) ,@params) ,@body)
-     (def-parse `(to ,nested (given ,params ,@body))))
+     (def-parse `(to ,nested (on ,params ,@body))))
     ))
 
 (to (seq-parse exps)
@@ -214,7 +214,7 @@
     (`(,e)
      (exp-parse e))
     (`((let ,p ,e) ,@es)
-     (exp-parse `((given (,p) ,@es) ,e)))
+     (exp-parse `((on (,p) ,@es) ,e)))
     (`((define ,@defs) ,@es)
      {define (each def-parse defs) (seq-parse es)})
     (`((to ,@_) ,@es)
@@ -232,8 +232,8 @@
     (`',value             {const value})
     ((? array?)
      {call {const prim-tuple<-} (each exp-parse e)})
-    (`(given ,ps ,@body)
-     {given (each pat-parse ps) (seq-parse body)})
+    (`(on ,ps ,@body)
+     {on (each pat-parse ps) (seq-parse body)})
     (`(if ,t ,y ,n)
      ;; TODO macroexpand to a (match ...) instead?
      {if (exp-parse t) (exp-parse y) (exp-parse n)})
@@ -256,7 +256,7 @@
              (collecting rest (link c pattern-cs) after-c)))))))
     (`(match ,subject ,@clauses)
      {match (exp-parse subject) (each clause-parse clauses)})
-    (`(catch ,@es)   ;; TODO macroexpand into (%catch (given () e)) ?
+    (`(catch ,@es)   ;; TODO macroexpand into (%catch (on () e)) ?
      {catch (seq-parse es)})
     (`(,operator ,@operands)
      (match (exp-macro-expand operator operands)
@@ -292,12 +292,12 @@
              (do ,@seq)
              (case ,@clauses)))))
     ('for
-        ;;(for f ((x a) (y b)) e) => (f (given (a b) e) x y)
+        ;;(for f ((x a) (y b)) e) => (f (on (a b) e) x y)
      (match operands
        (`(,f ,pairs ,@body)
         (for each! ((pair pairs))
           (surely (and (list? pair) (= pair.count 2))))
-        `(,f (given ,(each '.first pairs) ,@body)
+        `(,f (on ,(each '.first pairs) ,@body)
              ,@(for each ((pair pairs)) (pair 1))))))
     ('or
      (match operands
@@ -402,7 +402,7 @@
      {go k (env-get r name)})           ;TODO error handling
     ({module-ref mod-name var-name}
      {go k (module-ref mod-name var-name)}) ;XXX module-ref might error or block
-    ({given ps e}
+    ({on ps e}
      {go k {closure r ps e}})
     ({call e es}
      (sev e r {ev-operands es r k}))

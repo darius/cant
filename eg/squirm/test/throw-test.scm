@@ -1,6 +1,6 @@
 (to (main)
   (print 0)
-  (spawn (given ()
+  (spawn (on ()
            (print (catch
                    (print 1)
                    (throw 2)

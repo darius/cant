@@ -8,7 +8,7 @@
 
 (to (main)
   (start)
-  (spawn (given ()
+  (spawn (on ()
            (wait)
            (signal)))
   (wait)
