@@ -1,5 +1,5 @@
 (import (use 'squickcheck)
-  a-claim a-nat an-int a-char a-printable-char a-printable-string a-list-of a-tuple a-choice
+  a-claim a-count an-int a-char a-printable-char a-printable-string a-list-of a-tuple a-choice
   weighted-choice
   all should  ;; I dunno what to call it yet
   )
@@ -10,6 +10,6 @@
 
 ;; A deliberately failing property:
 
-(for all ((L (a-list-of a-nat)))
+(for all ((L (a-list-of a-count)))
   ;; Lists are palindromic (not!)
   (should = L (reverse L)))

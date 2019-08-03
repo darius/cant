@@ -58,7 +58,7 @@
     (0 #no)
     (1 #yes)))
 
-(to (a-nat g)
+(to (a-count g)
   (g .natural g.size))
 
 (to (an-int g)
@@ -102,7 +102,7 @@
 
 
 (export
-  a-claim a-nat an-int a-char a-printable-char a-printable-string a-list-of a-tuple a-choice
+  a-claim a-count an-int a-char a-printable-char a-printable-string a-list-of a-tuple a-choice
   weighted-choice
   all should
   context<-
