@@ -160,17 +160,17 @@ Be in this directory (the one holding the file `squeam.scm`) and then:
 
 ```
 $ ./squeam.scm
-sqm> (to (I-am name) (format "Hi, ~w!\n" name))
+-> (to (I-am name) (format "Hi, ~w!\n" name))
 #<I-am>
-sqm> (I-am 'Alice)
+-> (I-am 'Alice)
 Hi, Alice!
-sqm> 
+-> 
 ```
 
 The less-happy path:
 
 ```
-sqm> (I-am 'but 'human)
+-> (I-am 'but 'human)
 Error! Traceback:
   (call '#<print-result:repl> ^)
   (^)
@@ -186,9 +186,9 @@ structures.)
 This debugger is almost useless, but it's there as a last resort:
 
 ```
-sqm> (debug)
+-> (debug)
 Enter ? for help.
-debug> ?
+debug-> ?
 ? help      - this message
 q quit      - quit the debugger
 r resume    - continue from here, with the value of an expression
@@ -197,7 +197,7 @@ d down      - down to callee
 e env       - enumerate the variables in the current environment
 v value     - evaluate an expression in the current environment
 b backtrace - show all of the stack up from here
-debug> q
+debug-> q
 ok
 ```
 
@@ -218,7 +218,7 @@ Or load it in the listener:
 
 ```
 $ ./squeam.scm
-sqm> (load "eg/fizzbuzz.scm")
+-> (load "eg/fizzbuzz.scm")
 1
 2
 Fizz
@@ -438,13 +438,13 @@ message is a list, as in the third line.
 The `make` special form creates and returns a new object:
 
 ```
-sqm> (make alice
+-> (make alice
        ({.greet someone} `("hey" ,someone))
        ({.scram}         "see ya"))
 #<alice>
-sqm> (alice .greet "bob")
+-> (alice .greet "bob")
 ("hey" "bob")
-sqm> alice.scram
+-> alice.scram
 "see ya"
 ```
 
