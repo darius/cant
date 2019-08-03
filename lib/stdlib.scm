@@ -200,7 +200,7 @@
 
   (to (interact)
     (the-signal-handler .^= repl-handler)
-    (display "sqm> ")
+    (display "-> ")
     (match (read)
       ((? eof?) (newline))
       (sexpr (print-result (evaluate sexpr '()))))) ;XXX reify a proper env object

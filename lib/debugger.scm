@@ -34,7 +34,7 @@
       (print new-focus)           ;XXX pretty-print? cycle-print? ...?
       (interacting new-focus (link focus trail)))
 
-    (display "inspect> ")
+    (display "inspect-> ")
     (let input (read))
     (match (abbrevs .get input input)
       ('help
@@ -89,7 +89,7 @@
     (to (read-eval)
       (evaluate (read) frame.env))
 
-    (display "debug> ")
+    (display "debug-> ")
     (let input (read))  ; TODO read a line, then parse?
     (match (abbrevs .get input input)
       ('help
