@@ -27,10 +27,10 @@
 ;; Return a string that looks like X, an atom.
 ;; TODO just "~d" .format ?
 (to (coerce-string x)
-  (case ((symbol? x) x.name)
-        ((string? x) x)
-        ((number? x) (string<-number x))
-        (else (surely #no))))
+  (match x
+    ((? symbol?) x.name)
+    ((? string?) x)
+    ((? number?) (string<-number x))))
 
 ;; Return an instruction mnemonic formed out of STEM and SPECS.
 (to (combined-mnemonic<- stem specs)
