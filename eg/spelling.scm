@@ -6,10 +6,9 @@
 ;; Prefer the most common word with the fewest edits.
 (to (correct word)
   (or (pick-known-word `(,word))
-      (do (let neighbors1 (edits1 word))
-          (or (pick-known-word neighbors1)
-              (pick-known-word (gather edits1 neighbors1))
-              word))))
+      (pick-known-word (let neighbors1 (edits1 word)))
+      (pick-known-word (gather edits1 neighbors1))
+      word))
 
 (to (pick-known-word candidates)
   (let best (max-by WORDS candidates))
