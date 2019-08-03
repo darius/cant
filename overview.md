@@ -521,6 +521,14 @@ no (a . b)
 
 exceptions, ejectors
 
+cheat sheet, like https://github.com/jeapostrophe/racket-cheat/blob/master/racket-cheat.scrbl
+squeam-mode.el
+
+
+## Infelicities
+
+problems about the syntax
+
 list of biggest lacunae
 
 request for ideas:
@@ -528,5 +536,3 @@ request for ideas:
 - module refs without listing them all at import
 - better support for mutables?
 
-cheat sheet, like https://github.com/jeapostrophe/racket-cheat/blob/master/racket-cheat.scrbl
-squeam-mode.el
