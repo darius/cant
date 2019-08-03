@@ -167,7 +167,7 @@
   (mcase key
     ('?      (mlambda
               ((__ e)
-               `(view ,e #t))
+               `(view ,e #t)) ;TODO check result with yeah? instead of = #yes
               ((__ e p1)
                `(and (view ,e #t) ,p1))))
     ('optional (mlambda
@@ -350,19 +350,19 @@
 ;;              ((__ (e) . clauses) `(or ,e (case ,@clauses))) ;TODO: do I ever use this?
               ((__ (e e1 . es) . clauses)
                `(if ,e (do ,e1 ,@es) (case ,@clauses)))))
-    ('so     (mlambda                   ;TODO yet another experiment to toss or keep, replacing 'case'
+    ('hm     (mlambda                   ;TODO yet another experiment to toss or keep, replacing 'case'
               ((__)
-               '(error "No case taken in 'so'")) ;XXX hygiene
-              ((__ ('do . es))
-               `(do ,@es))
+               '(error "Fell off the end of 'hm'")) ;XXX hygiene
               ((__ ('else . es))
                `(do ,@es))
+              ((__ ('do . es) . clauses)
+               `(do ,@es (hm ,@clauses)))
               ((__ ('if e e1) . clauses)
-               `(if ,e ,e1 (so ,@clauses)))
-              ((__ ('when e e1 . es) . clauses)
-               `(if ,e (do ,e1 ,@es) (so ,@clauses)))
-              ((__ ('unless e e1 . es) . clauses)
-               `(if ,e (so ,@clauses) (do ,e1 ,@es)))))
+               `(if ,e ,e1 (hm ,@clauses)))
+              ((__ ('when e . es) . clauses)
+               `(if ,e (do ,@es) (hm ,@clauses)))
+              ((__ ('unless e . es) . clauses)
+               `(if ,e (hm ,@clauses) (do ,@es)))))
     ('and    (mlambda
               ((__) #t)
               ((__ e) e)

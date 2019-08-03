@@ -47,7 +47,7 @@
           (bdd-evaluate ((ifs value) node) env))))
 
 (to (do-choose node if0 if1)
-  (so (if (<= node lit1)
+  (hm (if (<= node lit1)
           (match node
             (0 if0)                      ;N.B. 0 == lit0
             (1 if1)))
@@ -89,15 +89,15 @@
   (let goal-node (constant<- goal))
   (let env (map<-))
   (begin walking ((node node))
-    (if (<= node lit1)
-        (and (= node goal-node) env)
-        (do (let if0 (if0s node))
-            (so (when (or (< lit1 if0) (= if0 goal-node))
-                  (env .set! (ranks node) 0)
-                  (walking if0))
-                (else
-                  (env .set! (ranks node) 1)
-                  (walking (if1s node))))))))
+    (hm (when (<= node lit1)
+          (and (= node goal-node) env))
+        (do (let if0 (if0s node)))
+        (when (or (< lit1 if0) (= if0 goal-node))
+          (env .set! (ranks node) 0)
+          (walking if0))
+        (else
+          (env .set! (ranks node) 1)
+          (walking (if1s node))))))
 
 (export satisfy-first build-choice bdd-and bdd-or lit0 lit1 constant<- bdd-evaluate)
 ;; TODO export more, rename
