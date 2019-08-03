@@ -93,9 +93,8 @@ Level ~w ~d Move ~w")
        (playing level)))))
 
 (to (parse floor-plan)
-  (surely (do (let lines floor-plan.split-lines) ;XXX require
-              (let lengths (each '.count lines))  
-              (= 1 lengths.range.count)))
+  (do (let line-lengths (each '.count floor-plan.split-lines))
+      (surely (= 1 line-lengths.range.count))) ;XXX require
   (array<-list floor-plan))
 
 (to (sokoban-grid<- grid)
