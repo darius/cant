@@ -48,7 +48,7 @@
 
 (to (do-choose node if0 if1)
   (hm (if (<= node lit1)
-          (match node
+          (be node
             (0 if0)                      ;N.B. 0 == lit0
             (1 if1)))
       (if (= if0 if1)
@@ -59,7 +59,7 @@
           (choose node if0 if1))))
 
 (to (subst rank replacement node)
-  (match (rank .compare (ranks node))
+  (be (rank .compare (ranks node))
     (-1 node)
     ( 0 (do-choose replacement (if0s node) (if1s node)))
     (+1 (make-choice (ranks node)
