@@ -182,7 +182,7 @@ separator: '\n'.
 ;; Return the least number in (low..high] that's `ok?`.
 ;; Pre: low is not ok, and high is.
 ;; Pre: there's just one cross-over point.
-;; TODO redesign, extract to lib
+;; TODO redesign, extract to lib -- see also eg/dole/buffer.scm
 (to (binary-search ok? low high)
   (begin searching ((L low) (H high))
     (surely (< L H))
