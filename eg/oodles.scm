@@ -13,8 +13,8 @@
   (format "~d\n" (fill expanded 72)))
 
 (to (expand-text text probability)
-  (call chain (for each ((token ((parse parser text) .results)))
-                (expand token probability))))
+  ("" .join (for each ((token ((parse parser text) .results)))
+              (expand token probability))))
 
 ;;TODO use simple-parser<- or something
 (let grammar (grammar<- "
