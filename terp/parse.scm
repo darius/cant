@@ -170,6 +170,11 @@
                `(view ,e #t)) ;TODO check result with yeah? instead of = #yes
               ((__ e p1)
                `(and (view ,e #t) ,p1))))
+    ('=      (mlambda                   ;TODO experiment
+              ((__ e)
+               (let ((param (gensym)))
+                 `(view (on (,param) (= ,param ,e)) ;XXX hygiene
+                        #t)))))
     ('optional (mlambda
                 ((__ . ps)
                  `(view ,(optional-match-exp (length ps))
