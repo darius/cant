@@ -172,6 +172,18 @@
      (0 '())             
      (_ (call chain (for each ((_ (range<- n)))
                       list)))))
+  ({.maybe}  ;; TODO an experiment TODO could be defined on maps in general too
+   (if list.empty?
+       #no
+       (do (unless list.rest.empty?
+             (error "Tried to convert to maybe from count >1" list))
+           list.first)))
+  ({.only}  ;; TODO an experiment TODO could be defined on maps in general too
+   (when list.empty?
+     (error "Tried to .only from empty" list))
+   (unless list.rest.empty?
+     (error "Tried to .only from count >1" list))
+   list.first)
   (message
    (map-trait list message)))
 
@@ -227,6 +239,8 @@
   ({.compare a}   (and (symbol? a)
                        (me.name .compare a.name)))
   ({.selfie sink} (sink .display me.name))
+  ;; TODO experiment:
+  ({.term<-}      (on (@arguments) (term<- me arguments)))
   ;; Some silly conveniences for sturm:
   ({.lowercase}   (symbol<- me.name.lowercase))
   ({.uppercase}   (symbol<- me.name.uppercase))

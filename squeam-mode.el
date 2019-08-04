@@ -3,25 +3,29 @@
 
 ;; Basing this on http://community.schemewiki.org/?emacs-syntax-hilight
 
-;; TODO keep only one of 'be' and 'match' -- decide which
-(put 'be 'scheme-indent-function 1)
 (put 'begin 'scheme-indent-function 2)
 (put 'case 'scheme-indent-function 0)
 (put 'do 'scheme-indent-function 0)
 (put 'export 'scheme-indent-function 0)
 (put 'for 'scheme-indent-function 2)
 (put 'given 'scheme-indent-function 1)
-(put 'on 'scheme-indent-function 1);; TODO keep only one of 'given' and 'on' -- decide which
 (put 'hide 'scheme-indent-function 0)  ; or nil)
 (put 'import 'scheme-indent-function 1)
 (put 'let 'scheme-indent-function 1)
 (put 'make 'scheme-indent-function 1)
 (put 'make-trait 'scheme-indent-function 2)
 (put 'match 'scheme-indent-function 1)
-(put 'hm 'scheme-indent-function 0);; TODO keep only one of 'hm' and 'case' -- decide which
 (put 'to 'scheme-indent-function 1)
 (put 'unless 'scheme-indent-function 1)
 (put 'when 'scheme-indent-function 1)
+
+;; TODO revisit these experiments
+(put ': 'scheme-indent-function 0)
+(put '-> 'scheme-indent-function 0)
+(put 'be 'scheme-indent-function 1)
+(put 'hm 'scheme-indent-function 0)
+(put 'on 'scheme-indent-function 1)
+(put 'switch 'scheme-indent-function 0)
 
 (defconst squeam-font-lock-keywords 
   '() 
@@ -35,8 +39,11 @@
                 (eval-when-compile
                   (list
                    (regexp-opt
-                    '("be" "export" "for" "given" "hide" "hm" "import" "make"
-                      "make-trait" "match" "on" "to" "unless" "when")
+                    '("export" "for" "given" "hide" "import" "make"
+                      "make-trait" "match" "to" "unless" "when"
+                      ;; more experiments:
+;;                      ":" "->"  ;;XXX these are keywords too, but emacs seems to dislike them here
+                      "be" "hm" "on" "switch")
                     'symbols)
                    ))))
   (setq font-lock-defaults

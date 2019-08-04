@@ -126,6 +126,24 @@
   (write x)
   (newline))
 
+
+;; Experiments
+
+;;  TODO maybe also (take x y z (given (a b c) ...))
+(to (take thing transform)
+  (transform thing))
+
+;; Maybe this should be syntax instead, for eval-order reasons.
+(to (hey receiver @messages)            ;TODO maybe require at least one message
+  (for foldl ((_ void) (m messages))
+    (call receiver m)))
+
+(to ((getter<- key) map)                ;better name?
+  (map key))
+
+
+;; Top level
+
 (let the-signal-handler (box<- panic))
 (let the-last-error (box<- #no))
 

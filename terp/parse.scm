@@ -299,12 +299,14 @@
                `(match ,subject ,@clauses))))
     ('match  (mlambda
               ((__ subject . clauses)
-               `((make _ ,@(map (lambda (clause)
-                                  (insist (pair? clause)
-                                          "invalid clause" clause)
-                                  `((list<- ,(car clause)) ,@(cdr clause)))
-                                clauses))
-                 ,subject))))
+               `((switch ,@clauses) ,subject))))
+    ('switch (mlambda                   ;TODO experiment; also, better name
+              ((__ . clauses)
+               `(make _ ,@(map (lambda (clause)
+                                 (insist (pair? clause)
+                                         "invalid clause" clause)
+                                 `((list<- ,(car clause)) ,@(cdr clause)))
+                               clauses)))))
     ('to     (mlambda
               ((__ (head . param-spec) . body)
                (let ((pattern (expand-definition-pattern param-spec)))
@@ -317,6 +319,17 @@
     ('on     (mlambda  ; TODO do I like this better than 'given'?
               ((__ dp . body)
                `(to (_ ,@dp) ,@body))))
+    (':      (mlambda  ; TODO experiment
+              ((__ . body)
+               `(to (_) ,@body))))
+    ('->     (mlambda  ; TODO experiment
+              ((__)
+               `identity)               ;XXX hygiene
+              ((__ e)
+               `(to (_ it) ,e))
+              ((__ e . es)
+               `(compose (-> ,@es) (to (_ it) ,e))) ;XXX hygiene
+              ))
     ('for    (mlambda
               ((__ fn bindings . body)
                (let ((name-for (if (symbol? fn)
