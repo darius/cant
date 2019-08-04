@@ -6,7 +6,7 @@
 ;; column padded to its max width.
 (to (format-table rows @(optional opt-spacer opt-justify))
   (let spacer  (or opt-spacer  " "))
-  (let justify (or opt-justify '.left-justify))
+  (let justify (or opt-justify (method<- '.left-justify)))
   (surely (hide (let lengths (each _.count rows))
                 (<= lengths.range.count 1))
           "Rows must be the same length" rows)

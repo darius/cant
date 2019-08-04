@@ -233,8 +233,8 @@
   )
 
 (make-trait symbol-primitive me
-  (`(,actor ,@arguments)
-   (call actor (term<- me arguments)))
+  ({.method}      (on (actor @arguments) ;TODO experiment; vs. method<- in stdlib
+                    (call actor (term<- me arguments))))
   ({.name}        (__symbol->string me))
   ({.compare a}   (and (symbol? a)
                        (me.name .compare a.name)))
@@ -973,19 +973,22 @@
   (`() 0)
   (`(,a) a)
   (`(,a ,b) (a .+ b))
-  (`(,a ,b ,@arguments) (foldl '.+ (a .+ b) arguments)))
+  (`(,a ,b ,@arguments)
+   (foldl (on (x y) (x .+ y)) (a .+ b) arguments)))
 
 (make *
   (`() 1)
   (`(,a) a)
   (`(,a ,b) (a .* b))
-  (`(,a ,b ,@arguments) (foldl '.* (a .* b) arguments)))
+  (`(,a ,b ,@arguments)
+   (foldl (on (x y) (x .* y)) (a .* b) arguments)))
 
 (make -
   (`() (error "Bad arity"))
   (`(,a) (0 .- a))
   (`(,a ,b) (a .- b))
-  (`(,a ,b ,@arguments) (foldl '.- (a .- b) arguments)))
+  (`(,a ,b ,@arguments)
+   (foldl (on (x y) (x .- y)) (a .- b) arguments)))
 
 (make-trait transitive-comparison compare?
   (`(,x ,@xs)
@@ -1094,7 +1097,8 @@
   (`() '())
   (`(,xs) xs)
   (`(,xs ,ys) (xs .chain ys))
-  (`(,@arguments) (foldr1 '.chain arguments)))
+  (`(,@arguments)
+   (foldr1 (on (xs ys) (xs .chain ys)) arguments)))
 
 (to (some pass? xs)
   (and (not xs.empty?)

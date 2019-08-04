@@ -113,9 +113,13 @@
         `(,(reverse r-head) ,xs)
         (scanning `(,xs.first ,@r-head) xs.rest))))
 
-(to (method<- actor cue)
-  (on (@arguments)
-    (call actor (term<- cue arguments))))
+(make method<-
+  (`(,cue)
+   (on (actor @arguments)
+     (call actor (term<- cue arguments))))
+  (`(,actor ,cue)
+   (on (@arguments)
+     (call actor (term<- cue arguments)))))
 
 (to (write x)                      ;TODO rename
   (out .print x))
