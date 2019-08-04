@@ -44,10 +44,7 @@
     ({.leftovers}        i)
     ({.opt-results}      vals)
     ({.results}          vals)
-    ({.result}
-     (if (= 1 vals.count)               ;TODO list.maybe method
-         vals.first
-         (error "Wrong # of results" vals)))
+    ({.result}           vals.maybe)    ;TODO nicer error on wrong # of vals
     ({.display}
      (write (text .slice i))
      (display " ")
