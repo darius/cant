@@ -95,9 +95,7 @@
     ((? operand? operand)
      (parse-operand operand))
     (`(,first ,@rest)
-     (let args (each expand-abbrev rest))
-     (let L args.count)
-     (be `(,first ,@args)
+     (be `(,first ,@(each expand-abbrev rest))
        (`(? ,(? byte? b))
         (condition-param b))
        (`(+ ,(? byte? b) ,(? (operand-of 'G) operand)) ;TODO
