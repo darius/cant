@@ -60,15 +60,13 @@
         (refresh "A draw."))
       (when (= player.name "Human")
         (continue))
-      (else
-        (let quit?
-          (and (not= opponent.name "Human")
+      (or (and (not= opponent.name "Human")
                (do (refresh ("~d to move ~d. (Press a key; Q to quit.)"
                              .format player.name (whose-move grid)))
                    (= #\Q ((get-key) .uppercase)))))
-        (unless quit?
-          (refresh ("~d ponders..." .format player.name))
-          (continue)))))
+      (else
+        (refresh ("~d ponders..." .format player.name))
+        (continue))))
 
 (to (ttt-render shown-grid message @(optional plaint))
   (render `(,(or plaint "") "\n\n" ,shown-grid "\n\n" ,message "\n\n")))
