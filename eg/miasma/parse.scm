@@ -122,7 +122,7 @@
 
 ;; Return a symbol whose name is the concatenation of ATOMS.
 (to (concat-symbol @atoms)
-  (symbol<- (foldr chain (each coerce-string atoms) "")))
+  (symbol<- ("" .join (each coerce-string atoms))))
 
 ;;XXX finish porting
 (let abbrevs
