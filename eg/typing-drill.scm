@@ -18,7 +18,7 @@
           (nanosleep 50000000)  ; 1/20 sec
           (typing))
         (else
-          (match (get-key)
+          (be (get-key)
             ('esc
              'done)
             ('backspace

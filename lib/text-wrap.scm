@@ -15,7 +15,7 @@
 (to (parse-tokens text)
   (if text.empty?
       '()
-      (match text.first
+      (be text.first
         (#\newline `({break} ,@(parse-tokens text.rest)))
         (#\space   `({space} ,@(parse-tokens text.rest)))
         ((? '.whitespace? ch)
@@ -31,7 +31,7 @@
   (begin scanning ((spaces 0) (tokens tokens))
     (if tokens.empty?
         (if line.empty? '() `(,(flush line)))
-        (match tokens.first
+        (be tokens.first
           ({break}
            (link (flush line) (wrap-into (flexarray<-) tokens.rest width)))
           ({space}

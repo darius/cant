@@ -31,10 +31,10 @@
 
   (to (running code local closure ret stack)
     (to (access insn)
-      (match insn
+      (be insn
         ('local local)
         ((? number?) (closure insn))))
-    (match code
+    (be code
       (`(make-closure ,m ,n ,@rest)
        (let new-closure (array<-list (link (rest .slice m)
                                            (each access (rest .slice 0 m)))))
@@ -60,7 +60,7 @@
   ((parse lexp) .compile global-scope '(halt)))
 
 (to (parse lexp)
-  (match lexp
+  (be lexp
     ((? symbol?)           (var-ref<- lexp))
     (`(lambda (,v) ,body)  (abstraction<- v (parse body)))
     (`(,operator ,operand) (call<- (parse operator)

@@ -12,7 +12,7 @@
 (to (compile-and-run exp)
 
   (to (fill e)
-    (match e
+    (be e
       ({const c}        (const<- c))
       ({var v}          (var<- v))
       ({lam v body src} (lam<- v (fill body) src)) ;N.B. src isn't updated correspondingly
@@ -23,14 +23,14 @@
     (invoke fn arg {halt}))
 
   (to (invoke fn arg k)
-    (match fn
+    (be fn
       ({compiled-closure entry _}
        (running entry {env fn arg} '() k))
       ({primitive p}
        (return (p arg) k))))
 
   (to (return result k)
-    (match k
+    (be k
       ({frame pc r st ret-k}
        (running pc r (link result st) ret-k))
       ({halt}
@@ -40,12 +40,12 @@
 
     (to (fetch f)
       (let {env {compiled-closure _ vals} argument} r)
-      (match f
+      (be f
         ('local     argument)
         ((? count?) (vals f))))
 
     ;;    (format "at ~w: ~w\n" pc (code (- pc 1)))
-    (match (code (- pc 1))
+    (be (code (- pc 1))
       ({const c}
        (running (- pc 1) r (link c st) k))
       ({fetch f}
@@ -153,7 +153,7 @@
     (`(,v)
      (if (= v param)
          {fetch 'local}
-         (match (var-offsets .get v)
+         (be (var-offsets .get v)
            (#no (known v))
            (n {fetch n}))))
     ({.known} known)))

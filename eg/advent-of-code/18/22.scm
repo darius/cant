@@ -17,14 +17,13 @@
 
 (let geologic-index<-
   (memoize (on (p)
-             (if (= p target)
-                 0
-                 (match p
-                   ('(0 0)   0)
-                   (`(,x 0)  (* x 16807))
-                   (`(0 ,y)  (* y 48271))
-                   (`(,x ,y) (* (erosion-level<- `(,(- x 1) ,y))
-                                (erosion-level<- `(,x ,(- y 1))))))))))
+             (be p
+               ((= target) 0)
+               ('(0 0)     0)
+               (`(,x 0)    (* x 16807))
+               (`(0 ,y)    (* y 48271))
+               (`(,x ,y)   (* (erosion-level<- `(,(- x 1) ,y))
+                              (erosion-level<- `(,x ,(- y 1)))))))))
 
 (to (erosion-level<- p)
   ((+ (geologic-index<- p) depth) .modulo 20183))
@@ -75,7 +74,7 @@
 
   (to (keep-early efforts)
     (for those (({at t state} efforts))
-      (match (bests .get state)
+      (be (bests .get state)
         (#no (bests .set! state t)
              #yes)
         (t1  (if (< t t1)

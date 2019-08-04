@@ -217,7 +217,7 @@
   (to (interact)
     (the-signal-handler .^= repl-handler)
     (display "-> ")
-    (match (read)
+    (be (read)
       ((? eof?) (newline))
       (sexpr (print-result (evaluate sexpr '()))))) ;XXX reify a proper env object
 
@@ -227,7 +227,7 @@
       (print value))
     (interact))
 
-  (match cmd-line-args
+  (be cmd-line-args
     (#no (interact))
     ('() (interact))
     (`("-i" ,filename ,@_)
@@ -245,7 +245,7 @@
 
 (to (debug)
   (import (use 'debugger) inspect-continuation)
-  (match the-last-error.^
+  (be the-last-error.^
     (`(,k ,@evil) (inspect-continuation k))
     (_ (display "No error to debug.\n"))))
 
@@ -261,7 +261,7 @@
   (let stem (if (symbol? file-stem)
                 (chain "lib/" file-stem.name)
                 file-stem))
-  (match (the-modules .get stem)
+  (be (the-modules .get stem)
     (#no
      (let mod (load-module (chain stem ".scm") `(,stem)))
      (the-modules .set! stem mod)

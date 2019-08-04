@@ -7,7 +7,7 @@
   (exp-parsing lexp lexp))
 
 (to (seq-parsing lexps srcs)
-  (match lexps
+  (be lexps
     ('((the-environment))  {the-env})   ;TODO not meant as part of the actual language
     (`(,e)                 (exp-parsing e srcs.first))
     (`((let ,p ,e) ,@es)   (exp-parsing `(([,p] ,@es) ,e) `(do ,@srcs)))
@@ -15,7 +15,7 @@
     ))
 
 (to (def-parsing def seq srcs)
-  (match def
+  (be def
     (`(to (,(? symbol? name) ,@params) ,@body)
      (let ps (array<-list params))
      (seq-parsing `((let ,name (,ps ,@body))
@@ -23,7 +23,7 @@
                   srcs))))
 
 (to (exp-parsing lexp src)
-  (match lexp
+  (be lexp
     ((? symbol?)           {var lexp})
     ((? self-evaluating?)  {const lexp})
     (`',c                  {const c})
@@ -35,13 +35,13 @@
     (`(,operator ,e1 ,@es) (exp-parse `((,operator ,e1) ,@es))))) ;TODO ditto
 
 (to (src-do-parts src)
-  (match src
+  (be src
     (`(do ,@es) es)
     (_ (error "I don't know how to unparse this sequence" src))))
 
 (to (lambda-parsing `(,(? array? params) ,@body) src)
   ;; TODO this is clumsy without array patterns
-  (match params.values
+  (be params.values
     (`(,(? symbol? v))     {lam v (seq-parse body) src})
     (`(,(? symbol? v) ,@vs) {lam v (exp-parse `(,(array<-list vs) ,@body)) src})))
 

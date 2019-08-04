@@ -14,7 +14,7 @@
                             {branch 4 30}}}})
 
 (to (balanced? tree)
-  (match tree
+  (be tree
     ({mobile left right}
      (and (balanced? left)
           (balanced? right)
@@ -26,7 +26,7 @@
   (* length (weight structure)))
 
 (to (weight tree)
-  (match tree
+  (be tree
     ({mobile left right}
      (+ (weight left) (weight right)))
     ((? number?)

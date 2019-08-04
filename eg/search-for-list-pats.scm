@@ -11,7 +11,7 @@
 
 (to (report-badness filename)
 ;;  (format "Checking ~d...\n" filename)
-  (match (those bad-expr? (with-input-file read-all filename))
+  (be (those bad-expr? (with-input-file read-all filename))
     ('() 'ok)
     (top-level-bad-exprs
      (format "In ~d these top-level expressions harbor badness:\n" filename)
@@ -27,7 +27,7 @@
 
 (to (bad-patt? patt)
   (let p (macroexpand-outer-patt patt))
-  (match p
+  (be p
     (`(,s ,@_)
      (if (not ('(list<- link quote and view @ quasiquote) .find? s))
          (do (format "This subpattern is bad: ~w\n" patt)

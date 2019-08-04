@@ -33,7 +33,7 @@
 
 (to (spew rng model state)
   (begin spewing ((state state))
-    (match (sample-from-bag rng (model state))
+    (be (sample-from-bag rng (model state))
       ("END"  '())
       (choice (let next-state `(,@(state .slice 1) ,choice))
               `(,choice ,@(spewing next-state))))))

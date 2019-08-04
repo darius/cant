@@ -21,7 +21,7 @@
   (surely (<= 0 y-extent))
 
   (let A (array<-count (* x-extent y-extent)
-                       (match initializer
+                       (be initializer
                          ({constant value} value)
                          ({map _} #no))))
   (let at
@@ -36,7 +36,7 @@
     (unless (<= xl x xh) (error "x coordinate out of range" x))
     (unless (<= yl y yh) (error "y coordinate out of range" y)))
 
-  (match initializer
+  (be initializer
     ({constant _})
     ({map f}
      (for each! ((y (yl .to yh)))

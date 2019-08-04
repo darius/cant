@@ -8,7 +8,7 @@
   (ev (exp-parse e) (or r prelude-env)))
 
 (to (ev e r)
-  (match e
+  (be e
     ({const c} c)
     ({var v}     (lookup r v))
     ({lam _ _ _} {closure e r})
@@ -16,7 +16,7 @@
     ({the-env}   r)))
 
 (to (apply fn val)
-  (match fn
+  (be fn
     ({closure {lam v e _} r} (ev e {extend v val r}))
     ({primitive p}           (p val))))
 
@@ -24,7 +24,7 @@
 ;; Environments
 
 (to (lookup r v)
-  (match r
+  (be r
     ({extend v1 val r1}
      (if (= v v1)
          val

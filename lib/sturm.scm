@@ -95,7 +95,7 @@
 
 (to (paint cursor-seen? wanted-state scene)
   ;; TODO: skip any terminal codes in the scene's strings/chars
-  (match scene
+  (be scene
     ((? string?)
      (screen-state .establish! wanted-state)
      (for each! ((ch scene))

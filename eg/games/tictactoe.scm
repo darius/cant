@@ -44,7 +44,7 @@
 (to (tty-playing player opponent grid)
 
   (to (continue)
-    (match (player grid)
+    (be (player grid)
       (#no
        (refresh ("~d (~d) resigns." .format player.name (whose-move grid))))
       (next-grid
@@ -79,11 +79,11 @@
      (ttt-render (if plaint (show-with-moves grid) (show grid))
                  `(,prompt ,cursor)
                  plaint)
-     (match ((get-key) .uppercase)
+     (be ((get-key) .uppercase)
        (#\Q #no)
-       (key (match (and (char? key)
-                        (<= #\1 key #\9)
-                        (update grid (move<-key key)))
+       (key (be (and (char? key)
+                     (<= #\1 key #\9)
+                     (update grid (move<-key key)))
               (#no (asking "Hey, that's not a move. Give me one of the digits below."))
               (successor successor)))))))
 
@@ -108,7 +108,7 @@
   (memoize (on (grid)
              (if (won? grid)
                  -1
-                 (match (successors grid)
+                 (be (successors grid)
                    ('() 0)
                    (succs (- (call min (each spock-evaluate succs)))))))))
 
@@ -118,7 +118,7 @@
   (memoize (on (grid)
              (if (won? grid)
                  -1
-                 (match (successors grid)
+                 (be (successors grid)
                    ('() 0)
                    (succs (- (average (each drunk-evaluate succs)))))))))
 
@@ -185,7 +185,7 @@
   (let values (for each ((slot (zip (reverse (player-bits p))
                                     (reverse (player-bits q))
                                     spaces)))
-                (match slot
+                (be slot
                   (`(1 0 ,_) (marks 0))
                   (`(0 1 ,_) (marks 1))
                   (`(0 0 ,s) s))))

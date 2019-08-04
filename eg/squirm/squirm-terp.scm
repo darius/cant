@@ -32,7 +32,7 @@
 (to (running wait-check-in)
   (when (= 0 wait-check-in)
     (check-timeouts))
-  (match (peek run-queue.^)
+  (be (peek run-queue.^)
     ({empty}
      (unless waiting-timeouts.empty?
        (let deadline (call min waiting-timeouts.values))
@@ -100,7 +100,7 @@
     ({.partner-died pid outcome}
      (surely (partners .maps? pid))     ;uh right?
      (partners .delete! pid)
-     (match state.^
+     (be state.^
        ({exit _})
        (_                            ;TODO check process_flag for trap
         (state .^= {exit 'partner-died}) ;TODO or whatever
@@ -112,7 +112,7 @@
      process.wake)
 
     ({.wake}
-     (match state.^
+     (be state.^
        ((and {blocked _ _ _ _ _} thunk)
         (run-queue .^= (push run-queue.^ process))
         (state .^= {go thunk #no})) ;(TODO still a bit clumsy)
@@ -120,7 +120,7 @@
 
     ({.receive deadline after-e clauses r k}
      (begin checking ()  ;; TODO finer time-slicing?
-       (match (peek inbox-unchecked.^)
+       (be (peek inbox-unchecked.^)
          ({empty}
           (if deadline
               (hm (when (<= deadline (nano-now))
@@ -135,7 +135,7 @@
           (inbox-unchecked .^= rest)
           (let map (map<-))
           ;; TODO handle {after ...} clauses
-          (match (match-clauses r map clauses msg)
+          (be (match-clauses r map clauses msg)
             (#no
              (inbox-checked .^= (push inbox-checked.^ msg))
              (checking))
@@ -147,13 +147,13 @@
              (sev exp {local-env map r} k)))))))
 
     ({.run-a-slice}
-     (match state.^
+     (be state.^
        ({go k value}
         (the-running-process .^= process)
         (let state2 (go k value))
         (the-running-process .^= #no)
         (state .^= state2)
-        (match state2
+        (be state2
           ({blocked _ _ _ _ _}
            (surely (empty? inbox-unchecked.^) "inbox populated"))
           ({exit outcome}
@@ -173,7 +173,7 @@
 (let autoload-base "eg/squirm/lib/")
 
 (to (module-ref mod-name var-name)
-  (match (modules .get mod-name)
+  (be (modules .get mod-name)
     (#no
      (let filename (chain autoload-base mod-name.name ".scm"))
      (module-load mod-name filename)
@@ -198,7 +198,7 @@
 
 (to (def-parse def)
 ;;  (print `(def-parse ,def))
-  (match def
+  (be def
     (`(to (,(? symbol? name) ,@params) ,@body)
      {to name (each pat-parse params) (seq-parse body)})
     (`(to (,(? link? nested) ,@params) ,@body)
@@ -207,7 +207,7 @@
 
 (to (seq-parse exps)
 ;;  (print `(seq-parse ,exps))
-  (match exps
+  (be exps
 ;; Not sure we want this:
 ;;    ('()
 ;;     (exp-parse #no))
@@ -223,7 +223,7 @@
      {then (exp-parse e) (seq-parse es)}))) ;TODO parse as ((let _ ,e) .@es) ?
 
 (to (exp-parse e)
-  (match e
+  (be e
     ((? symbol?)
      (if (module-ref? e)
          (module-ref-parse e)
@@ -244,36 +244,36 @@
      (begin collecting ((cs (each clause-parse clauses))
                         (pattern-cs '())
                         (after-c #no))
-       (match cs
+       (be cs
          ('()
           {receive (reverse pattern-cs) after-c})
          (`(,c ,@rest)
-          (match c
+          (be c
             ({after _ _}
              (surely (not after-c) "Multiple after clauses")
              (collecting rest pattern-cs c))
             ({clause _ _}
              (collecting rest (link c pattern-cs) after-c)))))))
     (`(be ,subject ,@clauses)
-     {match (exp-parse subject) (each clause-parse clauses)})
+     {be (exp-parse subject) (each clause-parse clauses)})
     (`(catch ,@es)   ;; TODO macroexpand into (%catch (on () e)) ?
      {catch (seq-parse es)})
     (`(,operator ,@operands)
-     (match (exp-macro-expand operator operands)
+     (be (exp-macro-expand operator operands)
        (#no {call (exp-parse operator) (each exp-parse operands)})
        (expanded (exp-parse expanded))))))
 
 (to (exp-macro-expand operator operands) ;TODO: make it extensible
   ;; TODO: quasiquote
-  (match operator
+  (be operator
     ('and
-     (match operands
+     (be operands
        ('() #no)
        (`(,e) e)
        (`(,e ,@es) `(if ,e (and ,@es) #no))))
     ('begin
         ;; (begin f ((x a) (y b)) e) => (do (to (f a b) e) (f x y))  ;; TODO tighter scope for f
-     (match operands
+     (be operands
        (`(,f ,pairs ,@body)
         (for each! ((pair pairs))
           (surely (and (list? pair) (= pair.count 2))))
@@ -282,7 +282,7 @@
              ,@body)
            (f ,@(for each ((pair pairs)) (pair 1)))))))
     ('case
-     (match operands
+     (be operands
        ('()
         '(exit "No true case")) ;TODO hygiene, & settle on what to exit with
        (`((else ,@seq))
@@ -293,14 +293,14 @@
              (case ,@clauses)))))
     ('for
         ;;(for f ((x a) (y b)) e) => (f (on (a b) e) x y)
-     (match operands
+     (be operands
        (`(,f ,pairs ,@body)
         (for each! ((pair pairs))
           (surely (and (list? pair) (= pair.count 2))))
         `(,f (on ,(each '.first pairs) ,@body)
              ,@(for each ((pair pairs)) (pair 1))))))
     ('or
-     (match operands
+     (be operands
        ('() #yes)
        (`(,e) e)
        (`(,e ,@es)
@@ -308,16 +308,16 @@
            (#no (or ,@es))
            (yeah yeah)))))
     ('quasiquote
-     (match operands
+     (be operands
        (`(,sexpr) (qq-expand sexpr))))
     ('unless
-     (match operands
+     (be operands
        (`(,test ,@body)
         `(be ,test
            (#no ,@body)
            (_ #no)))))
     ('when
-     (match operands
+     (be operands
        (`(,test ,@body)
         `(be ,test
            (#no #no)
@@ -327,7 +327,7 @@
 ;; Expand a quasiquoted expression or pattern (either one).
 (to (qq-expand sexpr)
   ;; N.B. unquote-splicing only at the end
-  (match sexpr
+  (be sexpr
     ((list<- 'unquote e)
      e)
     ((list<- (list<- 'unquote-splicing e))
@@ -355,14 +355,14 @@
 
 (to (clause-parse clause)
   (let `(,pattern ,@seq) clause)
-  (match pattern
+  (be pattern
     (`(after ,e)
      {after (exp-parse e) (seq-parse seq)})
     (_
      {clause (pat-parse pattern) (seq-parse seq)})))
 
 (to (pat-parse pattern)
-  (match pattern
+  (be pattern
     ((? symbol?)
      (surely (not (module-ref? pattern)))
      (if (pattern.name .starts-with? "_")
@@ -395,7 +395,7 @@
 ;; k: continuation
 (to (sev exp r k)
 ;;  (print `(sev ,exp))
-  (match exp
+  (be exp
     ({const value}
      {go k value})
     ({var name}
@@ -406,17 +406,17 @@
      {go k {closure r ps e}})
     ({call e es}
      (sev e r {ev-operands es r k}))
-    ({if e _ _}                  ;TODO base on match instead
+    ({if e _ _}                  ;TODO base on be instead
      (sev e r {branch exp r k}))
     ({then e1 e2}
      (sev e1 r {then-drop e2 r k}))
     ({receive clauses after-clause}
-     (match after-clause
+     (be after-clause
        (#no
         (the-running-process.^ .receive #no #no clauses r k))
        ({after n-exp e}
         (sev n-exp r {receive-timeout e clauses r k}))))
-    ({match e clauses}
+    ({be e clauses}
      (sev e r {matching clauses r k}))
     ({catch e}
      (sev e r {catch-frame k}))
@@ -426,7 +426,7 @@
 
 (to (go kk value)
 ;;  (print `(go ,kk ,value))
-  (match kk
+  (be kk
     ({ev-operands es r k}
      (ev-operands value '() es r k))
     ({ev-more-operands f rev-args es r k}
@@ -441,12 +441,12 @@
      (the-running-process.^ .receive deadline after-e clauses r k))
     ({matching clauses r k}
      (let map (map<-))                  ;TODO factor dupe?
-     (match (match-clauses r map clauses value)
+     (be (match-clauses r map clauses value)
        (#no (exit "Match failure"))
        ({clause _ e}
         (sev e {local-env map r} k))))
     ({receive-timeout e clauses r k}
-     (match value
+     (be value
        ((? count?)
         (let deadline (+ (nano-now) (* 1000000 value)))
         (the-running-process.^ .receive deadline e clauses r k))))
@@ -457,7 +457,7 @@
     ))
 
 (to (throw kk outcome)
-  (match kk                             ;TODO generic walk through k's
+  (be kk                             ;TODO generic walk through k's
     ({ev-operands es r k}
      (throw k outcome))
     ({ev-more-operands f rev-args es r k}
@@ -477,18 +477,18 @@
   (throw k (array<- 'exit reason)))
 
 (to (ev-operands f rev-args operands r k)
-  (match operands
+  (be operands
     ('()
      (apply f (reverse rev-args) k))
     (`(,e ,@es)
      (sev e r {ev-more-operands f rev-args es r k}))))
 
 (to (apply f args k)
-  (match f
+  (be f
     ({closure r ps e}
      (surely (= args.count ps.count) "arity mismatch")
      (let map (map<-))
-     (match (match-pats r map ps args)
+     (be (match-pats r map ps args)
        (#no
         (exit k "Match failure"))
        (#yes
@@ -496,19 +496,19 @@
     ({primitive p}
      (apply-primitive p args k))
     ({apply}
-     (match args
+     (be args
        (`(,f1 ,args1)
         (apply f1 args1 k))))
     ({eval}
-     (match args
+     (be args
        (`(,e)  ;; TODO env param
         (sev (exp-parse e) global-env k))))
     ({throw}
-     (match args
+     (be args
        (`(,outcome)
         (throw k outcome))))
     ({exit}
-     (match args
+     (be args
        (`(,outcome)
         (exit k outcome))))
     ))
@@ -518,11 +518,11 @@
   ;; I'm not going to try to handle errors everywhere; only in these
   ;; primitive calls (mostly). We can wait to do things properly until
   ;; we're making a VM in C for real.
-  (match (with-signal-handler
-          (on (squeam-k @evil)
-            (squeam-k .answer {error evil}))
-          (on ()
-            (call p args)))
+  (be (with-signal-handler
+        (on (squeam-k @evil)
+          (squeam-k .answer {error evil}))
+        (on ()
+          (call p args)))
     ({error evil}
      (exit k evil))
     (result
@@ -530,11 +530,11 @@
 
 (to (match-clauses r map clauses datum)
   (begin matching ((clauses clauses))
-    (match clauses
+    (be clauses
       ('() #no)
       (`(,(and clause {clause p e}) ,@rest)
        map.clear!
-       (match (match-pat r map p datum)
+       (be (match-pat r map p datum)
          (#no (matching rest))
          (#yes clause))))))
 
@@ -544,7 +544,7 @@
 
 (to (match-pat r map p val)
 ;;  (print `(match-pat ,map ,p ,val))
-  (match p
+  (be p
     ({bind name}
      (surely (not (map .maps? name)) "already set")
      (map .set! name val)
@@ -569,13 +569,13 @@
 ;; Environments
 
 (to (env-get r name)
-  (match r
+  (be r
     ({local-env map parent}
-     (match (map .get name)
+     (be (map .get name)
        (#no (env-get parent name))
        (value value)))
     ({recursive-env map parent}
-     (match (map .get name)
+     (be (map .get name)
        (#no (env-get parent name))
        ({to f params body}
         {closure r params body})))
@@ -702,7 +702,7 @@
 
 (to (map<-defs defs)
   (map<- (for each ((def defs))
-           (match def
+           (be def
              ({to name _ _} `(,name ,def))))))
 
 ;; Add the prelude to the global environment.

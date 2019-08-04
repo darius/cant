@@ -33,7 +33,7 @@
   (symbol<- ("-" .join `(,stem ,@specs)))) ;TODO join with some other separator? "/"?
 
 (to (suffixes x)
-  (match x
+  (be x
     ((? symbol?) (if ('(Sreg cr dr =16 =32 + /r /0 /1 /2 /3 /4 /5 /6 /7) .find? x)
                      '()
                      `(,x)))
@@ -83,7 +83,7 @@
 
 ;; TODO This might make a good use case for nested-list Parson.
 (to (parse-param param)
-  (match (expand-abbrev param)
+  (be (expand-abbrev param)
     ((? byte? b)
      (opcode-byte-param b))
     ((? register? r)
@@ -97,7 +97,7 @@
     (`(,first ,@rest)
      (let args (each expand-abbrev rest))
      (let L args.count)
-     (match `(,first ,@args)
+     (be `(,first ,@args)
        (`(? ,(? byte? b))
         (condition-param b))
        (`(+ ,(? byte? b) ,(? (operand-of 'G) operand)) ;TODO
@@ -131,20 +131,20 @@
 (let extended-opcode-tags '#(/0 /1 /2 /3 /4 /5 /6 /7))
 
 (to (operand? x)
-  (match x
+  (be x
     (`(,(? symbol?) ,(? symbol? tag) ,size)
      (and ('(I U J O) .find? tag)
           ('(1 2 4) .find? size)))
     (_ #no)))
 
 (to ((operand-of tag) x)                ;XXX duplicate code
-  (match x
+  (be x
     (`(,(? symbol?) ,(? (-> (= it tag))) ,size)
      ('(1 2 4) .find? size))
     (_ #no)))
 
 (to (parse-operand `(,symbol ,tag ,size))
-  (match tag
+  (be tag
     ('I (signed-immediate-param size))
     ('U (unsigned-immediate-param size))
     ('J (relative-jump-param size))

@@ -63,7 +63,7 @@
   (for each ((e nodes)) (subst rank value e)))
 
 (to (subst rank value node)
-  (match (rank .compare node.rank)
+  (be (rank .compare node.rank)
     (-1 node) ; N.B. node must be a constant, iff we arrived here (XXX why?)
     ( 0 (node.branches value))
     (+1 (make-node node.rank

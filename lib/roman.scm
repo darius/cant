@@ -17,7 +17,7 @@
 
 (to (roman<-int n)
   (let `(,tens ,ones) (n ./mod 10))
-  (chain (match tens
+  (chain (be tens
            (0 "")
            (_ (times-X (roman<-int tens))))
          (digits ones)))
@@ -28,7 +28,7 @@
 
 (to (main args)
   (for each! ((x args.rest))
-    (let converted (match (number<-string x)
+    (let converted (be (number<-string x)
                      (#no (int<-roman x))
                      (n   (roman<-int n))))
     (format "~d: ~d\n" x converted)))

@@ -36,7 +36,7 @@
 
     (display "inspect-> ")
     (let input (read))
-    (match (abbrevs .get input input)
+    (be (abbrevs .get input input)
       ('help
        (help vocab)
        (format "<n>         - inspect the nth component of the focus\n")
@@ -91,7 +91,7 @@
 
     (display "debug-> ")
     (let input (read))  ; TODO read a line, then parse?
-    (match (abbrevs .get input input)
+    (be (abbrevs .get input input)
       ('help
        (help vocab)
        (continue))

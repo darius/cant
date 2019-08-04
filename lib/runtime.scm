@@ -50,7 +50,7 @@
    (begin searching ((items map.items))
      (if items.empty?
          default
-         (match items.first
+         (be items.first
            (`(,k ,v) (if (= v value) k (searching items.rest)))
            (else (searching items.rest))))))
   ({.find value}
@@ -128,7 +128,7 @@
    ;; N.B. mutable arrays compare by this method, so it's really a comparison as of right now
    (hm (if list.empty? (if xs.empty? 0 -1))
        (if xs.empty? 1)
-       (else (match (list.first .compare xs.first)
+       (else (be (list.first .compare xs.first)
                  (0 (list.rest .compare xs.rest))
                  (d d)))))
   ;; A sequence is a kind of collection. Start implementing that:
@@ -156,11 +156,11 @@
           (if (= value values.first) i)
           (else (looking (+ i 1) values.rest)))))
   ({.find value}
-   (match (list .find value #no)
+   (be (list .find value #no)
      (#no (error "Missing value" value))
      (key key)))
   ({.find? value}
-   (match (list .find value #no)
+   (be (list .find value #no)
      (#no #no)
      (_ #yes)))
   ({.last}
@@ -168,7 +168,7 @@
    (if rest.empty? list.first rest.last))
   ({.repeat n}
    ;;TODO a method to get an empty seq of my type; and then factor out duplicate code
-   (match n
+   (be n
      (0 '())             
      (_ (call chain (for each ((_ (range<- n)))
                       list)))))
@@ -264,7 +264,7 @@
   (`(,i)          (__list-ref me i))    ;XXX just use the trait method? then can e.g. mix lazy and eager list nodes
   ({.chain a}     (__append me a))
   ({.selfie sink}
-   (match me
+   (be me
      (`(quote ,x)
       (sink .display "'")
       (sink .print x))
@@ -471,7 +471,7 @@
                   me
                   (" " .repeat half)))))
   ({.repeat n}
-   (match n
+   (be n
      (0 "")
      (_ (call chain (for each ((_ (range<- n)))
                       me)))))
@@ -490,7 +490,7 @@
   ({.selfie sink}
    (sink .display #\")
    (for each! ((c me))
-     (sink .display (match c            ;XXX super slow. We might prefer to use the Scheme built-in.
+     (sink .display (be c            ;XXX super slow. We might prefer to use the Scheme built-in.
                       (#\\ "\\\\")
                       (#\" "\\\"")
                       (#\newline "\\n")
@@ -517,7 +517,7 @@
    (surely (integer? n) "Bad arg type" n)
    (char<- (+ me.code n)))
   ({.- b}
-   (match b
+   (be b
      ((? integer?) (char<- (- me.code b)))
      ((? char?)    (- me.code b.code))
      (_ (error "Bad arg type" b))))
@@ -827,15 +827,15 @@
        
        (make hashmap {extending map-trait}
          (`(,key)
-          (match (place key)
+          (be (place key)
             ({at i} (vals.^ i))
             (_      (error "Missing key" hashmap key))))
          ({.get key @(optional default)}
-          (match (place key)
+          (be (place key)
             ({at i} (vals.^ i))
             (_      default)))
          ({.set! key val}
-          (match (place key)
+          (be (place key)
             ({at i}
              (vals.^ .set! i val))
             ({missing-at i}
@@ -844,7 +844,7 @@
              (count .^= (+ count.^ 1))
              (maybe-grow))))
          ({.maps? key}
-          (match (place key)
+          (be (place key)
             ({at _} #yes)
             (_      #no)))
          ({.empty?} (= count.^ 0))
@@ -857,7 +857,7 @@
           (for each ((i (occupants)))
             `(,(ks i) ,(vs i))))
          ({.get-set! key value<-}
-          (match (place key)
+          (be (place key)
             ({at i}
              (vals.^ i))
             ({missing-at _}
@@ -867,7 +867,7 @@
              (hashmap .set! key value)
              value)))
          ({.delete! key}
-          (match (place key)
+          (be (place key)
             ({at i}
              (keys.^ .set! i deleted)
              (count .^= (- count.^ 1))
@@ -989,7 +989,7 @@
 (make-trait transitive-comparison compare?
   (`(,x ,@xs)
    (begin comparing ((x0 x) (xs xs))
-     (match xs
+     (be xs
        (`() #yes)
        (`(,x1 ,@rest) (and (compare? x0 x1)
                            (comparing x1 rest)))))))
@@ -1005,7 +1005,7 @@
   (if (comparison? result) result (error "Incomparable" a b)))
 
 (to (comparison? x)
-  (match x
+  (be x
     (-1 #yes)
     ( 0 #yes)
     (+1 #yes)
@@ -1194,7 +1194,7 @@
   (hide
 
     (to (unparse-exp e)
-      (match e.term
+      (be e.term
         ({constant c}
          (if (self-evaluating? c) c `',c))
         ({variable v}
@@ -1206,7 +1206,7 @@
         ({let p e}
          `(let ,(unparse-pat p) ,(unparse-exp e)))
         ({call e1 e2}
-         (match e2.term
+         (be e2.term
            ({list operands}
             `(,(unparse-exp e1) ,@(each unparse-exp operands)))
            ({term (? cue? cue) operands}
@@ -1221,7 +1221,7 @@
     (to (unparse-do e1 e2)
       (let es
         (begin unparsing ((tail e2))
-          (match tail.term
+          (be tail.term
             ({do e3 e4} (link e3 (unparsing e4)))
             (_ `(,tail)))))
       `(do ,@(each unparse-exp (link e1 es))))
@@ -1229,7 +1229,7 @@
     (to (unparse-make name stamp trait-term clauses)
       (surely (= {constant #no} stamp.term)) ;XXX
       `(make ,name
-         ,@(match trait-term.term
+         ,@(be trait-term.term
              ({constant #no} '())
              (trait-e `({extending ,(unparse-exp trait-e)})))
          ,@(each unparse-clause clauses)))
@@ -1245,7 +1245,7 @@
 
     (to (unparse-pat pat)
       ;; XXX these need updating to the newer pattern syntax
-      (match pat.term
+      (be pat.term
         ({constant-pat c}
          (if (self-evaluating? c) c `',c))
         ({any-pat}
@@ -1280,7 +1280,7 @@
       (if s.empty? 
           (unless args.empty?
             (error "Leftover arguments" args))
-          (match s.first
+          (be s.first
             (#\~
              (let ss s.rest)
              (if (ss .starts-with? "-")
@@ -1298,7 +1298,7 @@
     (to (parsing sink s pad sign width args)
       (when s.empty?
         (error "Incomplete format")) ;TODO report the format-string
-      (match s.first
+      (be s.first
         (#\w
          (maybe-pad sink pad sign width {.print args.first})
          (scanning sink s.rest args.rest))

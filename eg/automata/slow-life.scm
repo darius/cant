@@ -6,7 +6,7 @@
   home clear-screen cursor-show cursor-hide)
 
 (to (main args)
-  (let n-steps (match args.rest
+  (let n-steps (be args.rest
                  ('() 20)
                  (`(,n-str) (number<-string n-str))
                  (_ (error ("Usage: ~d [#steps]" .format (args 0))))))
@@ -68,8 +68,8 @@
     (+ (* C r) c))
 
   (to (update i)
-    (match (sum (for each ((dir neighbor-dirs))
-                  (G (+ i dir))))
+    (be (sum (for each ((dir neighbor-dirs))
+               (G (+ i dir))))
       (2 (G i))
       (3 1)
       (_ 0)))

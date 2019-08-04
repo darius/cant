@@ -12,18 +12,18 @@
       {extension n s}))
 
 (to (merge<- s1 s2)
-  (match s1
+  (be s1
     ({empty} s2)
     (_ {meld s1 s2})))
 
 (to (empty? s)
-  (match s
+  (be s
     ({empty}         #yes)
     ({extension _ _} #no)
     ({meld s1 s2}    (and (empty? s1) (empty? s2)))))
 
 (to (has? s n)
-  (match s
+  (be s
     ({empty}           #no)
     ({extension n1 s1} (or (= n n1) (has? s1 n)))
     ({meld s1 s2}      (or (has? s1 n) (has? s2 n)))))

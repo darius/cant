@@ -10,7 +10,7 @@
 
 ;; Pre: xs and ys are sorted and infinite.
 (to (intersect xs ys)
-  (match (xs.first .compare ys.first)
+  (be (xs.first .compare ys.first)
     (-1 (intersect xs.rest ys))
     (+1 (intersect xs ys.rest))
     ( 0 (link/lazy xs.first

@@ -21,7 +21,7 @@
   (`(,@docs) docs))
 
 (to (nest i doc)
-  (match doc
+  (be doc
     ({text s}    doc)
     ({line j}    {line (+ i j)})
     ({union x y} {union (nest i x) (nest i y)})
@@ -33,7 +33,7 @@
   (if (= flat doc) doc {union flat doc}))
 
 (to (flatten doc)
-  (match doc
+  (be doc
     ({text s}    doc)
     ({line i}    {text " "})
     ({union x y} (flatten x))
@@ -46,7 +46,7 @@
 ;; first line, and where {text...} and {line...} appear only in a
 ;; (@docs) list (which may have no other types of elements).
 (to (best w c doc)
-  (match doc
+  (be doc
     ({text _}         `(,doc))
     ({line _}         `(,doc))
     ('()              doc)
@@ -62,12 +62,12 @@
          (best w c y)))))
 
 (to (fits? w semidetermined-doc)
-  (and (<= 0 w) (match semidetermined-doc
+  (and (<= 0 w) (be semidetermined-doc
                   (`({text ,s} ,@x) (fits? (- w s.count) x))
                   (_ #yes))))
 
 (to (lay-out w semidetermined-doc)
-  (match semidetermined-doc
+  (be semidetermined-doc
     ('() "")
     (`({line ,i} ,@x)
      (chain "\n"

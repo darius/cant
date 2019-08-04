@@ -44,7 +44,7 @@
 
 (to (py-body vars code-list)
   (begin walking ((code-list code-list) (stmts '()) (vars vars))
-    (match code-list
+    (be code-list
       (`() stmts)
       (`(,first ,@rest)
        ((walk-code first py-code py-exp)
@@ -55,7 +55,7 @@
 ;; TODO walker objects instead, with code/exp methods?
 
 (to (py-code code)
-  (match code
+  (be code
     ({bytes signed? count exp}
      (for bind ((cv exp))
        (unit 
@@ -70,7 +70,7 @@
          (unit (py-exp-stmt (py-call "mod_rm" cv1 cv2))))))))
 
 (to (py-exp exp)
-  (match exp
+  (be exp
     ({literal n}
      (unit (py-int-literal n)))
     ({op operator e1 e2}
@@ -88,7 +88,7 @@
 (to (py-variable-count code)
 
   (to (py-code code)
-    (match code
+    (be code
       ({bytes _ _ exp}
        exp)
       ({swap-args code}
@@ -99,7 +99,7 @@
            (unit (+ cv1 cv2)))))))
 
   (to (py-exp exp)
-    (match exp
+    (be exp
       ({literal _}
        (unit 0))
       ({op operator e1 e2}

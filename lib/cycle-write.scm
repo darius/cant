@@ -32,7 +32,7 @@
     ({.print thing}
      (if (or (symbol? thing) (self-evaluating? thing))  ;; TODO skip other atom types
          (thing .selfie cycle-sink)
-         (match (tags .get thing)
+         (be (tags .get thing)
            (#no
             ;; First visit.
             (tags .set! thing 0)

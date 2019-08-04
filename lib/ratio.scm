@@ -8,7 +8,7 @@
 ;; the same invariant.
 
 (to (ratio? thing)
-  (match thing
+  (be thing
     ({ratio n d}
      (and (integer? n) (integer? d) (not= d 0)))
     (_ #no)))

@@ -36,7 +36,7 @@
   ;; Return the minimum element of PQ.
   ;; Signals an error if PQ is empty.
   (to (pq-min pq)
-    (match pq
+    (be pq
       ({pq}        (error "pq-min of an empty pq"))
       ({pq elem _} elem)))
 
@@ -57,7 +57,7 @@
 
   ;; Return PQ with ELEM inserted.
   (to (pq-insert pq elem)
-    (match pq
+    (be pq
       ({pq}            {pq elem '()})
       ({pq min1 rest1} (if (<=? min1 elem)
                            {pq min1 `({pq ,elem ()} ,@rest1)}
@@ -66,11 +66,11 @@
   ;; Return PQ with its minimum element removed.
   ;; Signals an error if PQ is empty.
   (to (pq-remove-min pq)
-    (match pq
+    (be pq
       ({pq} (error "pq-remove-min of empty-pq"))
       ({pq _ pqs}
        (begin merging ((pqs pqs))
-         (match pqs
+         (be pqs
            ('() empty-pq)
            (`(,elem) elem)
            (`(,pq1 ,pq2 ,@rest)

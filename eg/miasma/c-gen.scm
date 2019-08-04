@@ -45,7 +45,7 @@
 
 (to (c-body vars code-list)
   (begin walking ((code-list code-list) (stmts '()) (vars vars))
-    (match code-list
+    (be code-list
       (`() stmts)
       (`(,first ,@rest)
        ((walk-code first c-code c-exp)
@@ -56,7 +56,7 @@
 ;; TODO walker objects instead, with code/exp methods?
 
 (to (c-code code)
-  (match code
+  (be code
     ({bytes signed? count exp}
      (for bind ((cv exp))
        (unit 
@@ -71,7 +71,7 @@
          (unit (c-exp-stmt (c-call "mod_rm" cv1 cv2))))))))
 
 (to (c-exp exp)
-  (match exp
+  (be exp
     ({literal n}
      (unit (c-int-literal n)))
     ({op operator e1 e2}
@@ -89,7 +89,7 @@
 (to (c-variable-count code)
 
   (to (c-code code)
-    (match code
+    (be code
       ({bytes _ _ exp}
        exp)
       ({swap-args code}
@@ -100,7 +100,7 @@
            (unit (+ cv1 cv2)))))))
 
   (to (c-exp exp)
-    (match exp
+    (be exp
       ({literal _}
        (unit 0))
       ({op operator e1 e2}

@@ -20,7 +20,7 @@
   (diff xs ys))
 
 (to (sset-remove xs unwanted)
-  (match xs
+  (be xs
     ('() '())
     (`(,x1 ,@xs1)
      (if (= x1 unwanted)
@@ -30,7 +30,7 @@
 (to (merge xs ys)               ;TODO dedupe (extracted from sort.scm)
   (hm (if xs.empty? ys)
       (if ys.empty? xs)
-      (else (match (xs.first .compare ys.first)
+      (else (be (xs.first .compare ys.first)
               (-1 `(,xs.first ,@(merge xs.rest ys)))
               ( 0 `(,xs.first ,@(merge xs.rest ys.rest)))
               ( 1 `(,ys.first ,@(merge xs ys.rest)))))))
@@ -38,7 +38,7 @@
 (to (diff xs ys)
   (hm (if xs.empty? '())
       (if ys.empty? xs)
-      (else (match (xs.first .compare ys.first)
+      (else (be (xs.first .compare ys.first)
               (-1 `(,xs.first ,@(diff xs.rest ys)))
               ( 0 (diff xs.rest ys.rest))
               ( 1 (diff xs ys.rest))))))

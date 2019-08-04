@@ -5,12 +5,12 @@
   lit0 lit1 build-choice)
 
 (to (main args)
-  (match args.rest
+  (be args.rest
     (`(,n) (queens (number<-string n)))
     (_     (format "Usage: ~d board-size\n" (args 0)))))
 
 (to (queens n)
-  (match (satisfy-first (queens-problem n) 1)
+  (be (satisfy-first (queens-problem n) 1)
     (#no (display "none\n"))
     (env (print-board n env))))
 

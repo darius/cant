@@ -21,7 +21,7 @@
     pq1)
 
   (to (growing pq ns)
-    (match ns
+    (be ns
       ('() pq)
       (`(,n1) (insert pq n1))
       (`(,n1 ,n2 ,@rest)

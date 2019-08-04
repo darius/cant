@@ -45,7 +45,7 @@
               (R 0) (R 1) (R 2) (R 3) (R 4) (R 5) (R 6) (R 7)
               inst))
 
-    (match opcode
+    (be opcode
       (13 ;(trace "r~w = 0x~08x\n" (7 .and (inst .u>> 25)) (inst .and 0x1FFFFFF))
           (reg .set! (7 .and (inst .u>> 25))
                (inst .and 0x1FFFFFF))
@@ -54,7 +54,7 @@
        (let a (7 .and (inst .u>> 6)))
        (let b (7 .and (inst .u>> 3)))
        (let c (7 .and inst))
-       (match opcode
+       (be opcode
 
          (0 ;(trace "if (r~w) r~w = r~w\n" c a b)
             (unless (= (reg c) 0)

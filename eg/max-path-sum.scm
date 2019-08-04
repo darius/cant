@@ -6,7 +6,7 @@
   best)
 
 (to (solve tree)
-  (match tree
+  (be tree
     ({leaf}
      '(0 0))
     ({branch value L R}

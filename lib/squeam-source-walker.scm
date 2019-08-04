@@ -7,7 +7,7 @@
 ;; Return a pair `(,exprs ,patts) of the immediate subexpressions and
 ;; subpatterns of expr.
 (to (expr-subparts expr)
-  (match (macroexpand-outer-expr expr)
+  (be (macroexpand-outer-expr expr)
     ((? symbol?)                    none)
     ((? self-evaluating?)           none)
     (`(quote ,_)                    none)
@@ -22,7 +22,7 @@
     (`(,e1 ,@es)                    `((,e1 ,@es) ()))))
 
 (to (make-subparts tail)
-  (match tail
+  (be tail
     (`({extending ,e} ,@clauses)
      (let `(,es ,ps) (clauses-subparts clauses))
      `((,e ,@es) ,ps))
@@ -30,7 +30,7 @@
      (clauses-subparts clauses))))
 
 (to (clauses-subparts clauses)
-  (match (transpose (each clause-subparts clauses))
+  (be (transpose (each clause-subparts clauses))
     ('() none)
     (`(,es-lists ,ps-lists) `(,(call chain es-lists)
                               ,(call chain ps-lists)))))
@@ -39,7 +39,7 @@
   `(,es (,p)))
 
 (to (macroexpand-outer-expr expr)
-  (match (maybe-macroexpand-expr expr)
+  (be (maybe-macroexpand-expr expr)
     (#no expr)
     ({ok expanded}
      ;; Keep expanding the outermost expr until we get core
@@ -47,7 +47,7 @@
      (macroexpand-outer-expr expanded))))
 
 (to (macroexpand-outer-patt patt)
-  (match (maybe-macroexpand-patt patt)
+  (be (maybe-macroexpand-patt patt)
     (#no patt)
     ({ok expanded}
      (macroexpand-outer-patt expanded))))
@@ -55,7 +55,7 @@
 ;; Return a pair `(,exprs ,patts) of the immediate subexpressions and
 ;; subpatterns of patt.
 (to (patt-subparts patt)
-  (match (macroexpand-outer-patt patt)
+  (be (macroexpand-outer-patt patt)
     ((? symbol?)          none)
     ((? self-evaluating?) none)
     (`(quote ,_)          none)
@@ -67,7 +67,7 @@
     ((? list? ps)         `(() ,(list-subpatts ps))))) ;TODO remove
 
 (to (quasiquote-subpatts q)
-  (match q
+  (be q
     ((list<- 'unquote p) `(,p))
     ((list<- (list<- 'unquote-splicing p)) `(,p))
     ((list<- 'unquote-splicing p)
@@ -81,7 +81,7 @@
   (quasiquote-subpatts term.arguments))
 
 (to (list-subpatts p-list)
-  (match p-list
+  (be p-list
     (`() '())
     (`((@ ,p)) `(,p))
     (`(,head ,@tail) `(,head ,@(list-subpatts tail)))))

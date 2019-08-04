@@ -5,13 +5,13 @@
 
 (make _
   (`(,me ,message)
-   (match message
+   (be message
      ({.selfie sink}
       (sink .display "#<expr ")
       (sink .print me.term)
       (sink .display ">"))
      ({.term}
-      (match (__ast-tag me)
+      (be (__ast-tag me)
         (0 {constant (__ast-part me 1)})
         (1 {variable (__ast-part me 1)})
         (2 {term (__ast-part me 1) (__ast-es me 2)})

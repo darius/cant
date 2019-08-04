@@ -18,7 +18,7 @@
 (to (human-player board)
   (begin asking ()
     (display ("~d, your move? " .format (side-name board.mover)))
-    (match stdin.read-line  ;TODO extract the stdin cap
+    (be stdin.read-line  ;TODO extract the stdin cap
       ((? eof?) {resign})
       (answer (or (board .parse-move answer)
                   (do (display "Illegal move\n")
@@ -43,14 +43,14 @@
   ;; Just a little randomness makes play less boring:
   ;;XXX need to set up with an rng
   ;; total += random.uniform(0, 0.001)
-  (match board.mover
+  (be board.mover
     ('white (- total))
     (_      total)))
 
 (to (minimax-evaluate board depth)
-  (match depth
+  (be depth
     (0 (greedy-evaluate board))
-    (_ (match board.get-piece-moves
+    (_ (be board.get-piece-moves
          ('() 0)
          (moves (- (min (for each ((move moves))
                           (minimax-evaluate (update move board) (- depth 1))))))))))
@@ -100,7 +100,7 @@
        (format .to-sink sink "\n"))
      (format .to-sink sink " +----------------\n")
      (format .to-sink sink "   a b c d e f g h    ~d\n"
-             (match board.outcome
+             (be board.outcome
                (#no   ("~d to move" .format (side-name mover)))
                ('draw "A draw.")
                (w     ("~d wins!" .format (side-name w))))))
@@ -117,7 +117,7 @@
      ;; Or: is the mover in check now, and in check after every possible move?
      ;; XXX also seems buggy in other ways, though these boards are hard to read in the console
      (to (in-check?)                    ;XXX redundant and untested. Not yet in the Python version.
-       (let my-king (match mover
+       (let my-king (be mover
                       ('white #\K)
                       ('black #\k)))
        (let swap-players (board<- (opponent mover)
@@ -130,7 +130,7 @@
     ;; Is the opponent in check?
     ({.checking?}
      ;; Operationalized as: can the mover take the opposing king?
-     (let opposing-king (match mover
+     (let opposing-king (be mover
                           ('white #\k)
                           ('black #\K)))
      (not (for every ((succ board.gen-successors))
@@ -169,7 +169,7 @@
      XXX)
 
     ({.play-turn `(,white-player ,black-player)}
-     (let player (match mover
+     (let player (be mover
                    ('white white-player)
                    ('black black-player)))
      (let move (player board))
@@ -236,7 +236,7 @@
                (else
                    '())))))
 
-     (match piece
+     (be piece
 
        (#\P
         ;; XXX do en passant too
@@ -295,16 +295,16 @@
   side.name.capitalize)
 
 (to (opponent side)
-  (match side
+  (be side
     ('white 'black)
     ('black 'white)))
 
 (to (update move board)
-  (match move
+  (be move
     ({resign}
      board.resign)
     ({move from-pos to-pos kind}
-     (match kind
+     (be kind
        ;; TODO we might need one more kind, like 'simple but with an en-passant-target
        ('simple
         (board .move-piece from-pos to-pos #no))
@@ -316,7 +316,7 @@
         (board .move-promoting from-pos to-pos))))))
 
 (to (unparse-move move)
-  (match move
+  (be move
     ({resign}
      "resign")
     ({move from-pos to-pos _}

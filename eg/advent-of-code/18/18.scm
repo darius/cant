@@ -44,7 +44,7 @@
   (let wood (box<- 0))
   (let lumber (box<- 0))
   (to (count-at x1 y1)
-    (match (grid .get `(,x1 ,y1))
+    (be (grid .get `(,x1 ,y1))
       (#\.)
       (#\| (wood .^= (+ wood.^ 1)))
       (#\# (lumber .^= (+ lumber.^ 1)))
@@ -60,7 +60,7 @@
   (count-at x       (+ y 1))
   (count-at (+ x 1) (+ y 1))
 
-  (match (grid p)
+  (be (grid p)
     (#\. (if (<= 3 wood.^) #\| #\.))
     (#\| (if (<= 3 lumber.^) #\# #\|))
     (#\# (if (and (<= 1 lumber.^)

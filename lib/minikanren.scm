@@ -9,7 +9,7 @@
   `(,s))
 
 (to ((== val1 val2) s)
-  (match (unify s val1 val2)
+  (be (unify s val1 val2)
     (#no '())
     (s1 `(,s1))))
 

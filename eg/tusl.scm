@@ -34,7 +34,7 @@
     (hm (when tokens.empty?
           (surely frames.empty?))      ;XXX require
         (else
-          (match tokens.first
+          (be tokens.first
             ((? number? n)
              (code .push! (push<- n))
              (compiling frames tokens.rest))
@@ -56,7 +56,7 @@
 
 (to (compile-local frames word)
   (let locals (call chain frames))      ;I think
-  (match (locals .find word #no)
+  (be (locals .find word #no)
     (#no   #no)
     (index (local<- index))))
 

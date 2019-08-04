@@ -1,8 +1,8 @@
 (to (walk-code code code-f exp-f)
   (begin walking ((code code))
-    (match code
+    (be code
       ({bytes signedness arg1 arg2}
-       (let signed? (match signedness ('i #yes) ('u #no)))
+       (let signed? (be signedness ('i #yes) ('u #no)))
        (code-f {bytes signed? arg1 (walk-exp arg2 exp-f)}))
       ({swap-args arg}
        (code-f {swap-args (walking arg)}))
@@ -12,7 +12,7 @@
 
 (to (walk-exp exp exp-f)
   (begin walking ((exp exp))
-    (match exp
+    (be exp
       ((? integer?)         (exp-f {literal exp}))
       ({hereafter}          (exp-f exp))
       ({arg @_}             (exp-f exp))

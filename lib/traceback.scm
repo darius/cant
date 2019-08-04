@@ -44,7 +44,7 @@
      (output))))
        
 (to (complain @evil)
-  (match evil
+  (be evil
     (`(,(? string? plaint) ,@values)
      (display plaint)
      (display ": ")

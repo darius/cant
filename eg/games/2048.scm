@@ -24,15 +24,15 @@
                    (if (won? board)  "You win!")
                    (else             "")))
     (frame board score)
-    (match ((get-key) .lowercase)
+    (be ((get-key) .lowercase)
       (#\q 'quitting)
       (#\u (if history.empty?
                (continue)
                (playing history.pop! #yes)))
-      (key (match (arrows .get key)
+      (key (be (arrows .get key)
              (#no (continue))
              (direction
-              (match (direction board)
+              (be (direction board)
                 ('() (continue))
                 (sliding
                  (history .push! board)

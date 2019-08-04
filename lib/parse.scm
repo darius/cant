@@ -52,7 +52,7 @@
     ({.lhs} lhs)
     ({.rhs} rhs)
     ({.starts-with? cat}
-     (match rhs
+     (be rhs
        (`(,first ,@_) (= first cat))
        (_ #no)))))
 

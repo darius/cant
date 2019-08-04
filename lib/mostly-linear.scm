@@ -33,9 +33,9 @@
   (begin solving ((inconsistent? #no) ; Noticed a contradiction yet?
                   (progress? #no)     ; Any progress since the last assessment?
                   (agenda (push (extend empty equations) 'assessment)))
-    (match (peek agenda)
+    (be (peek agenda)
       ({nonempty task pending}
-       (match task
+       (be task
          ('assessment
           (hm (if progress?
                   (solving inconsistent? #no (push pending 'assessment)))
@@ -43,7 +43,7 @@
               (if (empty? pending) 'done)
               (else                'stuck)))
          ({equation defaulty? expr}
-          (match (eval-expr expr)       ;XXX better name?
+          (be (eval-expr expr)       ;XXX better name?
             ('nonlinear                 ;TODO call it #no instead?
              (solving inconsistent? progress? (push pending task)))
             (combo
@@ -66,7 +66,7 @@
 (to (e/ e1 e2) {/ e1 e2})
 
 (to (get-value e ejector)
-  (match (eval-expr e)
+  (be (eval-expr e)
     ('nonlinear (ejector .eject {not-fixed e}))
     (combo
      (let terms (expand combo))
@@ -75,7 +75,7 @@
      (get-constant terms))))
 
 (to (eval-expr e)
-  (match e
+  (be e
     ({combo _}
      e)
     ({combine arg1 coeff arg2}

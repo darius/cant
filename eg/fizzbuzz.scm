@@ -1,5 +1,5 @@
 (for each! ((n (1 .to 30)))
-  (display (match `(,(n .remainder 3) ,(n .remainder 5))
+  (display (be `(,(n .remainder 3) ,(n .remainder 5))
              ('(0  0) "FizzBuzz")
              (`(0 ,_) "Fizz")
              (`(,_ 0) "Buzz")

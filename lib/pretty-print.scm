@@ -13,9 +13,9 @@
                       (unquote-splicing ",@"))))
 
 (to (doc<-sx x)
-  (match x
+  (be x
     (`(,(? symbol? sym) ,operand)
-     (match (abbrevs .get sym)
+     (be (abbrevs .get sym)
        (#no    (call-like "(" sym x.rest ")"))
        (abbrev (group (<> (text abbrev) (nest abbrev.count (doc<-sx operand)))))))
     ((? list?)  (maybe-call-like "(" x ")"))
@@ -33,7 +33,7 @@
   (hug (chain open symbol.name " ") elements close))
 
 (to (maybe-call-like open elements close)
-  (match elements
+  (be elements
     (`(,(? symbol? sym) ,_ ,@_)
      (call-like open sym elements.rest close))
     (_ (hug open elements close))))

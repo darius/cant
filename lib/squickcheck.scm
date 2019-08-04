@@ -20,7 +20,7 @@
    (for each! ((_ (range<- n-times)))
      (let inputs (for each ((gen gens))
                    (gen g)))
-     (match (call property inputs)
+     (be (call property inputs)
        (#yes    (display "."))
        (outcome (display "X")
                 (failures .push! `(,outcome ,inputs)))))
@@ -54,7 +54,7 @@
 ;; TODO maybe name like <claim> etc.
 
 (to (a-claim g)
-  (match (g .natural 2)
+  (be (g .natural 2)
     (0 #no)
     (1 #yes)))
 

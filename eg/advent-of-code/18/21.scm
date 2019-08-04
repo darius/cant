@@ -33,7 +33,7 @@
 
     ({.step}
      (let here (regs ip))
-     (match (program .get here)
+     (be (program .get here)
        (#no #no)
        (`(,op ,a ,b ,c)
         (vm .do op a b c)
@@ -44,7 +44,7 @@
 
     ({.do op a b c}
      (let result
-       (match op
+       (be op
 
          ('addr  (+ (regs a) (regs b)))
          ('addi  (+ (regs a) b))

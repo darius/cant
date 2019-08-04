@@ -4,20 +4,20 @@
   (fmt e 0))
 
 (to (fmt e p)
-  (match e
+  (be e
     ((? number?)
      (string<-number e))
     ((? symbol?)
      e.name)
     (`(,op ,x)
-     (match (unaries .get op)
+     (be (unaries .get op)
        (#no
         ("~w(~d)" .format op (fmt x 0)))
        (`(,prefix ,postfix)
         (hm (if prefix  (enclose prefix p ("~w~d" .format op (fmt x prefix))))
             (if postfix (enclose prefix p ("~d~w" .format (fmt x prefix) op)))))))
     (`(,op ,x ,y)
-     (match (binaries .get op)
+     (be (binaries .get op)
        (#no
         ("~w(~d, ~d)" .format op (fmt x 0) (fmt y 0)))
        (`(,left ,right)

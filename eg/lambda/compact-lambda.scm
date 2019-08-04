@@ -4,7 +4,7 @@
   ((parse lexp) .compile '(HALT)))
 
 (to (parse lexp)
-  (match lexp
+  (be lexp
     ((? symbol?)           (var-ref<- lexp))
     (`(lambda (,v) ,body)  (abstraction<- v (parse body)))
     (`(,operator ,operand) (call<- (parse operator)
@@ -22,7 +22,7 @@
 ;; Application
 (to ((call<- operator operand) .compile k)
   (let code (operator .compile (operand .compile '(CALL))))
-  (match k
+  (be k
     ('(RET) code)
     (_      `(SAVE ,code.count ,@code ,@k))))
 

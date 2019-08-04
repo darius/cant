@@ -13,7 +13,7 @@
      (on (lc-succ)
        {primitive (on (n)
                     (begin counting ((n n))
-                      (match n
+                      (be n
                         (0          lc-zero)
                         ((? count?) (apply lc-succ (counting (- n 1)))))))})})
 
@@ -22,7 +22,7 @@
      (on (lc-link)
        {primitive (on (xs)
                     (begin linking ((xs xs))
-                      (match xs
+                      (be xs
                         ('()       lc-nil)
                         (`(,h ,@t) (apply (apply lc-link h) (linking t))))))})})
 

@@ -30,7 +30,7 @@
 
 (to (main args)
   (let filename
-    (match args
+    (be args
       (`(,_) "eg/games/microban")
       (`(,_ ,fname) fname)
       (_ (error ("Usage: ~d [filename]" .format (args 0))))))
@@ -76,7 +76,7 @@ Level ~w ~d Move ~w")
               ,@(if grid.won? '("\n\nDone!") '())))
 
     (let key (get-key))
-    (match key.lowercase
+    (be key.lowercase
       (#\q  'done)
       (#\n  (playing ((+ level 1) .modulo trails.count)))
       (#\p  (playing ((- level 1) .modulo trails.count)))

@@ -12,7 +12,7 @@
 (to (find-it? e)
 
   (to (walk-exp exp)
-    (match exp
+    (be exp
       ({constant c} #no)
       ({variable v} #no)
       ({make name stamp-e extending-e clauses}
@@ -34,7 +34,7 @@
     (or (walk-pat p) (walk-exp e)))
 
   (to (walk-pat pat)
-    (match pat
+    (be pat
       ({any-pat} #no)
       ({variable-pat v} #no)
       ({constant-pat c} #no)

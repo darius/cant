@@ -15,7 +15,7 @@
 
 (let clay-spots
   (for gather ((input inputs))
-    (match input
+    (be input
       (`("x" ,x "y" ,lo ,hi) (grid* `(,x) (lo .to hi)))
       (`("y" ,y "x" ,lo ,hi) (grid* (lo .to hi) `(,y))))))
 
@@ -74,7 +74,7 @@
       (to (spilling x dx)
         (let x1 (+ x dx))
         (let next `(,x1 ,y0))
-        (match (grid .get next)
+        (be (grid .get next)
           (#no
            (grid .set! next #\|)
            (when (not (grid .get (under next)))

@@ -10,7 +10,7 @@
   (let jump (match-brackets program))   ; jump targets
   (begin running ((i 0)                 ; instruction pointer
                   (d 0))                ; data pointer
-    (match (program .get i)
+    (be (program .get i)
       (#\[ (running (if (= 0 (data .get d 0))
                         (jump i)
                         (+ i 1))
@@ -21,14 +21,14 @@
                     d))
       (#no 'done)
       (ch  (running (+ i 1)
-                    (match ch
+                    (be ch
                       (#\< (- d 1))
                       (#\> (+ d 1))
-                      (_ (match ch
+                      (_ (be ch
                            (#\- (data .set! d (- (data .get d 0) 1)))
                            (#\+ (data .set! d (+ (data .get d 0) 1)))
                            (#\. (display (char<- (data .get d 0))))
-                           (#\, (data .set! d (match stdin.read-char
+                           (#\, (data .set! d (be stdin.read-char
                                                 ((? eof?) -1)
                                                 (ch ch.code))))
                            (_))
@@ -37,7 +37,7 @@
 (to (match-brackets program)
   (let jump (map<-))
   (for foldl ((stack '()) (`(,i ,ch) program.items))
-    (match ch
+    (be ch
       (#\[ (link i stack))
       (#\] (jump .set! stack.first (+ i 1))
            (jump .set! i (+ stack.first 1))
@@ -58,7 +58,7 @@
                       (meaningful .maps? ch)))
   (let expr-stack
     (for foldl ((stack '(0)) (ch real-program))
-      (match ch
+      (be ch
         (#\[ (link 'd stack))
         (#\] (let `(,top ,next ,@rest) stack)
              (link `(begin looping ((d ,next))
@@ -67,7 +67,7 @@
                           (looping ,top)))
                    rest))
         (_ (let `(,top ,@rest) stack)
-           (link (match ch
+           (link (be ch
                    (#\< `(- ,top 1))
                    (#\> `(+ ,top 1))
                    (#\- `(decr ,top))
@@ -91,7 +91,7 @@
        (display (char<- (data d)))
        d)
      (to (absorb d)
-       (data .set! d (match stdin.read-char
+       (data .set! d (be stdin.read-char
                        ((? eof?) -1)
                        (ch ch.code)))
        d)

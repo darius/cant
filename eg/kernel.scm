@@ -14,7 +14,7 @@
   (make script
     ({.receive message actor parent-r}
      (begin matching ((clauses clauses))
-       (match clauses
+       (be clauses
          ('()
           (trait actor message))
          (`((,pattern ,pat-vars ,body-vars ,body) ,@rest)
@@ -24,7 +24,7 @@
               (matching rest))))))))
 
 (to (eval e r)
-  (match e.term
+  (be e.term
     ({constant value}
      value)
     ({variable name}
@@ -51,7 +51,7 @@
        (eval e1 r)))))
 
 (to (eval-match subject p r)
-  (match p.term
+  (be p.term
     ({any-pat}
      #yes)
     ({variable-pat name}
@@ -88,7 +88,7 @@
   (let vals (array<-count vars.count *uninitialized*))
   (make env
     (`(,key)
-     (match (vars .find key #no)
+     (be (vars .find key #no)
        (#no (parent-r key))
        (i   (vals i))))
     ({.bind var val}

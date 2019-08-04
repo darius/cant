@@ -17,7 +17,7 @@
     (when (= option 'loudly)
       (show-config machine)
       (newline))
-    (match (step machine)
+    (be (step machine)
       (#no machine)
       (updated (running updated)))))
 
@@ -25,7 +25,7 @@
   (to (show-squares squares)
     (" " .join (for each ((s squares))
                  ("~w" .format s))))
-  (let next-acts (match (transit .get `(,state ,h))
+  (let next-acts (be (transit .get `(,state ,h))
                    (#no '())
                    (`(,acts ,_) acts)))
 
@@ -34,13 +34,13 @@
   (format "~d ~w ~w\n" (" " .repeat before.count) state next-acts))
 
 (to (step {machine transit state (and tape {tape _ head _})})
-  (match (transit .get `(,state ,head))
+  (be (transit .get `(,state ,head))
     (#no #no)
     (`(,acts ,next-state) 
      {machine transit next-state (foldl perform tape acts)})))
 
 (to (perform {tape L h R} act)
-  (match act
+  (be act
     ('<   {tape (L .slice 1) (L .get 0 '-) `(,h ,@R)})
     ('>   {tape `(,h ,@L)    (R .get 0 '-) (R .slice 1)})
     (mark {tape L mark R})))

@@ -5,13 +5,13 @@
 
 (make _
   (`(,me ,message)
-   (match message
+   (be message
      ({.selfie sink}
       (sink .display "#<patt ")
       (sink .print me.term)
       (sink .display ">"))
      ({.term}
-      (match (__ast-tag me)
+      (be (__ast-tag me)
         (0 {constant-pat (__ast-part me 1)})
         (1 {any-pat})
         (2 {variable-pat (__ast-part me 1)})

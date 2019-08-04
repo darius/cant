@@ -9,7 +9,7 @@
 
 (to (main args)
   (let cryptogram
-    (match args.rest
+    (be args.rest
       ('()     (random-encrypt (random-rng<-) (run-fortune)))
       (`(,str) str)
       (_       (error ("Usage: ~d [cryptogram]" .format (args 0))))))
@@ -39,9 +39,9 @@
   (let cv (cryptoview<- cryptogram))
   (begin playing ()
     (render (cv .view #yes))
-    (match (get-key)
+    (be (get-key)
       ('esc (render (cv .view #no)))
-      (key (match key
+      (key (be key
              ('home      cv.go-to-start)
              ('end       cv.go-to-end)
              ('left      (cv .shift-by -1))

@@ -8,7 +8,7 @@
 (to (bob< x y)  (and (number? x) (number? y) (< x y)))
 
 (to (size x)
-  (match x
+  (be x
     (`(,h ,@t) (+ (size h) (size t)))
     (_ 1)))
 

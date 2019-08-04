@@ -25,7 +25,7 @@
   (for each! ((_ (range<- n-trials)))
     (exercise-em (for each ((value (range<- 50)))
                    (let key (rng .random-integer 16))
-                   (let op (match (rng .random-integer 10)
+                   (let op (be (rng .random-integer 10)
                              (0 'delete)
                              (1 'fetch)
                              (2 'fetch)
@@ -37,10 +37,10 @@
   (let m (map<-))     ;; The hashmap under test.
   (let a (box<- '())) ;; An a-list that should be equivalent.
   (for each! ((`(,key ,op) pairs))
-    (match op
+    (be op
       ('fetch
        (let m-val (m .get key))
-       (let a-val (match (assoc key a.^)
+       (let a-val (be (assoc key a.^)
                     (#no #no)
                     (`(,k ,v) v)))
        (surely (= m-val a-val))

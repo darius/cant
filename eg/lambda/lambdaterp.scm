@@ -11,7 +11,7 @@
 ;;  others  an AST or a value
 
 (to (parse lexp)
-  (match lexp
+  (be lexp
     ((? symbol?)
      (var-ref<- lexp))
     ((? number?)
@@ -128,7 +128,7 @@
   `((,v ,val) ,@r))
 
 (to (lookup r v k)
-  (match (assoc v r)
+  (be (assoc v r)
     (#no (debug k "Unbound var" v))
     (record (k .take (record 1)))))
 
@@ -141,7 +141,7 @@
 
 (to (next-command)
   (display "debug> ")
-  (match command-queue.^
+  (be command-queue.^
     ('()
      (newline)
      #no)

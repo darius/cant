@@ -65,7 +65,7 @@
 ;;   Seems unlikely since it got so much shorter.
 
 (to (rewrite/define+ defs proofs)
-  (match proofs
+  (be proofs
     ('() defs)
     (`({proof ,def ,steps} ,@rest-proofs)
      (if (= yes-c (rewrite/prove defs def steps))
@@ -76,7 +76,7 @@
 ;; TODO explain me
 
 (to (rewrite/prove+ defs proofs)
-  (match proofs
+  (be proofs
     ('() yes-c)
     (`({proof ,def ,steps} ,@rest-proofs)
      (let e (rewrite/prove+ (append defs def) rest-proofs))
@@ -86,7 +86,7 @@
 
 (to (rewrite/prove defs def steps)
   (let {def _ formals meaning} def)
-  (match meaning
+  (be meaning
     ({fun _}    yes-c)
     ({thm body} (rewrite/steps defs body steps)))) ;XXX should be using the formals too
 
@@ -94,7 +94,7 @@
 ;; Rewriting... TODO explain me
 
 (to (rewrite/steps defs claim steps)
-  (match steps
+  (be steps
     ('() claim)
     (`(,first ,@rest)
      (let new (rewrite/step defs claim first))
@@ -117,7 +117,7 @@
   (let {call _ args} app)
   (let result
     (equality/path claim path
-                   (match meaning
+                   (be meaning
                      ;; TODO do these constructed (= foo bar) exprs ever cause rewriting-in-reverse?
                      ;;   Or is this just a fancy way of substituting (eval-op app), etc.?
                      ({op fn}    `{call = (,app ,(eval-op fn args))})
@@ -165,9 +165,9 @@
 ;; of some 'if' in path through e1; then dig out the branch of thm's
 ;; 'if' corresponding to the next branch of the path through e1's 'if'.
 (to (snip-premises e path thm)
-  (match thm
+  (be thm
     ({if q _ _}
-     (match (find-premise e path q)
+     (be (find-premise e path q)
        (#no thm)
        (dir (snip-premises e path (get-at-direction thm dir)))))
     (_ thm)))
@@ -179,14 +179,14 @@
   (begin matching ((e e) (path path))
     (and (not path.empty?)
          (or (and ('(A E) .find? path.first)
-                  (match e
+                  (be e
                     ({if q _ _} (and (= q premise) path.first))
                     (_          #no)))
              (matching (get-at-direction e path.first) path.rest)))))
 
 ;; Rewrite focus according to concl-inst if concl-inst is an equality.
 (to (equality/equation focus concl-inst)
-  (match concl-inst
+  (be concl-inst
     (`{call = (,arg1 ,arg2)} (equality focus arg1 arg2))
     (_                       focus)))
 
@@ -202,7 +202,7 @@
 (to (sub-e vars args e)
   (let subst (map<- (zip vars args)))
   (begin subbing ((e e))
-    (match e
+    (be e
       ({constant _}    e)
       ({variable name} (subst .get name e))
       ({if q a e}      {if (subbing q)
@@ -239,7 +239,7 @@
 
 (to (def? known-defs {def name formals meaning})
   (and (undefined? name known-defs)
-       (match meaning
+       (be meaning
          ({thm body} (expr? known-defs formals body))
          ({fun body} (expr? known-defs formals body))
          ({op _}     #yes))))
@@ -255,7 +255,7 @@
     (let {step _ {call name args}} step)
     (let {def _ formals meaning} (lookup name defs))
     (and (arity? formals args)
-         (match meaning
+         (be meaning
            ({op _} (every constant? args))
            (_      (exprs? defs 'any args)))))) ;XXX so where do we check the boundness of args?
 
@@ -265,7 +265,7 @@
 ;; calls must name a defun or operator with the correct arity.
 
 (to (expr? defs vars e)
-  (match e
+  (be e
     ({constant _}    #yes)
     ({variable name} (bound? name vars))
     ({if q a e}      (exprs? defs vars `(,q ,a ,e)))
@@ -277,7 +277,7 @@
     (expr? defs vars e)))
 
 (to (call-arity? defs {call name args})
-  (match (lookup name defs)
+  (be (lookup name defs)
     ({def _ formals {op _}}  (arity? formals args))
     ({def _ formals {fun _}} (arity? formals args))
     (_                       #no))) ;TODO maybe assume this case never happens. Then just ignore the meaning field.
@@ -289,7 +289,7 @@
 ;; Name lookup.
 
 (to (lookup name defs)
-  (match defs
+  (be defs
     ('() #no)                ;N.B. original returns name instead
     (`(,def ,@rest)
      (let {def dname _ _} def)
@@ -321,18 +321,18 @@
                                    path.rest)))))
 
 (to (get-at-direction e dir)
-  (match dir
-    ('Q       (match e ({if q _ _}    q)))
-    ('A       (match e ({if _ a _}    a)))
-    ('E       (match e ({if _ _ e}    e)))
-    ((? nat?) (match e ({call _ args} (get-arg args dir))))))
+  (be dir
+    ('Q       (be e ({if q _ _}    q)))
+    ('A       (be e ({if _ a _}    a)))
+    ('E       (be e ({if _ _ e}    e)))
+    ((? nat?) (be e ({call _ args} (get-arg args dir))))))
 
 (to (set-at-direction e1 dir e2)
-  (match dir
-    ('Q       (match e1 ({if q a e}    {if e2 a e})))
-    ('A       (match e1 ({if q a e}    {if q e2 e})))
-    ('E       (match e1 ({if q a e}    {if q a e2})))
-    ((? nat?) (match e1 ({call f args} {call f (set-arg args dir e2)})))))
+  (be dir
+    ('Q       (be e1 ({if q a e}    {if e2 a e})))
+    ('A       (be e1 ({if q a e}    {if q e2 e})))
+    ('E       (be e1 ({if q a e}    {if q a e2})))
+    ((? nat?) (be e1 ({call f args} {call f (set-arg args dir e2)})))))
 
 (to (get-arg args n)
   (args (- n 1)))
@@ -353,11 +353,11 @@
                               
   
 (to (focus-is-at-direction? e dir)
-  (match dir
-    ('Q       (match e ({if _ _ _} #yes) (_ #no)))
-    ('A       (match e ({if _ _ _} #yes) (_ #no)))
-    ('E       (match e ({if _ _ _} #yes) (_ #no)))
-    ((? nat?) (match e ({call _ args} (<= 1 dir args.count))
+  (be dir
+    ('Q       (be e ({if _ _ _} #yes) (_ #no)))
+    ('A       (be e ({if _ _ _} #yes) (_ #no)))
+    ('E       (be e ({if _ _ _} #yes) (_ #no)))
+    ((? nat?) (be e ({call _ args} (<= 1 dir args.count))
                        (_ #no)))))
 
 
@@ -368,12 +368,12 @@
 (let no-c  {constant #no})
 
 (to (constant? e)
-  (match e
+  (be e
     ({constant _} #yes)
     (_            #no)))
 
 (to (variable? e)
-  (match e
+  (be e
     ({variable _} #yes)
     (_            #no)))
 
@@ -388,13 +388,13 @@
 ;; Unparse.
 
 (to (unparse-def {def name formals meaning})
-  (match meaning
+  (be meaning
     ({fun body} `(defun ,name ,formals ,(unparse-e body)))
     ({op fn}    `(defop ,name))
     ({thm body} `(dethm ,name ,formals ,(unparse-e body)))))
 
 (to (unparse-e e)
-  (match e
+  (be e
     ({constant datum} `',datum)
     ({variable name}  name)
     ({if q a e}       `(if ,(unparse-e q)
@@ -406,7 +406,7 @@
 ;; Parse.
 
 (to (parse-proof xproof)
-  (match xproof
+  (be xproof
     (`(,xdef ,xseed ,@xsteps)
      (surely (not xseed))
      {proof (parse-def xdef)
@@ -417,14 +417,14 @@
   (each parse-step xsteps))
 
 (to (parse-step xstep)
-  (match xstep
+  (be xstep
     (`(,xpath ,xe)
      ;; TODO check path well-formed
      ;; TODO check that xe is a call? I think?
      {step xpath (parse-e xe)})))
 
 (to (parse-def xdef)
-  (match xdef
+  (be xdef
     (`(defun ,(? symbol? name) ,(? formals? formals) ,body)
      {def name formals {fun (parse-e body)}})
     (`(dethm ,(? symbol? name) ,(? formals? formals) ,body)
@@ -438,7 +438,7 @@
        (set? x)))
 
 (to (parse-e xe)
-  (match xe
+  (be xe
     ((? number?)     {constant xe})
     ((? claim?)      {constant xe})
     (''nil           no-c)

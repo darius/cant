@@ -8,7 +8,7 @@
   clear-screen cursor-show cursor-hide)
 
 (to (main args)
-  (let n-steps (match args
+  (let n-steps (be args
                  (`(,_) 20)
                  (`(,_ ,n-str) (number<-string n-str))
                  (`(,prog ,@_) (error ("Usage: ~d [#steps]" .format prog)))))
@@ -26,7 +26,7 @@
 (to (update grid)
   (let active (bag<- (gather neighbors grid.keys)))
   ('.range (for yeahs ((`(,pos ,n-live) active.items))
-             (match n-live
+             (be n-live
                (3 pos)
                (2 (and (grid .maps? pos) pos))
                (_ #no)))))

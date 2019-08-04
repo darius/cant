@@ -99,7 +99,7 @@
 
 (to (terp e r k)
   (trace `(terp ,e ,r ,k))
-  (match e
+  (be e
     ('$                             (prim-$ k))
     ((? symbol?)                    (return k (lookup r e)))
     (`(: ,@rest)                    (return k (make-definition rest r)))
@@ -118,7 +118,7 @@
   (if (null? e) k `(message ,e ,r ,k)))
 
 (to (return k value)
-  (match k
+  (be k
     (`(nest ,@_)
      (send value k))
     (`(message ,@_) ;XXX I don't know what I'm doing. This clause wasn't in the Scheme version.
@@ -134,7 +134,7 @@
 (to (send object kk)
   (let k (to-message kk))
   (trace `(send ,object ,k))
-  (match object
+  (be object
     ((? number?) (send-number object k))
     ((? claim?)  (send-claim object k))
     (`(,tag ,e ,r)
@@ -143,23 +143,23 @@
     (_ (error "Unknown object type" object))))
 
 (to (to-message k)
-  (match k
+  (be k
     (`(nest ,@rest) `(message ,@rest))
     (`(message ,@_) k)                   ;I guess?
     (_ (error "Unexpected cont type" k))))
 
 (to (send-number self k)
-  (match k
+  (be k
     (`(message ,e2 ,r2 ,k2)
-     (match e2
+     (be e2
        (`(+ ,e3 ,@rest)
         (terp e3 r2
               `(number-+ ,self ,(nest rest r2 k2))))))))
 
 (to (send-claim self k)
-  (match k
+  (be k
     (`(message ,e2 ,r2 ,k2)
-     (match e2
+     (be e2
        (`(>> ,then ,@rest) (terp (if self then rest) r2 k2))))))
 
   
@@ -178,14 +178,14 @@
 
 (to (extract-message k take-message)
   (begin walking ((k k) (replace identity))
-    (match k
+    (be k
       (`(message ,e2 ,r2 ,k2)
        (take-message replace e2 r2 k2))
       (_ (walking k.last (on (k-prime)
                            (chain (but-last k) `(,k-prime))))))))
 
 (to (but-last xs)
-  (match xs
+  (be xs
     (`(,_) '())
     (`(,x ,@rest) `(,x ,@(but-last rest)))))
 

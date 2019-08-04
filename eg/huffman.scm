@@ -23,7 +23,7 @@
 
 (to (walk tree visit)
   (begin walking ((path '()) (tree tree))
-    (match tree
+    (be tree
       ({leaf symbol}
        (visit symbol (reverse path)))
       ({branch on-0 on-1}
@@ -47,7 +47,7 @@
     (if bits.empty?
         '()
         (do (let {branch @subtrees} tree)
-            (match (subtrees bits.first)
+            (be (subtrees bits.first)
               ({leaf symbol} `(,symbol ,@(stepping root bits.rest)))
               (subtree       (stepping subtree bits.rest)))))))
 
