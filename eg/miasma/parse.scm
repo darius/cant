@@ -137,7 +137,7 @@
 
 (to ((operand-of tag) x)                ;XXX duplicate code
   (be x
-    (`(,(? symbol?) ,(? (-> (= it tag))) ,size)
+    (`(,(? symbol?) ,(= tag) ,size)
      ('(1 2 4) .find? size))
     (_ #no)))
 
