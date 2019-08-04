@@ -33,14 +33,12 @@
   (symbol<- ("-" .join `(,stem ,@specs)))) ;TODO join with some other separator? "/"?
 
 (to (suffixes x)
-  (case ((list? x)
-         (gather suffixes x))
-        ((symbol? x)
-         (if ('(Sreg cr dr =16 =32 + /r /0 /1 /2 /3 /4 /5 /6 /7) .find? x)
-             '()
-             `(,x)))
-        (else
-         '())))
+  (match x
+    ((? symbol?) (if ('(Sreg cr dr =16 =32 + /r /0 /1 /2 /3 /4 /5 /6 /7) .find? x)
+                     '()
+                     `(,x)))
+    ((? list?)   (gather suffixes x))
+    (_           '())))
 
 ;; A map of all specs by fully-qualified mnemonic.
 (let the-specs (map<-))
