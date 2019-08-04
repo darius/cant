@@ -18,7 +18,7 @@
       (be text.first
         (#\newline `({break} ,@(parse-tokens text.rest)))
         (#\space   `({space} ,@(parse-tokens text.rest)))
-        ((? '.whitespace? ch)
+        ((? _.whitespace? ch)
          (error "I don't know how to fill whitespace like" ch))
         (_ (let word (flexarray<- text.first))
            (begin eating ((text text.rest))

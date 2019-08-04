@@ -31,11 +31,11 @@
                                nodes.first)
                            ;; TODO how to write this elegantly?
                            ;; Can't be this because it requires comparability of constants/none:
-                           ;; ((<=> nodes.keys (each '.constant-value nodes))
+                           ;; ((<=> nodes.keys (each _.constant-value nodes))
                            ;; This is ok but wordier:
                            ;; ((for every ((`(,i ,node) nodes.items)) (= i node.constant-value))
                            ;; So for now we end up with:
-                           (if (= (as-list nodes.keys) (each '.constant-value nodes))
+                           (if (= (as-list nodes.keys) (each _.constant-value nodes))
                                choice)
                            (else
                                (memo-choice choice nodes))))))
@@ -48,7 +48,7 @@
 (let memo-choice
   (memoize
    (on (node branches)
-     (let top (min-by '.rank `(,node ,@branches)))
+     (let top (min-by _.rank `(,node ,@branches)))
      (let rank top.rank)
      (make-node rank
                 (for each ((c top.branches.keys))

@@ -93,7 +93,7 @@ Level ~w ~d Move ~w")
        (playing level)))))
 
 (to (parse floor-plan)
-  (do (let line-lengths (each '.count floor-plan.split-lines))
+  (do (let line-lengths (each _.count floor-plan.split-lines))
       (surely (= 1 line-lengths.range.count))) ;XXX require
   (array<-list floor-plan))
 

@@ -131,8 +131,7 @@
 
     ({.visit filename}
      buffer.clear!
-     (let contents (with-input-file '.read-all filename))
-     (text .insert 0 contents))))
+     (text .insert 0 (with-input-file _.read-all filename)))))
 
 (export
   buffer<-)

@@ -34,7 +34,7 @@
 
     ;; Return all complete parses of a list of words.
     ({.parse words}
-     (each '.tree (those '.complete? (grammar .parse-prefixes words))))
+     (each _.tree (those _.complete? (grammar .parse-prefixes words))))
 
     ;; Return all parses of any prefix of words (working bottom-up).
     ({.parse-prefixes words}

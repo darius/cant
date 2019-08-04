@@ -83,7 +83,7 @@
 
 ;; TODO maybe call this `count` -- too overloaded?
 (to (tally f xs)
-  (sum (each (compose '.count f) xs)))
+  (sum (each (compose _.count f) xs)))
 ;; TODO hm, I was thinking of f as returning a claim, but as written,
 ;; it could be any function that returns a countable thing, such as a
 ;; collection. What's a good name for this from that point of view?

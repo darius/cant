@@ -278,7 +278,7 @@
         (for each! ((pair pairs))
           (surely (and (list? pair) (= pair.count 2))))
         `(do
-           (to (,f ,@(each '.first pairs))
+           (to (,f ,@(each _.first pairs))
              ,@body)
            (f ,@(for each ((pair pairs)) (pair 1)))))))
     ('case
@@ -297,7 +297,7 @@
        (`(,f ,pairs ,@body)
         (for each! ((pair pairs))
           (surely (and (list? pair) (= pair.count 2))))
-        `(,f (on ,(each '.first pairs) ,@body)
+        `(,f (on ,(each _.first pairs) ,@body)
              ,@(for each ((pair pairs)) (pair 1))))))
     ('or
      (be operands

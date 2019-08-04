@@ -180,7 +180,7 @@
            )))
 
 (let key-map-prefixes
-  ('.range (for gather ((full-key key-map.keys))
+  (_.range (for gather ((full-key key-map.keys))
              (for each ((i (1 .to< full-key.count)))
                (full-key .slice 0 i)))))
 

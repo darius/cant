@@ -2,7 +2,7 @@
 ;; Represent a CSV file as an object which responds to the column names as getters.
 
 (to (csv<-file filename)
-  (csv<-lines (with-input-file '.read-lines filename)))
+  (csv<-lines (with-input-file _.read-lines filename)))
 
 (to (csv<-lines lines)
   (table<- (parse-csv-line lines.first)
@@ -12,7 +12,7 @@
   (line .split ","))                    ;TODO quoting
 
 (to (table<- header rows)
-  (let columns ('.inverse (for each ((column header))
+  (let columns (_.inverse (for each ((column header))
                             (symbol<- (chain "." column)))))
   (to (column? x) (columns .maps? x))
   (to (row<- entries)

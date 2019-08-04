@@ -94,7 +94,7 @@ insn:    {'1'+} {'#' '#'? '#'? '#'? '#'?} :make_insn.
 
 (to (transpose-padded lists padding)
   (begin zipping ((lists lists))
-    (if (every '.empty? lists)
+    (if (every _.empty? lists)
         '()
         `(,(for each ((list lists))
              (list .get 0 padding))

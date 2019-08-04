@@ -125,7 +125,7 @@
        (not (for every ((succ swap-players.gen-successors))
               (succ.squares .find? my-king))))
      (and (in-check?)
-          (every '.checking? board.gen-successors)))
+          (every _.checking? board.gen-successors)))
 
     ;; Is the opponent in check?
     ({.checking?}

@@ -6,7 +6,7 @@
     (when (<= r n-rows)
       (rows .push! (each string<-number (i .span r)))
       (counting (+ r 1) (+ i r))))
-  (let widths (each '.count rows.last))
+  (let widths (each _.count rows.last))
   (for each! ((row rows))
     (format "~d\n" (" " .join (for each ((`(,col ,string) row.items))
                                 (string .right-justify (widths col)))))))

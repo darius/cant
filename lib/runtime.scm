@@ -42,7 +42,7 @@
    (make missing)
    (not= (map .get key missing) missing))
   ({.empty?} (= map.count 0))  ; or map.items.empty? - is that better?
-  ({.keys}   (each '.first map.items))
+  ({.keys}   (each _.first map.items))
   ({.values} (each (on (`(,_ ,v)) v) map.items))
   ({.find? value}
    (map.values .find? value))
@@ -1068,10 +1068,10 @@
 
 ;; TODO: name it (zip @rows) instead, like Python?
 (to (transpose rows)
-  (if (every '.empty? rows)   ; and make it (some '.empty? rows)?
+  (if (every _.empty? rows)   ; and make it (some _.empty? rows)?
       '()
-      `(,(each '.first rows)
-        ,@(transpose (each '.rest rows)))))
+      `(,(each _.first rows)
+        ,@(transpose (each _.rest rows)))))
 
 (to (gather f xs)
   (for foldr ((x xs) (gathered '()))
@@ -1309,7 +1309,7 @@
         (#\~
          (sink .display "~")
          (scanning sink s.rest args))
-        ((? '.digit? ch)
+        ((? _.digit? ch)
          (let digit (- ch.code 48))
          (parsing sink s.rest pad sign      ;TODO testme with a multidigit width
                   (+ (if width (* 10 width) 0)

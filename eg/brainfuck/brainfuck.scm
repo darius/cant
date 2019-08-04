@@ -101,7 +101,7 @@
 ;; Smoke test
 
 (to (main _)
-  (let text (with-input-file '.read-all "eg/brainfuck/hello.bf"))
+  (let text (with-input-file _.read-all "eg/brainfuck/hello.bf"))
   (bf-interpret text)
   (let code (bf-compile text))
 ;;  (print code)

@@ -6,7 +6,7 @@
 
 ;; Return the strings matching r whose length is in Ns.
 (to (regex-generate r Ns)
-  (sort-by (compound-key<- '.count identity)
+  (sort-by (compound-key<- _.count identity)
            ((r Ns) .keys)))
            
 
@@ -39,13 +39,13 @@
   (hm (if Ns.empty? none)
       (else
        ;; TODO still pretty ugly
-       (let r-matches ('.keys (r ('.range (0 .to (call max Ns.keys))))))
-       (let r-lengths ('.keys ('.range (each '.count r-matches))))
-       (let Ns-s ('.range (for gather ((n Ns.keys))
+       (let r-matches (_.keys (r (_.range (0 .to (call max Ns.keys))))))
+       (let r-lengths (_.keys (_.range (each _.count r-matches))))
+       (let Ns-s (_.range (for gather ((n Ns.keys))
                             (for yeahs ((m r-lengths))
                               (and (<= m n) (- n m))))))
-       (let s-matches ('.keys (s Ns-s)))
-       ('.range (for gather ((m1 r-matches))
+       (let s-matches (_.keys (s Ns-s)))
+       (_.range (for gather ((m1 r-matches))
                   (for yeahs ((m2 s-matches))
                     (and (Ns .maps? (+ m1.count m2.count))
                          (chain m1 m2))))))))

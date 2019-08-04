@@ -48,7 +48,7 @@
                      empty-pq pq-empty? pq-min pq-insert pq-remove-min))
   (let history-2
     (grow-and-shrink numbers 
-                     '() null? '.first insert-sorted '.rest))
+                     '() null? _.first insert-sorted _.rest))
   (if (= history-1 history-2)
       history-1
       (error "Test failed" `(,history-1 ,history-2))))

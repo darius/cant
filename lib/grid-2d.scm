@@ -101,12 +101,12 @@
 ;; (* * *)
 ;; (a * *)
 ;; #no
-;; sqm> (g .show (on (row) (format "~d\n" ("" .join (each '.name row)))))
+;; sqm> (g .show (on (row) (format "~d\n" ("" .join (each _.name row)))))
 ;; ***
 ;; a**
 ;; #no
 ;; sqm> (g .set! '(3 1) 'b)
-;; sqm> (g .show (on (row) (format "~d\n" ("" .join (each '.name row)))))
+;; sqm> (g .show (on (row) (format "~d\n" ("" .join (each _.name row)))))
 ;; *b*
 ;; a**
 ;; #no

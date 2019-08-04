@@ -7,11 +7,11 @@
 (to (format-table rows @(optional opt-spacer opt-justify))
   (let spacer  (or opt-spacer  " "))
   (let justify (or opt-justify '.left-justify))
-  (surely (hide (let lengths (each '.count rows))
+  (surely (hide (let lengths (each _.count rows))
                 (<= lengths.range.count 1))
           "Rows must be the same length" rows)
   (let widths (for each ((column (transpose rows)))
-                (call max (each '.count column))))
+                (call max (each _.count column))))
   (for each ((row rows))
     (spacer .join (each justify row widths))))
 
@@ -19,7 +19,7 @@
 ;; column order, trying to fit them in the given width.
 (to (tabulate strings @(optional opt-width))
   (let width (or opt-width 79))
-  (let max-width (+ 2 (call max `(0 ,@(each '.count strings)))))
+  (let max-width (+ 2 (call max `(0 ,@(each _.count strings)))))
   (let n-cols (max 1 (min strings.count (width .quotient max-width))))
   (let n-rows (max 1 ((+ strings.count n-cols -1) .quotient n-cols)))
   (let padded (chain strings

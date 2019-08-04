@@ -25,7 +25,7 @@
 
 (to (update grid)
   (let active (bag<- (gather neighbors grid.keys)))
-  ('.range (for yeahs ((`(,pos ,n-live) active.items))
+  (_.range (for yeahs ((`(,pos ,n-live) active.items))
              (be n-live
                (3 pos)
                (2 (and (grid .maps? pos) pos))
@@ -51,7 +51,7 @@
     ,(call max numbers)))
 
 (to (paint lines)
-  ('.range (for where ((ch (map<-lines lines)))
+  (_.range (for where ((ch (map<-lines lines)))
              (not ch.whitespace?))))
 
 (to (map<-lines lines)

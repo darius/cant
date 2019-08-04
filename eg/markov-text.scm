@@ -11,7 +11,7 @@
 (to (main argv)
   (let model (map<-))
   (for each! ((filename argv.rest))
-    (train model (tokenize (with-input-file '.read-all filename))))
+    (train model (tokenize (with-input-file _.read-all filename))))
   (unless model.empty?
     (let text (spew (random-rng<-) model start))
     (display (fill (" " .join text) ;TODO a lazy text-wrap

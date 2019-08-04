@@ -53,7 +53,7 @@
                     empty))))
 
 (let whitespace
-  (at-least-1 (either (skip-1 '.whitespace?)
+  (at-least-1 (either (skip-1 _.whitespace?)
                       (then (lit-1 #\#) eat-line))))
 
 (let __ (maybe whitespace))
@@ -144,7 +144,7 @@
   (let builder default-builder)         ;TODO parameterize
   (on (subs)
     (let full-subs (union-map<- subs default-subs))
-    (let rules (for map-by ((name (each '.first skeletons)))
+    (let rules (for map-by ((name (each _.first skeletons)))
                  (delay (: (rules name)))))
     (for each! ((`(,name (,_ ,f)) skeletons)) ;XXX better name than f
       (let peg (f builder rules full-subs))
@@ -154,19 +154,19 @@
 (let default-subs
   (map<- `((skip ,skip-any-1)
            (anyone ,any-1)            ;XXX all these should probably skip instead of capture
-           (letter ,(take-1 '.letter?))
-           (digit ,(take-1 '.digit?))
+           (letter ,(take-1 _.letter?))
+           (digit ,(take-1 _.digit?))
            (end ,end)
            (hug ,hug)
            (join ,(feed chain))
            (drop ,drop)
-           (whitespace ,(skip-1 '.whitespace?))
+           (whitespace ,(skip-1 _.whitespace?))
            (nat ,(seclude
-                  (then (capture (at-least-1 (skip-1 '.digit?))) ;; TODO no leading 0s
+                  (then (capture (at-least-1 (skip-1 _.digit?))) ;; TODO no leading 0s
                         (feed number<-string))))
            (int ,(seclude
                   (then (capture (then (maybe (lit-1 #\-))
-                                       (at-least-1 (skip-1 '.digit?))));; TODO no leading 0s
+                                       (at-least-1 (skip-1 _.digit?))));; TODO no leading 0s
                         (feed number<-string))))
            ;; TODO: more
            )))
@@ -183,7 +183,7 @@
   (unless skeletons
     outcome.display (newline)
     (error "Ungrammatical grammar"))
-  (let lhses (each '.first skeletons))
+  (let lhses (each _.first skeletons))
   (let all-refs (union-over (for each ((`(,_ (,refs ,_)) skeletons))
                               refs)))
   (let undefined (all-refs .difference (set<-list lhses)))

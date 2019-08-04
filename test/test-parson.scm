@@ -32,13 +32,13 @@
    (let subexpr (delay (: sexpr)))
    (let comment (then (lit-1 #\;) (many (then (invert (lit-1 #\newline))
                                               skip-any-1))))
-   (let __ (many (either (skip-1 '.whitespace?)
+   (let __ (many (either (skip-1 _.whitespace?)
                          comment)))
    (seclude
     (then __
           (either (then (lit-1 #\() __ (many subexpr) (lit-1 #\)) __
                         hug)
-                  (then (take-1 '.letter?) (many (take-1 '.alphanumeric?)) __
+                  (then (take-1 _.letter?) (many (take-1 _.alphanumeric?)) __
                         (feed (compose symbol<- chain))))))))
 
 (try sexpr "")

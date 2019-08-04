@@ -54,7 +54,7 @@
                          (cv .jot #\space))
              ('del       (cv .jot #\space)
                          (cv .shift-by 1))
-             ((and (? char?) (? '.uppercase?))
+             ((and (? char?) (? _.uppercase?))
                          (cv .shift-to-code 1 key))
              (_          (when (or (= key #\space) (alphabet .find? key))
                            (cv .jot key)
@@ -63,7 +63,7 @@
 
 (to (cryptoview<- cryptogram)
 
-  (let code (those '.letter? cryptogram.uppercase))
+  (let code (those _.letter? cryptogram.uppercase))
   (surely (not code.empty?))            ;XXX 'require' or something
   (let decoder (for map-by ((_ code.range.keys))
                  #\space))
@@ -71,8 +71,8 @@
 
   (let lines (each clean cryptogram.uppercase.split-lines))
   (let line-starts
-    ('.range (running-sum (for each ((line lines))
-                            (tally '.letter? line)))))
+    (_.range (running-sum (for each ((line lines))
+                            (tally _.letter? line)))))
 
   (to (shift-by offset)
     (point .^= ((+ point.^ offset) .modulo code.count)))
@@ -109,7 +109,7 @@
     ({.view show-cursor?}
      (let counts (bag<- decoder.values))
      (counts .delete! #\space)
-     (let clashes ('.range (for where ((n counts))
+     (let clashes (_.range (for where ((n counts))
                              (< 1 n))))
      (let letters-left (for each ((ch alphabet))
                          (if (counts .maps? ch) #\space ch)))

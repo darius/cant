@@ -88,7 +88,7 @@
               (successor successor)))))))
 
 (to (show-with-moves grid)
-  (each (highlight-if '.digit?) (show grid (1 .to 9))))
+  (each (highlight-if _.digit?) (show grid (1 .to 9))))
 
 (to ((highlight-if special?) x)
   (if (special? x) (green x) x))

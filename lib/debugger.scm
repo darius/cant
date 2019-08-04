@@ -123,6 +123,6 @@
        (continue "Huh? Enter 'help' for help.\n")))))
 
 (to (show-env env)
-  (print (each '.first env)))
+  (print (each _.first env)))
 
 (export inspect inspect-continuation)

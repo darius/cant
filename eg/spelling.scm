@@ -43,7 +43,7 @@
   string.lowercase.split)
 
 (let WORDS
-  (bag<- (words<-string (with-input-file '.read-all "eg/spelling.train.text"))))
+  (bag<- (words<-string (with-input-file _.read-all "eg/spelling.train.text"))))
 
 (to (main _)
   (each! (compose print correct) (words<-string "a lowsy spelur zzz")))
