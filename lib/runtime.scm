@@ -1323,7 +1323,7 @@
 
     (to (maybe-pad sink pad sign width message)
       (hm (when width
-            (let string (with-output-string (-> (call it message))))
+            (let string (with-output-string message))
             (let w (if sign (* sign width) width))
             (sink .display (string .justify w pad)))
           (when sign

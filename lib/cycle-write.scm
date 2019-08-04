@@ -28,7 +28,7 @@
   (let counter (box<- 0))
   (make cycle-sink
     ({.display atom}
-     (buffer .push! (-> (it .display atom))))
+     (buffer .push! (_ .display atom)))
     ({.print thing}
      (if (or (symbol? thing) (self-evaluating? thing))  ;; TODO skip other atom types
          (thing .selfie cycle-sink)
