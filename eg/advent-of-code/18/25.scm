@@ -46,11 +46,12 @@
     ))
 
 (to (unordered-pairs<- ps)
-  (case (ps.empty? '())
-        (else (let p0 ps.first)
-              (chain (for each ((p1 ps.rest))
-                       `(,p0 ,p1))
-                     (unordered-pairs<- ps.rest)))))
+  (if ps.empty?
+      '()
+      (do (let p0 ps.first)
+          (chain (for each ((p1 ps.rest))
+                   `(,p0 ,p1))
+                 (unordered-pairs<- ps.rest)))))
 
 
 (display "\nPart 1\n")

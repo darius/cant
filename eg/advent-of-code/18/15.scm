@@ -20,8 +20,9 @@
   (let n-rounds
     (begin battling ((t 0))
       (show t field)
-      (case (field.do-round! (battling (+ t 1)))
-            (else t))))
+      (if field.do-round!
+          (battling (+ t 1))
+          t)))
   (let hp field.total-hit-points)
   (format "Done after ~w rounds with ~w hit points left.\n"
           n-rounds hp)
@@ -69,14 +70,14 @@
   ;; For each unit, do a turn. Return yes if the round completed.
   (to (do-round)
     (begin doing ((items (sort units.items)))
-      (or items.empty?
-          (do (let `(,p ,unit) items.first)
-              ;; This unit may have been killed in a preceding unit's turn,
-              ;; but it can't have moved yet.
-              (if (units .maps? p)
-                  (and (do-turn p)
-                       (doing items.rest))
-                  (doing items.rest))))))
+      (hm (or items.empty?)
+          (do (let `(,p ,unit) items.first))
+          ;; This unit may have been killed in a preceding unit's turn,
+          ;; but it can't have moved yet.
+          (if (units .maps? p)
+              (and (do-turn p)
+                   (doing items.rest)))
+          (else (doing items.rest)))))
 
   ;; For the unit at p, do a turn. Return yes if it found a target.
   (to (do-turn p)
@@ -120,11 +121,11 @@
                       (#\E elf-attack-power))))                      
 ;    (format "attack: from ~d@~d to ~d@~d leaving ~w hp\n"
 ;            (area p) (coords<- p) (area target) (coords<- target) hp-left)
-    (case ((<= hp-left 0)
-           (units .delete! target)
-           (area .set! target #\.))
-          (else
-           (units .set! target hp-left))))
+    (hm (when (<= hp-left 0)
+          (units .delete! target)
+          (area .set! target #\.))
+        (else
+          (units .set! target hp-left))))
 
   (to (move! from-p to-p)
     (let species (area from-p))
@@ -213,14 +214,15 @@
   (let n-elves (field.census .get #\E))
   (begin battling ((t 0))
     (show t field)
-    (case ((not= n-elves (field.census .get #\E))
-           (format "Elf casualties, aborting the battle\n\n")
-           #no)
-          (field.do-round! (battling (+ t 1)))
-          (else
-           (let hp field.total-hit-points)
-           (format "Done after ~w rounds with ~w hit points left.\n"
-                   t hp)
-           (* t hp)))))
+    (hm (unless (= n-elves (field.census .get #\E))
+          (format "Elf casualties, aborting the battle\n\n")
+          #no)
+        (when field.do-round!
+          (battling (+ t 1)))
+        (else
+          (let hp field.total-hit-points)
+          (format "Done after ~w rounds with ~w hit points left.\n"
+                  t hp)
+          (* t hp)))))
 
 (format "~w\n" (part-2))

@@ -123,13 +123,13 @@
        (match (peek inbox-unchecked.^)
          ({empty}
           (if deadline
-              (case ((<= deadline (nano-now))
+              (hm (when (<= deadline (nano-now))
 ;                     (format "time ~w: deadline ~w\n" (msecs (nano-now)) (msecs deadline))
-                     (waiting-timeouts .delete! process) ;TODO might not be needed?
-                     (sev after-e r k))
-                    (else
-                     (waiting-timeouts .set! process deadline)
-                     {blocked deadline after-e clauses r k}))
+                    (waiting-timeouts .delete! process) ;TODO might not be needed?
+                    (sev after-e r k))
+                  (else
+                    (waiting-timeouts .set! process deadline)
+                    {blocked deadline after-e clauses r k}))
               {blocked deadline after-e clauses r k}))
          ({nonempty msg rest}
           (inbox-unchecked .^= rest)

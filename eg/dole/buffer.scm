@@ -34,17 +34,18 @@
 
   (to (update-origin)
     (let rendering (render text origin.^ point.^))
-    (case (rendering.point-visible? rendering)
-          (else
-           (to (has-point? o)
-             ((render text o point.^) .point-centered?))
-           (let screen-size (* rows cols))
-           (origin .^= (search (text .clip (- point.^ screen-size))
-                               point.^
-                               has-point?))
-           (when (= origin.^ point.^)
-             (origin .^= 0)) ; Couldn't center it.
-           (render text origin.^ point.^))))
+    (hm (if rendering.point-visible?
+            rendering)
+        (else
+          (to (has-point? o)
+            ((render text o point.^) .point-centered?))
+          (let screen-size (* rows cols))
+          (origin .^= (search (text .clip (- point.^ screen-size))
+                              point.^
+                              has-point?))
+          (when (= origin.^ point.^)
+            (origin .^= 0)) ; Couldn't center it.
+          (render text origin.^ point.^))))
 
   (to (insert str)
     (text .insert point.^ str)

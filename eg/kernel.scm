@@ -74,10 +74,10 @@
                  p r))))
 
 (to (match-all values pats r)
-  (case (values.empty? pats.empty?)
-        (pats.empty? #no)
-        (else (and (eval-match values.first pats.first r)
-                   (match-all  values.rest  pats.rest  r)))))
+  (hm (if values.empty? pats.empty?)
+      (if pats.empty? #no)
+      (else (and (eval-match values.first pats.first r)
+                 (match-all  values.rest  pats.rest  r)))))
 
 
 ;; Environments

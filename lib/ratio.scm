@@ -23,9 +23,9 @@
    (reduce n d)))
     
 (to (reduce n d)
-  (case ((= d 0) (error "Divide by 0"))
-        ((< d 0) (lowest-terms (- n) (- d)))
-        (else    (lowest-terms n d))))
+  (hm (if (= d 0) (error "Divide by 0"))
+      (if (< d 0) (lowest-terms (- n) (- d)))
+      (else       (lowest-terms n d))))
 
 (to (lowest-terms n d)
   (let g (gcd n d))

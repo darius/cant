@@ -197,13 +197,13 @@
   (let keys (flexarray<- (get-key-unmapped)))
   (begin matching ()
     (let s (string<-list keys))
-    (or (key-map .get s)
-        (case ((key-map-prefixes .maps? s)
-               (keys .push! (get-key-unmapped))
-               (matching))
-              (else
-               (key-stack .extend! (reverse keys)) ;TODO use a FIFO instead of this reversed LIFO
-               key-stack.pop!)))))
+    (hm (or (key-map .get s))
+        (when (key-map-prefixes .maps? s)
+          (keys .push! (get-key-unmapped))
+          (matching))
+        (else
+          (key-stack .extend! (reverse keys)) ;TODO use a FIFO instead of this reversed LIFO
+          key-stack.pop!))))
 
 (export
   raw-mode cbreak-mode

@@ -371,16 +371,13 @@
     ('hm     (mlambda                   ;TODO yet another experiment to toss or keep, replacing 'case'
               ((__)
                '(error "Fell off the end of 'hm'")) ;XXX hygiene
-              ((__ ('else . es))
-               `(do ,@es))
-              ((__ ('do . es) . clauses)
-               `(do ,@es (hm ,@clauses)))
-              ((__ ('if e e1) . clauses)
-               `(if ,e ,e1 (hm ,@clauses)))
-              ((__ ('when e . es) . clauses)
-               `(if ,e (do ,@es) (hm ,@clauses)))
-              ((__ ('unless e . es) . clauses)
-               `(if ,e (hm ,@clauses) (do ,@es)))))
+              ((__ ('else . es))          `(do ,@es))
+              ((__ ('do . es) . clauses)  `(do ,@es (hm ,@clauses)))
+              ((__ ('and . es) . clauses) `(and ,@es (hm ,@clauses)))
+              ((__ ('or . es) . clauses)  `(or ,@es (hm ,@clauses)))
+              ((__ ('if e e1) . clauses)  `(if ,e ,e1 (hm ,@clauses)))
+              ((__ ('when e . es) . clauses)   `(if ,e (do ,@es) (hm ,@clauses)))
+              ((__ ('unless e . es) . clauses) `(if ,e (hm ,@clauses) (do ,@es)))))
     ('and    (mlambda
               ((__) #t)
               ((__ e) e)

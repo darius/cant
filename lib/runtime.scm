@@ -111,24 +111,24 @@
          (counting list.rest (+ count 1)))))
   ({.slice i}
    (surely (<= 0 i))
-   (case ((= i 0) list)
-         (list.empty? list)
-         (else (list.rest .slice (- i 1)))))
+   (hm (if (= i 0) list)
+       (if list.empty? list)
+       (else (list.rest .slice (- i 1)))))
   ({.slice i bound}     ;XXX result is a link-list; be more generic?
    (surely (<= 0 i))
-   (case (list.empty? list)
-         ((<= bound i) '())
-         ((= i 0) (link list.first (list.rest .slice 0 (- bound 1))))
-         (else (list.rest .slice (- i 1) (- bound 1)))))
+   (hm (if list.empty? list)
+       (if (<= bound i) '())
+       (if (= i 0) (link list.first (list.rest .slice 0 (- bound 1))))
+       (else (list.rest .slice (- i 1) (- bound 1)))))
   ({.chain seq}                         ;TODO self if seq is ()
    (if list.empty?
        seq
        (link list.first (list.rest .chain seq))))
   ({.compare xs}
    ;; N.B. mutable arrays compare by this method, so it's really a comparison as of right now
-   (case (list.empty? (if xs.empty? 0 -1))
-         (xs.empty? 1)
-         (else (match (list.first .compare xs.first)
+   (hm (if list.empty? (if xs.empty? 0 -1))
+       (if xs.empty? 1)
+       (else (match (list.first .compare xs.first)
                  (0 (list.rest .compare xs.rest))
                  (d d)))))
   ;; A sequence is a kind of collection. Start implementing that:
@@ -141,9 +141,9 @@
   ({.get key default}
    (if (count? key)
        (begin walking ((k key) (xs list))
-         (case (xs.empty? default)
-               ((= k 0) xs.first)
-               (else (walking (- k 1) xs.rest))))
+         (hm (if xs.empty? default)
+             (if (= k 0) xs.first)
+             (else (walking (- k 1) xs.rest))))
        default))
   ({.maps? key}
    (and (not list.empty?)
@@ -152,9 +152,9 @@
                  (list.rest .maps? (- key 1))))))
   ({.find value default}    ;; XXX update the other collections to have this too
    (begin looking ((i 0) (values list))
-      (case (values.empty? default)
-            ((= value values.first) i)
-            (else (looking (+ i 1) values.rest)))))   
+      (hm (if values.empty? default)
+          (if (= value values.first) i)
+          (else (looking (+ i 1) values.rest)))))
   ({.find value}
    (match (list .find value #no)
      (#no (error "Missing value" value))
@@ -192,9 +192,9 @@
   ({.selfie sink} (sink .display (if me "#yes" "#no")))
   ({.compare a}
    (and (claim? a)
-        (case ((= me a) 0)
-              (me       1)
-              (else    -1))))
+        (hm (if (= me a) 0)
+            (if me       1)
+            (else       -1))))
   )
 
 (make-trait procedure-primitive me
@@ -272,14 +272,14 @@
       (sink .display "(")
       (sink .print me.first)
       (begin printing ((r me.rest))
-        (case ((link? r)
-               (sink .display " ")
-               (sink .print r.first)
-               (printing r.rest))
-              ((null? r) 'ok)
-              (else
-               (sink .display " . ")       ;XXX we're not supporting this in read, iirc
-               (sink .print r))))
+        (hm (when (link? r)
+              (sink .display " ")
+              (sink .print r.first)
+              (printing r.rest))
+            (when (null? r) 'ok)
+            (else
+              (sink .display " . ")       ;XXX we're not supporting this in read, iirc
+              (sink .print r))))
       (sink .display ")"))))
   (message
    (list-trait me message))) ;XXX use trait syntax instead
@@ -309,9 +309,9 @@
    (for each ((i (range<- me.count)))
      `(,i ,(me i))))
   ({.get key default}
-   (case ((not (count? key)) default)
-         ((<= me.count key) default)
-         (else (me key))))
+   (hm (unless (count? key) default)
+       (if (<= me.count key) default)
+       (else (me key))))
   ({.swap! i j}
    (let t (me i))
    (me .set! i (me j))
@@ -402,11 +402,11 @@
          '()
          (do (let limit s.count)
              (begin scanning ((i 1))
-               (case ((= i limit) `(,s))
-                     (((s i) .whitespace?)
-                      (link (s .slice 0 i)
-                            (splitting ((s .slice (+ i 1)) .trim-left))))
-                     (else (scanning (+ i 1)))))))))
+               (hm (if (= i limit) `(,s))
+                   (if ((s i) .whitespace?)
+                       (link (s .slice 0 i)
+                             (splitting ((s .slice (+ i 1)) .trim-left))))
+                   (else (scanning (+ i 1)))))))))
   ({.split delimiter}
    ;; TODO deduplicate code
    ;; TODO define a strstr and use that
@@ -417,11 +417,11 @@
              '("")
              (do (let limit s.count)
                  (begin scanning ((i 0))
-                   (case ((= i limit) `(,s))
-                         ((= delimiter (s .slice i (+ i delimiter.count)))
-                          (link (s .slice 0 i)
-                                (splitting (s .slice (+ i delimiter.count)))))
-                         (else (scanning (+ i 1))))))))))
+                   (hm (if (= i limit) `(,s))
+                       (if (= delimiter (s .slice i (+ i delimiter.count)))
+                           (link (s .slice 0 i)
+                                 (splitting (s .slice (+ i delimiter.count)))))
+                       (else (scanning (+ i 1))))))))))
   ({.lowercase} (string<-list (for each ((c me)) c.lowercase)))
   ({.uppercase} (string<-list (for each ((c me)) c.uppercase)))
   ({.capitalize} (chain ((me .slice 0 1) .uppercase) (me .slice 1)))
@@ -429,19 +429,19 @@
    (= (me .slice 0 s.count) s))   ;TODO more efficient
   ({.replace pattern replacement} ;TODO more efficient
    ;; TODO unify the cases?
-   (case (pattern.empty?
-          (for foldr ((ch me) (rest replacement))
-            (chain replacement (string<- ch) rest)))
-         (else
-          (let limit me.count)
-          (string<-list
-           ;; TODO define a strstr and use that
-           (begin scanning ((i 0))
-             (case ((= i limit) '())
-                   ((= pattern (me .slice i (+ i pattern.count)))
+   (hm (if pattern.empty?
+           (for foldr ((ch me) (rest replacement))
+             (chain replacement (string<- ch) rest)))
+       (else
+         (let limit me.count)
+         (string<-list
+          ;; TODO define a strstr and use that
+          (begin scanning ((i 0))
+            (hm (if (= i limit) '())
+                (if (= pattern (me .slice i (+ i pattern.count)))
                     (chain (list<-string replacement)
                            (scanning (+ i pattern.count))))
-                   (else (link (me i) (scanning (+ i 1))))))))))
+                (else (link (me i) (scanning (+ i 1))))))))))
   ({.justify n}
    (me .justify n #\space))
   ({.justify n pad}
@@ -517,9 +517,10 @@
    (surely (integer? n) "Bad arg type" n)
    (char<- (+ me.code n)))
   ({.- b}
-   (case ((integer? b) (char<- (- me.code b)))
-         ((char? b)    (- me.code b.code))
-         (else (error "Bad arg type" b))))
+   (match b
+     ((? integer?) (char<- (- me.code b)))
+     ((? char?)    (- me.code b.code))
+     (_ (error "Bad arg type" b))))
   ({.to< b}       (range<- me b))       ;These methods should be in a trait
   ({.to b}        (range<- me (+ b 1))) ;if they're a good idea at all...
   ({.span n}      (range<- me (+ me n)))
@@ -797,9 +798,9 @@
            (if (< i 0)
                '()
                (do (let k (keys.^ i))
-                   (case ((= k none) (walking (- i 1)))
-                         ((= k deleted) (walking (- i 1)))
-                         (else (link i (walking (- i 1)))))))))
+                   (hm (if (= k none) (walking (- i 1)))
+                       (if (= k deleted) (walking (- i 1)))
+                       (else (link i (walking (- i 1)))))))))
 
        (to (place key)
          (__place key keys.^ none deleted))
@@ -877,9 +878,9 @@
          ({.find value default}
           (let vs vals.^)
           (begin searching ((js (occupants)))  ;XXX should be lazy
-            (case (js.empty? default)
-                  ((= value (vs js.first)) (keys.^ js.first))
-                  (else (searching js.rest)))))
+            (hm (if js.empty? default)
+                (if (= value (vs js.first)) (keys.^ js.first))
+                (else (searching js.rest)))))
          ({.clear!}
           (count .^= 0)
           (keys .^= (array<- none))
@@ -1057,10 +1058,10 @@
    (to (mismatch)
      (error "zip: mismatched arguments" xs ys))
    (begin zipping ((xs xs) (ys ys))
-     (case (xs.empty? (if ys.empty? '() (mismatch)))
-           (ys.empty? (mismatch))
-           (else `((,xs.first ,ys.first)
-                   ,@(zipping xs.rest ys.rest))))))
+     (hm (if xs.empty? (if ys.empty? '() (mismatch)))
+         (if ys.empty? (mismatch))
+         (else `((,xs.first ,ys.first)
+                 ,@(zipping xs.rest ys.rest))))))
   (`(,@lists)  ; ugly
    (transpose lists)))
 
@@ -1135,32 +1136,32 @@
    (range<- 0 limit))
   (`(,first ,limit ,stride)
    ;; TODO factor the code better
-   (case ((< 0 stride)
-          (if (<= limit first)
-              '()
-              (make range {extending list-trait}
-                    ({.empty?} #no)
-                    ({.first}  first)
-                    ({.rest}   (range<- (+ first stride) limit stride))
-                    (`(,i)
-                     (error "TODO" range `(,i)))
-                    ({.maps? i}
-                     (error "TODO" range {.maps? i}))
-                    )))
-         ((< stride 0)
-          (if (< first limit)
-              '()
-              (make range {extending list-trait}
-                    ({.empty?} #no)
-                    ({.first}  first)
-                    ({.rest}   (range<- (+ first stride) limit stride))
-                    (`(,i)
-                     (error "TODO" range `(,i)))
-                    ({.maps? i}
-                     (error "TODO" range {.maps? i}))
-                    )))
-         (else
-          (error "Zero stride" first limit stride)))))
+   (hm (if (< 0 stride)
+           (if (<= limit first)
+               '()
+               (make range {extending list-trait}
+                     ({.empty?} #no)
+                     ({.first}  first)
+                     ({.rest}   (range<- (+ first stride) limit stride))
+                     (`(,i)
+                      (error "TODO" range `(,i)))
+                     ({.maps? i}
+                      (error "TODO" range {.maps? i}))
+                     )))
+       (if (< stride 0)
+           (if (< first limit)
+               '()
+               (make range {extending list-trait}
+                     ({.empty?} #no)
+                     ({.first}  first)
+                     ({.rest}   (range<- (+ first stride) limit stride))
+                     (`(,i)
+                      (error "TODO" range `(,i)))
+                     ({.maps? i}
+                      (error "TODO" range {.maps? i}))
+                     )))
+       (else
+         (error "Zero stride" first limit stride)))))
 
 (make enumerate
   (`(,xs)
@@ -1320,13 +1321,13 @@
          (error "Bad format string" s))))
 
     (to (maybe-pad sink pad sign width message)
-      (case (width
-             (let string (with-output-string (-> (call it message))))
-             (let w (if sign (* sign width) width))
-             (sink .display (string .justify w pad)))
-            (sign
-             (error "Missing width in format string"))
-            (else
-             (call sink message))))
+      (hm (when width
+            (let string (with-output-string (-> (call it message))))
+            (let w (if sign (* sign width) width))
+            (sink .display (string .justify w pad)))
+          (when sign
+            (error "Missing width in format string"))
+          (else
+            (call sink message))))
 
     format))

@@ -5,13 +5,15 @@
 
 (to (main `(,me ,@args))
   (let players
-    (case (args.empty? (list<- human-play spock-play))
-          ((= args.count 2) (each parse-player args)) ;TODO catch errors
-          (else
-           (format "Usage: ~d [X-player O-player]\n" me)
-           (format "Available players: ~d\n"
-                   (" " .join (sort player-registry.keys)))
-           (os-exit 1))))
+    (hm (if args.empty?
+            (list<- human-play spock-play))
+        (if (= args.count 2)
+            (each parse-player args)) ;TODO catch errors
+        (else
+          (format "Usage: ~d [X-player O-player]\n" me)
+          (format "Available players: ~d\n"
+                  (" " .join (sort player-registry.keys)))
+          (os-exit 1))))
   (call tty-ttt `(,@players ,empty-grid)))
 
 (to (quick-test)
@@ -22,15 +24,15 @@
 
 (to (tic-tac-toe player opponent grid)
   (format "~d\n\n" (show grid))
-  (case ((won? grid)   (format "~d wins.\n" (last-to-move grid)))
-        ((drawn? grid) (format "A draw.\n"))
-        (else
-         (unless (`(,player ,opponent) .find? human-play)
-           (format "~d to move ~d. (Press a key.)\n"
-                   player.name (whose-move grid))
+  (hm (when (won? grid)   (format "~d wins.\n" (last-to-move grid)))
+      (when (drawn? grid) (format "A draw.\n"))
+      (else
+        (unless (`(,player ,opponent) .find? human-play)
+          (format "~d to move ~d. (Press a key.)\n"
+                  player.name (whose-move grid))
 ;           (get-key)                    ;XXX
            )
-         (tic-tac-toe opponent player (player grid)))))
+        (tic-tac-toe opponent player (player grid)))))
 
 
 ;; Graphical TTY interface
@@ -51,22 +53,22 @@
   (to (refresh message)
     (ttt-render (show grid) message))
 
-  (case ((won? grid)
-         (refresh ("~d (playing ~d) wins."
-                   .format opponent.name (last-to-move grid))))
-        ((drawn? grid)
-         (refresh "A draw."))
-        ((= player.name "Human")
-         (continue))
-        (else
-         (let quit?
-           (and (not= opponent.name "Human")
-                (do (refresh ("~d to move ~d. (Press a key; Q to quit.)"
-                              .format player.name (whose-move grid)))
-                    (= #\Q ((get-key) .uppercase)))))
-         (unless quit?
-           (refresh ("~d ponders..." .format player.name))
-           (continue)))))
+  (hm (when (won? grid)
+        (refresh ("~d (playing ~d) wins."
+                  .format opponent.name (last-to-move grid))))
+      (when (drawn? grid)
+        (refresh "A draw."))
+      (when (= player.name "Human")
+        (continue))
+      (else
+        (let quit?
+          (and (not= opponent.name "Human")
+               (do (refresh ("~d to move ~d. (Press a key; Q to quit.)"
+                             .format player.name (whose-move grid)))
+                   (= #\Q ((get-key) .uppercase)))))
+        (unless quit?
+          (refresh ("~d ponders..." .format player.name))
+          (continue)))))
 
 (to (ttt-render shown-grid message @(optional plaint))
   (render `(,(or plaint "") "\n\n" ,shown-grid "\n\n" ,message "\n\n")))

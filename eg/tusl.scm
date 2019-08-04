@@ -31,27 +31,27 @@
 (to (compile tokens)
   (let code (flexarray<-))
   (begin compiling ((frames '()) (tokens tokens))
-    (case (tokens.empty?
-           (surely frames.empty?))      ;XXX require
-          (else
-           (match tokens.first
-             ((? number? n)
-              (code .push! (push<- n))
-              (compiling frames tokens.rest))
-             ('<<
-              (let `(,locals ,tail)
-                (split-on (-> (= it '--)) tokens.rest))
-              (code .push! (grab<- locals.count))
-              (compiling `(,(reverse locals) ,@frames)
-                         tail.rest))
-             ('>>
-              (surely (not frames.empty?)) ;XXX require
-              (code .push! (ungrab<- frames.first.count))
-              (compiling frames.rest tokens.rest))
-             ((? symbol? word)
-              (code .push! (or (compile-local frames word)
-                               (dictionary word)))
-              (compiling frames tokens.rest))))))
+    (hm (when tokens.empty?
+          (surely frames.empty?))      ;XXX require
+        (else
+          (match tokens.first
+            ((? number? n)
+             (code .push! (push<- n))
+             (compiling frames tokens.rest))
+            ('<<
+             (let `(,locals ,tail)
+               (split-on (-> (= it '--)) tokens.rest))
+             (code .push! (grab<- locals.count))
+             (compiling `(,(reverse locals) ,@frames)
+                        tail.rest))
+            ('>>
+             (surely (not frames.empty?)) ;XXX require
+             (code .push! (ungrab<- frames.first.count))
+             (compiling frames.rest tokens.rest))
+            ((? symbol? word)
+             (code .push! (or (compile-local frames word)
+                              (dictionary word)))
+             (compiling frames tokens.rest))))))
   code.values)
 
 (to (compile-local frames word)

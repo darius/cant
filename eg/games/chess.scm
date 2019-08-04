@@ -10,12 +10,10 @@
 
 (to (play board players)
   (begin playing ((board board))
-    (case (board.outcome
-           (print board))
-          (else
-           (print board)
-           (display "\n\n")
-           (playing (board .play-turn players))))))
+    (print board)
+    (unless board.outcome
+      (display "\n\n")
+      (playing (board .play-turn players)))))
 
 (to (human-player board)
   (begin asking ()
@@ -109,10 +107,10 @@
 
     ;; Return #no, draw, black, or white (meaning the winner).
     ({.outcome}
-     (or outcome-param
-         (case (board.checkmate?             (opponent mover))
-               (board.get-piece-moves.empty? 'draw)
-               (else                         #no))))
+     (hm (or outcome-param)
+         (if board.checkmate?             (opponent mover))
+         (if board.get-piece-moves.empty? 'draw)
+         (else                            #no)))
 
     ;; Is the player to move checkmated?
     ({.checkmate?}  ;;XXX are we getting this at the start? why?
@@ -227,16 +225,16 @@
      (to (move-freely dirs)
        (for gather ((`(,dr ,dc) dirs))
          (begin stepping ((i 1))
-           (if (= i 9)
-               '()
+           (hm (if (= i 9)
+                   '())
                (do (let r1 (+ r (* dr i)))
-                   (let c1 (+ c (* dc i)))
-                   (case ((empty? r1 c1)
-                          (link (move-to r1 c1) (stepping (+ i 1))))
-                         ((has-opponent? r1 c1)
-                          (link (move-to r1 c1) '()))
-                         (else
-                          '())))))))
+                   (let c1 (+ c (* dc i))))
+               (if (empty? r1 c1)
+                   (link (move-to r1 c1) (stepping (+ i 1))))
+               (if (has-opponent? r1 c1)
+                   (link (move-to r1 c1) '()))
+               (else
+                   '())))))
 
      (match piece
 

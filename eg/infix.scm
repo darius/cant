@@ -14,8 +14,8 @@
        (#no
         ("~w(~d)" .format op (fmt x 0)))
        (`(,prefix ,postfix)
-        (case (prefix  (enclose prefix p ("~w~d" .format op (fmt x prefix))))
-              (postfix (enclose prefix p ("~d~w" .format (fmt x prefix) op)))))))
+        (hm (if prefix  (enclose prefix p ("~w~d" .format op (fmt x prefix))))
+            (if postfix (enclose prefix p ("~d~w" .format (fmt x prefix) op)))))))
     (`(,op ,x ,y)
      (match (binaries .get op)
        (#no

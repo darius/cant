@@ -21,11 +21,12 @@
           (splitting seq.rest ys (link seq.first xs)))))
 
   (to (merge xs ys)
-    (case (xs.empty? ys)
-          (ys.empty? xs)
-          (else (if (<= (key<- xs.first) (key<- ys.first))
-                    `(,xs.first ,@(merge xs.rest ys))
-                    `(,ys.first ,@(merge xs ys.rest))))))
+    (hm (if xs.empty? ys)
+        (if ys.empty? xs)
+        (if (<= (key<- xs.first) (key<- ys.first))
+            `(,xs.first ,@(merge xs.rest ys)))
+        (else
+            `(,ys.first ,@(merge xs ys.rest)))))
 
   (merge-sort sequence))
 

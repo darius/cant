@@ -19,19 +19,19 @@
     (let a2 (select-targets "Immune System" immune-system infection))
     (let counts-before (for each ((groups armies.values))
                          (sum (each '.count groups))))
-    (case ((some '.empty? armies.values)
-           (not immune-system.empty?))
-          (else
-           ;; Fight a round.
-           (attacking (map<- (chain a1 a2)))
-           (for each! ((`(,army ,groups) armies.items))
-             (armies .set! army (those '.alive? groups)))
+    (hm (when (some '.empty? armies.values)
+          (not immune-system.empty?))
+        (else
+          ;; Fight a round.
+          (attacking (map<- (chain a1 a2)))
+          (for each! ((`(,army ,groups) armies.items))
+            (armies .set! army (those '.alive? groups)))
           
-           (let counts-after (for each ((groups armies.values))
-                               (sum (each '.count groups))))
-           (if (= counts-before counts-after)
-               #no      ; Stalemate
-               (battling))))))
+          (let counts-after (for each ((groups armies.values))
+                              (sum (each '.count groups))))
+          (if (= counts-before counts-after)
+              #no      ; Stalemate
+              (battling))))))
 
 (to (select-targets my-name my-groups enemy-groups)
   (let result (flexarray<-))

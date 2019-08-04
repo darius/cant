@@ -15,21 +15,21 @@
   (let p (box<- 0))                     ; current marble position
   (let scores (array<-count n))
   (begin playing ((elf 0) (marble 1))
-    (case ((23 .divides? marble)
-           (print marble)
-           (scores .set! elf (+ (scores elf) marble))
-           (let other ((- p.^ 7) .modulo circle.count))
-           (let removed (circle .pop! other))
-           (scores .set! elf (+ (scores elf) removed))
-           (p .^= other))
-          (else
-           ;; TODO speed up by initializing so no special cases
-           (let pos (+ 1 (match circle.count
-                           (1 0)
-                           (2 0)
-                           (_ ((+ p.^ 1) .modulo circle.count)))))
-           (circle .insert! pos marble)
-           (p .^= pos)))
+    (hm (when (23 .divides? marble)
+          (print marble)
+          (scores .set! elf (+ (scores elf) marble))
+          (let other ((- p.^ 7) .modulo circle.count))
+          (let removed (circle .pop! other))
+          (scores .set! elf (+ (scores elf) removed))
+          (p .^= other))
+        (else
+          ;; TODO speed up by initializing so no special cases
+          (let pos (+ 1 (match circle.count
+                          (1 0)
+                          (2 0)
+                          (_ ((+ p.^ 1) .modulo circle.count)))))
+          (circle .insert! pos marble)
+          (p .^= pos)))
     (unless (= marble m)
       (playing ((+ elf 1) .modulo n)
                (+ marble 1))))

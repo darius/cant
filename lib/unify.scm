@@ -46,34 +46,34 @@
 (to (unify s val1 val2)
   (let u (s .subst val1))
   (let v (s .subst val2))
-  (case ((variable? u)
-         (if (= u v)
-             s
-             ((if (variable? v) extend-unchecked extend) s u v)))
-        ((variable? v)
-         (extend s u v))
-        ((and (list? u) (list? v) (= u.count v.count))
-         (begin unifying ((s s) (u u) (v v))
-           (if u.empty?
-               s
-               (do (let s1 (unify s u.first v.first))
-                   (and s1 (unifying s1 u.rest v.rest))))))
-        (else
-         (and (= u v) s))))
+  (hm (if (variable? u)
+          (if (= u v)
+              s
+              ((if (variable? v) extend-unchecked extend) s u v)))
+      (if (variable? v)
+          (extend s u v))
+      (if (and (list? u) (list? v) (= u.count v.count))
+          (begin unifying ((s s) (u u) (v v))
+            (if u.empty?
+                s
+                (do (let s1 (unify s u.first v.first))
+                    (and s1 (unifying s1 u.rest v.rest))))))
+      (else
+          (and (= u v) s))))
 
 (to (reify s val)
   (let free-vars (map<-))
   (begin reifying ((val-in val))
     (let val (apply s val-in))
-    (case ((variable? val)
-           (unless (free-vars .maps? val)
-             (free-vars .set! val
-                        (variable<- "_" free-vars.count)))
-           (free-vars val))
-          ((list? val)
-           (each reifying val))
-          (else
-           val))))
+    (hm (when (variable? val)
+          (unless (free-vars .maps? val)
+            (free-vars .set! val
+                       (variable<- "_" free-vars.count)))
+          (free-vars val))
+        (when (list? val)
+          (each reifying val))
+        (else
+          val))))
 
 ;; TODO: consider making a 'failed' subst type instead of #no
 ;; or using 0-or-1-length lists. In fact, the latter meshes

@@ -36,19 +36,19 @@
   ;; Return the set of matches to rs whose total length is in Ns. We
   ;; ask s only for lengths that are remainders after an r-match in
   ;; 0..max(Ns). (And we call neither r nor s if there are no Ns.)
-  (case (Ns.empty? none)
-        (else
-         ;; TODO still pretty ugly
-         (let r-matches ('.keys (r ('.range (0 .to (call max Ns.keys))))))
-         (let r-lengths ('.keys ('.range (each '.count r-matches))))
-         (let Ns-s ('.range (for gather ((n Ns.keys))
-                              (for yeahs ((m r-lengths))
-                                (and (<= m n) (- n m))))))
-         (let s-matches ('.keys (s Ns-s)))
-         ('.range (for gather ((m1 r-matches))
-                    (for yeahs ((m2 s-matches))
-                      (and (Ns .maps? (+ m1.count m2.count))
-                           (chain m1 m2))))))))
+  (hm (if Ns.empty? none)
+      (else
+       ;; TODO still pretty ugly
+       (let r-matches ('.keys (r ('.range (0 .to (call max Ns.keys))))))
+       (let r-lengths ('.keys ('.range (each '.count r-matches))))
+       (let Ns-s ('.range (for gather ((n Ns.keys))
+                            (for yeahs ((m r-lengths))
+                              (and (<= m n) (- n m))))))
+       (let s-matches ('.keys (s Ns-s)))
+       ('.range (for gather ((m1 r-matches))
+                  (for yeahs ((m2 s-matches))
+                    (and (Ns .maps? (+ m1.count m2.count))
+                         (chain m1 m2))))))))
 
 ;; Extras
 

@@ -93,12 +93,12 @@
          (8 ;(trace "r~w = allocate r~w\n" b c)
             (let chunk (array<-count (reg c) 0)) ;TODO: typed array again
             (reg .set! b
-                 (case (free-list.empty?
-                        (mem .push! chunk))
-                       (else
-                        (let i free-list.pop!)
-                        (mem .set! i chunk)
-                        i)))
+                 (hm (when free-list.empty?
+                       (mem .push! chunk))
+                     (else
+                       (let i free-list.pop!)
+                       (mem .set! i chunk)
+                       i)))
             (next))
 
          (9 ;(trace "abandon r~w\n" c)
@@ -117,12 +117,12 @@
              (next))
 
          (12 ;(trace "dup r~w; finger r~w\n" b c)
-             (case ((= (reg b) 0)
-                    (running program (reg c)))
-                   (else
-                    (let new-program (mem (reg b)))  ; originally ((mem (reg b)) .copy)) -- why?
-                    (mem .set! 0 new-program)
-                    (running new-program (reg c)))))
+             (hm (when (= (reg b) 0)
+                   (running program (reg c)))
+                 (else
+                   (let new-program (mem (reg b)))  ; originally ((mem (reg b)) .copy)) -- why?
+                   (mem .set! 0 new-program)
+                   (running new-program (reg c)))))
 
          (_ (error "Bad opcode" opcode)))))))
 

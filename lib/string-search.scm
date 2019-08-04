@@ -17,12 +17,12 @@
   (begin sliding ((j 0))
     (and (< j j-limit)
          (begin checking ((i 0))
-           (case ((= i P)
-                  j)
-                 ((= (pat i) (dat (+ i j)))
-                  (checking (+ i 1)))
-                 (else
-                  (sliding (+ j 1))))))))
+           (hm (if (= i P)
+                   j)
+               (if (= (pat i) (dat (+ i j)))
+                   (checking (+ i 1)))
+               (else
+                   (sliding (+ j 1))))))))
 
 ;; XXX better name?
 ;; Boyer-Moore-Horspool algorithm
@@ -44,11 +44,11 @@
             (begin sliding ((i m))
               (and (< i D)
                    (begin checking ((k i) (j m))
-                     (case ((not= (dat k) (pat j)) ;NB this can go first because of (< m 0) above
-                            (sliding (+ i (skip ((dat i) .code)))))
-                           ((= j 0)
-                            k)
-                           (else
-                            (checking (- k 1) (- j 1)))))))))))
+                     (hm (unless (= (dat k) (pat j)) ;NB this can go first because of (< m 0) above
+                           (sliding (+ i (skip ((dat i) .code)))))
+                         (if (= j 0)
+                           k)
+                         (else
+                           (checking (- k 1) (- j 1)))))))))))
 
 (export string-matcher<-)

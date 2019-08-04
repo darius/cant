@@ -27,11 +27,11 @@
   (foldr insert ys xs))
 
 (to (insert x xs)                       ;TODO should be in a heapq or sort module or something
-  (case ((or xs.empty? (< x xs.first))
-         `(,x ,@xs))
-        ((= x xs.first)
-         xs)
-        (else
+  (hm (if (or xs.empty? (< x xs.first))
+          `(,x ,@xs))
+      (if (= x xs.first)
+          xs)
+      (else
          `(,xs.first ,@(insert x xs.rest)))))
 
 (to (delay<- node)                ;maybe go back to calling them steps

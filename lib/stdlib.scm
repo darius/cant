@@ -185,10 +185,10 @@
   ;; N.B. we're trying to use only primitives here as far as possible:
   (display "Error within error! Evils:\n")
   (begin printing ((xs evil))
-    (case (xs.empty? (os-exit 1))
-          (else (out .print xs.first)
-                (out .display #\newline)
-                (printing xs.rest)))))
+    (when xs.empty? (os-exit 1))
+    (out .print xs.first)
+    (out .display #\newline)
+    (printing xs.rest)))
 
 (to (breakpoint @values)
   (call error `("Breakpoint" ,@values)))

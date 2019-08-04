@@ -46,13 +46,14 @@
 
   ;; Return a priority queue combining the elements of PQ1 and PQ2.
   (to (pq-merge pq1 pq2)
-    (case ((pq-empty? pq1) pq2)
-          ((pq-empty? pq2) pq1)
-          (else (let {pq min1 rest1} pq1)
-                (let {pq min2 rest2} pq2)
-                (if (<=? min1 min2)
-                    {pq min1 `(,pq2 ,@rest1)}
-                    {pq min2 `(,pq1 ,@rest2)}))))
+    (hm (if (pq-empty? pq1) pq2)
+        (if (pq-empty? pq2) pq1)
+        (do (let {pq min1 rest1} pq1)
+            (let {pq min2 rest2} pq2))
+        (if (<=? min1 min2)
+            {pq min1 `(,pq2 ,@rest1)})
+        (else
+            {pq min2 `(,pq1 ,@rest2)})))
 
   ;; Return PQ with ELEM inserted.
   (to (pq-insert pq elem)

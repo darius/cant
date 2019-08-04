@@ -187,9 +187,9 @@
 
 ;; Taking "a=b" as a rewrite rule, rewrite focus if possible.
 (to (equality focus a b)
-  (case ((= focus a) b)
-        ((= focus b) a)
-        (else        focus)))
+  (hm (if (= focus a) b)
+      (if (= focus b) a)
+      (else           focus)))
 
 
 ;; "Check the premises against the instantiated conclusion." (?)
@@ -201,9 +201,9 @@
 (to (follow-prems path e1 thm)          ;TODO rename e1?
   (match thm
     ({if q a e}
-     (case ((prem-match? 'A q path e1) (follow-prems path e1 a))
-           ((prem-match? 'E q path e1) (follow-prems path e1 e))
-           (else                       thm)))
+     (hm (if (prem-match? 'A q path e1) (follow-prems path e1 a))
+         (if (prem-match? 'E q path e1) (follow-prems path e1 e))
+         (else                          thm)))
     (_ thm)))
 
 ;; Somewhere along path through e, does some if have a question equal to
@@ -355,9 +355,9 @@
     (sub-e vars args e)))
 
 (to (sub-var vars args name)
-  (case (vars.empty?         {variable name})
-        ((= vars.first name) args.first)
-        (else                (sub-var vars.rest args.rest name))))
+  (hm (if vars.empty?         {variable name})
+      (if (= vars.first name) args.first)
+      (else                   (sub-var vars.rest args.rest name))))
 
 
 ;; Check okayness of proofs.

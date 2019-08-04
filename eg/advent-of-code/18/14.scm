@@ -34,10 +34,9 @@
 
 (to (show)
   (for each! ((`(,i ,recipe) board.items))
-    (let f 
-      (case ((= i (coord (elves 0))) "(~w)")
-            ((= i (coord (elves 1))) "[~w]")
-            (else                    " ~w ")))
+    (let f (hm (if (= i (coord (elves 0))) "(~w)")
+               (if (= i (coord (elves 1))) "[~w]")
+               (else                       " ~w ")))
     (display (f .format recipe)))
   (newline))
 

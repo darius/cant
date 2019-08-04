@@ -28,17 +28,17 @@
   (to (stmt<- (list<- op a b c))
 
     (to (blah c-op x y)
-      (case ((and (commutative .maps? c-op)
-                  (not= x y)
-                  (= {r c} y))
-             (blah c-op y x))
-            ((and (commutative .maps? c-op)
-                  (= {r c} x))
-             ("~d ~d= ~d"
-              .format (arg<- x) c-op (arg<- y)))
-            (else
-             ("~d = ~d ~d ~d"
-              .format (arg<- {r c}) (arg<- x) c-op (arg<- y)))))
+      (hm (if (and (commutative .maps? c-op)
+                   (not= x y)
+                   (= {r c} y))
+              (blah c-op y x))
+          (if (and (commutative .maps? c-op)
+                   (= {r c} x))
+              ("~d ~d= ~d"
+               .format (arg<- x) c-op (arg<- y)))
+          (else
+              ("~d = ~d ~d ~d"
+               .format (arg<- {r c}) (arg<- x) c-op (arg<- y)))))
 
     (let commutative (set<- "+" "*" "&" "|"))
 

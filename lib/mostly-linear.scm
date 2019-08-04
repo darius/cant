@@ -37,28 +37,28 @@
       ({nonempty task pending}
        (match task
          ('assessment
-          (if progress?
-              (solving inconsistent? #no (push pending 'assessment))
-              (case (inconsistent?    'inconsistent)
-                    ((empty? pending) 'done)
-                    (else             'stuck))))
+          (hm (if progress?
+                  (solving inconsistent? #no (push pending 'assessment)))
+              (if inconsistent?    'inconsistent)
+              (if (empty? pending) 'done)
+              (else                'stuck)))
          ({equation defaulty? expr}
           (match (eval-expr expr)       ;XXX better name?
             ('nonlinear                 ;TODO call it #no instead?
              (solving inconsistent? progress? (push pending task)))
             (combo
              (let terms (expand combo))
-             (case ((varies? terms)
-                    (eliminate-a-variable terms)
-                    (solving inconsistent? #yes pending))
-                   ((or defaulty? (zeroish? (constant terms)))
-                    ;; The equation was either only a default (whose
-                    ;; inconsistency is allowed) or it reduced to an
-                    ;; uninformative 0=0: drop it.
-                    (solving inconsistent? #yes pending))
-                   (else
-                    (format "Inconsistent: ~w\n" combo)
-                    (solving #yes progress? pending)))))))))))
+             (hm (when (varies? terms)
+                   (eliminate-a-variable terms)
+                   (solving inconsistent? #yes pending))
+                 (when (or defaulty? (zeroish? (constant terms)))
+                   ;; The equation was either only a default (whose
+                   ;; inconsistency is allowed) or it reduced to an
+                   ;; uninformative 0=0: drop it.
+                   (solving inconsistent? #yes pending))
+                 (else
+                   (format "Inconsistent: ~w\n" combo)
+                   (solving #yes progress? pending)))))))))))
 
 (to (e+ e1 e2) {combine e1 one e2})
 (to (e- e1 e2) {combine e1 neg-one e2})
@@ -83,10 +83,10 @@
     ({* arg1 arg2}
      (let combo1 (eval-expr arg1))   (let terms1 (expand combo1))
      (let combo2 (eval-expr arg2))   (let terms2 (expand combo2))
-     (case ((and (varies? terms1) (varies? terms2))
-            'nonlinear)
-           ((varies? terms1) (scale combo1 (get-constant terms2)))
-           (else             (scale combo2 (get-constant terms1)))))
+     (hm (if (and (varies? terms1) (varies? terms2))
+             'nonlinear)
+         (if (varies? terms1) (scale combo1 (get-constant terms2)))
+         (else                (scale combo2 (get-constant terms1)))))
     ({/ arg1 arg2}
      (let combo1 (eval-expr arg1))
      (let combo2 (eval-expr arg2))

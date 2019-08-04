@@ -15,20 +15,20 @@
 
   ;; Look for the categories needed to complete the parse.
   (to (extend-parse lhs rhs rest needed)
-    (case (needed.empty?
-           ;; Return parse and upward extensions.
-           (let tree (tree<- lhs rhs))
-           (link (parse<- tree rest)
-                 (for gather ((rule (rules-starting-with lhs)))
-                   (extend-parse rule.lhs `(,tree)
+    (hm (when needed.empty?
+          ;; Return parse and upward extensions.
+          (let tree (tree<- lhs rhs))
+          (link (parse<- tree rest)
+                (for gather ((rule (rules-starting-with lhs)))
+                  (extend-parse rule.lhs `(,tree)
                                  rest rule.rhs.rest))))
-          (else
-           ;; Try to extend rightward.
-           (for gather ((p (grammar .parse-prefixes rest)))
-             (if (= p.lhs needed.first)
-                 (extend-parse lhs `(,@rhs ,p.tree)
-                               p.remainder needed.rest)
-                 '())))))
+        (else
+          ;; Try to extend rightward.
+          (for gather ((p (grammar .parse-prefixes rest)))
+            (if (= p.lhs needed.first)
+                (extend-parse lhs `(,@rhs ,p.tree)
+                              p.remainder needed.rest)
+                '())))))
 
   (make grammar
 

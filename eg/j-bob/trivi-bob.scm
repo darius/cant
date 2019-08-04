@@ -192,9 +192,9 @@
 
 ;; Taking "a=b" as a rewrite rule, rewrite focus if possible.
 (to (equality focus a b)
-  (case ((= focus a) b)
-        ((= focus b) a)
-        (else        focus)))
+  (hm (if (= focus a) b)
+      (if (= focus b) a)
+      (else           focus)))
 
 
 ;; Substitute vars -> args in an expression.

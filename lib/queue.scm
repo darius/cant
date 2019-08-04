@@ -17,13 +17,13 @@
   {queue h `(,@(reverse elements) ,@t)}) ;TODO chain-reverse
 
 (to (peek {queue h t})
-  (case ((and h.empty? t.empty?)
-         {empty})
-        (h.empty?
-         (let seq (reverse t))
-         {nonempty seq.first {queue seq.rest '()}})
-        (else
-         {nonempty h.first {queue h.rest t}})))
+  (hm (when (and h.empty? t.empty?)
+        {empty})
+      (when h.empty?
+        (let seq (reverse t))
+        {nonempty seq.first {queue seq.rest '()}})
+      (else
+        {nonempty h.first {queue h.rest t}})))
 
 (to (list<-queue {queue h t})
   (chain h (reverse t)))

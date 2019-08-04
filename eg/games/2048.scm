@@ -19,10 +19,10 @@
   (begin playing ((board board) (forfeit? #no))
     (to (continue)
       (playing board forfeit?))
-    (let score (case ((lost? board) "You lose!")
-                     (forfeit?      "You forfeit.")
-                     ((won? board)  "You win!")
-                     (else          "")))
+    (let score (hm (if (lost? board) "You lose!")
+                   (if forfeit?      "You forfeit.")
+                   (if (won? board)  "You win!")
+                   (else             "")))
     (frame board score)
     (match ((get-key) .lowercase)
       (#\q 'quitting)
@@ -114,16 +114,16 @@
 (to (slide `(,low ,row))
   (begin checking ((i low))
     (let j (+ i 1))
-    (if (<= 4 j)
-        `(4 ,row) ; There was no space or coincidence to slide into.
-        (do (let same? (= (row i) (row j)))
-            (case ((= same? (= (row i) 0))
-                   (checking j))
-                  (else ; Found one, let's slide:
-                   (let sum (+ (row i) (row j)))
-                   (let slid
-                     `(,@(row .slice 0 i) ,sum ,@(row .slice (+ j 1)) 0))
-                   `(,(if same? j low) ,slid)))))))
+    (hm (when (<= 4 j)
+          `(4 ,row)) ; There was no space or coincidence to slide into.
+        (do (let same? (= (row i) (row j))))
+        (when (= same? (= (row i) 0))
+          (checking j))
+        (else ; Found one, let's slide:
+          (let sum (+ (row i) (row j)))
+          (let slid
+            `(,@(row .slice 0 i) ,sum ,@(row .slice (+ j 1)) 0))
+          `(,(if same? j low) ,slid)))))
 
 (to (right rows) (each flip-h (left (flip-h rows))))
 (to (up rows)    (each flip-d (left (flip-d rows))))
