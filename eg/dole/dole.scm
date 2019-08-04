@@ -3,6 +3,5 @@
 (import (use "eg/dole/editor") dole)
 
 (to (main args)
-  (match args.rest
-    ('()          (dole #no))
-    (`(,filename) (dole filename))))
+  (dole args.rest.maybe)) ;TODO this is a cheap hack since you don't
+                          ;get an informative error on wrong # of args
