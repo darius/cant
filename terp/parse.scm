@@ -96,6 +96,10 @@
         (pack<- e-constant (void)))          ;I guess
        (('call e1 e2)
         (pack<- e-call (parse-e e1 ctx) (parse-e e2 ctx)))
+       (('_ (: cue cue?) . operands)      ; TODO experiment: syntax for messages
+        (pack<- e-term cue (parse-es operands ctx)))
+       (('_ . operands)                   ; TODO experiment: syntax for messages
+        (error 'parse-exp "XXX not yet impl" e))
        ((addressee (: cue cue?) . operands)
         (pack<- e-call
                 (parse-e addressee ctx)

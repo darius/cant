@@ -565,6 +565,7 @@
   )
 
 (make-trait term-primitive me
+  (`(,receiver)   (call receiver me))
   ({.tag}         (__term-tag me))
   ({.arguments}   (__term-arguments me))
   ({.selfie sink}
