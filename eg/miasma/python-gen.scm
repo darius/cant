@@ -49,7 +49,7 @@
       (`(,first ,@rest)
        ((walk-code first py-code py-exp)
         vars
-        (given (vars2 cv) 
+        (on (vars2 cv) 
           (walking rest `(,cv ,@stmts) vars2)))))))
 
 ;; TODO walker objects instead, with code/exp methods?
@@ -112,7 +112,7 @@
        (unit 1))))
 
   ((walk-code code py-code py-exp) '_
-                                   (given (_ count) count)))
+                                   (on (_ count) count)))
 
 
 ;; Python code constructors

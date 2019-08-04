@@ -11,33 +11,33 @@
 
 (to (rule-ref<- name)
   (list<- (set<- name)
-          (given (_ rules _)
-            (delay (given () (rules name))))))
+          (on (_ rules _)
+            (delay (: (rules name))))))
 
 (to (constant<- p)
   (list<- (set<-)
-          (given (_ _ _) p)))
+          (on (_ _ _) p)))
 
 (to (lift peg-op)
   (feed-list
-   (given (lifted)
+   (on (lifted)
      (list<- (union-over (for each ((`(,refs ,_) lifted))
                            refs))
-             (given (builder rules subs)
+             (on (builder rules subs)
                (call peg-op (for each ((`(,_ ,f) lifted))
                               (f builder rules subs))))))))
 
 (to (literal<- string)
   (list<- (set<-)
-          (given (builder _ _) (builder .literal string))))
+          (on (builder _ _) (builder .literal string))))
 
 (to (keyword<- string)
   (list<- (set<-)
-          (given (builder _ _) (builder .keyword string))))
+          (on (builder _ _) (builder .keyword string))))
 
 (to (unquote<- name)
   (list<- (set<-)
-          (given (_ _ subs) (subs name))))
+          (on (_ _ subs) (subs name))))
 
 (to (push-lit<- string)
   (constant<- (push string)))
@@ -48,10 +48,9 @@
 (let word-boundary (invert (skip-1 word-char?)))
 
 (let eat-line
-  (delay (given ()
-           (either (lit-1 #\newline)
-                   (then skip-any-1 eat-line)
-                   empty))))
+  (delay (: (either (lit-1 #\newline)
+                    (then skip-any-1 eat-line)
+                    empty))))
 
 (let whitespace
   (at-least-1 (either (skip-1 '.whitespace?)
@@ -85,18 +84,18 @@
 (let dqstring (string-quoted-by #\"))
 
 (let pe
-  (delay (given ()
+  (delay (:
            (seclude
             (either (then term (maybe (then (lit "|") __ pe (lift either))))
-                    (lift (given () empty)))))))
+                    (lift (: empty)))))))
 
 (let term
-  (delay (given ()
+  (delay (:
            (seclude
             (then factor (maybe (then term (lift then))))))))
 
 (let factor
-  (delay (given ()
+  (delay (:
            (seclude
             (either (then (lit "!") __ factor (lift invert))
                     (then primary
@@ -134,7 +133,7 @@
 
 (to (union-map<- map backup)
   ;; TODO: rest of map interface?
-  (given (key)
+  (on (key)
     (let value (map .get key none))
     (if (= value none)
         (backup key)
@@ -143,10 +142,10 @@
 (to (grammar<- text)
   (let skeletons (parse-grammar text))
   (let builder default-builder)         ;TODO parameterize
-  (given (subs)
+  (on (subs)
     (let full-subs (union-map<- subs default-subs))
     (let rules (for map-by ((name (each '.first skeletons)))
-                 (delay (given () (rules name)))))
+                 (delay (: (rules name)))))
     (for each! ((`(,name (,_ ,f)) skeletons)) ;XXX better name than f
       (let peg (f builder rules full-subs))
       (rules .set! name peg))

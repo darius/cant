@@ -9,13 +9,13 @@
 (to (mode name fn)
   (system/must-succeed ("stty ~d -echo" .format name))
   (unwind-protect
-   (given ()
+   (:
      (display home)
      (display clear-to-bottom)
      (fn)
      (display cursor-show)
      (display #\newline))
-   (given ()
+   (:
      (system/must-succeed "stty sane"))))    ;TODO save & restore instead
 
 

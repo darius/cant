@@ -22,7 +22,7 @@
   (k args v))
 
 (to ((bind m2-proc m1) state k)
-  (m1 state (given (state1 v1)
+  (m1 state (on (state1 v1)
               ((m2-proc v1) state1 k))))
 
 (to ((swapping m) `(,z ,y ,@rest) k)

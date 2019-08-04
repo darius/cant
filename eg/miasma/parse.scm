@@ -140,7 +140,7 @@
 
 (to ((operand-of tag) x)                ;XXX duplicate code
   (match x
-    (`(,(? symbol?) ,(? (given (t) (= t tag))) ,size)
+    (`(,(? symbol?) ,(? (-> (= it tag))) ,size)
      ('(1 2 4) .find? size))
     (_ #no)))
 

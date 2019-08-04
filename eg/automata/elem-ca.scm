@@ -18,7 +18,7 @@
   (format "~d\n" (line .center 80)))
 
 (to (rule<-index n)
-  (given (`(,a ,b ,c))
+  (on (`(,a ,b ,c))
     (let i (+ (* a 4) (* b 2) c))
     ((n .>> i) .and 1)))
 

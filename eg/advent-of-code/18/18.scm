@@ -11,10 +11,10 @@
 
 (let input-grid (grid-2d<- '(0 0)
                            bottom-right
-                           {map (given (`(,x ,y)) ((input y) x))}))
+                           {map (on (`(,x ,y)) ((input y) x))}))
 
 (to (show grid)
-  (grid .show (given (row)
+  (grid .show (on (row)
                 (each! display row)
                 (newline)))
   (newline))

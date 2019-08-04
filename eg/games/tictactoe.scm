@@ -105,7 +105,7 @@
     (`(,grid) (min-by evaluate (successors grid)))))
 
 (let spock-evaluate
-  (memoize (given (grid)
+  (memoize (on (grid)
              (if (won? grid)
                  -1
                  (match (successors grid)
@@ -115,7 +115,7 @@
 (let spock-play (ai<- "Spock" spock-evaluate))
 
 (let drunk-evaluate
-  (memoize (given (grid)
+  (memoize (on (grid)
              (if (won? grid)
                  -1
                  (match (successors grid)

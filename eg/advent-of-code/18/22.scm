@@ -16,7 +16,7 @@
 (print target)
 
 (let geologic-index<-
-  (memoize (given (p)
+  (memoize (on (p)
              (if (= p target)
                  0
                  (match p

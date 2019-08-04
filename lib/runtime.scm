@@ -43,7 +43,7 @@
    (not= (map .get key missing) missing))
   ({.empty?} (= map.count 0))  ; or map.items.empty? - is that better?
   ({.keys}   (each '.first map.items))
-  ({.values} (each (given (`(,_ ,v)) v) map.items))
+  ({.values} (each (on (`(,_ ,v)) v) map.items))
   ({.find? value}
    (map.values .find? value))
   ({.find value default}
@@ -367,7 +367,7 @@
   ({.join ss}   ;should this be a function, not a method?
    (if ss.empty?
        ""
-       (foldr1 (given (x y) (chain x me y)) ss))) ;XXX quadratic
+       (foldr1 (on (x y) (chain x me y)) ss))) ;XXX quadratic
   ;;XXX below mostly from list-trait, until .selfie
   ({.keys}        (range<- me.count))
   ({.values}      (list<-string me))
@@ -1321,9 +1321,9 @@
 
     (to (maybe-pad sink pad sign width message)
       (case (width
-             (sink .display ((with-output-string (given (o) (call o message)))
-                             .justify (if sign (* sign width) width)
-                                      pad)))
+             (let string (with-output-string (-> (call it message))))
+             (let w (if sign (* sign width) width))
+             (sink .display (string .justify w pad)))
             (sign
              (error "Missing width in format string"))
             (else

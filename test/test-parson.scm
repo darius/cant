@@ -14,7 +14,7 @@
 (try (many any-1) "abc")
 
 (let bal (hide
-          (let sub-bal (delay (given () bal)))
+          (let sub-bal (delay (: bal)))
           (maybe
            (then (lit "(") sub-bal (lit ")") sub-bal))))
 
@@ -29,7 +29,7 @@
 
 (let sexpr
   (hide
-   (let subexpr (delay (given () sexpr)))
+   (let subexpr (delay (: sexpr)))
    (let comment (then (lit-1 #\;) (many (then (invert (lit-1 #\newline))
                                               skip-any-1))))
    (let __ (many (either (skip-1 '.whitespace?)

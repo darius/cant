@@ -74,7 +74,7 @@
   (empty text far i `(,(f vals))))
 
 (to (feed f)
-  (feed-list (given (vals) (call f vals))))
+  (feed-list (on (vals) (call f vals))))
 
 (to (drop text far i vals)
   (empty text far i '()))
@@ -87,10 +87,10 @@
 
 ;;TODO: implement promises instead
 (to (delay thunk)
-  (let p (box<- (given (text far i vals)
+  (let p (box<- (on (text far i vals)
                   (p .^= (thunk))
                   (p.^ text far i vals))))
-  (given (text far i vals)
+  (on (text far i vals)
     (p.^ text far i vals)))
 
 (to ((skip-1 ok?) text far i vals)
@@ -113,7 +113,7 @@
 (let end (invert skip-any-1))
 
 (to (lit-1 my-char)
-  (skip-1 (given (char) (= my-char char))))
+  (skip-1 (-> (= my-char it))))
 
 (to (lit string)
   (foldr then (each lit-1 string) empty))
@@ -123,13 +123,13 @@
 
 (make many
   (`(,p)
-   (let p* (maybe (then p (delay (given () p*))))))
+   (let p* (maybe (then p (delay (: p*))))))
   (`(,p ,separator)
    (maybe (then p (many (then separator p))))))
 
 (make at-least-1
   (`(,p)
-   (let p+ (then p (maybe (delay (given () p+))))))
+   (let p+ (then p (maybe (delay (: p+))))))
   (`(,p ,separator)
    (then p (many (then separator p)))))
 

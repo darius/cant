@@ -40,8 +40,7 @@
               (compiling frames tokens.rest))
              ('<<
               (let `(,locals ,tail)
-                (split-on (given (token) (= token '--))
-                          tokens.rest))
+                (split-on (-> (= it '--)) tokens.rest))
               (code .push! (grab<- locals.count))
               (compiling `(,(reverse locals) ,@frames)
                          tail.rest))

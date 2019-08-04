@@ -31,7 +31,7 @@
        (walking `(1 ,@path) on-1)))))
 
 (to (show-tree tree)
-  (walk tree (given (symbol encoding)
+  (walk tree (on (symbol encoding)
                (format "~d ~d\n" symbol (string<-list (each "01" encoding))))))
 
 (to (encoder<- tree)

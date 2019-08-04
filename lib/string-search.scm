@@ -29,7 +29,7 @@
 (to (string-matcher<- pat)
   (let m (- pat.count 1))
   (if (< m 0)
-      (given (dat) 0)
+      (on (dat) 0)
       (do (let skip (array<-count alphabet-size pat.count))
           (for each! ((`(,i ,ch) pat.items))
             (skip .set! ch.code (- m i)))
@@ -39,7 +39,7 @@
           ;; with that char, because the above loop is ascending.
 
           ;; Search
-          (given (dat)
+          (on (dat)
             (let D dat.count)
             (begin sliding ((i m))
               (and (< i D)

@@ -15,21 +15,21 @@
 
 (to (literal str)
   (let just-str (set<- str))
-  (given (Ns)
+  (on (Ns)
     (if (Ns .maps? str.count) just-str none)))
 
 (to (star r)
   (let r1 (nonempty r))
   (begin r1* ()
-    (given (Ns) ((either empty (then r1 (r1*)))
-                 Ns))))
+    (on (Ns) ((either empty (then r1 (r1*)))
+              Ns))))
 
 (to ((nonempty r) Ns) (r (Ns .difference just-0)))
 (to ((either r s) Ns) ((r Ns) .union (s Ns)))
 
 (to (one-of chars)
   (let set (set<-list (each string<- chars)))
-  (given (Ns)
+  (on (Ns)
     (if (Ns .maps? 1) set none)))
 
 (to ((then r s) Ns)

@@ -165,13 +165,13 @@
   
 
 (to (prim-$ k)
-  (extract-message k (given (replace `(,e ,@es) r2 k2)
+  (extract-message k (on (replace `(,e ,@es) r2 k2)
                        (terp e r2
                              (replace (make-message es r2 k2))))))
 
 (to (terp-% pattern k)
   (trace `(terp-% (pattern: ,pattern) (k: ,k)))
-  (extract-message k (given (replace e2 r2 k2)
+  (extract-message k (on (replace e2 r2 k2)
                        (if (= pattern e2.first)
                            (return (replace (make-message e2.rest r2 k2)) #yes)
                            (return k #no)))))
@@ -181,7 +181,7 @@
     (match k
       (`(message ,e2 ,r2 ,k2)
        (take-message replace e2 r2 k2))
-      (_ (walking k.last (given (k-prime)
+      (_ (walking k.last (on (k-prime)
                            (chain (but-last k) `(,k-prime))))))))
 
 (to (but-last xs)

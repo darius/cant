@@ -26,9 +26,9 @@
                          ({map _} #no))))
   (let at
     (if (and (= xl 0) (= yl 0))
-        (given (x y)                    ;special-cased for speed
+        (on (x y)                    ;special-cased for speed
           (+ (* y x-extent) x))
-        (given (x y)        ;maybe a hashmap is actually more efficient?
+        (on (x y)        ;maybe a hashmap is actually more efficient?
           (+ (* (- y yl) x-extent)
              (- x xl)))))
 
@@ -101,12 +101,12 @@
 ;; (* * *)
 ;; (a * *)
 ;; #no
-;; sqm> (g .show (given (row) (format "~d\n" ("" .join (each '.name row)))))
+;; sqm> (g .show (on (row) (format "~d\n" ("" .join (each '.name row)))))
 ;; ***
 ;; a**
 ;; #no
 ;; sqm> (g .set! '(3 1) 'b)
-;; sqm> (g .show (given (row) (format "~d\n" ("" .join (each '.name row)))))
+;; sqm> (g .show (on (row) (format "~d\n" ("" .join (each '.name row)))))
 ;; *b*
 ;; a**
 ;; #no

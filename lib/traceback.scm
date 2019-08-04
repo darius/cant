@@ -28,7 +28,7 @@
         s
         (chain (s .slice 0 (- width 2)) "..")))
   (with-ejector
-   (given (ejector)
+   (on (ejector)
      (let ss (string-sink<-))
      (to (cut-off)
        (buffer .push! ss.output-string) ;TODO worth checking to skip if output-string empty?

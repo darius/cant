@@ -7,7 +7,7 @@
 
 (let inputs (each parse input))
 
-(let `(,strongest-p ,strongest-r) (max-by (given (`(,p ,r)) r)
+(let `(,strongest-p ,strongest-r) (max-by (on (`(,p ,r)) r)
                                           inputs))
 
 (let n-near-strongest (for tally ((`(,p ,_) inputs))

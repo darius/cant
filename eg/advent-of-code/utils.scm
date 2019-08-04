@@ -24,15 +24,13 @@
   (begin cycling ((ys xs))
     (if ys.empty?
         (cycling xs)
-        (link/lazy ys.first (given () (cycling ys.rest))))))
+        (link/lazy ys.first (: (cycling ys.rest))))))
 
 (to (scanl/lazy f z xs)
   (begin scanning ((z z) (xs xs))
-    (link/lazy z
-               (given ()
-                 (if xs.empty?
-                     '()
-                     (scanning (f z xs.first) xs.rest))))))
+    (link/lazy z (: (if xs.empty?
+                        '()
+                        (scanning (f z xs.first) xs.rest))))))
 
 ;; TODO is this worth it? sometimes what you want is the yeahs/lazy equivalent
 (to (detect include? xs)
@@ -48,16 +46,15 @@
             (outer outers.rest)
             (do (let x2 inners.first)
                 (link/lazy `(,x1 ,x2)
-                           (given () (inner inners.rest)))))))))
+                           (: (inner inners.rest)))))))))
 
 (to (yeahs/lazy f xs)
-  (foldr/lazy (given (x z-thunk)
-                (let fx (f x))
-                (if fx
+  (foldr/lazy (on (x z-thunk)
+                (if (let fx (f x))
                     (link/lazy fx z-thunk)
                     (z-thunk)))
               xs
-              (given () '())))
+              (: '())))
 
 (to (duplicates<- xs)
   (let seen (set<-))
@@ -66,7 +63,7 @@
         '()
         (do (let x xs.first)
             (if (seen .maps? x)
-                (link/lazy x (given () (looking xs.rest)))
+                (link/lazy x (: (looking xs.rest)))
                 (do (seen .add! x)
                     (looking xs.rest)))))))
 

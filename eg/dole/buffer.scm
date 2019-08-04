@@ -71,7 +71,7 @@
                     (text .clip (- next-end 1)))))
   ;; XXX this can wrap around since text .clip moves `nowhere` to 0.
    
-  (let key-map (key-map<- (given (ch)
+  (let key-map (key-map<- (on (ch)
                             (if (char? ch)
                                 (insert (string<- ch))
                                 (log "Not a char: ~w" ch)))))

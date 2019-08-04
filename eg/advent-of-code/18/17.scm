@@ -41,7 +41,7 @@
       (let p `(,x ,y))
       (display (if (= spring p) #\+ #\.)))
     (newline))
-  (grid .show (given (chars)
+  (grid .show (on (chars)
                 (for each! ((ch chars))
                   (display (or ch #\.)))
                 (newline)))

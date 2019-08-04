@@ -3,16 +3,15 @@
 (to (build-prelude interpret apply)
 
   (to (make-church<-claim lc-no)
-    {primitive (given (lc-yes)
-                 {primitive (given (claim)
-                              (match claim
-                                (#no  lc-no)
-                                (#yes lc-yes)))})})
+    {primitive (on (lc-yes)
+                 {primitive (switch
+                              (#no  lc-no)
+                              (#yes lc-yes))})})
 
   (to (make-church<-count lc-zero)
     {primitive
-     (given (lc-succ)
-       {primitive (given (n)
+     (on (lc-succ)
+       {primitive (on (n)
                     (begin counting ((n n))
                       (match n
                         (0          lc-zero)
@@ -20,8 +19,8 @@
 
   (to (make-church<-list lc-nil)
     {primitive
-     (given (lc-link)
-       {primitive (given (xs)
+     (on (lc-link)
+       {primitive (on (xs)
                     (begin linking ((xs xs))
                       (match xs
                         ('()       lc-nil)
@@ -32,11 +31,11 @@
      (map<- `(
               (make-church<-claim {primitive ,make-church<-claim})
 
-              (add1 {primitive ,(given (n) (+ n 1))})
+              (add1 {primitive ,(on (n) (+ n 1))})
               (make-church<-count {primitive ,make-church<-count})
 
-              (squeam-link {primitive ,(given (h)
-                                         {primitive (given (t) (link h t))})})
+              (squeam-link {primitive ,(on (h)
+                                         {primitive (on (t) (link h t))})})
               (make-church<-list {primitive ,make-church<-list})
 
               (display {primitive ,display})

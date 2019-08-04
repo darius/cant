@@ -96,15 +96,15 @@
      (shift-by offset))
 
     ({.shift-line offset}
-     (shift-till offset (given () (line-starts point.^))))
+     (shift-till offset (: (line-starts point.^))))
 
     ({.shift-to-space offset}
      (when (decoder .find? #\space)
-       (shift-till offset (given () (= #\space (decoder (code point.^)))))))
+       (shift-till offset (: (= #\space (decoder (code point.^)))))))
 
     ({.shift-to-code offset letter}
      (when (code .find? letter)
-       (shift-till offset (given () (= letter (code point.^))))))
+       (shift-till offset (: (= letter (code point.^))))))
 
     ({.view show-cursor?}
      (let counts (bag<- decoder.values))

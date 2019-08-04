@@ -519,9 +519,9 @@
   ;; primitive calls (mostly). We can wait to do things properly until
   ;; we're making a VM in C for real.
   (match (with-signal-handler
-          (given (squeam-k @evil)
+          (on (squeam-k @evil)
             (squeam-k .answer {error evil}))
-          (given ()
+          (on ()
             (call p args)))
     ({error evil}
      (exit k evil))

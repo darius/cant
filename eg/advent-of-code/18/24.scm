@@ -37,7 +37,7 @@
   (let result (flexarray<-))
   (let enemies (flexarray<-list enemy-groups)) ;; clumsy? probably ought to be a set
   (let enemy-nums (flexarray<-list (1 .to enemy-groups.count)))  ;; just for the messages
-  (for each! ((`(,i ,group) (sort-by (given (`(,_ ,group)) group.target-selection-key)
+  (for each! ((`(,i ,group) (sort-by (on (`(,_ ,group)) group.target-selection-key)
                                      my-groups.items)))
     (unless enemies.empty?
       (let damages (for each ((enemy enemies.values))
@@ -57,8 +57,7 @@
   result.values)
 
 (to (attacking selections)
-  (for each! ((group (sort-by (given (g) (- g.initiative))
-                              selections.keys)))
+  (for each! ((group (sort-by (-> (- it.initiative)) selections.keys)))
     (when group.alive?
       (match (selections .get group)
         (#no)
@@ -72,7 +71,7 @@
                ("immune" immunities)
                ("weak"   weaknesses)))
     (set .add-all! (each symbol<- attack-strings)))
-  (given (army-boost)
+  (on (army-boost)
     (group<- n-units hit-points immunities weaknesses
              (+ army-boost attack-damage) (symbol<- attack-type) initiative)))
 

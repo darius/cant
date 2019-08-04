@@ -14,11 +14,11 @@
     (-1 (intersect xs.rest ys))
     (+1 (intersect xs ys.rest))
     ( 0 (link/lazy xs.first
-                   (given () (intersect xs.rest ys.rest))))))
+                   (: (intersect xs.rest ys.rest))))))
 
 (to (multiples<- n)                     ;TODO infinite range<- with stride
   (begin listing ((k n))
-    (link/lazy k (given () (listing (+ k n))))))
+    (link/lazy k (: (listing (+ k n))))))
 
 (print (euler5 (2 .to 10)))
 ;(print (euler5 (2 .to 20)))

@@ -47,7 +47,7 @@
 
 (let memo-choice
   (memoize
-   (given (node branches)
+   (on (node branches)
      (let top (min-by '.rank `(,node ,@branches)))
      (let rank top.rank)
      (make-node rank
@@ -79,7 +79,7 @@
         (and (= goal node.constant-value)
              env)
         (for foldr/lazy ((`(,value ,branch) node.branches.items)
-                         (try-remaining-branches (given () #no)))
+                         (try-remaining-branches (: #no)))
           (if (`(,none ,goal) .find? branch.constant-value)
               (do (env .set! node.rank value)
                   (walking branch))

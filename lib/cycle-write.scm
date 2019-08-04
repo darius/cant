@@ -28,8 +28,7 @@
   (let counter (box<- 0))
   (make cycle-sink
     ({.display atom}
-     (buffer .push! (given (sink)
-                      (sink .display atom))))
+     (buffer .push! (-> (it .display atom))))
     ({.print thing}
      (if (or (symbol? thing) (self-evaluating? thing))  ;; TODO skip other atom types
          (thing .selfie cycle-sink)
@@ -37,7 +36,7 @@
            (#no
             ;; First visit.
             (tags .set! thing 0)
-            (buffer .push! (given (sink)
+            (buffer .push! (on (sink)
                              (let id (tags thing))
                              (unless (= 0 id)
                                (format .to-sink sink "#~w=" id))))
@@ -51,7 +50,7 @@
                           (else
                            ;; Thereafter.
                            tag)))
-            (buffer .push! (given (sink)
+            (buffer .push! (on (sink)
                              (format .to-sink sink "#~w" id)))))))))
 
 (export cycle-write)

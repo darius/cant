@@ -11,9 +11,9 @@
   (`(,a ,b) (if (< a b) b a))
   (`(,a ,b ,@rest) (call max `(,(max a b) ,@rest))))
 
-(to (min-by key<- xs) (foldr1 (given (x y) (if (< (key<- x) (key<- y)) x y))
+(to (min-by key<- xs) (foldr1 (on (x y) (if (< (key<- x) (key<- y)) x y))
                               xs))
-(to (max-by key<- xs) (foldr1 (given (x y) (if (> (key<- x) (key<- y)) x y))
+(to (max-by key<- xs) (foldr1 (on (x y) (if (> (key<- x) (key<- y)) x y))
                               xs))
 
 (to ((compound-key<- @key-fns) x)   ;; TODO shorter name? combo-key? call-each?
@@ -61,17 +61,15 @@
   (if xs.empty?
       '()
       (if (keep? xs.first)
-          (link/lazy xs.first (given () (those/lazy keep? xs.rest)))
+          (link/lazy xs.first (: (those/lazy keep? xs.rest)))
           (those/lazy keep? xs.rest))))
 
 (to (each/lazy f xs)
-  (for foldr/lazy ((x xs)
-                   (rest-thunk (given () '())))
+  (for foldr/lazy ((x xs) (rest-thunk (: '())))
     (link/lazy (f x) rest-thunk)))
 
 (to (gather/lazy f xs)
-  (for foldr/lazy ((x xs)
-                   (rest-thunk (given () '())))
+  (for foldr/lazy ((x xs) (rest-thunk (: '())))
     (chain/lazy (f x) rest-thunk)))
 
 (to (chain/lazy xs ys-thunk)
@@ -81,7 +79,7 @@
   (if xs.empty?
       (z-thunk)
       (f xs.first
-         (given () (foldr/lazy f xs.rest z-thunk)))))
+         (: (foldr/lazy f xs.rest z-thunk)))))
 
 ;; TODO maybe call this `count` -- too overloaded?
 (to (tally f xs)
@@ -116,7 +114,7 @@
         (scanning `(,xs.first ,@r-head) xs.rest))))
 
 (to (method<- actor cue)
-  (given (@arguments)
+  (on (@arguments)
     (call actor (term<- cue arguments))))
 
 (to (write x)                      ;TODO rename
@@ -129,7 +127,7 @@
 
 ;; Experiments
 
-;;  TODO maybe also (take x y z (given (a b c) ...))
+;;  TODO maybe also (take x y z (on (a b c) ...))
 (to (take thing transform)
   (transform thing))
 
@@ -161,7 +159,7 @@
 
 (to (with-signal-handler handler thunk)
   (let parent-handler the-signal-handler.^)
-  (the-signal-handler .^= (given (@evil)
+  (the-signal-handler .^= (on (@evil)
                             (the-signal-handler .^= parent-handler)
                             (call handler evil)))
   (let result (thunk))

@@ -50,7 +50,7 @@
       (`(,first ,@rest)
        ((walk-code first c-code c-exp)
         vars
-        (given (vars2 cv) 
+        (on (vars2 cv) 
           (walking rest `(,cv ,@stmts) vars2)))))))
 
 ;; TODO walker objects instead, with code/exp methods?
@@ -113,7 +113,7 @@
        (unit 1))))
 
   ((walk-code code c-code c-exp) '_
-                                 (given (_ count) count)))
+                                 (on (_ count) count)))
 
 
 ;; C code constructors
