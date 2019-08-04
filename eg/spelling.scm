@@ -2,7 +2,7 @@
 ;; http://norvig.com/spell-correct.html
 ;; TODO: Try imitating https://en.wikibooks.org/wiki/Clojure_Programming/Examples/Norvig_Spelling_Corrector
 
-;; Try to find a word in WORDS that's similar to `word`.
+;; Try to find a word in `lexicon` that's similar to `word`.
 ;; Prefer the most common word with the fewest edits.
 (to (correct word)
   (or (pick-known-word `(,word))
@@ -11,8 +11,8 @@
       word))
 
 (to (pick-known-word candidates)
-  (let best (max-by WORDS candidates))
-  (and (WORDS .maps? best) best))
+  (let best (max-by lexicon candidates))
+  (and (lexicon .maps? best) best))
 
 (to (edits1 word)
   (let splits     (for each ((i (0 .to word.count)))
@@ -42,7 +42,7 @@
   ;;  (re:findall "[a-z]+" string.lowercase))  ;TODO
   string.lowercase.split)
 
-(let WORDS
+(let lexicon
   (bag<- (words<-string (with-input-file _.read-all "eg/spelling.train.text"))))
 
 (to (main _)
