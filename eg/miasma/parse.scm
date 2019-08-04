@@ -25,12 +25,8 @@
   (combined-mnemonic<- stem (each coerce-string (suffixes params))))
 
 ;; Return a string that looks like X, an atom.
-;; TODO just "~d" .format ?
 (to (coerce-string x)
-  (match x
-    ((? symbol?) x.name)
-    ((? string?) x)
-    ((? number?) (string<-number x))))
+  ("~d" .format x))
 
 ;; Return an instruction mnemonic formed out of STEM and SPECS.
 (to (combined-mnemonic<- stem specs)
