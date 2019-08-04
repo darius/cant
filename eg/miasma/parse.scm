@@ -120,9 +120,8 @@
 
 ;;XXX finish porting
 (let abbrevs
-  (for each ((`((,a ,b) (,x ,y))
-              (zip (grid* '(E G I U M R J O S) '(b w v d))
-                   (grid* '(E G I U E E J O S) '(1 2 4 4)))))
+  (for each ((`(,a ,b) (grid* '(E G I U M R J O S) '(b w v d)))
+             (`(,x ,y) (grid* '(E G I U E E J O S) '(1 2 4 4))))
     `(,(concat-symbol a b) ,x ,y)))
 
 ; XXX: preserve semantics of M, R, v
