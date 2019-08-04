@@ -54,7 +54,8 @@
 
 (to (bf-compile program)
   (let meaningful (set<-list "<>-+.,[]"))
-  (let real-program (for those ((ch program)) (meaningful .maps? ch)))
+  (let real-program (for those ((ch program.values))
+                      (meaningful .maps? ch)))
   (let expr-stack
     (for foldl ((stack '(0)) (ch real-program))
       (match ch
