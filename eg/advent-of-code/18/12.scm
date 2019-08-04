@@ -1,6 +1,6 @@
 ;; (Use run.scm to run this.)
 
-(let input (with-input-file '.read-lines data-file))
+(let input (with-input-file _.read-lines data-file))
 
 (let initial-lineup (input.first .slice ("initial state: " .count)))
 
@@ -13,11 +13,11 @@
 (display "\nPart 1\n")
 
 (let rules
-  ('.range (for where ((outcome (map<- inputs)))
+  (_.range (for where ((outcome (map<- inputs)))
              (= outcome "#"))))
 
 (to (state<-lineup lineup)
-  ('.range (for where ((ch lineup))
+  (_.range (for where ((ch lineup))
              (= ch #\#))))
 
 (to (part1)
@@ -34,7 +34,7 @@
   (if state.empty?
       state
       (do (let `(,lo ,hi) (bounds-1d<- state.keys))
-          ('.range (for those ((pot ((- lo 2) .to (+ hi 2))))
+          (_.range (for those ((pot ((- lo 2) .to (+ hi 2))))
                      (generate-1 state pot))))))
 
 (to (generate-1 state pot)

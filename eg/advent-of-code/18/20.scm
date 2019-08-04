@@ -3,7 +3,7 @@
 (import (use 'memoize)
   memoize)
 
-(let input (with-input-file '.read-all data-file))
+(let input (with-input-file _.read-all data-file))
 
 (to (alt<- @es) {alt es})
 (to (seq<- @es) {seq es})
@@ -21,7 +21,7 @@ dir:  {'N' | 'S' | 'E' | 'W'} :Dir.
                                  (Dir ,(feed dir<-))))))
 (let parse-main (semantics 'main))
 (to (parse string)
-  ('.result (parson-parse parse-main string)))
+  (_.result (parson-parse parse-main string)))
 
 
 (let infinity 999999)

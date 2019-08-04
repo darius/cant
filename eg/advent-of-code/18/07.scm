@@ -5,7 +5,7 @@
 ;  '(2 1))
 ;  '(2 61))
   '(5 61))
-(let input (with-input-file '.read-lines data-file))
+(let input (with-input-file _.read-lines data-file))
 
 (let parse
   (simple-parser<- "'Step ' :anyone ' must be finished before step ' :anyone ' can begin.'"))
@@ -21,7 +21,7 @@
   ((succs-set pre) .add! post))             ;TODO maybe use .get-set!
 
 (let succs (for map-by ((node nodes))
-             (sort ('.keys (succs-set node)))))
+             (sort (_.keys (succs-set node)))))
 
 (to (merge xs ys)                       ;TODO should be in a sort module or something
   (foldr insert ys xs))

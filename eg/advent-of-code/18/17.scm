@@ -3,7 +3,7 @@
 (import (use 'grid-2d)
   grid-2d<-)
 
-(let input (with-input-file '.read-lines data-file))
+(let input (with-input-file _.read-lines data-file))
 
 (let parse
   (simple-parser<- ":anyone '=' :int ', ' :anyone '=' :int '..' :int"))

@@ -3,7 +3,7 @@
 (import (use 'pretty-print)
   pp)
 
-(let input (with-input-file '.read-all data-file))
+(let input (with-input-file _.read-all data-file))
 
 ;; Return yes if Immune System wins.
 (to (battle armies)
@@ -11,24 +11,24 @@
     (let immune-system (armies "Immune System"))
     (let infection     (armies "Infection"))
     (format "Round: ~w vs. ~w\n" 
-            (each '.count infection)
-            (each '.count immune-system))
-;    (when (= (each '.count infection) '(1273))
+            (each _.count infection)
+            (each _.count immune-system))
+;    (when (= (each _.count infection) '(1273))
 ;      (error "break"))
     (let a1 (select-targets "Infection"     infection immune-system))
     (let a2 (select-targets "Immune System" immune-system infection))
     (let counts-before (for each ((groups armies.values))
-                         (sum (each '.count groups))))
-    (hm (when (some '.empty? armies.values)
+                         (sum (each _.count groups))))
+    (hm (when (some _.empty? armies.values)
           (not immune-system.empty?))
         (else
           ;; Fight a round.
           (attacking (map<- (chain a1 a2)))
           (for each! ((`(,army ,groups) armies.items))
-            (armies .set! army (those '.alive? groups)))
+            (armies .set! army (those _.alive? groups)))
           
           (let counts-after (for each ((groups armies.values))
-                              (sum (each '.count groups))))
+                              (sum (each _.count groups))))
           (if (= counts-before counts-after)
               #no      ; Stalemate
               (battling))))))
@@ -128,7 +128,7 @@ separator: '\n'.
 (let semantics (grammar (map<- `((Group ,(feed cook-group))))))
 (let parse-main (semantics 'main))
 (to (parse string)
-  ('.results (parson-parse parse-main string)))
+  (_.results (parson-parse parse-main string)))
 
 (let matchup (parse input))
 
@@ -147,9 +147,9 @@ separator: '\n'.
                                   (group-maker 0))))))
   (show-count armies)
   (battle armies)
-;;  (sum (each '.count (call chain armies.values)))  TODO is this nicer?
+;;  (sum (each _.count (call chain armies.values)))  TODO is this nicer?
   (sum (for gather ((groups armies.values))
-         (each '.count groups))))
+         (each _.count groups))))
 
 (format "Part 1: ~w\n" (part-1))
 
@@ -174,7 +174,7 @@ separator: '\n'.
   (let win? (battle armies))
   (format "Immune boost of ~w ~d\n" boost (if win? "WORKED!" "failed"))
   (when win?
-    (format "leaving ~w units\n" (sum (each '.count (armies "Immune System")))))
+    (format "leaving ~w units\n" (sum (each _.count (armies "Immune System")))))
   (newline)
   win?)
 

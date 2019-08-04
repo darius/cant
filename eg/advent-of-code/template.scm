@@ -1,4 +1,4 @@
-(let input (with-input-file '.read-lines data-file))
+(let input (with-input-file _.read-lines data-file))
 ;(each! print (input .slice 0 5))
 
 (let parse
@@ -10,7 +10,7 @@ main: '#' :nat ' @ ' :nat ',' :nat ': ' :nat 'x' :nat :end.
 (let semantics (grammar (map<-)))
 (let parse-main (semantics 'main))
 (to (parse string)
-  ('.results (parson-parse parse-main string)))
+  (_.results (parson-parse parse-main string)))
 
 (let inputs (each parse input))
 ;(print inputs)

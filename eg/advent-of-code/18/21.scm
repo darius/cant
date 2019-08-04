@@ -1,6 +1,6 @@
 ;; (Use run.scm to run this.)
 
-(let input (with-input-file '.read-lines data-file))
+(let input (with-input-file _.read-lines data-file))
 
 (let the-ip (number<-string (input.first.split 1)))
 (print the-ip)
@@ -62,13 +62,13 @@
          ('seti  a)
        
          ; TODO I'm not sure about this method name claim.count
-         ('gtir  ('.count (> a (regs b))))
-         ('gtri  ('.count (> (regs a) b)))
-         ('gtrr  ('.count (> (regs a) (regs b))))
+         ('gtir  (_.count (> a (regs b))))
+         ('gtri  (_.count (> (regs a) b)))
+         ('gtrr  (_.count (> (regs a) (regs b))))
        
-         ('eqir  ('.count (= a (regs b))))
-         ('eqri  ('.count (= (regs a) b)))
-         ('eqrr  ('.count (= (regs a) (regs b))))
+         ('eqir  (_.count (= a (regs b))))
+         ('eqri  (_.count (= (regs a) b)))
+         ('eqrr  (_.count (= (regs a) (regs b))))
        
          ))
      (regs .set! c result))

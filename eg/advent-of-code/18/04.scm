@@ -1,6 +1,6 @@
 ;; (Use run.scm to run this.)
 
-(let input (with-input-file '.read-lines data-file))
+(let input (with-input-file _.read-lines data-file))
 
 (let grammar (grammar<- "
 shifts:    shift* :end.
@@ -20,7 +20,7 @@ _:         :whitespace.
 (let parse-shifts (grammar/semantics 'shifts))
 
 (to (parse string)
-  ('.results (parson-parse parse-shifts string)))
+  (_.results (parson-parse parse-shifts string)))
 
 (let shifts (parse (chain-lines (sort input))))
 

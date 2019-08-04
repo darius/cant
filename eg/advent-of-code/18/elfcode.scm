@@ -1,5 +1,5 @@
 (to (main `(,_ ,filename))
-  (let elfcode (parse (with-input-file '.read-lines filename)))
+  (let elfcode (parse (with-input-file _.read-lines filename)))
   (itsy-dump elfcode)
   (newline)
   (disassemble elfcode))

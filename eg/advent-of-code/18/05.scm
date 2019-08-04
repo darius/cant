@@ -1,7 +1,7 @@
 ;; (Use run.scm to run this.)
 
 (let input (list<-string                ;ugh
-            ('.name (with-input-file read data-file))))
+            (_.name (with-input-file read data-file))))
 
 (to (reacts? c d)
   (and (= c.uppercase d.uppercase)
@@ -21,6 +21,6 @@
     (not= atom c.uppercase)))
 
 (to (try atom)
-  ('.count (reduce (scour atom))))
+  (_.count (reduce (scour atom))))
 
 (format "part 2 ~w\n" (call min (each try (#\A .to #\Z))))

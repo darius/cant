@@ -1,6 +1,6 @@
 ;; (Use run.scm to run this.)
 
-(let input (with-input-file '.read-lines data-file))
+(let input (with-input-file _.read-lines data-file))
 
 (to (parse line)
   (each number<-string (line.trim .split ","))) ;TODO I thought it was #\,

@@ -1,6 +1,6 @@
 ;; (Use run.scm to run this.)
 
-(let input (with-input-file '.read-lines data-file))
+(let input (with-input-file _.read-lines data-file))
 
 
 (display "Part 1\n")
@@ -17,4 +17,4 @@
 
 (display "Part 2\n")
 
-(print (call chain ('.first (duplicates<- (gather deletions<- input)))))
+(print (call chain (_.first (duplicates<- (gather deletions<- input)))))

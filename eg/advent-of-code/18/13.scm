@@ -1,9 +1,9 @@
 ;; (Use run.scm to run this.)
 
-(let inputs (with-input-file '.read-all data-file))
+(let inputs (with-input-file _.read-all data-file))
 
 (to (parse world-str)
-  (surely (hide (let widths (each '.count world-str.split-lines))
+  (surely (hide (let widths (each _.count world-str.split-lines))
                 (= 1 widths.range.count)))
   (let width (+ 1 world-str.split-lines.first.count))
   (let carts (map<-))

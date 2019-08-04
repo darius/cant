@@ -11,7 +11,7 @@
 (display "\nPart 2\n")
 
 (let freqs (scanl/lazy + 0 (cycle changes)))
-(print ('.first (duplicates<- freqs)))
+(print (_.first (duplicates<- freqs)))
 ;;(let seen (set<-))
 ;;(print (for detect ((freq freqs))
 ;;         (or (seen freq)

@@ -1,6 +1,6 @@
 ;; (Use run.scm to run this.)
 
-(let input (with-input-file '.read-lines data-file))
+(let input (with-input-file _.read-lines data-file))
 
 (let parse
   (simple-parser<- "'pos=<' [:int ',' :int ',' :int :hug] '>, r=' :int"))

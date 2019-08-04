@@ -6,7 +6,7 @@
 (import (use 'pairing-heap)
   priority-queues<-)
 
-(let input (with-input-file '.read-all data-file))
+(let input (with-input-file _.read-all data-file))
 
 (let parse
   (simple-parser<- "'depth: ' :nat '\ntarget: ' [:nat ',' :nat :hug] '\n'"))

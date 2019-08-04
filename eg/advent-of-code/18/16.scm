@@ -1,6 +1,6 @@
 ;; (Use run.scm to run this.)
 
-(let input (with-input-file '.read-all data-file))
+(let input (with-input-file _.read-all data-file))
 
 (let grammar (grammar<- "
 main: clause* :hug '\n\n' program.  # N.B. no :end
@@ -14,7 +14,7 @@ insn:    :nat ' ' :nat ' ' :nat ' ' :nat '\n' :hug.
 (let semantics (grammar (map<-)))
 (let parse-main (semantics 'main))
 (to (parse string)
-  ('.results (parson-parse parse-main string)))
+  (_.results (parson-parse parse-main string)))
 
 (let `(,observations ,program) (parse input))
 ;(each! print program)
@@ -52,13 +52,13 @@ insn:    :nat ' ' :nat ' ' :nat ' ' :nat '\n' :hug.
          ('seti  a)
        
          ; TODO I'm not sure about this method name claim.count
-         ('gtir  ('.count (> a (regs b))))
-         ('gtri  ('.count (> (regs a) b)))
-         ('gtrr  ('.count (> (regs a) (regs b))))
+         ('gtir  (_.count (> a (regs b))))
+         ('gtri  (_.count (> (regs a) b)))
+         ('gtrr  (_.count (> (regs a) (regs b))))
        
-         ('eqir  ('.count (= a (regs b))))
-         ('eqri  ('.count (= (regs a) b)))
-         ('eqrr  ('.count (= (regs a) (regs b))))
+         ('eqir  (_.count (= a (regs b))))
+         ('eqri  (_.count (= (regs a) b)))
+         ('eqrr  (_.count (= (regs a) (regs b))))
        
          ))
      (regs .set! c result))
@@ -95,7 +95,7 @@ insn:    :nat ' ' :nat ' ' :nat ' ' :nat '\n' :hug.
 (to (part-2)
   ;; TODO: map-reduce with intersection
   (let op-name-set all-op-names.range)
-  (let opcodes ((each '.first constraints) .range))
+  (let opcodes ((each _.first constraints) .range))
   (let candidates (for map-by ((_ opcodes.keys))
                     op-name-set))
   (for each! ((`(,opcode ,op-names) constraints))
@@ -112,9 +112,9 @@ insn:    :nat ' ' :nat ' ' :nat ' ' :nat '\n' :hug.
   ;; Trivial constraint satisfaction turns out to be good enough:
   (let assignments (map<-))
   (begin pruning ()
-    (let opcode (min-by (compose '.count candidates)
+    (let opcode (min-by (compose _.count candidates)
                         candidates.keys))
-    (when (= 1 ('.count (candidates opcode)))
+    (when (= 1 (_.count (candidates opcode)))
       (let op-name (((candidates opcode) .keys) .first)) ;clumsy
       (assignments .set! opcode op-name)
       (candidates .delete! opcode)

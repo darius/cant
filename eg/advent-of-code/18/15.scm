@@ -5,15 +5,15 @@
   push extend
   peek)
 
-;(let input (with-input-file '.read-all "advent15.test"))
-;(let input (with-input-file '.read-all "advent15.movement"))
-;(let input (with-input-file '.read-all "advent15.movement2"))
-;(let input (with-input-file '.read-all "advent15.combat1"))
-;(let input (with-input-file '.read-all "advent15.combat2"))
-;(let input (with-input-file '.read-all "advent15.combat3"))
-;(let input (with-input-file '.read-all "advent15.combat4"))
-;(let input (with-input-file '.read-all "advent15.combat5"))
-(let input (with-input-file '.read-all data-file))
+;(let input (with-input-file _.read-all "advent15.test"))
+;(let input (with-input-file _.read-all "advent15.movement"))
+;(let input (with-input-file _.read-all "advent15.movement2"))
+;(let input (with-input-file _.read-all "advent15.combat1"))
+;(let input (with-input-file _.read-all "advent15.combat2"))
+;(let input (with-input-file _.read-all "advent15.combat3"))
+;(let input (with-input-file _.read-all "advent15.combat4"))
+;(let input (with-input-file _.read-all "advent15.combat5"))
+(let input (with-input-file _.read-all data-file))
 
 (to (part-1)
   (let field (field<- input 3))
@@ -37,7 +37,7 @@
 
   (let width (+ 1 field-string.split-lines.first.count))
   ;; TODO I *want* to write it like this, but it's ugly! --
-  ;; (surely (= 1 (((each '.count field-string.split-lines) .range) .count)))
+  ;; (surely (= 1 (((each _.count field-string.split-lines) .range) .count)))
   (surely (for every ((line field-string.split-lines))
             (= width (+ line.count 1))))
 
@@ -89,7 +89,7 @@
         ('())
         (paths
          (let chosen-path
-           (min-by (compound-key<- '.last '.first) paths))
+           (min-by (compound-key<- _.last _.first) paths))
          (let spot chosen-path.first)
          (move! p spot)
          (unless (maybe-attack spot)

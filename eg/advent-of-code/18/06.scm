@@ -11,7 +11,7 @@
 (let margin (be data-name
               ("06.in" 10000)
               ("06.test" 32)))
-(let input (with-input-file '.read-lines data-file))
+(let input (with-input-file _.read-lines data-file))
 
 (let parse (simple-parser<- ":nat ', ' :nat"))
 (let centers (each parse input))
