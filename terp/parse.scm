@@ -96,24 +96,25 @@
         (pack<- e-constant (void)))          ;I guess
        (('call e1 e2)
         (pack<- e-call (parse-e e1 ctx) (parse-e e2 ctx)))
-       (('_ (: cue cue?) . operands)      ; TODO experiment: syntax for messages
-        (pack<- e-term cue (parse-es operands ctx)))
        (('_ . operands)                   ; TODO experiment: syntax for messages
+        (parse-message-e operands ctx))
+       ((addressee . operands)
+        (pack<- e-call
+                (parse-e addressee ctx)
+                (parse-message-e operands ctx)))
+       (__ (error 'parse-exp "Bad syntax" e))
+       ))))
+
+(define (parse-message-e es ctx)
+  (mcase es
+    (((: cue cue?) . operands)
+     (pack<- e-term cue (parse-es operands ctx)))
+    (operands
         ;; XXX The following is not an acceptable meaning for (_ x y z) because
         ;;  if message = (_ 'x) then (message 0) currently would evaluate to 'x
         ;;  which doesn't match the behavior of other message objects like _.count.
         ;;  But I'm using it for the interim until we migrate away from lists as messages.
-        (pack<- e-list (parse-es operands ctx)))
-       ((addressee (: cue cue?) . operands)
-        (pack<- e-call
-                (parse-e addressee ctx)
-                (pack<- e-term cue (parse-es operands ctx))))
-       ((addressee . operands)
-        (pack<- e-call
-                (parse-e addressee ctx)
-                (pack<- e-list (parse-es operands ctx))))
-       (__ (error 'parse-exp "Bad syntax" e))
-       ))))
+     (pack<- e-list (parse-es operands ctx)))))
 
 (define (parse-es es ctx)
   (map (lambda (e) (parse-e e ctx)) es))
