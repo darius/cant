@@ -7,21 +7,21 @@
 
 (to (actor<- script r)
   (make actor
-    (message
-     (script .receive message actor r))))
+    (to message
+      (script .receive message actor r))))
 
 (to (script<- trait clauses)
   (make script
-    ((_ .receive message actor parent-r)
-     (begin matching ((clauses clauses))
-       (be clauses
-         ('()
-          (trait actor message))
-         (`((,pattern ,pat-vars ,body-vars ,body) ,@rest)
-          (let pat-r (env-extend parent-r pat-vars))
-          (if (eval-match message pattern pat-r)
-              (eval body (env-extend pat-r body-vars))
-              (matching rest))))))))
+    (to (_ .receive message actor parent-r)
+      (begin matching ((clauses clauses))
+        (be clauses
+          ('()
+           (trait actor message))
+          (`((,pattern ,pat-vars ,body-vars ,body) ,@rest)
+           (let pat-r (env-extend parent-r pat-vars))
+           (if (eval-match message pattern pat-r)
+               (eval body (env-extend pat-r body-vars))
+               (matching rest))))))))
 
 (to (eval e r)
   (be e.term
@@ -87,22 +87,22 @@
 (to (env-extend parent-r vars)
   (let vals (array<-count vars.count *uninitialized*))
   (make env
-    (`(,key)
-     (be (vars .find key #no)
-       (#no (parent-r key))
-       (i   (vals i))))
-    ((_ .bind var val)
-     (let i (vars .find var))
-     (unless (= (vals i) *uninitialized*)
-       (error "Re-binding" var))
-     (vals .set! i val))))
+    (to `(,key)
+      (be (vars .find key #no)
+        (#no (parent-r key))
+        (i   (vals i))))
+    (to (_ .bind var val)
+      (let i (vars .find var))
+      (unless (= (vals i) *uninitialized*)
+        (error "Re-binding" var))
+      (vals .set! i val))))
 
 (to (env<-map map)
   (make env
-    (`(,key)
-     (map key))
-    ((_ .bind var val)
-     (error "Tried to change immutable env" var))))
+    (to `(,key)
+      (map key))
+    (to (_ .bind var val)
+      (error "Tried to change immutable env" var))))
   
 (let global-env
   (env<-map (export __as-link + - * /)))   ; etc.

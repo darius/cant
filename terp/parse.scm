@@ -293,9 +293,7 @@
 
 (define (parse-clause clause ctx)
   (mcase clause
-    (('to pat . body)   ;; TODO 'to optional while we make the transition, at least
-     (parse-clause `(,pat ,@body) ctx))
-    ((pat . body)
+    (('to pat . body)
      (let ((p (parse-p pat ctx))
            (e (parse-e `(do ,@body) ctx)))
        (list p (pat-vars-defined p) (exp-vars-defined e) e)))))
@@ -315,7 +313,7 @@
                       ,@(map (lambda (clause)
                                (if (starts-with? clause 'to) ;XXX temporary
                                    (cdr clause)
-                                   clause))
+                                   (error 'parse "make-trait no-to clause" clause)))
                              clauses)
                       (_ (miranda-trait ,self ,msg)))))))) ;XXX hygiene, and XXX make it overridable
     ('be     (mlambda  ; TODO do I like this better than 'match'?
@@ -329,14 +327,14 @@
                `(make _ ,@(map (lambda (clause)
                                  (insist (pair? clause)
                                          "invalid clause" clause)
-                                 `((list<- ,(car clause)) ,@(cdr clause)))
+                                 `(to (list<- ,(car clause)) ,@(cdr clause)))
                                clauses)))))
     ('to     (mlambda
               ((__ (head . param-spec) . body)
                (let ((pattern (expand-definition-pattern param-spec)))
                  (if (symbol? head)
-                     `(make ,head (,pattern ,@body))
-                     `(to ,head (make _ (,pattern ,@body))))))))
+                     `(make ,head (to ,pattern ,@body))
+                     `(to ,head (make _ (to ,pattern ,@body))))))))
     ('given  (mlambda
               ((__ dp . body)
                `(to (_ ,@dp) ,@body))))
@@ -362,13 +360,13 @@
                  (parse-bindings bindings
                    (lambda (ps es)
                      `(,fn (make ,name-for
-                             ((list<- ,@ps) ,@body))
+                             (to (list<- ,@ps) ,@body))
                            ,@es)))))))
     ('begin  (mlambda
               ((__ (: proc symbol?) bindings . body)
                (parse-bindings bindings
                  (lambda (ps es)
-                   `((hide (make ,proc ((list<- ,@ps) ,@body)))
+                   `((hide (make ,proc (to (list<- ,@ps) ,@body)))
                      ,@es))))))
     ('if     (mlambda
               ((__ test if-so if-not)

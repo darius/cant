@@ -1,5 +1,6 @@
 ;; Let's try and make it easy to find instances of a pattern
 ;; in Squeam source code.
+;;XXX untested - e.g. walk-clauses below isn't filled in
 
 (to (main `(,_ ,@filenames))
   (each! search filenames))
@@ -51,11 +52,11 @@
 ;;  pattern-matching on the raw sexprs
 ;; XXX duplicate code
 (make grab
-  (`(,filename)
-   (grab filename '()))
-  (`(,filename ,context)
-   (let code (for with-input-file ((source filename))
-               `(hide ,@(read-all source))))
-   (parse-exp code context)))
+  (to `(,filename)
+    (grab filename '()))
+  (to `(,filename ,context)
+    (let code (for with-input-file ((source filename))
+                `(hide ,@(read-all source))))
+    (parse-exp code context)))
 
 (export search)

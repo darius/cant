@@ -222,7 +222,7 @@
       (make _
         (to (_ .take value) (debugging (out-step<- k value)))
         ;; XXX (.inject ...) ?
-        (message (call k message)))))
+        (to message (call k message)))))
 
 
 ;; Smoke test

@@ -14,14 +14,14 @@
     (_ #no)))
 
 (make ratio<-
-  (`(,n)
-   (surely (integer? n))
-   {ratio n 1})
-  (`(,n ,d)
-   (surely (integer? n))
-   (surely (integer? d))
-   (reduce n d)))
-    
+  (to `(,n)
+    (surely (integer? n))
+    {ratio n 1})
+  (to `(,n ,d)
+    (surely (integer? n))
+    (surely (integer? d))
+    (reduce n d)))
+
 (to (reduce n d)
   (hm (if (= d 0) (error "Divide by 0"))
       (if (< d 0) (lowest-terms (- n) (- d)))

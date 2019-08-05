@@ -29,7 +29,7 @@
   (let p (macroexpand-outer-patt patt))
   (be p
     (`(,s ,@_)
-     (if (not ('(list<- link quote and view @ quasiquote) .find? s))
+     (if (not ('(_ list<- link quote and view @ quasiquote) .find? s))
          (do (format "This subpattern is bad: ~w\n" patt)
              #yes)
          (bad-part? (patt-subparts p))))

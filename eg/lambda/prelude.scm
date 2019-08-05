@@ -39,8 +39,8 @@
               (make-church<-list {primitive ,make-church<-list})
 
               (display {primitive ,display})
-              (error {primitive ,(make lambda-error
-                                   (`(,_) (error "Error in lambda-calculus program")))})
+              (error {primitive ,(to (lambda-error _)
+                                   (error "Error in lambda-calculus program"))})
               ))})
 
   (let prelude

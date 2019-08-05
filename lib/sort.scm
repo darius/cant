@@ -1,12 +1,12 @@
 ;; Generic sorting
 
 (make sort
-  (`(,xs)
-   (sort-by identity xs))
-  (`(,xs {reverse})          ;TODO design a better keyword-args scheme
-   ;; TODO sort by 'negation' of key instead, but allowing for
-   ;; non-numbers. Make up a negation-wrapper type?
-   (reverse (sort-by identity xs))) 
+  (to `(,xs)
+    (sort-by identity xs))
+  (to `(,xs {reverse})          ;TODO design a better keyword-args scheme
+    ;; TODO sort by 'negation' of key instead, but allowing for
+    ;; non-numbers. Make up a negation-wrapper type?
+    (reverse (sort-by identity xs))) 
   ;; ...
   )
 

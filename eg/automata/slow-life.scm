@@ -88,24 +88,24 @@
     (G .move! dest G lo (+ lo n)))
 
   (make life-grid
-    (`(,r ,c)
-     (G (at r c)))
-    ((_ .set! r c value)
-     (surely ('(0 1) .find? value))
-     (G .set! (at r c) value))
-    (_.show
-     (for each! ((r (1 .to n-rows)))
-       (for each! ((c (1 .to n-cols)))
-         (display (" O" (G (at r c))))
-         (display " "))
-       (newline)))
-    (_.next
-     (copy-edges)
-     (let new-G (array<-count (* R C) 0))
-     (for each! ((r (1 .to n-rows)))
-       (for each! ((i ((at r 1) .span n-cols)))
-         (new-G .set! i (update i))))
-     (grid<-array n-rows n-cols new-G))
+    (to `(,r ,c)
+      (G (at r c)))
+    (to (_ .set! r c value)
+      (surely ('(0 1) .find? value))
+      (G .set! (at r c) value))
+    (to _.show
+      (for each! ((r (1 .to n-rows)))
+        (for each! ((c (1 .to n-cols)))
+          (display (" O" (G (at r c))))
+          (display " "))
+        (newline)))
+    (to _.next
+      (copy-edges)
+      (let new-G (array<-count (* R C) 0))
+      (for each! ((r (1 .to n-rows)))
+        (for each! ((i ((at r 1) .span n-cols)))
+          (new-G .set! i (update i))))
+      (grid<-array n-rows n-cols new-G))
     ))
 
 (export grid<- paint smoke-test)

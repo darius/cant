@@ -35,7 +35,7 @@
     (`(,es-lists ,ps-lists) `(,(call chain es-lists)
                               ,(call chain ps-lists)))))
 
-(to (clause-subparts `(,p ,@es))
+(to (clause-subparts `(to ,p ,@es))
   `(,es (,p)))
 
 (to (macroexpand-outer-expr expr)
