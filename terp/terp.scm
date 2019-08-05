@@ -724,7 +724,7 @@
     (out ,(current-output-port))
     (stdin ,(current-input-port))       ;XXX inconsistent
 
-    (link ,cons)
+    (link ,list*) ;;TODO insist that last argument = nil or pair? TODO is this n-arg form useful? TODO needs a corresponding n-arg pattern
     (link? ,pair?)
     (null? ,null?)
     (list? ,(lambda (x) (or (null? x) (pair? x))))
