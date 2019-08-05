@@ -116,6 +116,10 @@
         ;;  But I'm using it for the interim until we migrate away from lists as messages.
      (pack<- e-list (parse-es operands ctx)))))
 
+(define (has-spread-operator? parts)
+  (any (mlambda (('@ __) #t) (__ #f))
+       parts))  ;XXX really only need to check the last one
+
 (define (parse-es es ctx)
   (map (lambda (e) (parse-e e ctx)) es))
 
@@ -169,7 +173,7 @@
 (define (parse-term-pat p ctx)
   (let ((tag (term-tag p))
         (parts (term-parts p)))
-    (if (any (mlambda (('@ __) #t) (__ #f)) parts)  ;XXX really only need to check the last one
+    (if (has-spread-operator? parts)
         (pack<- p-view
                 explode-term-exp
                 (make-cons-pat (pack<- p-constant tag)
@@ -243,7 +247,7 @@
   (pack<- e-constant explode-term))
 
 (define (parse-list-pat ps ctx)
-  (if (all (mlambda (('@ __) #f) (__ #t)) ps)
+  (if (not (has-spread-operator? ps))
       (pack<- p-list (parse-ps ps ctx)) ; Special-cased just for speed
       (mcase ps
         (()
