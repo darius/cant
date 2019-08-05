@@ -32,38 +32,38 @@ insn:    :nat ' ' :nat ' ' :nat ' ' :nat '\n' :hug.
 
 (to (vm<- regs)
   (make vm
-    ({.do op a b c}
-     (let result
-       (be op
+    (to (_ .do op a b c)
+      (let result
+        (be op
 
-         ('addr  (+ (regs a) (regs b)))
-         ('addi  (+ (regs a) b))
+          ('addr  (+ (regs a) (regs b)))
+          ('addi  (+ (regs a) b))
 
-         ('mulr  (* (regs a) (regs b)))
-         ('muli  (* (regs a) b))
+          ('mulr  (* (regs a) (regs b)))
+          ('muli  (* (regs a) b))
 
-         ('banr  ((regs a) .and (regs b)))
-         ('bani  ((regs a) .and b))
+          ('banr  ((regs a) .and (regs b)))
+          ('bani  ((regs a) .and b))
        
-         ('borr  ((regs a) .or (regs b)))
-         ('bori  ((regs a) .or b))
+          ('borr  ((regs a) .or (regs b)))
+          ('bori  ((regs a) .or b))
        
-         ('setr  (regs a))
-         ('seti  a)
+          ('setr  (regs a))
+          ('seti  a)
        
-         ; TODO I'm not sure about this method name claim.count
-         ('gtir  (_.count (> a (regs b))))
-         ('gtri  (_.count (> (regs a) b)))
-         ('gtrr  (_.count (> (regs a) (regs b))))
+          ;; TODO I'm not sure about this method name claim.count
+          ('gtir  (_.count (> a (regs b))))
+          ('gtri  (_.count (> (regs a) b)))
+          ('gtrr  (_.count (> (regs a) (regs b))))
        
-         ('eqir  (_.count (= a (regs b))))
-         ('eqri  (_.count (= (regs a) b)))
-         ('eqrr  (_.count (= (regs a) (regs b))))
+          ('eqir  (_.count (= a (regs b))))
+          ('eqri  (_.count (= (regs a) b)))
+          ('eqrr  (_.count (= (regs a) (regs b))))
        
-         ))
-     (regs .set! c result))
+          ))
+      (regs .set! c result))
 
-    ({.get-regs} regs)
+    (to _.get-regs regs)
     ))
 
 (let all-op-names

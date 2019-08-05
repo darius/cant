@@ -19,36 +19,36 @@
 
 (to (fail text far i vals)
   (make failure
-    ({.continue _}       failure)
-    ({.else p j vs}      (p text far j vs))
-    ({.invert}           empty)
-    ({.capture-from _}   failure)
-    ({.prefix _}         failure)
-    ({.leftovers}        (error "Parse failed" failure.postmortem))
-    ({.opt-results}      #no)
-    ({.results}          (error "Parse failed" failure.postmortem))
-    ({.result}           (error "Parse failed" failure.postmortem))
-    ({.postmortem}       `(,(text .slice 0 far) /
-                           ,(text .slice far)))
-    ({.display}                         ;TODO change to .selfie
-     (let `(,left / ,right) failure.postmortem)
-     (format "failed: ~w/~w" left right))))
+    (to (_ .continue _)     failure)
+    (to (_ .else p j vs)    (p text far j vs))
+    (to _.invert            empty)
+    (to (_ .capture-from _) failure)
+    (to (_ .prefix _)       failure)
+    (to _.leftovers         (error "Parse failed" failure.postmortem))
+    (to _.opt-results       #no)
+    (to _.results           (error "Parse failed" failure.postmortem))
+    (to _.result            (error "Parse failed" failure.postmortem))
+    (to _.postmortem        `(,(text .slice 0 far) /
+                              ,(text .slice far)))
+    (to _.display                         ;TODO change to .selfie
+      (let `(,left / ,right) failure.postmortem)
+      (format "failed: ~w/~w" left right))))
 
 (to (empty text far i vals)
   (make success
-    ({.continue p}       (p text far i vals))
-    ({.else _ _ _}       success)
-    ({.invert}           fail)
-    ({.capture-from j}   (empty text far i `(,@vals ,(text .slice j i))))
-    ({.prefix pre-vals}  (empty text far i `(,@pre-vals ,@vals)))
-    ({.leftovers}        i)
-    ({.opt-results}      vals)
-    ({.results}          vals)
-    ({.result}           vals.maybe)    ;TODO nicer error on wrong # of vals
-    ({.display}
-     (write (text .slice i))
-     (display " ")
-     (write vals))))
+    (to (_ .continue p)       (p text far i vals))
+    (to (_ .else _ _ _)       success)
+    (to _.invert              fail)
+    (to (_ .capture-from j)   (empty text far i `(,@vals ,(text .slice j i))))
+    (to (_ .prefix pre-vals)  (empty text far i `(,@pre-vals ,@vals)))
+    (to _.leftovers           i)
+    (to _.opt-results         vals)
+    (to _.results             vals)
+    (to _.result              vals.maybe)    ;TODO nicer error on wrong # of vals
+    (to _.display
+      (write (text .slice i))
+      (display " ")
+      (write vals))))
 
 (to ((invert p) text far i vals)
   (((p text far i vals) .invert) text far i vals))

@@ -5,21 +5,21 @@
 
 (to (mobile<- left right)
   (make _
-    ({.weight}    (+ left.weight right.weight))
-    ({.balanced?} (and left.balanced?
-                       right.balanced?
-                       (= left.torque right.torque)))))
+    (to _.weight    (+ left.weight right.weight))
+    (to _.balanced? (and left.balanced?
+                         right.balanced?
+                         (= left.torque right.torque)))))
 
 (to (branch<- length submobile)
   (let structure (if (number? submobile) (weight<- submobile) submobile))
   (make _
-    ({.torque}    (* length structure.weight))
-    (msg          (call structure msg))))
+    (to _.torque    (* length structure.weight))
+    (to msg         (call structure msg))))
 
 (to (weight<- value)
   (make _
-    ({.weight}    value)
-    ({.balanced?} #yes)))
+    (to _.weight    value)
+    (to _.balanced? #yes)))
 
 (let test-mobile
   (mobile<- (branch<- 1 10)

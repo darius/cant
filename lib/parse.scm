@@ -33,15 +33,15 @@
   (make grammar
 
     ;; Return all complete parses of a list of words.
-    ({.parse words}
-     (each _.tree (those _.complete? (grammar .parse-prefixes words))))
+    (to (_ .parse words)
+      (each _.tree (those _.complete? (grammar .parse-prefixes words))))
 
     ;; Return all parses of any prefix of words (working bottom-up).
-    ({.parse-prefixes words}
-     (if words.empty?
-         '()
-         (for gather ((rule (lexical-rules words.first)))
-           (extend-parse rule.lhs `(,words.first) words.rest '()))))))
+    (to (_ .parse-prefixes words)
+      (if words.empty?
+          '()
+          (for gather ((rule (lexical-rules words.first)))
+            (extend-parse rule.lhs `(,words.first) words.rest '()))))))
 
 (to (grammar<- sexprs)
   (grammar<-rules (for each ((`(,lhs -> ,rhs) sexprs))
@@ -49,29 +49,29 @@
 
 (to (rule<- lhs rhs)
   (make
-    ({.lhs} lhs)
-    ({.rhs} rhs)
-    ({.starts-with? cat}
-     (be rhs
-       (`(,first ,@_) (= first cat))
-       (_ #no)))))
+    (to _.lhs lhs)
+    (to _.rhs rhs)
+    (to (_ .starts-with? cat)
+      (be rhs
+        (`(,(= cat) ,@_) #yes)
+        (_ #no)))))
 
 (to (tree<- lhs rhs)
   (make
-    ({.lhs} lhs)
-    ({.rhs} rhs)
-    ({.selfie sink} (sink .print `(,lhs ,@rhs)))))
+    (to _.lhs lhs)
+    (to _.rhs rhs)
+    (to (_ .selfie sink) (sink .print `(,lhs ,@rhs)))))
 
 ;; A parse tree and a remainder.
 (to (parse<- tree remainder)
   (make
-    ({.tree}      tree)
-    ({.remainder} remainder)
-    ({.lhs}       tree.lhs)
-    ({.complete?} remainder.empty?)
-    ({.selfie sink}
-     (sink .print `((tree: ,tree)
-                    (remainder: ,remainder))))))
+    (to _.tree      tree)
+    (to _.remainder remainder)
+    (to _.lhs       tree.lhs)
+    (to _.complete? remainder.empty?)
+    (to (_ .selfie sink)
+      (sink .print `((tree: ,tree)
+                     (remainder: ,remainder))))))
 
 (export grammar<-
         grammar<-rules rule<-)

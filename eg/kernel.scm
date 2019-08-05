@@ -12,7 +12,7 @@
 
 (to (script<- trait clauses)
   (make script
-    ({.receive message actor parent-r}
+    ((_ .receive message actor parent-r)
      (begin matching ((clauses clauses))
        (be clauses
          ('()
@@ -91,7 +91,7 @@
      (be (vars .find key #no)
        (#no (parent-r key))
        (i   (vals i))))
-    ({.bind var val}
+    ((_ .bind var val)
      (let i (vars .find var))
      (unless (= (vals i) *uninitialized*)
        (error "Re-binding" var))
@@ -101,7 +101,7 @@
   (make env
     (`(,key)
      (map key))
-    ({.bind var val}
+    ((_ .bind var val)
      (error "Tried to change immutable env" var))))
   
 (let global-env

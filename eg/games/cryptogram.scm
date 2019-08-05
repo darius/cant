@@ -83,63 +83,64 @@
       (shift-till offset stop?)))
 
   (make _
-    ({.jot letter}
-     (decoder .set! (code point.^) letter))
 
-    ({.go-to-start}
-     (point .^= 0))
+    (to (_ .jot letter)
+      (decoder .set! (code point.^) letter))
 
-    ({.go-to-end}
-     (point .^= (- code.count 1)))
+    (to _.go-to-start
+      (point .^= 0))
 
-    ({.shift-by offset}
-     (shift-by offset))
+    (to _.go-to-end
+      (point .^= (- code.count 1)))
 
-    ({.shift-line offset}
-     (shift-till offset (: (line-starts point.^))))
+    (to (_ .shift-by offset)
+      (shift-by offset))
 
-    ({.shift-to-space offset}
-     (when (decoder .find? #\space)
-       (shift-till offset (: (= #\space (decoder (code point.^)))))))
+    (to (_ .shift-line offset)
+      (shift-till offset (: (line-starts point.^))))
 
-    ({.shift-to-code offset letter}
-     (when (code .find? letter)
-       (shift-till offset (: (= letter (code point.^))))))
+    (to (_ .shift-to-space offset)
+      (when (decoder .find? #\space)
+        (shift-till offset (: (= #\space (decoder (code point.^)))))))
 
-    ({.view show-cursor?}
-     (let counts (bag<- decoder.values))
-     (counts .delete! #\space)
-     (let clashes (_.range (for where ((n counts))
-                             (< 1 n))))
-     (let letters-left (for each ((ch alphabet))
-                         (if (counts .maps? ch) #\space ch)))
+    (to (_ .shift-to-code offset letter)
+      (when (code .find? letter)
+        (shift-till offset (: (= letter (code point.^))))))
 
-     (let pos (box<- 0))
+    (to (_ .view show-cursor?)
+      (let counts (bag<- decoder.values))
+      (counts .delete! #\space)
+      (let clashes (_.range (for where ((n counts))
+                              (< 1 n))))
+      (let letters-left (for each ((ch alphabet))
+                          (if (counts .maps? ch) #\space ch)))
 
-     (let view (flexarray<-))
-     (to (emit x) (view .push! x))
+      (let pos (box<- 0))
 
-     (emit (green `("Free: " ,letters-left #\newline)))
-     (for each! ((line lines))
-       (emit #\newline)
-       (for each! ((ch line))
-         (when (and show-cursor? ch.letter?)
-           (when (= pos.^ point.^)
-             (emit cursor))
-           (pos .^= (+ pos.^ 1)))         ;XXX clumsier
-         (emit (decoder .get ch ch)))
-       (emit #\newline)
-       (for each! ((ch line))
-         (emit (if ch.letter? #\- #\space)))
-       (emit #\newline)
-       (for each! ((ch line))
-         (let color (hm (if (clashes .maps? (decoder .get ch)) red)
-                        (if (= ch (code point.^))              green)
-                        (else                                  unstyled)))
-         (emit (color ch)))
-       (emit #\newline))
+      (let view (flexarray<-))
+      (to (emit x) (view .push! x))
 
-     view.values)))
+      (emit (green `("Free: " ,letters-left #\newline)))
+      (for each! ((line lines))
+        (emit #\newline)
+        (for each! ((ch line))
+          (when (and show-cursor? ch.letter?)
+            (when (= pos.^ point.^)
+              (emit cursor))
+            (pos .^= (+ pos.^ 1)))         ;XXX clumsier
+          (emit (decoder .get ch ch)))
+        (emit #\newline)
+        (for each! ((ch line))
+          (emit (if ch.letter? #\- #\space)))
+        (emit #\newline)
+        (for each! ((ch line))
+          (let color (hm (if (clashes .maps? (decoder .get ch)) red)
+                         (if (= ch (code point.^))              green)
+                         (else                                  unstyled)))
+          (emit (color ch)))
+        (emit #\newline))
+
+      view.values)))
 
 ;; Expand tabs; blank out other control characters.
 (to (clean str)

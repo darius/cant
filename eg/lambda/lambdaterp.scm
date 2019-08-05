@@ -29,68 +29,68 @@
 ;; ASTs and continuations
 
 (make halt
-  ({.empty?} #yes)
-  ({.inject k<-} halt)
-  ({.take-step val} val)
-  ({.take val} val))
+  (to _.empty? #yes)
+  (to (_ .inject k<-) halt)
+  (to (_ .take-step val) val)
+  (to (_ .take val) val))
 
 
 ;; Constant
 (to (constant<- c)
   (make constant
-    ({.source} c)
-    ({.eval-step r k} (debugging (value-step<- constant r k)))
-    ({.evaluate r k} (k .take c))))
+    (to _.source c)
+    (to (_ .eval-step r k) (debugging (value-step<- constant r k)))
+    (to (_ .evaluate r k) (k .take c))))
 
 ;; Variable reference
 (to (var-ref<- v)
   (make var-ref
-    ({.source} v)
-    ({.eval-step r k} (debugging (value-step<- var-ref r k)))
-    ({.evaluate r k} (lookup r v k))))
+    (to _.source v)
+    (to (_ .eval-step r k) (debugging (value-step<- var-ref r k)))
+    (to (_ .evaluate r k) (lookup r v k))))
 
 ;; Lambda expression
 (to (abstraction<- v body)
   (make abstraction
-    ({.source} `(& ,v ,body.source))
-    ({.eval-step r k} (debugging (value-step<- abstraction r k)))
-    ({.evaluate r k}
-     (k .take (make _
-                ({.survey} `(,v -> <body>))
-                ({.call arg k2}
-                 (body .evaluate (extend r v arg) k2))
-                ({.call-step arg k2}
-                 (body .eval-step (extend r v arg) k2)))))))
+    (to _.source `(& ,v ,body.source))
+    (to (_ .eval-step r k) (debugging (value-step<- abstraction r k)))
+    (to (_ .evaluate r k)
+      (k .take (make _
+                 (to _.survey `(,v -> <body>))
+                 (to (_ .call arg k2)
+                   (body .evaluate (extend r v arg) k2))
+                 (to (_ .call-step arg k2)
+                   (body .eval-step (extend r v arg) k2)))))))
 
 ;; Application
 (to (call<- operator operand)
   (make app
-    ({.source} `(,operator.source ,operand.source))
-    ({.eval-step r k}
-     (debugging (subeval-step<- operator r (ev-arg-cont<- operand r k))))
-    ({.evaluate r k}
-     (operator .evaluate r (ev-arg-cont<- operand r k)))))
+    (to _.source `(,operator.source ,operand.source))
+    (to (_ .eval-step r k)
+      (debugging (subeval-step<- operator r (ev-arg-cont<- operand r k))))
+    (to (_ .evaluate r k)
+      (operator .evaluate r (ev-arg-cont<- operand r k)))))
 
 (to (ev-arg-cont<- operand r k)
-  (make ({.empty?} #no)
-        ({.rest} k)
-        ({.first} `(^ ,operand.source))
-        ({.inject k<-} (ev-arg-cont<- operand r (k<- k)))
-        ({.take fn}
-         (operand .evaluate r (call-cont<- fn k)))
-        ({.take-step fn}
-         (operand .eval-step r (call-cont<- fn k)))
+  (make (to _.empty? #no)
+        (to _.rest k)
+        (to _.first `(^ ,operand.source))
+        (to (_ .inject k<-) (ev-arg-cont<- operand r (k<- k)))
+        (to (_ .take fn)
+          (operand .evaluate r (call-cont<- fn k)))
+        (to (_ .take-step fn)
+          (operand .eval-step r (call-cont<- fn k)))
         ))
 
 (to (call-cont<- fn k)
-  (make ({.empty?} #no)
-        ({.rest} k)
-        ({.first} `(,(survey fn) ^))
-        ({.inject k<-} (call-cont<- fn (k<- k)))
-        ({.take arg}
-         (fn .call arg k))
-        ({.take-step arg}
-         (fn .call-step arg k))
+  (make (to _.empty? #no)
+        (to _.rest k)
+        (to _.first `(,(survey fn) ^))
+        (to (_ .inject k<-) (call-cont<- fn (k<- k)))
+        (to (_ .take arg)
+          (fn .call arg k))
+        (to (_ .take-step arg)
+          (fn .call-step arg k))
         ))
 
 
@@ -102,21 +102,21 @@
       value.survey))
 
 (make prim+
-  ({.survey} '+)
-  ({.call-step arg1 k1}
-   XXX)
-  ({.call arg1 k1}
-   (if (number? arg1)
-       (k1 .take (make _
-                   ({.survey} `(+ ,(survey arg1)))
-                   ({.call-step arg2 k2}
-                    XXX)
-                   ({.call arg2 k2}
-                    (if (number? arg2)
-                        (k2 .take (+ arg1 arg2))
-                        ;; XXX should supply self, too:
-                        (debug k2 "Bad arg2 to +" (survey arg2))))))
-       (debug k1 "Bad arg1 to +" (survey arg1)))))
+  (to _.survey '+)
+  (to (_ .call-step arg1 k1)
+    XXX)
+  (to (_ .call arg1 k1)
+    (if (number? arg1)
+        (k1 .take (make _
+                    (to _.survey `(+ ,(survey arg1)))
+                    (to (_ .call-step arg2 k2)
+                      XXX)
+                    (to (_ .call arg2 k2)
+                      (if (number? arg2)
+                          (k2 .take (+ arg1 arg2))
+                          ;; XXX should supply self, too:
+                          (debug k2 "Bad arg2 to +" (survey arg2))))))
+        (debug k1 "Bad arg1 to +" (survey arg1)))))
 
 
 ;; Environments
@@ -171,56 +171,56 @@
 
 (to (value-step<- e r k)
   (make value-step
-    ({.show}
-     (display "ev-> ") (print e.source))
-    ({.b}
-     (traceback k)
-     (debugging value-step))
-    ({.continue}
-     (e .evaluate r k))
-    ({.hop}
-     (e .evaluate r (k .inject debugger-trap-cont<-)))
-    ({.step}
-     value-step.hop)
+    (to _.show
+      (display "ev-> ") (print e.source))
+    (to _.b
+      (traceback k)
+      (debugging value-step))
+    (to _.continue
+      (e .evaluate r k))
+    (to _.hop
+      (e .evaluate r (k .inject debugger-trap-cont<-)))
+    (to _.step
+      value-step.hop)
     ))
 
 (to (subeval-step<- e r k)
   (make subeval-step
-    ({.show}
-     (display "ev-> ") (print e.source))
-    ({.b}
-     (traceback k)
-     (debugging subeval-step))
-    ({.continue}
-     (e .evaluate r k))
-    ({.hop}
-     (e .evaluate r (k .inject debugger-trap-cont<-)))
-    ({.step}
-     (e .eval-step r k))
+    (to _.show
+      (display "ev-> ") (print e.source))
+    (to _.b
+      (traceback k)
+      (debugging subeval-step))
+    (to _.continue
+      (e .evaluate r k))
+    (to _.hop
+      (e .evaluate r (k .inject debugger-trap-cont<-)))
+    (to _.step
+      (e .eval-step r k))
     ))
 
 (to (out-step<- k value)
   (make out-step
-    ({.show}
-     (display "<-ret ") (print (survey value)))
-    ({.b}
-     (traceback k)
-     (debugging out-step))
-    ({.continue}
-     (k .take value))
-    ({.hop}
-     ((k .inject debugger-trap-cont<-) .take value))
-    ({.step} 
-     (k .take-step value))
-    ({.value new-value}
-     (debugging (out-step<- k new-value)))
+    (to _.show
+      (display "<-ret ") (print (survey value)))
+    (to _.b
+      (traceback k)
+      (debugging out-step))
+    (to _.continue
+      (k .take value))
+    (to _.hop
+      ((k .inject debugger-trap-cont<-) .take value))
+    (to _.step 
+      (k .take-step value))
+    (to (_ .value new-value)
+      (debugging (out-step<- k new-value)))
     ))
 
 (to (debugger-trap-cont<- k)
   (if (= k halt)
       k
       (make _
-        ({.take value} (debugging (out-step<- k value)))
+        (to (_ .take value) (debugging (out-step<- k value)))
         ;; XXX (.inject ...) ?
         (message (call k message)))))
 
@@ -242,11 +242,11 @@
  (try '(((+ 1) y) 2))
 
  (try '((lambda (x) ((+ y) 1)) 42)
-      {.value 42}
-      {.continue})
+      (_ .value 42)
+      _.continue)
  (try '((lambda (x) ((+ y) 1)) 42)
-      {.value 42}
-      {.hop}
-      {.b}
-      {.hop})
+      (_ .value 42)
+      _.hop
+      _.b
+      _.hop)
 )

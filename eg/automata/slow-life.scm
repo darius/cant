@@ -90,16 +90,16 @@
   (make life-grid
     (`(,r ,c)
      (G (at r c)))
-    ({.set! r c value}
+    ((_ .set! r c value)
      (surely ('(0 1) .find? value))
      (G .set! (at r c) value))
-    ({.show}
+    (_.show
      (for each! ((r (1 .to n-rows)))
        (for each! ((c (1 .to n-cols)))
          (display (" O" (G (at r c))))
          (display " "))
        (newline)))
-    ({.next}
+    (_.next
      (copy-edges)
      (let new-G (array<-count (* R C) 0))
      (for each! ((r (1 .to n-rows)))

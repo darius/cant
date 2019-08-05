@@ -45,44 +45,44 @@
 
   (make grid-2d {extending map-trait}
     
-    (`((,x ,y))
-     (check x y)
-     (A (at x y)))
-    ({.set! `(,x ,y) value}
-     (check x y)
-     (A .set! (at x y) value))
-    ({.get `(,x ,y) default}
-     (if (and (<= xl x xh)
-              (<= yl y yh))
-         (A (at x y))
-         default))
-    ({.maps? `(,x ,y)}
-     (and (<= xl x xh)
-          (<= yl y yh)))
+    (to `((,x ,y))
+      (check x y)
+      (A (at x y)))
+    (to (_ .set! `(,x ,y) value)
+      (check x y)
+      (A .set! (at x y) value))
+    (to (_ .get `(,x ,y) default)
+      (if (and (<= xl x xh)
+               (<= yl y yh))
+          (A (at x y))
+          default))
+    (to (_ .maps? `(,x ,y))
+      (and (<= xl x xh)
+           (<= yl y yh)))
 
-    ({.count}
-     A.count)
+    (to _.count
+      A.count)
 
-    ({.items}
-     (zip grid-2d.keys A.values))
-    ({.keys}
-     ;; Could be a one-liner: (grid* (xl .to xh) (yl .to yh))
-     ;; except that'd be column-major order. Hm, hm.
-     (for gather ((y (yl .to yh)))
-       (for each ((x (xl .to xh)))
-         `(,x ,y))))
-    ({.values}
-     A.values)
+    (to _.items
+      (zip grid-2d.keys A.values))
+    (to _.keys
+      ;; Could be a one-liner: (grid* (xl .to xh) (yl .to yh))
+      ;; except that'd be column-major order. Hm, hm.
+      (for gather ((y (yl .to yh)))
+        (for each ((x (xl .to xh)))
+          `(,x ,y))))
+    (to _.values
+      A.values)
 
-    ({.show print-line!}
-     (for each! ((y (yl .to yh)))
-       (print-line! (for each ((x (xl .to xh)))
-                      (A (at x y))))))
-    ({.show}
-     (grid-2d .show print))
-    ({.selfie sink}
-     (sink .display ("#<grid-2d (~w,~w)..(~w,~w)>"
-                     .format xl yl xh yh)))
+    (to (_ .show print-line!)
+      (for each! ((y (yl .to yh)))
+        (print-line! (for each ((x (xl .to xh)))
+                       (A (at x y))))))
+    (to _.show
+      (grid-2d .show print))
+    (to (_ .selfie sink)
+      (sink .display ("#<grid-2d (~w,~w)..(~w,~w)>"
+                      .format xl yl xh yh)))
     ))
 
 (export grid-2d<-)

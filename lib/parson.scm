@@ -172,9 +172,9 @@
            )))
 
 (make default-builder
-  ({.literal string} (lit string))
-  ({.keyword string} (then (lit string) word-boundary))
-  ({.match regex-string} (surely #no))  ;TODO
+  (to (_ .literal string) (lit string))
+  (to (_ .keyword string) (then (lit string) word-boundary))
+  (to (_ .match regex-string) (surely #no))  ;TODO
   )
 
 (to (parse-grammar text)

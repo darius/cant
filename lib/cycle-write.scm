@@ -27,30 +27,32 @@
 (to (cycle-sink<- tags buffer)
   (let counter (box<- 0))
   (make cycle-sink
-    ({.display atom}
-     (buffer .push! (_ .display atom)))
-    ({.print thing}
-     (if (or (symbol? thing) (self-evaluating? thing))  ;; TODO skip other atom types
-         (thing .selfie cycle-sink)
-         (be (tags .get thing)
-           (#no
-            ;; First visit.
-            (tags .set! thing 0)
-            (buffer .push! (on (sink)
-                             (let id (tags thing))
-                             (unless (= 0 id)
-                               (format .to-sink sink "#~w=" id))))
-            (thing .selfie cycle-sink))
-           (tag
-            (let id (hm (when (= tag 0)
-                          ;; Second visit.
-                          (counter .^= (+ counter.^ 1)) ;TODO (incr counter) ?
-                          (tags .set! thing counter.^)
-                          counter.^)
-                        (else
+
+    (to (_ .display atom)
+      (buffer .push! (_ .display atom)))
+
+    (to (_ .print thing)
+      (if (or (symbol? thing) (self-evaluating? thing))  ;; TODO skip other atom types
+          (thing .selfie cycle-sink)
+          (be (tags .get thing)
+            (#no
+             ;; First visit.
+             (tags .set! thing 0)
+             (buffer .push! (on (sink)
+                              (let id (tags thing))
+                              (unless (= 0 id)
+                                (format .to-sink sink "#~w=" id))))
+             (thing .selfie cycle-sink))
+            (tag
+             (let id (hm (when (= tag 0)
+                           ;; Second visit.
+                           (counter .^= (+ counter.^ 1)) ;TODO (incr counter) ?
+                           (tags .set! thing counter.^)
+                           counter.^)
+                         (else
                           ;; Thereafter.
-                         tag)))
-            (buffer .push! (on (sink)
-                             (format .to-sink sink "#~w" id)))))))))
+                          tag)))
+             (buffer .push! (on (sink)
+                              (format .to-sink sink "#~w" id)))))))))
 
 (export cycle-write)

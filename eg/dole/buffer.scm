@@ -79,59 +79,59 @@
 
   (make buffer
 
-    ({.clear!}
-     text.clear!
-     (point .^= 0)
-     (origin .^= 0))
+    (to _.clear!
+      text.clear!
+      (point .^= 0)
+      (origin .^= 0))
 
-    ({.backward-delete-char}
-     (text .delete (- point.^ 1) 1)
-     (buffer .move-char backward))
+    (to _.backward-delete-char
+      (text .delete (- point.^ 1) 1)
+      (buffer .move-char backward))
 
-    ({.forward-delete-char}
-     (text .delete point.^ 1))
+    (to _.forward-delete-char
+      (text .delete point.^ 1))
 
-    ({.beginning-of-line}
-     (point .^= (find-line point.^ backward)))
+    (to _.beginning-of-line
+      (point .^= (find-line point.^ backward)))
 
-    ({.end-of-line}
-     (point .^= (text .clip (- (find-line point.^ forward) 1))))
+    (to _.end-of-line
+      (point .^= (text .clip (- (find-line point.^ forward) 1))))
 
-    ({.insert str}
-     (surely (string? str))
-     (insert str))
+    (to (_ .insert str)
+      (surely (string? str))
+      (insert str))
 
-    ({.key-map}
-     key-map)
+    (to _.key-map
+      key-map)
 
-    ({.move-char offset}
-     (point .^= (text .clip (+ point.^ offset))))
+    (to (_ .move-char offset)
+      (point .^= (text .clip (+ point.^ offset))))
 
-    ({.previous-line} (previous-line))
-    ({.next-line}     (next-line))
+    (to _.previous-line (previous-line))
+    (to _.next-line     (next-line))
 
     ;; TODO: more reasonable/emacsy behavior. This interacts quite badly
     ;; with the dumb update-origin() logic.
-    ({.previous-page}
-     ;; (update-origin)
-     ;; point .^= origin
-     (for each! ((_ (range<- rows)))
-       (previous-line)))
+    (to _.previous-page
+      ;; (update-origin)
+      ;; point .^= origin
+      (for each! ((_ (range<- rows)))
+        (previous-line)))
 
-    ({.next-page}
-     ;; (update-origin)
-     ;; point .^= origin
-     (for each! ((_ (range<- rows)))
-       (next-line)))
+    (to _.next-page
+      ;; (update-origin)
+      ;; point .^= origin
+      (for each! ((_ (range<- rows)))
+        (next-line)))
 
-    ({.redisplay}
-     (let rendering (update-origin))
-     (surely rendering.point-visible?)
-     rendering.show)
+    (to _.redisplay
+      (let rendering (update-origin))
+      (surely rendering.point-visible?)
+      rendering.show)
 
-    ({.visit filename}
-     buffer.clear!
-     (text .insert 0 (with-input-file _.read-all filename)))))
+    (to (_ .visit filename)
+      buffer.clear!
+      (text .insert 0 (with-input-file _.read-all filename)))))
 
 (export
   buffer<-)

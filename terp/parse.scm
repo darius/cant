@@ -145,21 +145,30 @@
         (parse-list-pat ps ctx))
        (('link car-p cdr-p)
         (make-cons-pat (parse-p car-p ctx) (parse-p cdr-p ctx)))
+
+       (('_ (: cue cue?) . operands)      ; TODO experiment: syntax for messages
+        (parse-term-pat (make-term cue operands) ctx))
+       (('_ . operands)                   ; TODO experiment: syntax for messages
+        (error 'parse-exp "XXX not yet impl" p))
        ((: __ term?)
-        (let ((tag (term-tag p))
-              (parts (term-parts p)))
-          (if (any (mlambda (('@ __) #t) (__ #f)) parts)  ;XXX really only need to check the last one
-              (pack<- p-view
-                      explode-term-exp
-                      (make-cons-pat (pack<- p-constant tag)
-                                     (parse-list-pat parts ctx)))
-              (pack<- p-term tag (parse-ps parts ctx)))))
+        (parse-term-pat p ctx))
+
        ((: __ vector?)
         (error 'parse "Array patterns not yet implemented" p))
        (('@ __)                      ;XXX make @vars be some disjoint type
         (error 'parse "An @-pattern must be at the end of a list" p))
        ((: __ list?)
         (error 'parse "Old-style list pattern" p)))))) ;TODO better plaint
+
+(define (parse-term-pat p ctx)
+  (let ((tag (term-tag p))
+        (parts (term-parts p)))
+    (if (any (mlambda (('@ __) #t) (__ #f)) parts)  ;XXX really only need to check the last one
+        (pack<- p-view
+                explode-term-exp
+                (make-cons-pat (pack<- p-constant tag)
+                               (parse-list-pat parts ctx)))
+        (pack<- p-term tag (parse-ps parts ctx)))))
 
 (define (parse-and-pat ps ctx)
   (mcase ps
@@ -284,6 +293,8 @@
 
 (define (parse-clause clause ctx)
   (mcase clause
+    (('to pat . body)   ;; TODO 'to optional while we make the transition, at least
+     (parse-clause `(,pat ,@body) ctx))
     ((pat . body)
      (let ((p (parse-p pat ctx))
            (e (parse-e `(do ,@body) ctx)))
@@ -301,7 +312,11 @@
                  ;; TODO leave out miranda-trait if there's a catchall already
                  `(to (,v ,self ,msg)
                     (match ,msg
-                      ,@clauses
+                      ,@(map (lambda (clause)
+                               (if (starts-with? clause 'to) ;XXX temporary
+                                   (cdr clause)
+                                   clause))
+                             clauses)
                       (_ (miranda-trait ,self ,msg)))))))) ;XXX hygiene, and XXX make it overridable
     ('be     (mlambda  ; TODO do I like this better than 'match'?
               ((__ subject . clauses)

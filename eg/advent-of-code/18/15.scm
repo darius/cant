@@ -186,10 +186,10 @@
          (display ch)))))
 
   (make field
-    ({.do-round!}        (do-round))
-    ({.show}             (show))
-    ({.total-hit-points} (sum units.values))
-    ({.census}           (bag<- area.values))
+    (to _.do-round!        (do-round))
+    (to _.show             (show))
+    (to _.total-hit-points (sum units.values))
+    (to _.census           (bag<- area.values))
     ))
 
 (let enemy<- (map<- '((#\G #\E)

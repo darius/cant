@@ -31,18 +31,18 @@
         (#no i)
         (j (chasing j)))))
   (make partitioning
-    ({.join! x y}
-     (let xi (chase x))
-     (let yi (chase y))
-     ;; TODO path compression, etc.
-     (be (xi .compare yi)
-       (0)
-       (-1 (next .set! yi xi))
-       (+1 (next .set! xi yi))))
-    ({.count}
-     ;; TODO: there's a trickier but more efficient method looking only at the next array, right?
-     (let representatives (each chase elements))
-     representatives.range.count)
+    (to (_ .join! x y)
+      (let xi (chase x))
+      (let yi (chase y))
+      ;; TODO path compression, etc.
+      (be (xi .compare yi)
+        (0)
+        (-1 (next .set! yi xi))
+        (+1 (next .set! xi yi))))
+    (to _.count
+      ;; TODO: there's a trickier but more efficient method looking only at the next array, right?
+      (let representatives (each chase elements))
+      representatives.range.count)
     ))
 
 (to (unordered-pairs<- ps)

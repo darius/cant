@@ -49,26 +49,26 @@
                 (if (< (+ y 1) rows) (appending glyphs.rest 0 (+ y 1)))
                 (else                'done))))))
   (make _
-    ({.point-visible?}  (not (not point-y.^)))
+    (to _.point-visible?  (yeah? point-y.^))
     ;; XXX doesn't mean 'is centered' any more:
-    ({.point-centered?} (and point-y.^ (<= point-y.^ (rows .quotient 2))))
-    ({.show}
-     (display cursor-hide)
-     (display home)
-     (for each! ((`(,i ,line) lines.items))
-       (unless (= line (showing i))
-         (display (goto 0 i))
-         (display line)
-         (display clear-to-right)
-         (showing .set! i line)))
-     ;; TODO: styling for the logs
-     (display (goto 0 rows))
-     (for each! ((message (logs.^ .slice 0 console-rows)))
-       (display (message .slice 0 cols))
-       (display clear-to-right)
-       (display "\r\n"))
-     (display (goto point-x.^ point-y.^))
-     (display cursor-show))))
+    (to _.point-centered? (and point-y.^ (<= point-y.^ (rows .quotient 2))))
+    (to _.show
+      (display cursor-hide)
+      (display home)
+      (for each! ((`(,i ,line) lines.items))
+        (unless (= line (showing i))
+          (display (goto 0 i))
+          (display line)
+          (display clear-to-right)
+          (showing .set! i line)))
+      ;; TODO: styling for the logs
+      (display (goto 0 rows))
+      (for each! ((message (logs.^ .slice 0 console-rows)))
+        (display (message .slice 0 cols))
+        (display clear-to-right)
+        (display "\r\n"))
+      (display (goto point-x.^ point-y.^))
+      (display cursor-show))))
 
 (export
   cols rows

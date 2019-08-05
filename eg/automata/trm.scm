@@ -43,30 +43,30 @@ insn:    {'1'+} {'#' '#'? '#'? '#'? '#'?} :make_insn.
   (array<-
    'illegal-insn
    (make _
-     ({.name} "add-1")
-     (`(,n ,regs)
-      (regs .set! n (chain (regs n) "1"))
-      1))
+     (to _.name "add-1")
+     (to `(,n ,regs)
+       (regs .set! n (chain (regs n) "1"))
+       1))
    (make _
-     ({.name} "add-#")
-     (`(,n ,regs)
-      (regs .set! n (chain (regs n) "#"))
-      1))
+     (to _.name "add-#")
+     (to `(,n ,regs)
+       (regs .set! n (chain (regs n) "#"))
+       1))
    (make _
-     ({.name} "forward")
-     (`(,n ,regs) n))
+     (to _.name "forward")
+     (to `(,n ,regs) n))
    (make _
-     ({.name} "backward")
-     (`(,n ,regs) (- n)))
+     (to _.name "backward")
+     (to `(,n ,regs) (- n)))
    (make _
-     ({.name} "case")
-     (`(,n ,regs)
-      (be (regs .get n "")           ;TODO how about just (regs n)?
-        ("" 1)
-        (str (regs .set! n str.rest)
-             (be str.first
-               (#\1 2)
-               (#\# 3))))))))
+     (to _.name "case")
+     (to `(,n ,regs)
+       (be (regs .get n "")           ;TODO how about just (regs n)?
+         ("" 1)
+         (str (regs .set! n str.rest)
+              (be str.first
+                (#\1 2)
+                (#\# 3))))))))
 
 ;; (import (use 'pretty-layout) ...)
 ;;XXX use me

@@ -83,18 +83,18 @@
 ;; We cache the label in an object to keep constant-time access.
 
 (make nil-seq
-  ({.label} 0)
-  ({.tail?} #no)
-  ({.insns} '()))
+  (to _.label 0)
+  (to _.tail? #no)
+  (to _.insns '()))
 
 (to (prepend insn rest)
   (let label (+ rest.label 1))
   (let insns (link insn rest.insns))
   (make link-seq
-    ({.label} label)
-    ({.tail?} (= insn {return}))
-    ({.insns} insns)
-    ({.rest}  rest)))                   ;kinda funky
+    (to _.label label)
+    (to _.tail? (= insn {return}))
+    (to _.insns insns)
+    (to _.rest  rest)))                   ;kinda funky
 
 ;;XXX 
 ;;(to (show assembly)
@@ -106,19 +106,19 @@
 
 (to (const<- c)
   (make constant
-    ({.fvs} empty-set)
-    ({.gen s then} (prepend {const c} then))))
+    (to _.fvs empty-set)
+    (to (_ .gen s then) (prepend {const c} then))))
 
 (to (var<- v)
   (make variable
-    ({.fvs} (sset<- v))
-    ({.gen s then} (prepend (s v) then))))
+    (to _.fvs (sset<- v))
+    (to (_ .gen s then) (prepend (s v) then))))
 
 (to (lam<- v body src)
   (let fvs (sset-remove body.fvs v))
   (make lambda
-    ({.fvs} fvs)
-    ({.gen s then}
+    (to _.fvs fvs)
+    (to (_ .gen s then)
      (let cvs ;; closure variables
        (sset-elements (sset-difference fvs (sset<-list s.known.keys))))
      (let fetches (for each ((v cvs))
@@ -131,8 +131,8 @@
 
 (to (app<- f a src)
   (make application
-    ({.fvs} (sset-union f.fvs a.fvs))
-    ({.gen s then}
+    (to _.fvs (sset-union f.fvs a.fvs))
+    (to (_ .gen s then)
      (let code (a .gen s
                   (f .gen s
                      (prepend {invoke src} (if then.tail? then.rest then)))))
@@ -145,18 +145,18 @@
 
 (to (module-scope<- known)
   (make module-scope
-    (`(,v) (known v))
-    ({.known} known)))
+    (to `(,v) (known v))
+    (to _.known known)))
 
 (to (scope<- param var-offsets known)
   (make scope
-    (`(,v)
-     (if (= v param)
-         {fetch 'local}
-         (be (var-offsets .get v)
-           (#no (known v))
-           (n {fetch n}))))
-    ({.known} known)))
+    (to `(,v)
+      (if (= v param)
+          {fetch 'local}
+          (be (var-offsets .get v)
+            (#no (known v))
+            (n {fetch n}))))
+    (to _.known known)))
 
 
 ;; Smoke test

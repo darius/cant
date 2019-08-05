@@ -19,19 +19,19 @@
       v))
 
 (make empty-subst
-  ({.subst val}
-   val)
-  ({.selfie sink}
-   (sink .display "<>")))
+  (to (_ .subst val)
+    val)
+  (to (_ .selfie sink)
+    (sink .display "<>")))
 
 (to (extend-unchecked s my-var my-val)
   (make extended-subst
-    ({.subst val}
-     (if (variable? val)
-         (if (= val my-var) my-val (s .subst val))
-         val))
-    ({.selfie sink}
-     (format .to-sink sink "<~d: ~w>..~w" (variable-name my-var) my-val s))))
+    (to (_ .subst val)
+      (if (variable? val)
+          (if (= val my-var) my-val (s .subst val))
+          val))
+    (to (_ .selfie sink)
+      (format .to-sink sink "<~d: ~w>..~w" (variable-name my-var) my-val s))))
 
 (to (extend s var val)
   (if (occurs? s var val) #no (extend-unchecked s var val)))

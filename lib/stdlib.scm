@@ -3,13 +3,13 @@
 
 ;; XXX float contagion
 (make min
-  (`(,a) a)
-  (`(,a ,b) (if (< a b) a b))
-  (`(,a ,b ,@rest) (call min `(,(min a b) ,@rest))))
+  (to `(,a) a)
+  (to `(,a ,b) (if (< a b) a b))
+  (to `(,a ,b ,@rest) (call min `(,(min a b) ,@rest))))
 (make max
-  (`(,a) a)
-  (`(,a ,b) (if (< a b) b a))
-  (`(,a ,b ,@rest) (call max `(,(max a b) ,@rest))))
+  (to `(,a) a)
+  (to `(,a ,b) (if (< a b) b a))
+  (to `(,a ,b ,@rest) (call max `(,(max a b) ,@rest))))
 
 (to (min-by key<- xs) (foldr1 (on (x y) (if (< (key<- x) (key<- y)) x y))
                               xs))
@@ -51,9 +51,9 @@
 
 (to (link/lazy x thunk)
   (make lazy-list {extending list-trait}
-    ({.empty?} #no)
-    ({.first}  x)
-    ({.rest}   (thunk))
+    (to _.empty? #no)
+    (to _.first  x)
+    (to _.rest   (thunk))
     ;; XXX override parts of list-trait that need it for laziness
     ))
 
@@ -114,12 +114,12 @@
         (scanning `(,xs.first ,@r-head) xs.rest))))
 
 (make method<-
-  (`(,cue)
-   (on (actor @arguments)
-     (call actor (term<- cue arguments))))
-  (`(,actor ,cue)
-   (on (@arguments)
-     (call actor (term<- cue arguments)))))
+  (to `(,cue)
+    (on (actor @arguments)
+      (call actor (term<- cue arguments))))
+  (to `(,actor ,cue)
+    (on (@arguments)
+      (call actor (term<- cue arguments)))))
 
 (to (write x)                      ;TODO rename
   (out .print x))

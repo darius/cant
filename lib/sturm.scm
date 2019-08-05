@@ -62,10 +62,10 @@
 
 (to (state<- fg bg styles)
   (make state
-    ({.reveal}         `(,fg ,bg ,styles))
-    ({.set-fg code}    (state<- code bg   styles))
-    ({.set-bg code}    (state<- fg   code styles))
-    ({.add-style code} (state<- fg   bg   (styles .or code)))))
+    (to _.reveal            `(,fg ,bg ,styles))
+    (to (_ .set-fg code)    (state<- code bg   styles))
+    (to (_ .set-bg code)    (state<- fg   code styles))
+    (to (_ .add-style code) (state<- fg   bg   (styles .or code)))))
 
 (let default-state (state<- 39 49 0))
 
@@ -74,22 +74,22 @@
   (let bg     (box<- 49))
   (let styles (box<- 0))
   (make _
-    ({.establish! state}
-     (let `(,want-fg ,want-bg ,want-styles) state.reveal)
-     (unless (= styles.^ want-styles)
-       (display (sgr 0))
-       (fg .^= 39)
-       (bg .^= 49)
-       (for each! ((s '(1 4 5 7)))
-         (unless (= 0 (want-styles .and (1 .<< s)))
-           (display (sgr s))))
-       (styles .^= want-styles))
-     (unless (= want-fg fg.^)
-       (display (sgr want-fg))
-       (fg .^= want-fg))
-     (unless (= want-bg bg.^)
-       (display (sgr want-bg))
-       (bg .^= want-bg)))))
+    (to (_ .establish! state)
+      (let `(,want-fg ,want-bg ,want-styles) state.reveal)
+      (unless (= styles.^ want-styles)
+        (display (sgr 0))
+        (fg .^= 39)
+        (bg .^= 49)
+        (for each! ((s '(1 4 5 7)))
+          (unless (= 0 (want-styles .and (1 .<< s)))
+            (display (sgr s))))
+        (styles .^= want-styles))
+      (unless (= want-fg fg.^)
+        (display (sgr want-fg))
+        (fg .^= want-fg))
+      (unless (= want-bg bg.^)
+        (display (sgr want-bg))
+        (bg .^= want-bg)))))
 
 (let screen-state (screen-state<-))
 

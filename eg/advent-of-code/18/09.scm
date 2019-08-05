@@ -49,59 +49,60 @@
   (V .set! 0 0)
 
   (make circle
-    ({.count}
-     (+ L.^ (- N H.^)))
 
-    ({.pop! i}
-     (let lo L.^)
-     (let hi H.^)
-     (if (< i lo)
-         (do (let popped (V i))
-             (let j (+ i 1))
-             (let k (- hi (- lo j)))
-             ;; 0..i j..lo / hi..N
-             (__vector-move! V k V j lo)
-             ;; 0..i / hi-(lo-j)..hi..N
-             ;;        gap+j..hi..N equivalently
-             (L .^= i)
-             (H .^= k)
-             popped)
-         (do (let k (+ hi (- i lo)))
-             (let popped (V k))
-             ;; 0..lo / hi..k..N
-             (__vector-move! V lo V hi k)
-             ;; 0..lo..i / k+1..N
-             ;; 0..lo..i / gap+i+1..N equivalently
-             (L .^= i)
-             (H .^= (+ k 1))
-             popped)))
+    (to _.count
+      (+ L.^ (- N H.^)))
 
-    ({.insert! i value}
-     (let lo L.^)
-     (let hi H.^)
-     (if (<= i lo)
-         (do (let k (- hi (- lo i)))
-             ;; 0..i..lo /        hi..N
-             (__vector-move! V k V i lo)
-             ;; 0..i / hi-(lo-i)..hi..N
-             (V .set! i value)
-             ;; 0....j / hi-(lo-i)..hi..N
-             (L .^= (+ i 1))
-             (H .^= k))
-         (do (let k (+ hi (- i lo)))
-             ;; 0..lo / hi..k..N
-             ;; (__vector-move! V i V hi k)
-             (__vector-move! V lo V hi k)
-             ;; 0..lo..i / k..N
-             ;; 0..lo..i / gap+i..N equivalently
-             (V .set! i value)
-             (L .^= (+ i 1))
-             (H .^= k)
-             )))
+    (to (_ .pop! i)
+      (let lo L.^)
+      (let hi H.^)
+      (if (< i lo)
+          (do (let popped (V i))
+              (let j (+ i 1))
+              (let k (- hi (- lo j)))
+              ;; 0..i j..lo / hi..N
+              (__vector-move! V k V j lo)
+              ;; 0..i / hi-(lo-j)..hi..N
+              ;;        gap+j..hi..N equivalently
+              (L .^= i)
+              (H .^= k)
+              popped)
+          (do (let k (+ hi (- i lo)))
+              (let popped (V k))
+              ;; 0..lo / hi..k..N
+              (__vector-move! V lo V hi k)
+              ;; 0..lo..i / k+1..N
+              ;; 0..lo..i / gap+i+1..N equivalently
+              (L .^= i)
+              (H .^= (+ k 1))
+              popped)))
 
-    ({.values}
-     (chain (V .slice 0 L.^)
-            (V .slice H.^)))
+    (to (_ .insert! i value)
+      (let lo L.^)
+      (let hi H.^)
+      (if (<= i lo)
+          (do (let k (- hi (- lo i)))
+              ;; 0..i..lo /        hi..N
+              (__vector-move! V k V i lo)
+              ;; 0..i / hi-(lo-i)..hi..N
+              (V .set! i value)
+              ;; 0....j / hi-(lo-i)..hi..N
+              (L .^= (+ i 1))
+              (H .^= k))
+          (do (let k (+ hi (- i lo)))
+              ;; 0..lo / hi..k..N
+              ;; (__vector-move! V i V hi k)
+              (__vector-move! V lo V hi k)
+              ;; 0..lo..i / k..N
+              ;; 0..lo..i / gap+i..N equivalently
+              (V .set! i value)
+              (L .^= (+ i 1))
+              (H .^= k)
+              )))
+
+    (to _.values
+      (chain (V .slice 0 L.^)
+             (V .slice H.^)))
     ))
 
 (let scores

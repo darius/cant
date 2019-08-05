@@ -133,21 +133,22 @@
     (gap  .^= (- gap.^ r-size))
     (size .^= (+ size.^ r-size)))
 
-  (make _
-    ({.clear!}
-     (head .^= 0)
-     (gap  .^= 0)
-     (size .^= 0))
-    ({.clip p}             (clip p))
-    ({.get p span}         (get p span))
-    ({.delete p span}      (replace p span "")) ;TODO rename these with !
-    ({.insert p str}       (replace p 0 str))
-    ({.replace p span str} (replace p span str))
-    ({.count}              size.^)
-    ({.find-char-set p dir char-set}
-     (find-char-set p dir char-set))
+  (make text
+    (to _.clear!
+      (head .^= 0)
+      (gap  .^= 0)
+      (size .^= 0))
+    (to (_ .clip p)             (clip p))
+    (to (_ .get p span)         (get p span))
+    (to (_ .delete p span)      (replace p span "")) ;TODO rename these with !
+    (to (_ .insert p str)       (replace p 0 str))
+    (to (_ .replace p span str) (replace p span str))
+    (to _.count                 size.^)
+    (to (_ .find-char-set p dir char-set)
+      (find-char-set p dir char-set))
     ;; TODO: delegate to a string trait? but strings are immutable...
-    ({.keys}  (range<- size.^))
+    (to _.keys
+      (range<- size.^))
     ))
 
 (export

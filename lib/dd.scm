@@ -12,10 +12,10 @@
 (to (constant<- value)
   (surely (not= value none) "That can't be a constant value -- it's reserved")
   (make
-    ({.rank}           infinity)
-    ({.constant-value} value)
-    ({.evaluate env}   value)
-    (`(,@nodes)        (nodes value))))
+    (to _.rank            infinity)
+    (to _.constant-value  value)
+    (to (_ .evaluate env) value)
+    (to `(,@nodes)        (nodes value))))
 
 (to (all-same? xs)
   (= 1 xs.range.count))
@@ -23,22 +23,22 @@
 (to (choice<- rank branches)
   (surely (< rank infinity))
   (make choice
-    ({.rank}           rank)
-    ({.constant-value} none)
-    ({.evaluate env}   ((branches (env rank)) .evaluate env))
-    ({.branches}       branches)
-    (`(,@nodes)        (hm (if (all-same? nodes)
-                               nodes.first)
-                           ;; TODO how to write this elegantly?
-                           ;; Can't be this because it requires comparability of constants/none:
-                           ;; ((<=> nodes.keys (each _.constant-value nodes))
-                           ;; This is ok but wordier:
-                           ;; ((for every ((`(,i ,node) nodes.items)) (= i node.constant-value))
-                           ;; So for now we end up with:
-                           (if (= (as-list nodes.keys) (each _.constant-value nodes))
-                               choice)
-                           (else
-                               (memo-choice choice nodes))))))
+    (to _.rank            rank)
+    (to _.constant-value  none)
+    (to (_ .evaluate env) ((branches (env rank)) .evaluate env))
+    (to _.branches        branches)
+    (to `(,@nodes)        (hm (if (all-same? nodes)
+                                  nodes.first)
+                              ;; TODO how to write this elegantly?
+                              ;; Can't be this because it requires comparability of constants/none:
+                              ;; ((<=> nodes.keys (each _.constant-value nodes))
+                              ;; This is ok but wordier:
+                              ;; ((for every ((`(,i ,node) nodes.items)) (= i node.constant-value))
+                              ;; So for now we end up with:
+                              (if (= (as-list nodes.keys) (each _.constant-value nodes))
+                                  choice)
+                              (else
+                                  (memo-choice choice nodes))))))
 
 (let memo-node (memoize choice<-))
 

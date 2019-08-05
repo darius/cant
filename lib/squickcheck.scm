@@ -13,23 +13,23 @@
 ;; TODO catch errors
 ;; TODO better names
 (make all
-  (`(,property ,@gens)
-   (all .run (context<- default-rng) 40 property gens))
-  ({.run g n-times property gens}
-   (let failures (flexarray<-))
-   (for each! ((_ (range<- n-times)))
-     (let inputs (for each ((gen gens))
-                   (gen g)))
-     (be (call property inputs)
-       (#yes    (display "."))
-       (outcome (display "X")
-                (failures .push! `(,outcome ,inputs)))))
-   (newline)
-   (unless failures.empty?
-     (format "Failures for ~w:\n" property)
-     (for each! ((`(,outcome ,inputs) failures))
-       (format "~w: ~w\n" outcome inputs)))
-   failures.empty?))
+  (to `(,property ,@gens)
+    (all .run (context<- default-rng) 40 property gens))
+  (to (_ .run g n-times property gens)
+    (let failures (flexarray<-))
+    (for each! ((_ (range<- n-times)))
+      (let inputs (for each ((gen gens))
+                    (gen g)))
+      (be (call property inputs)
+        (#yes    (display "."))
+        (outcome (display "X")
+                 (failures .push! `(,outcome ,inputs)))))
+    (newline)
+    (unless failures.empty?
+      (format "Failures for ~w:\n" property)
+      (for each! ((`(,outcome ,inputs) failures))
+        (format "~w: ~w\n" outcome inputs)))
+    failures.empty?))
 
 (to (should be-ok? @arguments)
   (call be-ok? arguments))
@@ -38,16 +38,16 @@
 ;; Generator context
 
 (make context<-
-  (`(,rng)
-   (context<- rng 20))             ; TODO: is 20 a good default size?
-  (`(,rng ,size)
-   ;; TODO better method names
-   (make gen
-     ({.size}        size)
-     ({.natural n}   (rng .random-integer n))
-     ({.range lo hi} (rng .random-range lo hi))
-     ({.a-size}      (rng .random-integer size))
-     ({.choose xs}   (rng .pick xs)))))
+  (to `(,rng)
+    (context<- rng 20))             ; TODO: is 20 a good default size?
+  (to `(,rng ,size)
+    ;; TODO better method names
+    (make gen
+      (to _.size           size)
+      (to (_ .natural n)   (rng .random-integer n))
+      (to (_ .range lo hi) (rng .random-range lo hi))
+      (to _.a-size         (rng .random-integer size))
+      (to (_ .choose xs)   (rng .pick xs)))))
 
 
 ;; Basic gens

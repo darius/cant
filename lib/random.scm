@@ -18,16 +18,16 @@
     r)
 
   (make rng
-    ({.random-integer n}                ;TODO rename .random-count or something
-     ((next) .modulo n))                ;XXX could be better
-    ({.random-range lo hi}
-     (+ lo (rng .random-integer (- hi lo))))
-    ({.pick xs}
-     (xs (rng .random-integer xs.count)))
-    ({.shuffle! vec}
-     (let n vec.count)
-     (for each! ((i (range<- n)))
-       (vec .swap! i (+ i (rng .random-integer (- n i))))))
+    (to (_ .random-integer n)                ;TODO rename .random-count or something
+      ((next) .modulo n))                ;XXX could be better
+    (to (_ .random-range lo hi)
+      (+ lo (rng .random-integer (- hi lo))))
+    (to (_ .pick xs)
+      (xs (rng .random-integer xs.count)))
+    (to (_ .shuffle! vec)
+      (let n vec.count)
+      (for each! ((i (range<- n)))
+        (vec .swap! i (+ i (rng .random-integer (- n i))))))
     ))
 
 (let rng<- park-miller-rng<-)

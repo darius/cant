@@ -17,13 +17,13 @@
   (to (column? x) (columns .maps? x))
   (to (row<- entries)
     (make row
-      (`{,(? column? tag)}
-       (entries (columns tag))) ;; A bit clumsy, looking the tag up twice...
-      (message
-       (call entries message))))
+      (to `{,(? column? tag)}
+        (entries (columns tag))) ;; A bit clumsy, looking the tag up twice...
+      (to message
+        (call entries message))))
   (make table
-    ({.rows}
-     (each row<- rows))))
+    (to _.rows
+      (each row<- rows))))
 
 
 ;; Example

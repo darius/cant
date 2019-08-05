@@ -80,90 +80,90 @@
 
   (make process
 
-    ({.selfie sink}
-     (format .to-sink sink "#<~w>" pid-num))
+    (to (_ .selfie sink)
+      (format .to-sink sink "#<~w>" pid-num))
 
-    ({.subscribe watcher}
-     (watchers .add! watcher))
-    ({.unsubscribe watcher}
-     (watchers .delete! watcher))
+    (to (_ .subscribe watcher)
+      (watchers .add! watcher))
+    (to (_ .unsubscribe watcher)
+      (watchers .delete! watcher))
 
-    ({.receive-signal pid outcome}
-     (process .enqueue (array<- 'DOWN pid outcome)))
+    (to (_ .receive-signal pid outcome)
+      (process .enqueue (array<- 'DOWN pid outcome)))
 
-    ({.partner pid}
-     (partners .add! pid))
-    ({.unpartner pid}
-     (surely (partners .maps? pid))
-     (partners .delete! pid))
+    (to (_ .partner pid)
+      (partners .add! pid))
+    (to (_ .unpartner pid)
+      (surely (partners .maps? pid))
+      (partners .delete! pid))
 
-    ({.partner-died pid outcome}
-     (surely (partners .maps? pid))     ;uh right?
-     (partners .delete! pid)
-     (be state.^
-       ({exit _})
-       (_                            ;TODO check process_flag for trap
-        (state .^= {exit 'partner-died}) ;TODO or whatever
-        (on-death 'partner-died))))      ;TODO or whatever
+    (to (_ .partner-died pid outcome)
+      (surely (partners .maps? pid))     ;uh right?
+      (partners .delete! pid)
+      (be state.^
+        ({exit _})
+        (_                            ;TODO check process_flag for trap
+         (state .^= {exit 'partner-died}) ;TODO or whatever
+         (on-death 'partner-died))))      ;TODO or whatever
 
-    ({.enqueue message}
-     ;; TODO: error if exited? Probably not.
-     (inbox-unchecked .^= (push inbox-unchecked.^ message))
-     process.wake)
+    (to (_ .enqueue message)
+      ;; TODO: error if exited? Probably not.
+      (inbox-unchecked .^= (push inbox-unchecked.^ message))
+      process.wake)
 
-    ({.wake}
-     (be state.^
-       ((and {blocked _ _ _ _ _} thunk)
-        (run-queue .^= (push run-queue.^ process))
-        (state .^= {go thunk #no})) ;(TODO still a bit clumsy)
-       (_)))
+    (to _.wake
+      (be state.^
+        ((and {blocked _ _ _ _ _} thunk)
+         (run-queue .^= (push run-queue.^ process))
+         (state .^= {go thunk #no})) ;(TODO still a bit clumsy)
+        (_)))
 
-    ({.receive deadline after-e clauses r k}
-     (begin checking ()  ;; TODO finer time-slicing?
-       (be (peek inbox-unchecked.^)
-         ({empty}
-          (if deadline
-              (hm (when (<= deadline (nano-now))
+    (to (_ .receive deadline after-e clauses r k)
+      (begin checking ()  ;; TODO finer time-slicing?
+        (be (peek inbox-unchecked.^)
+          ({empty}
+           (if deadline
+               (hm (when (<= deadline (nano-now))
 ;                     (format "time ~w: deadline ~w\n" (msecs (nano-now)) (msecs deadline))
-                    (waiting-timeouts .delete! process) ;TODO might not be needed?
-                    (sev after-e r k))
-                  (else
-                    (waiting-timeouts .set! process deadline)
-                    {blocked deadline after-e clauses r k}))
-              {blocked deadline after-e clauses r k}))
-         ({nonempty msg rest}
-          (inbox-unchecked .^= rest)
-          (let map (map<-))
-          ;; TODO handle {after ...} clauses
-          (be (match-clauses r map clauses msg)
-            (#no
-             (inbox-checked .^= (push inbox-checked.^ msg))
-             (checking))
-            ({clause _ exp}
-             (inbox-unchecked .^= (extend inbox-checked.^ (list<-queue rest)))
-             (inbox-checked .^= empty)
-             (when deadline
-               (waiting-timeouts .delete! process)) ;TODO might not be needed?
-             (sev exp {local-env map r} k)))))))
+                     (waiting-timeouts .delete! process) ;TODO might not be needed?
+                     (sev after-e r k))
+                   (else
+                     (waiting-timeouts .set! process deadline)
+                     {blocked deadline after-e clauses r k}))
+               {blocked deadline after-e clauses r k}))
+          ({nonempty msg rest}
+           (inbox-unchecked .^= rest)
+           (let map (map<-))
+           ;; TODO handle {after ...} clauses
+           (be (match-clauses r map clauses msg)
+             (#no
+              (inbox-checked .^= (push inbox-checked.^ msg))
+              (checking))
+             ({clause _ exp}
+              (inbox-unchecked .^= (extend inbox-checked.^ (list<-queue rest)))
+              (inbox-checked .^= empty)
+              (when deadline
+                (waiting-timeouts .delete! process)) ;TODO might not be needed?
+              (sev exp {local-env map r} k)))))))
 
-    ({.run-a-slice}
-     (be state.^
-       ({go k value}
-        (the-running-process .^= process)
-        (let state2 (go k value))
-        (the-running-process .^= #no)
-        (state .^= state2)
-        (be state2
-          ({blocked _ _ _ _ _}
-           (surely (empty? inbox-unchecked.^) "inbox populated"))
-          ({exit outcome}
-           (on-death outcome))
-          (_ (run-queue .^= (push run-queue.^ process)))))
-       ({exit _}
-        (surely #no))
-       ({blocked _ _ _ _ _}
-        (surely (empty? inbox-unchecked.^) "I'm supposed to be blocked"))
-       ))))
+    (to _.run-a-slice
+      (be state.^
+        ({go k value}
+         (the-running-process .^= process)
+         (let state2 (go k value))
+         (the-running-process .^= #no)
+         (state .^= state2)
+         (be state2
+           ({blocked _ _ _ _ _}
+            (surely (empty? inbox-unchecked.^) "inbox populated"))
+           ({exit outcome}
+            (on-death outcome))
+           (_ (run-queue .^= (push run-queue.^ process)))))
+        ({exit _}
+         (surely #no))
+        ({blocked _ _ _ _ _}
+         (surely (empty? inbox-unchecked.^) "I'm supposed to be blocked"))
+        ))))
 
 
 ;; Modules

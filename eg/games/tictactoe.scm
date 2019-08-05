@@ -72,20 +72,20 @@
   (render `(,(or plaint "") "\n\n" ,shown-grid "\n\n" ,message "\n\n")))
 
 (make human-play
-  ({.name} "Human")
-  (`(,grid) 
-   (let prompt ("~d move? [1-9; Q to quit] " .format (whose-move grid)))
-   (begin asking ((plaint #no))
-     (ttt-render (if plaint (show-with-moves grid) (show grid))
-                 `(,prompt ,cursor)
-                 plaint)
-     (be ((get-key) .uppercase)
-       (#\Q #no)
-       (key (be (and (char? key)
-                     (<= #\1 key #\9)
-                     (update grid (move<-key key)))
-              (#no (asking "Hey, that's not a move. Give me one of the digits below."))
-              (successor successor)))))))
+  (to _.name "Human")
+  (to `(,grid) 
+    (let prompt ("~d move? [1-9; Q to quit] " .format (whose-move grid)))
+    (begin asking ((plaint #no))
+      (ttt-render (if plaint (show-with-moves grid) (show grid))
+                  `(,prompt ,cursor)
+                  plaint)
+      (be ((get-key) .uppercase)
+        (#\Q #no)
+        (key (be (and (char? key)
+                      (<= #\1 key #\9)
+                      (update grid (move<-key key)))
+               (#no (asking "Hey, that's not a move. Give me one of the digits below."))
+               (successor successor)))))))
 
 (to (show-with-moves grid)
   (each (highlight-if _.digit?) (show grid (1 .to 9))))
@@ -101,8 +101,8 @@
 
 (to (ai<- name evaluate)
   (make ai
-    ({.name} name)
-    (`(,grid) (min-by evaluate (successors grid)))))
+    (to _.name name)
+    (to `(,grid) (min-by evaluate (successors grid)))))
 
 (let spock-evaluate
   (memoize (on (grid)

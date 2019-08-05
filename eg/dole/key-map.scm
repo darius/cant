@@ -12,12 +12,12 @@
 (to (key-map<- default-command)
   (let bindings (map<-))
   (make key-map
-    ({.set! key command}
-     (bindings .set! key command))
-    (`(,key)
-     (if (eof? key)
-         'exit
-         (bindings .get key default-command)))
+    (to (_ .set! key command)
+      (bindings .set! key command))
+    (to `(,key)
+      (if (eof? key)
+          'exit
+          (bindings .get key default-command)))
     ))
 
 (export

@@ -68,27 +68,27 @@
 
 ;; Variable reference
 (to (var-ref<- v)
-  (make ({.free-vars} (set<- v))
-        ({.compile s k} (link (s v) k))))
+  (make (to _.free-vars (set<- v))
+        (to (_ .compile s k) (link (s v) k))))
 
 ;; Lambda expression
 (to (abstraction<- v body)
   (let free-vars (body.free-vars .difference (set<- v)))
-  (make ({.free-vars} free-vars)
-        ({.compile s k}
-         (let code (body .compile (scope<- v free-vars.keys.inverse) '(return)))
-         `(make-closure
-           ,free-vars.count ,code.count ,@(each s free-vars.keys)
-           ,@code ,@k))))
+  (make (to _.free-vars free-vars)
+        (to (_ .compile s k)
+          (let code (body .compile (scope<- v free-vars.keys.inverse) '(return)))
+          `(make-closure
+            ,free-vars.count ,code.count ,@(each s free-vars.keys)
+            ,@code ,@k))))
 
 ;; Application
 (to (call<- operator operand)
-  (make ({.free-vars} (operator.free-vars .union operand.free-vars))
-        ({.compile s k}
-         (let code (operand .compile s (operator .compile s '(invoke))))
-         (if (= k '(return))
-             code
-             `(pushcont ,code.count ,@code ,@k)))))
+  (make (to _.free-vars (operator.free-vars .union operand.free-vars))
+        (to (_ .compile s k)
+          (let code (operand .compile s (operator .compile s '(invoke))))
+          (if (= k '(return))
+              code
+              `(pushcont ,code.count ,@code ,@k)))))
 
 
 ;; Scopes (called 's' above)

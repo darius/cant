@@ -22,58 +22,59 @@
 (to (vm<- regs ip program)
   (make vm
 
-    ({.run}
-     (begin running ()
+    (to _.run
+      (begin running ()
 ;       (when vm.step (running))))
-       (when (program .maps? (regs ip))
-         (format "ip=~w ~w ~d " (regs ip) regs (show (program (regs ip))))
-         vm.step
-         (format " ~w\n" regs)
-        (running))))
+        (when (program .maps? (regs ip))
+          (format "ip=~w ~w ~d " (regs ip) regs (show (program (regs ip))))
+          vm.step
+          (format " ~w\n" regs)
+          (running))))
 
-    ({.step}
-     (let here (regs ip))
-     (be (program .get here)
-       (#no #no)
-       (`(,op ,a ,b ,c)
-        (vm .do op a b c)
-        (regs .set! ip (+ (regs ip) 1))
-        (when (= here 7)
-          (format "ip=~w ~w ~d " (regs ip) regs (show (program (regs ip)))))
-        #yes)))
+    (to _.step
+      (let here (regs ip))
+      (be (program .get here)
+        (#no #no)
+        (`(,op ,a ,b ,c)
+         (vm .do op a b c)
+         (regs .set! ip (+ (regs ip) 1))
+         (when (= here 7)
+           (format "ip=~w ~w ~d " (regs ip) regs (show (program (regs ip)))))
+         #yes)))
 
-    ({.do op a b c}
-     (let result
-       (be op
+    (to (_ .do op a b c)
+      (let result
+        (be op
 
-         ('addr  (+ (regs a) (regs b)))
-         ('addi  (+ (regs a) b))
+          ('addr  (+ (regs a) (regs b)))
+          ('addi  (+ (regs a) b))
 
-         ('mulr  (* (regs a) (regs b)))
-         ('muli  (* (regs a) b))
+          ('mulr  (* (regs a) (regs b)))
+          ('muli  (* (regs a) b))
 
-         ('banr  ((regs a) .and (regs b)))
-         ('bani  ((regs a) .and b))
+          ('banr  ((regs a) .and (regs b)))
+          ('bani  ((regs a) .and b))
        
-         ('borr  ((regs a) .or (regs b)))
-         ('bori  ((regs a) .or b))
+          ('borr  ((regs a) .or (regs b)))
+          ('bori  ((regs a) .or b))
        
-         ('setr  (regs a))
-         ('seti  a)
+          ('setr  (regs a))
+          ('seti  a)
        
-         ; TODO I'm not sure about this method name claim.count
-         ('gtir  (_.count (> a (regs b))))
-         ('gtri  (_.count (> (regs a) b)))
-         ('gtrr  (_.count (> (regs a) (regs b))))
+          ;; TODO I'm not sure about this method name claim.count
+          ('gtir  (_.count (> a (regs b))))
+          ('gtri  (_.count (> (regs a) b)))
+          ('gtrr  (_.count (> (regs a) (regs b))))
        
-         ('eqir  (_.count (= a (regs b))))
-         ('eqri  (_.count (= (regs a) b)))
-         ('eqrr  (_.count (= (regs a) (regs b))))
+          ('eqir  (_.count (= a (regs b))))
+          ('eqri  (_.count (= (regs a) b)))
+          ('eqrr  (_.count (= (regs a) (regs b))))
        
          ))
-     (regs .set! c result))
+      (regs .set! c result))
 
-    ({.get-regs} regs)
+    (to _.get-regs
+      regs)
     ))
 
 (display "\nPart 1\n")

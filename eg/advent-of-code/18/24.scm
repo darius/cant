@@ -83,34 +83,39 @@
   (let qualities (map<- (chain (for each ((immune immunities.keys)) `(,immune immunity))
                                (for each ((weak   weaknesses.keys)) `(,weak weakness)))))
   (make group
-    ({.count} n-units.^)
-    ({.effective-power} (effective-power))
-    ({.initiative} initiative)
-    ({.target-selection-key} (list<- (- (effective-power)) (- initiative)))
-    ({.would-damage target}
-     (target .damage-from attack-type (effective-power)))
-    ({.attack! target}
+    (to _.count
+      n-units.^)
+    (to _.effective-power
+      (effective-power))
+    (to _.initiative
+      initiative)
+    (to _.target-selection-key
+      (list<- (- (effective-power)) (- initiative)))
+    (to (_ .would-damage target)
+      (target .damage-from attack-type (effective-power)))
+    (to (_ .attack! target)
 ;;     (format "attack: ~w ~w\n" attack-type (effective-power))
-     (target .receive! attack-type (effective-power)))
-    ({.damage-from attacker-attack-type attack-power}
-     (be (qualities .get attacker-attack-type)
-       ('immunity 0)
-       ('weakness (* 2 attack-power))
-       (#no       attack-power)))
-    ({.receive! attacker-attack-type attack-power}
-     (let damage (group .damage-from attacker-attack-type attack-power))
-     (let mortality (min n-units.^ (damage .quotient hit-points)))
-     (n-units .^= (- n-units.^ mortality))
+      (target .receive! attack-type (effective-power)))
+    (to (_ .damage-from attacker-attack-type attack-power)
+      (be (qualities .get attacker-attack-type)
+        ('immunity 0)
+        ('weakness (* 2 attack-power))
+        (#no       attack-power)))
+    (to (_ .receive! attacker-attack-type attack-power)
+      (let damage (group .damage-from attacker-attack-type attack-power))
+      (let mortality (min n-units.^ (damage .quotient hit-points)))
+      (n-units .^= (- n-units.^ mortality))
 ;;     (format "power ~w, damage ~w, killing ~w units, leaving ~w\n"
 ;;             attack-power damage mortality n-units.^)
-     )
-    ({.alive?} (< 0 n-units.^))
-    ({.show}
-     (pp {group {size n-units.^}
-                {hp hit-points}
-                {immune-to immunities.keys}
-                {weak-to weaknesses.keys}
-                {attack attack-damage attack-type {initiative initiative}}}))))
+      )
+    (to _.alive?
+      (< 0 n-units.^))
+    (to _.show
+      (pp {group {size n-units.^}
+                 {hp hit-points}
+                 {immune-to immunities.keys}
+                 {weak-to weaknesses.keys}
+                 {attack attack-damage attack-type {initiative initiative}}}))))
 
 (let grammar (grammar<- "
 main: army**separator :end.

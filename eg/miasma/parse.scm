@@ -6,15 +6,14 @@
   (let params (for those ((p params+))
                 (not= p '{bytes u 0 0})))
   (make spec                            ;TODO struct maker?
-    ({.mnemonic} mnemonic)
-    ({.stem} stem)
-    ({.params} params)
-    ({.doc-string} doc-string)
-    ({.uses} uses)
-    ({.unparse}
-     `(,mnemonic
-       ,@(each unparse-param params)
-       ,doc-string))))
+    (to _.mnemonic   mnemonic)
+    (to _.stem       stem)
+    (to _.params     params)
+    (to _.doc-string doc-string)
+    (to _.uses       uses)
+    (to _.unparse    `(,mnemonic
+                       ,@(each unparse-param params)
+                       ,doc-string))))
 
 (to (unparse-param param)
   param)                      ;TODO did I never write this originally?
