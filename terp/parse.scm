@@ -320,8 +320,8 @@
                `(match ,subject ,@clauses))))
     ('match  (mlambda
               ((__ subject . clauses)
-               `((switch ,@clauses) ,subject))))
-    ('switch (mlambda                   ;TODO experiment; also, better name
+               `((case ,@clauses) ,subject))))
+    ('case   (mlambda                   ;TODO experiment; also, better name
               ((__ . clauses)
                `(make _ ,@(map (lambda (clause)
                                  (insist (pair? clause)
@@ -378,12 +378,6 @@
     ('unless (mlambda
               ((__ test . body)
                `(if ,test ',(void) (do ,@body)))))
-    ('case   (mlambda
-              ((__) '(error "No default case")) ;XXX hygiene
-              ((__ ('else . es)) `(do ,@es))
-;;              ((__ (e) . clauses) `(or ,e (case ,@clauses))) ;TODO: do I ever use this?
-              ((__ (e e1 . es) . clauses)
-               `(if ,e (do ,e1 ,@es) (case ,@clauses)))))
     ('hm     (mlambda                   ;TODO yet another experiment to toss or keep, replacing 'case'
               ((__)
                '(error "Fell off the end of 'hm'")) ;XXX hygiene

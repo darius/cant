@@ -4,7 +4,7 @@
 
   (to (make-church<-claim lc-no)
     {primitive (on (lc-yes)
-                 {primitive (switch
+                 {primitive (case
                               (#no  lc-no)
                               (#yes lc-yes))})})
 
