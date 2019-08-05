@@ -14,11 +14,12 @@
 
   (to (merge-sort seq)
     (begin splitting ((seq seq) (xs '()) (ys '()))
-      (if seq.empty?
-          (if xs.empty?
-              ys
-              (merge (merge-sort xs) (merge-sort ys)))
-          (splitting seq.rest ys (link seq.first xs)))))
+      (hm (unless seq.empty?
+            (splitting seq.rest ys (link seq.first xs)))
+          (when xs.empty?
+            ys)
+          (else
+            (merge (merge-sort xs) (merge-sort ys))))))
 
   (to (merge xs ys)
     (hm (if xs.empty? ys)
