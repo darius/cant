@@ -1,4 +1,5 @@
 ;; A kernel-Squeam interpreter in direct-style Squeam
+;; TODO is this still up to date wrt terp.scm?
 
 ;; Variable names:
 ;;   e expression
