@@ -11,31 +11,29 @@
   (to (make-church<-count lc-zero)
     {primitive
      (on (lc-succ)
-       {primitive (on (n)
-                    (begin counting ((n n))
-                      (be n
-                        (0          lc-zero)
-                        ((? count?) (apply lc-succ (counting (- n 1)))))))})})
+       {primitive (let counting
+                    (case
+                      (0            lc-zero)
+                      ((? count? n) (apply lc-succ (counting (- n 1))))))})})
 
   (to (make-church<-list lc-nil)
     {primitive
      (on (lc-link)
-       {primitive (on (xs)
-                    (begin linking ((xs xs))
-                      (be xs
-                        ('()       lc-nil)
-                        (`(,h ,@t) (apply (apply lc-link h) (linking t))))))})})
+       {primitive (let linking
+                    (case
+                      ('()       lc-nil)
+                      (`(,h ,@t) (apply (apply lc-link h) (linking t)))))})})
 
   (let builtins-env
     {module
      (map<- `(
               (make-church<-claim {primitive ,make-church<-claim})
 
-              (add1 {primitive ,(on (n) (+ n 1))})
+              (add1 {primitive ,(-> (+ it 1))})
               (make-church<-count {primitive ,make-church<-count})
 
               (squeam-link {primitive ,(on (h)
-                                         {primitive (on (t) (link h t))})})
+                                         {primitive (-> (link h it))})})
               (make-church<-list {primitive ,make-church<-list})
 
               (display {primitive ,display})
