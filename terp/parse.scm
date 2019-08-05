@@ -99,7 +99,11 @@
        (('_ (: cue cue?) . operands)      ; TODO experiment: syntax for messages
         (pack<- e-term cue (parse-es operands ctx)))
        (('_ . operands)                   ; TODO experiment: syntax for messages
-        (error 'parse-exp "XXX not yet impl" e))
+        ;; XXX The following is not an acceptable meaning for (_ x y z) because
+        ;;  if message = (_ 'x) then (message 0) currently would evaluate to 'x
+        ;;  which doesn't match the behavior of other message objects like _.count.
+        ;;  But I'm using it for the interim until we migrate away from lists as messages.
+        (pack<- e-list (parse-es operands ctx)))
        ((addressee (: cue cue?) . operands)
         (pack<- e-call
                 (parse-e addressee ctx)
@@ -148,8 +152,9 @@
 
        (('_ (: cue cue?) . operands)      ; TODO experiment: syntax for messages
         (parse-term-pat (make-term cue operands) ctx))
-       (('_ . operands)                   ; TODO experiment: syntax for messages
-        (error 'parse-exp "XXX not yet impl" p))
+       (('_ . ps)                   ; TODO experiment: syntax for messages
+        ;; XXX see the comment above about the ('_ . operands) expression form
+        (parse-list-pat ps ctx))
        ((: __ term?)
         (parse-term-pat p ctx))
 

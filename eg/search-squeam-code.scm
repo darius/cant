@@ -52,9 +52,9 @@
 ;;  pattern-matching on the raw sexprs
 ;; XXX duplicate code
 (make grab
-  (to `(,filename)
+  (to (_ filename)
     (grab filename '()))
-  (to `(,filename ,context)
+  (to (_ filename ,context)
     (let code (for with-input-file ((source filename))
                 `(hide ,@(read-all source))))
     (parse-exp code context)))

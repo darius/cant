@@ -87,7 +87,7 @@
 (to (env-extend parent-r vars)
   (let vals (array<-count vars.count *uninitialized*))
   (make env
-    (to `(,key)
+    (to (_ key)
       (be (vars .find key #no)
         (#no (parent-r key))
         (i   (vals i))))
@@ -99,7 +99,7 @@
 
 (to (env<-map map)
   (make env
-    (to `(,key)
+    (to (_ key)
       (map key))
     (to (_ .bind var val)
       (error "Tried to change immutable env" var))))

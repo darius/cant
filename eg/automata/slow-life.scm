@@ -88,7 +88,7 @@
     (G .move! dest G lo (+ lo n)))
 
   (make life-grid
-    (to `(,r ,c)
+    (to (_ r c)
       (G (at r c)))
     (to (_ .set! r c value)
       (surely ('(0 1) .find? value))

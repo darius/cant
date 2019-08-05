@@ -644,11 +644,11 @@
   (surely (count? n))
   (x n))
 (make slice
-  (to `(,x ,n)
+  (to (_ x n)
     (surely (sequence? x))
     (surely (count? n))
     (x .slice n))
-  (to `(,x ,m ,n)
+  (to (_ x m n)
     (surely (sequence? x))
     (surely (count? m))
     (surely (count? n))

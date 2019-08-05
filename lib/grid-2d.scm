@@ -45,7 +45,7 @@
 
   (make grid-2d {extending map-trait}
     
-    (to `((,x ,y))
+    (to (_ `(,x ,y))
       (check x y)
       (A (at x y)))
     (to (_ .set! `(,x ,y) value)

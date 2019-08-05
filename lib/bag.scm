@@ -10,7 +10,7 @@
       (to _.values             map.values)
       (to _.items              map.items)
       (to (_ .maps? key)       (map .maps? key))
-      (to `(,key)              (map .get key 0)) ; TODO (map key) would be safer... revisit this
+      (to (_ key)              (map .get key 0)) ; TODO (map key) would be safer... revisit this
       (to (_ .get key default) (map .get key default))
       (to (_ .get key)         (map .get key))
       (to (_ .add! key)        (map .set! key
@@ -27,7 +27,7 @@
         (sink .display ")>"))
       ))
 
-  (to `(,vals)
+  (to (_ vals)
     (let bag (bag<-))
     (bag .add-all! vals)
     bag))

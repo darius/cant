@@ -30,7 +30,7 @@
 ;; uglyish and kinda expensive.
 
 (make-trait map-trait map
-  (to `(,key)
+  (to (_ key)
     (make missing)
     (let answer (map .get key missing))
     (if (= answer missing)
@@ -93,7 +93,7 @@
   )
 
 (make-trait list-trait list
-  (to `(,i)
+  (to (_ i)
     (if (= i 0)
         list.first
         (list.rest (- i 1))))
@@ -251,7 +251,7 @@
   (to _.first          (error "Empty list" '.first))
   (to _.rest           (error "Empty list" '.rest))
   (to _.count          0)
-  (to `(,i)            (error "Empty list" 'nth i))
+  (to (_ i)            (error "Empty list" 'nth i))
   (to (_ .chain a)     a)
   (to (_ .selfie sink) (sink .display "()"))
   (to message          (list-trait me message))) ;XXX use trait syntax instead
@@ -261,7 +261,7 @@
   (to _.first       (__car me))
   (to _.rest        (__cdr me))
   (to _.count       (__length me))
-  (to `(,i)         (__list-ref me i))    ;XXX just use the trait method? then can e.g. mix lazy and eager list nodes
+  (to (_ i)         (__list-ref me i))    ;XXX just use the trait method? then can e.g. mix lazy and eager list nodes
   (to (_ .chain a)  (__append me a))
   (to (_ .selfie sink)
     (be me
@@ -325,7 +325,7 @@
   (to _.rest          (me .slice 1))
   (to (_ .set! i val) (__vector-set! me i val))
   (to _.count         (__vector-length me))
-  (to `(,i)           (__vector-ref me i))
+  (to (_ i)           (__vector-ref me i))
   (to (_ .maps? i)    (__vector-maps? me i))
   (to (_ .chain v)    (__vector-append me v))
   (to _.values        (__vector->list me))
@@ -355,7 +355,7 @@
   (to _.first        (me 0))
   (to _.rest         (me .slice 1))
   (to _.count        (__string-length me))
-  (to `(,i)          (__string-ref me i))
+  (to (_ i)          (__string-ref me i))
   (to (_ .maps? i)   (__string-maps? me i))
   (to (_ .chain s)   (__string-append me s))
   (to (_ .slice i)   (__substring me i me.count))
@@ -565,7 +565,7 @@
   )
 
 (make-trait term-primitive me
-  (to `(,receiver)     (call receiver me))
+  (to (_ receiver)     (call receiver me))
   (to _.tag            (__term-tag me))
   (to _.arguments      (__term-arguments me))
   (to (_ .selfie sink)
@@ -826,7 +826,7 @@
               (vals.^ .set! j (old-vals i)))))
        
         (make hashmap {extending map-trait}
-          (to `(,key)
+          (to (_ key)
             (be (place key)
               ({at i} (vals.^ i))
               (_      (error "Missing key" hashmap key))))
@@ -893,7 +893,7 @@
             (sink .display ")>"))
           ))
 
-      (to `(,a-list) ;TODO invent a concise constructor; frozen by default
+      (to (_ a-list) ;TODO invent a concise constructor; frozen by default
         (let m (map<-))
         (for each! ((`(,k ,v) a-list))
           (m .set! k v))
@@ -943,7 +943,7 @@
       (map .intersects? map2))
     (to _.clear!         map.clear!)
     (to (_ .get key)     (map .maps? key))
-    (to `(,key)          (map .get key 0)) ;I'm not sure this is a good idea, but it's to match the bag type
+    (to (_ key)          (map .get key 0)) ;I'm not sure this is a good idea, but it's to match the bag type
     (to _.items          map.items)
     (to _.values         map.values)
     (to (_ .delete! key) (map .delete! key))
@@ -969,38 +969,38 @@
   (not (= x y)))
 
 (make +
-  (to `() 0)
-  (to `(,a) a)
-  (to `(,a ,b) (a .+ b))
-  (to `(,a ,b ,@arguments)
+  (to (_) 0)
+  (to (_ a) a)
+  (to (_ a b) (a .+ b))
+  (to (_ a b @arguments)
     (foldl (on (x y) (x .+ y)) (a .+ b) arguments)))
 
 (make *
-  (to `() 1)
-  (to `(,a) a)
-  (to `(,a ,b) (a .* b))
-  (to `(,a ,b ,@arguments)
+  (to (_) 1)
+  (to (_ a) a)
+  (to (_ a b) (a .* b))
+  (to (_ a b @arguments)
     (foldl (on (x y) (x .* y)) (a .* b) arguments)))
 
 (make -
-  (to `(,a) (0 .- a))
-  (to `(,a ,b) (a .- b))
-  (to `(,a ,b ,@arguments)
+  (to (_ a) (0 .- a))
+  (to (_ a b) (a .- b))
+  (to (_ a b @arguments)
     (foldl (on (x y) (x .- y)) (a .- b) arguments)))
 
 (make-trait transitive-comparison compare?
-  (to `(,x ,@xs)
+  (to (_ x @xs)
     (begin comparing ((x0 x) (xs xs))
       (be xs
         (`() #yes)
         (`(,x1 ,@rest) (and (compare? x0 x1)
                             (comparing x1 rest)))))))
 
-(make <   {extending transitive-comparison} (to `(,a ,b)      (= (compare a b) -1)))
-(make <=  {extending transitive-comparison} (to `(,a ,b) (not (= (compare a b)  1))))
-(make <=> {extending transitive-comparison} (to `(,a ,b)      (= (compare a b)  0))) ; XXX better name?
-(make >=  {extending transitive-comparison} (to `(,a ,b) (not (= (compare a b) -1))))
-(make >   {extending transitive-comparison} (to `(,a ,b)      (= (compare a b)  1)))
+(make <   {extending transitive-comparison} (to (_ a b)      (= (compare a b) -1)))
+(make <=  {extending transitive-comparison} (to (_ a b) (not (= (compare a b)  1))))
+(make <=> {extending transitive-comparison} (to (_ a b)      (= (compare a b)  0))) ; XXX better name?
+(make >=  {extending transitive-comparison} (to (_ a b) (not (= (compare a b) -1))))
+(make >   {extending transitive-comparison} (to (_ a b)      (= (compare a b)  1)))
 
 (to (compare a b)
   (let result (a .compare b))
@@ -1048,15 +1048,15 @@
       (f xs.first (foldr1 f tail))))
 
 (make each
-  (to `(,f ,xs)
+  (to (_ f xs)
     (for foldr ((x xs) (ys '()))
       (link (f x) ys)))
-  (to `(,f ,@lists)
+  (to (_ f @lists)
     (for each ((args (call zip lists)))
       (call f args))))
 
 (make zip
-  (to `(,xs ,ys)                           ;specialized for speed
+  (to (_ xs ys)                           ;specialized for speed
     (to (mismatch)
       (error "zip: mismatched arguments" xs ys))
     (begin zipping ((xs xs) (ys ys))
@@ -1064,7 +1064,7 @@
           (if ys.empty? (mismatch))
           (else `((,xs.first ,ys.first)
                   ,@(zipping xs.rest ys.rest))))))
-  (to `(,@lists)  ; ugly
+  (to (_ @lists)  ; ugly
     (transpose lists)))
 
 ;; TODO: name it (zip @rows) instead, like Python?
@@ -1092,10 +1092,10 @@
   arguments)
 
 (make chain
-  (to `() '())
-  (to `(,xs) xs)
-  (to `(,xs ,ys) (xs .chain ys))
-  (to `(,@arguments)
+  (to (_) '())
+  (to (_ xs) xs)
+  (to (_ xs ys) (xs .chain ys))
+  (to (_ @arguments)
     (foldr1 (on (xs ys) (xs .chain ys)) arguments)))
 
 (to (some pass? xs)
@@ -1114,7 +1114,7 @@
     (each! f xs.rest)))
 
 (make range<-
-  (to `(,first ,limit)
+  (to (_ first limit)
     (if (<= limit first)
         '()
         (make range {extending list-trait}
@@ -1122,7 +1122,7 @@
           (to _.first  first)
           (to _.rest   (range<- (+ first 1) limit))
           (to _.count  (- limit first))
-          (to `(,i)
+          (to (_ i)
             (if (not (integer? i))
                 (error "Key error" range i)
                 (do (let j (+ first i))
@@ -1135,9 +1135,9 @@
                      (and (<= first j) (< j limit)))))
           ;; TODO: .compare
           )))
-  (to `(,limit)
+  (to (_ limit)
     (range<- 0 limit))
-  (to `(,first ,limit ,stride)
+  (to (_ first limit stride)
     ;; TODO factor the code better
     (hm (if (< 0 stride)
             (if (<= limit first)
@@ -1146,7 +1146,7 @@
                   (to _.empty? #no)
                   (to _.first  first)
                   (to _.rest   (range<- (+ first stride) limit stride))
-                  (to `(,i)
+                  (to (_ i)
                     (error "TODO" range `(,i)))
                   (to (_ .maps? i)
                     (error "TODO" range (_ .maps? i)))
@@ -1158,7 +1158,7 @@
                   (to _.empty? #no)
                   (to _.first  first)
                   (to _.rest   (range<- (+ first stride) limit stride))
-                  (to `(,i)
+                  (to (_ i)
                     (error "TODO" range `(,i)))
                   (to (_ .maps? i)
                     (error "TODO" range (_ .maps? i)))
@@ -1167,9 +1167,9 @@
           (error "Zero stride" first limit stride)))))
 
 (make enumerate
-  (to `(,xs)
+  (to (_ xs)
     (enumerate xs 0))
-  (to `(,xs ,i)
+  (to (_ xs i)
     (if xs.empty?
         '()
         (make enumeration {extending list-trait}
@@ -1272,7 +1272,7 @@
   (hide
 
     (make format
-      (to `(,format-string ,@arguments)
+      (to (_ format-string @arguments)
         (scanning out format-string arguments))
       (to (_ .to-sink sink format-string @arguments)
         (scanning sink format-string arguments)))

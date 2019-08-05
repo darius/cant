@@ -14,7 +14,7 @@
   (make key-map
     (to (_ .set! key command)
       (bindings .set! key command))
-    (to `(,key)
+    (to (_ key)
       (if (eof? key)
           'exit
           (bindings .get key default-command)))

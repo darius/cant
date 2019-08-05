@@ -119,15 +119,15 @@
   (either p empty))
 
 (make many
-  (to `(,p)
+  (to (_ p)
     (let p* (maybe (then p (delay (: p*))))))
-  (to `(,p ,separator)
+  (to (_ p separator)
     (maybe (then p (many (then separator p))))))
 
 (make at-least-1
-  (to `(,p)
+  (to (_ p)
     (let p+ (then p (maybe (delay (: p+))))))
-  (to `(,p ,separator)
+  (to (_ p separator)
     (then p (many (then separator p)))))
 
 (export invert capture either then feed-list feed push seclude delay

@@ -14,10 +14,10 @@
     (_ #no)))
 
 (make ratio<-
-  (to `(,n)
+  (to (_ n)
     (surely (integer? n))
     {ratio n 1})
-  (to `(,n ,d)
+  (to (_ n d)
     (surely (integer? n))
     (surely (integer? d))
     (reduce n d)))

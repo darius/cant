@@ -73,7 +73,7 @@
 
 (make human-play
   (to _.name "Human")
-  (to `(,grid) 
+  (to (_ grid) 
     (let prompt ("~d move? [1-9; Q to quit] " .format (whose-move grid)))
     (begin asking ((plaint #no))
       (ttt-render (if plaint (show-with-moves grid) (show grid))
@@ -102,7 +102,7 @@
 (to (ai<- name evaluate)
   (make ai
     (to _.name name)
-    (to `(,grid) (min-by evaluate (successors grid)))))
+    (to (_ grid) (min-by evaluate (successors grid)))))
 
 (let spock-evaluate
   (memoize (on (grid)

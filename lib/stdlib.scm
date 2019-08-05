@@ -3,13 +3,13 @@
 
 ;; XXX float contagion
 (make min
-  (to `(,a) a)
-  (to `(,a ,b) (if (< a b) a b))
-  (to `(,a ,b ,@rest) (call min `(,(min a b) ,@rest))))
+  (to (_ a) a)
+  (to (_ a b) (if (< a b) a b))
+  (to (_ a b @rest) (call min `(,(min a b) ,@rest))))
 (make max
-  (to `(,a) a)
-  (to `(,a ,b) (if (< a b) b a))
-  (to `(,a ,b ,@rest) (call max `(,(max a b) ,@rest))))
+  (to (_ a) a)
+  (to (_ a b) (if (< a b) b a))
+  (to (_ a b @rest) (call max `(,(max a b) ,@rest))))
 
 (to (min-by key<- xs) (foldr1 (on (x y) (if (< (key<- x) (key<- y)) x y))
                               xs))
@@ -114,10 +114,10 @@
         (scanning `(,xs.first ,@r-head) xs.rest))))
 
 (make method<-
-  (to `(,cue)
+  (to (_ cue)
     (on (actor @arguments)
       (call actor (term<- cue arguments))))
-  (to `(,actor ,cue)
+  (to (_ actor cue)
     (on (@arguments)
       (call actor (term<- cue arguments)))))
 

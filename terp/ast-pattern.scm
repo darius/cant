@@ -4,7 +4,7 @@
 ;; them... using the interpreter.
 
 (make _
-  (to `(,me ,message)
+  (to (_ me message)
     (be message
       ({.selfie sink}
        (sink .display "#<patt ")

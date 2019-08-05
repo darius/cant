@@ -17,8 +17,8 @@
 (to (text str) {text str})
 (let line      {line 0})
 (make <>
-  (to `(,doc) doc)
-  (to `(,@docs) docs))
+  (to (_ doc) doc)
+  (to (_ @docs) docs))
 
 (to (nest i doc)
   (be doc

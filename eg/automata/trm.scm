@@ -44,23 +44,23 @@ insn:    {'1'+} {'#' '#'? '#'? '#'? '#'?} :make_insn.
    'illegal-insn
    (make _
      (to _.name "add-1")
-     (to `(,n ,regs)
+     (to (_ n regs)
        (regs .set! n (chain (regs n) "1"))
        1))
    (make _
      (to _.name "add-#")
-     (to `(,n ,regs)
+     (to (_ n regs)
        (regs .set! n (chain (regs n) "#"))
        1))
    (make _
      (to _.name "forward")
-     (to `(,n ,regs) n))
+     (to (_ n regs) n))
    (make _
      (to _.name "backward")
-     (to `(,n ,regs) (- n)))
+     (to (_ n regs) (- n)))
    (make _
      (to _.name "case")
-     (to `(,n ,regs)
+     (to (_ n regs)
        (be (regs .get n "")           ;TODO how about just (regs n)?
          ("" 1)
          (str (regs .set! n str.rest)

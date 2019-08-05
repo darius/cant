@@ -145,12 +145,12 @@
 
 (to (module-scope<- known)
   (make module-scope
-    (to `(,v) (known v))
+    (to (_ v) (known v))
     (to _.known known)))
 
 (to (scope<- param var-offsets known)
   (make scope
-    (to `(,v)
+    (to (_ v)
       (if (= v param)
           {fetch 'local}
           (be (var-offsets .get v)

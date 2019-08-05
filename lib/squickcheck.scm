@@ -13,7 +13,7 @@
 ;; TODO catch errors
 ;; TODO better names
 (make all
-  (to `(,property ,@gens)
+  (to (_ property @gens)
     (all .run (context<- default-rng) 40 property gens))
   (to (_ .run g n-times property gens)
     (let failures (flexarray<-))
@@ -38,9 +38,9 @@
 ;; Generator context
 
 (make context<-
-  (to `(,rng)
+  (to (_ rng)
     (context<- rng 20))             ; TODO: is 20 a good default size?
-  (to `(,rng ,size)
+  (to (_ rng size)
     ;; TODO better method names
     (make gen
       (to _.size           size)

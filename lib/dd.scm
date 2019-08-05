@@ -15,7 +15,7 @@
     (to _.rank            infinity)
     (to _.constant-value  value)
     (to (_ .evaluate env) value)
-    (to `(,@nodes)        (nodes value))))
+    (to (_ @nodes)        (nodes value))))
 
 (to (all-same? xs)
   (= 1 xs.range.count))
@@ -27,7 +27,7 @@
     (to _.constant-value  none)
     (to (_ .evaluate env) ((branches (env rank)) .evaluate env))
     (to _.branches        branches)
-    (to `(,@nodes)        (hm (if (all-same? nodes)
+    (to (_ @nodes)        (hm (if (all-same? nodes)
                                   nodes.first)
                               ;; TODO how to write this elegantly?
                               ;; Can't be this because it requires comparability of constants/none:

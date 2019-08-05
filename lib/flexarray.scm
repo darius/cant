@@ -25,7 +25,7 @@
       (error "Bad index" flexarray i)))
 
   (make flexarray {extending array-trait}
-    (to `(,i)
+    (to (_ i)
       (count-check i)
       (vec.^ i))
     (to _.count
