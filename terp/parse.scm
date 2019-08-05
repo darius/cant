@@ -227,14 +227,12 @@
       (optional-match-exp<- n)))
 
 (define (expand-definition-pattern dp)
- (mcase dp
-   (((: cue cue?) . rest)
-    (make-term cue rest))
-   ((: __ list?)
-    `(list<- ,@dp))
-   ((: __ term?)
-    dp)
-   (__ (error 'parse "Bad definition pattern" dp))))
+  (mcase dp
+    ((: __ list?)
+     `(_ ,@dp))
+    ((: __ term?)
+     dp)
+    (__ (error 'parse "Bad definition pattern" dp))))
 
 (define (explode-term thing)
   (and (term? thing)
@@ -328,7 +326,7 @@
                `(make _ ,@(map (lambda (clause)
                                  (insist (pair? clause)
                                          "invalid clause" clause)
-                                 `(to (list<- ,(car clause)) ,@(cdr clause)))
+                                 `(to (_ ,(car clause)) ,@(cdr clause)))
                                clauses)))))
     ('to     (mlambda
               ((__ (head . param-spec) . body)
@@ -361,13 +359,13 @@
                  (parse-bindings bindings
                    (lambda (ps es)
                      `(,fn (make ,name-for
-                             (to (list<- ,@ps) ,@body))
+                             (to (_ ,@ps) ,@body))
                            ,@es)))))))
     ('begin  (mlambda
               ((__ (: proc symbol?) bindings . body)
                (parse-bindings bindings
                  (lambda (ps es)
-                   `((hide (make ,proc (to (list<- ,@ps) ,@body)))
+                   `((hide (make ,proc (to (_ ,@ps) ,@body)))
                      ,@es))))))
     ('if     (mlambda
               ((__ test if-so if-not)
