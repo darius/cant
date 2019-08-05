@@ -310,11 +310,7 @@
                  ;; TODO leave out miranda-trait if there's a catchall already
                  `(to (,v ,self ,msg)
                     (match ,msg
-                      ,@(map (lambda (clause)
-                               (if (starts-with? clause 'to) ;XXX temporary
-                                   (cdr clause)
-                                   (error 'parse "make-trait no-to clause" clause)))
-                             clauses)
+                      ,@(map (mlambda (('to . rest) rest)) clauses)
                       (_ (miranda-trait ,self ,msg)))))))) ;XXX hygiene, and XXX make it overridable
     ('be     (mlambda  ; TODO do I like this better than 'match'?
               ((__ subject . clauses)
