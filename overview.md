@@ -439,8 +439,8 @@ The `make` special form creates and returns a new object:
 
 ```
 -> (make alice
-       ({.greet someone} `("hey" ,someone))
-       ({.scram}         "see ya"))
+     (to (_ .greet someone) `("hey" ,someone))
+     (to _.scram            "see ya"))
 #<alice>
 -> (alice .greet "bob")
 ("hey" "bob")
