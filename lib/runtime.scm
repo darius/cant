@@ -1240,12 +1240,6 @@
     (to (unparse-clause `(,p ,p-vars ,e-vars ,e))
       `(to ,(unparse-pat p) ,(unparse-exp e)))
 
-    (to (self-evaluating? x)            ;TODO this is already defined in terp/parse.scm
-      (or (claim? x)
-          (number? x)
-          (char? x)
-          (string? x)))
-
     (to (unparse-pat pat)
       ;; XXX these need updating to the newer pattern syntax
       (be pat.term
