@@ -21,7 +21,7 @@
       (display home)
       grid.show
       (when (< step n-steps)
-        (running grid.next (+ step 1))))
+        (running grid.next step.up)))
     (display cursor-show)))
 
 (to (smoke-test)

@@ -21,7 +21,7 @@
     (begin battling ((t 0))
       (show t field)
       (if field.do-round!
-          (battling (+ t 1))
+          (battling t.up)
           t)))
   (let hp field.total-hit-points)
   (format "Done after ~w rounds with ~w hit points left.\n"
@@ -35,11 +35,11 @@
 
 (to (field<- field-string elf-attack-power)
 
-  (let width (+ 1 field-string.split-lines.first.count))
+  (let width field-string.split-lines.first.count.up)
   ;; TODO I *want* to write it like this, but it's ugly! --
   ;; (surely (= 1 (((each _.count field-string.split-lines) .range) .count)))
   (surely (for every ((line field-string.split-lines))
-            (= width (+ line.count 1))))
+            (= width line.count.up)))
 
   (let area (array<-list field-string))
 
@@ -207,7 +207,7 @@
     (format "Trying attack power ~w\n" power)
     (let field (field<- input power))
     (be (battle-sans-elf-casualties field power)
-      (#no (trying (+ power 1)))
+      (#no (trying power.up))
       (outcome outcome))))
 
 (to (battle-sans-elf-casualties field power)
@@ -218,7 +218,7 @@
           (format "Elf casualties, aborting the battle\n\n")
           #no)
         (when field.do-round!
-          (battling (+ t 1)))
+          (battling t.up))
         (else
           (let hp field.total-hit-points)
           (format "Done after ~w rounds with ~w hit points left.\n"

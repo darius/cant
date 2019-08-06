@@ -5,7 +5,7 @@
 (to (parse world-str)
   (surely (hide (let widths (each _.count world-str.split-lines))
                 (= 1 widths.range.count)))
-  (let width (+ 1 world-str.split-lines.first.count))
+  (let width world-str.split-lines.first.count.up)
   (let carts (map<-))
   (let tracks (flexarray<-))
   (to (add-cart! i dir)
@@ -59,10 +59,10 @@
 
 (to (turn-right dir) ;    n e s w
                      ; -> e s w n
-  ((+ dir 1) .modulo 4))
+  (dir.up .modulo 4))
 
 (to (turn-left dir)
-  ((- dir 1) .modulo 4))
+  (dir.down .modulo 4))
 
 (to (swerve dir veer)
   (be veer
@@ -89,7 +89,7 @@
       (let `(,state1 ,crashes) (tick state))
 ;      (show state1)
       (if crashes.empty?
-          (ticking state1 (+ 1 t))
+          (ticking state1 t.up)
           (xy-coords state crashes.first)))))
 
 (to (xy-coords {world _ width _} pos)
@@ -134,6 +134,6 @@
               (let {world tracks width carts} state1)
               (for each! ((pos crashes))
                 (carts .delete! pos))
-              (ticking state1 (+ 1 t)))))))
+              (ticking state1 t.up))))))
 
 (format "~w\n" (part2))

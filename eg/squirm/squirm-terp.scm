@@ -24,10 +24,15 @@
 ;; Processes, scheduling, message passing
 
 (to (spawn f @(optional arguments))
-  (let new-process (process<- {go {spawn f}
-                                  (or arguments '())}))
-  (run-queue .^= (push run-queue.^ new-process))
-  new-process)
+  (hey (process<- {go {spawn f}
+                      (or arguments '())})
+       schedule!))
+
+(to (schedule! process)
+  (push! run-queue process))
+
+(to (push! q-box element)
+  (q-box .^= (push q-box.^ element)))
 
 (to (running wait-check-in)
   (when (= 0 wait-check-in)
@@ -58,11 +63,10 @@
       ;; TODO: wake it specifically as hitting the timeout, instead of re-evaluating the receive?
       process.wake)))
 
-(let pid-counter (box<- 0))
+(let pid-counter (box<- -1))
 
 (to (process<- start-state)
-  (let pid-num pid-counter.^)           ; Just for display.
-  (pid-counter .^= (+ pid-num 1))
+  (let pid-num (pid-counter .update _.up))           ; Just for display.
   (let state (box<- start-state))       ; State of execution.
   (let inbox-checked (box<- empty))     ; Messages that didn't match the current receive.
   (let inbox-unchecked (box<- empty))   ; Messages not yet checked against the current receive.
@@ -108,13 +112,13 @@
 
     (to (_ .enqueue message)
       ;; TODO: error if exited? Probably not.
-      (inbox-unchecked .^= (push inbox-unchecked.^ message))
+      (push! inbox-unchecked message)
       process.wake)
 
     (to _.wake
       (be state.^
         ((and {blocked _ _ _ _ _} thunk)
-         (run-queue .^= (push run-queue.^ process))
+         (schedule! process)
          (state .^= {go thunk #no})) ;(TODO still a bit clumsy)
         (_)))
 
@@ -137,7 +141,7 @@
            ;; TODO handle {after ...} clauses
            (be (match-clauses r map clauses msg)
              (#no
-              (inbox-checked .^= (push inbox-checked.^ msg))
+              (push! inbox-checked msg)
               (checking))
              ({clause _ exp}
               (inbox-unchecked .^= (extend inbox-checked.^ (list<-queue rest)))
@@ -158,7 +162,7 @@
             (surely (empty? inbox-unchecked.^) "inbox populated"))
            ({exit outcome}
             (on-death outcome))
-           (_ (run-queue .^= (push run-queue.^ process)))))
+           (_ (schedule! process))))
         ({exit _}
          (surely #no))
         ({blocked _ _ _ _ _}

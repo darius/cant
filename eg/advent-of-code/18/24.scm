@@ -144,7 +144,7 @@ separator: '\n'.
   (for each! ((`(,army ,groups) (sort armies.items)))
     (format "~d:\n" army)
     (for each! ((`(,i ,group) groups.items))
-      (format "Group ~w contains ~w units\n" (+ i 1) group.count))))
+      (format "Group ~w contains ~w units\n" i.up group.count))))
 
 (to (part-1)
   (let armies (map<- (for each ((`(,name ,group-makers) matchup))
@@ -152,7 +152,7 @@ separator: '\n'.
                                   (group-maker 0))))))
   (show-count armies)
   (battle armies)
-;;  (sum (each _.count (call chain armies.values)))  TODO is this nicer?
+;;  (sum (each _.count (chain @armies.values)))  TODO is this nicer?
   (sum (for gather ((groups armies.values))
          (each _.count groups))))
 
@@ -190,7 +190,7 @@ separator: '\n'.
 (to (binary-search ok? low high)
   (begin searching ((L low) (H high))
     (surely (< L H))
-    (if (= (+ L 1) H)
+    (if (= L.up H)
         H
         (do (let M ((+ L H) .quotient 2))
             (surely (< M H))

@@ -68,6 +68,6 @@
   ;; queen at its position. Row/column numbers start from 0.
   (for each ((r (range<- n)))
     (range<- (+ 2 (* n r))
-             (+ 2 (* n (+ r 1))))))
+             (+ 2 (* n r.up)))))
 
 (export queens queens-problem print-board)

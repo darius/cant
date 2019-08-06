@@ -47,7 +47,7 @@
                     0))
   (for each! ((ss succs.values))
     (for each! ((s ss))
-      (pred-count .set! s (+ (pred-count s) 1))))   ;TODO maybe incr a box instead
+      (pred-count .update s _.up)))
 
   (let outbox (flexarray<-))
 
@@ -83,14 +83,13 @@
          (working rest `(#no ,@ws2) jobs))
         (`((,node ,ticks-left) ,@rest)
 ;         (print 'c)
-         (let n (- ticks-left 1))
+         (let n ticks-left.down)
          (if (= n 0)
              (do (outbox .push! node)
                  (let new-nodes
                    (sort (for those ((s (succs node)))
                            (surely (< 0 (pred-count s)))
-                           (pred-count .set! s (- (pred-count s) 1)) ;TODO box
-                           (= 0 (pred-count s)))))
+                           (= 0 (pred-count .update s _.down)))))
                  ;; let's assume assigning happens elsewhere for now
                  (working rest `(#no ,@ws2) (merge new-nodes jobs)))
              (working rest `((,node ,n) ,@ws2) jobs))))))
@@ -110,7 +109,7 @@
             jobs
             ("" .join outbox.values))
     (if (some identity workers) ;clumsy, I guess
-        (ticking (+ t 1) (assign (work {state workers jobs})))
+        (ticking t.up (assign (work {state workers jobs})))
         t)))
 
 

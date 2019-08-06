@@ -11,7 +11,7 @@
 (display "\nPart 1\n")
 
 (to (play n m)                         ; n: #players; m: last-marble points
-  (let circle (circle<- (+ m 1)))
+  (let circle (circle<- m.up))
   (let p (box<- 0))                     ; current marble position
   (let scores (array<-count n))
   (begin playing ((elf 0) (marble 1))
@@ -27,12 +27,12 @@
           (let pos (+ 1 (be circle.count
                           (1 0)
                           (2 0)
-                          (_ ((+ p.^ 1) .modulo circle.count)))))
+                          (_ (p.^.up .modulo circle.count)))))
           (circle .insert! pos marble)
           (p .^= pos)))
     (unless (= marble m)
-      (playing ((+ elf 1) .modulo n)
-               (+ marble 1))))
+      (playing (elf.up .modulo n)
+               marble.up)))
   scores.values)
 
 (to (circle<- N)
@@ -58,7 +58,7 @@
       (let hi H.^)
       (if (< i lo)
           (do (let popped (V i))
-              (let j (+ i 1))
+              (let j i.up)
               (let k (- hi (- lo j)))
               ;; 0..i j..lo / hi..N
               (__vector-move! V k V j lo)
@@ -74,7 +74,7 @@
               ;; 0..lo..i / k+1..N
               ;; 0..lo..i / gap+i+1..N equivalently
               (L .^= i)
-              (H .^= (+ k 1))
+              (H .^= k.up)
               popped)))
 
     (to (_ .insert! i value)
@@ -87,7 +87,7 @@
               ;; 0..i / hi-(lo-i)..hi..N
               (V .set! i value)
               ;; 0....j / hi-(lo-i)..hi..N
-              (L .^= (+ i 1))
+              (L .^= i.up)
               (H .^= k))
           (do (let k (+ hi (- i lo)))
               ;; 0..lo / hi..k..N
@@ -96,7 +96,7 @@
               ;; 0..lo..i / k..N
               ;; 0..lo..i / gap+i..N equivalently
               (V .set! i value)
-              (L .^= (+ i 1))
+              (L .^= i.up)
               (H .^= k)
               )))
 

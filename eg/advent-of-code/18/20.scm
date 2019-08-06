@@ -41,7 +41,7 @@ dir:  {'N' | 'S' | 'E' | 'W'} :Dir.
     (be exp
       ({dir ch}
        (visit (vector+ p (step ch))
-              (+ d 1)
+              d.up
               {seq '()}))
       ({alt es}
        (merge-best (for each ((e es))

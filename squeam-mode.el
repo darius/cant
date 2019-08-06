@@ -6,6 +6,7 @@
 (put 'begin 'scheme-indent-function 2)
 (put 'case 'scheme-indent-function 0)
 (put 'do 'scheme-indent-function 0)
+(put 'else 'scheme-indent-function 0)
 (put 'export 'scheme-indent-function 0)
 (put 'for 'scheme-indent-function 2)
 (put 'given 'scheme-indent-function 1)

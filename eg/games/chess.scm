@@ -231,7 +231,7 @@
                 (do (let r1 (+ r (* dr i)))
                     (let c1 (+ c (* dc i))))
                 (if (empty? r1 c1)
-                    (link (move-to r1 c1) (stepping (+ i 1))))
+                    (link (move-to r1 c1) (stepping i.up)))
                 (if (has-opponent? r1 c1)
                     (link (move-to r1 c1) '()))
                 (else
@@ -249,11 +249,11 @@
                               (link (move-to (+ r (* dr 2)) c) '())
                               '()))
                     '())
-                (if (has-opponent? (+ r dr) (- c 1))
-                    `(,(move-to (+ r dr) (- c 1)))
+                (if (has-opponent? (+ r dr) c.down)
+                    `(,(move-to (+ r dr) c.down))
                     '())
-                (if (has-opponent? (+ r dr) (+ c 1))
-                    `(,(move-to (+ r dr) (+ c 1)))
+                (if (has-opponent? (+ r dr) c.up)
+                    `(,(move-to (+ r dr) c.up))
                     '())))
 
         (#\K

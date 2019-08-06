@@ -71,16 +71,16 @@
     (begin searching ((p p))
       (if (< p H)
           (if (char-set .maps? (t p))
-              (+ p 1)
-              (searching (+ p 1)))
+              p.up
+              (searching p.up))
           (do
             (let G gap.^)
             (let S size.^)
             (begin persevering ((p p))
               (if (< p S)
                   (if (char-set .maps? (t (+ G p)))
-                      (+ p 1)
-                      (persevering (+ p 1)))
+                      p.up
+                      (persevering p.up))
                   nowhere))))))
 
   (to (find-char-set-backward p char-set)

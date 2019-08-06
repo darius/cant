@@ -61,7 +61,7 @@
                       (= p (board (+ j k))))
                 (print j)
                 (os-exit 0))
-              (checking (+ j 1)))
+              (checking j.up))
           (do (step!)
               (working j))))))
 

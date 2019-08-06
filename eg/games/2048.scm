@@ -113,7 +113,7 @@
 ;; the updated `(,low ,row) state.
 (to (slide `(,low ,row))
   (begin checking ((i low))
-    (let j (+ i 1))
+    (let j i.up)
     (hm (when (<= 4 j)
           `(4 ,row)) ; There was no space or coincidence to slide into.
         (do (let same? (= (row i) (row j))))
@@ -122,7 +122,7 @@
         (else ; Found one, let's slide:
           (let sum (+ (row i) (row j)))
           (let slid
-            `(,@(row .slice 0 i) ,sum ,@(row .slice (+ j 1)) 0))
+            `(,@(row .slice 0 i) ,sum ,@(row .slice j.up) 0))
           `(,(if same? j low) ,slid)))))
 
 (to (right rows) (each flip-h (left (flip-h rows))))

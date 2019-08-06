@@ -32,7 +32,7 @@
         (#no #no)
         (`(,op ,a ,b ,c)
          (vm .do op a b c)
-         (regs .set! ip (+ (regs ip) 1))
+         (regs .update ip _.up)
          (when (= here 7)
            (format "ip=~w ~w ~d " (regs ip) regs (show (program (regs ip)))))
          #yes)))

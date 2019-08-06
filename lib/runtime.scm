@@ -96,7 +96,7 @@
   (to (_ i)
     (if (= i 0)
         list.first
-        (list.rest (- i 1))))
+        (list.rest i.down)))
   (to _.empty?
     (= 0 list.count)) ;N.B. these default implementations are circular
   (to _.first
@@ -108,18 +108,18 @@
     (begin counting ((list list) (count 0))
       (if list.empty?
           count
-          (counting list.rest (+ count 1)))))
+          (counting list.rest count.up))))
   (to (_ .slice i)
     (surely (<= 0 i))
     (hm (if (= i 0) list)
         (if list.empty? list)
-        (else (list.rest .slice (- i 1)))))
+        (else (list.rest .slice i.down))))
   (to (_ .slice i bound)     ;XXX result is a link-list; be more generic?
     (surely (<= 0 i))
     (hm (if list.empty? list)
         (if (<= bound i) '())
-        (if (= i 0) (link list.first (list.rest .slice 0 (- bound 1))))
-        (else (list.rest .slice (- i 1) (- bound 1)))))
+        (if (= i 0) (link list.first (list.rest .slice 0 bound.down)))
+        (else (list.rest .slice i.down bound.down))))
   (to (_ .chain seq)                         ;TODO self if seq is ()
     (if list.empty?
         seq
@@ -143,18 +143,18 @@
         (begin walking ((k key) (xs list))
           (hm (if xs.empty? default)
               (if (= k 0) xs.first)
-              (else (walking (- k 1) xs.rest))))
+              (else (walking k.down xs.rest))))
         default))
   (to (_ .maps? key)
     (and (not list.empty?)
          (or (= 0 key)
              (and (< 0 key)
-                  (list.rest .maps? (- key 1))))))
+                  (list.rest .maps? key.down)))))
   (to (_ .find value default)    ;; XXX update the other collections to have this too
     (begin looking ((i 0) (values list))
       (hm (if values.empty? default)
           (if (= value values.first) i)
-          (else (looking (+ i 1) values.rest)))))
+          (else (looking i.up values.rest)))))
   (to (_ .find value)
     (be (list .find value #no)
       (#no (error "Missing value" value))
@@ -217,11 +217,13 @@
   (to (_ .or b)        (__bit-or  me b))
   (to (_ .xor b)       (__bit-xor me b))
   (to (_ .to< b)       (range<- me b))
-  (to (_ .to b)        (range<- me (+ b 1)))
+  (to (_ .to b)        (range<- me b.up))
   (to (_ .span n)      (range<- me (+ me n)))
   (to _.even?          (surely (integer? me)) (= 0 (me .modulo 2)))
   (to _.odd?           (surely (integer? me)) (not= 0 (me .modulo 2)))
   (to (_ .divides? b)  (surely (integer? me)) (= 0 (b .modulo me)))
+  (to _.up             (__+ me 1))      ;experiment
+  (to _.down           (__- me 1))      ;experiment
   ;; XXX sketchy support for 32-bit word ops:
   (to (_ .u+ a)        (__u+ me a))
   (to (_ .u- a)        (__u- me a))
@@ -292,7 +294,7 @@
     (v .move! 0 me i bound)
     v)
   (to _.last
-    (me (- me.count 1)))
+    (me me.count.down))
   (to (_ .copy! v)
     (me .move! 0 v 0 v.count))
   (to (_ .move! dst source lo bound)
@@ -300,7 +302,7 @@
     (let lo->dst (- dst lo))
     (for each! ((i (if (<= dst lo)
                        (range<- lo bound)
-                       (range<- (- bound 1) lo -1))))
+                       (range<- bound.down lo -1))))
       (me .set! (+ i lo->dst)
           (source i))))
   (to _.values
@@ -338,6 +340,10 @@
         (__vector-move! me dst source lo bound)
         (array-trait me message)))
   (to _.copy          (__vector-copy me))
+  (to (_ .update key f)         ;TODO define in a mutable-map-trait ?
+    (let value (f (me key)))
+    (me .set! key value)
+    value)
   (to (_ .selfie sink)
     (sink .display "[")
     (when (< 0 me.count)
@@ -390,9 +396,9 @@
     (begin scanning ((i me.count))
       (if (= i 0)
           ""
-          (do (let c (me (- i 1)))
+          (do (let c (me i.down))
               (if c.whitespace?
-                  (scanning (- i 1))
+                  (scanning i.down)
                   (me .slice 0 i))))))
   (to _.trim
     me.trim-left.trim-right)
@@ -405,8 +411,8 @@
                 (hm (if (= i limit) `(,s))
                     (if ((s i) .whitespace?)
                         (link (s .slice 0 i)
-                              (splitting ((s .slice (+ i 1)) .trim-left))))
-                    (else (scanning (+ i 1)))))))))
+                              (splitting ((s .slice i.up) .trim-left))))
+                    (else (scanning i.up))))))))
   (to (_ .split delimiter)
     ;; TODO deduplicate code
     ;; TODO define a strstr and use that
@@ -421,7 +427,7 @@
                         (if (= delimiter (s .slice i (+ i delimiter.count)))
                             (link (s .slice 0 i)
                                   (splitting (s .slice (+ i delimiter.count)))))
-                        (else (scanning (+ i 1))))))))))
+                        (else (scanning i.up)))))))))
   (to _.lowercase (string<-list (for each ((c me)) c.lowercase)))
   (to _.uppercase (string<-list (for each ((c me)) c.uppercase)))
   (to _.capitalize (chain ((me .slice 0 1) .uppercase) (me .slice 1)))
@@ -441,7 +447,7 @@
                 (if (= pattern (me .slice i (+ i pattern.count)))
                     (chain (list<-string replacement)
                            (scanning (+ i pattern.count))))
-                (else (link (me i) (scanning (+ i 1))))))))))
+                (else (link (me i) (scanning i.up)))))))))
   (to (_ .justify n)
     (me .justify n #\space))
   (to (_ .justify n pad)
@@ -485,7 +491,7 @@
     ;; yield the same output as a string with no final "\n". N.B. while
     ;; that's convenient it's also information-destroying.
     (if (and (not lines.empty?) (= lines.last ""))
-        (lines .slice 0 (- lines.count 1))
+        (lines .slice 0 lines.count.down)
         lines))
   (to (_ .selfie sink)
     (sink .display #\")
@@ -522,14 +528,20 @@
       ((? char?)    (- me.code b.code))
       (_ (error "Bad arg type" b))))
   (to (_ .to< b)      (range<- me b))       ;These methods should be in a trait
-  (to (_ .to b)       (range<- me (+ b 1))) ;if they're a good idea at all...
+  (to (_ .to b)       (range<- me b.up))    ;if they're a good idea at all...
   (to (_ .span n)     (range<- me (+ me n)))
+  (to _.up            (me .+ 1))      ;experiment
+  (to _.down          (me .- 1))      ;experiment
   )
 
 ;; TODO: should a box be a collection?
 (make-trait box-primitive me
   (to _.^             (__box-value me))
   (to (_ .^= val)     (__box-value-set! me val))
+  (to (_ .update f) ;TODO better name? I left out the '!' to emphasize it returns the value
+    (let value (f me.^))
+    (me .^= value)
+    value)                              ;TODO return void instead?
   (to (_ .selfie sink)
     (sink .display "<box ")
     (sink .print me.^)
@@ -798,9 +810,9 @@
           (begin walking ((i (- (capacity) 1)))
             (hm (if (< i 0)       '())
                 (do (let k (keys.^ i)))
-                (if (= k none)    (walking (- i 1)))
-                (if (= k deleted) (walking (- i 1)))
-                (else             (link i (walking (- i 1)))))))
+                (if (= k none)    (walking i.down))
+                (if (= k deleted) (walking i.down))
+                (else             (link i (walking i.down))))))
 
         (to (place key)
           (__place key keys.^ none deleted))
@@ -841,7 +853,7 @@
               ({missing-at i}
                (keys.^ .set! i key)
                (vals.^ .set! i val)
-               (count .^= (+ count.^ 1))
+               (count .^= count.^.up)
                (maybe-grow))))
           (to (_ .maps? key)
             (be (place key)
@@ -870,7 +882,7 @@
             (be (place key)
               ({at i}
                (keys.^ .set! i deleted)
-               (count .^= (- count.^ 1))
+               (count .^= count.^.down)
                #no)
               (_ #no)))   ;XXX error instead? It is in Python.
           (to (_ .find? value)
@@ -887,6 +899,10 @@
             (vals .^= (array<- #no)))
           (to _.copy
             (map<- map.items))
+          (to (_ .update key f)         ;TODO define in a mutable-map-trait ?
+            (let value (f (map key)))  ;TODO what about a (map .get key) version? how to factor this?
+            (map .set! key value)
+            value)
           (to (_ .selfie sink)
             (sink .display "#<map (")
             (sink .print count.^)
@@ -1120,7 +1136,7 @@
         (make range {extending list-trait}
           (to _.empty? #no)
           (to _.first  first)
-          (to _.rest   (range<- (+ first 1) limit))
+          (to _.rest   (range<- first.up limit))
           (to _.count  (- limit first))
           (to (_ i)
             (if (not (integer? i))
@@ -1175,7 +1191,7 @@
         (make enumeration {extending list-trait}
           (to _.empty? #no)
           (to _.first  `(,i ,xs.first))
-          (to _.rest   (enumerate xs.rest (+ i 1)))))))
+          (to _.rest   (enumerate xs.rest i.up))))))
 
 (to (array<- @elements)
   (array<-list elements))

@@ -49,12 +49,11 @@
             (tag
              (let id (hm (when (= tag 0)
                            ;; Second visit.
-                           (counter .^= (+ counter.^ 1)) ;TODO (incr counter) ?
-                           (tags .set! thing counter.^)
-                           counter.^)
+                           (hey (counter .update _.up)
+                                (-> (tags .set! thing it))))
                          (else
-                          ;; Thereafter.
-                          tag)))
+                           ;; Thereafter.
+                           tag)))
              (buffer .push! (on (sink)
                               (format .to-sink sink "#~w" id)))))))))
 

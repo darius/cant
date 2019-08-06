@@ -38,16 +38,16 @@
       (let ch (text .get p 1))
       (let pp (+ p 1))
       (if (or (= ch "") (= ch "\n"))
-          (rendering pp 0 (+ y 1))  ;; TODO flexarray to string, i guess
+          (rendering pp 0 y.up)  ;; TODO flexarray to string, i guess
           (begin appending ((glyphs (render-glyph ch.first x))
                             (x x)
                             (y y))
             (hm (if glyphs.empty?    (rendering pp x y))
                 (do 
-                  (lines .set! y (chain (lines y) (string<- glyphs.first)))) ;XXX quadratic
-                (if (< (+ x 1) cols) (appending glyphs.rest (+ x 1) y))
-                (if (< (+ y 1) rows) (appending glyphs.rest 0 (+ y 1)))
-                (else                'done))))))
+                  (lines .set! y  (chain (lines y) (string<- glyphs.first)))) ;XXX quadratic
+                (if (< x.up cols) (appending glyphs.rest x.up y))
+                (if (< y.up rows) (appending glyphs.rest 0 y.up))
+                (else             'done))))))
   (make _
     (to _.point-visible?  (yeah? point-y.^))
     ;; XXX doesn't mean 'is centered' any more:

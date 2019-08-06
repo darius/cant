@@ -2,7 +2,7 @@
 
 (let SIZE 8190)
 
-(let flags (array<-count (+ SIZE 1) #no))      ;XXX original had just SIZE
+(let flags (array<-count SIZE.up #no))      ;XXX original had just SIZE
 
 (to (main _)
   (format "10 iterations\n")
@@ -14,8 +14,8 @@
       (for each! ((i (0 .to SIZE)))
         (when (flags i)
           (let prime (+ i i 3))
-          (for each! ((k (range<- (+ i prime) (+ SIZE 1) prime)))
+          (for each! ((k (range<- (+ i prime) SIZE.up prime)))
             (flags .set! k #no))
-          (count .^= (+ count.^ 1))))
+          (count .update _.up)))
       count.^))
   (format "~w primes\n" result))
