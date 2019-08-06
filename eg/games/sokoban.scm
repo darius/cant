@@ -70,7 +70,7 @@ Level ~w ~d Move ~w")
         (let c2 (if (".I@" .find? ch) (compose bold c1) c1))
         (c2 ch)))
 
-    (render `(,(heading .format (+ level 1) (name .center 50) trail.count)
+    (render `(,(heading .format level.+ (name .center 50) trail.count)
               "\n\n"
               ,(view-grid)
               ,@(if grid.won? '("\n\nDone!") '())))
