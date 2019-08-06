@@ -135,7 +135,7 @@
 (to (take thing transform)
   (transform thing))
 
-(to (hey focus @actions)
+(to (hey focus @actions)                ;TODO: better name 'with'?
   (for each! ((act actions))
     (act focus))
   focus)
