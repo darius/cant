@@ -4,7 +4,7 @@
 
 (with-signal-handler
  (on (k plaint @values)
-   (call on-error-traceback `(,k ,plaint ,@values))
+   (on-error-traceback k plaint @values)
    (display "Now continuing with 42\n")
    (k .answer 42))
  (:

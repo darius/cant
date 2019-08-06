@@ -14,7 +14,7 @@
           (format "Available players: ~d\n"
                   (" " .join (sort player-registry.keys)))
           (os-exit 1))))
-  (call tty-ttt `(,@players ,empty-grid)))
+  (tty-ttt @`(,@players ,empty-grid)))
 
 (to (quick-test)
   (tic-tac-toe spock-play spock-play {grid 0o610 0o061}))

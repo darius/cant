@@ -195,7 +195,7 @@
     (printing xs.rest)))
 
 (to (breakpoint @values)
-  (call error `("Breakpoint" ,@values)))
+  (error @`("Breakpoint" ,@values)))
 
 (to (system/must-succeed command)
   (unless (= 0 (system command))

@@ -291,10 +291,7 @@
 
     (install-read-macro #\@
       (lambda (port c)
-        (let ((next (peek-char port)))
-          (if (or (symbol-constituent? next) (char=? next #\( ))
-              (list '@ (must-read port))    ;XXX for now
-              '@))))
+        (list '@ (must-read port))))    ;XXX for now
 
     (lambda opt:in-port
       (read (optional-arg opt:in-port (current-input-port))))))
