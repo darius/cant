@@ -3,9 +3,9 @@
 
 ;; The general registers by size, and then by their 3-bit code.
 (let possible-registers
-  (map<- '((1 #(%al %cl %dl %bl %ah %ch %dh %bh))
-           (2 #(%ax %cx %dx %bx %sp %bp %si %di))
-           (4 #(%eax %ecx %edx %ebx %esp %ebp %esi %edi)))))
+  (map<- '((1 [%al %cl %dl %bl %ah %ch %dh %bh])
+           (2 [%ax %cx %dx %bx %sp %bp %si %di])
+           (4 [%eax %ecx %edx %ebx %esp %ebp %esi %edi]))))
 
 ;; TODO instead of a symbol and lookup, consider creating register
 ;; objects which know their number.

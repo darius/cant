@@ -32,7 +32,7 @@
 
 (to (show-tree tree)
   (walk tree (on (symbol encoding)
-               (format "~d ~d\n" symbol (string<-list (each "01" encoding))))))
+               (format "~d ~d\n" symbol (string<- @(each "01" encoding))))))
 
 (to (encoder<- tree)
   (hey (map<-)

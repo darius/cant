@@ -125,7 +125,7 @@ app:    (expr expr*)
        (n `({local ,n} ,@then))))))                    ;TODO generalize
 
 
-(let primitives-2 ('#(= - + *) .inverse))
+(let primitives-2 ('[= - + *] .inverse))
 (let first-prim2-opcode 10)
 
 (to (compile-operands scope operands then)

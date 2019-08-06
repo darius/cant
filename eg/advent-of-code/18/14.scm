@@ -6,7 +6,7 @@
 (display "\nPart 1\n")
 
 (let board (flexarray<- 3 7))
-(let elves '#(0 1))
+(let elves '[0 1])
 
 (to (step!)
   (board .extend! (digits<- (sum (each at elves))))

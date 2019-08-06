@@ -51,11 +51,11 @@
 
 (to (turn-1 dir) ; /  n e s w
                  ; -> e n w s
-  (  '#(1 0 3 2) dir))
+  (  '[1 0 3 2] dir))
 
 (to (turn-2 dir) ; \  n e s w
                  ; -> w s e n
-  (  '#(3 2 1 0) dir))
+  (  '[3 2 1 0] dir))
 
 (to (turn-right dir) ;    n e s w
                      ; -> e s w n

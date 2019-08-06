@@ -20,7 +20,7 @@
        (abbrev (group (<> (text abbrev) (nest abbrev.count (doc<-sx operand)))))))
     ((? list?)  (maybe-call-like "(" x ")"))
     ((? term?)  (maybe-call-like "{" `(,x.tag ,@x.arguments) "}"))
-    ((? array?) (hug "#(" x ")"))
+    ((? array?) (hug "[" x "]"))
     ((? box?)   (call-like "#<" 'box `(,x.^) ">"))
     (_          (text ("~w" .format x)))))
 

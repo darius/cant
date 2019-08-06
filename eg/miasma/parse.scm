@@ -125,7 +125,7 @@
 (to (expand-abbrev x)
   (or (assoc x abbrevs) x))
 
-(let extended-opcode-tags '#(/0 /1 /2 /3 /4 /5 /6 /7))
+(let extended-opcode-tags '[/0 /1 /2 /3 /4 /5 /6 /7])
 
 (to (operand? x)
   (be x

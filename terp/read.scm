@@ -235,8 +235,6 @@
                                          "Unknown character constant - #\\"
                                          symbol)))))
                    next)))
-            (( #\( )	; vector constant
-             (list->vector (read-list port next)))
             (else
              (cond ((char-alphabetic? next)
                     (let ((sym (read-atom port next)))

@@ -17,7 +17,7 @@
          (2 {term (__ast-part me 1) (__ast-es me 2)})
          (3 {list (__ast-es me 1)})
          (4 {make (__ast-part me 1)
-              (__expr '#(0 #no))  ;XXX really hacky
+              (__expr '[0 #no])  ;XXX really hacky
               (__ast-e me 2)
               (__ast-clauses me 3)})
          (5 {do (__ast-e me 1) (__ast-e me 2)})
