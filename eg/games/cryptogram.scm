@@ -19,8 +19,8 @@
 (let alphabet (#\a .to #\z))
 
 (to (random-encrypt rng text)
-  (let values (array<-list alphabet))
-  (rng .shuffle! values)
+  (let values (hey (array<-list alphabet)
+                   (-> (rng .shuffle! it))))
   (let code (map<- (zip alphabet values)))
   (string<-list (for each ((ch text.lowercase))
                   (code .get ch ch))))
@@ -108,8 +108,8 @@
         (shift-till offset (: (= letter (code point.^))))))
 
     (to (_ .view show-cursor?)
-      (let counts (bag<- decoder.values))
-      (counts .delete! #\space)
+      (let counts (hey (bag<- decoder.values)
+                       (-> (it .delete! #\space))))
       (let clashes (_.range (for where ((n counts))
                               (< 1 n))))
       (let letters-left (for each ((ch alphabet))

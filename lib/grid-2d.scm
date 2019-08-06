@@ -87,35 +87,35 @@
 
 (export grid-2d<-)
 
-;; sqm> (let g (grid-2d<- '(2 1) '(4 2) '*))
+;; -> (let g (grid-2d<- '(2 1) '(4 2) '*))
 ;; #<grid-2d (2,1)..(4,2)>
-;; sqm> (g 2 2)
+;; -> (g 2 2)
 ;; ...
 ;; Match failure: (#<grid-2d (2,1)..(4,2)> (2 2))
-;; sqm> (g '(2 2))
+;; -> (g '(2 2))
 ;; *
-;; sqm> (g .set! '(2 2) 'a)
-;; sqm> g
+;; -> (g .set! '(2 2) 'a)
+;; -> g
 ;; #<grid-2d (2,1)..(4,2)>
-;; sqm> g.show
+;; -> g.show
 ;; (* * *)
 ;; (a * *)
 ;; #no
-;; sqm> (g .show (on (row) (format "~d\n" ("" .join (each _.name row)))))
+;; -> (g .show (on (row) (format "~d\n" ("" .join (each _.name row)))))
 ;; ***
 ;; a**
 ;; #no
-;; sqm> (g .set! '(3 1) 'b)
-;; sqm> (g .show (on (row) (format "~d\n" ("" .join (each _.name row)))))
+;; -> (g .set! '(3 1) 'b)
+;; -> (g .show (on (row) (format "~d\n" ("" .join (each _.name row)))))
 ;; *b*
 ;; a**
 ;; #no
-;; sqm> (g .get '(3 1))
+;; -> (g .get '(3 1))
 ;; b
-;; sqm> (g .get '(3 3))
+;; -> (g .get '(3 3))
 ;; #no
-;; sqm> (g .get '(3 3) 'blah)
+;; -> (g .get '(3 3) 'blah)
 ;; blah
-;; sqm> (g '(2 42))
+;; -> (g '(2 42))
 ;; ...
 ;; y coordinate out of range: (42)

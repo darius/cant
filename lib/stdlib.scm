@@ -135,10 +135,10 @@
 (to (take thing transform)
   (transform thing))
 
-;; Maybe this should be syntax instead, for eval-order reasons.
-(to (hey receiver @messages)            ;TODO maybe require at least one message
-  (for foldl ((_ void) (m messages))
-    (call receiver m)))
+(to (hey focus @actions)
+  (for each! ((act actions))
+    (act focus))
+  focus)
 
 (to ((getter<- key) map)                ;better name?
   (map key))

@@ -13,8 +13,11 @@
   (let buffer (flexarray<-))
   (let cycle-sink (cycle-sink<- tags buffer)) ;XXX better name?
   (cycle-sink .print thing)
-  (for each! ((writer buffer.values))
-    (writer sink)))
+  (hey sink @buffer.values)
+  void)
+;; TODO restore if I decide I don't like 'hey':
+;;  (for each! ((writer buffer.values))
+;;    (writer sink)))
 
 ;; The tags map keeps a tag for each object the cycle sink visits. The
 ;; tag is 0 after the first visit; then, on the second and thereafter,

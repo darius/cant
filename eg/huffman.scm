@@ -35,9 +35,8 @@
                (format "~d ~d\n" symbol (string<-list (each "01" encoding))))))
 
 (to (encoder<- tree)
-  (let encoder (map<-))
-  (walk tree (method<- encoder '.set!))
-  encoder)
+  (hey (map<-)
+       (-> (walk tree (method<- it '.set!)))))
 
 (to (encode encoder symbols)
   (gather encoder symbols))
