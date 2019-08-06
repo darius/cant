@@ -242,18 +242,19 @@
         (#\P
          ;; XXX do en passant too
          (let dr (if white? -1 1))
-         (chain (if (empty? (+ r dr) c)
-                    (link (move-to (+ r dr) c)
+         (let r1 (+ r dr))
+         (chain (if (empty? r1 c)
+                    (link (move-to r1 c)
                           (if (and (= r (if white? 7 2))   ; initial 2 steps
-                                   (empty? (+ r (* dr 2)) c))
-                              (link (move-to (+ r (* dr 2)) c) '())
+                                   (empty? (+ r1 dr) c))
+                              (link (move-to (+ r1 dr) c) '())
                               '()))
                     '())
-                (if (has-opponent? (+ r dr) c.-)
-                    `(,(move-to (+ r dr) c.-))
+                (if (has-opponent? r1 c.-)
+                    `(,(move-to r1 c.-))
                     '())
-                (if (has-opponent? (+ r dr) c.+)
-                    `(,(move-to (+ r dr) c.+))
+                (if (has-opponent? r1 c.+)
+                    `(,(move-to r1 c.+))
                     '())))
 
         (#\K
