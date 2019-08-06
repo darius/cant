@@ -825,11 +825,11 @@
               (keys.^ .set! j key)
               (vals.^ .set! j (old-vals i)))))
        
-        (make hashmap {extending map-trait}
+        (make map {extending map-trait}
           (to (_ key)
             (be (place key)
               ({at i} (vals.^ i))
-              (_      (error "Missing key" hashmap key))))
+              (_      (error "Missing key" map key))))
           (to (_ .get key @(optional default))
             (be (place key)
               ({at i} (vals.^ i))
@@ -864,7 +864,7 @@
                (let value (value<-))
                ;; Alas, we can't just stick it in at i because (value<-)
                ;; might have changed things too:
-               (hashmap .set! key value)
+               (map .set! key value)
                value)))
           (to (_ .delete! key)
             (be (place key)
@@ -874,7 +874,7 @@
                #no)
               (_ #no)))   ;XXX error instead? It is in Python.
           (to (_ .find? value)
-            (hashmap.values .find? value))
+            (map.values .find? value))
           (to (_ .find value default)
             (let vs vals.^)
             (begin searching ((js (occupants)))  ;XXX should be lazy
@@ -886,9 +886,9 @@
             (keys .^= (array<- none))
             (vals .^= (array<- #no)))
           (to _.copy
-            (map<- hashmap.items))
+            (map<- map.items))
           (to (_ .selfie sink)
-            (sink .display "#<hash-map (")
+            (sink .display "#<map (")
             (sink .print count.^)
             (sink .display ")>"))
           ))
@@ -914,17 +914,17 @@
 
 (to (hash-set<-)                        ;XXX shouldn't be a global
   (let map (map<-)) ;TODO would be nice to avoid storing all the #yes values
-  (make hash-set {extending map-trait}
+  (make set {extending map-trait}
     (to _.empty?           map.empty?)
     (to _.count            map.count)
     (to _.keys             map.keys)
     (to (_ .maps? key)     (map .maps? key))
     (to _.copy             (set<-list map.keys)) ;TODO tune
     (to (_ .add! key)      (map .set! key 1))    ;N.B. matching the bag type here
-    (to (_ .add-all! vals) (for each! ((v vals)) (hash-set .add! v)))
-    (to (_ .union! other)  (hash-set .add-all! other.keys))
+    (to (_ .add-all! vals) (for each! ((v vals)) (set .add! v)))
+    (to (_ .union! other)  (set .add-all! other.keys))
     (to (_ .union other)
-      (let result hash-set.copy)
+      (let result set.copy)
       (result .union! other)
       result)
     (to (_ .intersect other)                 ;TODO rename to .and, etc., I guess
