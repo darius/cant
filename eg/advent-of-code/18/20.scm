@@ -63,7 +63,7 @@ dir:  {'N' | 'S' | 'E' | 'W'} :Dir.
   (let how-many (for tally ((dist rooms.values))
                   (<= 1000 dist)))
   (format "count for >= 1000 distance: ~w\n" how-many)
-  (call max rooms.values))
+  (max @rooms.values))
 
 (to (vec? p)
   (and (list? p) (= p.count 2) (every number? p)))

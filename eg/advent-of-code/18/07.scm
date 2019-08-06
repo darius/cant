@@ -13,7 +13,7 @@
 (let ordering (each parse input))
 ;(each! print ordering)
 
-(let all-steps (set<-list (call chain ordering))) ;TODO use list.range method now
+(let all-steps (_.range (chain @ordering)))
 (let nodes all-steps.keys)
 (let succs-set (for map-by ((_ nodes))
                  (set<-)))

@@ -116,7 +116,7 @@
 ; (play 30 5807))
 
 ;(print scores)
-(print (call max scores))
+(print (max @scores))
 
 
 ;(display "\nPart 2\n")

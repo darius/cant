@@ -73,8 +73,8 @@
       ,(s .slice (+ i 1)))))
 
 (to (chain-lines lines)
-  (call chain (for each ((line lines))
-                (chain line "\n"))))
+  (chain @(for each ((line lines))
+            (chain line "\n"))))
 
 ;; I wish Parson made this convenient without the wrapper:
 (to (simple-parser<- template)
@@ -106,7 +106,7 @@
   (transpose (each bounds-1d<- (transpose points))))
 
 (to (bounds-1d<- ns)
-  `(,(call min ns) ,(call max ns)))
+  `(,(min @ns) ,(max @ns)))
 
 (export
   cycle scanl/lazy detect pairs<- yeahs/lazy 

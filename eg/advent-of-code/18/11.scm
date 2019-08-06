@@ -79,13 +79,11 @@
     (grid* side side))
 
   (let `(,power ,triple)
-    (call max
-          (for each ((`(,x ,y) (corners)))
-            (call max
-                  (for each ((d (1 .to (min (- N x) (- N y)))))
+    (max @(for each ((`(,x ,y) (corners)))
+            (max @(for each ((d (1 .to (min (- N x) (- N y)))))
                     (let triple `(,x ,y ,d))
                     `(,(power<- triple) ,triple))))))
-                  
+
   (cvt-coords triple))
 
 (let `(,x ,y ,s) (part2))

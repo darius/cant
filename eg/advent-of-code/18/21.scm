@@ -17,7 +17,7 @@
 ;(exit 0)
 
 (to (show insn)
-  (call "~d ~w ~w ~w" `{.format ,@insn}))
+  ("~d ~w ~w ~w" .format @insn))
 
 (to (vm<- regs ip program)
   (make vm

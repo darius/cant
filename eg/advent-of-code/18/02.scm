@@ -17,4 +17,4 @@
 
 (display "Part 2\n")
 
-(print (call chain (_.first (duplicates<- (gather deletions<- input)))))
+(print (chain @(_.first (duplicates<- (gather deletions<- input)))))
