@@ -144,6 +144,7 @@
                 (else
                  (cons (must-read port) (reading)))))))
 
+    ;; TODO remove this (and term<-list) if we switch to the new term syntax
     (define (read-term port c)
       (term<-list (read-seq #\} port c)))
 
@@ -215,6 +216,10 @@
       (lambda (port c)
         (let ((next (read-char port)))
           (case next
+            (( #\( )	; new term notation
+             (let* ((tag (must-read port))
+                    (parts (read-seq #\) port c)))
+               (make-term tag parts)))
             ((#\\)
              (let ((next (read-char port)))
                (if (and (char-alphabetic? next)
