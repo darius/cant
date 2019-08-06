@@ -39,7 +39,7 @@
        (to (_ .display a)   (ss .display a)   (cut-off))
        (to (_ .write-u8 u8) (ss .write-u8 u8) (cut-off))
        (to (_ .print a)     (a .selfie bounded-sink))
-       (to _.close          (ss .close)))
+       (to _.close          ss.close))
      (bounded-sink .print thing)
      (output))))
        
