@@ -140,9 +140,6 @@
     (act focus))
   focus)
 
-(to ((getter<- key) map)                ;better name?
-  (map key))
-
 
 ;; Top level
 
