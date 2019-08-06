@@ -797,8 +797,8 @@
 
       (to '()
         (let count (box<- 0))
-        (let keys  (box<- (array<- none)))  ;; size a power of 2
-        (let vals  (box<- (array<- #no)))   ;; same size
+        (let keys  (box<- [none]))  ;; size a power of 2
+        (let vals  (box<- [#no]))   ;; same size
 
        ;; temp performance tracking
 ;;       (let n-places (box<- 0))
@@ -895,8 +895,8 @@
                   (else (searching js.rest)))))
           (to _.clear!
             (count .^= 0)
-            (keys .^= (array<- none))
-            (vals .^= (array<- #no)))
+            (keys .^= [none])
+            (vals .^= [#no]))
           (to _.copy
             (map<- map.items))
           (to (_ .update key f)         ;TODO define in a mutable-map-trait ?

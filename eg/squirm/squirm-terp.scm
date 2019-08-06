@@ -93,7 +93,7 @@
       (watchers .delete! watcher))
 
     (to (_ .receive-signal pid outcome)
-      (process .enqueue (array<- 'DOWN pid outcome)))
+      (process .enqueue ['DOWN pid outcome]))
 
     (to (_ .partner pid)
       (partners .add! pid))
@@ -478,7 +478,7 @@
      {exit outcome})))
 
 (to (exit k reason)
-  (throw k (array<- 'exit reason)))
+  (throw k ['exit reason]))
 
 (to (ev-operands f rev-args operands r k)
   (be operands

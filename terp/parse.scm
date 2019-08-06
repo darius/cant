@@ -71,6 +71,8 @@
         (pack<- e-constant datum))
        ((: __ self-evaluating?)
         (pack<- e-constant e))
+       ((: __ vector?)
+        (parse-e `(array<- ,@(vector->list e)) ctx)) ;XXX hygiene
        ((: __ term?)
         (pack<- e-term
                 (term-tag e)
@@ -107,7 +109,7 @@
 
 (define (parse-message-e es ctx)
   ;; TODO the code generated for when there's a spread operator needs to
-  ;;  ensure the result is a list.
+  ;;  ensure the result is a list
   (mcase es
     (((: cue cue?) . operands)
      (if (has-spread-operator? operands)

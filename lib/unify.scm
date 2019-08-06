@@ -6,7 +6,7 @@
 (let variable? array?) ;TODO make a disjoint type instead with stamps
 
 (to (variable<- prefix n)
-  (array<- (symbol<- (chain prefix "." (string<-number n)))))
+  [(symbol<- (chain prefix "." (string<-number n)))])
 
 (to (variable-name var)
   (var 0))
