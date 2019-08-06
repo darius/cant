@@ -166,6 +166,8 @@
   (to (_ .last)
     (let rest list.rest)
     (if rest.empty? list.first rest.last))
+  (to (_ .prefix? p)
+    (= (list .slice 0 p.count) p))   ;TODO more efficient
   (to (_ .repeat n)
    ;;TODO a method to get an empty seq of my type; and then factor out duplicate code
     (be n
@@ -431,8 +433,6 @@
   (to _.lowercase (string<-list (each _.lowercase me)))
   (to _.uppercase (string<-list (each _.uppercase me)))
   (to _.capitalize (chain ((me .slice 0 1) .uppercase) (me .slice 1)))
-  (to (_ .prefix? s)
-    (= (me .slice 0 s.count) s))   ;TODO more efficient
   (to (_ .replace pattern replacement) ;TODO more efficient
     ;; TODO unify the cases?
     (hm (if pattern.empty?
