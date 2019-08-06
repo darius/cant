@@ -369,7 +369,7 @@
   (be pattern
     ((? symbol?)
      (surely (not (module-ref? pattern)))
-     (if (pattern.name .starts-with? "_")
+     (if (pattern.name .prefix? "_")
          {ignore}
          {bind pattern}))
     ((? self-evaluating?)

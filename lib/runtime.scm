@@ -431,7 +431,7 @@
   (to _.lowercase (string<-list (for each ((c me)) c.lowercase)))
   (to _.uppercase (string<-list (for each ((c me)) c.uppercase)))
   (to _.capitalize (chain ((me .slice 0 1) .uppercase) (me .slice 1)))
-  (to (_ .starts-with? s)
+  (to (_ .prefix? s)
     (= (me .slice 0 s.count) s))   ;TODO more efficient
   (to (_ .replace pattern replacement) ;TODO more efficient
     ;; TODO unify the cases?
@@ -1296,7 +1296,7 @@
           (be s.first
             (#\~
              (let ss s.rest)
-             (if (ss .starts-with? "-")
+             (if (ss .prefix? "-")
                  (parse sink ss.rest -1 #no args)
                  (parse sink ss #no #no args)))
             (ch
@@ -1304,7 +1304,7 @@
              (scanning sink s.rest args)))))
 
     (to (parse sink s sign width args)
-      (if (s .starts-with? "0")
+      (if (s .prefix? "0")
           (parsing sink s.rest #\0     sign width args)
           (parsing sink s      #\space sign width args)))
 
