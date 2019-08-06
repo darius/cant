@@ -10,8 +10,7 @@
 
   ;; Return a list of those rules where cat starts the rhs.
   (to (rules-starting-with cat)
-    (for those ((rule rules))
-      (rule .starts-with? cat)))
+    (those (_ .starts-with? cat) rules))
 
   ;; Look for the categories needed to complete the parse.
   (to (extend-parse lhs rhs rest needed)
