@@ -106,19 +106,32 @@
        ))))
 
 (define (parse-message-e es ctx)
+  ;; TODO the code generated for when there's a spread operator needs to
+  ;;  ensure the result is a list.
   (mcase es
     (((: cue cue?) . operands)
-     (pack<- e-term cue (parse-es operands ctx)))
+     (if (has-spread-operator? operands)
+         (parse-e `(',make-term ',cue (',list* ,@(remove-spread-operator operands)))
+                  ctx)
+         (pack<- e-term cue (parse-es operands ctx))))
     (operands
         ;; XXX The following is not an acceptable meaning for (_ x y z) because
         ;;  if message = (_ 'x) then (message 0) currently would evaluate to 'x
         ;;  which doesn't match the behavior of other message objects like _.count.
         ;;  But I'm using it for the interim until we migrate away from lists as messages.
-     (pack<- e-list (parse-es operands ctx)))))
+     (if (has-spread-operator? operands)
+         (parse-e `(',list* ,@(remove-spread-operator operands)) ctx)
+         (pack<- e-list (parse-es operands ctx))))))
 
 (define (has-spread-operator? parts)
   (any (mlambda (('@ __) #t) (__ #f))
        parts))  ;XXX really only need to check the last one
+
+(define (remove-spread-operator xs)
+  (let walking ((xs xs))
+    (mcase xs
+      ((('@ last)) `(,last))
+      ((hd . tl) (cons hd (walking tl))))))
 
 (define (parse-es es ctx)
   (map (lambda (e) (parse-e e ctx)) es))

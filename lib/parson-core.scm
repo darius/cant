@@ -71,7 +71,7 @@
   (empty text far i `(,(f vals))))
 
 (to (feed f)
-  (feed-list (on (vals) (call f vals))))
+  (feed-list (on (vals) (f @vals))))
 
 (to (drop text far i vals)
   (empty text far i '()))

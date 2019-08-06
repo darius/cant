@@ -10,7 +10,7 @@
 ;; N.B. specialized to args and result all being expressions
 (to (trace fn @args)
   (when loud? (pp `(>>> ,fn ,@(each unparse-e args))))
-  (let result (call fn args))
+  (let result (fn @args))
   (when loud? (pp `(<<< ,fn : ,(unparse-e result))))
   result)
 
@@ -381,8 +381,8 @@
 ;; Apply an operator to values.
 
 (to (eval-op fn args)
-  {constant (call fn (for each (({constant value} args))
-                       value))})
+  {constant (fn @(for each (({constant value} args))
+                   value))})
 
 
 ;; Unparse.

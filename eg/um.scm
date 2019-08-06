@@ -11,7 +11,7 @@
 ;; nor the type is as simple...
 
 (to (trace @args)
-  (call format args))
+  (format @args))
 
 (let mask32 (- (expt 2 32) 1))
 

@@ -89,7 +89,7 @@
 ;;XXX
 (to (trace fn @args)
   (when loud? (pp `(>>> ,fn ,@args)))
-  (let result (call fn args))
+  (let result (fn @args))
   (when loud? (pp `(<<< ,fn : ,result)))
   result)
 
@@ -539,8 +539,8 @@
 ;; Apply an operator to values.
 
 (to (eval-op fn args)
-  {constant (call fn (for each (({constant value} args))
-                       value))})
+  {constant (fn @(for each (({constant value} args))
+                   value))})
 
 
 ;; Runtime.

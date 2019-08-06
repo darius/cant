@@ -32,7 +32,7 @@
   (array<-list (each number<-string (k-slices<- input 1))))
 
 (to (euler8 n)
-  (call max (each product<- (k-slices<- digits n))))
+  (max @(each product<- (k-slices<- digits n))))
 
 (to (product<- ns) ;ugly: the asymmetry of this name and `sum`.
   (foldl * 1 ns))

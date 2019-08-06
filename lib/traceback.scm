@@ -6,11 +6,11 @@
 (to (on-error-traceback k @evil)
   (display "Error! Traceback:\n")
   (print-traceback k)
-  (call complain evil))
+  (complain @evil))
 
 (to (on-error-complain k @evil)
   (display "Error!\n")
-  (call complain evil))
+  (complain @evil))
 
 (to (print-traceback k)
   (for each! ((frame (reverse k)))

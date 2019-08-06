@@ -110,7 +110,7 @@
                  -1
                  (be (successors grid)
                    ('() 0)
-                   (succs (- (call min (each spock-evaluate succs)))))))))
+                   (succs (- (min @(each spock-evaluate succs)))))))))
 
 (let spock-play (ai<- "Spock" spock-evaluate))
 
@@ -189,7 +189,7 @@
                   (`(1 0 ,_) (marks 0))
                   (`(0 1 ,_) (marks 1))
                   (`(0 0 ,s) s))))
-  (call grid-format `{.format ,@values})) ;ugh
+  (grid-format .format @values))
 
 (let grid-format ("\n" .join ('(" ~d ~d ~d") .repeat 3)))
 

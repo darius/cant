@@ -32,8 +32,8 @@
 (to (clauses-subparts clauses)
   (be (transpose (each clause-subparts clauses))
     ('() none)
-    (`(,es-lists ,ps-lists) `(,(call chain es-lists)
-                              ,(call chain ps-lists)))))
+    (`(,es-lists ,ps-lists) `(,(chain @es-lists)
+                              ,(chain @ps-lists)))))
 
 (to (clause-subparts `(to ,p ,@es))
   `(,es (,p)))

@@ -55,7 +55,7 @@
   code.values)
 
 (to (compile-local frames word)
-  (let locals (call chain frames))      ;I think
+  (let locals (chain @frames))      ;I think
   (be (locals .find word #no)
     (#no   #no)
     (index (local<- index))))

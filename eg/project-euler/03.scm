@@ -4,7 +4,7 @@
 (import (use 'factor) factor)
 
 (to (euler3 n)
-  (call max (factor n)))
+  (max @(factor n)))
 
 ;(print (euler3 13195))
 (print (euler3 131957))

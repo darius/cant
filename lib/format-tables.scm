@@ -11,7 +11,7 @@
                 (<= lengths.range.count 1))
           "Rows must be the same length" rows)
   (let widths (for each ((column (transpose rows)))
-                (call max (each _.count column))))
+                (max @(each _.count column))))
   (for each ((row rows))
     (spacer .join (each justify row widths))))
 

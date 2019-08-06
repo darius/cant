@@ -47,8 +47,8 @@
     (newline)))
 
 (to (bounds<- numbers)
-  `(,(call min numbers)
-    ,(call max numbers)))
+  `(,(min @numbers)
+    ,(max @numbers)))
 
 (to (paint lines)
   (_.range (for where ((ch (map<-lines lines)))

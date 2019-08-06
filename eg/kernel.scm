@@ -71,7 +71,7 @@
      (and (eval-match subject p1 r)
           (eval-match subject p2 r)))
     ({view-pat e p}
-     (eval-match (call (eval e r) `(,subject))
+     (eval-match (call (eval e r) (_ subject))
                  p r))))
 
 (to (match-all values pats r)

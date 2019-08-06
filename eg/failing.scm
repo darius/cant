@@ -9,7 +9,7 @@
       (* n (factorial (- n 1)))))
 
 (to (on-error-complain-and-continue k @evil) ;TODO 'k' is too abbreviated
-  (call on-error-traceback `(,k ,@evil))
+  (on-error-traceback k @evil)
   (display "About to continue with 10") (newline)
   (the-signal-handler .^= on-error-traceback) ;; Restore the usual handler.
   (k .answer 10))

@@ -34,7 +34,7 @@
       (`(,_) "eg/games/microban")
       (`(,_ ,fname) fname)
       (_ (error ("Usage: ~d [filename]" .format (args 0))))))
-  (call start (with-input-file read-collection filename)))
+  (start @(with-input-file read-collection filename)))
 
 (to (read-collection source)
   (let name source.read-line)

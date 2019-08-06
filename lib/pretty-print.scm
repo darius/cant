@@ -39,7 +39,7 @@
     (_ (hug open elements close))))
 
 (to (docs<- sexprs)
-  (call <> (intercalate line (each doc<-sx sexprs))))
+  (<> @(intercalate line (each doc<-sx sexprs))))
 
 (export
   pp doc<-sx)

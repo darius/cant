@@ -89,8 +89,7 @@ insn:    {'1'+} {'#' '#'? '#'? '#'? '#'?} :make_insn.
   (flip (chain (flip lines1) (flip lines2))))
 
 (to (flip strings)
-  (for each ((row (transpose-padded strings #\space)))
-    (call string<- row)))
+  (each string<-list (transpose-padded strings #\space)))
 
 (to (transpose-padded lists padding)
   (begin zipping ((lists lists))

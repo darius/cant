@@ -170,8 +170,8 @@
    ;;TODO a method to get an empty seq of my type; and then factor out duplicate code
     (be n
       (0 '())             
-      (_ (call chain (for each ((_ (range<- n)))
-                       list)))))
+      (_ (chain @(for each ((_ (range<- n)))
+                   list)))))
   (to _.maybe  ;; TODO an experiment TODO could be defined on maps in general too
     (if list.empty?
         #no
@@ -473,11 +473,11 @@
   (to (_ .repeat n)
     (be n
       (0 "")
-      (_ (call chain (for each ((_ (range<- n)))
-                       me)))))
+      (_ (chain @(for each ((_ (range<- n)))
+                   me)))))
   (to (_ .format @arguments)
     (let sink (string-sink<-))
-    (call format `{.to-sink ,sink ,me ,@arguments})
+    (format .to-sink sink me @arguments)
     sink.output-string)
   (to _.split-lines
     (let lines (me .split "\n"))
@@ -960,7 +960,7 @@
 
 (to (surely ok? @arguments)
   (unless ok?
-    (call error (if arguments.empty? '("Assertion failed") arguments))))
+    (error @(if arguments.empty? '("Assertion failed") arguments))))
 
 (to (count? x)
   (and (integer? x) (<= 0 x)))
@@ -1049,11 +1049,11 @@
 
 (make each
   (to (_ f xs)
-    (for foldr ((x xs) (ys '()))
-      (link (f x) ys)))
+    (for foldr ((x xs) (results '()))
+      (link (f x) results)))
   (to (_ f @lists)
-    (for each ((args (call zip lists)))
-      (call f args))))
+    (for each ((args (zip @lists)))
+      (f @args))))
 
 (make zip
   (to (_ xs ys)                           ;specialized for speed

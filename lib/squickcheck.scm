@@ -20,7 +20,7 @@
     (for each! ((_ (range<- n-times)))
       (let inputs (for each ((gen gens))
                     (gen g)))
-      (be (call property inputs)
+      (be (property @inputs)
         (#yes    (display "."))
         (outcome (display "X")
                  (failures .push! `(,outcome ,inputs)))))
@@ -32,7 +32,7 @@
     failures.empty?))
 
 (to (should be-ok? @arguments)
-  (call be-ok? arguments))
+  (be-ok? @arguments))
 
 
 ;; Generator context

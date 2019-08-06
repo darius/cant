@@ -5,11 +5,11 @@
 (make min
   (to (_ a) a)
   (to (_ a b) (if (< a b) a b))
-  (to (_ a b @rest) (call min `(,(min a b) ,@rest))))
+  (to (_ a b @rest) (min (min a b) @rest)))  ;TODO why aren't we using foldl? geez.
 (make max
   (to (_ a) a)
   (to (_ a b) (if (< a b) b a))
-  (to (_ a b @rest) (call max `(,(max a b) ,@rest))))
+  (to (_ a b @rest) (max (max a b) @rest)))
 
 (to (min-by key<- xs) (foldr1 (on (x y) (if (< (key<- x) (key<- y)) x y))
                               xs))
@@ -90,7 +90,7 @@
 ;; total-count ? total ? sum-by ? count-by ?
 
 (to ((compose f g) @arguments)
-  (f (call g arguments)))
+  (f (g @arguments)))
 
 (to (sum ns)
   (foldl + 0 ns))
@@ -156,7 +156,7 @@
     (unwind-protect
      (to (handler-thunk)
        (the-signal-handler .^= parent-handler)
-       (call handler evil))
+       (handler @evil))
      (to (unwind-thunk)
        (the-signal-handler .^= handler/wrapped))))
   (the-signal-handler .^= handler/wrapped))
@@ -165,7 +165,7 @@
   (let parent-handler the-signal-handler.^)
   (the-signal-handler .^= (on (@evil)
                             (the-signal-handler .^= parent-handler)
-                            (call handler evil)))
+                            (handler @evil)))
   (let result (thunk))
   (the-signal-handler .^= parent-handler)
   result)
@@ -175,7 +175,7 @@
   (the-signal-handler .^= (to (unwind-protector @evil)
                             (the-signal-handler .^= parent-handler)
                             (finally)
-                            (call parent-handler evil)))
+                            (parent-handler @evil)))
   (let result (try))
   (the-signal-handler .^= parent-handler)
   (finally)
@@ -209,12 +209,12 @@
   (to (script-handler @evil)
     (the-signal-handler .^= parent-handler)
     (the-last-error .^= evil)
-    (call on-error-traceback evil))
+    (on-error-traceback @evil))
 
   (to (repl-handler @evil)
     (the-signal-handler .^= parent-handler)
     (the-last-error .^= evil)
-    (call on-error-traceback evil)
+    (on-error-traceback @evil)
     (display "Enter (debug) for more.\n")
     (interact))
 

@@ -35,7 +35,7 @@
   (be (peek run-queue.^)
     ({empty}
      (unless waiting-timeouts.empty?
-       (let deadline (call min waiting-timeouts.values))
+       (let deadline (min @waiting-timeouts.values))
        (nanosleep (- deadline (nano-now)))
        (running 0)))
     ({nonempty pid q2}
@@ -522,7 +522,7 @@
         (on (squeam-k @evil)
           (squeam-k .answer {error evil}))
         (on ()
-          (call p args)))
+          (p @args)))
     ({error evil}
      (exit k evil))
     (result

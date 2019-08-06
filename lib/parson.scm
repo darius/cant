@@ -24,8 +24,8 @@
      (list<- (union-over (for each ((`(,refs ,_) lifted))
                            refs))
              (on (builder rules subs)
-               (call peg-op (for each ((`(,_ ,f) lifted))
-                              (f builder rules subs))))))))
+               (peg-op @(for each ((`(,_ ,f) lifted))
+                          (f builder rules subs))))))))
 
 (to (literal<- string)
   (list<- (set<-)

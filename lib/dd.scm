@@ -52,7 +52,7 @@
      (let rank top.rank)
      (make-node rank
                 (for each ((c top.branches.keys))
-                  (call (subst rank c node) (subst-each rank c branches)))))))
+                  ((subst rank c node) @(subst-each rank c branches)))))))
 
 (to (make-node rank branches)
   (if (all-same? branches)
