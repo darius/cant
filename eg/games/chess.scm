@@ -296,8 +296,8 @@
 (to (side-name side)
   side.name.capitalize)
 
-(to (opponent side)
-  (be side
+(let opponent
+  (case
     ('white 'black)
     ('black 'white)))
 
