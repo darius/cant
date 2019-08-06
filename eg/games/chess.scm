@@ -47,13 +47,15 @@
     ('white (- total))
     (_      total)))
 
+;; TODO not really tested
 (to (minimax-evaluate board depth)
   (be depth
     (0 (greedy-evaluate board))
     (_ (be board.get-piece-moves
          ('() 0)
-         (moves (- (min (for each ((move moves))
-                          (minimax-evaluate (update move board) (- depth 1))))))))))
+         (moves (- (min @(for each ((move moves))
+                           (minimax-evaluate (update move board)
+                                             depth.-)))))))))
 
 (let piece-values
   (map<- '((#\p 10)
