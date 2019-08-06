@@ -1283,9 +1283,9 @@
 
     (make format
       (to (_ format-string @arguments)
-        (scanning out format-string arguments))
+        (scanning out format-string.values arguments))
       (to (_ .to-sink sink format-string @arguments)
-        (scanning sink format-string arguments)))
+        (scanning sink format-string.values arguments)))
 
     ;;TODO actually design the format language
 
@@ -1296,7 +1296,7 @@
           (be s.first
             (#\~
              (let ss s.rest)
-             (if (ss .prefix? "-")
+             (if (ss .prefix? '(#\-))
                  (parse sink ss.rest -1 #no args)
                  (parse sink ss #no #no args)))
             (ch
@@ -1304,7 +1304,7 @@
              (scanning sink s.rest args)))))
 
     (to (parse sink s sign width args)
-      (if (s .prefix? "0")
+      (if (s .prefix? '(#\0))
           (parsing sink s.rest #\0     sign width args)
           (parsing sink s      #\space sign width args)))
 
@@ -1331,7 +1331,7 @@
          (maybe-pad sink pad sign width {.display ((string<-number args.first 16) .lowercase)})
          (scanning sink s.rest args.rest))
         (_
-         (error "Bad format string" s))))
+         (error "Bad format string" (string<-list s)))))
 
     (to (maybe-pad sink pad sign width message)
       (hm (when width
