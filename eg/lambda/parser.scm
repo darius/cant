@@ -39,10 +39,10 @@
     (`(do ,@es) es)
     (_ (error "I don't know how to unparse this sequence" src))))
 
-(to (lambda-parsing `(,(? array? params) ,@body) src)
-  ;; TODO this is clumsy without array patterns
-  (be params.values
-    (`(,(? symbol? v))     {lam v (seq-parse body) src})
-    (`(,(? symbol? v) ,@vs) {lam v (exp-parse `(,(array<-list vs) ,@body)) src})))
+(to (lambda-parsing `(,[(? symbol? v) @vs] ,@body) src)
+  (let parsed-body (if vs.empty?
+                       (seq-parse body)
+                       (exp-parse `(,(array<-list vs) ,@body))))
+  {lam v parsed-body src})
 
 (export seq-parse exp-parse)

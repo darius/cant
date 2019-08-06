@@ -175,15 +175,22 @@
        (('_ . ps)                   ; TODO experiment: syntax for messages
         ;; XXX see the comment above about the ('_ . operands) expression form
         (parse-list-pat ps ctx))
+
        ((: __ term?)
         (parse-term-pat p ctx))
-
        ((: __ vector?)
-        (error 'parse "Array patterns not yet implemented" p))
+        ;; N.B. the spread operator (like [a b @cs] still binds cs to
+        ;;  a *list*, not an array. I guess that's surprising? I'm not
+        ;;  sure it's bad.
+        (parse-p `(view ',maybe-vector->list (list<- ,@(vector->list p)))
+                 ctx))
        (('@ __)                      ;XXX make @vars be some disjoint type
         (error 'parse "An @-pattern must be at the end of a list" p))
        ((: __ list?)
         (error 'parse "Old-style list pattern" p)))))) ;TODO better plaint
+
+(define (maybe-vector->list x)
+  (and (vector? x) (vector->list x)))
 
 (define (parse-term-pat p ctx)
   (let ((tag (term-tag p))
@@ -461,7 +468,11 @@
     ((: __ term?)
      (expand-qq-term-pat qq))
     ((: __ vector?)
-     (error 'parse "Array patterns not yet implemented" qq))
+     ;; TODO note that a ,@ pattern at the end of the vector, in this
+     ;;  expansion, will bind to a *list*, not an array. Also, I don't
+     ;;  even know exactly what to expect of a pattern like `[a b @,c]
+     ;;  -- N.B. different from ,@c -- should this be an error, or what?
+     `(view ',maybe-vector->list ,(list 'quasiquote (vector->list qq))))
     ;; TODO any other datatypes like vectors with a ,pat inside?
     ;;  We should probably at least try to notice them and complain.
     (__ `',qq)))
