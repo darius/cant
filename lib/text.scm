@@ -53,7 +53,7 @@
   ;; Return the `span` characters after `p0` as a string.
   (to (get p0 span0)
     (let `(,p ,span) (clip-range p0 span0))
-    (string<-list (each get-char-after (range<- p (+ p span)))))
+    (string<-list (each get-char-after (p .span span))))
 
   ;; Return the position after the character in the text that is in
   ;; char-set and that comes up first in searching from p in
@@ -88,14 +88,14 @@
     (let G gap.^)
     (begin searching ((p p))
       (if (< H p)
-          (if (char-set .maps? (t (+ G p -1)))
+          (if (char-set .maps? (t (+ G p.-)))
               p
-              (searching (- p 1)))
+              (searching p.-))
           (begin persevering ((p p))
             (if (< 0 p)
-                (if (char-set .maps? (t (- p 1)))
+                (if (char-set .maps? (t p.-))
                     p
-                    (persevering (- p 1)))
+                    (persevering p.-))
                 (- nowhere))))))
 
   (to (grow n)
