@@ -65,7 +65,7 @@ Level ~w ~d Move ~w")
     (let grid  trail.last)
 
     (to (view-grid)
-      (for each ((ch grid.unparse))
+      (for each ((ch grid.unparse.values))
         (let c1 (if ("iI" .find? ch) green unstyled))
         (let c2 (if (".I@" .find? ch) (compose bold c1) c1))
         (c2 ch)))
