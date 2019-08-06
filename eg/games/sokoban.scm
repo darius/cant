@@ -75,8 +75,7 @@ Level ~w ~d Move ~w")
               ,(view-grid)
               ,@(if grid.won? '("\n\nDone!") '())))
 
-    (let key (get-key))
-    (be key.lowercase
+    (be get-key.lowercase
       (#\q  'done)
       (#\n  (playing (level.+ .modulo trails.count)))
       (#\p  (playing (level.- .modulo trails.count)))
@@ -84,7 +83,7 @@ Level ~w ~d Move ~w")
        (when (< 1 trail.count)
          trail.pop!)
        (playing level))
-      (_
+      (key
        (when (directions .maps? key)
          (let after grid.copy)
          (after .push (directions key))

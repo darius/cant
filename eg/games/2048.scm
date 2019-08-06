@@ -24,7 +24,7 @@
                    (if (won? board)  "You win!")
                    (else             "")))
     (frame board score)
-    (be ((get-key) .lowercase)
+    (be get-key.lowercase
       (#\q 'quitting)
       (#\u (if history.empty?
                (continue)

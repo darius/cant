@@ -79,7 +79,7 @@
       (ttt-render (if plaint (show-with-moves grid) (show grid))
                   `(,prompt ,cursor)
                   plaint)
-      (be ((get-key) .uppercase)
+      (be get-key.uppercase
         (#\Q #no)
         (key (be (and (char? key)
                       (<= #\1 key #\9)

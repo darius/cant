@@ -193,17 +193,21 @@
           ch)
       key-stack.pop!))
 
-(to (get-key)
-  (let keys (flexarray<- (get-key-unmapped)))
-  (begin matching ()
-    (let s (string<-list keys))
-    (hm (or (key-map .get s))
-        (when (key-map-prefixes .maps? s)
-          (keys .push! (get-key-unmapped))
-          (matching))
-        (else
-          (key-stack .extend! (reverse keys)) ;TODO use a FIFO instead of this reversed LIFO
-          key-stack.pop!))))
+(make get-key
+  (to (_)
+    (let keys (flexarray<- (get-key-unmapped)))
+    (begin matching ()
+      (let s (string<-list keys))
+      (hm (or (key-map .get s))
+          (when (key-map-prefixes .maps? s)
+            (keys .push! (get-key-unmapped))
+            (matching))
+          (else
+            (key-stack .extend! (reverse keys)) ;TODO use a FIFO instead of this reversed LIFO
+            key-stack.pop!))))
+  ;; Silly conveniences:
+  (to _.uppercase ((get-key) .uppercase))
+  (to _.lowercase ((get-key) .lowercase)))
 
 (export
   raw-mode cbreak-mode
