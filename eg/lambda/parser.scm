@@ -40,6 +40,7 @@
     (_ (error "I don't know how to unparse this sequence" src))))
 
 (to (lambda-parsing `(,[(? symbol? v) @vs] ,@body) src)
+  ;; TODO adjust src in the curried case
   (let parsed-body (if vs.empty?
                        (seq-parse body)
                        (exp-parse `(,(array<-list vs) ,@body))))
