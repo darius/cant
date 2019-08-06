@@ -24,6 +24,7 @@
 (put '-> 'scheme-indent-function 0)
 (put 'be 'scheme-indent-function 1)
 (put 'hm 'scheme-indent-function 0)
+(put 'may 'scheme-indent-function 1)
 (put 'on 'scheme-indent-function 1)
 
 (defconst squeam-font-lock-keywords 
@@ -42,7 +43,7 @@
                       "make-trait" "match" "to" "unless" "when"
                       ;; more experiments:
 ;;                      ":" "->"  ;;XXX these are keywords too, but emacs seems to dislike them here
-                      "be" "hm" "on")
+                      "be" "hm" "may" "on")
                     'symbols)
                    ))))
   (setq font-lock-defaults
