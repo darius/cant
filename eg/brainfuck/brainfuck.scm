@@ -22,7 +22,7 @@
       (#no 'done)
       (ch  (running i.up
                     (be ch
-                      (#\< d.down)
+                      (#\< d.-)
                       (#\> d.up)
                       (_ (be ch
                            (#\- (data .set! d (- (data .get d 0) 1)))
@@ -82,10 +82,10 @@
   `(on ()
      (let data (array<-count 30000 0))
      (to (decr d)
-       (data .update d _.down)
+       (data .update d _.-)
        d)
      (to (incr d)
-       (data .update d _.up)
+       (data .update d _.+)
        d)
      (to (emit d)
        (display (char<- (data d)))

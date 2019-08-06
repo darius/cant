@@ -128,8 +128,8 @@
 (to (neighbors<- `(,x ,y))
   `((,x.up ,y)
     (,x ,y.up)
-    ,@(if (< 0 x) `((,x.down ,y)) '())
-    ,@(if (< 0 y) `((,x ,y.down)) '())))
+    ,@(if (< 0 x) `((,x.- ,y)) '())
+    ,@(if (< 0 y) `((,x ,y.-)) '())))
 
 ;; (specialized from utils for speed)
 (to (manhattan-distance p q)

@@ -18,11 +18,11 @@
       (begin L40 ((x 1))
         (if ((f x) .divides? a)
             (L30 a)
-            (do (let x1 x.up)
+            (do (let x1 x.+)
                 (if (and (<= x1 p)
                          (<= (square (f x1)) a))
                     (L40 x1)
-                    (L20 a p.up))))))))
+                    (L20 a p.+))))))))
 
 (when #no
   (for each! ((`(,i ,fi) f.items))

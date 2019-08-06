@@ -62,7 +62,7 @@
   (dir.up .modulo 4))
 
 (to (turn-left dir)
-  (dir.down .modulo 4))
+  (dir.- .modulo 4))
 
 (to (swerve dir veer)
   (be veer

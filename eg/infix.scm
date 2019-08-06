@@ -35,7 +35,7 @@
 (to (def-prefix name p)  (unaries .set! name `(,p #no)))
 (to (def-postfix name p) (unaries .set! name `(#no ,p)))
 
-(to (def-infix name p)   (binaries .set! name `(,p ,p.up)))
+(to (def-infix name p)   (binaries .set! name `(,p ,p.+)))
 
 (def-prefix '- 100)                     ;XXX dunno
 

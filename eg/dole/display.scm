@@ -38,15 +38,15 @@
       (let ch (text .get p 1))
       (let pp (+ p 1))
       (if (or (= ch "") (= ch "\n"))
-          (rendering pp 0 y.up)  ;; TODO flexarray to string, i guess
+          (rendering pp 0 y.+)  ;; TODO flexarray to string, i guess
           (begin appending ((glyphs (render-glyph ch.first x))
                             (x x)
                             (y y))
-            (hm (if glyphs.empty?    (rendering pp x y))
+            (hm (if glyphs.empty? (rendering pp x y))
                 (do 
-                  (lines .set! y  (chain (lines y) (string<- glyphs.first)))) ;XXX quadratic
-                (if (< x.up cols) (appending glyphs.rest x.up y))
-                (if (< y.up rows) (appending glyphs.rest 0 y.up))
+                  (lines .set! y (chain (lines y) (string<- glyphs.first)))) ;XXX quadratic
+                (if (< x.+ cols)  (appending glyphs.rest x.+ y))
+                (if (< y.+ rows)  (appending glyphs.rest 0 y.+))
                 (else             'done))))))
   (make _
     (to _.point-visible?  (yeah? point-y.^))

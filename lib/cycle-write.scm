@@ -49,7 +49,7 @@
             (tag
              (let id (hm (when (= tag 0)
                            ;; Second visit.
-                           (hey (counter .update _.up)
+                           (hey (counter .update _.+)
                                 (-> (tags .set! thing it))))
                          (else
                            ;; Thereafter.

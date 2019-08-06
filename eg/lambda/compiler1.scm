@@ -88,7 +88,7 @@
   (to _.insns '()))
 
 (to (prepend insn rest)
-  (let label rest.label.up)
+  (let label rest.label.+)
   (let insns (link insn rest.insns))
   (make link-seq
     (to _.label label)

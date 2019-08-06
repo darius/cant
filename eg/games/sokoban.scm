@@ -78,8 +78,8 @@ Level ~w ~d Move ~w")
     (let key (get-key))
     (be key.lowercase
       (#\q  'done)
-      (#\n  (playing (level.up .modulo trails.count)))
-      (#\p  (playing (level.down .modulo trails.count)))
+      (#\n  (playing (level.+ .modulo trails.count)))
+      (#\p  (playing (level.- .modulo trails.count)))
       (#\u
        (when (< 1 trail.count)
          trail.pop!)

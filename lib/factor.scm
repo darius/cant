@@ -9,6 +9,6 @@
       (begin trying ((d 2) (n n))
         (if (d .divides? n)
             (link d (if (= d n) '() (trying d (n .quotient d))))
-            (trying d.up n)))))
+            (trying d.+ n)))))
 
 (export factor)

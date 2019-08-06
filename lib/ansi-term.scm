@@ -18,8 +18,8 @@
 
 (to (goto x y)
   (chain prefix
-         (string<-number y.up) ";"
-         (string<-number x.up) "H"))
+         (string<-number y.+) ";"
+         (string<-number x.+) "H"))
 
 (let `(,black ,red ,green ,yellow ,blue ,magenta ,cyan ,white)
   (as-list (0 .to 7)))              ;TODO ugly

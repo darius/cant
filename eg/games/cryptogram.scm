@@ -127,7 +127,7 @@
           (when (and show-cursor? ch.letter?)
             (when (= pos.^ point.^)
               (emit cursor))
-            (pos .update _.up))
+            (pos .update _.+))
           (emit (decoder .get ch ch)))
         (emit #\newline)
         (for each! ((ch line))

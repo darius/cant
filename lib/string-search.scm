@@ -20,14 +20,14 @@
            (hm (if (= i P)
                    j)
                (if (= (pat i) (dat (+ i j)))
-                   (checking i.up))
+                   (checking i.+))
                (else
-                   (sliding j.up)))))))
+                   (sliding j.+)))))))
 
 ;; XXX better name?
 ;; Boyer-Moore-Horspool algorithm
 (to (string-matcher<- pat)
-  (let m pat.count.down)
+  (let m pat.count.-)
   (if (< m 0)
       (on (dat) 0)
       (do (let skip (array<-count alphabet-size pat.count))
@@ -49,6 +49,6 @@
                          (if (= j 0)
                            k)
                          (else
-                           (checking k.down j.down))))))))))
+                           (checking k.- j.-))))))))))
 
 (export string-matcher<-)

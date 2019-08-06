@@ -47,10 +47,10 @@
   (for each! ((y (1 .to N)))
     (for each! ((x (1 .to N)))
       (S .set! (at x y)
-         (+ (S (at x y.down))          ; rect above
-            (- (S (at x.down y))       ; strip to left
-               (S (at x.down y.down)))
-            (level<- x y)))))           ; this spot
+         (+ (S (at x y.-))          ; rect above
+            (- (S (at x.- y))       ; strip to left
+               (S (at x.- y.-)))
+            (level<- x y)))))       ; this spot
   (format "S initialized\n")
 
   (to (power<- `(,x0 ,y0 ,d))

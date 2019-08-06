@@ -66,7 +66,7 @@
 (let pid-counter (box<- -1))
 
 (to (process<- start-state)
-  (let pid-num (pid-counter .update _.up))           ; Just for display.
+  (let pid-num (pid-counter .update _.+)) ; Just for display.
   (let state (box<- start-state))       ; State of execution.
   (let inbox-checked (box<- empty))     ; Messages that didn't match the current receive.
   (let inbox-unchecked (box<- empty))   ; Messages not yet checked against the current receive.

@@ -92,7 +92,7 @@
 
 (to ((skip-1 ok?) text far i vals)
   (if (and (text .maps? i) (ok? (text i)))
-      (empty text (max far i.up) i.up vals)
+      (empty text (max far i.+) i.+ vals)
       (fail text far i vals)))
 
 
