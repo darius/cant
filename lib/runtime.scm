@@ -428,8 +428,8 @@
                             (link (s .slice 0 i)
                                   (splitting (s .slice (+ i delimiter.count)))))
                         (else (scanning i.+)))))))))
-  (to _.lowercase (string<-list (for each ((c me)) c.lowercase)))
-  (to _.uppercase (string<-list (for each ((c me)) c.uppercase)))
+  (to _.lowercase (string<-list (each _.lowercase me)))
+  (to _.uppercase (string<-list (each _.uppercase me)))
   (to _.capitalize (chain ((me .slice 0 1) .uppercase) (me .slice 1)))
   (to (_ .prefix? s)
     (= (me .slice 0 s.count) s))   ;TODO more efficient
@@ -1068,7 +1068,7 @@
     (for foldr ((x xs) (results '()))
       (link (f x) results)))
   (to (_ f @lists)
-    (for each ((args (zip @lists)))
+    (for each ((args (transpose lists)))
       (f @args))))
 
 (make zip
