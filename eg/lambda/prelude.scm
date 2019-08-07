@@ -4,7 +4,7 @@
 
   (to (make-church<-claim lc-no)
     {primitive (on (lc-yes)
-                 {primitive (opt
+                 {primitive (given
                               (be #no  lc-no)
                               (be #yes lc-yes))})})
 
@@ -12,7 +12,7 @@
     {primitive
      (on (lc-succ)
        {primitive (let counting
-                    (opt
+                    (given
                       (be 0            lc-zero)
                       (be (? count? n) (apply lc-succ (counting (- n 1))))))})})
 
@@ -20,7 +20,7 @@
     {primitive
      (on (lc-link)
        {primitive (let linking
-                    (opt
+                    (given
                       (be '()       lc-nil)
                       (be `(,h ,@t) (apply (apply lc-link h) (linking t)))))})})
 

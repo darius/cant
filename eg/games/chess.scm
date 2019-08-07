@@ -299,7 +299,7 @@
   side.name.capitalize)
 
 (let opponent
-  (opt
+  (given
     (be 'white 'black)
     (be 'black 'white)))
 

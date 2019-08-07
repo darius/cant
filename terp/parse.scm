@@ -349,8 +349,8 @@
                       (else (miranda-trait ,self ,msg)))))))) ;XXX hygiene, and XXX make it overridable
     ('may    (mlambda
               ((__ subject . clauses)
-               `((opt ,@clauses) ,subject))))
-    ('opt    (mlambda                   ;TODO experiment; also, better name
+               `((given ,@clauses) ,subject))))
+    ('given  (mlambda                   ;TODO experiment; also, better name
               ((__ . clauses)
                `(make _
                   ,@(map (mlambda

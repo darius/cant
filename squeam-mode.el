@@ -8,7 +8,7 @@
 (put 'else 'scheme-indent-function 0)
 (put 'export 'scheme-indent-function 0)
 (put 'for 'scheme-indent-function 2)
-(put 'given 'scheme-indent-function 1)
+(put 'given 'scheme-indent-function 0)
 (put 'hide 'scheme-indent-function 0)  ; or nil)
 (put 'import 'scheme-indent-function 1)
 (put 'let 'scheme-indent-function 1)
@@ -26,7 +26,6 @@
 (put 'hm 'scheme-indent-function 0)
 (put 'may 'scheme-indent-function 1)
 (put 'on 'scheme-indent-function 1)
-(put 'opt 'scheme-indent-function 0)
 
 (defconst squeam-font-lock-keywords 
   '() 
@@ -40,11 +39,11 @@
                 (eval-when-compile
                   (list
                    (regexp-opt
-                    '("export" "for" "given" "hide" "import" "make"
-                      "make-trait" "match" "to" "unless" "when"
+                    '("export" "for" "hide" "import" "make"
+                      "make-trait" "to" "unless" "when"
                       ;; more experiments:
 ;;                      ":" "->"  ;;XXX these are keywords too, but emacs seems to dislike them here
-                      "be" "hm" "may" "on")
+                      "be" "given" "hm" "may" "on")
                     'symbols)
                    ))))
   (setq font-lock-defaults
