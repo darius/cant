@@ -87,8 +87,8 @@
       mover)
 
     (to (_ .selfie sink)
-      (let lines (for each ((line (squares .slice 1 9)))
-                   (line .slice 1 9)))
+      (let lines (each (_ .slice 1 9)
+                       (squares .slice 1 9)))
       (for each! ((`(,i ,line) lines.items))
         (format .to-sink sink "~w|" (- 8 i))
         (for each! ((`(,j ,piece) line.items))
