@@ -310,14 +310,10 @@
     (be {move from-pos to-pos kind}
       (may kind
         ;; TODO we might need one more kind, like 'simple but with an en-passant-target
-        (be 'simple
-          (board .move-piece from-pos to-pos #no))
-        (be 'castling
-          (board .castle from-pos to-pos))
-        (be 'en-passant-capture
-          (board .move-en-passant from-pos to-pos))
-        (be 'pawn-promotion
-          (board .move-promoting from-pos to-pos))))))
+        (be 'simple             (board .move-piece from-pos to-pos #no))
+        (be 'castling           (board .castle from-pos to-pos))
+        (be 'en-passant-capture (board .move-en-passant from-pos to-pos))
+        (be 'pawn-promotion     (board .move-promoting from-pos to-pos))))))
 
 (to (unparse-move move)
   (may move
