@@ -58,17 +58,17 @@
     (begin assigning ((ws1 workers) (ws2 '()) (jobs jobs))
 ;      (format "ws1 = ~w\n" ws1)
       (may ws1
-        ('()
-         {state (reverse ws2) jobs})
-        (`(#no ,@rest)
-         (may jobs
-           ('()
-            (assigning rest `(#no ,@ws2) '()))
-           (`(,j ,@js)
-            (let delay (delay<- j))
-            (assigning rest `((,j ,delay) ,@ws2) js))))
-        (`(,w ,@rest)
-         (assigning rest `(,w ,@ws2) jobs)))))
+        (be '()
+          {state (reverse ws2) jobs})
+        (be `(#no ,@rest)
+          (may jobs
+            (be '()
+              (assigning rest `(#no ,@ws2) '()))
+            (be `(,j ,@js)
+              (let delay (delay<- j))
+              (assigning rest `((,j ,delay) ,@ws2) js))))
+        (be `(,w ,@rest)
+          (assigning rest `(,w ,@ws2) jobs)))))
 
   (to (work {state workers jobs})
     ;; Decrement one time tick on each worker,
@@ -76,23 +76,23 @@
     (begin working ((ws1 workers) (ws2 '()) (jobs jobs))
 ;      (format "a: ws1 = ~w\n" ws1)
       (may ws1
-        ('()
+        (be '()
 ;         (print 'b)
-         {state (reverse ws2) jobs})
-        (`(#no ,@rest)
-         (working rest `(#no ,@ws2) jobs))
-        (`((,node ,ticks-left) ,@rest)
-;         (print 'c)
-         (let n ticks-left.-)
-         (if (= n 0)
-             (do (outbox .push! node)
-                 (let new-nodes
-                   (sort (for those ((s (succs node)))
-                           (surely (< 0 (pred-count s)))
-                           (= 0 (pred-count .update s _.-)))))
-                 ;; let's assume assigning happens elsewhere for now
-                 (working rest `(#no ,@ws2) (merge new-nodes jobs)))
-             (working rest `((,node ,n) ,@ws2) jobs))))))
+          {state (reverse ws2) jobs})
+        (be `(#no ,@rest)
+          (working rest `(#no ,@ws2) jobs))
+        (be `((,node ,ticks-left) ,@rest)
+;          (print 'c)
+          (let n ticks-left.-)
+          (if (= n 0)
+              (do (outbox .push! node)
+                  (let new-nodes
+                    (sort (for those ((s (succs node)))
+                            (surely (< 0 (pred-count s)))
+                            (= 0 (pred-count .update s _.-)))))
+                  ;; let's assume assigning happens elsewhere for now
+                  (working rest `(#no ,@ws2) (merge new-nodes jobs)))
+              (working rest `((,node ,n) ,@ws2) jobs))))))
 
   (let first-steps (sort (for those ((node nodes))
                            (= 0 (pred-count node)))))
@@ -109,7 +109,7 @@
             jobs
             ("" .join outbox.values))
     (if (some identity workers) ;clumsy, I guess
-        (ticking t.up (assign (work {state workers jobs})))
+        (ticking t.+ (assign (work {state workers jobs})))
         t)))
 
 
