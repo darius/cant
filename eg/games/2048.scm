@@ -106,7 +106,7 @@
     (if (for every ((lo lows))
           (<= 4 lo))
         '()
-        `(,board ,@(sliding (each slide states))))))
+        (link board (sliding (each slide states))))))
 
 ;; Slide row one place leftward, leaving fixed any places left of the
 ;; position at `low`. Advance low past merging or completion. Return
