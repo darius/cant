@@ -188,7 +188,7 @@
 
     (to _.gen-legal-moves
       (for those ((move board.gen-piece-moves))
-        (not ((update move board) .checking?))))
+        (not (_.checking? (update move board)))))
 
     (to _.get-moves
       (link {resign} board.get-piece-moves))
