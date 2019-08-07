@@ -25,7 +25,7 @@ insn:    {'1'+} {'#' '#'? '#'? '#'? '#'?} :make_insn.
    'program))
 
 (to (regs<- @strings)
-  (array<-list `(#no ,@strings)))
+  (array<- #no @strings))
 
 (to (run insns regs @(optional loud?))
   (begin stepping ((pc 0))
