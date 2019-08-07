@@ -103,8 +103,8 @@
     (be (? char?)
       (screen-state .establish! wanted-state)
       (display (if (= scene #\newline) cr-lf scene)))
-    (be (? list?)
-      (for each! ((subscene scene))
+    (be (? (-> (or (list? it) (array? it))))
+      (for each! ((subscene scene.values))
         (paint cursor-seen? wanted-state subscene)))
     (else
       (scene .paint cursor-seen? wanted-state))))

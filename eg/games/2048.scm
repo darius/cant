@@ -44,7 +44,7 @@
 (let heading "Use the arrow keys, U to undo (and forfeit), or Q to quit.\n\n")
 
 (to (frame board score)
-  (render `(,heading ,(view board) ,score)))
+  (render [heading (view board) score]))
 
 (to (animate boards score)
   (for each! ((board boards))

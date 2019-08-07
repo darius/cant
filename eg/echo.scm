@@ -14,8 +14,8 @@
   (let strokes (flexarray<-))
   (begin running ()
     (let echoes (fill (" " .join strokes) screen-width))
-    (render `("Hit some keys; or hit capital Q to quit.\n\n"
-              ,echoes ,cursor))
+    (render ["Hit some keys; or hit capital Q to quit.\n\n"
+             echoes cursor])
     (let key (get-key))
     (unless (= key #\Q)
       (strokes .push! ("~w" .format key))

@@ -70,15 +70,15 @@ Level ~w ~d Move ~w")
         (let c2 (if (".I@" .find? ch) (compose bold c1) c1))
         (c2 ch)))
 
-    (render `(,(heading .format level.+ (name .center 50) trail.count)
-              "\n\n"
-              ,(view-grid)
-              ,@(if grid.won? '("\n\nDone!") '())))
+    (render [(heading .format level.+ (name .center 50) trail.count)
+             "\n\n"
+             (view-grid)
+             (if grid.won? '("\n\nDone!") '())])
 
     (may get-key.lowercase
-      (be #\q  'done)
-      (be #\n  (playing (level.+ .modulo trails.count)))
-      (be #\p  (playing (level.- .modulo trails.count)))
+      (be #\q 'done)
+      (be #\n (playing (level.+ .modulo trails.count)))
+      (be #\p (playing (level.- .modulo trails.count)))
       (be #\u
         (when (< 1 trail.count)
           trail.pop!)
@@ -87,7 +87,7 @@ Level ~w ~d Move ~w")
         (when (directions .maps? key)
           (let after grid.copy)
           (after .push (directions key))
-          (unless (= grid.unparse after.unparse) ;XXX clumsy
+          (unless (= grid.unparse after.unparse)
             (trail .push! after)))
         (playing level)))))
 

@@ -69,7 +69,7 @@
         (continue))))
 
 (to (ttt-render shown-grid message @(optional plaint))
-  (render `(,(or plaint "") "\n\n" ,shown-grid "\n\n" ,message "\n\n")))
+  (render [(or plaint "") "\n\n" shown-grid "\n\n" message "\n\n"]))
 
 (make human-play
   (to _.name "Human")
