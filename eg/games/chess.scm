@@ -176,7 +176,7 @@
                     (be 'white white-player)
                     (be 'black black-player)))
       (let move (player board))
-      (let possibles `({resign} ,@board.gen-legal-moves))  ;; isn't this poor factoring?
+      (let possibles (link {resign} board.gen-legal-moves))  ;; isn't this poor factoring?
       (unless (possibles .find? move)
         (error "Bad move" move))
       (unless (= player human-player)
