@@ -27,7 +27,7 @@
   (hm (when (won? grid)   (format "~d wins.\n" (last-to-move grid)))
       (when (drawn? grid) (format "A draw.\n"))
       (else
-        (unless (`(,player ,opponent) .find? human-play)
+        (unless ([player opponent] .find? human-play)
           (format "~d to move ~d. (Press a key.)\n"
                   player.name (whose-move grid))
 ;           (get-key)                    ;XXX
