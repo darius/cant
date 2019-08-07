@@ -1,12 +1,14 @@
 ;; A bit of Forth with local variables
 
 (to (stack-op-2-1<- op)
-  (to (stack-op-2-1 {state `(,z ,y ,@s) r})
-    {state `(,(op y z) ,@s) r}))
+  (to (stack-op-2-1 {state (link z y s) r})
+    {state (link (op y z) s)
+           r}))
 
 (to (push<- literal)
   (to (push {state s r})
-    {state `(,literal ,@s) r}))
+    {state (link literal s)
+           r}))
 
 (to (grab<- count)
   (to (grab {state s r})
@@ -15,11 +17,13 @@
 
 (to (local<- k)
   (to (local {state s r})
-    {state `(,(r k) ,@s) r}))
+    {state (link (r k) s)
+           r}))
 
 (to (ungrab<- count)
   (to (ungrab {state s r})
-    {state s (r .slice count)}))
+    {state s
+           (r .slice count)}))
 
 (let dictionary
   (map<- `((+ ,(stack-op-2-1<- +))
@@ -42,7 +46,7 @@
               (let `(,locals ,tail)
                 (split-on (-> (= it '--)) tokens.rest))
               (code .push! (grab<- locals.count))
-              (compiling `(,(reverse locals) ,@frames)
+              (compiling (link (reverse locals) frames)
                          tail.rest))
             (be '>>
               (surely (not frames.empty?)) ;XXX require
