@@ -33,10 +33,12 @@
 
 (to (spew rng model state)
   (begin spewing ((state state))
-    (be (sample-from-bag rng (model state))
-      ("END"  '())
-      (choice (let next-state `(,@(state .slice 1) ,choice))
-              `(,choice ,@(spewing next-state))))))
+    (may (sample-from-bag rng (model state))
+      (be "END"
+        '())
+      (be choice
+        (let next-state `(,@(state .slice 1) ,choice))
+        (link choice (spewing next-state))))))
 
 (to (sample-from-bag rng bag)           ;TODO dedupe: similar in squickcheck.scm
   (let n bag.total)  ;; Pre: n > 0

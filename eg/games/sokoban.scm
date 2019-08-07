@@ -30,10 +30,10 @@
 
 (to (main args)
   (let filename
-    (be args
-      (`(,_) "eg/games/microban")
-      (`(,_ ,fname) fname)
-      (_ (error ("Usage: ~d [filename]" .format (args 0))))))
+    (may args
+      (be `(,_)        "eg/games/microban")
+      (be `(,_ ,fname) fname)
+      (else (error ("Usage: ~d [filename]" .format (args 0))))))
   (start @(with-input-file read-collection filename)))
 
 (to (read-collection source)
@@ -75,21 +75,21 @@ Level ~w ~d Move ~w")
               ,(view-grid)
               ,@(if grid.won? '("\n\nDone!") '())))
 
-    (be get-key.lowercase
-      (#\q  'done)
-      (#\n  (playing (level.+ .modulo trails.count)))
-      (#\p  (playing (level.- .modulo trails.count)))
-      (#\u
-       (when (< 1 trail.count)
-         trail.pop!)
-       (playing level))
-      (key
-       (when (directions .maps? key)
-         (let after grid.copy)
-         (after .push (directions key))
-         (unless (= grid.unparse after.unparse) ;XXX clumsy
-           (trail .push! after)))
-       (playing level)))))
+    (may get-key.lowercase
+      (be #\q  'done)
+      (be #\n  (playing (level.+ .modulo trails.count)))
+      (be #\p  (playing (level.- .modulo trails.count)))
+      (be #\u
+        (when (< 1 trail.count)
+          trail.pop!)
+        (playing level))
+      (be key
+        (when (directions .maps? key)
+          (let after grid.copy)
+          (after .push (directions key))
+          (unless (= grid.unparse after.unparse) ;XXX clumsy
+            (trail .push! after)))
+        (playing level)))))
 
 (to (parse floor-plan)
   (do (let line-lengths (each _.count floor-plan.split-lines))

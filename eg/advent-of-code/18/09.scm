@@ -24,7 +24,7 @@
           (p .^= other))
         (else
           ;; TODO speed up by initializing so no special cases
-          (let pos (+ 1 (be circle.count
+          (let pos (+ 1 (may circle.count
                           (1 0)
                           (2 0)
                           (_ (p.^.up .modulo circle.count)))))

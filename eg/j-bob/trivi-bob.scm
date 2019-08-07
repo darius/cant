@@ -65,42 +65,45 @@
 ;;   Seems unlikely since it got so much shorter.
 
 (to (rewrite/define+ defs proofs)
-  (be proofs
-    ('() defs)
-    (`({proof ,def ,steps} ,@rest-proofs)
-     (if (= yes-c (rewrite/prove defs def steps))
-         (rewrite/define+ (append defs def) rest-proofs)
-         #no))))                        ;was defs in book
+  (may proofs
+    (be '()
+      defs)
+    (be `({proof ,def ,steps} ,@rest-proofs)
+      (if (= yes-c (rewrite/prove defs def steps))
+          (rewrite/define+ (append defs def) rest-proofs)
+          #no))))                        ;was defs in book
 
 
 ;; TODO explain me
 
 (to (rewrite/prove+ defs proofs)
-  (be proofs
-    ('() yes-c)
-    (`({proof ,def ,steps} ,@rest-proofs)
-     (let e (rewrite/prove+ (append defs def) rest-proofs))
-     (if (= e yes-c)
-         (rewrite/prove defs def steps) ;y'know, if we did this first it'd be more like rewrite/define+
-         e))))
+  (may proofs
+    (be '()
+      yes-c)
+    (be `({proof ,def ,steps} ,@rest-proofs)
+      (let e (rewrite/prove+ (append defs def) rest-proofs))
+      (if (= e yes-c)
+          (rewrite/prove defs def steps) ;y'know, if we did this first it'd be more like rewrite/define+
+          e))))
 
 (to (rewrite/prove defs def steps)
   (let {def _ formals meaning} def)
-  (be meaning
-    ({fun _}    yes-c)
-    ({thm body} (rewrite/steps defs body steps)))) ;XXX should be using the formals too
+  (may meaning
+    (be {fun _}    yes-c)
+    (be {thm body} (rewrite/steps defs body steps)))) ;XXX should be using the formals too
 
 
 ;; Rewriting... TODO explain me
 
 (to (rewrite/steps defs claim steps)
-  (be steps
-    ('() claim)
-    (`(,first ,@rest)
-     (let new (rewrite/step defs claim first))
-     (if (= new claim)
-         new
-         (rewrite/steps defs new rest)))))
+  (may steps
+    (be '()
+      claim)
+    (be `(,first ,@rest)
+      (let new (rewrite/step defs claim first))
+      (if (= new claim)
+          new
+          (rewrite/steps defs new rest)))))
 
 (to (rewrite/step defs claim {step path app})
   (let {call f _} app)
@@ -117,14 +120,14 @@
   (let {call _ args} app)
   (let result
     (equality/path claim path
-                   (be meaning
+                   (may meaning
                      ;; TODO do these constructed (= foo bar) exprs ever cause rewriting-in-reverse?
                      ;;   Or is this just a fancy way of substituting (eval-op app), etc.?
-                     ({op fn}    `{call = (,app ,(eval-op fn args))})
-                     ({fun body} (sub-e formals args
+                     (be {op fn}    `{call = (,app ,(eval-op fn args))})
+                     (be {fun body} (sub-e formals args
                                         `{call = ({call ,name ,(express-variables formals)}
                                                   ,body)}))
-                     ({thm body} (sub-e formals args body)))))
+                     (be {thm body} (sub-e formals args body)))))
   (when loud? (pp `(equality/def : ,(unparse-e result))))
   result)
 
@@ -165,12 +168,13 @@
 ;; of some 'if' in path through e1; then dig out the branch of thm's
 ;; 'if' corresponding to the next branch of the path through e1's 'if'.
 (to (snip-premises e path thm)
-  (be thm
-    ({if q _ _}
-     (be (find-premise e path q)
-       (#no thm)
-       (dir (snip-premises e path (get-at-direction thm dir)))))
-    (_ thm)))
+  (may thm
+    (be {if q _ _}
+      (may (find-premise e path q)
+        (be #no thm)
+        (be dir (snip-premises e path (get-at-direction thm dir)))))
+    (else
+      thm)))
 
 ;; Seek an `if` in e, somewhere along the path, having a question
 ;; equal to premise. If found, return the dir of the path's next step
@@ -179,16 +183,16 @@
   (begin matching ((e e) (path path))
     (and (not path.empty?)
          (or (and ('(A E) .find? path.first)
-                  (be e
-                    ({if q _ _} (and (= q premise) path.first))
-                    (_          #no)))
+                  (may e
+                    (be {if q _ _} (and (= q premise) path.first))
+                    (else          #no)))
              (matching (get-at-direction e path.first) path.rest)))))
 
 ;; Rewrite focus according to concl-inst if concl-inst is an equality.
 (to (equality/equation focus concl-inst)
-  (be concl-inst
-    (`{call = (,arg1 ,arg2)} (equality focus arg1 arg2))
-    (_                       focus)))
+  (may concl-inst
+    (be `{call = (,arg1 ,arg2)} (equality focus arg1 arg2))
+    (else                       focus)))
 
 ;; Taking "a=b" as a rewrite rule, rewrite focus if possible.
 (to (equality focus a b)
@@ -202,13 +206,13 @@
 (to (sub-e vars args e)
   (let subst (map<- (zip vars args)))
   (begin subbing ((e e))
-    (be e
-      ({constant _}    e)
-      ({variable name} (subst .get name e))
-      ({if q a e}      {if (subbing q)
-                           (subbing a)
-                           (subbing e)})
-      ({call f es}     {call f (each subbing es)}))))
+    (may e
+      (be {constant _}    e)
+      (be {variable name} (subst .get name e))
+      (be {if q a e}      {if (subbing q)
+                              (subbing a)
+                              (subbing e)})
+      (be {call f es}     {call f (each subbing es)}))))
 
 
 ;; Check okayness of proofs.
@@ -239,10 +243,10 @@
 
 (to (def? known-defs {def name formals meaning})
   (and (undefined? name known-defs)
-       (be meaning
-         ({thm body} (expr? known-defs formals body))
-         ({fun body} (expr? known-defs formals body))
-         ({op _}     #yes))))
+       (may meaning
+         (be {thm body} (expr? known-defs formals body))
+         (be {fun body} (expr? known-defs formals body))
+         (be {op _}     #yes))))
 
 
 ;; Check okayness of steps.
@@ -255,9 +259,9 @@
     (let {step _ {call name args}} step)
     (let {def _ formals meaning} (lookup name defs))
     (and (arity? formals args)
-         (be meaning
-           ({op _} (every constant? args))
-           (_      (exprs? defs 'any args)))))) ;XXX so where do we check the boundness of args?
+         (may meaning
+           (be {op _} (every constant? args))
+           (else      (exprs? defs 'any args)))))) ;XXX so where do we check the boundness of args?
 
 
 ;; Check okayness of expressions.
@@ -265,22 +269,22 @@
 ;; calls must name a defun or operator with the correct arity.
 
 (to (expr? defs vars e)
-  (be e
-    ({constant _}    #yes)
-    ({variable name} (bound? name vars))
-    ({if q a e}      (exprs? defs vars `(,q ,a ,e)))
-    ({call _ es}     (and (call-arity? defs e)
-                          (exprs? defs vars es)))))
+  (may e
+    (be {constant _}    #yes)
+    (be {variable name} (bound? name vars))
+    (be {if q a e}      (exprs? defs vars `(,q ,a ,e)))
+    (be {call _ es}     (and (call-arity? defs e)
+                             (exprs? defs vars es)))))
 
 (to (exprs? defs vars es)
   (for every ((e es))
     (expr? defs vars e)))
 
 (to (call-arity? defs {call name args})
-  (be (lookup name defs)
-    ({def _ formals {op _}}  (arity? formals args))
-    ({def _ formals {fun _}} (arity? formals args))
-    (_                       #no))) ;TODO maybe assume this case never happens. Then just ignore the meaning field.
+  (may (lookup name defs)
+    (be {def _ formals {op _}}  (arity? formals args))
+    (be {def _ formals {fun _}} (arity? formals args))
+    (else                       #no))) ;TODO maybe assume this case never happens. Then just ignore the meaning field.
 
 (to (arity? formals args)
   (= formals.count args.count))
@@ -289,13 +293,14 @@
 ;; Name lookup.
 
 (to (lookup name defs)
-  (be defs
-    ('() #no)                ;N.B. original returns name instead
-    (`(,def ,@rest)
-     (let {def dname _ _} def)
-     (if (= name dname)
-         def
-         (lookup name rest)))))
+  (may defs
+    (be '()
+      #no)                ;N.B. original returns name instead
+    (be `(,def ,@rest)
+      (let {def dname _ _} def)
+      (if (= name dname)
+          def
+          (lookup name rest)))))
 
 (to (undefined? name defs)
   (not (lookup name defs)))
@@ -321,18 +326,18 @@
                                    path.rest)))))
 
 (to (get-at-direction e dir)
-  (be dir
-    ('Q       (be e ({if q _ _}    q)))
-    ('A       (be e ({if _ a _}    a)))
-    ('E       (be e ({if _ _ e}    e)))
-    ((? nat?) (be e ({call _ args} (get-arg args dir))))))
+  (may dir
+    (be 'Q       (may e (be {if q _ _}    q)))
+    (be 'A       (may e (be {if _ a _}    a)))
+    (be 'E       (may e (be {if _ _ e}    e)))
+    (be (? nat?) (may e (be {call _ args} (get-arg args dir))))))
 
 (to (set-at-direction e1 dir e2)
-  (be dir
-    ('Q       (be e1 ({if q a e}    {if e2 a e})))
-    ('A       (be e1 ({if q a e}    {if q e2 e})))
-    ('E       (be e1 ({if q a e}    {if q a e2})))
-    ((? nat?) (be e1 ({call f args} {call f (set-arg args dir e2)})))))
+  (may dir
+    (be 'Q       (may e1 (be {if q a e}    {if e2 a e})))
+    (be 'A       (may e1 (be {if q a e}    {if q e2 e})))
+    (be 'E       (may e1 (be {if q a e}    {if q a e2})))
+    (be (? nat?) (may e1 (be {call f args} {call f (set-arg args dir e2)})))))
 
 (to (get-arg args n)
   (args (- n 1)))
@@ -353,12 +358,12 @@
                               
   
 (to (focus-is-at-direction? e dir)
-  (be dir
-    ('Q       (be e ({if _ _ _} #yes) (_ #no)))
-    ('A       (be e ({if _ _ _} #yes) (_ #no)))
-    ('E       (be e ({if _ _ _} #yes) (_ #no)))
-    ((? nat?) (be e ({call _ args} (<= 1 dir args.count))
-                       (_ #no)))))
+  (may dir
+    (be 'Q       (may e (be {if _ _ _} #yes) (_ #no)))
+    (be 'A       (may e (be {if _ _ _} #yes) (_ #no)))
+    (be 'E       (may e (be {if _ _ _} #yes) (_ #no)))
+    (be (? nat?) (may e (be {call _ args} (<= 1 dir args.count))
+                        (else             #no)))))
 
 
 ;; Some expression helpers.
@@ -368,14 +373,14 @@
 (let no-c  {constant #no})
 
 (to (constant? e)
-  (be e
-    ({constant _} #yes)
-    (_            #no)))
+  (may e
+    (be {constant _} #yes)
+    (else            #no)))
 
 (to (variable? e)
-  (be e
-    ({variable _} #yes)
-    (_            #no)))
+  (may e
+    (be {variable _} #yes)
+    (else            #no)))
 
 
 ;; Apply an operator to values.
@@ -388,49 +393,49 @@
 ;; Unparse.
 
 (to (unparse-def {def name formals meaning})
-  (be meaning
-    ({fun body} `(defun ,name ,formals ,(unparse-e body)))
-    ({op fn}    `(defop ,name))
-    ({thm body} `(dethm ,name ,formals ,(unparse-e body)))))
+  (may meaning
+    (be {fun body} `(defun ,name ,formals ,(unparse-e body)))
+    (be {op fn}    `(defop ,name))
+    (be {thm body} `(dethm ,name ,formals ,(unparse-e body)))))
 
 (to (unparse-e e)
-  (be e
-    ({constant datum} `',datum)
-    ({variable name}  name)
-    ({if q a e}       `(if ,(unparse-e q)
-                           ,(unparse-e a)
-                           ,(unparse-e e)))
-    ({call name es}   `(,name ,@(each unparse-e es)))))
+  (may e
+    (be {constant datum} `',datum)
+    (be {variable name}  name)
+    (be {if q a e}       `(if ,(unparse-e q)
+                              ,(unparse-e a)
+                              ,(unparse-e e)))
+    (be {call name es}   `(,name ,@(each unparse-e es)))))
 
 
 ;; Parse.
 
 (to (parse-proof xproof)
-  (be xproof
-    (`(,xdef ,xseed ,@xsteps)
-     (surely (not xseed))
-     {proof (parse-def xdef)
-            (parse-steps xsteps)})))
+  (may xproof
+    (be `(,xdef ,xseed ,@xsteps)
+      (surely (not xseed))
+      {proof (parse-def xdef)
+             (parse-steps xsteps)})))
 
 (to (parse-steps xsteps)
   (surely (list? xsteps) "Steps syntax")
   (each parse-step xsteps))
 
 (to (parse-step xstep)
-  (be xstep
-    (`(,xpath ,xe)
-     ;; TODO check path well-formed
-     ;; TODO check that xe is a call? I think?
-     {step xpath (parse-e xe)})))
+  (may xstep
+    (be `(,xpath ,xe)
+      ;; TODO check path well-formed
+      ;; TODO check that xe is a call? I think?
+      {step xpath (parse-e xe)})))
 
 (to (parse-def xdef)
-  (be xdef
-    (`(defun ,(? symbol? name) ,(? formals? formals) ,body)
-     {def name formals {fun (parse-e body)}})
-    (`(dethm ,(? symbol? name) ,(? formals? formals) ,body)
-     {def name formals {thm (parse-e body)}})
-    (`(,(? symbol? name) ,(? formals? formals) ,fn)
-     {def name formals {op fn}})))
+  (may xdef
+    (be `(defun ,(? symbol? name) ,(? formals? formals) ,body)
+      {def name formals {fun (parse-e body)}})
+    (be `(dethm ,(? symbol? name) ,(? formals? formals) ,body)
+      {def name formals {thm (parse-e body)}})
+    (be `(,(? symbol? name) ,(? formals? formals) ,fn)
+      {def name formals {op fn}})))
 
 (to (formals? x)
   (and (list? x)
@@ -438,15 +443,15 @@
        (set? x)))
 
 (to (parse-e xe)
-  (be xe
-    ((? number?)     {constant xe})
-    ((? claim?)      {constant xe})
-    (''nil           no-c)
-    (''t             yes-c)
-    (`',datum        {constant datum})
-    ((? symbol?)     {variable xe})
-    (`(if ,x1 ,x2 ,x3)         {if (parse-e x1) (parse-e x2) (parse-e x3)})
-    (`(,(? symbol? f) ,@xargs) {call f (each parse-e xargs)})))
+  (may xe
+    (be (? number?)     {constant xe})
+    (be (? claim?)      {constant xe})
+    (be ''nil           no-c)
+    (be ''t             yes-c)
+    (be `',datum        {constant datum})
+    (be (? symbol?)     {variable xe})
+    (be `(if ,x1 ,x2 ,x3)         {if (parse-e x1) (parse-e x2) (parse-e x3)})
+    (be `(,(? symbol? f) ,@xargs) {call f (each parse-e xargs)})))
 
 
 ;; Lists as sets with order.

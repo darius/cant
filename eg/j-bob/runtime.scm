@@ -8,9 +8,9 @@
 (to (bob< x y)  (and (number? x) (number? y) (< x y)))
 
 (to (size x)
-  (be x
-    (`(,h ,@t) (+ (size h) (size t)))
-    (_ 1)))
+  (may x
+    (be `(,h ,@t) (+ (size h) (size t)))
+    (else         1)))
 
 (let x-ops
   `(

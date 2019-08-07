@@ -27,7 +27,7 @@
   (let next (array<-count elements.count #no))
   (to (chase element)
     (begin chasing ((i (index element)))
-      (be (next i)
+      (may (next i)
         (#no i)
         (j (chasing j)))))
   (make partitioning
@@ -35,7 +35,7 @@
       (let xi (chase x))
       (let yi (chase y))
       ;; TODO path compression, etc.
-      (be (xi .compare yi)
+      (may (xi .compare yi)
         (0)
         (-1 (next .set! yi xi))
         (+1 (next .set! xi yi))))

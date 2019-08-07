@@ -44,11 +44,11 @@
 (to (tty-playing player opponent grid)
 
   (to (continue)
-    (be (player grid)
-      (#no
-       (refresh ("~d (~d) resigns." .format player.name (whose-move grid))))
-      (next-grid
-       (tty-playing opponent player next-grid))))
+    (may (player grid)
+      (be #no
+        (refresh ("~d (~d) resigns." .format player.name (whose-move grid))))
+      (be next-grid
+        (tty-playing opponent player next-grid))))
 
   (to (refresh message)
     (ttt-render (show grid) message))
@@ -79,13 +79,13 @@
       (ttt-render (if plaint (show-with-moves grid) (show grid))
                   `(,prompt ,cursor)
                   plaint)
-      (be get-key.uppercase
-        (#\Q #no)
-        (key (be (and (char? key)
-                      (<= #\1 key #\9)
-                      (update grid (move<-key key)))
-               (#no (asking "Hey, that's not a move. Give me one of the digits below."))
-               (successor successor)))))))
+      (may get-key.uppercase
+        (be #\Q #no)
+        (be key (may (and (char? key)
+                          (<= #\1 key #\9)
+                          (update grid (move<-key key)))
+                  (be #no (asking "Hey, that's not a move. Give me one of the digits below."))
+                  (be successor successor)))))))
 
 (to (show-with-moves grid)
   (each (highlight-if _.digit?) (show grid (1 .to 9))))
@@ -108,9 +108,9 @@
   (memoize (on (grid)
              (if (won? grid)
                  -1
-                 (be (successors grid)
-                   ('() 0)
-                   (succs (- (min @(each spock-evaluate succs)))))))))
+                 (may (successors grid)
+                   (be '() 0)
+                   (be succs (- (min @(each spock-evaluate succs)))))))))
 
 (let spock-play (ai<- "Spock" spock-evaluate))
 
@@ -118,9 +118,9 @@
   (memoize (on (grid)
              (if (won? grid)
                  -1
-                 (be (successors grid)
-                   ('() 0)
-                   (succs (- (average (each drunk-evaluate succs)))))))))
+                 (may (successors grid)
+                   (be '() 0)
+                   (be succs (- (average (each drunk-evaluate succs)))))))))
 
 (to (average numbers)
   (/ (sum numbers) numbers.count))
@@ -185,10 +185,10 @@
   (let values (for each ((slot (zip (reverse (player-bits p))
                                     (reverse (player-bits q))
                                     spaces)))
-                (be slot
-                  (`(1 0 ,_) (marks 0))
-                  (`(0 1 ,_) (marks 1))
-                  (`(0 0 ,s) s))))
+                (may slot
+                  (be `(1 0 ,_) (marks 0))
+                  (be `(0 1 ,_) (marks 1))
+                  (be `(0 0 ,s) s))))
   (grid-format .format @values))
 
 (let grid-format ("\n" .join ('(" ~d ~d ~d") .repeat 3)))

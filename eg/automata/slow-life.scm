@@ -6,10 +6,10 @@
   home clear-screen cursor-show cursor-hide)
 
 (to (main args)
-  (let n-steps (be args.rest
-                 ('() 20)
-                 (`(,n-str) (number<-string n-str))
-                 (_ (error ("Usage: ~d [#steps]" .format (args 0))))))
+  (let n-steps (may args.rest
+                 (be '()       20)
+                 (be `(,n-str) (number<-string n-str))
+                 (else (error ("Usage: ~d [#steps]" .format (args 0))))))
   (let grid (grid<- 24 39))
   (paint grid 10 18 '(" **"             ;TODO: read in a pattern
                       "** "
@@ -68,11 +68,11 @@
     (+ (* C r) c))
 
   (to (update i)
-    (be (sum (for each ((dir neighbor-dirs))
-               (G (+ i dir))))
-      (2 (G i))
-      (3 1)
-      (_ 0)))
+    (may (sum (for each ((dir neighbor-dirs))
+                (G (+ i dir))))
+      (be 2 (G i))
+      (be 3 1)
+      (else 0)))
 
   ;; Make the world toroidal by copying the edges of the array so that
   ;; row #1 effectively neighbors row #n-rows, and likewise for the

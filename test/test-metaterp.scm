@@ -22,7 +22,7 @@
 (run '(hide (to (f) 136) (f)))
 (run '(hide
         (to (factorial n)
-          (be n
-            (0 1)
-            (_ (n .* (factorial (- n 1))))))
+          (may n
+            (be 0 1)
+            (else (n .* (factorial (- n 1))))))
         (factorial 10)))

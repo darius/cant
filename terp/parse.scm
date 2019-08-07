@@ -339,22 +339,23 @@
                (let ((msg (gensym)))
                  ;; TODO leave out miranda-trait if there's a catchall already
                  `(to (,v ,self ,msg)
-                    (match ,msg
+                    (may ,msg
                       ,@(map (mlambda (('to . rest) rest)) clauses)
                       (_ (miranda-trait ,self ,msg)))))))) ;XXX hygiene, and XXX make it overridable
-    ('be     (mlambda  ; TODO do I like this better than 'match'?
-              ((__ subject . clauses)
-               `(match ,subject ,@clauses))))
-    ('match  (mlambda
+    ('may    (mlambda
               ((__ subject . clauses)
                `((case ,@clauses) ,subject))))
     ('case   (mlambda                   ;TODO experiment; also, better name
               ((__ . clauses)
-               `(make _ ,@(map (lambda (clause)
-                                 (insist (pair? clause)
-                                         "invalid clause" clause)
-                                 `(to (_ ,(car clause)) ,@(cdr clause)))
-                               clauses)))))
+               `(make _
+                  ,@(map (mlambda
+                          (('be pat . body)
+                           `(to (_ ,pat) ,@body))
+                          (('else . body)
+                           `(to (_ _) ,@body))
+                          ((pat . body)
+                           `(to (_ ,pat) ,@body)))
+                         clauses)))))
     ('to     (mlambda
               ((__ (head . param-spec) . body)
                (let ((pattern (expand-definition-pattern param-spec)))
@@ -396,7 +397,7 @@
                      ,@es))))))
     ('if     (mlambda
               ((__ test if-so if-not)
-               `(match ,test
+               `(may ,test
                   (#f ,if-not)
                   (_ ,if-so)))))
     ('when   (mlambda

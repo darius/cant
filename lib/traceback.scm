@@ -17,14 +17,14 @@
     (format "  ~d\n" (write-to-bounded-string frame 77))))
 
 (to (complain @evil)
-  (be evil
-    (`(,(? string? plaint) ,@values)
-     (display plaint)
-     (display ": ")
-     (display (write-to-bounded-string values (* 80 20))))
-    (_
-     (display "Nonstandard evil: ")
-     (write evil)))
+  (may evil
+    (be `(,(? string? plaint) ,@values)
+      (display plaint)
+      (display ": ")
+      (display (write-to-bounded-string values (* 80 20))))
+    (else
+      (display "Nonstandard evil: ")
+      (write evil)))
   (newline))
 
 ;; Write `thing` into a string, but give up and truncate if it

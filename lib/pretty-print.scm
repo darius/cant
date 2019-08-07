@@ -13,16 +13,16 @@
                       (unquote-splicing ",@"))))
 
 (to (doc<-sx x)
-  (be x
-    (`(,(? symbol? sym) ,operand)
-     (be (abbrevs .get sym)
-       (#no    (call-like "(" sym x.rest ")"))
-       (abbrev (group (<> (text abbrev) (nest abbrev.count (doc<-sx operand)))))))
-    ((? list?)  (maybe-call-like "(" x ")"))
-    ((? term?)  (maybe-call-like "{" `(,x.tag ,@x.arguments) "}"))
-    ((? array?) (hug "[" x "]"))
-    ((? box?)   (call-like "#<" 'box `(,x.^) ">"))
-    (_          (text ("~w" .format x)))))
+  (may x
+    (be `(,(? symbol? sym) ,operand)
+      (may (abbrevs .get sym)
+        (be #no    (call-like "(" sym x.rest ")"))
+        (be abbrev (group (<> (text abbrev) (nest abbrev.count (doc<-sx operand)))))))
+    (be (? list?)  (maybe-call-like "(" x ")"))
+    (be (? term?)  (maybe-call-like "{" `(,x.tag ,@x.arguments) "}"))
+    (be (? array?) (hug "[" x "]"))
+    (be (? box?)   (call-like "#<" 'box `(,x.^) ">"))
+    (else          (text ("~w" .format x)))))
 
 (to (hug open elements close)
   (group (<> (text open)
@@ -33,10 +33,11 @@
   (hug (chain open symbol.name " ") elements close))
 
 (to (maybe-call-like open elements close)
-  (be elements
-    (`(,(? symbol? sym) ,_ ,@_)
-     (call-like open sym elements.rest close))
-    (_ (hug open elements close))))
+  (may elements
+    (be `(,(? symbol? sym) ,_ ,@_)
+      (call-like open sym elements.rest close))
+    (else
+      (hug open elements close))))
 
 (to (docs<- sexprs)
   (<> @(intercalate line (each doc<-sx sexprs))))

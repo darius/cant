@@ -18,18 +18,18 @@
           (nanosleep 50000000)  ; 1/20 sec
           (typing))
         (else
-          (be (get-key)
-            ('esc
-             'done)
-            ('backspace
-             (unless strokes.empty?
-               strokes.pop!)
-             (typing))
-            ((? char? key)
-             (strokes .push! key)
-             (typing))
-            (_
-             (typing)))))))
+          (may (get-key)
+            (be 'esc
+              'done)
+            (be 'backspace
+              (unless strokes.empty?
+                strokes.pop!)
+              (typing))
+            (be (? char? key)
+              (strokes .push! key)
+              (typing))
+            (else
+              (typing)))))))
 
 (to (show t body)
   (let cps (if (or (= t 0) body.empty?)

@@ -44,43 +44,44 @@
 
 (to (py-body vars code-list)
   (begin walking ((code-list code-list) (stmts '()) (vars vars))
-    (be code-list
-      (`() stmts)
-      (`(,first ,@rest)
-       ((walk-code first py-code py-exp)
-        vars
-        (on (vars2 cv) 
-          (walking rest `(,cv ,@stmts) vars2)))))))
+    (may code-list
+      (be `()
+        stmts)
+      (be `(,first ,@rest)
+        ((walk-code first py-code py-exp)
+         vars
+         (on (vars2 cv) 
+           (walking rest `(,cv ,@stmts) vars2)))))))
 
 ;; TODO walker objects instead, with code/exp methods?
 
 (to (py-code code)
-  (be code
-    ({bytes signed? count exp}
-     (for bind ((cv exp))
-       (unit 
-        (py-exp-stmt (py-call ("push_~d~w" .format (if signed? "i" "u")
-                                                   (* 8 count))
-                              cv)))))
-    ({swap-args code}
-     (swapping code))
-    ({mod-r/m e1 e2}
-     (for bind ((cv1 e1))
-       (for bind ((cv2 e2))
-         (unit (py-exp-stmt (py-call "mod_rm" cv1 cv2))))))))
+  (may code
+    (be {bytes signed? count exp}
+      (for bind ((cv exp))
+        (unit 
+         (py-exp-stmt (py-call ("push_~d~w"
+                                .format (if signed? "i" "u") (* 8 count))
+                               cv)))))
+    (be {swap-args code}
+      (swapping code))
+    (be {mod-r/m e1 e2}
+      (for bind ((cv1 e1))
+        (for bind ((cv2 e2))
+          (unit (py-exp-stmt (py-call "mod_rm" cv1 cv2))))))))
 
 (to (py-exp exp)
-  (be exp
-    ({literal n}
-     (unit (py-int-literal n)))
-    ({op operator e1 e2}
-     (for bind ((cv1 e1))
-       (for bind ((cv2 e2))
-         (unit (py-binop operator.name cv1 cv2)))))
-    ({hereafter}
-     (unit "hereafter"))
-    ({arg @_}
-     (eating unit))))
+  (may exp
+    (be {literal n}
+      (unit (py-int-literal n)))
+    (be {op operator e1 e2}
+      (for bind ((cv1 e1))
+        (for bind ((cv2 e2))
+          (unit (py-binop operator.name cv1 cv2)))))
+    (be {hereafter}
+      (unit "hereafter"))
+    (be {arg @_}
+      (eating unit))))
 
 
 ;; Variables
@@ -88,28 +89,28 @@
 (to (py-variable-count code)
 
   (to (py-code code)
-    (be code
-      ({bytes _ _ exp}
-       exp)
-      ({swap-args code}
-       code)
-      ({mod-r/m e1 e2}
-       (for bind ((cv1 e1))
-         (for bind ((cv2 e2))
-           (unit (+ cv1 cv2)))))))
+    (may code
+      (be {bytes _ _ exp}
+        exp)
+      (be {swap-args code}
+        code)
+      (be {mod-r/m e1 e2}
+        (for bind ((cv1 e1))
+          (for bind ((cv2 e2))
+            (unit (+ cv1 cv2)))))))
 
   (to (py-exp exp)
-    (be exp
-      ({literal _}
-       (unit 0))
-      ({op operator e1 e2}
-       (for bind ((cv1 e1))
-         (for bind ((cv2 e2))
-           (unit (+ cv1 cv2)))))
-      ({hereafter}
-       (unit 0))
-      ({arg @_}
-       (unit 1))))
+    (may exp
+      (be {literal _}
+        (unit 0))
+      (be {op operator e1 e2}
+        (for bind ((cv1 e1))
+          (for bind ((cv2 e2))
+            (unit (+ cv1 cv2)))))
+      (be {hereafter}
+        (unit 0))
+      (be {arg @_}
+        (unit 1))))
 
   ((walk-code code py-code py-exp) '_
                                    (on (_ count) count)))

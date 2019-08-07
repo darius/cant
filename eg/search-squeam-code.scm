@@ -13,38 +13,38 @@
 (to (find-it? e)
 
   (to (walk-exp exp)
-    (be exp
-      ({constant c} #no)
-      ({variable v} #no)
-      ({make name stamp-e extending-e clauses}
-       (or (some walk-exp `(,stamp-e ,extending-e))
-           (walk-clauses clauses)))
-      ({do e1 e2}
-       (or (walk-exp e1)
-           (walk-exp e2)))
-      ({let p e}
-       (or (walk-pat p) (walk-exp e)))
-      ({call e1 e2}
-       (or (walk-exp e1) (walk-exp e2)))
-      ({term tag es}
-       (some walk-exp es))
-      ({list es}
-       (some walk-exp es))))
+    (may exp
+      (be {constant c} #no)
+      (be {variable v} #no)
+      (be {make name stamp-e extending-e clauses}
+        (or (some walk-exp `(,stamp-e ,extending-e))
+            (walk-clauses clauses)))
+      (be {do e1 e2}
+        (or (walk-exp e1)
+            (walk-exp e2)))
+      (be {let p e}
+        (or (walk-pat p) (walk-exp e)))
+      (be {call e1 e2}
+        (or (walk-exp e1) (walk-exp e2)))
+      (be {term tag es}
+        (some walk-exp es))
+      (be {list es}
+        (some walk-exp es))))
 
   (to (walk-clause `(,p ,p-vars ,e-vars ,e))
     (or (walk-pat p) (walk-exp e)))
 
   (to (walk-pat pat)
-    (be pat
-      ({any-pat} #no)
-      ({variable-pat v} #no)
-      ({constant-pat c} #no)
-      ({view-pat e p}
-       (or (walk-exp e) (walk-pat p)))
-      ({and-pat p1 p2}
-       (or (walk-pat p1) (walk-pat p2)))
-      ({term-pat tag ps}
-       (some walk-pat ps))))
+    (may pat
+      (be {any-pat} #no)
+      (be {variable-pat v} #no)
+      (be {constant-pat c} #no)
+      (be {view-pat e p}
+        (or (walk-exp e) (walk-pat p)))
+      (be {and-pat p1 p2}
+        (or (walk-pat p1) (walk-pat p2)))
+      (be {term-pat tag ps}
+        (some walk-pat ps))))
 
   (walk-exp e))
 

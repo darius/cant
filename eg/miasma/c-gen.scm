@@ -45,43 +45,43 @@
 
 (to (c-body vars code-list)
   (begin walking ((code-list code-list) (stmts '()) (vars vars))
-    (be code-list
-      (`() stmts)
-      (`(,first ,@rest)
-       ((walk-code first c-code c-exp)
-        vars
-        (on (vars2 cv) 
-          (walking rest `(,cv ,@stmts) vars2)))))))
+    (may code-list
+      (be `() stmts)
+      (be `(,first ,@rest)
+        ((walk-code first c-code c-exp)
+         vars
+         (on (vars2 cv) 
+           (walking rest `(,cv ,@stmts) vars2)))))))
 
 ;; TODO walker objects instead, with code/exp methods?
 
 (to (c-code code)
-  (be code
-    ({bytes signed? count exp}
-     (for bind ((cv exp))
-       (unit 
-        (c-exp-stmt (c-call ("x86_push_~d~w" .format (if signed? "i" "u")
-                                                     (* 8 count))
-                            cv)))))
-    ({swap-args code}
-     (swapping code))
-    ({mod-r/m e1 e2}
-     (for bind ((cv1 e1))
-       (for bind ((cv2 e2))
-         (unit (c-exp-stmt (c-call "mod_rm" cv1 cv2))))))))
+  (may code
+    (be {bytes signed? count exp}
+      (for bind ((cv exp))
+        (unit 
+         (c-exp-stmt (c-call ("x86_push_~d~w"
+                              .format (if signed? "i" "u") (* 8 count))
+                             cv)))))
+    (be {swap-args code}
+      (swapping code))
+    (be {mod-r/m e1 e2}
+      (for bind ((cv1 e1))
+        (for bind ((cv2 e2))
+          (unit (c-exp-stmt (c-call "mod_rm" cv1 cv2))))))))
 
 (to (c-exp exp)
-  (be exp
-    ({literal n}
-     (unit (c-int-literal n)))
-    ({op operator e1 e2}
-     (for bind ((cv1 e1))
-       (for bind ((cv2 e2))
-         (unit (c-binop operator.name cv1 cv2)))))
-    ({hereafter}
-     (unit "hereafter"))
-    ({arg @_}
-     (eating unit))))
+  (may exp
+    (be {literal n}
+      (unit (c-int-literal n)))
+    (be {op operator e1 e2}
+      (for bind ((cv1 e1))
+        (for bind ((cv2 e2))
+          (unit (c-binop operator.name cv1 cv2)))))
+    (be {hereafter}
+      (unit "hereafter"))
+    (be {arg @_}
+      (eating unit))))
 
 
 ;; Variables
@@ -89,28 +89,28 @@
 (to (c-variable-count code)
 
   (to (c-code code)
-    (be code
-      ({bytes _ _ exp}
-       exp)
-      ({swap-args code}
-       code)
-      ({mod-r/m e1 e2}
-       (for bind ((cv1 e1))
-         (for bind ((cv2 e2))
-           (unit (+ cv1 cv2)))))))
+    (may code
+      (be {bytes _ _ exp}
+        exp)
+      (be {swap-args code}
+        code)
+      (be {mod-r/m e1 e2}
+        (for bind ((cv1 e1))
+          (for bind ((cv2 e2))
+            (unit (+ cv1 cv2)))))))
 
   (to (c-exp exp)
-    (be exp
-      ({literal _}
-       (unit 0))
-      ({op operator e1 e2}
-       (for bind ((cv1 e1))
-         (for bind ((cv2 e2))
-           (unit (+ cv1 cv2)))))
-      ({hereafter}
-       (unit 0))
-      ({arg @_}
-       (unit 1))))
+    (may exp
+      (be {literal _}
+        (unit 0))
+      (be {op operator e1 e2}
+        (for bind ((cv1 e1))
+          (for bind ((cv2 e2))
+            (unit (+ cv1 cv2)))))
+      (be {hereafter}
+        (unit 0))
+      (be {arg @_}
+        (unit 1))))
 
   ((walk-code code c-code c-exp) '_
                                  (on (_ count) count)))
@@ -119,12 +119,11 @@
 ;; C code constructors
 
 (to (c-enum items)
-  (call chain                           ;XXX a little clumsy
-        `("enum {\n"
-          ,@(for each ((`(,sym ,val) items))
-              ("  ~d = ~d,\n" .format (as-legal-c-identifier sym.name)
-                                      (c-int-literal val)))
-          "};")))
+  ("" .join `("enum {\n"
+              ,@(for each ((`(,sym ,val) items))
+                  ("  ~d = ~d,\n"
+                   .format (as-legal-c-identifier sym.name) (c-int-literal val)))
+              "};")))
 
 (to (c-int-literal n)
   (if (count? n)

@@ -32,12 +32,12 @@
   (symbol<- ("-" .join `(,stem ,@specs)))) ;TODO join with some other separator? "/"?
 
 (to (suffixes x)
-  (be x
-    ((? symbol?) (if ('(Sreg cr dr =16 =32 + /r /0 /1 /2 /3 /4 /5 /6 /7) .find? x)
-                     '()
-                     `(,x)))
-    ((? list?)   (gather suffixes x))
-    (_           '())))
+  (may x
+    (be (? symbol?) (if ('(Sreg cr dr =16 =32 + /r /0 /1 /2 /3 /4 /5 /6 /7) .find? x)
+                        '()
+                        `(,x)))
+    (be (? list?)   (gather suffixes x))
+    (else           '())))
 
 ;; A map of all specs by fully-qualified mnemonic.
 (let the-specs (map<-))
@@ -82,33 +82,33 @@
 
 ;; TODO This might make a good use case for nested-list Parson.
 (to (parse-param param)
-  (be (expand-abbrev param)
-    ((? byte? b)
-     (opcode-byte-param b))
-    ((? register? r)
-     (register-param r))
-    ('=16
-     (size-mode-param 16))
-    ('=32
-     (size-mode-param 16))
-    ((? operand? operand)
-     (parse-operand operand))
-    (`(,first ,@rest)
-     (be `(,first ,@(each expand-abbrev rest))
-       (`(? ,(? byte? b))
-        (condition-param b))
-       (`(+ ,(? byte? b) ,(? (operand-of 'G) operand)) ;TODO
-        (opcode+register-param b operand))
-       (`(/r ,arg1 ,arg2)
-        (hm (if (and ((operand-of 'E) arg1) ((operand-of 'G) arg2))
-                (Ex.Gx-param arg1 arg2))
-            (if (and ((operand-of 'G) arg1) ((operand-of 'E) arg2))
-                (Gx.Ex-param arg1 arg2))))
-       (`(,foo ,arg)
-        (surely (extended-opcode-tags .find? foo))
-        (surely ((operand-of 'E) arg))
-        (let extended-opcode (extended-opcode-tags .find foo))
-        (Ex-param extended-opcode arg))))))
+  (may (expand-abbrev param)
+    (be (? byte? b)
+      (opcode-byte-param b))
+    (be (? register? r)
+      (register-param r))
+    (be '=16
+      (size-mode-param 16))
+    (be '=32
+      (size-mode-param 16))
+    (be (? operand? operand)
+      (parse-operand operand))
+    (be `(,first ,@rest)
+      (may `(,first ,@(each expand-abbrev rest))
+        (be `(? ,(? byte? b))
+          (condition-param b))
+        (be `(+ ,(? byte? b) ,(? (operand-of 'G) operand)) ;TODO
+          (opcode+register-param b operand))
+        (be `(/r ,arg1 ,arg2)
+          (hm (if (and ((operand-of 'E) arg1) ((operand-of 'G) arg2))
+                  (Ex.Gx-param arg1 arg2))
+              (if (and ((operand-of 'G) arg1) ((operand-of 'E) arg2))
+                  (Gx.Ex-param arg1 arg2))))
+        (be `(,foo ,arg)
+          (surely (extended-opcode-tags .find? foo))
+          (surely ((operand-of 'E) arg))
+          (let extended-opcode (extended-opcode-tags .find foo))
+          (Ex-param extended-opcode arg))))))
 
 ;; Return a symbol whose name is the concatenation of ATOMS.
 (to (concat-symbol @atoms)
@@ -128,24 +128,24 @@
 (let extended-opcode-tags '[/0 /1 /2 /3 /4 /5 /6 /7])
 
 (to (operand? x)
-  (be x
-    (`(,(? symbol?) ,(? symbol? tag) ,size)
-     (and ('(I U J O) .find? tag)
-          ('(1 2 4) .find? size)))
-    (_ #no)))
+  (may x
+    (be `(,(? symbol?) ,(? symbol? tag) ,size)
+      (and ('(I U J O) .find? tag)
+           ('(1 2 4) .find? size)))
+    (else #no)))
 
 (to ((operand-of tag) x)                ;XXX duplicate code
-  (be x
-    (`(,(? symbol?) ,(= tag) ,size)
-     ('(1 2 4) .find? size))
-    (_ #no)))
+  (may x
+    (be `(,(? symbol?) ,(= tag) ,size)
+      ('(1 2 4) .find? size))
+    (else #no)))
 
 (to (parse-operand `(,symbol ,tag ,size))
-  (be tag
-    ('I (signed-immediate-param size))
-    ('U (unsigned-immediate-param size))
-    ('J (relative-jump-param size))
-    ('O (offset-param size))))
+  (may tag
+    (be 'I (signed-immediate-param size))
+    (be 'U (unsigned-immediate-param size))
+    (be 'J (relative-jump-param size))
+    (be 'O (offset-param size))))
 
 ;; TODO name like foo-param<-
 

@@ -47,16 +47,16 @@
                     (rule<- lhs rhs))))
 
 (to (rule<- lhs rhs)
-  (make
+  (make _
     (to _.lhs lhs)
     (to _.rhs rhs)
     (to (_ .starts-with? cat)
-      (be rhs
-        (`(,(= cat) ,@_) #yes)
-        (_ #no)))))
+      (may rhs
+        (be `(,(= cat) ,@_) #yes)
+        (else               #no)))))
 
 (to (tree<- lhs rhs)
-  (make
+  (make _
     (to _.lhs lhs)
     (to _.rhs rhs)
     (to (_ .selfie sink) (sink .print `(,lhs ,@rhs)))))

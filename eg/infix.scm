@@ -4,25 +4,25 @@
   (fmt e 0))
 
 (to (fmt e p)
-  (be e
-    ((? number?)
-     (string<-number e))
-    ((? symbol?)
-     e.name)
-    (`(,op ,x)
-     (be (unaries .get op)
-       (#no
-        ("~w(~d)" .format op (fmt x 0)))
-       (`(,prefix ,postfix)
-        (hm (if prefix  (enclose prefix p ("~w~d" .format op (fmt x prefix))))
-            (if postfix (enclose prefix p ("~d~w" .format (fmt x prefix) op)))))))
-    (`(,op ,x ,y)
-     (be (binaries .get op)
-       (#no
-        ("~w(~d, ~d)" .format op (fmt x 0) (fmt y 0)))
-       (`(,left ,right)
-        (enclose left p
-                 ("~d ~w ~d" .format (fmt x left) op (fmt y right))))))))
+  (may e
+    (be (? number?)
+      (string<-number e))
+    (be (? symbol?)
+      e.name)
+    (be `(,op ,x)
+      (may (unaries .get op)
+        (be #no
+          ("~w(~d)" .format op (fmt x 0)))
+        (be `(,prefix ,postfix)
+          (hm (if prefix  (enclose prefix p ("~w~d" .format op (fmt x prefix))))
+              (if postfix (enclose prefix p ("~d~w" .format (fmt x prefix) op)))))))
+    (be `(,op ,x ,y)
+      (may (binaries .get op)
+        (be #no
+          ("~w(~d, ~d)" .format op (fmt x 0) (fmt y 0)))
+        (be `(,left ,right)
+          (enclose left p
+                   ("~d ~w ~d" .format (fmt x left) op (fmt y right))))))))
 
 (to (enclose inner outer string)
    (if (< inner outer)
@@ -44,3 +44,7 @@
 (def-infix '* 20)
 (def-infix '/ 20)
 (binaries .set! '^ '(30 30))   ; right-to-left associativity (is this correct?)
+
+;; smoke test
+
+(print (format-infix '(* (+ 1 2) (+ 3 (* 4 5)))))

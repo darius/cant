@@ -61,12 +61,13 @@ insn:    {'1'+} {'#' '#'? '#'? '#'? '#'?} :make_insn.
    (make _
      (to _.name "case")
      (to (_ n regs)
-       (be (regs .get n "")           ;TODO how about just (regs n)?
-         ("" 1)
-         (str (regs .set! n str.rest)
-              (be str.first
-                (#\1 2)
-                (#\# 3))))))))
+       (may (regs .get n "")           ;TODO how about just (regs n)?
+         (be "" 1)
+         (be str
+           (regs .set! n str.rest)
+           (may str.first
+             (be #\1 2)
+             (be #\# 3))))))))
 
 ;; (import (use 'pretty-layout) ...)
 ;;XXX use me

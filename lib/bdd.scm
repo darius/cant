@@ -48,9 +48,9 @@
 
 (to (do-choose node if0 if1)
   (hm (if (<= node lit1)
-          (be node
-            (0 if0)                      ;N.B. 0 == lit0
-            (1 if1)))
+          (may node
+            (be 0 if0)                      ;N.B. 0 == lit0
+            (be 1 if1)))
       (if (= if0 if1)
           if0)
       (if (and (= if0 lit0) (= if1 lit1))
@@ -59,12 +59,12 @@
           (choose node if0 if1))))
 
 (to (subst rank replacement node)
-  (be (rank .compare (ranks node))
-    (-1 node)
-    ( 0 (do-choose replacement (if0s node) (if1s node)))
-    (+1 (make-choice (ranks node)
-                     (subst rank replacement (if0s node))
-                     (subst rank replacement (if1s node))))))
+  (may (rank .compare (ranks node))
+    (be -1 node)
+    (be  0 (do-choose replacement (if0s node) (if1s node)))
+    (be +1 (make-choice (ranks node)
+                        (subst rank replacement (if0s node))
+                        (subst rank replacement (if1s node))))))
 
 (let choose-memo (map<-))
 

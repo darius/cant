@@ -57,11 +57,11 @@
     (let {state workers jobs} arg)
     (begin assigning ((ws1 workers) (ws2 '()) (jobs jobs))
 ;      (format "ws1 = ~w\n" ws1)
-      (be ws1
+      (may ws1
         ('()
          {state (reverse ws2) jobs})
         (`(#no ,@rest)
-         (be jobs
+         (may jobs
            ('()
             (assigning rest `(#no ,@ws2) '()))
            (`(,j ,@js)
@@ -75,7 +75,7 @@
     ;; and retire the nodes that reach 0.
     (begin working ((ws1 workers) (ws2 '()) (jobs jobs))
 ;      (format "a: ws1 = ~w\n" ws1)
-      (be ws1
+      (may ws1
         ('()
 ;         (print 'b)
          {state (reverse ws2) jobs})

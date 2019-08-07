@@ -59,7 +59,7 @@
 (to (attacking selections)
   (for each! ((group (sort-by (-> (- it.initiative)) selections.keys)))
     (when group.alive?
-      (be (selections .get group)
+      (may (selections .get group)
         (#no)
         (target (group .attack! target))))))
 
@@ -67,7 +67,7 @@
   (let immunities (set<-))
   (let weaknesses (set<-))
   (for each! ((`(,type ,attack-strings) qualities)) ;TODO could use a group-by or map-reduce again
-    (let set (be type
+    (let set (may type
                ("immune" immunities)
                ("weak"   weaknesses)))
     (set .add-all! (each symbol<- attack-strings)))
@@ -97,7 +97,7 @@
 ;;     (format "attack: ~w ~w\n" attack-type (effective-power))
       (target .receive! attack-type (effective-power)))
     (to (_ .damage-from attacker-attack-type attack-power)
-      (be (qualities .get attacker-attack-type)
+      (may (qualities .get attacker-attack-type)
         ('immunity 0)
         ('weakness (* 2 attack-power))
         (#no       attack-power)))
@@ -170,7 +170,7 @@ separator: '\n'.
 
 (to (enough-boost? boost)
   (let armies (map<- (for each ((`(,name ,group-makers) matchup))
-                       `(,name ,(do (let my-boost (be name
+                       `(,name ,(do (let my-boost (may name
                                                     ("Immune System" boost)
                                                     (_               0)))
                                     (for each ((group-maker group-makers))

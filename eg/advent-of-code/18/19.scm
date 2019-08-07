@@ -28,7 +28,7 @@
 
     (to _.step
       (let here (regs ip))
-      (be (program .get here)
+      (may (program .get here)
         (#no #no)
         (`(,op ,a ,b ,c)
          (vm .do op a b c)
@@ -39,7 +39,7 @@
 
     (to (_ .do op a b c)
       (let result
-        (be op
+        (may op
 
           ('addr  (+ (regs a) (regs b)))
           ('addi  (+ (regs a) b))

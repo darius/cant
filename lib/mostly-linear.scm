@@ -33,32 +33,32 @@
   (begin solving ((inconsistent? #no) ; Noticed a contradiction yet?
                   (progress? #no)     ; Any progress since the last assessment?
                   (agenda (push (extend empty equations) 'assessment)))
-    (be (peek agenda)
-      ({nonempty task pending}
-       (be task
-         ('assessment
-          (hm (if progress?
-                  (solving inconsistent? #no (push pending 'assessment)))
-              (if inconsistent?    'inconsistent)
-              (if (empty? pending) 'done)
-              (else                'stuck)))
-         ({equation defaulty? expr}
-          (be (eval-expr expr)       ;XXX better name?
-            ('nonlinear                 ;TODO call it #no instead?
-             (solving inconsistent? progress? (push pending task)))
-            (combo
-             (let terms (expand combo))
-             (hm (when (varies? terms)
-                   (eliminate-a-variable terms)
-                   (solving inconsistent? #yes pending))
-                 (when (or defaulty? (zeroish? (constant terms)))
-                   ;; The equation was either only a default (whose
-                   ;; inconsistency is allowed) or it reduced to an
-                   ;; uninformative 0=0: drop it.
-                   (solving inconsistent? #yes pending))
-                 (else
-                   (format "Inconsistent: ~w\n" combo)
-                   (solving #yes progress? pending)))))))))))
+    (may (peek agenda)
+      (be {nonempty task pending}
+        (may task
+          (be 'assessment
+            (hm (if progress?
+                    (solving inconsistent? #no (push pending 'assessment)))
+                (if inconsistent?    'inconsistent)
+                (if (empty? pending) 'done)
+                (else                'stuck)))
+          (be {equation defaulty? expr}
+            (may (eval-expr expr)       ;XXX better name?
+              (be 'nonlinear                 ;TODO call it #no instead?
+                (solving inconsistent? progress? (push pending task)))
+              (be combo
+                (let terms (expand combo))
+                (hm (when (varies? terms)
+                      (eliminate-a-variable terms)
+                      (solving inconsistent? #yes pending))
+                    (when (or defaulty? (zeroish? (constant terms)))
+                      ;; The equation was either only a default (whose
+                      ;; inconsistency is allowed) or it reduced to an
+                      ;; uninformative 0=0: drop it.
+                      (solving inconsistent? #yes pending))
+                    (else
+                      (format "Inconsistent: ~w\n" combo)
+                      (solving #yes progress? pending)))))))))))
 
 (to (e+ e1 e2) {combine e1 one e2})
 (to (e- e1 e2) {combine e1 neg-one e2})
@@ -66,42 +66,43 @@
 (to (e/ e1 e2) {/ e1 e2})
 
 (to (get-value e ejector)
-  (be (eval-expr e)
-    ('nonlinear (ejector .eject {not-fixed e}))
-    (combo
-     (let terms (expand combo))
-     (when (varies? terms)
-       (ejector .eject {not-fixed e}))
-     (get-constant terms))))
+  (may (eval-expr e)
+    (be 'nonlinear
+      (ejector .eject {not-fixed e}))
+    (be combo
+      (let terms (expand combo))
+      (when (varies? terms)
+        (ejector .eject {not-fixed e}))
+      (get-constant terms))))
 
 (to (eval-expr e)
-  (be e
-    ({combo _}
-     e)
-    ({combine arg1 coeff arg2}
-     (combine (eval-expr arg1) coeff (eval-expr arg2)))
-    ({* arg1 arg2}
-     (let combo1 (eval-expr arg1))   (let terms1 (expand combo1))
-     (let combo2 (eval-expr arg2))   (let terms2 (expand combo2))
-     (hm (if (and (varies? terms1) (varies? terms2))
-             'nonlinear)
-         (if (varies? terms1) (scale combo1 (get-constant terms2)))
-         (else                (scale combo2 (get-constant terms1)))))
-    ({/ arg1 arg2}
-     (let combo1 (eval-expr arg1))
-     (let combo2 (eval-expr arg2))
-     (let terms2 (expand combo2))
-     (if (varies? terms2)
-         'nonlinear
-         (scale combo1 (r/ one (get-constant terms2))))) ;TODO reciprocal function
-    ({nonlinear fn arg}
-     (let combo (eval-expr arg))
-     (let terms (expand combo))
-     (if (varies? terms)
-         'nonlinear
-         (do (let value (get-constant terms))
-             (surely (ratio? value))
-             (constant<- (fn value)))))
+  (may e
+    (be {combo _}
+      e)
+    (be {combine arg1 coeff arg2}
+      (combine (eval-expr arg1) coeff (eval-expr arg2)))
+    (be {* arg1 arg2}
+      (let combo1 (eval-expr arg1))   (let terms1 (expand combo1))
+      (let combo2 (eval-expr arg2))   (let terms2 (expand combo2))
+      (hm (if (and (varies? terms1) (varies? terms2))
+              'nonlinear)
+          (if (varies? terms1) (scale combo1 (get-constant terms2)))
+          (else                (scale combo2 (get-constant terms1)))))
+    (be {/ arg1 arg2}
+      (let combo1 (eval-expr arg1))
+      (let combo2 (eval-expr arg2))
+      (let terms2 (expand combo2))
+      (if (varies? terms2)
+          'nonlinear
+          (scale combo1 (r/ one (get-constant terms2))))) ;TODO reciprocal function
+    (be {nonlinear fn arg}
+      (let combo (eval-expr arg))
+      (let terms (expand combo))
+      (if (varies? terms)
+          'nonlinear
+          (do (let value (get-constant terms))
+              (surely (ratio? value))
+              (constant<- (fn value)))))
     ))
 
 (to (constant<- value)

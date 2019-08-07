@@ -15,36 +15,37 @@
 (to (parse-tokens text)
   (if text.empty?
       '()
-      (be text.first
-        (#\newline `({break} ,@(parse-tokens text.rest)))
-        (#\space   `({space} ,@(parse-tokens text.rest)))
-        ((? _.whitespace? ch)
-         (error "I don't know how to fill whitespace like" ch))
-        (_ (let word (flexarray<- text.first))
-           (begin eating ((text text.rest))
-             (if (or text.empty? text.first.whitespace?)
-                 `({word ,(flush word)} ,@(parse-tokens text))
-                 (do (word .push! text.first)
-                     (eating text.rest))))))))
+      (may text.first
+        (be #\newline `({break} ,@(parse-tokens text.rest)))
+        (be #\space   `({space} ,@(parse-tokens text.rest)))
+        (be (? _.whitespace? ch)
+          (error "I don't know how to fill whitespace like" ch))
+        (else
+          (let word (flexarray<- text.first))
+          (begin eating ((text text.rest))
+            (if (or text.empty? text.first.whitespace?)
+                `({word ,(flush word)} ,@(parse-tokens text))
+                (do (word .push! text.first)
+                    (eating text.rest))))))))
 
 (to (wrap-into line tokens width)
   (begin scanning ((spaces 0) (tokens tokens))
     (if tokens.empty?
         (if line.empty? '() `(,(flush line)))
-        (be tokens.first
-          ({break}
-           (link (flush line) (wrap-into (flexarray<-) tokens.rest width)))
-          ({space}
-           (scanning (+ spaces 1) tokens.rest))
-          ({word s}
-           (if (<= (+ line.count spaces s.count) width)
-               (do (line .extend! (chain (" " .repeat spaces) s))
-                   (scanning 0 tokens.rest))
-               (link (flush line)
-                     (hide
-                       (let new-line (flexarray<-))
-                       (new-line .extend! s)
-                       (wrap-into new-line tokens.rest width)))))))))
+        (may tokens.first
+          (be {break}
+            (link (flush line) (wrap-into (flexarray<-) tokens.rest width)))
+          (be {space}
+            (scanning (+ spaces 1) tokens.rest))
+          (be {word s}
+            (if (<= (+ line.count spaces s.count) width)
+                (do (line .extend! (chain (" " .repeat spaces) s))
+                    (scanning 0 tokens.rest))
+                (link (flush line)
+                      (hide
+                        (let new-line (flexarray<-))
+                        (new-line .extend! s)
+                        (wrap-into new-line tokens.rest width)))))))))
 
 
 (to (main `(,_ ,width-str ,@words))

@@ -85,7 +85,7 @@
     (unless (maybe-attack p)
       ;;  (format "targets for ~w: ~w\n" p (sort targets))
       (let goals (set<-list (gather open-neighbors<- targets)))
-      (be (find-shortest-paths p goals)
+      (may (find-shortest-paths p goals)
         ('())
         (paths
          (let chosen-path
@@ -103,7 +103,7 @@
 
   (to (maybe-attack p)
     (let enemy (enemy<- (area p)))
-    (be (for those ((q (neighbors<- p)))
+    (may (for those ((q (neighbors<- p)))
           (= enemy (area q)))
       ('() #no)
       (targets
@@ -116,7 +116,7 @@
 
   (to (attack p target)
     (let hp-left (- (units target)
-                    (be (area p)
+                    (may (area p)
                       (#\G 3)
                       (#\E elf-attack-power))))                      
 ;    (format "attack: from ~d@~d to ~d@~d leaving ~w hp\n"
@@ -151,7 +151,7 @@
                                        `(,trail.first)))))
 ;;      (surely (sorted? (for each ((trail (list<-queue queue)))
 ;;                         `(,trail.count ,(reverse trail)))))
-      (be (peek queue)
+      (may (peek queue)
         ({empty}
          (each reverse successes.values))
         ({nonempty trail queue-1}
@@ -176,7 +176,7 @@
   (to (show)
     (let notes (flexarray<-))
     (for each! ((`(,p ,ch) area.items))
-      (be ch
+      (may ch
         (#\newline
          (format "   ~d\n" (", " .join notes.values))
          notes.clear!)
@@ -206,7 +206,7 @@
     (newline)
     (format "Trying attack power ~w\n" power)
     (let field (field<- input power))
-    (be (battle-sans-elf-casualties field power)
+    (may (battle-sans-elf-casualties field power)
       (#no (trying power.up))
       (outcome outcome))))
 

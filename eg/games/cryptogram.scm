@@ -9,10 +9,10 @@
 
 (to (main args)
   (let cryptogram
-    (be args.rest
-      ('()     (random-encrypt (random-rng<-) (run-fortune)))
-      (`(,str) str)
-      (_       (error ("Usage: ~d [cryptogram]" .format (args 0))))))
+    (may args.rest
+      (be '()     (random-encrypt (random-rng<-) (run-fortune)))
+      (be `(,str) str)
+      (else       (error ("Usage: ~d [cryptogram]" .format (args 0))))))
   (for cbreak-mode ()
     (puzzle cryptogram)))
 
@@ -39,27 +39,28 @@
   (let cv (cryptoview<- cryptogram))
   (begin playing ()
     (render (cv .view #yes))
-    (be (get-key)
-      ('esc (render (cv .view #no)))
-      (key (be key
-             ('home      cv.go-to-start)
-             ('end       cv.go-to-end)
-             ('left      (cv .shift-by -1))
-             ('right     (cv .shift-by  1))
-             ('up        (cv .shift-line -1))
-             ('down      (cv .shift-line  1))
-             ('shift-tab (cv .shift-to-space -1))
-             (#\tab      (cv .shift-to-space  1))
-             ('backspace (cv .shift-by -1)
+    (may (get-key)
+      (be 'esc (render (cv .view #no)))
+      (be key
+        (may key
+          (be 'home      cv.go-to-start)
+          (be 'end       cv.go-to-end)
+          (be 'left      (cv .shift-by -1))
+          (be 'right     (cv .shift-by  1))
+          (be 'up        (cv .shift-line -1))
+          (be 'down      (cv .shift-line  1))
+          (be 'shift-tab (cv .shift-to-space -1))
+          (be #\tab      (cv .shift-to-space  1))
+          (be 'backspace (cv .shift-by -1)
                          (cv .jot #\space))
-             ('del       (cv .jot #\space)
+          (be 'del       (cv .jot #\space)
                          (cv .shift-by 1))
-             ((and (? char?) (? _.uppercase?))
+          (be (and (? char?) (? _.uppercase?))
                          (cv .shift-to-code 1 key))
-             (_          (when (or (= key #\space) (alphabet .find? key))
+          (else          (when (or (= key #\space) (alphabet .find? key))
                            (cv .jot key)
                            (cv .shift-by 1))))
-           (playing)))))
+        (playing)))))
 
 (to (cryptoview<- cryptogram)
 

@@ -36,34 +36,34 @@
 
     (display "inspect-> ")
     (let input (read))
-    (be (abbrevs .get input input)
-      ('help
-       (help vocab)
-       (format "<n>         - inspect the nth component of the focus\n")
-       (continue))
-      ('quit
+    (may (abbrevs .get input input)
+      (be 'help
+        (help vocab)
+        (format "<n>         - inspect the nth component of the focus\n")
+        (continue))
+      (be 'quit
+        'ok)
+      (be (? eof?)
        'ok)
-      ((? eof?)
-       'ok)
-      ('up
-       (if trail.empty?
-           (continue "At top.\n")
-           (interacting trail.first trail.rest)))
-      ('top
-       (interacting initial-focus '()))
-      ('script
-       (push (extract-script focus)))
-      ('datum
-       (push (extract-datum focus)))
-      ('value
-       (let focus-env '())              ;XXX
-       (let env `((*focus* ,focus) ,@focus-env))
-       (print (evaluate (read) env))
-       (continue))
-      ((? count?)
-       (push (focus input))) ;TODO handle out-of-range
+      (be 'up
+        (if trail.empty?
+            (continue "At top.\n")
+            (interacting trail.first trail.rest)))
+      (be 'top
+        (interacting initial-focus '()))
+      (be 'script
+        (push (extract-script focus)))
+      (be 'datum
+        (push (extract-datum focus)))
+      (be 'value
+        (let focus-env '())              ;XXX
+        (let env `((*focus* ,focus) ,@focus-env))
+        (print (evaluate (read) env))
+        (continue))
+      (be (? count?)
+        (push (focus input))) ;TODO handle out-of-range
       (else
-       (continue "Huh? Enter 'help' for help.")))))
+        (continue "Huh? Enter 'help' for help.")))))
 
 (to (inspect-continuation k)
   (surely (not k.empty?))               ;XXX require
@@ -91,36 +91,36 @@
 
     (display "debug-> ")
     (let input (read))  ; TODO read a line, then parse?
-    (be (abbrevs .get input input)
-      ('help
-       (help vocab)
-       (continue))
-      ('quit
-       'ok)
-      ((? eof?)
-       'ok)
-      ('resume
-       (frame .answer (read-eval)))
-      ('up
-       (let caller frame.rest)
-       (if caller.empty?
-           (continue "At top.\n")
-           (interacting caller (link frame callees)))) ;TODO show the new current frame
-      ('down
-       (if callees.empty?
-           (continue "At bottom.\n")
-           (interacting callees.first callees.rest)))
-      ('env
-       (show-env frame.env)
-       (continue))
-      ('value
-       (print (read-eval))
-       (continue))
-      ('backtrace
-       (print-traceback frame)
-       (continue))
+    (may (abbrevs .get input input)
+      (be 'help
+        (help vocab)
+        (continue))
+      (be 'quit
+        'ok)
+      (be (? eof?)
+        'ok)
+      (be 'resume
+        (frame .answer (read-eval)))
+      (be 'up
+        (let caller frame.rest)
+        (if caller.empty?
+            (continue "At top.\n")
+            (interacting caller (link frame callees)))) ;TODO show the new current frame
+      (be 'down
+        (if callees.empty?
+            (continue "At bottom.\n")
+            (interacting callees.first callees.rest)))
+      (be 'env
+        (show-env frame.env)
+        (continue))
+      (be 'value
+        (print (read-eval))
+        (continue))
+      (be 'backtrace
+        (print-traceback frame)
+        (continue))
       (else
-       (continue "Huh? Enter 'help' for help.\n")))))
+        (continue "Huh? Enter 'help' for help.\n")))))
 
 (to (show-env env)
   (print (each _.first env)))

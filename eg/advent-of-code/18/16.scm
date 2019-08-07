@@ -34,7 +34,7 @@ insn:    :nat ' ' :nat ' ' :nat ' ' :nat '\n' :hug.
   (make vm
     (to (_ .do op a b c)
       (let result
-        (be op
+        (may op
 
           ('addr  (+ (regs a) (regs b)))
           ('addi  (+ (regs a) b))

@@ -8,10 +8,11 @@
 ;; the same invariant.
 
 (to (ratio? thing)
-  (be thing
-    ({ratio n d}
-     (and (integer? n) (integer? d) (not= d 0)))
-    (_ #no)))
+  (may thing
+    (be {ratio n d}
+      (and (integer? n) (integer? d) (not= d 0)))
+    (else
+      #no)))
 
 (make ratio<-
   (to (_ n)

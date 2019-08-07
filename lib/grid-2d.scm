@@ -21,9 +21,9 @@
   (surely (<= 0 y-extent))
 
   (let A (array<-count (* x-extent y-extent)
-                       (be initializer
-                         ({constant value} value)
-                         ({map _} #no))))
+                       (may initializer
+                         (be {constant value} value)
+                         (be {map _} #no))))
   (let at
     (if (and (= xl 0) (= yl 0))
         (on (x y)                    ;special-cased for speed
@@ -36,12 +36,12 @@
     (unless (<= xl x xh) (error "x coordinate out of range" x))
     (unless (<= yl y yh) (error "y coordinate out of range" y)))
 
-  (be initializer
-    ({constant _})
-    ({map f}
-     (for each! ((y (yl .to yh)))
-       (for each! ((x (xl .to xh)))
-         (A .set! (at x y) (f `(,x ,y)))))))
+  (may initializer
+    (be {constant _})
+    (be {map f}
+      (for each! ((y (yl .to yh)))
+        (for each! ((x (xl .to xh)))
+          (A .set! (at x y) (f `(,x ,y)))))))
 
   (make grid-2d {extending map-trait}
     

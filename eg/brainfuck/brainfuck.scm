@@ -10,39 +10,35 @@
   (let jump (match-brackets program))   ; jump targets
   (begin running ((i 0)                 ; instruction pointer
                   (d 0))                ; data pointer
-    (be (program .get i)
-      (#\[ (running (if (= 0 (data .get d 0))
-                        (jump i)
-                        i.up)
-                    d))
-      (#\] (running (if (= 0 (data .get d 0))
-                        i.up
-                        (jump i))
-                    d))
-      (#no 'done)
-      (ch  (running i.up
-                    (be ch
-                      (#\< d.-)
-                      (#\> d.up)
-                      (_ (be ch
-                           (#\- (data .set! d (- (data .get d 0) 1)))
-                           (#\+ (data .set! d (+ (data .get d 0) 1)))
-                           (#\. (display (char<- (data .get d 0))))
-                           (#\, (data .set! d (be stdin.read-char
-                                                ((? eof?) -1)
-                                                (ch ch.code))))
-                           (_))
-                         d)))))))
+    (may (program .get i)
+      (be #\[ (running (if (= 0 (data .get d 0)) (jump i) i.+)
+                       d))
+      (be #\] (running (if (= 0 (data .get d 0)) i.+ (jump i))
+                       d))
+      (be #no 'done)
+      (be ch  (running i.+
+                       (may ch
+                         (be #\< d.-)
+                         (be #\> d.+)
+                         (else (may ch
+                                 (be #\- (data .set! d (- (data .get d 0) 1)))
+                                 (be #\+ (data .set! d (+ (data .get d 0) 1)))
+                                 (be #\. (display (char<- (data .get d 0))))
+                                 (be #\, (data .set! d (may stdin.read-char
+                                                         (be (? eof?) -1)
+                                                         (be ch ch.code))))
+                                 (else))
+                               d)))))))
 
 (to (match-brackets program)
   (let jump (map<-))
   (for foldl ((stack '()) (`(,i ,ch) program.items))
-    (be ch
-      (#\[ (link i stack))
-      (#\] (jump .set! stack.first i.up)
-           (jump .set! i stack.first.up)
-           stack.rest)
-      (_   stack)))
+    (may ch
+      (be #\[ (link i stack))
+      (be #\] (jump .set! stack.first i.+)
+              (jump .set! i stack.first.+)
+              stack.rest)
+      (else   stack)))
   jump)
 
 
@@ -58,23 +54,23 @@
                       (meaningful .maps? ch)))
   (let expr-stack
     (for foldl ((stack '(0)) (ch real-program))
-      (be ch
-        (#\[ (link 'd stack))
-        (#\] (let `(,top ,next ,@rest) stack)
-             (link `(begin looping ((d ,next))
-                      (if (= 0 (data d))
-                          d
-                          (looping ,top)))
-                   rest))
-        (_ (let `(,top ,@rest) stack)
-           (link (be ch
-                   (#\< `(- ,top 1))
-                   (#\> `(+ ,top 1))
-                   (#\- `(decr ,top))
-                   (#\+ `(incr ,top))
-                   (#\. `(emit ,top))
-                   (#\, `(absorb ,top)))
-                 rest)))))
+      (may ch
+        (be #\[ (link 'd stack))
+        (be #\] (let `(,top ,next ,@rest) stack)
+                (link `(begin looping ((d ,next))
+                         (if (= 0 (data d))
+                             d
+                             (looping ,top)))
+                      rest))
+        (else (let `(,top ,@rest) stack)
+              (link (may ch
+                      (be #\< `(- ,top 1))
+                      (be #\> `(+ ,top 1))
+                      (be #\- `(decr ,top))
+                      (be #\+ `(incr ,top))
+                      (be #\. `(emit ,top))
+                      (be #\, `(absorb ,top)))
+                    rest)))))
   (surely (= 1 expr-stack.count))
   (bf-complete-program expr-stack.first))
 
@@ -91,9 +87,9 @@
        (display (char<- (data d)))
        d)
      (to (absorb d)
-       (data .set! d (be stdin.read-char
-                       ((? eof?) -1)
-                       (ch ch.code)))
+       (data .set! d (may stdin.read-char
+                       (be (? eof?) -1)
+                       (be ch ch.code)))
        d)
      ,body))
 

@@ -36,9 +36,9 @@
   ;; Return the minimum element of PQ.
   ;; Signals an error if PQ is empty.
   (to (pq-min pq)
-    (be pq
-      ({pq}        (error "pq-min of an empty pq"))
-      ({pq elem _} elem)))
+    (may pq
+      (be {pq}        (error "pq-min of an empty pq"))
+      (be {pq elem _} elem)))
 
   ;; Return a priority queue with a single element, ELEM.
   (to (unit-pq elem)
@@ -57,29 +57,32 @@
 
   ;; Return PQ with ELEM inserted.
   (to (pq-insert pq elem)
-    (be pq
-      ({pq}            {pq elem '()})
-      ({pq min1 rest1} (if (<=? min1 elem)
-                           {pq min1 `({pq ,elem ()} ,@rest1)}
-                           {pq elem `(,pq)}))))
+    (may pq
+      (be {pq}            {pq elem '()})
+      (be {pq min1 rest1} (if (<=? min1 elem)
+                              {pq min1 `({pq ,elem ()} ,@rest1)}
+                              {pq elem `(,pq)}))))
 
   ;; Return PQ with its minimum element removed.
   ;; Signals an error if PQ is empty.
   (to (pq-remove-min pq)
-    (be pq
-      ({pq} (error "pq-remove-min of empty-pq"))
-      ({pq _ pqs}
-       (begin merging ((pqs pqs))
-         (be pqs
-           ('() empty-pq)
-           (`(,elem) elem)
-           (`(,pq1 ,pq2 ,@rest)
-            (let {pq min1 rest1} pq1)
-            (let {pq min2 rest2} pq2)
-            (pq-merge (if (<=? min1 min2)
-                          {pq min1 `(,pq2 ,@rest1)}
-                          {pq min2 `(,pq1 ,@rest2)})
-                      (merging rest))))))))
+    (may pq
+      (be {pq}
+        (error "pq-remove-min of empty-pq"))
+      (be {pq _ pqs}
+        (begin merging ((pqs pqs))
+          (may pqs
+            (be '()
+              empty-pq)
+            (be `(,elem)
+              elem)
+            (be `(,pq1 ,pq2 ,@rest)
+              (let {pq min1 rest1} pq1)
+              (let {pq min2 rest2} pq2)
+              (pq-merge (if (<=? min1 min2)
+                            {pq min1 `(,pq2 ,@rest1)}
+                            {pq min2 `(,pq1 ,@rest2)})
+                        (merging rest))))))))
 
   (export
     pq-empty? pq-min

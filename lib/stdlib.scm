@@ -218,9 +218,9 @@
   (to (interact)
     (the-signal-handler .^= repl-handler)
     (display "-> ")
-    (be (read)
-      ((? eof?) (newline))
-      (sexpr (print-result (evaluate sexpr '()))))) ;XXX reify a proper env object
+    (may (read)
+      (be (? eof?) (newline))
+      (be sexpr (print-result (evaluate sexpr '()))))) ;XXX reify a proper env object
 
   ;; A separate function just to make the top of tracebacks cleaner.
   (to (print-result value)
@@ -228,16 +228,16 @@
       (print value))
     (interact))
 
-  (be cmd-line-args
-    (#no (interact))
-    ('() (interact))
-    (`("-i" ,filename ,@_)
-     (the-signal-handler .^= repl-handler)
-     (load-and-run filename cmd-line-args.rest)
-     (interact))
-    (`(,filename ,@_)
-     (the-signal-handler .^= script-handler)
-     (load-and-run filename cmd-line-args))))
+  (may cmd-line-args
+    (be #no (interact))
+    (be '() (interact))
+    (be `("-i" ,filename ,@_)
+      (the-signal-handler .^= repl-handler)
+      (load-and-run filename cmd-line-args.rest)
+      (interact))
+    (be `(,filename ,@_)
+      (the-signal-handler .^= script-handler)
+      (load-and-run filename cmd-line-args))))
 
 (to (load-and-run filename args)
   (load filename `(,filename)) ;TODO remove .scm extension
@@ -246,9 +246,11 @@
 
 (to (debug)
   (import (use 'debugger) inspect-continuation)
-  (be the-last-error.^
-    (`(,k ,@evil) (inspect-continuation k))
-    (_ (display "No error to debug.\n"))))
+  (may the-last-error.^
+    (be `(,k ,@evil)
+      (inspect-continuation k))
+    (else
+      (display "No error to debug.\n"))))
 
 (let the-modules (map<-))
 
@@ -262,12 +264,13 @@
   (let stem (if (symbol? file-stem)
                 (chain "lib/" file-stem.name)
                 file-stem))
-  (be (the-modules .get stem)
-    (#no
-     (let mod (load-module (chain stem ".scm") `(,stem)))
-     (the-modules .set! stem mod)
-     mod)
-    (mod mod)))
+  (may (the-modules .get stem)
+    (be #no
+      (let mod (load-module (chain stem ".scm") `(,stem)))
+      (the-modules .set! stem mod)
+      mod)
+    (be mod
+      mod)))
 
 (to (load filename @(optional context))
   (load-exp `(do ,@(with-input-file read-all filename))

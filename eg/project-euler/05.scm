@@ -10,11 +10,11 @@
 
 ;; Pre: xs and ys are sorted and infinite.
 (to (intersect xs ys)
-  (be (xs.first .compare ys.first)
-    (-1 (intersect xs.rest ys))
-    (+1 (intersect xs ys.rest))
-    ( 0 (link/lazy xs.first
-                   (: (intersect xs.rest ys.rest))))))
+  (may (xs.first .compare ys.first)
+    (be -1 (intersect xs.rest ys))
+    (be +1 (intersect xs ys.rest))
+    (be  0 (link/lazy xs.first
+                      (: (intersect xs.rest ys.rest))))))
 
 (to (multiples<- n)                     ;TODO infinite range<- with stride
   (begin listing ((k n))

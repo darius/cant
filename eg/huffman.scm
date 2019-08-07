@@ -23,12 +23,12 @@
 
 (to (walk tree visit)
   (begin walking ((path '()) (tree tree))
-    (be tree
-      ({leaf symbol}
-       (visit symbol (reverse path)))
-      ({branch on-0 on-1}
-       (walking `(0 ,@path) on-0)
-       (walking `(1 ,@path) on-1)))))
+    (may tree
+      (be {leaf symbol}
+        (visit symbol (reverse path)))
+      (be {branch on-0 on-1}
+        (walking `(0 ,@path) on-0)
+        (walking `(1 ,@path) on-1)))))
 
 (to (show-tree tree)
   (walk tree (on (symbol encoding)
@@ -46,8 +46,8 @@
     (if bits.empty?
         '()
         (do (let {branch @subtrees} tree)
-            (be (subtrees bits.first)
-              ({leaf symbol} `(,symbol ,@(stepping root bits.rest)))
-              (subtree       (stepping subtree bits.rest)))))))
+            (may (subtrees bits.first)
+              (be {leaf symbol} `(,symbol ,@(stepping root bits.rest)))
+              (be subtree       (stepping subtree bits.rest)))))))
 
 (export build-tree show-tree encoder<- encode decode)

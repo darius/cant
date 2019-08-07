@@ -4,11 +4,11 @@
   ((parse lexp) .compile '(HALT)))
 
 (to (parse lexp)
-  (be lexp
-    ((? symbol?)           (var-ref<- lexp))
-    (`(lambda (,v) ,body)  (abstraction<- v (parse body)))
-    (`(,operator ,operand) (call<- (parse operator)
-                                   (parse operand)))))
+  (may lexp
+    (be (? symbol?)           (var-ref<- lexp))
+    (be `(lambda (,v) ,body)  (abstraction<- v (parse body)))
+    (be `(,operator ,operand) (call<- (parse operator)
+                                      (parse operand)))))
 
 ;; Variable reference
 (to ((var-ref<- v) .compile k)
@@ -22,9 +22,9 @@
 ;; Application
 (to ((call<- operator operand) .compile k)
   (let code (operator .compile (operand .compile '(CALL))))
-  (be k
-    ('(RET) code)
-    (_      `(SAVE ,code.count ,@code ,@k))))
+  (may k
+    (be '(RET) code)
+    (else      `(SAVE ,code.count ,@code ,@k))))
 
 
 ;; Smoke test

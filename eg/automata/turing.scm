@@ -17,33 +17,33 @@
     (when (= option 'loudly)
       (show-config machine)
       (newline))
-    (be (step machine)
-      (#no machine)
-      (updated (running updated)))))
+    (may (step machine)
+      (be #no machine)
+      (be updated (running updated)))))
 
 (to (show-config {machine transit state {tape L h R}})
   (to (show-squares squares)
     (" " .join (for each ((s squares))
                  ("~w" .format s))))
-  (let next-acts (be (transit .get `(,state ,h))
-                   (#no '())
-                   (`(,acts ,_) acts)))
+  (let next-acts (may (transit .get `(,state ,h))
+                   (be #no '())
+                   (be `(,acts ,_) acts)))
 
   (let before (show-squares (reverse L)))
   (format "~d ~d ~d\n" before (show-squares `(,h)) (show-squares R))
   (format "~d ~w ~w\n" (" " .repeat before.count) state next-acts))
 
 (to (step {machine transit state (and tape {tape _ head _})})
-  (be (transit .get `(,state ,head))
-    (#no #no)
-    (`(,acts ,next-state) 
-     {machine transit next-state (foldl perform tape acts)})))
+  (may (transit .get `(,state ,head))
+    (be #no #no)
+    (be `(,acts ,next-state) 
+      {machine transit next-state (foldl perform tape acts)})))
 
 (to (perform {tape L h R} act)
-  (be act
-    ('<   {tape (L .slice 1) (L .get 0 '-) `(,h ,@R)})
-    ('>   {tape `(,h ,@L)    (R .get 0 '-) (R .slice 1)})
-    (mark {tape L mark R})))
+  (may act
+    (be '<   {tape (L .slice 1) (L .get 0 '-) `(,h ,@R)})
+    (be '>   {tape `(,h ,@L)    (R .get 0 '-) (R .slice 1)})
+    (be mark {tape L mark R})))
 
 
 ;; Conveniences

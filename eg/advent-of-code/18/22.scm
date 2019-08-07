@@ -73,7 +73,7 @@
 
   (to (keep-early efforts)
     (for those (({at t state} efforts))
-      (be (bests .get state)
+      (may (bests .get state)
         (#no (bests .set! state t)
              #yes)
         (t1  (if (< t t1)

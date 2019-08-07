@@ -12,7 +12,7 @@
     (tracks .push! (erase-cart dir))
     (carts .set! i {cart dir 0}))
   (for each! ((`(,i ,ch) world-str.items))
-    (be ch
+    (may ch
       (#\> (add-cart! i E))
       (#\< (add-cart! i W))
       (#\v (add-cart! i S))
@@ -29,7 +29,7 @@
 (let W 3)
 
 (to (step width dir) ; we could prob. pass an array around instead of width
-  (be dir
+  (may dir
     (0 (- width))
     (1 1)
     (2 width)
@@ -43,7 +43,7 @@
 
 (to (maybe-turn cart ch)
   (let {cart dir veer} cart)
-  (be ch
+  (may ch
     (#\/ {cart (turn-1 dir) veer})
     (#\\ {cart (turn-2 dir) veer})
     (#\+ (swerve dir veer))
@@ -65,7 +65,7 @@
   (dir.- .modulo 4))
 
 (to (swerve dir veer)
-  (be veer
+  (may veer
     (0 {cart (turn-left dir) 1})
     (1 {cart dir 2})
     (2 {cart (turn-right dir) 0})))

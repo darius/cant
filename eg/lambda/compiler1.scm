@@ -12,54 +12,54 @@
 (to (compile-and-run exp)
 
   (to (fill e)
-    (be e
-      ({const c}        (const<- c))
-      ({var v}          (var<- v))
-      ({lam v body src} (lam<- v (fill body) src)) ;N.B. src isn't updated correspondingly
-      ({app f a src}    (app<- (fill f) (fill a) src)) ;ditto
-      ({the-env}        (fill exp))))  ; TODO this is pretty janky
+    (may e
+      (be {const c}        (const<- c))
+      (be {var v}          (var<- v))
+      (be {lam v body src} (lam<- v (fill body) src)) ;N.B. src isn't updated correspondingly
+      (be {app f a src}    (app<- (fill f) (fill a) src)) ;ditto
+      (be {the-env}        (fill exp))))  ; TODO this is pretty janky
 
   (to (apply fn arg)
     (invoke fn arg {halt}))
 
   (to (invoke fn arg k)
-    (be fn
-      ({compiled-closure entry _}
-       (running entry {env fn arg} '() k))
-      ({primitive p}
-       (return (p arg) k))))
+    (may fn
+      (be {compiled-closure entry _}
+        (running entry {env fn arg} '() k))
+      (be {primitive p}
+        (return (p arg) k))))
 
   (to (return result k)
-    (be k
-      ({frame pc r st ret-k}
-       (running pc r (link result st) ret-k))
-      ({halt}
-       result)))
+    (may k
+      (be {frame pc r st ret-k}
+        (running pc r (link result st) ret-k))
+      (be {halt}
+        result)))
 
   (to (running pc r st k)  ; program counter + 1, "environment", local stack, "continuation"
 
     (to (fetch f)
       (let {env {compiled-closure _ vals} argument} r)
-      (be f
-        ('local     argument)
-        ((? count?) (vals f))))
+      (may f
+        (be 'local     argument)
+        (be (? count?) (vals f))))
 
-    ;;    (format "at ~w: ~w\n" pc (code (- pc 1)))
-    (be (code (- pc 1))
-      ({const c}
-       (running (- pc 1) r (link c st) k))
-      ({fetch f}
-       (running (- pc 1) r (link (fetch f) st) k))
-      ({enclose addr fs _}
-       (let closure {compiled-closure (- pc 1) (each fetch fs)}) ;TODO link to src annotation somewhere
-       (running addr r (link closure st) k))
-      ({push-cont addr}
-       (running (- pc 1) r st {frame addr r st k}))
-      ({return}
-       (return st.first k))
-      ({invoke _}
-       (let `(,fn ,arg ,@_) st)
-       (invoke fn arg k))
+    ;;    (format "at ~w: ~w\n" pc (code pc.-))
+    (may (code pc.-)
+      (be {const c}
+        (running pc.- r (link c st) k))
+      (be {fetch f}
+        (running pc.- r (link (fetch f) st) k))
+      (be {enclose addr fs _}
+        (let closure {compiled-closure pc.- (each fetch fs)}) ;TODO link to src annotation somewhere
+        (running addr r (link closure st) k))
+      (be {push-cont addr}
+        (running pc.- r st {frame addr r st k}))
+      (be {return}
+        (return st.first k))
+      (be {invoke _}
+        (let `(,fn ,arg ,@_) st)
+        (invoke fn arg k))
       ))
 
   (to (interpret prelude {module builtins}) ;TODO rename
@@ -153,9 +153,9 @@
     (to (_ v)
       (if (= v param)
           {fetch 'local}
-          (be (var-offsets .get v)
-            (#no (known v))
-            (n {fetch n}))))
+          (may (var-offsets .get v)
+            (be #no (known v))
+            (be n   {fetch n}))))
     (to _.known known)))
 
 

@@ -21,12 +21,12 @@
     pq1)
 
   (to (growing pq ns)
-    (be ns
-      ('() pq)
-      (`(,n1) (insert pq n1))
-      (`(,n1 ,n2 ,@rest)
-       (growing (remove-min (insert (insert pq n1) n2))
-                rest))))
+    (may ns
+      (be '() pq)
+      (be `(,n1) (insert pq n1))
+      (be `(,n1 ,n2 ,@rest)
+        (growing (remove-min (insert (insert pq n1) n2))
+                 rest))))
 
   (begin shrinking ((pq (growing empty numbers))
                     (ns numbers))

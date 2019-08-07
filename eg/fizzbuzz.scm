@@ -1,7 +1,7 @@
 (for each! ((n (1 .to 30)))
-  (display (be `(,(n .remainder 3) ,(n .remainder 5))
-             ('(0  0) "FizzBuzz")
-             (`(0 ,_) "Fizz")
-             (`(,_ 0) "Buzz")
-             (_       n)))
+  (display (may [(n .remainder 3) (n .remainder 5)]
+             (be [0 0] "FizzBuzz")
+             (be [0 _] "Fizz")
+             (be [_ 0] "Buzz")
+             (else     n)))
   (newline))

@@ -8,10 +8,10 @@
   clear-screen cursor-show cursor-hide)
 
 (to (main args)
-  (let n-steps (be args
-                 (`(,_) 20)
-                 (`(,_ ,n-str) (number<-string n-str))
-                 (`(,prog ,@_) (error ("Usage: ~d [#steps]" .format prog)))))
+  (let n-steps (may args
+                 (be `(,_)        20)
+                 (be `(,_ ,n-str) (number<-string n-str))
+                 (be `(,prog ,@_) (error ("Usage: ~d [#steps]" .format prog)))))
   (for cbreak-mode ()
     (display cursor-hide)
     (run r-pentomino n-steps)
@@ -26,10 +26,10 @@
 (to (update grid)
   (let active (bag<- (gather neighbors grid.keys)))
   (_.range (for yeahs ((`(,pos ,n-live) active.items))
-             (be n-live
-               (3 pos)
-               (2 (and (grid .maps? pos) pos))
-               (_ #no)))))
+             (may n-live
+               (be 3 pos)
+               (be 2 (and (grid .maps? pos) pos))
+               (else #no)))))
 
 (to (neighbors `(,x ,y))
   (for each ((`(,dx ,dy) neighborhood))

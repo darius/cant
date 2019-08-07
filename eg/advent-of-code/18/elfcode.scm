@@ -43,12 +43,12 @@
     (let commutative (set<- "+" "*" "&" "|"))
 
     (to (arg<- x)
-      (be x
+      (may x
         ({r i} (if (= i ip-reg) "IP" ("r~w" .format i)))
         ({i n} (string<-number n))
         (#no   "")))
 
-    (be op
+    (may op
       ('addr  (blah "+"  {r a} {r b}))
       ('addi  (blah "+"  {r a} {i b}))
       ('mulr  (blah "*"  {r a} {r b}))

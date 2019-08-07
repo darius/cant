@@ -37,24 +37,24 @@
     (to (_ .print thing)
       (if (or (symbol? thing) (self-evaluating? thing))  ;; TODO skip other atom types
           (thing .selfie cycle-sink)
-          (be (tags .get thing)
-            (#no
-             ;; First visit.
-             (tags .set! thing 0)
-             (buffer .push! (on (sink)
-                              (let id (tags thing))
-                              (unless (= 0 id)
-                                (format .to-sink sink "#~w=" id))))
-             (thing .selfie cycle-sink))
-            (tag
-             (let id (hm (when (= tag 0)
-                           ;; Second visit.
-                           (hey (counter .update _.+)
-                                (-> (tags .set! thing it))))
-                         (else
-                           ;; Thereafter.
-                           tag)))
-             (buffer .push! (on (sink)
-                              (format .to-sink sink "#~w" id)))))))))
+          (may (tags .get thing)
+            (be #no
+              ;; First visit.
+              (tags .set! thing 0)
+              (buffer .push! (on (sink)
+                               (let id (tags thing))
+                               (unless (= 0 id)
+                                 (format .to-sink sink "#~w=" id))))
+              (thing .selfie cycle-sink))
+            (be tag
+              (let id (hm (when (= tag 0)
+                            ;; Second visit.
+                            (hey (counter .update _.+)
+                                 (-> (tags .set! thing it))))
+                          (else
+                            ;; Thereafter.
+                            tag)))
+              (buffer .push! (on (sink)
+                               (format .to-sink sink "#~w" id)))))))))
 
 (export cycle-write)

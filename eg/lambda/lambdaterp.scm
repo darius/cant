@@ -11,16 +11,16 @@
 ;;  others  an AST or a value
 
 (to (parse lexp)
-  (be lexp
-    ((? symbol?)
-     (var-ref<- lexp))
-    ((? number?)
-     (constant<- lexp))
-    (`(lambda (,v) ,body)
-     (abstraction<- v (parse body)))
-    (`(,operator ,operand)
-     (call<- (parse operator)
-             (parse operand)))))
+  (may lexp
+    (be (? symbol?)
+      (var-ref<- lexp))
+    (be (? number?)
+      (constant<- lexp))
+    (be `(lambda (,v) ,body)
+      (abstraction<- v (parse body)))
+    (be `(,operator ,operand)
+      (call<- (parse operator)
+              (parse operand)))))
 
 (to (interpret lexp)
   ((parse lexp) .evaluate global-env halt))
@@ -38,25 +38,31 @@
 ;; Constant
 (to (constant<- c)
   (make constant
-    (to _.source c)
+    (to _.source           c)
     (to (_ .eval-step r k) (debugging (value-step<- constant r k)))
-    (to (_ .evaluate r k) (k .take c))))
+    (to (_ .evaluate r k)  (k .take c))))
 
 ;; Variable reference
 (to (var-ref<- v)
   (make var-ref
-    (to _.source v)
-    (to (_ .eval-step r k) (debugging (value-step<- var-ref r k)))
-    (to (_ .evaluate r k) (lookup r v k))))
+    (to _.source
+      v)
+    (to (_ .eval-step r k)
+      (debugging (value-step<- var-ref r k)))
+    (to (_ .evaluate r k)
+      (lookup r v k))))
 
 ;; Lambda expression
 (to (abstraction<- v body)
   (make abstraction
-    (to _.source `(& ,v ,body.source))
-    (to (_ .eval-step r k) (debugging (value-step<- abstraction r k)))
+    (to _.source
+      `(& ,v ,body.source))
+    (to (_ .eval-step r k)
+      (debugging (value-step<- abstraction r k)))
     (to (_ .evaluate r k)
       (k .take (make _
-                 (to _.survey `(,v -> <body>))
+                 (to _.survey
+                   `(,v -> <body>))
                  (to (_ .call arg k2)
                    (body .evaluate (extend r v arg) k2))
                  (to (_ .call-step arg k2)
@@ -65,7 +71,8 @@
 ;; Application
 (to (call<- operator operand)
   (make app
-    (to _.source `(,operator.source ,operand.source))
+    (to _.source
+      `(,operator.source ,operand.source))
     (to (_ .eval-step r k)
       (debugging (subeval-step<- operator r (ev-arg-cont<- operand r k))))
     (to (_ .evaluate r k)
@@ -108,7 +115,8 @@
   (to (_ .call arg1 k1)
     (if (number? arg1)
         (k1 .take (make _
-                    (to _.survey `(+ ,(survey arg1)))
+                    (to _.survey
+                      `(+ ,(survey arg1)))
                     (to (_ .call-step arg2 k2)
                       XXX)
                     (to (_ .call arg2 k2)
@@ -128,9 +136,9 @@
   `((,v ,val) ,@r))
 
 (to (lookup r v k)
-  (be (assoc v r)
-    (#no (debug k "Unbound var" v))
-    (record (k .take (record 1)))))
+  (may (assoc v r)
+    (be #no    (debug k "Unbound var" v))
+    (be record (k .take (record 1)))))
 
 
 ;; Debugger
@@ -141,14 +149,14 @@
 
 (to (next-command)
   (display "debug> ")
-  (be command-queue.^
-    ('()
-     (newline)
-     #no)
-    (`(,first ,@rest)
-     (print first)
-     (command-queue .^= rest)
-     first)))
+  (may command-queue.^
+    (be '()
+      (newline)
+      #no)
+    (be `(,first ,@rest)
+      (print first)
+      (command-queue .^= rest)
+      first)))
 
 (to (debug k plaint irritant)
   (complain plaint irritant)

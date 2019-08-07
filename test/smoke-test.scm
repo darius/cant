@@ -17,7 +17,7 @@
 (expect 136          (hide (to (f) 136) (f)))
 (expect 120          (hide
                        (to (factorial n)
-                         (be n
+                         (may n
                            (0 1)
                            (_ (n .* (factorial (n .- 1))))))
                        (factorial 5)))

@@ -5,14 +5,14 @@
   lit0 lit1 build-choice)
 
 (to (main args)
-  (be args.rest
-    (`(,n) (queens (number<-string n)))
-    (_     (format "Usage: ~d board-size\n" (args 0)))))
+  (may args.rest
+    (be `(,n) (queens (number<-string n)))
+    (else     (format "Usage: ~d board-size\n" (args 0)))))
 
 (to (queens n)
-  (be (satisfy-first (queens-problem n) 1)
-    (#no (display "none\n"))
-    (env (print-board n env))))
+  (may (satisfy-first (queens-problem n) 1)
+    (be #no (display "none\n"))
+    (be env (print-board n env))))
 
 (to (print-board n env)
   (for each! ((row (board<- n)))

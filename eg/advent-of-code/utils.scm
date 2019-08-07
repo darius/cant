@@ -11,7 +11,7 @@
 (to (all-mins-by fn xs)
   (for foldl ((best (list<- xs.first))
               (x xs.rest))
-    (be ((fn best.first) .compare (fn x))
+    (may ((fn best.first) .compare (fn x))
       (-1 best)
       ( 0 (link x best))
       (+1 (list<- x)))))

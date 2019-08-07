@@ -34,31 +34,31 @@
     (hm (when tokens.empty?
           (surely frames.empty?))      ;XXX require
         (else
-          (be tokens.first
-            ((? number? n)
-             (code .push! (push<- n))
-             (compiling frames tokens.rest))
-            ('<<
-             (let `(,locals ,tail)
-               (split-on (-> (= it '--)) tokens.rest))
-             (code .push! (grab<- locals.count))
-             (compiling `(,(reverse locals) ,@frames)
-                        tail.rest))
-            ('>>
-             (surely (not frames.empty?)) ;XXX require
-             (code .push! (ungrab<- frames.first.count))
-             (compiling frames.rest tokens.rest))
-            ((? symbol? word)
-             (code .push! (or (compile-local frames word)
-                              (dictionary word)))
-             (compiling frames tokens.rest))))))
+          (may tokens.first
+            (be (? number? n)
+              (code .push! (push<- n))
+              (compiling frames tokens.rest))
+            (be '<<
+              (let `(,locals ,tail)
+                (split-on (-> (= it '--)) tokens.rest))
+              (code .push! (grab<- locals.count))
+              (compiling `(,(reverse locals) ,@frames)
+                         tail.rest))
+            (be '>>
+              (surely (not frames.empty?)) ;XXX require
+              (code .push! (ungrab<- frames.first.count))
+              (compiling frames.rest tokens.rest))
+            (be (? symbol? word)
+              (code .push! (or (compile-local frames word)
+                               (dictionary word)))
+              (compiling frames tokens.rest))))))
   code.values)
 
 (to (compile-local frames word)
   (let locals (chain @frames))      ;I think
-  (be (locals .find word #no)
-    (#no   #no)
-    (index (local<- index))))
+  (may (locals .find word #no)
+    (be #no   #no)
+    (be index (local<- index))))
 
 (to (run xts)
   (for foldl ((state {state '() '()})

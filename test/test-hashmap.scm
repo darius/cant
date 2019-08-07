@@ -25,35 +25,35 @@
   (for each! ((_ (range<- n-trials)))
     (exercise-em (for each ((value (range<- 50)))
                    (let key (rng .random-integer 16))
-                   (let op (be (rng .random-integer 10)
-                             (0 'delete)
-                             (1 'fetch)
-                             (2 'fetch)
-                             (3 'fetch)
-                             (_ value)))
+                   (let op (may (rng .random-integer 10)
+                             (be 0 'delete)
+                             (be 1 'fetch)
+                             (be 2 'fetch)
+                             (be 3 'fetch)
+                             (else value)))
                    `(,key ,op)))))
 
 (to (exercise-em pairs)
   (let m (map<-))     ;; The hashmap under test.
   (let a (box<- '())) ;; An a-list that should be equivalent.
   (for each! ((`(,key ,op) pairs))
-    (be op
-      ('fetch
-       (let m-val (m .get key))
-       (let a-val (be (assoc key a.^)
-                    (#no #no)
-                    (`(,k ,v) v)))
-       (surely (= m-val a-val))
+    (may op
+      (be 'fetch
+        (let m-val (m .get key))
+        (let a-val (may (assoc key a.^)
+                     (be #no #no)
+                     (be `(,k ,v) v)))
+        (surely (= m-val a-val))
                                         ;        (print `(,key ,m-val))
-       )
-      ('delete
-       (m .delete! key)
-       (a .^= (a-list-remove key a.^)))
-      (value
-       (m .set! key value)
-       (a .^= `((,key ,value) ,@(a-list-remove key a.^)))
-       ;; TODO test equivalence here
-       )))
+        )
+      (be 'delete
+        (m .delete! key)
+        (a .^= (a-list-remove key a.^)))
+      (be value
+        (m .set! key value)
+        (a .^= `((,key ,value) ,@(a-list-remove key a.^)))
+        ;; TODO test equivalence here
+        )))
   (let r1 (sort m.items))
   (let r2 (sort a.^))
   (surely (= r1 r2) "Final maps diverge" r1 r2))

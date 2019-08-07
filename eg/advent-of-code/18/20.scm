@@ -38,7 +38,7 @@ dir:  {'N' | 'S' | 'E' | 'W'} :Dir.
     ;; following exp from p, with each value being the lowest
     ;; door-distance traveled to get to the position (including d).
     (rooms .set! p (min d (rooms .get p infinity)))
-    (be exp
+    (may exp
       ({dir ch}
        (visit (vector+ p (step ch))
               d.up
@@ -79,7 +79,7 @@ dir:  {'N' | 'S' | 'E' | 'W'} :Dir.
   ;; TODO there should be a union-with-combiner method
   (let result map1.copy)
   (for each! ((`(,k2 ,v2) map2.items))
-    (result .set! k2 (be (map1 .get k2)
+    (result .set! k2 (may (map1 .get k2)
                        (#no v2)
                        (v1 (min v1 v2)))))
   result)

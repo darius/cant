@@ -8,7 +8,7 @@
   push extend
   peek)
 
-(let margin (be data-name
+(let margin (may data-name
               ("06.in" 10000)
               ("06.test" 32)))
 (let input (with-input-file _.read-lines data-file))
@@ -60,7 +60,7 @@
 (to (grow-from seed)
   (let already (set<-))
   (begin growing ((queue (extend empty `(,seed))))
-    (be (peek queue)
+    (may (peek queue)
       ({empty})
       ({nonempty p queue-1}
        (if (region .maps? p)

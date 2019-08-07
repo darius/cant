@@ -11,12 +11,12 @@
 
 (to (report-badness filename)
 ;;  (format "Checking ~d...\n" filename)
-  (be (those bad-expr? (with-input-file read-all filename))
-    ('() 'ok)
-    (top-level-bad-exprs
-     (format "In ~d these top-level expressions harbor badness:\n" filename)
-     (each! pp top-level-bad-exprs)
-     (newline))))
+  (may (those bad-expr? (with-input-file read-all filename))
+    (be '() 'ok)
+    (be top-level-bad-exprs
+      (format "In ~d these top-level expressions harbor badness:\n" filename)
+      (each! pp top-level-bad-exprs)
+      (newline))))
 
 (to (bad-expr? expr)
   (bad-part? (expr-subparts expr)))
@@ -26,13 +26,12 @@
       (some bad-patt? subpatts)))
 
 (to (bad-patt? patt)
-  (let p (macroexpand-outer-patt patt))
-  (be p
-    (`(,s ,@_)
-     (if (not ('(_ list<- link quote and view @ quasiquote) .find? s))
-         (do (format "This subpattern is bad: ~w\n" patt)
-             #yes)
-         (bad-part? (patt-subparts p))))
-    (_ (bad-part? (patt-subparts p)))))
+  (may (let p (macroexpand-outer-patt patt))
+    (be `(,s ,@_)
+      (if (not ('(_ list<- link quote and view @ quasiquote) .find? s))
+          (do (format "This subpattern is bad: ~w\n" patt)
+              #yes)
+          (bad-part? (patt-subparts p))))
+    (else (bad-part? (patt-subparts p)))))
 
 (export main bad-expr? bad-patt?)

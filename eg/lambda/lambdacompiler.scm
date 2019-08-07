@@ -31,28 +31,28 @@
 
   (to (running code local closure ret stack)
     (to (access insn)
-      (be insn
-        ('local local)
-        ((? number?) (closure insn))))
-    (be code
-      (`(make-closure ,m ,n ,@rest)
-       (let new-closure (array<-list (link (rest .slice m)
-                                           (each access (rest .slice 0 m)))))
-       (running (rest .slice (+ m n)) local closure ret (link new-closure stack)))
-      (`(invoke ,@_)
-       (let `(,argument ,callee ,@old-stack) stack)
-       (running (callee 0) argument callee ret `(,local ,closure ,@old-stack)))
-      (`(return ,@_)
-       (let `(,return-value ,new-local ,new-closure ,new-ret ,@new-stack) stack)
-       (running ret new-local new-closure new-ret (link return-value new-stack)))
-      (`(pushcont ,n ,@code1)
-       (let new-ret (code1 .slice n))
-       (let new-stack `(,local ,closure ,ret ,@stack))
-       (running code1 local closure new-ret new-stack))
-      (`(halt ,@_)                      ;XXX need to emit this somewhere
-       stack.first)
-      (`(,accessor ,@code1)    ;; ugh, defaulty representation
-       (running code1 local closure ret (link (access accessor) stack)))))
+      (may insn
+        (be 'local local)
+        (be (? number?) (closure insn))))
+    (may code
+      (be `(make-closure ,m ,n ,@rest)
+        (let new-closure (array<-list (link (rest .slice m)
+                                            (each access (rest .slice 0 m)))))
+        (running (rest .slice (+ m n)) local closure ret (link new-closure stack)))
+      (be `(invoke ,@_)
+        (let `(,argument ,callee ,@old-stack) stack)
+        (running (callee 0) argument callee ret `(,local ,closure ,@old-stack)))
+      (be `(return ,@_)
+        (let `(,return-value ,new-local ,new-closure ,new-ret ,@new-stack) stack)
+        (running ret new-local new-closure new-ret (link return-value new-stack)))
+      (be `(pushcont ,n ,@code1)
+        (let new-ret (code1 .slice n))
+        (let new-stack `(,local ,closure ,ret ,@stack))
+        (running code1 local closure new-ret new-stack))
+      (be `(halt ,@_)                      ;XXX need to emit this somewhere
+        stack.first)
+      (be `(,accessor ,@code1)    ;; ugh, defaulty representation
+        (running code1 local closure ret (link (access accessor) stack)))))
 
   (running code argument 'XXX 'XXX '()))
 
@@ -60,35 +60,42 @@
   ((parse lexp) .compile global-scope '(halt)))
 
 (to (parse lexp)
-  (be lexp
-    ((? symbol?)           (var-ref<- lexp))
-    (`(lambda (,v) ,body)  (abstraction<- v (parse body)))
-    (`(,operator ,operand) (call<- (parse operator)
-                                   (parse operand)))))
+  (may lexp
+    (be (? symbol?)           (var-ref<- lexp))
+    (be `(lambda (,v) ,body)  (abstraction<- v (parse body)))
+    (be `(,operator ,operand) (call<- (parse operator)
+                                      (parse operand)))))
 
 ;; Variable reference
 (to (var-ref<- v)
-  (make (to _.free-vars (set<- v))
-        (to (_ .compile s k) (link (s v) k))))
+  (make _
+    (to _.free-vars
+      (set<- v))
+    (to (_ .compile s k)
+      (link (s v) k))))
 
 ;; Lambda expression
 (to (abstraction<- v body)
   (let free-vars (body.free-vars .difference (set<- v)))
-  (make (to _.free-vars free-vars)
-        (to (_ .compile s k)
-          (let code (body .compile (scope<- v free-vars.keys.inverse) '(return)))
-          `(make-closure
-            ,free-vars.count ,code.count ,@(each s free-vars.keys)
-            ,@code ,@k))))
+  (make _
+    (to _.free-vars
+      free-vars)
+    (to (_ .compile s k)
+      (let code (body .compile (scope<- v free-vars.keys.inverse) '(return)))
+      `(make-closure
+        ,free-vars.count ,code.count ,@(each s free-vars.keys)
+        ,@code ,@k))))
 
 ;; Application
 (to (call<- operator operand)
-  (make (to _.free-vars (operator.free-vars .union operand.free-vars))
-        (to (_ .compile s k)
-          (let code (operand .compile s (operator .compile s '(invoke))))
-          (if (= k '(return))
-              code
-              `(pushcont ,code.count ,@code ,@k)))))
+  (make _
+    (to _.free-vars
+      (operator.free-vars .union operand.free-vars))
+    (to (_ .compile s k)
+      (let code (operand .compile s (operator .compile s '(invoke))))
+      (if (= k '(return))
+          code
+          `(pushcont ,code.count ,@code ,@k)))))
 
 
 ;; Scopes (called 's' above)

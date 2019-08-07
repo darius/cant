@@ -9,10 +9,10 @@
 
 (to (int-log2 n)
   (begin searching ((p 0) (two**p 1))
-    (be (compare two**p n)
-      (-1 (searching p.+ (* 2 two**p)))
-      ( 0 p)
-      (+1 (error "Not a power of 2" n)))))
+    (may (compare two**p n)
+      (be -1 (searching p.+ (* 2 two**p)))
+      (be  0 p)
+      (be +1 (error "Not a power of 2" n)))))
 
 (to (pow2 n)
   (1 .<< n))

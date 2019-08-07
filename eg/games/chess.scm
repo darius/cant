@@ -18,11 +18,11 @@
 (to (human-player board)
   (begin asking ()
     (display ("~d, your move? " .format (side-name board.mover)))
-    (be stdin.read-line  ;TODO extract the stdin cap
-      ((? eof?) {resign})
-      (answer (or (board .parse-move answer)
-                  (do (display "Illegal move\n")
-                      (asking)))))))
+    (may stdin.read-line  ;TODO extract the stdin cap
+      (be (? eof?) {resign})
+      (be answer (or (board .parse-move answer)
+                     (do (display "Illegal move\n")
+                         (asking)))))))
 
 (to (random-player<- rng)
   (to (random-player board)
@@ -43,19 +43,19 @@
   ;; Just a little randomness makes play less boring:
   ;;XXX need to set up with an rng
   ;; total += random.uniform(0, 0.001)
-  (be board.mover
-    ('white (- total))
-    (_      total)))
+  (may board.mover
+    (be 'white (- total))
+    (else      total)))
 
 ;; TODO not really tested
 (to (minimax-evaluate board depth)
-  (be depth
-    (0 (greedy-evaluate board))
-    (_ (be board.get-piece-moves
-         ('() 0)
-         (moves (- (min @(for each ((move moves))
-                           (minimax-evaluate (update move board)
-                                             depth.-)))))))))
+  (may depth
+    (be 0 (greedy-evaluate board))
+    (else (may board.get-piece-moves
+            (be '() 0)
+            (be moves (- (min @(for each ((move moves))
+                                 (minimax-evaluate (update move board)
+                                                   depth.-)))))))))
 
 (let piece-values
   (map<- '((#\p 10)
@@ -103,10 +103,10 @@
         (format .to-sink sink "\n"))
       (format .to-sink sink " +----------------\n")
       (format .to-sink sink "   a b c d e f g h    ~d\n"
-              (be board.outcome
-                (#no   ("~d to move" .format (side-name mover)))
-                ('draw "A draw.")
-                (w     ("~d wins!" .format (side-name w))))))
+              (may board.outcome
+                (be #no   ("~d to move" .format (side-name mover)))
+                (be 'draw "A draw.")
+                (be w     ("~d wins!" .format (side-name w))))))
 
     ;; Return #no, draw, black, or white (meaning the winner).
     (to _.outcome
@@ -120,9 +120,9 @@
       ;; Or: is the mover in check now, and in check after every possible move?
       ;; XXX also seems buggy in other ways, though these boards are hard to read in the console
       (to (in-check?)                    ;XXX redundant and untested. Not yet in the Python version.
-        (let my-king (be mover
-                       ('white #\K)
-                       ('black #\k)))
+        (let my-king (may mover
+                       (be 'white #\K)
+                       (be 'black #\k)))
         (let swap-players (board<- (opponent mover)
                                    squares castling en-passant-target outcome-param))
         (not (for every ((succ swap-players.gen-successors))
@@ -133,9 +133,9 @@
     ;; Is the opponent in check?
     (to _.checking?
       ;; Operationalized as: can the mover take the opposing king?
-      (let opposing-king (be mover
-                           ('white #\k)
-                           ('black #\K)))
+      (let opposing-king (may mover
+                           (be 'white #\k)
+                           (be 'black #\K)))
       (not (for every ((succ board.gen-successors))
              (succ.squares .find? opposing-king))))
 
@@ -172,9 +172,9 @@
       XXX)
 
     (to (_ .play-turn `(,white-player ,black-player))
-      (let player (be mover
-                    ('white white-player)
-                    ('black black-player)))
+      (let player (may mover
+                    (be 'white white-player)
+                    (be 'black black-player)))
       (let move (player board))
       (let possibles `({resign} ,@board.gen-legal-moves))  ;; isn't this poor factoring?
       (unless (possibles .find? move)
@@ -239,49 +239,49 @@
                 (else
                     '())))))
 
-      (be piece
+      (may piece
 
-        (#\P
-         ;; XXX do en passant too
-         (let dr (if white? -1 1))
-         (let r1 (+ r dr))
-         (chain (if (empty? r1 c)
-                    (link (move-to r1 c)
-                          (if (and (= r (if white? 7 2))   ; initial 2 steps
-                                   (empty? (+ r1 dr) c))
-                              (link (move-to (+ r1 dr) c) '())
-                              '()))
-                    '())
-                (if (has-opponent? r1 c.-)
-                    `(,(move-to r1 c.-))
-                    '())
-                (if (has-opponent? r1 c.+)
-                    `(,(move-to r1 c.+))
-                    '())))
+        (be #\P
+          ;; XXX do en passant too
+          (let dr (if white? -1 1))
+          (let r1 (+ r dr))
+          (chain (if (empty? r1 c)
+                     (link (move-to r1 c)
+                           (if (and (= r (if white? 7 2))   ; initial 2 steps
+                                    (empty? (+ r1 dr) c))
+                               (link (move-to (+ r1 dr) c) '())
+                               '()))
+                     '())
+                 (if (has-opponent? r1 c.-)
+                     `(,(move-to r1 c.-))
+                     '())
+                 (if (has-opponent? r1 c.+)
+                     `(,(move-to r1 c.+))
+                     '())))
 
-        (#\K
-         (for yeahs ((`(,dr ,dc) queen-dirs))
-           (let r1 (+ r dr))
-           (let c1 (+ c dc))
-           ;; XXX also castling
-           (and (takeable? r1 c1)
-                (move-to r1 c1))))
+        (be #\K
+          (for yeahs ((`(,dr ,dc) queen-dirs))
+            (let r1 (+ r dr))
+            (let c1 (+ c dc))
+            ;; XXX also castling
+            (and (takeable? r1 c1)
+                 (move-to r1 c1))))
 
-        (#\N
-         (for yeahs ((`(,dr ,dc) knight-jumps))
-           (let r1 (+ r dr))
-           (let c1 (+ c dc))
-           (and (<= 1 r1 8)
-                (<= 1 c1 8)
-                (takeable? r1 c1)
-                (move-to r1 c1))))
+        (be #\N
+          (for yeahs ((`(,dr ,dc) knight-jumps))
+            (let r1 (+ r dr))
+            (let c1 (+ c dc))
+            (and (<= 1 r1 8)
+                 (<= 1 c1 8)
+                 (takeable? r1 c1)
+                 (move-to r1 c1))))
 
-        (#\Q (move-freely queen-dirs))
-        (#\R (move-freely rook-dirs))
-        (#\B (move-freely bishop-dirs))
+        (be #\Q (move-freely queen-dirs))
+        (be #\R (move-freely rook-dirs))
+        (be #\B (move-freely bishop-dirs))
 
-        (#\space '())
-        (#\-     '())))
+        (be #\space '())
+        (be #\-     '())))
 
     (to _.squares
       ("" .join squares))
@@ -300,31 +300,31 @@
 
 (let opponent
   (case
-    ('white 'black)
-    ('black 'white)))
+    (be 'white 'black)
+    (be 'black 'white)))
 
 (to (update move board)
-  (be move
-    ({resign}
-     board.resign)
-    ({move from-pos to-pos kind}
-     (be kind
-       ;; TODO we might need one more kind, like 'simple but with an en-passant-target
-       ('simple
-        (board .move-piece from-pos to-pos #no))
-       ('castling
-        (board .castle from-pos to-pos))
-       ('en-passant-capture
-        (board .move-en-passant from-pos to-pos))
-       ('pawn-promotion
-        (board .move-promoting from-pos to-pos))))))
+  (may move
+    (be {resign}
+      board.resign)
+    (be {move from-pos to-pos kind}
+      (may kind
+        ;; TODO we might need one more kind, like 'simple but with an en-passant-target
+        (be 'simple
+          (board .move-piece from-pos to-pos #no))
+        (be 'castling
+          (board .castle from-pos to-pos))
+        (be 'en-passant-capture
+          (board .move-en-passant from-pos to-pos))
+        (be 'pawn-promotion
+          (board .move-promoting from-pos to-pos))))))
 
 (to (unparse-move move)
-  (be move
-    ({resign}
-     "resign")
-    ({move from-pos to-pos _}
-     (chain (unparse-pos from-pos) (unparse-pos to-pos)))))
+  (may move
+    (be {resign}
+      "resign")
+    (be {move from-pos to-pos _}
+      (chain (unparse-pos from-pos) (unparse-pos to-pos)))))
 
 (to (unparse-pos `(,r ,c))
   ("~d~w" .format ("abcdefgh" (- c 1)) (- 9 r)))

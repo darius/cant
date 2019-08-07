@@ -50,8 +50,8 @@
     (begin searching ((items map.items))
       (if items.empty?
           default
-          (be items.first
-            (`(,k ,v) (if (= v value) k (searching items.rest)))
+          (may items.first
+            (be `(,k ,v) (if (= v value) k (searching items.rest)))
             (else (searching items.rest))))))
   (to (_ .find value)
     (make missing)
@@ -128,9 +128,9 @@
     ;; N.B. mutable arrays compare by this method, so it's really a comparison as of right now
     (hm (if list.empty? (if xs.empty? 0 -1))
         (if xs.empty? 1)
-        (else (be (list.first .compare xs.first)
-                (0 (list.rest .compare xs.rest))
-                (d d)))))
+        (else (may (list.first .compare xs.first)
+                (be 0 (list.rest .compare xs.rest))
+                (be d d)))))
   ;; A sequence is a kind of collection. Start implementing that:
   (to _.keys
     (range<- list.count)) ;TODO move this impl to array-trait; here, enum lazily.
@@ -156,24 +156,24 @@
           (if (= value values.first) i)
           (else (looking i.+ values.rest)))))
   (to (_ .find value)
-    (be (list .find value #no)
-      (#no (error "Missing value" value))
-      (key key)))
+    (may (list .find value #no)
+      (be #no (error "Missing value" value))
+      (be key key)))
   (to (_ .find? value)
-    (be (list .find value #no)
-      (#no #no)
-      (_ #yes)))
+    (may (list .find value #no)
+      (be #no #no)
+      (else   #yes)))
   (to (_ .last)
     (let rest list.rest)
     (if rest.empty? list.first rest.last))
   (to (_ .prefix? p)
     (= (list .slice 0 p.count) p))   ;TODO more efficient
   (to (_ .repeat n)
-   ;;TODO a method to get an empty seq of my type; and then factor out duplicate code
-    (be n
-      (0 '())             
-      (_ (chain @(for each ((_ (range<- n)))
-                   list)))))
+    ;;TODO a method to get an empty seq of my type; and then factor out duplicate code
+    (may n
+      (be 0 '())             
+      (else (chain @(for each ((_ (range<- n)))
+                      list)))))
   (to _.maybe  ;; TODO an experiment TODO could be defined on maps in general too
     (if list.empty?
         #no
@@ -268,10 +268,10 @@
   (to (_ i)         (__list-ref me i))    ;XXX just use the trait method? then can e.g. mix lazy and eager list nodes
   (to (_ .chain a)  (__append me a))
   (to (_ .selfie sink)
-    (be me
-      (`(quote ,x)
-       (sink .display "'")
-       (sink .print x))
+    (may me
+      (be `(quote ,x)
+        (sink .display "'")
+        (sink .print x))
       (else
        (sink .display "(")
        (sink .print me.first)
@@ -477,10 +477,10 @@
                    me
                    (" " .repeat half)))))
   (to (_ .repeat n)
-    (be n
-      (0 "")
-      (_ (chain @(for each ((_ (range<- n)))
-                   me)))))
+    (may n
+      (be 0 "")
+      (else (chain @(for each ((_ (range<- n)))
+                      me)))))
   (to (_ .format @arguments)
     (let sink (string-sink<-))
     (format .to-sink sink me @arguments)
@@ -496,14 +496,14 @@
   (to (_ .selfie sink)
     (sink .display #\")
     (for each! ((c me))
-      (sink .display (be c            ;XXX super slow. We might prefer to use the Scheme built-in.
-                       (#\\ "\\\\")
-                       (#\" "\\\"")
-                       (#\newline "\\n")
-                       (#\tab     "\\t")
-                       (#\return  "\\r")
+      (sink .display (may c            ;XXX super slow. We might prefer to use the Scheme built-in.
+                       (be #\\ "\\\\")
+                       (be #\" "\\\"")
+                       (be #\newline "\\n")
+                       (be #\tab     "\\t")
+                       (be #\return  "\\r")
                        ;; XXX escape the control chars
-                       (_ c))))
+                       (else c))))
     (sink .display #\"))
   (to message
     (list-trait me message))) ;XXX use trait syntax instead
@@ -523,10 +523,10 @@
     (surely (integer? n) "Bad arg type" n)
     (char<- (+ me.code n)))
   (to (_ .- b)
-    (be b
-      ((? integer?) (char<- (- me.code b)))
-      ((? char?)    (- me.code b.code))
-      (_ (error "Bad arg type" b))))
+    (may b
+      (be (? integer?) (char<- (- me.code b)))
+      (be (? char?)    (- me.code b.code))
+      (else (error "Bad arg type" b))))
   (to (_ .to< b)      (range<- me b))       ;These methods should be in a trait
   (to (_ .to b)       (range<- me b.+))    ;if they're a good idea at all...
   (to (_ .span n)     (range<- me (+ me n)))
@@ -839,26 +839,26 @@
        
         (make map {extending map-trait}
           (to (_ key)
-            (be (place key)
-              ({at i} (vals.^ i))
-              (_      (error "Missing key" map key))))
+            (may (place key)
+              (be {at i} (vals.^ i))
+              (else      (error "Missing key" map key))))
           (to (_ .get key @(optional default))
-            (be (place key)
-              ({at i} (vals.^ i))
-              (_      default)))
+            (may (place key)
+              (be {at i} (vals.^ i))
+              (else      default)))
           (to (_ .set! key val)
-            (be (place key)
-              ({at i}
-               (vals.^ .set! i val))
-              ({missing-at i}
-               (keys.^ .set! i key)
-               (vals.^ .set! i val)
-               (count .^= count.^.+)
-               (maybe-grow))))
+            (may (place key)
+              (be {at i}
+                (vals.^ .set! i val))
+              (be {missing-at i}
+                (keys.^ .set! i key)
+                (vals.^ .set! i val)
+                (count .^= count.^.+)
+                (maybe-grow))))
           (to (_ .maps? key)
-            (be (place key)
-              ({at _} #yes)
-              (_      #no)))
+            (may (place key)
+              (be {at _} #yes)
+              (else      #no)))
           (to _.empty? (= count.^ 0))
           (to _.count  count.^)
           (to _.keys   (each keys.^ (occupants))) ;XXX lazy-map
@@ -869,22 +869,22 @@
             (for each ((i (occupants)))
               `(,(ks i) ,(vs i))))
           (to (_ .get-set! key value<-)
-            (be (place key)
-              ({at i}
-               (vals.^ i))
-              ({missing-at _}
-               (let value (value<-))
-               ;; Alas, we can't just stick it in at i because (value<-)
-               ;; might have changed things too:
-               (map .set! key value)
-               value)))
+            (may (place key)
+              (be {at i}
+                (vals.^ i))
+              (be {missing-at _}
+                (let value (value<-))
+                ;; Alas, we can't just stick it in at i because (value<-)
+                ;; might have changed things too:
+                (map .set! key value)
+                value)))
           (to (_ .delete! key)
-            (be (place key)
-              ({at i}
-               (keys.^ .set! i deleted)
-               (count .^= count.^.-)
-               #no)
-              (_ #no)))   ;XXX error instead? It is in Python.
+            (may (place key)
+              (be {at i}
+                (keys.^ .set! i deleted)
+                (count .^= count.^.-)
+                #no)
+              (else #no)))   ;XXX error instead? It is in Python.
           (to (_ .find? value)
             (map.values .find? value))
           (to (_ .find value default)
@@ -1007,10 +1007,10 @@
 (make-trait transitive-comparison compare?
   (to (_ x @xs)
     (begin comparing ((x0 x) (xs xs))
-      (be xs
-        (`() #yes)
-        (`(,x1 ,@rest) (and (compare? x0 x1)
-                            (comparing x1 rest)))))))
+      (may xs
+        (be `()           #yes)
+        (be `(,x1 ,@rest) (and (compare? x0 x1)
+                               (comparing x1 rest)))))))
 
 (make <   {extending transitive-comparison} (to (_ a b)      (= (compare a b) -1)))
 (make <=  {extending transitive-comparison} (to (_ a b) (not (= (compare a b)  1))))
@@ -1023,11 +1023,11 @@
   (if (comparison? result) result (error "Incomparable" a b)))
 
 (to (comparison? x)
-  (be x
-    (-1 #yes)
-    ( 0 #yes)
-    (+1 #yes)
-    (_  #no)))
+  (may x
+    (be -1 #yes)
+    (be  0 #yes)
+    (be +1 #yes)
+    (else  #no)))
 
 
 ;;XXX so should some of these be in list-trait?
@@ -1213,44 +1213,44 @@
   (hide
 
     (to (unparse-exp e)
-      (be e.term
-        ({constant c}
-         (if (self-evaluating? c) c `',c))
-        ({variable v}
-         v)
-        ({make name stamp trait clauses}
-         (unparse-make name stamp trait clauses))
-        ({do e1 e2}
-         (unparse-do e1 e2))
-        ({let p e}
-         `(let ,(unparse-pat p) ,(unparse-exp e)))
-        ({call e1 e2}
-         (be e2.term
-           ({list operands}
-            `(,(unparse-exp e1) ,@(each unparse-exp operands)))
-           ({term (? cue? cue) operands}
-            `(,(unparse-exp e1) ,cue ,@(each unparse-exp operands)))
-           (_
-            `(call ,(unparse-exp e1) ,(unparse-exp e2)))))
-        ({term tag es}
-         (term<- tag (each unparse-exp es)))
-        ({list es}
-         `(list<- ,@(each unparse-exp es))))) ;XXX unhygienic
+      (may e.term
+        (be {constant c}
+          (if (self-evaluating? c) c `',c))
+        (be {variable v}
+          v)
+        (be {make name stamp trait clauses}
+          (unparse-make name stamp trait clauses))
+        (be {do e1 e2}
+          (unparse-do e1 e2))
+        (be {let p e}
+          `(let ,(unparse-pat p) ,(unparse-exp e)))
+        (be {call e1 e2}
+          (may e2.term
+            (be {list operands}
+              `(,(unparse-exp e1) ,@(each unparse-exp operands)))
+            (be {term (? cue? cue) operands}
+              `(,(unparse-exp e1) ,cue ,@(each unparse-exp operands)))
+            (else
+              `(call ,(unparse-exp e1) ,(unparse-exp e2)))))
+        (be {term tag es}
+          (term<- tag (each unparse-exp es)))
+        (be {list es}
+          `(list<- ,@(each unparse-exp es))))) ;XXX unhygienic
 
     (to (unparse-do e1 e2)
       (let es
         (begin unparsing ((tail e2))
-          (be tail.term
-            ({do e3 e4} (link e3 (unparsing e4)))
-            (_ `(,tail)))))
+          (may tail.term
+            (be {do e3 e4} (link e3 (unparsing e4)))
+            (else          `(,tail)))))
       `(do ,@(each unparse-exp (link e1 es))))
 
     (to (unparse-make name stamp trait-term clauses)
       (surely (= {constant #no} stamp.term)) ;XXX
       `(make ,name
-         ,@(be trait-term.term
-             ({constant #no} '())
-             (trait-e `({extending ,(unparse-exp trait-e)})))
+         ,@(may trait-term.term
+             (be {constant #no} '())
+             (be trait-e        `({extending ,(unparse-exp trait-e)})))
          ,@(each unparse-clause clauses)))
 
     (to (unparse-clause `(,p ,p-vars ,e-vars ,e))
@@ -1258,21 +1258,21 @@
 
     (to (unparse-pat pat)
       ;; XXX these need updating to the newer pattern syntax
-      (be pat.term
-        ({constant-pat c}
-         (if (self-evaluating? c) c `',c))
-        ({any-pat}
-         '_)
-        ({variable-pat v}
-         v)
-        ({term-pat tag ps}
-         (term<- tag (each unparse-pat ps)))
-        ({list-pat ps}
-         (each unparse-pat ps))
-        ({and-pat p1 p2}
-         `(<and-pat> ,(unparse-pat p1) ,(unparse-pat p2)))
-        ({view-pat e p}
-         `(<view-pat> ,(unparse-exp e) ,(unparse-pat p)))))
+      (may pat.term
+        (be {constant-pat c}
+          (if (self-evaluating? c) c `',c))
+        (be {any-pat}
+          '_)
+        (be {variable-pat v}
+          v)
+        (be {term-pat tag ps}
+          (term<- tag (each unparse-pat ps)))
+        (be {list-pat ps}
+          (each unparse-pat ps))
+        (be {and-pat p1 p2}
+          `(<and-pat> ,(unparse-pat p1) ,(unparse-pat p2)))
+        (be {view-pat e p}
+          `(<view-pat> ,(unparse-exp e) ,(unparse-pat p)))))
 
     (list<- unparse-exp unparse-pat unparse-clause)))
 
@@ -1293,15 +1293,15 @@
       (if s.empty? 
           (unless args.empty?
             (error "Leftover arguments" args))
-          (be s.first
-            (#\~
-             (let ss s.rest)
-             (if (ss .prefix? '(#\-))
-                 (parse sink ss.rest -1 #no args)
-                 (parse sink ss #no #no args)))
-            (ch
-             (sink .display ch)
-             (scanning sink s.rest args)))))
+          (may s.first
+            (be #\~
+              (let ss s.rest)
+              (if (ss .prefix? '(#\-))
+                  (parse sink ss.rest -1 #no args)
+                  (parse sink ss #no #no args)))
+            (be ch
+              (sink .display ch)
+              (scanning sink s.rest args)))))
 
     (to (parse sink s sign width args)
       (if (s .prefix? '(#\0))
@@ -1311,27 +1311,27 @@
     (to (parsing sink s pad sign width args)
       (when s.empty?
         (error "Incomplete format")) ;TODO report the format-string
-      (be s.first
-        (#\w
-         (maybe-pad sink pad sign width (_ .print args.first))
-         (scanning sink s.rest args.rest))
-        (#\d
-         (maybe-pad sink pad sign width (_ .display args.first))
-         (scanning sink s.rest args.rest))
-        (#\~
-         (sink .display "~")
-         (scanning sink s.rest args))
-        ((? _.digit? ch)
-         (let digit (- ch.code 48))
-         (parsing sink s.rest pad sign      ;TODO testme with a multidigit width
-                  (+ (if width (* 10 width) 0)
-                     digit)
-                  args))
-        (#\x  ; hex number, XXX works wrong on negative numbers
-         (maybe-pad sink pad sign width {.display ((string<-number args.first 16) .lowercase)})
-         (scanning sink s.rest args.rest))
-        (_
-         (error "Bad format string" (string<-list s)))))
+      (may s.first
+        (be #\w
+          (maybe-pad sink pad sign width (_ .print args.first))
+          (scanning sink s.rest args.rest))
+        (be #\d
+          (maybe-pad sink pad sign width (_ .display args.first))
+          (scanning sink s.rest args.rest))
+        (be #\~
+          (sink .display "~")
+          (scanning sink s.rest args))
+        (be (? _.digit? ch)
+          (let digit (- ch.code 48))
+          (parsing sink s.rest pad sign      ;TODO testme with a multidigit width
+                   (+ (if width (* 10 width) 0)
+                      digit)
+                   args))
+        (be #\x  ; hex number, XXX works wrong on negative numbers
+          (maybe-pad sink pad sign width {.display ((string<-number args.first 16) .lowercase)})
+          (scanning sink s.rest args.rest))
+        (else
+          (error "Bad format string" (string<-list s)))))
 
     (to (maybe-pad sink pad sign width message)
       (hm (when width

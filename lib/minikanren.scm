@@ -9,9 +9,9 @@
   `(,s))
 
 (to ((== val1 val2) s)
-  (be (unify s val1 val2)
-    (#no '())
-    (s1 `(,s1))))
+  (may (unify s val1 val2)
+    (be #no '())
+    (be s1 `(,s1))))
 
 ;; XXX either and both are not quite Kanrenish
 

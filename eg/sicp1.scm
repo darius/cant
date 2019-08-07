@@ -14,26 +14,26 @@
                             {branch 4 30}}}})
 
 (to (balanced? tree)
-  (be tree
-    ({mobile left right}
-     (and (balanced? left)
-          (balanced? right)
-          (= (torque left) (torque right))))
-    (_
-     #yes)))                       ;XXX don't we care about deep balance?
+  (may tree
+    (be {mobile left right}
+      (and (balanced? left)
+           (balanced? right)
+           (= (torque left) (torque right))))
+    (else
+      #yes)))                       ;XXX don't we care about deep balance?
 
 (to (torque {branch length structure})
   (* length (weight structure)))
 
 (to (weight tree)
-  (be tree
-    ({mobile left right}
-     (+ (weight left) (weight right)))
-    ((? number?)
-     tree)
+  (may tree
+    (be {mobile left right}
+      (+ (weight left) (weight right)))
+    (be (? number?)
+      tree)
 ;; XXX this was missing -- go look up the problem again:
-    ({branch _ thing}
-     (weight thing))))
+    (be {branch _ thing}
+      (weight thing))))
 
 (print (balanced? test-mobile))
 (print (balanced? test-balanced-mobile))

@@ -8,29 +8,29 @@
   (ev (exp-parse e) (or r prelude-env)))
 
 (to (ev e r)
-  (be e
-    ({const c} c)
-    ({var v}     (lookup r v))
-    ({lam _ _ _} {closure e r})
-    ({app f a _} (apply (ev f r) (ev a r)))
-    ({the-env}   r)))
+  (may e
+    (be {const c}   c)
+    (be {var v}     (lookup r v))
+    (be {lam _ _ _} {closure e r})
+    (be {app f a _} (apply (ev f r) (ev a r)))
+    (be {the-env}   r)))
 
 (to (apply fn val)
-  (be fn
-    ({closure {lam v e _} r} (ev e {extend v val r}))
-    ({primitive p}           (p val))))
+  (may fn
+    (be {closure {lam v e _} r} (ev e {extend v val r}))
+    (be {primitive p}           (p val))))
 
 
 ;; Environments
 
 (to (lookup r v)
-  (be r
-    ({extend v1 val r1}
-     (if (= v v1)
-         val
-         (lookup r1 v)))
-    ({module map}
-     (map v))))
+  (may r
+    (be {extend v1 val r1}
+      (if (= v v1)
+          val
+          (lookup r1 v)))
+    (be {module map}
+      (map v))))
 
 (let prelude-env (build-prelude terp apply))
 

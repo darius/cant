@@ -20,10 +20,10 @@
     (for each! ((_ (range<- n-times)))
       (let inputs (for each ((gen gens))
                     (gen g)))
-      (be (property @inputs)
-        (#yes    (display "."))
-        (outcome (display "X")
-                 (failures .push! `(,outcome ,inputs)))))
+      (may (property @inputs)
+        (be #yes    (display "."))
+        (be outcome (display "X")
+                    (failures .push! `(,outcome ,inputs)))))
     (newline)
     (unless failures.empty?
       (format "Failures for ~w:\n" property)
@@ -54,9 +54,9 @@
 ;; TODO maybe name like <claim> etc.
 
 (to (a-claim g)
-  (be (g .natural 2)
-    (0 #no)
-    (1 #yes)))
+  (may (g .natural 2)
+    (be 0 #no)
+    (be 1 #yes)))
 
 (to (a-count g)
   (g .natural g.size))
