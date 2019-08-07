@@ -340,8 +340,9 @@
                  ;; TODO leave out miranda-trait if there's a catchall already
                  `(to (,v ,self ,msg)
                     (may ,msg
-                      ,@(map (mlambda (('to . rest) rest)) clauses)
-                      (_ (miranda-trait ,self ,msg)))))))) ;XXX hygiene, and XXX make it overridable
+                      ,@(map (mlambda (('to . rest) `(be ,@rest)))
+                             clauses)
+                      (else (miranda-trait ,self ,msg)))))))) ;XXX hygiene, and XXX make it overridable
     ('may    (mlambda
               ((__ subject . clauses)
                `((case ,@clauses) ,subject))))
@@ -353,8 +354,8 @@
                            `(to (_ ,pat) ,@body))
                           (('else . body)
                            `(to (_ _) ,@body))
-                          ((pat . body)
-                           `(to (_ ,pat) ,@body)))
+                          (clause
+                           (error 'parse "Bad clause: 'be' or 'else' missing" clause)))
                          clauses)))))
     ('to     (mlambda
               ((__ (head . param-spec) . body)
@@ -398,8 +399,8 @@
     ('if     (mlambda
               ((__ test if-so if-not)
                `(may ,test
-                  (#f ,if-not)
-                  (_ ,if-so)))))
+                  (be #f ,if-not)
+                  (else ,if-so)))))
     ('when   (mlambda
               ((__ test . body)
                `(if ,test (do ,@body) ',(void)))))

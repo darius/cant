@@ -70,13 +70,13 @@
 
 (to (lay-out w semidetermined-doc)
   (may semidetermined-doc
-    ('() "")
-    (`({line ,i} ,@x)
-     (chain "\n"
-            (" " .repeat i)
-            (lay-out w (best w i x))))
-    (`({text ,s} ,@x)
-     (chain s (lay-out w x)))))
+    (be '() "")
+    (be `({line ,i} ,@x)
+      (chain "\n"
+             (" " .repeat i)
+             (lay-out w (best w i x))))
+    (be `({text ,s} ,@x)
+      (chain s (lay-out w x)))))
 
 
 (export

@@ -5,24 +5,24 @@
   (to (make-church<-claim lc-no)
     {primitive (on (lc-yes)
                  {primitive (case
-                              (#no  lc-no)
-                              (#yes lc-yes))})})
+                              (be #no  lc-no)
+                              (be #yes lc-yes))})})
 
   (to (make-church<-count lc-zero)
     {primitive
      (on (lc-succ)
        {primitive (let counting
                     (case
-                      (0            lc-zero)
-                      ((? count? n) (apply lc-succ (counting (- n 1))))))})})
+                      (be 0            lc-zero)
+                      (be (? count? n) (apply lc-succ (counting (- n 1))))))})})
 
   (to (make-church<-list lc-nil)
     {primitive
      (on (lc-link)
        {primitive (let linking
                     (case
-                      ('()       lc-nil)
-                      (`(,h ,@t) (apply (apply lc-link h) (linking t)))))})})
+                      (be '()       lc-nil)
+                      (be `(,h ,@t) (apply (apply lc-link h) (linking t)))))})})
 
   (let builtins-env
     {module
