@@ -74,12 +74,14 @@
   (to (keep-early efforts)
     (for those (({at t state} efforts))
       (may (bests .get state)
-        (#no (bests .set! state t)
-             #yes)
-        (t1  (if (< t t1)
-                 (do (bests .set! state t)
-                     #yes)
-                 #no)))))
+        (be #no
+          (bests .set! state t)
+          #yes)
+        (be t1
+          (if (< t t1)
+              (do (bests .set! state t)
+                  #yes)
+              #no)))))
 
   (to (equip {at t {state p tool}} new-tool)
 ;;    (surely (usable? new-tool p) "New tool usable" new-tool)

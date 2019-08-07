@@ -12,9 +12,9 @@
   (for foldl ((best (list<- xs.first))
               (x xs.rest))
     (may ((fn best.first) .compare (fn x))
-      (-1 best)
-      ( 0 (link x best))
-      (+1 (list<- x)))))
+      (be -1 best)
+      (be  0 (link x best))
+      (be +1 (list<- x)))))
          
 (to (fill! array value)                 ;TODO should be a mutable-map-trait method
   (for each! ((i array.keys))

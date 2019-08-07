@@ -28,17 +28,17 @@
   (to (chase element)
     (begin chasing ((i (index element)))
       (may (next i)
-        (#no i)
-        (j (chasing j)))))
+        (be #no i)
+        (be j   (chasing j)))))
   (make partitioning
     (to (_ .join! x y)
       (let xi (chase x))
       (let yi (chase y))
       ;; TODO path compression, etc.
       (may (xi .compare yi)
-        (0)
-        (-1 (next .set! yi xi))
-        (+1 (next .set! xi yi))))
+        (be 0)
+        (be -1 (next .set! yi xi))
+        (be +1 (next .set! xi yi))))
     (to _.count
       ;; TODO: there's a trickier but more efficient method looking only at the next array, right?
       (let representatives (each chase elements))

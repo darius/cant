@@ -29,41 +29,41 @@
     (to _.step
       (let here (regs ip))
       (may (program .get here)
-        (#no #no)
-        (`(,op ,a ,b ,c)
-         (vm .do op a b c)
-         (regs .update ip _.+)
-         (when (= here 7)
-           (format "ip=~w ~w ~d " (regs ip) regs (show (program (regs ip)))))
-         #yes)))
+        (be #no #no)
+        (be `(,op ,a ,b ,c)
+          (vm .do op a b c)
+          (regs .update ip _.+)
+          (when (= here 7)
+            (format "ip=~w ~w ~d " (regs ip) regs (show (program (regs ip)))))
+          #yes)))
 
     (to (_ .do op a b c)
       (let result
         (may op
 
-          ('addr  (+ (regs a) (regs b)))
-          ('addi  (+ (regs a) b))
+          (be 'addr  (+ (regs a) (regs b)))
+          (be 'addi  (+ (regs a) b))
 
-          ('mulr  (* (regs a) (regs b)))
-          ('muli  (* (regs a) b))
+          (be 'mulr  (* (regs a) (regs b)))
+          (be 'muli  (* (regs a) b))
 
-          ('banr  ((regs a) .and (regs b)))
-          ('bani  ((regs a) .and b))
+          (be 'banr  ((regs a) .and (regs b)))
+          (be 'bani  ((regs a) .and b))
        
-          ('borr  ((regs a) .or (regs b)))
-          ('bori  ((regs a) .or b))
+          (be 'borr  ((regs a) .or (regs b)))
+          (be 'bori  ((regs a) .or b))
        
-          ('setr  (regs a))
-          ('seti  a)
+          (be 'setr  (regs a))
+          (be 'seti  a)
        
           ;; TODO I'm not sure about this method name claim.count
-          ('gtir  (_.count (> a (regs b))))
-          ('gtri  (_.count (> (regs a) b)))
-          ('gtrr  (_.count (> (regs a) (regs b))))
+          (be 'gtir  (_.count (> a (regs b))))
+          (be 'gtri  (_.count (> (regs a) b)))
+          (be 'gtrr  (_.count (> (regs a) (regs b))))
        
-          ('eqir  (_.count (= a (regs b))))
-          ('eqri  (_.count (= (regs a) b)))
-          ('eqrr  (_.count (= (regs a) (regs b))))
+          (be 'eqir  (_.count (= a (regs b))))
+          (be 'eqri  (_.count (= (regs a) b)))
+          (be 'eqrr  (_.count (= (regs a) (regs b))))
 
           ))
       (regs .set! c result))

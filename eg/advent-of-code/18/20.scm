@@ -39,16 +39,16 @@ dir:  {'N' | 'S' | 'E' | 'W'} :Dir.
     ;; door-distance traveled to get to the position (including d).
     (rooms .set! p (min d (rooms .get p infinity)))
     (may exp
-      ({dir ch}
-       (visit (vector+ p (step ch))
-              d.up
-              {seq '()}))
-      ({alt es}
-       (merge-best (for each ((e es))
-                     (visit p d e))))
-      ({seq es}
-       ;; Here's where we need the return value.
-       (visit-seq p d es))))
+      (be {dir ch}
+        (visit (vector+ p (step ch))
+               d.up
+               {seq '()}))
+      (be {alt es}
+        (merge-best (for each ((e es))
+                      (visit p d e))))
+      (be {seq es}
+        ;; Here's where we need the return value.
+        (visit-seq p d es))))
 
   (to (really-visit-seq p d es)
     (if es.empty?
@@ -80,8 +80,8 @@ dir:  {'N' | 'S' | 'E' | 'W'} :Dir.
   (let result map1.copy)
   (for each! ((`(,k2 ,v2) map2.items))
     (result .set! k2 (may (map1 .get k2)
-                       (#no v2)
-                       (v1 (min v1 v2)))))
+                       (be #no v2)
+                       (be v1 (min v1 v2)))))
   result)
 
 (let step (map<- '((#\N (0 -1))

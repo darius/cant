@@ -86,15 +86,15 @@
       ;;  (format "targets for ~w: ~w\n" p (sort targets))
       (let goals (set<-list (gather open-neighbors<- targets)))
       (may (find-shortest-paths p goals)
-        ('())
-        (paths
-         (let chosen-path
-           (min-by (compound-key<- _.last _.first) paths))
-         (let spot chosen-path.first)
-         (move! p spot)
-         (unless (maybe-attack spot)
+        (be '())
+        (be paths
+          (let chosen-path
+            (min-by (compound-key<- _.last _.first) paths))
+          (let spot chosen-path.first)
+          (move! p spot)
+          (unless (maybe-attack spot)
 ;           (format "unit ~d did not attack\n" (coords<- spot))
-           'ok))))
+            'ok))))
     (not targets.empty?))
 
   (to (find-targets species)
@@ -105,20 +105,20 @@
     (let enemy (enemy<- (area p)))
     (may (for those ((q (neighbors<- p)))
           (= enemy (area q)))
-      ('() #no)
-      (targets
-       (let target
-         ;; The least remaining hit points, then the first in reading order.
-         (min-by (compound-key<- units identity) targets))
-       ;;     (format "target ~w\n" target)
-       (attack p target)
-       #yes)))
+      (be '() #no)
+      (be targets
+        (let target
+          ;; The least remaining hit points, then the first in reading order.
+          (min-by (compound-key<- units identity) targets))
+        ;;     (format "target ~w\n" target)
+        (attack p target)
+        #yes)))
 
   (to (attack p target)
     (let hp-left (- (units target)
                     (may (area p)
-                      (#\G 3)
-                      (#\E elf-attack-power))))                      
+                      (be #\G 3)
+                      (be #\E elf-attack-power))))                      
 ;    (format "attack: from ~d@~d to ~d@~d leaving ~w hp\n"
 ;            (area p) (coords<- p) (area target) (coords<- target) hp-left)
     (hm (when (<= hp-left 0)
@@ -152,17 +152,17 @@
 ;;      (surely (sorted? (for each ((trail (list<-queue queue)))
 ;;                         `(,trail.count ,(reverse trail)))))
       (may (peek queue)
-        ({empty}
-         (each reverse successes.values))
-        ({nonempty trail queue-1}
-         (let spot trail.first)
-         (if (goals .maps? spot)
-             (if (and (not successes.empty?)
-                      (< successes.first.count trail.count))
-                 (each reverse successes.values)
-                 (do (successes .push! trail)
-                     (exploring (extend queue-1 (expand trail)))))
-             (exploring (extend queue-1 (expand trail))))))))
+        (be {empty}
+          (each reverse successes.values))
+        (be {nonempty trail queue-1}
+          (let spot trail.first)
+          (if (goals .maps? spot)
+              (if (and (not successes.empty?)
+                       (< successes.first.count trail.count))
+                  (each reverse successes.values)
+                  (do (successes .push! trail)
+                      (exploring (extend queue-1 (expand trail)))))
+              (exploring (extend queue-1 (expand trail))))))))
 
 ;;  (to (list<-queue {queue h t})
 ;;    (chain h (reverse t)))
@@ -177,13 +177,13 @@
     (let notes (flexarray<-))
     (for each! ((`(,p ,ch) area.items))
       (may ch
-        (#\newline
-         (format "   ~d\n" (", " .join notes.values))
-         notes.clear!)
+        (be #\newline
+          (format "   ~d\n" (", " .join notes.values))
+          notes.clear!)
         (else
-         (when (unit? ch)
-           (notes .push! ("~d(~w)" .format ch (units p))))
-         (display ch)))))
+          (when (unit? ch)
+            (notes .push! ("~d(~w)" .format ch (units p))))
+          (display ch)))))
 
   (make field
     (to _.do-round!        (do-round))
@@ -207,8 +207,8 @@
     (format "Trying attack power ~w\n" power)
     (let field (field<- input power))
     (may (battle-sans-elf-casualties field power)
-      (#no (trying power.up))
-      (outcome outcome))))
+      (be #no (trying power.up))
+      (be outcome outcome))))
 
 (to (battle-sans-elf-casualties field power)
   (let n-elves (field.census .get #\E))

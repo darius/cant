@@ -9,8 +9,8 @@
   peek)
 
 (let margin (may data-name
-              ("06.in" 10000)
-              ("06.test" 32)))
+              (be "06.in" 10000)
+              (be "06.test" 32)))
 (let input (with-input-file _.read-lines data-file))
 
 (let parse (simple-parser<- ":nat ', ' :nat"))
@@ -61,18 +61,18 @@
   (let already (set<-))
   (begin growing ((queue (extend empty `(,seed))))
     (may (peek queue)
-      ({empty})
-      ({nonempty p queue-1}
-       (if (region .maps? p)
-           (format "dupe ~w\n" p)
-           (do (region .add! p)
+      (be {empty})
+      (be {nonempty p queue-1}
+        (if (region .maps? p)
+            (format "dupe ~w\n" p)
+            (do (region .add! p)
 ;;               (format "add ~w distance ~w count ~w\n" p (total-distance p) region.count)
-               ))
-       (growing (extend queue-1 
-                        (for those ((p1 (neighbors<- p)))
-                          (and (not (already .maps? p1))
-                               (do (already .add! p1)
-                                   (included? p1))))))))))
+                ))
+        (growing (extend queue-1 
+                         (for those ((p1 (neighbors<- p)))
+                           (and (not (already .maps? p1))
+                                (do (already .add! p1)
+                                    (included? p1))))))))))
 
 (to (neighbors<- `(,x ,y))
   `((,x.- ,y)

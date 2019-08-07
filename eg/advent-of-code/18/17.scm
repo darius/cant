@@ -16,8 +16,8 @@
 (let clay-spots
   (for gather ((input inputs))
     (may input
-      (`("x" ,x "y" ,lo ,hi) (grid* `(,x) (lo .to hi)))
-      (`("y" ,y "x" ,lo ,hi) (grid* (lo .to hi) `(,y))))))
+      (be `("x" ,x "y" ,lo ,hi) (grid* `(,x) (lo .to hi)))
+      (be `("y" ,y "x" ,lo ,hi) (grid* (lo .to hi) `(,y))))))
 
 (let `((,xl0 ,yl) (,xh0 ,yh)) (bounds<- clay-spots))
 
@@ -75,17 +75,17 @@
         (let x1 (+ x dx))
         (let next `(,x1 ,y0))
         (may (grid .get next)
-          (#no
-           (grid .set! next #\|)
-           (when (not (grid .get (under next)))
-             (flooding (under next)))
-           (if (blocked? (under next))
-               (spilling x1 dx)
-               x))
-          (#\| x)
-          (#\# x)
-          (#\~ (surely #no "Can't happen, can it?"))
-          (_   (surely #no "Even less happenable"))))
+          (be #no
+            (grid .set! next #\|)
+            (when (not (grid .get (under next)))
+              (flooding (under next)))
+            (if (blocked? (under next))
+                (spilling x1 dx)
+                x))
+          (be #\| x)
+          (be #\# x)
+          (be #\~ (surely #no "Can't happen, can it?"))
+          (else   (surely #no "Even less happenable"))))
       (let x-min (spilling x0 -1))
       (let x-max (spilling x0 1))
       (let span (for each ((x (x-min .to x-max)))

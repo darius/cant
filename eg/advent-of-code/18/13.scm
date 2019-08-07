@@ -13,11 +13,11 @@
     (carts .set! i {cart dir 0}))
   (for each! ((`(,i ,ch) world-str.items))
     (may ch
-      (#\> (add-cart! i E))
-      (#\< (add-cart! i W))
-      (#\v (add-cart! i S))
-      (#\^ (add-cart! i N))
-      (_   (tracks .push! ch))))
+      (be #\> (add-cart! i E))
+      (be #\< (add-cart! i W))
+      (be #\v (add-cart! i S))
+      (be #\^ (add-cart! i N))
+      (else   (tracks .push! ch))))
   {world (string<-list tracks.values) width carts})
 
 
@@ -30,10 +30,10 @@
 
 (to (step width dir) ; we could prob. pass an array around instead of width
   (may dir
-    (0 (- width))
-    (1 1)
-    (2 width)
-    (3 -1)))
+    (be 0 (- width))
+    (be 1 1)
+    (be 2 width)
+    (be 3 -1)))
 
 (to (erase-cart dir)
   ("|-|-" dir))
@@ -44,10 +44,10 @@
 (to (maybe-turn cart ch)
   (let {cart dir veer} cart)
   (may ch
-    (#\/ {cart (turn-1 dir) veer})
-    (#\\ {cart (turn-2 dir) veer})
-    (#\+ (swerve dir veer))
-    (_   cart)))
+    (be #\/ {cart (turn-1 dir) veer})
+    (be #\\ {cart (turn-2 dir) veer})
+    (be #\+ (swerve dir veer))
+    (else   cart)))
 
 (to (turn-1 dir) ; /  n e s w
                  ; -> e n w s
@@ -66,9 +66,9 @@
 
 (to (swerve dir veer)
   (may veer
-    (0 {cart (turn-left dir) 1})
-    (1 {cart dir 2})
-    (2 {cart (turn-right dir) 0})))
+    (be 0 {cart (turn-left dir) 1})
+    (be 1 {cart dir 2})
+    (be 2 {cart (turn-right dir) 0})))
 
 
 ;; Here we go

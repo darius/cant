@@ -60,16 +60,16 @@
   (for each! ((group (sort-by (-> (- it.initiative)) selections.keys)))
     (when group.alive?
       (may (selections .get group)
-        (#no)
-        (target (group .attack! target))))))
+        (be #no)
+        (be target (group .attack! target))))))
 
 (to (cook-group n-units hit-points qualities attack-damage attack-type initiative)
   (let immunities (set<-))
   (let weaknesses (set<-))
   (for each! ((`(,type ,attack-strings) qualities)) ;TODO could use a group-by or map-reduce again
     (let set (may type
-               ("immune" immunities)
-               ("weak"   weaknesses)))
+               (be "immune" immunities)
+               (be "weak"   weaknesses)))
     (set .add-all! (each symbol<- attack-strings)))
   (on (army-boost)
     (group<- n-units hit-points immunities weaknesses
@@ -98,9 +98,9 @@
       (target .receive! attack-type (effective-power)))
     (to (_ .damage-from attacker-attack-type attack-power)
       (may (qualities .get attacker-attack-type)
-        ('immunity 0)
-        ('weakness (* 2 attack-power))
-        (#no       attack-power)))
+        (be 'immunity 0)
+        (be 'weakness (* 2 attack-power))
+        (be #no       attack-power)))
     (to (_ .receive! attacker-attack-type attack-power)
       (let damage (group .damage-from attacker-attack-type attack-power))
       (let mortality (min n-units.^ (damage .quotient hit-points)))
@@ -171,8 +171,8 @@ separator: '\n'.
 (to (enough-boost? boost)
   (let armies (map<- (for each ((`(,name ,group-makers) matchup))
                        `(,name ,(do (let my-boost (may name
-                                                    ("Immune System" boost)
-                                                    (_               0)))
+                                                    (be "Immune System" boost)
+                                                    (else               0)))
                                     (for each ((group-maker group-makers))
                                       (group-maker my-boost)))))))
   (format "Trying immune boost of ~w\n" boost)
