@@ -167,8 +167,12 @@
        ;; XXX complain if you see a bare , or ,@. but this will fall out of disallowing defaulty lists.
        (('list<- . ps)
         (parse-list-pat ps ctx))
-       (('link car-p cdr-p)
-        (make-cons-pat (parse-p car-p ctx) (parse-p cdr-p ctx)))
+       ;; TODO shouldn't the cdr-p pattern in (link ... cdr-p) do a list? check at match-time?
+       (('link cdr-p)
+        (parse-p cdr-p ctx))
+       (('link car-p . rest-ps)
+        (make-cons-pat (parse-p car-p ctx)
+                       (parse-p `(link ,@rest-ps) ctx)))
 
        (('_ (: cue cue?) . operands)      ; TODO experiment: syntax for messages
         (parse-term-pat (make-term cue operands) ctx))
