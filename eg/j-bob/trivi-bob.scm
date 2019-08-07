@@ -359,9 +359,9 @@
   
 (to (focus-is-at-direction? e dir)
   (may dir
-    (be 'Q       (may e (be {if _ _ _} #yes) (_ #no)))
-    (be 'A       (may e (be {if _ _ _} #yes) (_ #no)))
-    (be 'E       (may e (be {if _ _ _} #yes) (_ #no)))
+    (be 'Q       (may e (be {if _ _ _} #yes) (else #no)))
+    (be 'A       (may e (be {if _ _ _} #yes) (else #no)))
+    (be 'E       (may e (be {if _ _ _} #yes) (else #no)))
     (be (? nat?) (may e (be {call _ args} (<= 1 dir args.count))
                         (else             #no)))))
 
