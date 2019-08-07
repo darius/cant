@@ -105,7 +105,7 @@
 ;;             (for each ((y ((- (seed 1) margin) .to (+ (seed 1) margin))))
 ;;               (format "y ~w of ~w\n" y (+ (seed 1) margin))
 ;;               (sum (for each ((x ((- (seed 0) margin) .to (+ (seed 0) margin))))
-;;                      (if (included? `(,x ,y)) 1 0))))))
+;;                      (_.count (included? `(,x ,y))))))))
 
 ;(format "result 2 (slow): ~w\n" (area-1))
 
