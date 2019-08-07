@@ -11,10 +11,10 @@
   (and h.empty? t.empty?))
 
 (to (push {queue h t} element)
-  {queue h `(,element ,@t)})
+  {queue h (link element t)})
 
 (to (extend {queue h t} elements)
-  {queue h `(,@(reverse elements) ,@t)}) ;TODO chain-reverse
+  {queue h (chain (reverse elements) t)}) ;TODO chain-reverse
 
 (to (peek {queue h t})
   (hm (when (and h.empty? t.empty?)

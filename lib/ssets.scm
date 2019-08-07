@@ -22,7 +22,7 @@
 (to (sset-remove xs unwanted)
   (may xs
     (be '() '())
-    (be `(,x1 ,@xs1)
+    (be (link x1 xs1)
       (if (= x1 unwanted)
           xs1
           (link x1 (sset-remove xs1 unwanted))))))
@@ -31,15 +31,15 @@
   (hm (if xs.empty? ys)
       (if ys.empty? xs)
       (else (may (xs.first .compare ys.first)
-              (be -1 `(,xs.first ,@(merge xs.rest ys)))
-              (be  0 `(,xs.first ,@(merge xs.rest ys.rest)))
-              (be  1 `(,ys.first ,@(merge xs ys.rest)))))))
+              (be -1 (link xs.first (merge xs.rest ys)))
+              (be  0 (link xs.first (merge xs.rest ys.rest)))
+              (be  1 (link ys.first (merge xs ys.rest)))))))
 
 (to (diff xs ys)
   (hm (if xs.empty? '())
       (if ys.empty? xs)
       (else (may (xs.first .compare ys.first)
-              (be -1 `(,xs.first ,@(diff xs.rest ys)))
+              (be -1 (link xs.first (diff xs.rest ys)))
               (be  0 (diff xs.rest ys.rest))
               (be  1 (diff xs ys.rest))))))
 

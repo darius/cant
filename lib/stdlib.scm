@@ -45,9 +45,9 @@
 (to (intercalate between elements)      ;TODO unify with .join
   (if elements.empty?
       elements
-      `(,elements.first
-        ,@(for gather ((x elements.rest)) ;TODO more efficient
-            `(,between ,x)))))
+      (link elements.first
+            (for gather ((x elements.rest)) ;TODO more efficient
+              `(,between ,x)))))
 
 (to (link/lazy x thunk)
   (make lazy-list {extending list-trait}
@@ -111,7 +111,7 @@
   (begin scanning ((r-head '()) (xs xs))
     (if (or xs.empty? (split-point? xs.first))
         `(,(reverse r-head) ,xs)
-        (scanning `(,xs.first ,@r-head) xs.rest))))
+        (scanning (link xs.first r-head) xs.rest))))
 
 (make method<-
   (to (_ cue)

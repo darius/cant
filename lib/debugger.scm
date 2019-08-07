@@ -57,7 +57,7 @@
         (push (extract-datum focus)))
       (be 'value
         (let focus-env '())              ;XXX
-        (let env `((*focus* ,focus) ,@focus-env))
+        (let env (link `(*focus* ,focus) focus-env))
         (print (evaluate (read) env))
         (continue))
       (be (? count?)

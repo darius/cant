@@ -25,9 +25,9 @@
     (hm (if xs.empty? ys)
         (if ys.empty? xs)
         (if (<= (key<- xs.first) (key<- ys.first))
-            `(,xs.first ,@(merge xs.rest ys)))
+            (link xs.first (merge xs.rest ys)))
         (else
-            `(,ys.first ,@(merge xs ys.rest)))))
+            (link ys.first (merge xs ys.rest)))))
 
   (merge-sort sequence))
 

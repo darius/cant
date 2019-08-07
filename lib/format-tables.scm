@@ -19,7 +19,7 @@
 ;; column order, trying to fit them in the given width.
 (to (tabulate strings @(optional opt-width))
   (let width (or opt-width 79))
-  (let max-width (+ 2 (max @`(0 ,@(each _.count strings)))))
+  (let max-width (+ 2 (max 0 @(each _.count strings))))
   (let n-cols (max 1 (min strings.count (width .quotient max-width))))
   (let n-rows (max 1 ((+ strings.count n-cols -1) .quotient n-cols)))
   (let padded (chain strings

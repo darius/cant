@@ -10,21 +10,21 @@
   (wrap-into (flexarray<-) (parse-tokens text) width))
 
 (to (flush buffer)
-  (string<-list buffer))
+  (string<-list buffer.values))
 
 (to (parse-tokens text)
   (if text.empty?
       '()
       (may text.first
-        (be #\newline `({break} ,@(parse-tokens text.rest)))
-        (be #\space   `({space} ,@(parse-tokens text.rest)))
+        (be #\newline (link {break} (parse-tokens text.rest)))
+        (be #\space   (link {space} (parse-tokens text.rest)))
         (be (? _.whitespace? ch)
           (error "I don't know how to fill whitespace like" ch))
         (else
           (let word (flexarray<- text.first))
           (begin eating ((text text.rest))
             (if (or text.empty? text.first.whitespace?)
-                `({word ,(flush word)} ,@(parse-tokens text))
+                (link {word (flush word)} (parse-tokens text))
                 (do (word .push! text.first)
                     (eating text.rest))))))))
 

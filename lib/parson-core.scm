@@ -40,7 +40,7 @@
     (to (_ .else _ _ _)       success)
     (to _.invert              fail)
     (to (_ .capture-from j)   (empty text far i `(,@vals ,(text .slice j i))))
-    (to (_ .prefix pre-vals)  (empty text far i `(,@pre-vals ,@vals)))
+    (to (_ .prefix pre-vals)  (empty text far i (chain pre-vals vals)))
     (to _.leftovers           i)
     (to _.opt-results         vals)
     (to _.results             vals)
