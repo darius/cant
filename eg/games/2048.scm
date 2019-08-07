@@ -59,10 +59,10 @@
 
 (to (view rows)
   (for each ((row rows))
-    `(,(for each ((v row))
-         [" " (or (tiles .get v)
-                  (bold ("~w" .format v)))])
-      "\n\n")))
+    [(for each ((v row))
+       [" " (or (tiles .get v)
+                (bold ("~w" .format v)))])
+     "\n\n"]))
 
 (let tiles
   (map<- `((   0                                      "  . ")
