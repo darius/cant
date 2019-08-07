@@ -4,7 +4,6 @@
 ;; Basing this on http://community.schemewiki.org/?emacs-syntax-hilight
 
 (put 'begin 'scheme-indent-function 2)
-(put 'case 'scheme-indent-function 0)
 (put 'do 'scheme-indent-function 0)
 (put 'else 'scheme-indent-function 0)
 (put 'export 'scheme-indent-function 0)
@@ -27,6 +26,7 @@
 (put 'hm 'scheme-indent-function 0)
 (put 'may 'scheme-indent-function 1)
 (put 'on 'scheme-indent-function 1)
+(put 'opt 'scheme-indent-function 0)
 
 (defconst squeam-font-lock-keywords 
   '() 
