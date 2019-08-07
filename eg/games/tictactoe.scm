@@ -63,7 +63,7 @@
       (or (and (not= opponent.name "Human")
                (do (refresh ("~d to move ~d. (Press a key; Q to quit.)"
                              .format player.name (whose-move grid)))
-                   (= #\Q ((get-key) .uppercase)))))
+                   (= #\Q get-key.uppercase))))
       (else
         (refresh ("~d ponders..." .format player.name))
         (continue))))
