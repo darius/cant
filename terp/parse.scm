@@ -332,7 +332,7 @@
   (mcase key
     ('hide   (mlambda
               ((__ . es)
-               `((given () ,@es)))))
+               `((on () ,@es)))))
     ('make-trait
              (mlambda
               ((__ (: v symbol?) (: self symbol?) . clauses) ;XXX allow other patterns?
@@ -426,7 +426,7 @@
               ((__ e) e)
               ((__ e . es)
                (let ((t (gensym)))
-                 `((given (,t) (if ,t ,t (or ,@es)))
+                 `((on (,t) (if ,t ,t (or ,@es)))
                    ,e)))))
     ('import (mlambda
               ((__ m . names)
