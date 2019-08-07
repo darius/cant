@@ -323,7 +323,7 @@
       (chain (unparse-pos from-pos) (unparse-pos to-pos)))))
 
 (to (unparse-pos `(,r ,c))
-  ("~d~w" .format ("abcdefgh" (- c 1)) (- 9 r)))
+  ("~d~w" .format ("abcdefgh" c.-) (- 9 r)))
 
 (to (main<-rng rng)
   (let strategy-names
