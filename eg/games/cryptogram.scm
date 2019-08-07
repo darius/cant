@@ -98,7 +98,7 @@
       (shift-by offset))
 
     (to (_ .shift-line offset)
-      (shift-till offset (: (line-starts point.^))))
+      (shift-till offset (: (line-starts .maps? point.^))))
 
     (to (_ .shift-to-space offset)
       (when (decoder .find? #\space)
