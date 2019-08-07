@@ -87,7 +87,8 @@ insn:    {'1'+} {'#' '#'? '#'? '#'? '#'?} :make_insn.
     (format "~d\n" line)))
 
 (to (abut lines1 lines2)
-  (flip (chain (flip lines1) (flip lines2))))
+  (flip (chain (flip lines1)
+               (flip lines2))))
 
 (to (flip strings)
   (each string<-list (transpose-padded strings #\space)))
@@ -96,10 +97,8 @@ insn:    {'1'+} {'#' '#'? '#'? '#'? '#'?} :make_insn.
   (begin zipping ((lists lists))
     (if (every _.empty? lists)
         '()
-        `(,(for each ((list lists))
-             (list .get 0 padding))
-          ,@(zipping (for each ((list lists))
-                       (list .slice 1)))))))
+        (link (each (_ .get 0 padding) lists)
+              (zipping (each (_ .slice 1) lists))))))
 
 ;; Smoke test
 (to (main _)
