@@ -33,7 +33,7 @@
   (let buffer (flexarray<-))
   (let total (box<- 0)) ;; Kept equal to (sum _.count buffer)
   (to (output)
-    (let s ("" .join buffer))
+    (let s ("" .join buffer.values))
     ;; TODO make it unambiguous whether it's truncated, somehow
     (if (< total.^ width)
         s
