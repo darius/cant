@@ -121,7 +121,7 @@
       (let view (flexarray<-))
       (to (emit x) (view .push! x))
 
-      (emit (green `("Free: " ,letters-left #\newline)))
+      (emit (green ["Free: " letters-left "\n"]))
       (for each! ((line lines))
         (emit #\newline)
         (for each! ((ch line))

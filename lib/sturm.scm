@@ -40,7 +40,7 @@
 (to (sgr num)
   (seq ("~wm" .format num)))
 
-(let `(,screen-height ,screen-width) '(25 80)) ;TODO find out for real
+(let [screen-height screen-width] [25 80]) ;TODO find out for real
 
 
 ;; Rendering

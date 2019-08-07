@@ -191,7 +191,7 @@
         (not ((update move board) .checking?))))
 
     (to _.get-moves
-      `({resign} ,@board.get-piece-moves))
+      (link {resign} board.get-piece-moves))
 
     (to _.get-piece-moves
       board.gen-piece-moves)
