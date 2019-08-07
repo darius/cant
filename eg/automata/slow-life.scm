@@ -79,10 +79,10 @@
   ;; columns.
   (to (copy-edges)
     (for each! ((r (1 .to n-rows)))
-      (G .set! (at r 0)       (G (at r n-cols)))
-      (G .set! (at r (- C 1)) (G (at r 1))))
-    (copy! (at 0 0)       (at n-rows 0) C)
-    (copy! (at (- R 1) 0) (at 1 0)      C))
+      (G .set! (at r 0)   (G (at r n-cols)))
+      (G .set! (at r C.-) (G (at r 1))))
+    (copy! (at 0 0)   (at n-rows 0) C)
+    (copy! (at R.- 0) (at 1 0)      C))
 
   (to (copy! dest lo n)
     (G .move! dest G lo (+ lo n)))
