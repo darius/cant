@@ -1071,6 +1071,15 @@
     (for each ((args (transpose lists)))
       (f @args))))
 
+(make each!
+  (to (_ f xs)
+    (unless xs.empty?
+      (f xs.first)
+      (each! f xs.rest)))
+  (to (_ f @lists)
+    (for each! ((args (transpose lists)))
+      (f @args))))
+
 (make zip
   (to (_ xs ys)                           ;specialized for speed
     (to (mismatch)
@@ -1123,11 +1132,6 @@
   (or xs.empty?
       (and (pass? xs.first)
            (every pass? xs.rest))))
-
-(to (each! f xs)
-  (unless xs.empty?
-    (f xs.first)
-    (each! f xs.rest)))
 
 (make range<-
   (to (_ first limit)

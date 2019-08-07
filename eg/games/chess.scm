@@ -58,16 +58,12 @@
                                                    depth.-)))))))))
 
 (let piece-values
-  (map<- '((#\p 10)
-           (#\n 31)
-           (#\b 33)
-           (#\r 50)
-           (#\q 90)
-           (#\k 10000))))
-(for each! ((`(,p ,v) piece-values.items))
+  (map<- '((#\space 0)
+           (#\-     0))))
+(for each! ((p "pnbrqk")
+            (v '(10 31 33 50 90 10000)))
+  (piece-values .set! p.lowercase v)
   (piece-values .set! p.uppercase (- v)))
-(piece-values .set! #\space 0)
-(piece-values .set! #\-     0)
 
 (to (initial-chess-board<-)
   ;; XXX ok, what rep is nicest here?
