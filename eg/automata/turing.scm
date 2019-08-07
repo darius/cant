@@ -18,7 +18,7 @@
       (show-config machine)
       (newline))
     (may (step machine)
-      (be #no machine)
+      (be #no     machine)
       (be updated (running updated)))))
 
 (to (show-config {machine transit state {tape L h R}})
