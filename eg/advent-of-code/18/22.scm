@@ -117,7 +117,7 @@
                 (do (let moves
                       (for yeahs ((q (neighbors<- p)))
                         (and (usable? tool q)
-                             {at t.up {state q tool}})))
+                             {at t.+ {state q tool}})))
                     (let swap (equip effort (swap-tool p tool)))
                     (continue `(,swap ,@moves))))))))
 
@@ -128,9 +128,9 @@
       candidates.first))
 
 (to (neighbors<- `(,x ,y))
-  `((,x.up ,y)
-    (,x ,y.up)
-    ,@(if (< 0 x) `((,x.- ,y)) '())
+  `((,x.+ ,y)
+    (,x ,y.+)
+    ,@(if (< 0 x) `((,x.- ,y))   '())
     ,@(if (< 0 y) `((,x ,y.-)) '())))
 
 ;; (specialized from utils for speed)

@@ -25,7 +25,7 @@
           (show next)
           (format "spread\n")))
     (when (< t 11000)
-      (stepping t.up next))))
+      (stepping t.+ next))))
 
 (to (compact? ps)
   (let `((,xl ,yl) (,xh ,yh)) (bounds<- ps))

@@ -36,7 +36,7 @@
 
 (to (part2)
   ;; I'm gonna use 0-based coords and then convert up at the end.
-  (let N1 N.up)
+  (let N1 N.+)
   (to (at x y)
     (+ (* y N1) x))
 
@@ -70,7 +70,7 @@
           `(,i ,j ,d)))))
 
   (to (cvt-coords `(,x ,y ,d))
-    `(,x.up ,y.up ,d))
+    `(,x.+ ,y.+ ,d))
 
 ;  (cvt-coords (max-by power<- (subsquares))))
 ; out of memory
