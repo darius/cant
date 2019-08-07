@@ -74,9 +74,7 @@
        ((: __ vector?)
         (parse-e `(array<- ,@(vector->list e)) ctx)) ;XXX hygiene
        ((: __ term?)
-        (pack<- e-term
-                (term-tag e)
-                (parse-es (term-parts e) ctx)))
+        (parse-term-e (term-tag e) (term-parts e) ctx))
        (('let p e1)
         (pack<- e-let (parse-p p ctx) (parse-e e1 ctx)))
        (('make '_ . clauses)
@@ -112,10 +110,7 @@
   ;;  ensure the result is a list
   (mcase es
     (((: cue cue?) . operands)
-     (if (has-spread-operator? operands)
-         (parse-e `(',make-term ',cue (',list* ,@(remove-spread-operator operands)))
-                  ctx)
-         (pack<- e-term cue (parse-es operands ctx))))
+     (parse-term-e cue operands ctx))
     (operands
         ;; XXX The following is not an acceptable meaning for (_ x y z) because
         ;;  if message = (_ 'x) then (message 0) currently would evaluate to 'x
@@ -124,6 +119,12 @@
      (if (has-spread-operator? operands)
          (parse-e `(',list* ,@(remove-spread-operator operands)) ctx)
          (pack<- e-list (parse-es operands ctx))))))
+
+(define (parse-term-e tag operands ctx)
+  (if (has-spread-operator? operands)
+      (parse-e `(',make-term ',tag (',list* ,@(remove-spread-operator operands)))
+               ctx)
+      (pack<- e-term tag (parse-es operands ctx))))
 
 (define (has-spread-operator? parts)
   (any (mlambda (('@ __) #t) (__ #f))
