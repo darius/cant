@@ -1,5 +1,5 @@
 #!chezscheme
-(library (player terp)
+(library (player player)
 (export run-load squeam-interpret)
 (import (chezscheme)
   (player util)

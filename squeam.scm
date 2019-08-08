@@ -8,7 +8,7 @@
   (player env)
   (player elaborate)
   (player primitives)
-  (player terp))
+  (player player))
 
 ;; The Squeam interpreter and global environment.
 
