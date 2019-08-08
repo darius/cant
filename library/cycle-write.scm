@@ -5,13 +5,19 @@
 ;; > (cycle-write a)
 ;; #1=<box #1>
 
-;; Use cycle-sink<- if you want to perform multiple writes with id #s
-;; keeping the same meaning.
+;; cycle-sink<- could be generalized to support a stream of writes on
+;; separate occasions, with the id #s keeping the same meaning. It
+;; seems it'd be trickier in that an object could get flushed into an
+;; output before its second appearance, so in that output it would not
+;; be given an ID -- it wouldn't get an ID until it appeared twice in
+;; the *same* flushed chunk of output. Perhaps not a big deal, but
+;; this wrinkle and the faceting below are why I'm not bothering to
+;; engineer a general cycle-sink object. TODO revisit this
 
-;; TODO generally, sinks should not have a .close, right? POLA.
-;; POLA is why we're splitting out the flush-to facet here, but if
-;; we're going to go that route then string-sinks should be redesigned
-;; in the same style.
+;; There's also a matter of POLA-separating the flushing from the
+;; writing. I bothered to do that here, but maybe that's kind of
+;; gilding the lily, when string-sinks aren't faceted in the same way,
+;; and neither is _.close.
 
 ;; TODO better names?
 
@@ -19,8 +25,7 @@
   (let (_ cycle-sink flush-to) (cycle-sink<-))
   (cycle-sink .print thing)             ;TODO name it .write
   (flush-to (or sink-arg out))
-  flush-to.close
-  cycle-sink.close)
+  flush-to.close)
 
 (to (cycle-sink<-)
 
@@ -32,25 +37,18 @@
 
   (make flush-to
 
-    (to _.string
-      (with-output-string flush-to))
-
     (to (_ sink)
       (hey sink @buffer.values)
       buffer.clear!)
 
-    ;; (not sure this is the best division of responsibilities; just trying it out)
     (to _.close
-      buffer.clear!))
+      buffer.clear!
+      tags.clear!))
 
   ;; The tags map has a tag for each object the cycle-sink visits. The
   ;; tag is 0 after the first visit; then, on the second and thereafter,
   ;; a positive integer identifying the object.
   
-  ;; This map is passed to cycle-sink<- so that multiple .print calls can
-  ;; display the same id numbers for the same things, if that's your wish.
-  ;; But 
-
   ;; TODO exclude known-to-be-acyclic types from the tags map
 
   (let tags (map<-))
@@ -93,4 +91,4 @@
 
   (_ cycle-sink flush-to))
 
-(export cycle-write cycle-sink<-)
+(export cycle-write)
