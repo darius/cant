@@ -227,12 +227,11 @@ Fizz
 ```
 
 The global environment at startup is populated from
-[runtime.scm](https://github.com/darius/squeam/blob/master/abcs/runtime.scm)
-and
-[stdlib.scm](https://github.com/darius/squeam/blob/master/abcs/stdlib.scm)
-(plus a handful of other modules). Not that these make great example
-code necessarily, but they're the first places to look to clear up
-questions you may have.
+[abcs/](https://github.com/darius/squeam/tree/master/abcs) (plus a
+handful of modules from
+[library/](https://github.com/darius/squeam/tree/master/library)). Not
+that these make great example code necessarily, but they're the first
+places to look to clear up questions you may have.
 
 The underlying interpreter in Scheme lives in
 [terp/](https://github.com/darius/squeam/tree/master/terp).
