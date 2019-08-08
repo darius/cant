@@ -1,8 +1,8 @@
-(library (terp elaborate)
+(library (player elaborate)
 (export elaborate-e elaborate-p
         outer-scope<-
         )
-(import (chezscheme) (terp util) (terp macros) (terp parse) (terp env))
+(import (chezscheme) (player util) (player macros) (player parse) (player env))
 
 ;; Analyze and transform a parsed AST.
 

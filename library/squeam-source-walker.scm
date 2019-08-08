@@ -1,6 +1,6 @@
 ;; Find the immediate subparts of expressions and patterns, for
 ;; source-code walking.
-;; XXX duplication of terp/parse.scm
+;; XXX duplication of player/parse.scm
 
 (let none '(() ()))
 

@@ -1,9 +1,9 @@
-(library (terp env)
+(library (player env)
 (export primitive-env repl-env
         global-defined? really-global-lookup global-init! really-global-define!
         missing
         )
-(import (chezscheme) (terp util))
+(import (chezscheme) (player util))
 
 ;; The global environment
 ;; This organization is a hacky breaking of a dependency cycle

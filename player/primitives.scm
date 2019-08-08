@@ -1,11 +1,11 @@
-(library (terp primitives)
+(library (player primitives)
 (export hash squeam=? char-compare number-compare string-compare hashmap-place
         as-link box<- vector-append subvector copy-range! vector-move!
         maybe-macroexpand-expr maybe-macroexpand-patt prim-halp-log
         prim-nano-now prim-nanosleep prim-*/mod prim-string-maps? 
         prim-substring prim-vector-maps? prim-read-all 
         )
-(import (chezscheme) (terp util) (terp parse))
+(import (chezscheme) (player util) (player parse))
 
 ;; Hashing and equality
 

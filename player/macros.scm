@@ -1,4 +1,4 @@
-(library (terp macros)
+(library (player macros)
 (export unpack define-enum mcase mlambda)
 (import (chezscheme))
 

@@ -1,4 +1,4 @@
-(library (terp util)
+(library (player util)
 (export report starts-with? cue<- cue? boolean<- insist should= identity foldl
         foldr all any flatmap last butlast remove-nth snarf string-join
         term<-list term<- make-term term? term-tag term-parts)

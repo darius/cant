@@ -1,14 +1,14 @@
 #! /usr/bin/scheme --program
 #!chezscheme
 (import (chezscheme)
-  (terp util)
-  (terp macros)
-  (terp read)
-  (terp parse)
-  (terp env)
-  (terp elaborate)
-  (terp primitives)
-  (terp terp))
+  (player util)
+  (player macros)
+  (player read)
+  (player parse)
+  (player env)
+  (player elaborate)
+  (player primitives)
+  (player terp))
 
 ;; The Squeam interpreter and global environment.
 

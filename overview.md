@@ -234,7 +234,7 @@ that these make great example code necessarily, but they're the first
 places to look to clear up questions you may have.
 
 The underlying interpreter in Scheme lives in
-[terp/](https://github.com/darius/squeam/tree/master/terp).
+[player/](https://github.com/darius/squeam/tree/master/player).
 
 
 ## The bikeshedding

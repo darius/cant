@@ -1,7 +1,7 @@
 #!chezscheme
-(library (terp read)
+(library (player read)
 (export squeam-read)
-(import (chezscheme) (terp util))
+(import (chezscheme) (player util))
 
 ;; Adapted from my UTS Scheme reader.
 ;; This relies on char->integer returning a number in [0..255].

@@ -1,5 +1,5 @@
 #!chezscheme
-(library (terp parse)
+(library (player parse)
 (export pack<- pack-tag 
         e-constant
         e-variable
@@ -24,7 +24,7 @@
         none-exp
         self-evaluating?
         )
-(import (chezscheme) (terp util) (terp macros))
+(import (chezscheme) (player util) (player macros))
 
 ;; Parse expressions and patterns to ASTs
 
