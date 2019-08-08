@@ -55,7 +55,7 @@
   (unless (= 0 (system command))
     (error "Failed system command" command)))
 
-(to (repl @(optional cmd-line-args))    ;TODO rename
+(to (listener @(optional cmd-line-args))    ;TODO rename
   (import (use 'traceback) on-error-traceback)
 
   (let parent-handler the-signal-handler.^)
@@ -65,7 +65,7 @@
     (the-last-error .^= evil)
     (on-error-traceback @evil))
 
-  (to (repl-handler @evil)
+  (to (listener-handler @evil)
     (the-signal-handler .^= parent-handler)
     (the-last-error .^= evil)
     (on-error-traceback @evil)
@@ -73,7 +73,7 @@
     (interact))
 
   (to (interact)
-    (the-signal-handler .^= repl-handler)
+    (the-signal-handler .^= listener-handler)
     (display "-> ")
     (may (read)
       (be (? eof?) (newline))
@@ -89,7 +89,7 @@
     (be #no (interact))
     (be '() (interact))
     (be `("-i" ,filename ,@_)
-      (the-signal-handler .^= repl-handler)
+      (the-signal-handler .^= listener-handler)
       (load-and-run filename cmd-line-args.rest)
       (interact))
     (be `(,filename ,@_)

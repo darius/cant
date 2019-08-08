@@ -12,8 +12,8 @@
 
 ;; The Squeam interpreter and global environment.
 
-(define (repl . opt-args)
-  (squeam-interpret `(call repl ',opt-args)))
+(define (listener . opt-args)
+  (squeam-interpret `(call listener ',opt-args)))
 
 (run-load "abcs/functions.scm")
 (run-load "abcs/library.scm")
@@ -28,5 +28,5 @@
     (import (use 'bag)        bag<-)))
 
 ;(unless (squeam-interpret '(the-last-error .^))
-(repl (cdr (command-line)))
+(listener (cdr (command-line)))
 ;)
