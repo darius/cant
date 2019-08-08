@@ -262,7 +262,7 @@
 (to (use file-stem)                  ;TODO a realer module system
   ;; N.B. could sort of just use memoize if that were already loaded.
   (let stem (if (symbol? file-stem)
-                (chain "lib/" file-stem.name)
+                (chain "library/" file-stem.name)
                 file-stem))
   (may (the-modules .get stem)
     (be #no

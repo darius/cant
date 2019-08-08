@@ -57,7 +57,7 @@
 (((loud-use "eg/automata/turing") 'smoke-test))
 (loud-use "eg/circuitoptimizer")
 (loud-use "eg/csv")
-(loud-use "eg/failing")   ;; tests lib/traceback
+(loud-use "eg/failing")   ;; tests library/traceback
 (loud-use "eg/fizzbuzz")
 (loud-use "eg/floyd-triangle")
 (loud-use "test/test-2048")

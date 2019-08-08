@@ -135,7 +135,7 @@ which I'm not sure have ever run a program for actual use.
 
 It's sort of Smalltalky, where for now the interpreter internals
 always appear as meta-objects with no optimization, and even primitive
-objects execute via high-level scripts (in `lib/runtime.scm`). This is
+objects execute via high-level scripts (in `abcs/runtime.scm`). This is
 motivated by the goal of a self-sustaining whole system eventually
 supporting powerful debugging. To not be incredibly slow, the design
 will need to get fancier.
@@ -205,7 +205,7 @@ ok
 
 There are example programs in
 [eg/](https://github.com/darius/squeam/tree/master/eg) and
-[lib/](https://github.com/darius/squeam/tree/master/lib). To run an
+[library/](https://github.com/darius/squeam/tree/master/library). To run an
 example (
 [FizzBuzz](https://github.com/darius/squeam/blob/master/eg/fizzbuzz.scm)
 here):
@@ -227,9 +227,9 @@ Fizz
 ```
 
 The global environment at startup is populated from
-[runtime.scm](https://github.com/darius/squeam/blob/master/lib/runtime.scm)
+[runtime.scm](https://github.com/darius/squeam/blob/master/abcs/runtime.scm)
 and
-[stdlib.scm](https://github.com/darius/squeam/blob/master/lib/stdlib.scm)
+[stdlib.scm](https://github.com/darius/squeam/blob/master/abcs/stdlib.scm)
 (plus a handful of other modules). Not that these make great example
 code necessarily, but they're the first places to look to clear up
 questions you may have.
