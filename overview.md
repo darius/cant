@@ -140,10 +140,11 @@ motivated by the goal of a self-sustaining whole system eventually
 supporting powerful debugging. To not be incredibly slow, the design
 will need to get fancier.
 
-The interpreter and core library, at this writing, amount to ~2500
+The interpreter and core library, at this writing, amount to ~4000
 lines of Scheme and Squeam. Back in the 90s I used a bytecode Scheme
 of my own at ~5000 lines of C and Scheme, and that size would not be
-too crazy a goal for this. Over 10k lines would be disappointing.
+too crazy a goal for this... if we stopped counting blank lines and
+comments, sigh. Over 10k lines would be disappointing.
 
 It seems hard to find systems anywhere near as small as the
 educational toys but with realistic support for real use requiring
