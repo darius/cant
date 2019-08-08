@@ -1,5 +1,6 @@
-;; Binary decision diagrams
-;; from ~/git/mccarthy-to-bryant/lua/bdd3.lua
+;; Binary decision diagrams.
+;; Explained (in Python) at
+;; https://codewords.recurse.com/issues/four/the-language-of-choice
 
 (to (bdd-and f g) (do-choose g lit0 f)) ;TODO rename do-choose
 (to (bdd-or  f g) (do-choose g f lit1))
@@ -12,7 +13,7 @@
           "Not binary" value)
   value)
 
-(let infinite-rank 0x7fffffff)
+(let infinite-rank 0x7fffffff)  ;; (Greater than any variable's rank.)
 (let ranks (flexarray<- infinite-rank infinite-rank))
 (let if0s  (flexarray<- lit0 lit1))
 (let if1s  (flexarray<- lit0 lit1))
@@ -25,6 +26,9 @@
 
 (let choice-memo (map<-))
 
+;; Given a variable numbered `rank` and two bdd nodes, return a bdd
+;; node for the expression "if variable_rank = 0 then if0 else if1".
+;; TODO document the preconditions
 (to (build-choice rank if0 if1)
   (let `(,already ,memo-table) (dedup choice-memo rank if0 if1))
   (or already
@@ -40,6 +44,7 @@
       if0
       (build-choice rank if0 if1)))
 
+;; Return the value of `node` given the settings of its variables in `env`.
 (to (bdd-evaluate node env)
   (if (<= node lit1)
       node
@@ -51,6 +56,8 @@
           (may node
             (be 0 if0)                      ;N.B. 0 == lit0
             (be 1 if1)))
+      ;; The next two cases usually save work, but aren't needed for
+      ;; correctness.
       (if (= if0 if1)
           if0)
       (if (and (= if0 lit0) (= if1 lit1))
@@ -58,16 +65,10 @@
       (else
           (choose node if0 if1))))
 
-(to (subst rank replacement node)
-  (may (rank .compare (ranks node))
-    (be -1 node)
-    (be  0 (do-choose replacement (if0s node) (if1s node)))
-    (be +1 (make-choice (ranks node)
-                        (subst rank replacement (if0s node))
-                        (subst rank replacement (if1s node))))))
-
 (let choose-memo (map<-))
 
+;; Like `do-choose`, but McCarthy-standardized, presupposing the
+;; arguments are all McCarthy-standardized.
 (to (choose node if0 if1)
   (let `(,already ,memo-table) (dedup choose-memo node if0 if1))
   (or already
@@ -82,6 +83,16 @@
           (let result (make-choice top on0 on1))
           (memo-table .set! if1 result)
           result)))
+
+;; Specialize `node` to the case where variable number `rank` takes the
+;; given value, `replacement`. Again, node must be standardized.
+(to (subst rank replacement node)
+  (may (rank .compare (ranks node))
+    (be -1 node)
+    (be  0 (do-choose replacement (if0s node) (if1s node)))
+    (be +1 (make-choice (ranks node)
+                        (subst rank replacement (if0s node))
+                        (subst rank replacement (if1s node))))))
 
 ;; Return the lexicographically first env which makes node evaluate to
 ;; goal, if possible; else #no.
@@ -101,3 +112,4 @@
 
 (export satisfy-first build-choice bdd-and bdd-or lit0 lit1 constant<- bdd-evaluate)
 ;; TODO export more, rename
+;; XXX why is build-choice exported? why isn't `choose`? did I just get confused?

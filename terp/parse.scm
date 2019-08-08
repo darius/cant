@@ -112,6 +112,7 @@
     (((: cue cue?) . operands)
      (parse-term-e cue operands ctx))
     (operands
+;;     (parse-term-e '_ operands ctx))))
         ;; XXX The following is not an acceptable meaning for (_ x y z) because
         ;;  if message = (_ 'x) then (message 0) currently would evaluate to 'x
         ;;  which doesn't match the behavior of other message objects like _.count.

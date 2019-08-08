@@ -891,7 +891,9 @@
     (os-exit ,exit)
     ))
 
+;;(display "hey\n")
 (run-load "lib/runtime.scm")
+;;(display "dude\n")
 
 (set! miranda-trait (get-prim 'miranda-trait))
 
