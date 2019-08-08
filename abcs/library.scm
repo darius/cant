@@ -44,7 +44,7 @@
   (display "Error within error! Evils:\n")
   (begin printing ((xs evil))
     (when xs.empty? (os-exit 1))
-    (out .print xs.first)
+    (out .write xs.first)
     (out .display #\newline)
     (printing xs.rest)))
 

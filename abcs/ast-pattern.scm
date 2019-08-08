@@ -8,7 +8,7 @@
     (may message
       (be {.selfie sink}
         (sink .display "#<patt ")
-        (sink .print me.term)
+        (sink .write me.term)
         (sink .display ">"))
       (be {.term}
         (may (__ast-tag me)

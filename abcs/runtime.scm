@@ -271,19 +271,19 @@
     (may me
       (be `(quote ,x)
         (sink .display "'")
-        (sink .print x))
+        (sink .write x))
       (else
        (sink .display "(")
-       (sink .print me.first)
+       (sink .write me.first)
        (begin printing ((r me.rest))
          (hm (when (link? r)
                (sink .display " ")
-               (sink .print r.first)
+               (sink .write r.first)
                (printing r.rest))
              (when (null? r) 'ok)
              (else
                (sink .display " . ")       ;XXX we're not supporting this in read, iirc
-               (sink .print r))))
+               (sink .write r))))
        (sink .display ")"))))
   (to message
     (list-trait me message))) ;XXX use trait syntax instead
@@ -349,12 +349,12 @@
   (to (_ .selfie sink)
     (sink .display "[")
     (when (< 0 me.count)
-      (sink .print (me 0))
+      (sink .write (me 0))
       (for each! ((x ((__vector->list me) .rest)))
         (sink .display #\space)
-        (sink .print x)))
+        (sink .write x)))
     (sink .display "]"))
-;   (sink .print (__vector->list me)))
+;   (sink .write (__vector->list me)))
   (to message
     (array-trait me message))) ;XXX use trait syntax instead
 
@@ -544,7 +544,7 @@
     value)                              ;TODO return void instead?
   (to (_ .selfie sink)
     (sink .display "<box ")
-    (sink .print me.^)
+    (sink .write me.^)
     (sink .display ">"))
   )
 
@@ -570,7 +570,7 @@
 (make-trait sink-primitive me
   (to (_ .display a)   (__display a me))
   (to (_ .write-u8 u8) (__put-u8 me u8))
-  (to (_ .print a)     (a .selfie me))
+  (to (_ .write a)     (a .selfie me))
   (to _.close          (__close-port me))
   (to _.output-string                 ;XXX for string-sink only
     (__get-output-string me))
@@ -582,10 +582,10 @@
   (to _.arguments      (__term-arguments me))
   (to (_ .selfie sink)
     (sink .display "{")
-    (sink .print me.tag)
+    (sink .write me.tag)
     (for each! ((arg me.arguments))
       (sink .display " ")
-      (sink .print arg))
+      (sink .write arg))
     (sink .display "}"))
   (to (_ .compare t)
     (`(,me.tag ,@me.arguments) .compare `(,t.tag ,@t.arguments))) ;XXX untested
@@ -905,7 +905,7 @@
             value)
           (to (_ .selfie sink)
             (sink .display "#<map (")
-            (sink .print count.^)
+            (sink .write count.^)
             (sink .display ")>"))
           ))
 
@@ -967,7 +967,7 @@
     ;; XXX fill in rest of set interface (just the map interface, I guess)
     (to (_ .selfie sink)
       (sink .display "#<set")
-      (sink .print map.keys)
+      (sink .write map.keys)
       (sink .display ">"))
     ))
 
@@ -1317,7 +1317,7 @@
         (error "Incomplete format")) ;TODO report the format-string
       (may s.first
         (be #\w
-          (maybe-pad sink pad sign width (_ .print args.first))
+          (maybe-pad sink pad sign width (_ .write args.first))
           (scanning sink s.rest args.rest))
         (be #\d
           (maybe-pad sink pad sign width (_ .display args.first))

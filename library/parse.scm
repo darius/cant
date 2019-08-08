@@ -59,7 +59,7 @@
   (make _
     (to _.lhs lhs)
     (to _.rhs rhs)
-    (to (_ .selfie sink) (sink .print `(,lhs ,@rhs)))))
+    (to (_ .selfie sink) (sink .write `(,lhs ,@rhs)))))
 
 ;; A parse tree and a remainder.
 (to (parse<- tree remainder)
@@ -69,7 +69,7 @@
     (to _.lhs       tree.lhs)
     (to _.complete? remainder.empty?)
     (to (_ .selfie sink)
-      (sink .print `((tree: ,tree)
+      (sink .write `((tree: ,tree)
                      (remainder: ,remainder))))))
 
 (export grammar<-

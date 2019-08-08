@@ -77,7 +77,7 @@
         (flexarray .push! v)))
     (to (_ .selfie sink)
       (sink .display "#<flexarray (")
-      (sink .print count.^)
+      (sink .write count.^)
       (sink .display ")>"))     
     (to (_ .resize! n)
       (let old vec.^)

@@ -122,7 +122,7 @@
       (call actor (term<- cue arguments)))))
 
 (to (write x)                      ;TODO rename
-  (out .print x))
+  (out .write x))
 
 (to (print x)                      ;TODO rename
   (write x)

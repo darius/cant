@@ -23,7 +23,7 @@
 
 (to (cycle-write thing @(optional sink-arg))
   (let (_ cycle-sink flush-to) (cycle-sink<-))
-  (cycle-sink .print thing)             ;TODO name it .write
+  (cycle-sink .write thing)             ;TODO name it .write
   (flush-to (or sink-arg out))
   flush-to.close)
 
@@ -62,7 +62,7 @@
     (to (and (_ .write-u8 u8) message)
       (buffer .push! message))
 
-    (to (_ .print thing)
+    (to (_ .write thing)
       (if (or (symbol? thing) (self-evaluating? thing))  ;; TODO skip other atom types
           (thing .selfie cycle-sink)
           (may (tags .get thing)

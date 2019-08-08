@@ -23,7 +23,7 @@
       ;; XXX fill in rest of bag interface (just the map interface, I guess)
       (to (_ .selfie sink)
         (sink .display "#<bag (")
-        (sink .print map.count)
+        (sink .write map.count)
         (sink .display ")>"))
       ))
 
