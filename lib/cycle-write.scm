@@ -47,13 +47,12 @@
                                  (format .to-sink sink "#~w=" id))))
               (thing .selfie cycle-sink))
             (be tag
-              (let id (hm (when (= tag 0)
-                            ;; Second visit.
-                            (hey (counter .update _.+)
-                                 (-> (tags .set! thing it))))
-                          (else
-                            ;; Thereafter.
-                            tag)))
+              (let id (if (= tag 0)
+                          ;; Second visit:
+                          (hey (counter .update _.+)
+                               (-> (tags .set! thing it)))
+                          ;; Thereafter:
+                          tag))
               (buffer .push! (on (sink)
                                (format .to-sink sink "#~w" id)))))))))
 
