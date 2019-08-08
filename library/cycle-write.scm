@@ -39,6 +39,7 @@
       (hey sink @buffer.values)
       buffer.clear!)
 
+    ;; (not sure this is the best division of responsibilities; just trying it out)
     (to _.close
       buffer.clear!))
 
