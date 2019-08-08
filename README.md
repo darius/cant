@@ -9,7 +9,7 @@ You can try it out with:
 
 $ ./squeam.scm
 
-There's no documentation, though there's example code in eg/ and lib/.
+There's no documentation, though there's example code in eg/ and library/.
 
 
 ## The motive, roughly
@@ -37,6 +37,6 @@ better (idiosyncrasies, remember).
 The goal of Smalltalkiness motivated the incredibly slow
 implementation strategy to start with, where the interpreter internals
 always appear as meta-objects with no optimization, and even primitive
-objects execute via high-level scripts (in lib/runtime.scm).
+objects execute via high-level scripts (in library/runtime.scm).
 
 Thanks to Kragen Sitaker for early discussions about the language.
