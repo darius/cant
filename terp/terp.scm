@@ -193,10 +193,10 @@
           (script<- 'script-name prim primitive-env))))))
 
 (define expression-script
-  (load-ast-script 'expression-primitive "terp/ast-expression"))
+  (load-ast-script 'expression-primitive "abcs/ast-expression"))
 
 (define pattern-script
-  (load-ast-script 'pattern-primitive "terp/ast-pattern"))
+  (load-ast-script 'pattern-primitive "abcs/ast-pattern"))
 
 (define (unwrap-ast ast)
   (insist (and (object? ast)
@@ -892,7 +892,7 @@
     ))
 
 ;;(display "hey\n")
-(run-load "lib/runtime.scm")
+(run-load "abcs/runtime.scm")
 ;;(display "dude\n")
 
 (set! miranda-trait (get-prim 'miranda-trait))

@@ -15,7 +15,7 @@
 (define (repl . opt-args)
   (squeam-interpret `(call repl ',opt-args)))
 
-(run-load "lib/stdlib.scm")
+(run-load "abcs/stdlib.scm")
 (squeam-interpret
  '(do
 ;    (use "test/smoke-test")
