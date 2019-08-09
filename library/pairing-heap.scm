@@ -51,16 +51,16 @@
         (do (let {pq min1 rest1} pq1)
             (let {pq min2 rest2} pq2))
         (if (<=? min1 min2)
-            {pq min1 `(,pq2 ,@rest1)})
+            {pq min1 (link pq2 rest1)})
         (else
-            {pq min2 `(,pq1 ,@rest2)})))
+            {pq min2 (link pq1 rest2)})))
 
   ;; Return PQ with ELEM inserted.
   (to (pq-insert pq elem)
     (may pq
       (be {pq}            {pq elem '()})
       (be {pq min1 rest1} (if (<=? min1 elem)
-                              {pq min1 `({pq ,elem ()} ,@rest1)}
+                              {pq min1 (link {pq elem '()} rest1)}
                               {pq elem `(,pq)}))))
 
   ;; Return PQ with its minimum element removed.
@@ -80,8 +80,8 @@
               (let {pq min1 rest1} pq1)
               (let {pq min2 rest2} pq2)
               (pq-merge (if (<=? min1 min2)
-                            {pq min1 `(,pq2 ,@rest1)}
-                            {pq min2 `(,pq1 ,@rest2)})
+                            {pq min1 (link pq2 rest1)}
+                            {pq min2 (link pq1 rest2)})
                         (merging rest))))))))
 
   (export
