@@ -104,8 +104,8 @@
   (empty text far i `(,@vals ,constant)))
 
 ;; (seclude p): parse as p, but where p doesn't get to see or alter
-;; the incoming values. If p succeeds, producing new vals, *then*
-;; append them to the overall result.
+;; the incoming values. If p succeeds, producing new values, *then*
+;; append them to the incoming values for the overall result.
 ;;
 ;; When you write a grammar, you typically want to seclude most
 ;; productions: e.g. a rule A ::= B C | D
