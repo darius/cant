@@ -59,13 +59,13 @@
     (for foldl ((stack '(0)) (ch real-program))
       (may ch
         (be #\[ (link 'd stack))
-        (be #\] (let `(,top ,next ,@rest) stack)
+        (be #\] (let (link top next rest) stack)
                 (link `(begin looping ((d ,next))
                          (if (= 0 (data d))
                              d
                              (looping ,top)))
                       rest))
-        (else (let `(,top ,@rest) stack)
+        (else (let (link top rest) stack)
               (link (may ch
                       (be #\< `(- ,top 1))
                       (be #\> `(+ ,top 1))
