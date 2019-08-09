@@ -161,7 +161,7 @@
            (join ,(feed chain))
            (drop ,drop)
            (whitespace ,(skip-1 _.whitespace?))
-           (nat ,(seclude
+           (nat ,(seclude                                        ;TODO rename
                   (then (capture (at-least-1 (skip-1 _.digit?))) ;; TODO no leading 0s
                         (feed number<-string))))
            (int ,(seclude
@@ -183,16 +183,16 @@
   (unless skeletons
     outcome.display (newline)
     (error "Ungrammatical grammar"))
-  (let lhses (each _.first skeletons))
   (let all-refs (union-over (for each ((`(,_ (,refs ,_)) skeletons))
                               refs)))
-  (let undefined (all-refs .difference (set<-list lhses)))
+  (let lhses (bag<- (each _.first skeletons)))
+  (let undefined (all-refs .difference lhses))
   (unless undefined.empty?
     (error "Undefined rules" (sort undefined.keys)))
-  (let dups (for where ((n (bag<- lhses)))
-              (< 1 n)))
-  (unless dups.empty?
-    (error "Multiply-defined rules" (sort dups)))
+  (let duplicates (for where ((n lhses))
+                    (< 1 n)))
+  (unless duplicates.empty?
+    (error "Multiply-defined rules" (sort duplicates)))
   skeletons)
 
 (when #no
