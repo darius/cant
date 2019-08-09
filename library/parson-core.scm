@@ -113,13 +113,18 @@
 ;;
 ;; But a style that secludes all of your productions would be
 ;; constraining, like writing a recursive-descent parser without ever
-;; passing parameters or keeping loop state. You *could* do it:
-;; instead of taking parameters, return a closure that takes them, and
-;; instead of loop state, return a data structure for a later pass in
-;; code to deal with. (At least, insofar as syntactic decisions are
-;; oblivious to semantic parameters.)
+;; passing parameters or keeping loop state. You *could* get along
+;; without those features, as long as the data only enters into
+;; semantics, not syntactic predicates: instead of taking parameters,
+;; return a closure that takes them, and instead of loop state, return
+;; a data structure for a later pass in code to deal with. These are
+;; pretty annoying hacks to need for things as ordinary as parsing
+;; left-associative operators -- which would be just a while-loop in a
+;; recursive-descent parser. In Parson it's equally simple: the `many`
+;; combinator (below) of a non-secluded loop body. (Call it a left
+;; fold if you prefer.)
 ;;
-;; Sometimes you want to seclude just part of a production. `seclude`
+;; Sometimes you want to seclude only part of a production. `seclude`
 ;; works together with `feed` to pipe results from producers to
 ;; consumers.
 (to ((seclude p) text far i vals)
