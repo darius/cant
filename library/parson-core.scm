@@ -152,6 +152,7 @@
 ;; Succeed just at the end of the input.
 (let end (invert skip-any-1))
 
+;; E.g. (lit-1 #\x) advances past exactly "x", or fails.
 (to (lit-1 my-char)
   (skip-1 (-> (= my-char it)))) ;TODO I think <=> in place of = would catch some bugs in client code
 
@@ -159,7 +160,7 @@
 (to (lit string)
   (foldr then (each lit-1 string) empty))
 
-;; Always succeed, but first try p.
+;; Always succeed, but preferably after p.
 (to (maybe p)
   (either p empty))
 
