@@ -1,8 +1,7 @@
 ;; Binding keys to commands
 
 (to (ctrl ch)                           ;XXX duplicate code
-  (let code ch.uppercase.code)
-  (char<- (- code 64)))
+  (- ch.uppercase 64))
 
 (to (meta ch)
   (string<- esc ch))

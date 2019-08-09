@@ -24,9 +24,7 @@
                                  (be #\- (data .set! d (- (data .get d 0) 1)))
                                  (be #\+ (data .set! d (+ (data .get d 0) 1)))
                                  (be #\. (display (char<- (data .get d 0))))
-                                 (be #\, (data .set! d (may stdin.read-char
-                                                         (be (? eof?) -1)
-                                                         (be ch ch.code))))
+                                 (be #\, (data .set! d (read-1 stdin)))
                                  (else))
                                d)))))))
 
@@ -40,6 +38,11 @@
               stack.rest)
       (else   stack)))
   jump)
+
+(to (read-1 source)
+  (may source.read-char
+    (be (? eof?) -1)
+    (be ch ch.code)))
 
 
 ;; Compiler
@@ -87,9 +90,7 @@
        (display (char<- (data d)))
        d)
      (to (absorb d)
-       (data .set! d (may stdin.read-char
-                       (be (? eof?) -1)
-                       (be ch ch.code)))
+       (data .set! d (read-1 stdin))
        d)
      ,body))
 
