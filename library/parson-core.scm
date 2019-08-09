@@ -56,9 +56,7 @@
     (to _.results             vals)
     (to _.result              vals.maybe)    ;TODO nicer error on wrong # of vals
     (to _.display
-      (write (text .slice i))
-      (display " ")
-      (write vals))))
+      (format "~w ~w" (text .slice i) vals))))
 
 ;; (invert p): a parser that succeeds from a state just when p fails
 ;; from the same state. Any parsing by p becomes mere lookahead; it
