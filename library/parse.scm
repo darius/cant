@@ -20,7 +20,7 @@
           (link (parse<- tree rest)
                 (for gather ((rule (rules-starting-with lhs)))
                   (extend-parse rule.lhs `(,tree)
-                                 rest rule.rhs.rest))))
+                                rest rule.rhs.rest))))
         (else
           ;; Try to extend rightward.
           (for gather ((p (grammar .parse-prefixes rest)))
