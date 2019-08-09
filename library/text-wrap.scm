@@ -7,7 +7,7 @@
 
 (to (wrap text width)
   (surely (< 0 width))  ;TODO 'require' or something, for preconditions
-  (wrap-into (flexarray<-) (parse-tokens text) width))
+  (wrap-into (flexarray<-) (parse-tokens text.values) width))
 
 (to (flush buffer)
   (string<-list buffer.values))
@@ -42,10 +42,9 @@
                 (do (line .extend! (chain (" " .repeat spaces) s))
                     (scanning 0 tokens.rest))
                 (link (flush line)
-                      (hide
-                        (let new-line (flexarray<-))
-                        (new-line .extend! s)
-                        (wrap-into new-line tokens.rest width)))))))))
+                      (do (let new-line (flexarray<-))
+                          (new-line .extend! s)
+                          (wrap-into new-line tokens.rest width)))))))))
 
 
 (to (main `(,_ ,width-str ,@words))

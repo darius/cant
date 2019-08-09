@@ -776,7 +776,7 @@
 ;; TODO:
 ;;   extend map-trait
 ;;   test deletion more
-;;   nonlinear probing -- how about xor probing?
+;;   nonlinear probing -- now quadratic, but how about xor probing?
 ;;   preserving insertion order
 ;;   immutable snapshots
 ;;
