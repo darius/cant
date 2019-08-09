@@ -182,23 +182,23 @@
     outcome.display (newline)
     (error "Ungrammatical grammar"))
 
-  (let all-refs (union-over (for each ((`(,_ (,refs ,_)) skeletons))
-                              refs)))
   (let lhses (bag<- (each _.first skeletons)))
-  (let undefined (all-refs .difference lhses))
-  (unless undefined.empty?
-    (error "Undefined rules" (sort undefined.keys)))
-
   (let duplicates (for where ((n lhses))
                     (< 1 n)))
   (unless duplicates.empty?
     (error "Multiply-defined rules" (sort duplicates)))
 
+  (let all-refs (union-over (for each ((`(,_ (,refs ,_)) skeletons))
+                              refs)))
+  (let undefined (all-refs .difference lhses))
+  (unless undefined.empty?
+    (error "Undefined rules" (sort undefined.keys)))
+
   skeletons)
 
 (when #no
   (let text "
-r: 'yo'.
+r: 'yo' z.
 r: 'dude'.
 s: .
 s: r.
