@@ -34,10 +34,8 @@
   (format "~d ~w ~w\n" (" " .repeat before.count) state next-acts))
 
 (to (step {machine transit state (and tape {tape _ head _})})
-  (may (transit .get `(,state ,head))
-    (be #no #no)
-    (be `(,acts ,next-state) 
-      {machine transit next-state (foldl perform tape acts)})))
+  (for mayhap ((`(,acts ,next-state) (transit .get `(,state ,head))))
+    {machine transit next-state (foldl perform tape acts)}))
 
 (to (perform {tape L h R} act)
   (may act

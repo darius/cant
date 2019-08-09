@@ -40,9 +40,8 @@
     (may op
       (be 'fetch
         (let m-val (m .get key))
-        (let a-val (may (assoc key a.^)
-                     (be #no #no)
-                     (be `(,k ,v) v)))
+        (let a-val (for mayhap ((`(,k ,v) (assoc key a.^)))
+                     v))
         (surely (= m-val a-val))
                                         ;        (print `(,key ,m-val))
         )

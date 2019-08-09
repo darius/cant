@@ -60,9 +60,7 @@
 
 (to (compile-local frames word)
   (let locals (chain @frames))      ;I think
-  (may (locals .find word #no)
-    (be #no   #no)
-    (be index (local<- index))))
+  (mayhap local<- (locals .find word #no)))
 
 (to (run xts)
   (for foldl ((state {state '() '()})

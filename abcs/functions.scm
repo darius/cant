@@ -132,6 +132,12 @@
     (act focus))
   focus)
 
+;; 'bind' on the maybe monad
+(to (mayhap f ?thing)
+  (may ?thing
+    (be #no #no)
+    (else   (f ?thing))))
+
 ;; probably worthless
 (make method<-
   (to (_ cue)

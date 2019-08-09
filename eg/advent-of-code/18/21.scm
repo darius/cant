@@ -33,14 +33,12 @@
 
     (to _.step
       (let here (regs ip))
-      (may (program .get here)
-        (be #no #no)
-        (be `(,op ,a ,b ,c)
-          (vm .do op a b c)
-          (regs .set! ip (+ (regs ip) 1))
-          (when (= here 7)
-            (format "ip=~w ~w ~d " (regs ip) regs (show (program (regs ip)))))
-          #yes)))
+      (for mayhap ((`(,op ,a ,b ,c) (program .get here)))
+        (vm .do op a b c)
+        (regs .set! ip (+ (regs ip) 1))
+        (when (= here 7)
+          (format "ip=~w ~w ~d " (regs ip) regs (show (program (regs ip)))))
+        #yes))
 
     (to (_ .do op a b c)
       (let result
