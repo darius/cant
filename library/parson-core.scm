@@ -9,8 +9,9 @@
 ;; Glossary:
 ;;  p, q       parsing expression
 ;;  text       input sequence
-;;             (We call it 'text' here even though most operations don't
-;;             care what kind of sequence they deal with.)
+;;             (We call it 'text' here even though these operations don't
+;;             care what kind of sequence they deal with. It'd better support
+;;             efficient access by index, though.)
 ;;  far        the rightmost index tentatively advanced to in text
 ;;             (used for error reporting)
 ;;  i, j       index into text
