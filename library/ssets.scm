@@ -27,7 +27,8 @@
           xs1
           (link x1 (sset-remove xs1 unwanted))))))
 
-(to (merge xs ys)               ;TODO dedupe (extracted from sort.scm)
+;; Not quite the same as sort.scm's merge, since we dedupe here.
+(to (merge xs ys)
   (hm (if xs.empty? ys)
       (if ys.empty? xs)
       (else (may (xs.first .compare ys.first)
