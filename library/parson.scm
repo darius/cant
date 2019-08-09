@@ -42,7 +42,7 @@
 (to (push-lit<- string)
   (constant<- (push string)))
 
-(to (name-char? ch) (or ch.letter? (= ch #\_)))
+(to (name-char? ch) (or ch.letter?       (= ch #\_)))
 (to (word-char? ch) (or ch.alphanumeric? (= ch #\_)))
 
 (let word-boundary (invert (skip-1 word-char?)))
@@ -84,27 +84,24 @@
 (let dqstring (string-quoted-by #\"))
 
 (let pe
-  (delay (:
-           (seclude
-            (either (then term (maybe (then (lit "|") __ pe (lift either))))
-                    (lift (: empty)))))))
+  (delay (: (seclude
+             (either (then term (maybe (then (lit "|") __ pe (lift either))))
+                     (lift (: empty)))))))
 
 (let term
-  (delay (:
-           (seclude
-            (then factor (maybe (then term (lift then))))))))
+  (delay (: (seclude
+             (then factor (maybe (then term (lift then))))))))
 
 (let factor
-  (delay (:
-           (seclude
-            (either (then (lit "!") __ factor (lift invert))
-                    (then primary
-                          (either (then (lit "**") __ primary (lift many))
-                                  (then (lit "++") __ primary (lift at-least-1))
-                                  (then (lit "*") __ (lift many))
-                                  (then (lit "+") __ (lift at-least-1))
-                                  (then (lit "?") __ (lift maybe))
-                                  empty)))))))
+  (delay (: (seclude
+             (either (then (lit "!") __ factor (lift invert))
+                     (then primary
+                           (either (then (lit "**") __ primary (lift many))
+                                   (then (lit "++") __ primary (lift at-least-1))
+                                   (then (lit "*") __ (lift many))
+                                   (then (lit "+") __ (lift at-least-1))
+                                   (then (lit "?") __ (lift maybe))
+                                   empty)))))))
 
 (let primary
   (seclude
@@ -180,19 +177,23 @@
 (to (parse-grammar text)
   (let outcome (parse parson-grammar text))
   (let skeletons outcome.opt-results)
+
   (unless skeletons
     outcome.display (newline)
     (error "Ungrammatical grammar"))
+
   (let all-refs (union-over (for each ((`(,_ (,refs ,_)) skeletons))
                               refs)))
   (let lhses (bag<- (each _.first skeletons)))
   (let undefined (all-refs .difference lhses))
   (unless undefined.empty?
     (error "Undefined rules" (sort undefined.keys)))
+
   (let duplicates (for where ((n lhses))
                     (< 1 n)))
   (unless duplicates.empty?
     (error "Multiply-defined rules" (sort duplicates)))
+
   skeletons)
 
 (when #no
