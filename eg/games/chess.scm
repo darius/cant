@@ -144,7 +144,7 @@
       (let oppo (opponent mover))
       (board<- oppo squares castling #no oppo))
 
-    (to (_ .move-piece place0 place1 opt-en-passant-target)
+    (to (_ .move-piece place0 place1 ?en-passant-target)
       (let `(,r0 ,c0) place0)
       (let `(,r1 ,c1) place1)
       (let rows (array<-list (each array<-list squares)))
@@ -156,7 +156,7 @@
       (let new-castling castling)        ;XXX TODO
 
       (board<- (opponent mover) (each string<-list rows.values)
-               new-castling opt-en-passant-target #no))
+               new-castling ?en-passant-target #no))
 
     (to (_ .move-en-passant place0 place1)
       XXX)

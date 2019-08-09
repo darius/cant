@@ -4,10 +4,10 @@
 (import (use "eg/dole/keyboard")         read-key)
 (import (use "eg/dole/fundamental-mode") fundamental-mode<-)
 
-(to (dole opt-filename)
+(to (dole ?filename)
    (let buffer (fundamental-mode<-))
-   (when opt-filename
-     (buffer .visit opt-filename))
+   (when ?filename
+     (buffer .visit ?filename))
    (for raw-mode ()
      (edit buffer))
    (newline))

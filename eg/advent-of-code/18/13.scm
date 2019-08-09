@@ -77,8 +77,9 @@
 
 (to (show {world tracks w carts})
   (for each! ((`(,i ,ch) tracks.items))
-    (let opt-cart (carts .get i))
-    (display (if opt-cart (show-cart opt-cart) ch)))
+    (display (may (carts .get i)
+               (be #no  ch)
+               (be cart (show-cart cart)))))
   (newline))
 
 (to (part1)

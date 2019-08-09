@@ -176,7 +176,7 @@
 
 (to (parse-grammar text)
   (let outcome (parse parson-grammar text))
-  (let skeletons outcome.opt-results)
+  (let skeletons outcome.?results)
 
   (unless skeletons
     outcome.display (newline)

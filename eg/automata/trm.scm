@@ -72,9 +72,9 @@ insn:    {'1'+} {'#' '#'? '#'? '#'? '#'?} :make_insn.
 ;; (import (use 'pretty-layout) ...)
 ;;XXX use me
 
-(to (show insns @(optional opt-pc opt-regs))
-  (let pc   (or opt-pc   0))
-  (let regs (or opt-regs (regs<-)))
+(to (show insns @(optional ?pc ?regs))
+  (let pc   (or ?pc   0))
+  (let regs (or ?regs (regs<-)))
   (let left
     (for each ((`(,addr (,fn ,n)) insns.items))
       (let show-addr (if (= addr pc)

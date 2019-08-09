@@ -4,9 +4,9 @@
 ;; Given a list of rows, each a list of strings, return a list of lines.
 ;; Each line is the corresponding row joined by `spacer`, with each
 ;; column padded to its max width.
-(to (format-table rows @(optional opt-spacer opt-justify))
-  (let spacer  (or opt-spacer  " "))
-  (let justify (or opt-justify (method<- '.left-justify)))
+(to (format-table rows @(optional ?spacer ?justify))
+  (let spacer  (or ?spacer  " "))
+  (let justify (or ?justify (method<- '.left-justify)))
   (surely (hide (let lengths (each _.count rows))
                 (<= lengths.range.count 1))
           "Rows must be the same length" rows)
@@ -17,8 +17,8 @@
 
 ;; Given a sequence of strings, return a matrix of the same strings in
 ;; column order, trying to fit them in the given width.
-(to (tabulate strings @(optional opt-width))
-  (let width (or opt-width 79))
+(to (tabulate strings @(optional ?width))
+  (let width (or ?width 79))
   (let max-width (+ 2 (max 0 @(each _.count strings))))
   (let n-cols (max 1 (min strings.count (width .quotient max-width))))
   (let n-rows (max 1 ((+ strings.count n-cols -1) .quotient n-cols)))

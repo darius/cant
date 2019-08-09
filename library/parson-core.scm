@@ -36,7 +36,7 @@
     (to (_ .capture-from _) failure)
     (to (_ .prefix _)       failure)
     (to _.leftovers         (error "Parse failed" failure.postmortem))
-    (to _.opt-results       #no)
+    (to _.?results          #no)
     (to _.results           (error "Parse failed" failure.postmortem))
     (to _.result            (error "Parse failed" failure.postmortem))
     (to _.postmortem        `(,(text .slice 0 far) /
@@ -53,7 +53,7 @@
     (to (_ .capture-from j)   (empty text far i `(,@vals ,(text .slice j i))))
     (to (_ .prefix pre-vals)  (empty text far i (chain pre-vals vals)))
     (to _.leftovers           i)
-    (to _.opt-results         vals)
+    (to _.?results            vals)
     (to _.results             vals)
     (to _.result              vals.maybe)    ;TODO nicer error on wrong # of vals
     (to _.display
