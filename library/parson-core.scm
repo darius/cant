@@ -104,18 +104,26 @@
 (to ((push constant) text far i vals)
   (empty text far i `(,@vals ,constant)))
 
-;; Parse as p, but where p doesn't get to see or alter the incoming
-;; values. If it succeeds, producing new vals, *then* append them to
-;; the overall result.
+;; (seclude p): parse as p, but where p can't see or alter the
+;; incoming values. If it succeeds, producing new vals, *then* append
+;; them to the overall result.
 ;;
 ;; When you write a grammar, you typically want to seclude most
-;; productions, but a style that secludes *all* of them would be
+;; productions: e.g. a rule A ::= B C | D
+;; would be (seclude (either (then B C (feed make-A-of-BC-type))
+;;                           (then D   (feed make-A-of-D-type))))
+;;
+;; But a style that secludes all of your productions would be
 ;; constraining, like writing a recursive-descent parser without ever
 ;; passing parameters or keeping loop state. You *could* do it:
 ;; instead of taking parameters, return a closure that takes them, and
 ;; instead of loop state, return a data structure for a later pass in
 ;; code to deal with. (At least, insofar as syntactic decisions are
 ;; oblivious to semantic parameters.)
+;;
+;; Sometimes you want to seclude just part of a production. `seclude`
+;; works together with `feed` to pipe results from producers to
+;; consumers.
 (to ((seclude p) text far i vals)
   ((p text far i '()) .prefix vals))
 
