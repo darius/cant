@@ -104,9 +104,9 @@
 (to ((push constant) text far i vals)
   (empty text far i `(,@vals ,constant)))
 
-;; (seclude p): parse as p, but where p can't see or alter the
-;; incoming values. If it succeeds, producing new vals, *then* append
-;; them to the overall result.
+;; (seclude p): parse as p, but where p doesn't get to see or alter
+;; the incoming values. If p succeeds, producing new vals, *then*
+;; append them to the overall result.
 ;;
 ;; When you write a grammar, you typically want to seclude most
 ;; productions: e.g. a rule A ::= B C | D
