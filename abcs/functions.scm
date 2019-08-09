@@ -113,14 +113,6 @@
         `(,(reverse r-head) ,xs)
         (scanning (link xs.first r-head) xs.rest))))
 
-(make method<-
-  (to (_ cue)
-    (on (actor @arguments)
-      (call actor (term<- cue arguments))))
-  (to (_ actor cue)
-    (on (@arguments)
-      (call actor (term<- cue arguments)))))
-
 (to (write x)                      ;TODO rename
   (out .write x))
 
@@ -139,3 +131,12 @@
   (for each! ((act actions))
     (act focus))
   focus)
+
+;; probably worthless
+(make method<-
+  (to (_ cue)
+    (on (actor @arguments)
+      (call actor (term<- cue arguments))))
+  (to (_ actor cue)
+    (on (@arguments)
+      (call actor (term<- cue arguments)))))
