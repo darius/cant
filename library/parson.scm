@@ -183,8 +183,7 @@
     (error "Ungrammatical grammar"))
 
   (let lhses (bag<- (each _.first skeletons)))
-  (let duplicates (for where ((n lhses))
-                    (< 1 n)))
+  (let duplicates (for where ((n lhses)) (< 1 n)))
   (unless duplicates.empty?
     (error "Multiply-defined rules" (sort duplicates)))
 
