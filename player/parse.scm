@@ -175,6 +175,8 @@
        (('link car-p . rest-ps)
         (make-cons-pat (parse-p car-p ctx)
                        (parse-p `(link ,@rest-ps) ctx)))
+       (('term<- tag-p arguments-p)
+        (make-term-pat (parse-p tag-p ctx) (parse-p arguments-p ctx)))
 
        (('_ (: cue cue?) . operands)      ; TODO experiment: syntax for messages
         (parse-term-pat (make-term cue operands) ctx))
@@ -198,14 +200,20 @@
 (define (maybe-vector->list x)
   (and (vector? x) (vector->list x)))
 
+(define (make-term-pat tag-pat arguments-pat)
+  ;; This should probably be in the kernel, but I'm going to make up
+  ;; an expansion for now.
+  ;; (term<- tag arguments) -> (view explode-term (link tag arguments))
+  (pack<- p-view
+          explode-term-exp
+          (make-cons-pat tag-pat arguments-pat)))
+
 (define (parse-term-pat p ctx)
   (let ((tag (term-tag p))
         (parts (term-parts p)))
     (if (has-spread-operator? parts)
-        (pack<- p-view
-                explode-term-exp
-                (make-cons-pat (pack<- p-constant tag)
-                               (parse-list-pat parts ctx)))
+        (make-term-pat (pack<- p-constant tag)
+                       (parse-list-pat parts ctx))
         (pack<- p-term tag (parse-ps parts ctx)))))
 
 (define (parse-and-pat ps ctx)

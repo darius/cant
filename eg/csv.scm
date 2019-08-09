@@ -17,7 +17,7 @@
   (to (column? x) (columns .maps? x))
   (to (row<- entries)
     (make row
-      (to `{,(? column? tag)}    ;; TODO there should be a (term<- (? column? tag) '()) type of pattern
+      (to `{,(? column? tag)}
         (entries (columns tag))) ;; A bit clumsy, looking the tag up twice...
       (to message
         (call entries message))))
