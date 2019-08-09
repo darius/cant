@@ -105,13 +105,17 @@
   (empty text far i `(,@vals ,constant)))
 
 ;; Parse as p, but where p doesn't get to see or alter the incoming
-;; values tuple. If it succeeds, producing new vals, *then* append them
-;; to the overall result.
+;; values. If it succeeds, producing new vals, *then* append them to
+;; the overall result.
 ;;
 ;; When you write a grammar, you typically want to seclude most
-;; productions, but non-seclusion can be very useful. It corresponds
-;; to, in recursive-descent parsing, passing parameters or keeping
-;; loop state.
+;; productions, but a style that secludes *all* of them would be
+;; constraining, like writing a recursive-descent parser without ever
+;; passing parameters or keeping loop state. You *could* do it:
+;; instead of taking parameters, return a closure that takes them, and
+;; instead of loop state, return a data structure for a later pass in
+;; code to deal with. (At least, insofar as syntactic decisions are
+;; oblivious to semantic parameters.)
 (to ((seclude p) text far i vals)
   ((p text far i '()) .prefix vals))
 
