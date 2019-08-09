@@ -37,8 +37,8 @@
 ;; Extras
 
 (to (anyone succs) (set<- (shift succs)))
-(to (one-of str)
-  (let char-set (set<-list str))
+(to (one-of string)
+  (let char-set string.range)
   (on (succs)
     (set<- (expect-any-of char-set succs))))
 
