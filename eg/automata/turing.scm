@@ -23,10 +23,9 @@
 
 (to (show-config {machine transit state {tape L h R}})
   (to (show-squares squares)
-    (" " .join (for each ((s squares))
-                 ("~w" .format s))))
+    (" " .join (each (-> ("~w" .format it)) squares)))
   (let next-acts (may (transit .get `(,state ,h))
-                   (be #no '())
+                   (be #no         '())
                    (be `(,acts ,_) acts)))
 
   (let before (show-squares (reverse L)))
