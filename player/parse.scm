@@ -177,13 +177,8 @@
                        (parse-p `(link ,@rest-ps) ctx)))
        (('term<- tag-p arguments-p)
         (make-term-pat (parse-p tag-p ctx) (parse-p arguments-p ctx)))
-
-       (('_ (: cue cue?) . operands)      ; TODO experiment: syntax for messages
-        (parse-term-pat (make-term cue operands) ctx))
        (('_ . ps)                   ; TODO experiment: syntax for messages
-        ;; XXX see the comment above about the ('_ . operands) expression form
         (parse-message-pat ps ctx))
-
        ((: __ term?)
         (parse-term-pat p ctx))
        ((: __ vector?)
@@ -197,8 +192,14 @@
        ((: __ list?)
         (error 'parse "Old-style list pattern" p)))))) ;TODO better plaint
 
+;; TODO experiment: syntax for messages
 (define (parse-message-pat ps ctx)
-  (parse-list-pat ps ctx))
+  (mcase ps
+    (((: cue cue?) . operands)
+     (parse-term-pat (make-term cue operands) ctx))
+    (ps
+     ;; XXX see the comment above about the ('_ . operands) expression form
+     (parse-list-pat ps ctx))))
 
 (define (maybe-vector->list x)
   (and (vector? x) (vector->list x)))
