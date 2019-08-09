@@ -182,7 +182,7 @@
         (parse-term-pat (make-term cue operands) ctx))
        (('_ . ps)                   ; TODO experiment: syntax for messages
         ;; XXX see the comment above about the ('_ . operands) expression form
-        (parse-list-pat ps ctx))
+        (parse-message-pat ps ctx))
 
        ((: __ term?)
         (parse-term-pat p ctx))
@@ -196,6 +196,9 @@
         (error 'parse "An @-pattern must be at the end of a list" p))
        ((: __ list?)
         (error 'parse "Old-style list pattern" p)))))) ;TODO better plaint
+
+(define (parse-message-pat ps ctx)
+  (parse-list-pat ps ctx))
 
 (define (maybe-vector->list x)
   (and (vector? x) (vector->list x)))
@@ -377,9 +380,6 @@
                  (if (symbol? head)
                      `(make ,head (to ,pattern ,@body))
                      `(to ,head (make _ (to ,pattern ,@body))))))))
-    ('given  (mlambda
-              ((__ dp . body)
-               `(to (_ ,@dp) ,@body))))
     ('on     (mlambda  ; TODO do I like this better than 'given'?
               ((__ dp . body)
                `(to (_ ,@dp) ,@body))))
