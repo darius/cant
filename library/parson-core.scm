@@ -108,8 +108,8 @@
 ;;
 ;; When you write a grammar, you typically want to seclude most
 ;; productions: e.g. a rule A ::= B C | D
-;; would be (seclude (either (then B C (feed make-A-of-BC-type))
-;;                           (then D   (feed make-A-of-D-type))))
+;; would be like (seclude (either (then B C (feed a<-bc))
+;;                                (then D   (feed a<-d))))
 ;;
 ;; But a style that secludes all of your productions would be
 ;; constraining, like writing a recursive-descent parser without ever
