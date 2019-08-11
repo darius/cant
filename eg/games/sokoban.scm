@@ -66,9 +66,9 @@ Level ~w ~d Move ~w")
 
     (to (view-grid)
       (for each ((ch grid.unparse.values))
-        ((if (".I@" .find? ch) bold identity)
-         ((if ("iI" .find? ch) green identity)
-          ch))))
+        (take ch
+              (if ("iI" .find? ch) green identity)
+              (if (".I@" .find? ch) bold identity))))
 
     (render [(heading .format level.+ (name .center 50) trail.count)
              "\n\n"

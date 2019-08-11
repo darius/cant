@@ -141,11 +141,13 @@
 
 ;; Experiments
 
-;;  TODO maybe also (take x y z (on (a b c) ...))
-;;               or (take x f g) = (g (f x))
 ;: TODO better name 'with'?
-(to (take thing transform)
-  (transform thing))
+(make take
+  (to (_ input f)            ;for speed, a specialization of the below
+    (f input))
+  (to (_ input @transforms)
+    (for foldl ((result input) (f transforms))
+      (f result))))
 
 (to (hey focus @actions)                ;TODO better name 'also'?
   (each! (-> (it focus)) actions)
