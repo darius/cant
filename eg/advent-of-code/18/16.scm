@@ -96,8 +96,7 @@ insn:    :nat ' ' :nat ' ' :nat ' ' :nat '\n' :hug.
   ;; TODO: map-reduce with intersection
   (let op-name-set all-op-names.range)
   (let opcodes ((each _.first constraints) .range))
-  (let candidates (for map-by ((_ opcodes.keys))
-                    op-name-set))
+  (let candidates (map-by (-> op-name-set) opcodes.keys))
   (for each! ((`(,opcode ,op-names) constraints))
     (candidates .set! opcode
                 ((candidates opcode) .intersect op-names.range)))

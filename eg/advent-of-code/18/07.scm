@@ -43,8 +43,7 @@
 ;; then fill workers from available jobs, and send retirement notices
 
 (to (schedule)
-  (let pred-count (for map-by ((_ nodes))
-                    0))
+  (let pred-count (map-by (-> 0) nodes))
   (for each! ((ss succs.values))
     (for each! ((s ss))
       (pred-count .update s _.+)))
