@@ -90,7 +90,10 @@
 (to (sum-by f xs) ;TODO overload 'sum' instead? (viz. other use of name below)
   (sum (each f xs)))
 
-(to (tally f xs)
+(to (tally xs)
+  (sum-by _.count xs))
+
+(to (tally-by f xs)
   (sum-by (compose _.count f) xs))
 ;; TODO hm, I was thinking of f as returning a claim, but as written,
 ;; it could be any function that returns a countable thing, such as a

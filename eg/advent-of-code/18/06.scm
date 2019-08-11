@@ -45,8 +45,8 @@
 ;; This would take like a week for the non-test question.
 ;; But the code can help us test its successor.
 (to (area-1)
-  (tally included? (grid* ((- xl margin) .to (+ xh margin))
-                          ((- yl margin) .to (+ yh margin)))))
+  (tally-by included? (grid* ((- xl margin) .to (+ xh margin))
+                             ((- yl margin) .to (+ yh margin)))))
 
 (to (integer<- n)
   (exact<-inexact (floor n)))

@@ -15,7 +15,7 @@
 
 (let covered-area (bag<- (gather area<- claims)))
 
-(let n-conflicts (for tally ((n covered-area.values))
+(let n-conflicts (for tally-by ((n covered-area.values))
                    (< 1 n)))
 (print `(the area is ,n-conflicts))
 

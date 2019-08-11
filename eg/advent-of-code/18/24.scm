@@ -17,8 +17,7 @@
 ;      (error "break"))
     (let a1 (select-targets "Infection"     infection immune-system))
     (let a2 (select-targets "Immune System" immune-system infection))
-    (let counts-before (for each ((groups armies.values))
-                         (sum-by _.count groups)))
+    (let counts-before (each tally armies.values))
     (hm (when (some _.none? armies.values) ;TODO a little confusing
           immune-system.some?)
         (else
@@ -27,8 +26,7 @@
           (for each! ((`(,army ,groups) armies.items))
             (armies .set! army (those _.alive? groups)))
           
-          (let counts-after (for each ((groups armies.values))
-                              (sum-by _.count groups)))
+          (let counts-after (each tally armies.values))
           (if (= counts-before counts-after)
               #no      ; Stalemate
               (battling))))))
@@ -152,9 +150,7 @@ separator: '\n'.
                                   (group-maker 0))))))
   (show-count armies)
   (battle armies)
-;;  (sum-by _.count (chain @armies.values))  TODO is this nicer?
-  (sum (for gather ((groups armies.values))
-         (each _.count groups))))
+  (sum-by tally armies.values))
 
 (format "Part 1: ~w\n" (part-1))
 

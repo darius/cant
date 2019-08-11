@@ -84,7 +84,7 @@ insn:    :nat ' ' :nat ' ' :nat ' ' :nat '\n' :hug.
     `(,op ,compatible-ops)))
 
 (to (part-1)
-  (for tally ((`(,_ ,compatible-ops) constraints))
+  (for tally-by ((`(,_ ,compatible-ops) constraints))
     (<= 3 compatible-ops.count)))
 
 (format "~w\n" (part-1))
