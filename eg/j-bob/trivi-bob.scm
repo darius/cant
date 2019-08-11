@@ -181,7 +181,7 @@
 ;; from there -- i.e. the A or E of the if having that premise.
 (to (find-premise e path premise)
   (begin matching ((e e) (path path))
-    (and (not path.empty?)
+    (and path.some?
          (or (and ('(A E) .find? path.first)
                   (may e
                     (be {if q _ _} (and (= q premise) path.first))
@@ -221,7 +221,7 @@
 ;; A proof is okay when its def and steps are all okay.
 
 (to (proofs? defs proofs)
-  (or proofs.empty?
+  (or proofs.none?
       (and (proof? defs proofs.first)
            (do (let {proof def _} proofs.first)
                (proofs? (append defs def) proofs.rest)))))
@@ -237,7 +237,7 @@
 ;; time and its body is okay. Recursion is not allowed,
 
 (to (defs? known-defs defs)
-  (or defs.empty?
+  (or defs.none?
       (and (def? known-defs defs.first)
            (defs? (append known-defs defs.first) defs.rest))))
 
@@ -319,7 +319,7 @@
 
 (to (set-at-path e1 path e2)
   (begin walking ((e1 e1) (path path))
-    (if path.empty?
+    (if path.none?
         e2
         (set-at-direction e1 path.first
                           (walking (get-at-direction e1 path.first)
@@ -351,7 +351,7 @@
 ;; Check okayness of a path.
 
 (to (focus-is-at-path? e path)
-  (or path.empty?
+  (or path.none?
       (and (focus-is-at-direction? e path.first)
            (focus-is-at-path? (get-at-direction e path.first)
                               path.rest))))

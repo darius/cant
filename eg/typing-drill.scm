@@ -22,7 +22,7 @@
             (be 'esc
               'done)
             (be 'backspace
-              (unless strokes.empty?
+              (unless strokes.none?
                 strokes.pop!)
               (typing))
             (be (? char? key)
@@ -32,9 +32,9 @@
               (typing)))))))
 
 (to (show t body)
-  (let cps (if (or (= t 0) body.empty?)
+  (let cps (if (or (= t 0) body.none?)
                0
-               (/ (- body.count 1) t)))
+               (/ body.count.- t)))
   (let wpm (/ (* cps 60) 5))
   (render [("~w seconds  ~w words/minute"
             .format (floor t) (floor wpm))

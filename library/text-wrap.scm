@@ -13,7 +13,7 @@
   (string<-list buffer.values))
 
 (to (parse-tokens text)
-  (if text.empty?
+  (if text.none?
       '()
       (may text.first
         (be #\newline (link {break} (parse-tokens text.rest)))
@@ -23,15 +23,15 @@
         (else
           (let word (flexarray<- text.first))
           (begin eating ((text text.rest))
-            (if (or text.empty? text.first.whitespace?)
+            (if (or text.none? text.first.whitespace?)
                 (link {word (flush word)} (parse-tokens text))
                 (do (word .push! text.first)
                     (eating text.rest))))))))
 
 (to (wrap-into line tokens width)
   (begin scanning ((spaces 0) (tokens tokens))
-    (if tokens.empty?
-        (if line.empty? '() `(,(flush line)))
+    (if tokens.none?
+        (if line.none? '() `(,(flush line)))
         (may tokens.first
           (be {break}
             (link (flush line) (wrap-into (flexarray<-) tokens.rest width)))

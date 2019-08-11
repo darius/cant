@@ -29,16 +29,16 @@
 
 ;; Not quite the same as sort.scm's merge, since we dedupe here.
 (to (merge xs ys)
-  (hm (if xs.empty? ys)
-      (if ys.empty? xs)
+  (hm (if xs.none? ys)
+      (if ys.none? xs)
       (else (may (xs.first .compare ys.first)
               (be -1 (link xs.first (merge xs.rest ys)))
               (be  0 (link xs.first (merge xs.rest ys.rest)))
               (be  1 (link ys.first (merge xs ys.rest)))))))
 
 (to (diff xs ys)
-  (hm (if xs.empty? '())
-      (if ys.empty? xs)
+  (hm (if xs.none? '())
+      (if ys.none? xs)
       (else (may (xs.first .compare ys.first)
               (be -1 (link xs.first (diff xs.rest ys)))
               (be  0 (diff xs.rest ys.rest))

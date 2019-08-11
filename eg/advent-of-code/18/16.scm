@@ -119,9 +119,9 @@ insn:    :nat ' ' :nat ' ' :nat ' ' :nat '\n' :hug.
       (candidates .delete! opcode)
       (for each! ((`(,op2 ,names2) candidates.items))
         (names2 .delete! op-name))
-      (unless candidates.empty?
+      (when candidates.some?
         (pruning))))
-  (surely candidates.empty?)
+  (surely candidates.none?)
 
   (each! print assignments.items)
   (newline)

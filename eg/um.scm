@@ -92,7 +92,7 @@
           (be 8 ;(trace "r~w = allocate r~w\n" b c)
             (let chunk (array<-count (reg c) 0)) ;TODO: typed array again
             (reg .set! b
-                 (hm (when free-list.empty?
+                 (hm (when free-list.none?
                        (mem .push! chunk))
                      (else
                        (let i free-list.pop!)

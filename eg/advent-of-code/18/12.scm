@@ -31,7 +31,7 @@
     (generate state)))
 
 (to (generate state)
-  (if state.empty?
+  (if state.none?
       state
       (do (let `(,lo ,hi) (bounds-1d<- state.keys))
           (_.range (for those ((pot ((- lo 2) .to (+ hi 2))))

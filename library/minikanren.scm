@@ -20,7 +20,7 @@
 
 ;; TODO: probably ought to be lazy in the head as well as the tail
 (to (interleave xs ys)
-  (if xs.empty?
+  (if xs.none?
       ys
       (link/lazy xs.first
                  (: (interleave ys xs.rest)))))

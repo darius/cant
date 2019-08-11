@@ -41,14 +41,15 @@
   (to (_ .maps? key)
     (make missing)
     (not= (map .get key missing) missing))
-  (to _.empty? (= map.count 0))  ; or map.items.empty? - is that better?
+  (to _.none?  (= map.count 0))  ; or map.items.none? - is that better?
+  (to _.some?  (not map.none?))
   (to _.keys   (each _.first map.items))
   (to _.values (each (on (`(,_ ,v)) v) map.items))
   (to (_ .find? value)
     (map.values .find? value))
   (to (_ .find value default)
     (begin searching ((items map.items))
-      (if items.empty?
+      (if items.none?
           default
           (may items.first
             (be `(,k ,v) (if (= v value) k (searching items.rest)))
@@ -97,7 +98,7 @@
     (if (= i 0)
         list.first
         (list.rest i.-)))
-  (to _.empty?
+  (to _.none?
     (= 0 list.count)) ;N.B. these default implementations are circular
   (to _.first
     (list 0))
@@ -105,29 +106,29 @@
     (list .slice 1))
   (to _.count
     ;; TODO non-tail-recursive would be more OO in style. Go back to that?
-    (begin counting ((list list) (count 0))
-      (if list.empty?
+    (begin counting ((remainder list) (count 0))
+      (if remainder.none?              ;XXX why can't this be .none?
           count
-          (counting list.rest count.+))))
+          (counting remainder.rest count.+))))
   (to (_ .slice i)
     (surely (<= 0 i))
     (hm (if (= i 0) list)
-        (if list.empty? list)
+        (if list.none? list)
         (else (list.rest .slice i.-))))
   (to (_ .slice i bound)     ;XXX result is a link-list; be more generic?
     (surely (<= 0 i))
-    (hm (if list.empty? list)
+    (hm (if list.none? list)
         (if (<= bound i) '())
         (if (= i 0) (link list.first (list.rest .slice 0 bound.-)))
         (else (list.rest .slice i.- bound.-))))
   (to (_ .chain seq)                         ;TODO self if seq is ()
-    (if list.empty?
+    (if list.none?
         seq
         (link list.first (list.rest .chain seq))))
   (to (_ .compare xs)
     ;; N.B. mutable arrays compare by this method, so it's really a comparison as of right now
-    (hm (if list.empty? (if xs.empty? 0 -1))
-        (if xs.empty? 1)
+    (hm (if list.none? (if xs.none? 0 -1))
+        (if xs.none? 1)
         (else (may (list.first .compare xs.first)
                 (be 0 (list.rest .compare xs.rest))
                 (be d d)))))
@@ -141,18 +142,18 @@
   (to (_ .get key default)
     (if (count? key)
         (begin walking ((k key) (xs list))
-          (hm (if xs.empty? default)
+          (hm (if xs.none? default)
               (if (= k 0) xs.first)
               (else (walking k.- xs.rest))))
         default))
   (to (_ .maps? key)
-    (and (not list.empty?)
+    (and list.some?
          (or (= 0 key)
              (and (< 0 key)
                   (list.rest .maps? key.-)))))
   (to (_ .find value default)    ;; XXX update the other collections to have this too
     (begin looking ((i 0) (values list))
-      (hm (if values.empty? default)
+      (hm (if values.none? default)
           (if (= value values.first) i)
           (else (looking i.+ values.rest)))))
   (to (_ .find value)
@@ -165,7 +166,7 @@
       (else   #yes)))
   (to (_ .last)
     (let rest list.rest)
-    (if rest.empty? list.first rest.last))
+    (if rest.none? list.first rest.last))
   (to (_ .prefix? p)
     (= (list .slice 0 p.count) p))   ;TODO more efficient
   (to (_ .repeat n)
@@ -175,15 +176,15 @@
       (else (chain @(for each ((_ (range<- n)))
                       list)))))
   (to _.maybe  ;; TODO an experiment TODO could be defined on maps in general too
-    (if list.empty?
+    (if list.none?
         #no
-        (do (unless list.rest.empty?
+        (do (unless list.rest.none?
               (error "Tried to convert to maybe from count >1" list))
             list.first)))
   (to _.only  ;; TODO an experiment TODO could be defined on maps in general too
-    (when list.empty?
+    (when list.none?
       (error "Tried to .only from empty" list))
-    (unless list.rest.empty?
+    (unless list.rest.none?
       (error "Tried to .only from count >1" list))
     list.first)
   (to message
@@ -251,7 +252,7 @@
   )
 
 (make-trait nil-primitive me
-  (to _.empty?         #yes)
+  (to _.none?          #yes)
   (to _.first          (error "Empty list" '.first))
   (to _.rest           (error "Empty list" '.rest))
   (to _.count          0)
@@ -261,7 +262,7 @@
   (to message          (list-trait me message))) ;XXX use trait syntax instead
 
 (make-trait link-primitive me
-  (to _.empty?      #no)
+  (to _.none?       #no)
   (to _.first       (__car me))
   (to _.rest        (__cdr me))
   (to _.count       (__length me))
@@ -324,7 +325,7 @@
     (list-trait me message))) ;XXX use trait syntax instead
 
 (make-trait array-primitive me
-  (to _.empty?        (= 0 me.count))
+  (to _.none?         (= 0 me.count))   ;redundant definition(s) for speed
   (to _.first         (me 0))
   (to _.rest          (me .slice 1))
   (to (_ .set! i val) (__vector-set! me i val))
@@ -359,7 +360,7 @@
     (array-trait me message))) ;XXX use trait syntax instead
 
 (make-trait string-primitive me
-  (to _.empty?       (= 0 me.count))
+  (to _.none?        (= 0 me.count))
   (to _.first        (me 0))
   (to _.rest         (me .slice 1))
   (to _.count        (__string-length me))
@@ -373,7 +374,7 @@
         (__string-compare me s)          ; just a speedup
         (list-trait me (_ .compare s))))   ; but is this what we really want? (<=> "a" '(#\a))
   (to (_ .join ss)   ;should this be a function, not a method?
-    (if ss.empty?
+    (if ss.none?
         ""
         (foldr1 (on (x y) (chain x me y)) ss))) ;XXX quadratic
   ;;XXX below mostly from list-trait, until .selfie
@@ -388,7 +389,7 @@
   (to (_ .maps? key)                         ;XXX duplicate, see above
     (and (count? key) (< key me.count)))
   (to (_ .trim-left)
-    (if me.empty?
+    (if me.none?
         me
         (do (let c me.first)
             (if c.whitespace?
@@ -406,7 +407,7 @@
     me.trim-left.trim-right)
   (to _.split
     (begin splitting ((s me.trim-left))
-      (if s.empty?
+      (if s.none?
           '()
           (do (let limit s.count)
               (begin scanning ((i 1))
@@ -418,10 +419,10 @@
   (to (_ .split delimiter)
     ;; TODO deduplicate code
     ;; TODO define a strstr and use that
-    (if me.empty?
+    (if me.none?
         '()
         (begin splitting ((s me))
-          (if s.empty?
+          (if s.none?
               '("")
               (do (let limit s.count)
                   (begin scanning ((i 0))
@@ -435,7 +436,7 @@
   (to _.capitalize (chain ((me .slice 0 1) .uppercase) (me .slice 1)))
   (to (_ .replace pattern replacement) ;TODO more efficient
     ;; TODO unify the cases?
-    (hm (if pattern.empty?
+    (hm (if pattern.none?
             (for foldr ((ch me) (rest replacement))
               (chain replacement (string<- ch) rest)))
         (else
@@ -490,7 +491,7 @@
     ;; TODO ugly. This 'if' is needed because we want a final "\n" to
     ;; yield the same output as a string with no final "\n". N.B. while
     ;; that's convenient it's also information-destroying.
-    (if (and (not lines.empty?) (= lines.last ""))
+    (if (and lines.some? (= lines.last ""))
         (lines .slice 0 lines.count.-)
         lines))
   (to (_ .selfie sink)
@@ -634,14 +635,14 @@
   `(,(__patt p) ,pv ,ev ,(__expr e)))
 
 (make-trait __halt-cont me
-  (to _.empty?        #yes)
+  (to _.none?         #yes)
   (to _.first         (error "No more frames" me))
   (to _.rest          (error "No more frames" me))
   (to (_ .selfie sink)   (sink .display "<halt-cont>"))
   (to message (list-trait me message)))
 
 (make-trait __cont-trait me   ;; For the non-halt cont types
-  (to _.empty?        #no)
+  (to _.none?         #no)
   (to _.rest          (__cont-next-cont me)) ;TODO
   (to (_ .selfie sink)   (sink .display "<cont>")) ;TODO at least give out the tag
   (to _.env
@@ -859,7 +860,7 @@
             (may (place key)
               (be {at _} #yes)
               (else      #no)))
-          (to _.empty? (= count.^ 0))
+          (to _.none? (= count.^ 0))
           (to _.count  count.^)
           (to _.keys   (each keys.^ (occupants))) ;XXX lazy-map
           (to _.values (each vals.^ (occupants)))
@@ -890,7 +891,7 @@
           (to (_ .find value default)
             (let vs vals.^)
             (begin searching ((js (occupants)))  ;XXX should be lazy
-              (hm (if js.empty? default)
+              (hm (if js.none? default)
                   (if (= value (vs js.first)) (keys.^ js.first))
                   (else (searching js.rest)))))
           (to _.clear!
@@ -931,7 +932,7 @@
 (to (hash-set<-)                        ;XXX shouldn't be a global
   (let map (map<-)) ;TODO would be nice to avoid storing all the #yes values
   (make set {extending map-trait}
-    (to _.empty?           map.empty?)
+    (to _.none?           map.none?)
     (to _.count            map.count)
     (to _.keys             map.keys)
     (to (_ .maps? key)     (map .maps? key))
@@ -976,7 +977,7 @@
 
 (to (surely ok? @arguments)
   (unless ok?
-    (error @(if arguments.empty? '("Assertion failed") arguments))))
+    (error @(if arguments.none? '("Assertion failed") arguments))))
 
 (to (count? x)
   (and (integer? x) (<= 0 x)))
@@ -1036,7 +1037,7 @@
   (if (list? seq)
       seq
       (begin copying ((seq seq))
-        (if seq.empty?
+        (if seq.none?
             '()
             (link seq.first (copying seq.rest))))))
 
@@ -1048,18 +1049,18 @@
     (link x ys)))
 
 (to (foldl f z xs)
-  (if xs.empty?
+  (if xs.none?
       z
       (foldl f (f z xs.first) xs.rest)))
 
 (to (foldr f xs z)     ;TODO rename since args are in nonstandard order
-  (if xs.empty?
+  (if xs.none?
       z
       (f xs.first (foldr f xs.rest z))))
 
 (to (foldr1 f xs)
   (let tail xs.rest)
-  (if tail.empty?
+  (if tail.none?
       xs.first
       (f xs.first (foldr1 f tail))))
 
@@ -1073,7 +1074,7 @@
 
 (make each!
   (to (_ f xs)
-    (unless xs.empty?
+    (unless xs.none?
       (f xs.first)
       (each! f xs.rest)))
   (to (_ f @lists)
@@ -1085,8 +1086,8 @@
     (to (mismatch)
       (error "zip: mismatched arguments" xs ys))
     (begin zipping ((xs xs) (ys ys))
-      (hm (if xs.empty? (if ys.empty? '() (mismatch)))
-          (if ys.empty? (mismatch))
+      (hm (if xs.none? (if ys.none? '() (mismatch)))
+          (if ys.none? (mismatch))
           (else `((,xs.first ,ys.first)
                   ,@(zipping xs.rest ys.rest))))))
   (to (_ @lists)  ; ugly
@@ -1094,7 +1095,7 @@
 
 ;; TODO: name it (zip @rows) instead, like Python?
 (to (transpose rows)
-  (if (every _.empty? rows)   ; and make it (some _.empty? rows)?
+  (if (every _.none? rows)   ; and make it (some _.none? rows)?
       '()
       `(,(each _.first rows)
         ,@(transpose (each _.rest rows)))))
@@ -1124,12 +1125,12 @@
     (foldr1 (on (xs ys) (xs .chain ys)) arguments)))
 
 (to (some pass? xs)
-  (and (not xs.empty?)
+  (and (not xs.none?)
        (or (pass? xs.first)
            (some pass? xs.rest))))
 
 (to (every pass? xs)
-  (or xs.empty?
+  (or xs.none?
       (and (pass? xs.first)
            (every pass? xs.rest))))
 
@@ -1138,10 +1139,10 @@
     (if (<= limit first)
         '()
         (make range {extending list-trait}
-          (to _.empty? #no)
-          (to _.first  first)
-          (to _.rest   (range<- first.+ limit))
-          (to _.count  (- limit first))
+          (to _.none? #no)
+          (to _.first first)
+          (to _.rest  (range<- first.+ limit))
+          (to _.count (- limit first))
           (to (_ i)
             (if (not (integer? i))
                 (error "Key error" range i)
@@ -1163,9 +1164,9 @@
             (if (<= limit first)
                 '()
                 (make range {extending list-trait}
-                  (to _.empty? #no)
-                  (to _.first  first)
-                  (to _.rest   (range<- (+ first stride) limit stride))
+                  (to _.none? #no)
+                  (to _.first first)
+                  (to _.rest  (range<- (+ first stride) limit stride))
                   (to (_ i)
                     (error "TODO" range `(,i)))
                   (to (_ .maps? i)
@@ -1175,9 +1176,9 @@
             (if (< first limit)
                 '()
                 (make range {extending list-trait}
-                  (to _.empty? #no)
-                  (to _.first  first)
-                  (to _.rest   (range<- (+ first stride) limit stride))
+                  (to _.none? #no)
+                  (to _.first first)
+                  (to _.rest  (range<- (+ first stride) limit stride))
                   (to (_ i)
                     (error "TODO" range `(,i)))
                   (to (_ .maps? i)
@@ -1190,12 +1191,12 @@
   (to (_ xs)
     (enumerate xs 0))
   (to (_ xs i)
-    (if xs.empty?
+    (if xs.none?
         '()
         (make enumeration {extending list-trait}
-          (to _.empty? #no)
-          (to _.first  `(,i ,xs.first))
-          (to _.rest   (enumerate xs.rest i.+))))))
+          (to _.none? #no)
+          (to _.first `(,i ,xs.first))
+          (to _.rest  (enumerate xs.rest i.+))))))
 
 (to (array<- @elements)
   (array<-list elements))
@@ -1294,8 +1295,8 @@
     ;;TODO actually design the format language
 
     (to (scanning sink s args)
-      (if s.empty? 
-          (unless args.empty?
+      (if s.none? 
+          (when args.some?
             (error "Leftover arguments" args))
           (may s.first
             (be #\~
@@ -1313,7 +1314,7 @@
           (parsing sink s      #\space sign width args)))
 
     (to (parsing sink s pad sign width args)
-      (when s.empty?
+      (when s.none?
         (error "Incomplete format")) ;TODO report the format-string
       (may s.first
         (be #\w

@@ -5,7 +5,7 @@
 (let parson-parse (parson 'parse))
 
 (to (average numbers)
-  (surely (not numbers.empty?) "Average of an empty list")
+  (surely numbers.some? "Average of an empty list")
   (/ (sum numbers) numbers.count))
 
 (to (all-mins-by fn xs)
@@ -22,13 +22,13 @@
 
 (to (cycle xs)
   (begin cycling ((ys xs))
-    (if ys.empty?
+    (if ys.none?
         (cycling xs)
         (link/lazy ys.first (: (cycling ys.rest))))))
 
 (to (scanl/lazy f z xs)
   (begin scanning ((z z) (xs xs))
-    (link/lazy z (: (if xs.empty?
+    (link/lazy z (: (if xs.none?
                         '()
                         (scanning (f z xs.first) xs.rest))))))
 
@@ -39,10 +39,10 @@
 ;; TODO I reimplemented this in 18/25.scm
 (to (pairs<- xs)
   (begin outer ((outers xs))
-    (unless outers.empty?
+    (unless outers.none?
       (let x1 outers.first)
       (begin inner ((inners outers.rest))
-        (if inners.empty?
+        (if inners.none?
             (outer outers.rest)
             (do (let x2 inners.first)
                 (link/lazy `(,x1 ,x2)
@@ -59,7 +59,7 @@
 (to (duplicates<- xs)
   (let seen (set<-))
   (begin looking ((xs xs))
-    (if xs.empty?
+    (if xs.none?
         '()
         (do (let x xs.first)
             (if (seen .maps? x)

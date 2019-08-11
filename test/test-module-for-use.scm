@@ -2,7 +2,7 @@
 (newline)
 
 (to (left-pad string)
-  (if (or string.empty? (not= #\space string.first))
+  (if (or string.none? (not= #\space string.first))
       string
       (left-pad string.rest)))
 

@@ -110,7 +110,7 @@
     (else                              (return k e))))
 
 (to (nest es r k)
-  (if es.empty? k `(nest ,es ,r ,k)))
+  (if es.none? k `(nest ,es ,r ,k)))
 
 (to (make-message e r k)
   ;; XXX null message probably should be kept instead

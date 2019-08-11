@@ -130,7 +130,7 @@ app:    (expr expr*)
 
 (to (compile-operands scope operands then)
   (begin compiling ((operands operands)) ;of course this could currently be a foldr
-    (if operands.empty?
+    (if operands.none?
         then
         (compile-exp scope operands.first
                      (compiling operands.rest)))))

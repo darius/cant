@@ -28,11 +28,10 @@
 (display "\nPart 2\n")
 
 (to (value<- {node children metadata})
-  (if children.empty?
-      (sum metadata)
-      (sum (for each ((n metadata))
-             (let child (children .get (- n 1)))
-             (if child (value<- child) 0)))))
+  (sum (if children.none?
+           metadata
+           (for yeahs ((n metadata))
+             (mayhap value<- (children .get n.-))))))
 
 (format "result 2: ~w\n" (value<- input))
 

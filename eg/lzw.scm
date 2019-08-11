@@ -20,7 +20,7 @@
           (do (result .push! (codes chunk))
               (codes .set! chunk-1 codes.count)
               s1))))
-  (unless chunk.empty?
+  (unless chunk.none?
     (result .push! (codes chunk)))
   result.values)
 
@@ -29,7 +29,7 @@
 
 ;; TODO ugly!
 (to (chunked-decode codes codebook)
-  (if codes.empty?
+  (if codes.none?
       '()
       (do
         (let chunks (flexarray<-list codebook))
@@ -37,7 +37,7 @@
         (begin decoding ((chunk (chunks codes.first))
                          (codes codes.rest)) ;TODO not a great idea, reusing the name
           (output .push! chunk)
-          (if codes.empty?
+          (if codes.none?
               output.values
               (do (let code codes.first)
                   (chunks .push! chunk)

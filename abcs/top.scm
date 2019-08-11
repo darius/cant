@@ -43,7 +43,7 @@
   ;; N.B. we're trying to use only primitives here as far as possible:
   (display "Error within error! Evils:\n")
   (begin printing ((xs evil))
-    (when xs.empty? (os-exit 1))
+    (when xs.none? (os-exit 1))
     (out .write xs.first)
     (out .display #\newline)
     (printing xs.rest)))

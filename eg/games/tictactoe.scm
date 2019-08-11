@@ -5,7 +5,7 @@
 
 (to (main `(,me ,@args))
   (let players
-    (hm (if args.empty?
+    (hm (if args.none?
             (list<- human-play spock-play))
         (if (= args.count 2)
             (each parse-player args)) ;TODO catch errors
@@ -150,7 +150,7 @@
 (let ways-to-win '(0o700 0o070 0o007 0o444 0o222 0o111 0o421 0o124))
 
 (to (drawn? grid)
-  ((successors grid) .empty?))
+  ((successors grid) .none?))
 
 (to (successors grid)
   (for yeahs ((move (0 .to 8)))

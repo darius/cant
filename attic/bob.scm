@@ -131,12 +131,12 @@
 ;; Rewriting... TODO explain me
 
 (to (rewrite/steps defs claim steps)
-  (if steps.empty?
+  (if steps.none?
       claim
       (begin stepping ((`(,first ,@rest) steps)
                        (old claim))
         (let new (rewrite/step defs old first))
-        (if (or (= old new) rest.empty?)
+        (if (or (= old new) rest.none?)
             new
             (stepping rest new)))))
 
@@ -212,7 +212,7 @@
 ;;      and return that, or #no. Then we wouldn't have to call this twice.
 (to (prem-match? dir prem path e)
   (begin matching ((path path) (e e))
-    (and (not path.empty?)
+    (and (not path.none?)
          (or (and (= path.first dir)
                   (may e
                     ({if q _ _} (= q prem))
@@ -224,14 +224,14 @@
 ;; TODO ought to be shorter
 
 (to (set-at-path path e1 e2)
-  (if path.empty?
+  (if path.none?
       e2
       (set-at-direction path.first e1
                         (set-at-path path.rest (get-at-direction path.first e1)
                                      e2))))
 
 (to (get-at-path path e)                ;TODO: foldl
-  (if path.empty?
+  (if path.none?
       e
       (get-at-path path.rest (get-at-direction path.first e))))
 
@@ -261,7 +261,7 @@
 ;; Check okayness of a path.
 
 (to (focus-is-at-path? path e)
-  (or path.empty?
+  (or path.none?
       (and (focus-is-at-direction? path.first e)
            (focus-is-at-path? path.rest
                               (get-at-direction path.first e)))))
@@ -279,7 +279,7 @@
 
 (to (totality/claim meas {def name formals {fun body}})
   (if (not meas)                        ;XXX might need to unparse a constant
-      {constant ((calls-to name body) .empty?)}
+      {constant ((calls-to name body) .none?)}
       {if {call 'nat? `(,meas)}
           (totality/if meas name formals body)
           no-c}))
@@ -355,7 +355,7 @@
     (sub-e vars args e)))
 
 (to (sub-var vars args name)
-  (hm (if vars.empty?         {variable name})
+  (hm (if vars.none?         {variable name})
       (if (= vars.first name) args.first)
       (else                   (sub-var vars.rest args.rest name))))
 
@@ -367,7 +367,7 @@
 ;; XXX the step-checking seems to have no connection to the seed
 
 (to (proofs? defs proofs)
-  (or proofs.empty?
+  (or proofs.none?
       (and (proof? defs proofs.first)
            (do (let {proof def _ _} proofs.first)
                (proofs? (append defs def) proofs.rest)))))
@@ -422,7 +422,7 @@
 ;; but not a dethm's.
 
 (to (defs? known-defs defs)
-  (or defs.empty?
+  (or defs.none?
       (and (def? known-defs defs.first)
            (defs? (append known-defs defs.first) defs.rest))))
 

@@ -74,8 +74,8 @@
       (eval-match ((eval e r) subject) p r))))
 
 (to (match-all values pats r)
-  (hm (if values.empty? pats.empty?)
-      (if pats.empty? #no)
+  (hm (if values.none? pats.none?)
+      (if pats.none? #no)
       (else (and (eval-match values.first pats.first r)
                  (match-all  values.rest  pats.rest  r)))))
 

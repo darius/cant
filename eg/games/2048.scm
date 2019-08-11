@@ -26,7 +26,7 @@
     (frame board score)
     (may get-key.lowercase
       (be #\q 'quitting)
-      (be #\u (if history.empty?
+      (be #\u (if history.none?
                   (continue)
                   (playing history.pop! #yes)))
       (be key (may (arrows .get key)
@@ -85,7 +85,7 @@
 
 (to (lost? rows)
   (for every ((move arrows.values))
-    ((move rows) .empty?)))
+    ((move rows) .none?)))
 
 (to (random-empty-square rng rows)
   (rng .pick (for gather ((`(,r ,row) rows.items))

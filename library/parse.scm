@@ -14,7 +14,7 @@
 
   ;; Look for the categories needed to complete the parse.
   (to (extend-parse lhs rhs rest needed)
-    (hm (when needed.empty?
+    (hm (when needed.none?
           ;; Return parse and upward extensions.
           (let tree (tree<- lhs rhs))
           (link (parse<- tree rest)
@@ -37,7 +37,7 @@
 
     ;; Return all parses of any prefix of words (working bottom-up).
     (to (_ .parse-prefixes words)
-      (if words.empty?
+      (if words.none?
           '()
           (for gather ((rule (lexical-rules words.first)))
             (extend-parse rule.lhs `(,words.first) words.rest '()))))))
@@ -67,7 +67,7 @@
     (to _.tree      tree)
     (to _.remainder remainder)
     (to _.lhs       tree.lhs)
-    (to _.complete? remainder.empty?)
+    (to _.complete? remainder.none?)
     (to (_ .selfie sink)
       (sink .write `((tree: ,tree)
                      (remainder: ,remainder))))))

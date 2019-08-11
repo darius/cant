@@ -42,12 +42,12 @@
           (begin appending ((glyphs (render-glyph ch.first x))
                             (x x)
                             (y y))
-            (hm (if glyphs.empty? (rendering pp x y))
-                (do 
-                  (lines .set! y (chain (lines y) (string<- glyphs.first)))) ;XXX quadratic
-                (if (< x.+ cols)  (appending glyphs.rest x.+ y))
-                (if (< y.+ rows)  (appending glyphs.rest 0 y.+))
-                (else             'done))))))
+            (hm (if glyphs.none? (rendering pp x y))
+                (do (lines .set! y
+                           (chain (lines y) (string<- glyphs.first)))) ;XXX quadratic
+                (if (< x.+ cols) (appending glyphs.rest x.+ y))
+                (if (< y.+ rows) (appending glyphs.rest 0 y.+))
+                (else            'done))))))
   (make _
     (to _.point-visible?  (yeah? point-y.^))
     ;; XXX doesn't mean 'is centered' any more:

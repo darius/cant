@@ -43,7 +43,7 @@
       `(,x ,y))))
 
 (to (intercalate between elements)      ;TODO unify with .join
-  (if elements.empty?
+  (if elements.none?
       elements
       (link elements.first
             (for gather ((x elements.rest)) ;TODO more efficient
@@ -51,14 +51,14 @@
 
 (to (link/lazy x thunk)
   (make lazy-list {extending list-trait}
-    (to _.empty? #no)
-    (to _.first  x)
-    (to _.rest   (thunk))
+    (to _.none? #no)
+    (to _.first x)
+    (to _.rest  (thunk))
     ;; XXX override parts of list-trait that need it for laziness
     ))
 
 (to (those/lazy keep? xs)
-  (if xs.empty?
+  (if xs.none?
       '()
       (if (keep? xs.first)
           (link/lazy xs.first (: (those/lazy keep? xs.rest)))
@@ -76,7 +76,7 @@
   (foldr/lazy link/lazy xs ys-thunk))
 
 (to (foldr/lazy f xs z-thunk)
-  (if xs.empty?
+  (if xs.none?
       (z-thunk)
       (f xs.first
          (: (foldr/lazy f xs.rest z-thunk)))))
@@ -109,7 +109,7 @@
 ;; TODO I forgot this existed
 (to (split-on split-point? xs)
   (begin scanning ((r-head '()) (xs xs))
-    (if (or xs.empty? (split-point? xs.first))
+    (if (or xs.none? (split-point? xs.first))
         `(,(reverse r-head) ,xs)
         (scanning (link xs.first r-head) xs.rest))))
 
@@ -147,7 +147,7 @@
 (to (take thing transform)
   (transform thing))
 
-(to (hey focus @actions)
+(to (hey focus @actions)                ;TODO better name 'also'?
   (each! (-> (it focus)) actions)
   focus)
 

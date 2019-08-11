@@ -11,12 +11,16 @@
 (to (variable-name var)
   (var 0))
 
-;; XXX seems clumsy:
 (to (apply s val)                   ;XXX rename
   (let v (s .subst val))
   (if (variable? v)
       (if (= v val) v (apply s v))
       v))
+;; TODO seems clumsy. How about:
+;;  (may (s .subst val)
+;;    (be (and (? variable? v) (not (= val)))   ;TODO Squeam only has (= val) patterns, not not
+;;      (apply s v))
+;;    (be other other)))
 
 (make empty-subst
   (to (_ .subst val)
@@ -54,10 +58,10 @@
           (extend s u v))
       (if (and (list? u) (list? v) (= u.count v.count))
           (begin unifying ((s s) (u u) (v v))
-            (if u.empty?
+            (if u.none?
                 s
-                (do (let s1 (unify s u.first v.first))
-                    (and s1 (unifying s1 u.rest v.rest))))))
+                (for mayhap ((s1 (unify s u.first v.first)))
+                  (unifying s1 u.rest v.rest)))))
       (else
           (and (= u v) s))))
 

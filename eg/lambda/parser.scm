@@ -41,7 +41,7 @@
 
 (to (lambda-parsing `(,[(? symbol? v) @vs] ,@body) src)
   ;; TODO adjust src in the curried case
-  (let parsed-body (if vs.empty?
+  (let parsed-body (if vs.none?
                        (seq-parse body)
                        (exp-parse `(,(array<-list vs) ,@body))))
   {lam v parsed-body src})

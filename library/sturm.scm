@@ -186,11 +186,10 @@
 (let key-stack (flexarray<-))
 
 (to (get-key-unmapped)
-  (if key-stack.empty?
-      (do (let ch stdin.read-char)
-          (surely (not (eof? ch))) ;shouldn't ever happen in raw/cbreak modes
-          ch)
-      key-stack.pop!))
+  (if key-stack.some?
+      key-stack.pop!
+      (hey stdin.read-char
+           (-> (surely (not (eof? it))))))) ;shouldn't ever happen in raw/cbreak modes
 
 (make get-key
   (to (_)

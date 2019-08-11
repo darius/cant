@@ -39,7 +39,7 @@
     (check-timeouts))
   (may (peek run-queue.^)
     (be {empty}
-      (unless waiting-timeouts.empty?
+      (unless waiting-timeouts.none?
         (let deadline (min @waiting-timeouts.values))
         (nanosleep (- deadline (nano-now)))
         (running 0)))
@@ -384,7 +384,7 @@
     (be `(link ,pf ,pr)
       {link (pat-parse pf) (pat-parse pr)})
     (be `(list ,@ps)
-      (pat-parse (if ps.empty?
+      (pat-parse (if ps.none?
                      ''()
                      `(link ,ps.first (list ,@ps.rest)))))
     (be `(: ,(? symbol? name))

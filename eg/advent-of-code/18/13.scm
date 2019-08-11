@@ -89,9 +89,9 @@
 ;      (format "time ~w\n" t)
       (let `(,state1 ,crashes) (tick state))
 ;      (show state1)
-      (if crashes.empty?
-          (ticking state1 t.+)
-          (xy-coords state crashes.first)))))
+      (if crashes.some?
+          (xy-coords state crashes.first)
+          (ticking state1 t.+)))))
 
 (to (xy-coords {world _ width _} pos)
   (reverse (pos ./mod width)))

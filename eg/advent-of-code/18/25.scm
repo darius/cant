@@ -46,7 +46,7 @@
     ))
 
 (to (unordered-pairs<- ps)
-  (if ps.empty?
+  (if ps.none?
       '()
       (do (let p0 ps.first)
           (chain (for each ((p1 ps.rest))

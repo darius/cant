@@ -46,7 +46,7 @@
       (be (? eof?)
        'ok)
       (be 'up
-        (if trail.empty?
+        (if trail.none?
             (continue "At top.\n")
             (interacting trail.first trail.rest)))
       (be 'top
@@ -66,7 +66,7 @@
         (continue "Huh? Enter 'help' for help.")))))
 
 (to (inspect-continuation k)
-  (surely (not k.empty?))               ;XXX require
+  (surely k.some?)               ;XXX require
 
   (let vocab
     '((? help      "this message")
@@ -103,11 +103,11 @@
         (frame .answer (read-eval)))
       (be 'up
         (let caller frame.rest)
-        (if caller.empty?
+        (if caller.none?
             (continue "At top.\n")
             (interacting caller (link frame callees)))) ;TODO show the new current frame
       (be 'down
-        (if callees.empty?
+        (if callees.none?
             (continue "At bottom.\n")
             (interacting callees.first callees.rest)))
       (be 'env

@@ -43,11 +43,11 @@
 
 (to (decode root bits)
   (begin stepping ((tree root) (bits bits))
-    (if bits.empty?
+    (if bits.none?
         '()
         (do (let {branch @subtrees} tree)
             (may (subtrees bits.first)
-              (be {leaf symbol} `(,symbol ,@(stepping root bits.rest)))
+              (be {leaf symbol} (link symbol (stepping root bits.rest)))
               (be subtree       (stepping subtree bits.rest)))))))
 
 (export build-tree show-tree encoder<- encode decode)

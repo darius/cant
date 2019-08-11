@@ -27,7 +27,7 @@
   (foldr insert ys xs))
 
 (to (insert x xs)                       ;TODO should be in a heapq or sort module or something
-  (hm (if (or xs.empty? (< x xs.first))
+  (hm (if (or xs.none? (< x xs.first))
           `(,x ,@xs))
       (if (= x xs.first)
           xs)

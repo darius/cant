@@ -29,7 +29,7 @@
 ;; ASTs and continuations
 
 (make halt
-  (to _.empty? #yes)
+  (to _.none? #yes)                     ;TODO use list-trait for .some?, bleah.
   (to (_ .inject k<-) halt)
   (to (_ .take-step val) val)
   (to (_ .take val) val))
@@ -79,8 +79,8 @@
       (operator .evaluate r (ev-arg-cont<- operand r k)))))
 
 (to (ev-arg-cont<- operand r k)
-  (make (to _.empty? #no)
-        (to _.rest k)
+  (make (to _.none? #no)
+        (to _.rest  k)
         (to _.first `(^ ,operand.source))
         (to (_ .inject k<-) (ev-arg-cont<- operand r (k<- k)))
         (to (_ .take fn)
@@ -90,8 +90,8 @@
         ))
 
 (to (call-cont<- fn k)
-  (make (to _.empty? #no)
-        (to _.rest k)
+  (make (to _.none? #no)
+        (to _.rest  k)
         (to _.first `(,(survey fn) ^))
         (to (_ .inject k<-) (call-cont<- fn (k<- k)))
         (to (_ .take arg)

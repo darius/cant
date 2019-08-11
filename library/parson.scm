@@ -184,13 +184,13 @@
 
   (let lhses (bag<- (each _.first skeletons)))
   (let duplicates (for where ((n lhses)) (< 1 n)))
-  (unless duplicates.empty?
+  (when duplicates.some?
     (error "Multiply-defined rules" (sort duplicates)))
 
   (let all-refs (union-over (for each ((`(,_ (,refs ,_)) skeletons))
                               refs)))
   (let undefined (all-refs .difference lhses))
-  (unless undefined.empty?
+  (when undefined.some?
     (error "Undefined rules" (sort undefined.keys)))
 
   skeletons)

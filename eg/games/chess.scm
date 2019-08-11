@@ -107,9 +107,9 @@
     ;; Return #no, draw, black, or white (meaning the winner).
     (to _.outcome
       (hm (or outcome-param)
-          (if board.checkmate?             (opponent mover))
-          (if board.get-piece-moves.empty? 'draw)
-          (else                            #no)))
+          (if board.checkmate?            (opponent mover))
+          (if board.get-piece-moves.none? 'draw)
+          (else                           #no)))
 
     ;; Is the player to move checkmated?
     (to _.checkmate?  ;;XXX are we getting this at the start? why?

@@ -35,8 +35,8 @@
 (to (compile tokens)
   (let code (flexarray<-))
   (begin compiling ((frames '()) (tokens tokens))
-    (hm (when tokens.empty?
-          (surely frames.empty?))      ;XXX require
+    (hm (when tokens.none?
+          (surely frames.none?))      ;XXX require
         (else
           (may tokens.first
             (be (? number? n)
@@ -49,7 +49,7 @@
               (compiling (link (reverse locals) frames)
                          tail.rest))
             (be '>>
-              (surely (not frames.empty?)) ;XXX require
+              (surely frames.some?) ;XXX require
               (code .push! (ungrab<- frames.first.count))
               (compiling frames.rest tokens.rest))
             (be (? symbol? word)

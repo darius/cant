@@ -25,11 +25,11 @@
         (be outcome (display "X")
                     (failures .push! `(,outcome ,inputs)))))
     (newline)
-    (unless failures.empty?
+    (when failures.some?
       (format "Failures for ~w:\n" property)
       (for each! ((`(,outcome ,inputs) failures))
         (format "~w: ~w\n" outcome inputs)))
-    failures.empty?))
+    failures.none?))
 
 (to (should be-ok? @arguments)
   (be-ok? @arguments))

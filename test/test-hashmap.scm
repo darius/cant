@@ -14,7 +14,7 @@
 (print (a .get 'x))
 (print (a .get 'y))
 (print (a .get 'z))
-(print (list<- a.keys a.values a.items a.empty? a.count))
+(print (list<- a.keys a.values a.items a.none? a.count))
 (print (a 'z))
 
 ;; TODO more tests

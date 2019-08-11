@@ -38,7 +38,7 @@
 (to (test-with numbers)
 
   (to (insert-sorted ns n)
-    (if (or ns.empty? (<= n ns.first))
+    (if (or ns.none? (<= n ns.first))
         (link n ns)
         (link ns.first
               (insert-sorted ns.rest n))))
@@ -58,7 +58,7 @@
     (test-with ns)
     (when #no
       (test-with (reverse ns))
-      (unless ns.empty?
+      (unless ns.none?
         (testing ns.rest)))))
 
 (to (main _)

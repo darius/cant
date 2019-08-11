@@ -19,8 +19,8 @@
     (let a2 (select-targets "Immune System" immune-system infection))
     (let counts-before (for each ((groups armies.values))
                          (sum (each _.count groups))))
-    (hm (when (some _.empty? armies.values)
-          (not immune-system.empty?))
+    (hm (when (some _.none? armies.values)
+          immune-system.some?)
         (else
           ;; Fight a round.
           (attacking (map<- (chain a1 a2)))
@@ -39,7 +39,7 @@
   (let enemy-nums (flexarray<-list (1 .to enemy-groups.count)))  ;; just for the messages
   (for each! ((`(,i ,group) (sort-by (on (`(,_ ,group)) group.target-selection-key)
                                      my-groups.items)))
-    (unless enemies.empty?
+    (when enemies.some?
       (let damages (for each ((enemy enemies.values))
                      (group .would-damage enemy)))
 ;;      (for each! ((`(,j ,damage) damages.items))

@@ -69,7 +69,7 @@
   ;; For each unit, do a turn. Return yes if the round completed.
   (to (do-round)
     (begin doing ((items (sort units.items)))
-      (hm (or items.empty?)
+      (hm (or items.none?)
           (do (let `(,p ,unit) items.first))
           ;; This unit may have been killed in a preceding unit's turn,
           ;; but it can't have moved yet.
@@ -94,7 +94,7 @@
           (unless (maybe-attack spot)
 ;           (format "unit ~d did not attack\n" (coords<- spot))
             'ok))))
-    (not targets.empty?))
+    targets.some?)
 
   (to (find-targets species)
     (for where ((q units))
@@ -156,7 +156,7 @@
         (be {nonempty trail queue-1}
           (let spot trail.first)
           (if (goals .maps? spot)
-              (if (and (not successes.empty?)
+              (if (and successes.some?
                        (< successes.first.count trail.count))
                   (each reverse successes.values)
                   (do (successes .push! trail)
@@ -167,8 +167,8 @@
 ;;    (chain h (reverse t)))
 
   (to (sorted? xs)                      ;TODO extract to lib
-    (or xs.empty?
-        xs.rest.empty?
+    (or xs.none?
+        xs.rest.none?
         (and (<= xs.first xs.rest.first)
              (sorted? xs.rest))))
   

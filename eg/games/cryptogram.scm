@@ -65,7 +65,7 @@
 (to (cryptoview<- cryptogram)
 
   (let code (those _.letter? cryptogram.uppercase))
-  (surely (not code.empty?))            ;XXX 'require' or something
+  (surely code.some?)            ;XXX 'require' or something
   (let decoder (map-by (-> #\space) code.range.keys))
   (let point (box<- 0))                ; Index in `code` of the cursor
 

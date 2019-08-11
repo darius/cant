@@ -267,7 +267,7 @@ Scheme functions on lists:
 | `(cons x xs)`                 | `(link x xs)`       |  |
 | `(append xs ys)`              | `(chain xs ys)`     |  |
 | `(list x y z)`                | `(list<- x y z)`    | Though it's more common to use quasiquoting. |
-| `(null? xs)`                  | `(null? xs)`, `xs.empty?`, or `(xs .empty?)`     | `xs.empty?` is reader sugar for the last expression. All collections answer this message, though not all objects. `null?` would be useful when you don't know if the argument is a collection. |
+| `(null? xs)`                  | `(null? xs)`, `xs.none?`, or `(xs .none?)`     | `xs.none?` is reader sugar for the last expression. All collections answer this message, though not all objects. `null?` would be useful when you don't know if the argument is a collection. |
 | `(pair? x)`                   | `(link? x)`      |  |
 | `(list? x)`                   | `(list? x)`     |  Squeam doesn't plan to support improper lists, though I haven't got around to making them an error. |
 | `(car xs)`                    | `xs.first` or etc.     |  |
@@ -329,7 +329,7 @@ like bags/sets/sequences also understand the same messages.
 | `(m key)`                     | The value for this particular key, or raise an error if it's absent. The primitive `=` function defines sameness between the map's key and the value `key` provided in the message. |
 | `(m .get key)`                | Ditto, except the result is `#no` if the key is absent. |
 | `(m .get key default)`        | Ditto, except `default` instead of `#no`. |
-| `m.empty?`                    | Does `m` have any keys? `#yes` or `#no`. |
+| `m.none?`                    | Does `m` have any keys? `#yes` or `#no`. |
 | `m.keys`                      | A sequence of the keys, in some defined order. If `m` is mutable, the result should present a snapshot of the state as of this call. (For a hashmap, currently, the order is arbitrary, but I intend to make it insertion order when I get around to it.) |
 | `m.values`                    | A sequence of the values corresponding to the keys, in the same order. |
 | `m.items`                     | A sequence of key-value pairs. (The name `items` is from Python; any ideas for a better name? `mappings`?) |

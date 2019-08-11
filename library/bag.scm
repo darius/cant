@@ -4,7 +4,7 @@
   (to '()
     (let map (map<-))
     (make bag {extending map-trait} ;; XXX make sure map-trait methods are OK
-      (to _.empty?             map.empty?)
+      (to _.none?              map.none?)
       (to _.count              map.count)
       (to _.keys               map.keys)
       (to _.values             map.values)

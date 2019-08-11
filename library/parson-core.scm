@@ -70,7 +70,7 @@
 (to ((capture p) text far i vals)
   ((p text far i vals) .capture-from i))
 
-(to ((folded<- combine) @arguments)     ;TODO support arguments.empty?
+(to ((folded<- combine) @arguments)     ;TODO support the no-arguments case
   (foldr1 combine arguments))
 
 ;; (either p1 ... pn): a parser that succeeds just when one of its

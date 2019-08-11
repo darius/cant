@@ -36,7 +36,7 @@
   ;; Return the set of matches to rs whose total length is in Ns. We
   ;; ask s only for lengths that are remainders after an r-match in
   ;; 0..max(Ns). (And we call neither r nor s if there are no Ns.)
-  (hm (if Ns.empty? none)
+  (hm (if Ns.none? none)
       (else
        ;; TODO still pretty ugly
        (let r-matches (_.keys (r (_.range (0 .to (max @Ns.keys))))))

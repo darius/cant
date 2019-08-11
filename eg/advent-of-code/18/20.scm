@@ -51,7 +51,7 @@ dir:  {'N' | 'S' | 'E' | 'W'} :Dir.
         (visit-seq p d es))))
 
   (to (really-visit-seq p d es)
-    (if es.empty?
+    (if es.none?
         (map<- `((,p ,d)))
         (do (let map1 (visit p d es.first))
             (merge-best (for each ((`(,p1 ,d1) map1.items))
@@ -71,7 +71,7 @@ dir:  {'N' | 'S' | 'E' | 'W'} :Dir.
 (let empty-map (map<-))
 
 (to (merge-best maps)
-  (if maps.empty?
+  (if maps.none?
       empty-map
       (foldr1 merge2 maps)))
 

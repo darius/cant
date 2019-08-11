@@ -8,7 +8,7 @@
 (let empty {queue '() '()})
 
 (to (empty? {queue h t})
-  (and h.empty? t.empty?))
+  (and h.none? t.none?))
 
 (to (push {queue h t} element)
   {queue h (link element t)})
@@ -17,9 +17,9 @@
   {queue h (chain (reverse elements) t)}) ;TODO chain-reverse
 
 (to (peek {queue h t})
-  (hm (when (and h.empty? t.empty?)
+  (hm (when (and h.none? t.none?)
         {empty})
-      (when h.empty?
+      (when h.none?
         (let seq (reverse t))
         {nonempty seq.first {queue seq.rest '()}})
       (else
