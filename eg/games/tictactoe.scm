@@ -65,7 +65,7 @@
                              .format player.name (whose-move grid)))
                    (= #\Q get-key.uppercase))))
       (else
-        (refresh ("~d ponders..." .format player.name))
+        (refresh [player.name " ponders..."])
         (continue))))
 
 (to (ttt-render shown-grid message @(optional plaint))
