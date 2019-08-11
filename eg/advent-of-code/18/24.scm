@@ -18,8 +18,8 @@
     (let a1 (select-targets "Infection"     infection immune-system))
     (let a2 (select-targets "Immune System" immune-system infection))
     (let counts-before (for each ((groups armies.values))
-                         (sum (each _.count groups))))
-    (hm (when (some _.none? armies.values)
+                         (sum-by _.count groups)))
+    (hm (when (some _.none? armies.values) ;TODO a little confusing
           immune-system.some?)
         (else
           ;; Fight a round.
@@ -28,7 +28,7 @@
             (armies .set! army (those _.alive? groups)))
           
           (let counts-after (for each ((groups armies.values))
-                              (sum (each _.count groups))))
+                              (sum-by _.count groups)))
           (if (= counts-before counts-after)
               #no      ; Stalemate
               (battling))))))
@@ -152,7 +152,7 @@ separator: '\n'.
                                   (group-maker 0))))))
   (show-count armies)
   (battle armies)
-;;  (sum (each _.count (chain @armies.values)))  TODO is this nicer?
+;;  (sum-by _.count (chain @armies.values))  TODO is this nicer?
   (sum (for gather ((groups armies.values))
          (each _.count groups))))
 
@@ -179,7 +179,7 @@ separator: '\n'.
   (let win? (battle armies))
   (format "Immune boost of ~w ~d\n" boost (if win? "WORKED!" "failed"))
   (when win?
-    (format "leaving ~w units\n" (sum (each _.count (armies "Immune System")))))
+    (format "leaving ~w units\n" (sum-by _.count (armies "Immune System"))))
   (newline)
   win?)
 

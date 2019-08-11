@@ -33,7 +33,7 @@
 ;; Code translation
 
 (to (py-gen mnemonic code-list)
-  (let vars (py-make-variable-list (sum (each py-variable-count code-list))))
+  (let vars (py-make-variable-list (sum-by py-variable-count code-list)))
   (py-stmt-macro (py-insn-name mnemonic)
                  vars
                  (py-body vars code-list)))

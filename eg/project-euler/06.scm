@@ -4,7 +4,7 @@
 
 (to (euler6 ns)
   (- (square (sum ns))
-     (sum (each square ns))))
+     (sum-by square ns)))
 
 (to (square n)
   (* n n))

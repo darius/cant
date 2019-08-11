@@ -34,7 +34,7 @@
 ;; Code translation
 
 (to (c-gen mnemonic code-list)
-  (let vars (c-make-variable-list (sum (each c-variable-count code-list))))
+  (let vars (c-make-variable-list (sum-by c-variable-count code-list)))
   (c-stmt-macro (c-insn-name mnemonic)
                 vars
                 (c-body (each c-parenthesize vars) code-list)))

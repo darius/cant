@@ -39,7 +39,7 @@
 
 ;; Return the mover's weighted piece advantage.
 (to (greedy-evaluate board)
-  (let total (sum (each piece-values board.squares)))
+  (let total (sum-by piece-values board.squares))
   ;; Just a little randomness makes play less boring:
   ;;XXX need to set up with an rng
   ;; total += random.uniform(0, 0.001)

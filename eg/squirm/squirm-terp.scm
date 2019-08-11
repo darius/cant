@@ -694,8 +694,9 @@
     register unregister
     module-load   ;; for now
     reverse zip transpose identity format
-    count? yeah? min max grid* intercalate sum 
+    count? yeah? min max grid* intercalate sum sum-by
     write print display newline read
+    ;; TODO see if I've changed the stdlib relevantly since collecting these
     ))
 
 (let builtins-map

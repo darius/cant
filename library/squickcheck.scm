@@ -92,7 +92,7 @@
 
 ;; TODO extract something like this to random.scm
 (to (weighted-choice choices)
-  (let total (sum (each _.first choices)))
+  (let total (sum-by _.first choices))
   (on (g)
     (begin scanning ((i (g .natural total))
                      (`((,weight ,choice) ,@rest) choices))

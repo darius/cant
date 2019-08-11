@@ -20,7 +20,7 @@
 
 (to (sum-metadata {node children metadata})
   (+ (sum metadata)
-     (sum (each sum-metadata children))))
+     (sum-by sum-metadata children)))
 
 (format "result 1: ~w\n" (sum-metadata input))
 

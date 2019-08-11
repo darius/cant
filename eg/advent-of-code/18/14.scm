@@ -9,7 +9,7 @@
 (let elves '[0 1])
 
 (to (step!)
-  (board .extend! (digits<- (sum (each at elves))))
+  (board .extend! (digits<- (sum-by at elves)))
   (for each! ((`(,i ,elf) elves.items)) ;maybe a method like array .update!
     (elves .set! i (coord (+ elf 1 (at elf))))))
 

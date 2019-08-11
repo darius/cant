@@ -34,8 +34,8 @@
   (< (total-distance p) margin))
 
 (to (total-distance p)
-  (sum (for each ((c centers))
-         (manhattan-distance<- c p))))
+  (for sum-by ((c centers))
+    (manhattan-distance<- c p)))
 
 
 (display "\nPart 2\n")

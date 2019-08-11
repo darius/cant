@@ -40,7 +40,7 @@
   (total-risk (rectangle<- '(0 0) target)))
 
 (to (total-risk area)
-  (sum (each risk<- area)))
+  (sum-by risk<- area))
 
 (to (rectangle<- `(,xl ,yl) `(,xh ,yh))
   (grid* (xl .to xh)
@@ -73,6 +73,7 @@
 
   (to (keep-early efforts)
     (for those (({at t state} efforts))
+      ;; TODO un-duplicate this:
       (may (bests .get state)
         (be #no
           (bests .set! state t)
@@ -123,6 +124,8 @@
 
 (to (swap-tool q tool)
   (let candidates ((usables (type<- q)) .keys))
+  ;; TODO try this rephrase:
+;;  (let candidates (take (type<- q) usables _.keys))
   (if (= tool candidates.first)         ;TODO clumsy
       candidates.rest.first
       candidates.first))

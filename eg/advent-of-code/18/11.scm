@@ -21,8 +21,8 @@
   (max-by patch-level<- (patches)))
 
 (to (patch-level<- `(,x ,y))
-  (sum (for each ((`(,x ,y) (grid* (x .span 3) (y .span 3))))
-         (level<- x y))))
+  (for sum-by ((`(,x ,y) (grid* (x .span 3) (y .span 3))))
+    (level<- x y)))
 
 (to (patches)
   (grid* (1 .to 298) (1 .to 298)))
