@@ -142,10 +142,12 @@
 ;; Experiments
 
 ;;  TODO maybe also (take x y z (on (a b c) ...))
+;;               or (take x f g) = (g (f x))
+;: TODO better name 'with'?
 (to (take thing transform)
   (transform thing))
 
-(to (hey focus @actions)                ;TODO: better name 'with'?
+(to (hey focus @actions)
   (for each! ((act actions))
     (act focus))
   focus)
