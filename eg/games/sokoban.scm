@@ -26,7 +26,7 @@
 (import (use 'sturm)
   cbreak-mode
   get-key render
-  green bold unstyled)
+  green bold)
 
 (to (main args)
   (let filename
@@ -66,9 +66,9 @@ Level ~w ~d Move ~w")
 
     (to (view-grid)
       (for each ((ch grid.unparse.values))
-        (let c1 (if ("iI" .find? ch) green unstyled))
-        (let c2 (if (".I@" .find? ch) (compose bold c1) c1))
-        (c2 ch)))
+        ((if (".I@" .find? ch) bold identity)
+         ((if ("iI" .find? ch) green identity)
+          ch))))
 
     (render [(heading .format level.+ (name .center 50) trail.count)
              "\n\n"

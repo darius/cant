@@ -14,7 +14,7 @@
           (format "Available players: ~d\n"
                   (" " .join (sort player-registry.keys)))
           (os-exit 1))))
-  (tty-ttt @`(,@players ,empty-grid)))
+  (tty-ttt @`(,@players ,empty-grid))) ;TODO allow @arguments in non-final position in expressions?
 
 (to (quick-test)
   (tic-tac-toe spock-play spock-play {grid 0o610 0o061}))
@@ -74,18 +74,16 @@
 (make human-play
   (to _.name "Human")
   (to (_ grid) 
-    (let prompt ("~d move? [1-9; Q to quit] " .format (whose-move grid)))
     (begin asking ((plaint #no))
-      (ttt-render (if plaint (show-with-moves grid) (show grid))
-                  `(,prompt ,cursor)
+      (ttt-render (take grid (if plaint show-with-moves show))
+                  [(whose-move grid) " move? [1-9; Q to quit] " cursor]
                   plaint)
       (may get-key.uppercase
         (be #\Q #no)
-        (be key (may (and (char? key)
-                          (<= #\1 key #\9)
-                          (update grid (move<-key key)))
-                  (be #no (asking "Hey, that's not a move. Give me one of the digits below."))
-                  (be successor successor)))))))
+        (be key (or (and (char? key)
+                         (<= #\1 key #\9)
+                         (update grid (move<-key key)))
+                    (asking "Hey, that's not a move. Give me one of the digits below.")))))))
 
 (to (show-with-moves grid)
   (each (highlight-if _.digit?) (show grid (1 .to 9))))
