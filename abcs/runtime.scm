@@ -1297,21 +1297,22 @@
     (to (scanning sink s args)
       (if s.none? 
           (when args.some?
-            (error "Leftover arguments" args))
+            (error "Leftover arguments to .format" args))
           (may s.first
             (be #\~
-              (let ss s.rest)
-              (if (ss .prefix? '(#\-))
-                  (parse sink ss.rest -1 #no args)
-                  (parse sink ss #no #no args)))
+              (parse sink s.rest args))
             (be ch
               (sink .display ch)
               (scanning sink s.rest args)))))
 
-    (to (parse sink s sign width args)
-      (if (s .prefix? '(#\0))
-          (parsing sink s.rest #\0     sign width args)
-          (parsing sink s      #\space sign width args)))
+    ;; Parse a ~ field, then go back to scanning the rest of s.
+    (to (parse sink s args)
+      (let {pair sign s1} (if (s .prefix? '(#\-))
+                              {pair -1 s.rest}
+                              {pair #no s}))
+      (if (s1 .prefix? '(#\0))
+          (parsing sink s1.rest #\0     sign 0   args)
+          (parsing sink s1      #\space sign #no args)))
 
     (to (parsing sink s pad sign width args)
       (when s.none?
@@ -1327,11 +1328,9 @@
           (sink .display "~")
           (scanning sink s.rest args))
         (be (? _.digit? ch)
-          (let digit (- ch.code 48))
-          (parsing sink s.rest pad sign      ;TODO testme with a multidigit width
-                   (+ (if width (* 10 width) 0)
-                      digit)
-                   args))
+          (let new-width (+ (- ch #\0)
+                            (if width (* 10 width) 0)))
+          (parsing sink s.rest pad sign new-width args))
         (be #\x  ; hex number, XXX works wrong on negative numbers
           (maybe-pad sink pad sign width (_ .display ((string<-number args.first 16) .lowercase)))
           (scanning sink s.rest args.rest))
@@ -1340,6 +1339,7 @@
 
     (to (maybe-pad sink pad sign width message)
       (hm (when width
+            ;; TODO fix: we're currently justifying to width, but not truncating
             (let w (if sign (* sign width) width))
             (sink .display ((string<-writer message) .justify w pad)))
           (when sign
