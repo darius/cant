@@ -6,11 +6,11 @@
 (make _
   (to (_ me message)
     (may message
-      (be {.selfie sink}
+      (be (_ .selfie sink)
         (sink .display "#<expr ")
         (sink .write me.term)
         (sink .display ">"))
-      (be {.term}
+      (be _.term
         (may (__ast-tag me)
           (be 0 {constant (__ast-part me 1)})
           (be 1 {variable (__ast-part me 1)})

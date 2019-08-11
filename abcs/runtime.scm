@@ -1333,7 +1333,7 @@
                       digit)
                    args))
         (be #\x  ; hex number, XXX works wrong on negative numbers
-          (maybe-pad sink pad sign width {.display ((string<-number args.first 16) .lowercase)})
+          (maybe-pad sink pad sign width (_ .display ((string<-number args.first 16) .lowercase)))
           (scanning sink s.rest args.rest))
         (else
           (error "Bad format string" (string<-list s)))))
