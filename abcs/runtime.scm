@@ -1325,7 +1325,7 @@
           (maybe-pad sink pad sign width (_ .display args.first))
           (scanning sink s.rest args.rest))
         (be #\~
-          (sink .display "~")
+          (sink .display "~") ;TODO: complain if there were formatting directives before "~"?
           (scanning sink s.rest args))
         (be (? _.digit? ch)
           (let new-width (+ (- ch #\0)
