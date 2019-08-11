@@ -1204,7 +1204,7 @@
 (to (string<- @chars)
   (string<-list chars))
 
-(to (with-output-string take-sink)             ;TODO rename
+(to (string<-writer take-sink)
   (let sink (string-sink<-))
   (take-sink sink)
   sink.output-string)
@@ -1340,9 +1340,8 @@
 
     (to (maybe-pad sink pad sign width message)
       (hm (when width
-            (let string (with-output-string message))
             (let w (if sign (* sign width) width))
-            (sink .display (string .justify w pad)))
+            (sink .display ((string<-writer message) .justify w pad)))
           (when sign
             (error "Missing width in format string"))
           (else
