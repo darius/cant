@@ -148,8 +148,7 @@
   (transform thing))
 
 (to (hey focus @actions)
-  (for each! ((act actions))
-    (act focus))
+  (each! (-> (it focus)) actions)
   focus)
 
 ;; 'bind' on the maybe monad
@@ -159,10 +158,6 @@
     (else   (f ?thing))))
 
 ;; probably worthless
-(make method<-
-  (to (_ cue)
-    (on (actor @arguments)
-      (call actor (term<- cue arguments))))
-  (to (_ actor cue)
-    (on (@arguments)
-      (call actor (term<- cue arguments)))))
+(to (method<- actor cue)
+  (on (@arguments)
+    (call actor (term<- cue arguments))))
