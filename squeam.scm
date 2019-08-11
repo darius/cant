@@ -17,6 +17,7 @@
 
 (run-load "abcs/functions.scm")
 (run-load "abcs/library.scm")
+(run-load "abcs/top.scm")
 (squeam-interpret
  '(do
 ;    (use "test/smoke-test")

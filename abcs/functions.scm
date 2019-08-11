@@ -120,6 +120,24 @@
   (write x)
   (newline))
 
+(to (with-input-file fn filename)
+  (let source (open-input-file filename))
+  (let result (fn source))
+  source.close                       ;TODO unwind-protect
+  result)
+
+(to (with-output-file fn filename)
+  (let sink (open-output-file filename 'replace)) ;TODO the 'replace is for Chez
+  (let result (fn sink))
+  sink.close                       ;TODO unwind-protect
+  result)
+
+(to (read-all source) ;XXX confusing name, since source.read-all returns a string
+  (let thing (read source))
+  (if (eof? thing)
+      '()
+      (link thing (read-all source))))
+
 
 ;; Experiments
 
