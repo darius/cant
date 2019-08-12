@@ -56,7 +56,7 @@
 
   (let N (- C))
   (let S C)
-  (let W (- 1))
+  (let W -1)
   (let E 1)
   (let neighbor-dirs
     `(,(+ N W) ,N ,(+ N E)
