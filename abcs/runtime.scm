@@ -376,36 +376,38 @@
   (to (_ .join ss)   ;should this be a function, not a method?
     (if ss.none?
         ""
-        (foldr1 (on (x y) (chain x me y)) ss))) ;XXX quadratic
-  ;;XXX below mostly from list-trait, until .selfie
-  (to _.keys         (range<- me.count))
+        ;; De-quadratified (foldr1 (on (x y) (chain x me y)) ss)
+        (do (let mine me.values)
+            (string<-list (foldr1 (on (s chars)
+                                    (s.values .chain (mine .chain chars.values)))
+                                  ss)))))
   (to _.values       (list<-string me))
-  (to _.items        (enumerate me))
-  (to (_ .get key)   (me .get key #no))
-  (to (_ .get key default)
+  (to (_ .get key)   (me .get key #no)) ;TODO duplicated because delegation is slow
+  (to (_ .get key default)      ;TODO could be shared with array-trait
     (if (me .maps? key)
         (me key)
         default))
-  (to (_ .maps? key)                         ;XXX duplicate, see above
-    (and (count? key) (< key me.count)))
   (to (_ .trim-left)
-    (if me.none?
-        me
-        (do (let c me.first)
-            (if c.whitespace?
-                me.rest.trim-left
-                me))))
+    (let limit me.count)
+    (begin scanning ((i 0))
+      (hm (when (= i limit)
+            "")
+          (do (let c (me i)))
+          (unless c.whitespace?
+            (me .slice i))
+          (else (scanning i.+)))))
   (to _.trim-right
     (begin scanning ((i me.count))
-      (if (= i 0)
-          ""
-          (do (let c (me i.-))
-              (if c.whitespace?
-                  (scanning i.-)
-                  (me .slice 0 i))))))
+      (hm (when (= i 0)
+            "")
+          (do (let c (me i.-)))
+          (unless c.whitespace?
+            (me .slice 0 i))
+          (else (scanning i.-)))))
   (to _.trim
     me.trim-left.trim-right)
   (to _.split
+    ;; TODO dequadratify
     (begin splitting ((s me.trim-left))
       (if s.none?
           '()
@@ -478,22 +480,18 @@
                    me
                    (" " .repeat half)))))
   (to (_ .repeat n)
-    (may n
-      (be 0 "")
-      (else (chain @(for each ((_ (range<- n)))
-                      me)))))
+    ("" .join (each (-> me) (range<- n))))
   (to (_ .format @arguments)
-    (let sink (string-sink<-))
-    (format .to-sink sink me @arguments)
-    sink.output-string)
+    (string<-writer (-> (format .to-sink it me @arguments))))
   (to _.split-lines
-    (let lines (me .split "\n"))
     ;; TODO ugly. This 'if' is needed because we want a final "\n" to
     ;; yield the same output as a string with no final "\n". N.B. while
     ;; that's convenient it's also information-destroying.
-    (if (and lines.some? (= lines.last ""))
-        (lines .slice 0 lines.count.-)
-        lines))
+    (let tweaked (if (and me.some? (= me.last #\newline))
+                     (me .slice 0 me.count.-)
+                     me))
+    ;; TODO it'd be nice for efficiency if tweaked could be a view instead of a copy
+    (tweaked .split "\n"))
   (to (_ .selfie sink)
     (sink .display #\")
     (for each! ((c me))
@@ -1046,15 +1044,15 @@
 (to (array<-list xs)     (__array<-list (as-list xs)))
 
 (to (reverse xs)
-  (for foldl ((ys '()) (x xs))
-    (link x ys)))
+  (for foldl ((result '()) (x xs))
+    (link x result)))
 
-(to (foldl f z xs)
+(to (foldl f z xs)           ; 'z' connoting zero from f's perspective
   (if xs.none?
       z
       (foldl f (f z xs.first) xs.rest)))
 
-(to (foldr f xs z)     ;TODO rename since args are in nonstandard order
+(to (foldr f xs z) ;N.B. some other languages have a different argument order
   (if xs.none?
       z
       (f xs.first (foldr f xs.rest z))))
@@ -1091,7 +1089,7 @@
           (if ys.none? (mismatch))
           (else `((,xs.first ,ys.first)
                   ,@(zipping xs.rest ys.rest))))))
-  (to (_ @lists)  ; ugly
+  (to (_ @lists)
     (transpose lists)))
 
 ;; TODO: name it (zip @rows) instead, like Python?
@@ -1110,7 +1108,11 @@
     (if (keep? x) (link x kept) kept)))
 
 (to (yeahs maybe xs)             ;TODO is this worth defining? good name?
-  (those identity (each maybe xs)))
+  ;; Inlining of (those identity (each maybe xs))
+  (for foldr ((x xs) (kept '()))
+    (may (maybe x)
+      (be #no  kept)
+      (be yeah (link yeah kept)))))
 
 (to (identity x)
   x)
