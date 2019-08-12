@@ -18,10 +18,9 @@
 
 ;; Return a string of glyphs representing character ch at column x.
 (to (render-glyph ch x)
-   (let b ch.code)
-   (if (and (<= 32 b) (< b 127))  ;; TODO char.printable?
-       (string<- ch)
-       ("\\x~02x" .format b)))
+  (if ch.printable?
+      (string<- ch)
+      ("\\x~02x" .format ch.code)))
 
 ;; Compute how to show `text` from coordinate `start` with cursor at
 ;; `point`. Return an object that can say whether the cursor is visible

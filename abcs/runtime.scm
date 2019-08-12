@@ -519,6 +519,7 @@
   (to _.uppercase?    (__char-uppercase? me))
   (to _.lowercase     (__char-lowercase me))
   (to _.uppercase     (__char-uppercase me))
+  (to _.printable?    (<= 32 (__char->integer me) 126))  ; TODO better name?
   (to (_ .compare c)  (__char-compare me c))
   (to (_ .+ n)   ;; Is this a good idea?
     (surely (integer? n) "Bad arg type" n)
