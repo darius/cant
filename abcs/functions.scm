@@ -1,3 +1,11 @@
+(make display
+  (to (_ x)      (out .display x))
+  (to (_ x sink) (sink .display x)))
+
+(make newline
+  (to (_)      (out .display #\newline))
+  (to (_ sink) (sink .display #\newline)))
+
 (to (yeah? x)
   (not= x #no))
 

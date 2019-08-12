@@ -738,7 +738,7 @@
     (array? ,vector?)
     (box? ,box?)
     (term? ,term?)
-    (source? ,input-port?)
+    (source? ,input-port?) ;TODO these only know about primitive sources/sinks
     (sink? ,output-port?)
     (eof? ,eof-object?)
     (box<- ,box<-)
@@ -753,8 +753,6 @@
     (not ,not)
     (assoc ,assoc)  ;; TODO replace with 'real' hashmaps
     (sqrt ,sqrt)
-    (display ,prim-display)
-    (newline ,newline)           ;XXX temp
     (panic ,panic-object)
     (error ,error-prim-object)
     (evaluate ,evaluate-prim)
