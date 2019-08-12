@@ -36,8 +36,6 @@
 (to (field<- field-string elf-attack-power)
 
   (let width field-string.split-lines.first.count.+)
-  ;; TODO I *want* to write it like this, but it's ugly! --
-  ;; (surely (= 1 (((each _.count field-string.split-lines) .range) .count)))
   (surely (for every ((line field-string.split-lines))
             (= width line.count.+)))
 
@@ -47,7 +45,7 @@
     ("~w,~w" .format (p .quotient width) (p .modulo width)))
 
   ;; Step in directions N E S W
-  (let steps (array<- (- width) 1 width -1)) ;TODO maybe a list instead?
+  (let steps (list<- (- width) 1 width -1))
 
   (to (neighbors<- p)
     (for each ((s steps))
@@ -68,15 +66,11 @@
 
   ;; For each unit, do a turn. Return yes if the round completed.
   (to (do-round)
-    (begin doing ((items (sort units.items)))
-      (hm (or items.none?)
-          (do (let `(,p ,unit) items.first))
-          ;; This unit may have been killed in a preceding unit's turn,
-          ;; but it can't have moved yet.
-          (if (units .maps? p)
-              (and (do-turn p)
-                   (doing items.rest)))
-          (else (doing items.rest)))))
+    (for every ((`(,p ,unit) (sort units.items)))
+      ;; This unit may have been killed in a preceding unit's turn,
+      ;; but it can't have moved yet.
+      (or (not (units .maps? p)) ; (must've been killed)
+          (do-turn p))))
 
   ;; For the unit at p, do a turn. Return yes if it found a target.
   (to (do-turn p)
