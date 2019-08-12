@@ -137,7 +137,7 @@
       (for yeahs ((q (sort (open-neighbors<- trail.first))))
         (and (not (already .maps? q))
              (do (already .add! q)
-                 `(,q ,@trail)))))
+                 (link q trail)))))
 
     (begin exploring ((queue
                        (extend empty (for each ((trail (expand `(,start-pos))))
