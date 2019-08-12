@@ -22,7 +22,7 @@
                     (for each ((c alphabet))
                       (chain a c b))))
   (let del-splits (for those ((`(,a ,b) splits))
-                    (not b.none?)))
+                    b.some?))
   (let deletes    (for each ((`(,a ,b) del-splits))
                     (chain a (b .slice 1))))
   (let replaces   (for gather ((`(,a ,b) del-splits))
