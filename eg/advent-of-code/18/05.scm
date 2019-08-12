@@ -9,7 +9,7 @@
 
 (to (reduce polymer)
   (for foldr ((c polymer) (r '()))
-    (if (and (not r.none?) (reacts? c r.first))
+    (if (and r.some? (reacts? c r.first))
         r.rest
         `(,c ,@r))))
 
