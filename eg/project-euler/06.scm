@@ -11,4 +11,3 @@
 
 (print (euler6 (1 .to 10)))
 ;(print (euler6 (1 .to 100)))
-

@@ -1273,7 +1273,7 @@
         (be {term-pat tag ps}
           (term<- tag (each unparse-pat ps)))
         (be {list-pat ps}
-          (each unparse-pat ps))
+          (each unparse-pat ps))        ;TODO especially unacceptable now
         (be {and-pat p1 p2}
           `(<and-pat> ,(unparse-pat p1) ,(unparse-pat p2)))
         (be {view-pat e p}

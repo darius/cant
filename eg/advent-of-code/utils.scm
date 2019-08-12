@@ -100,7 +100,7 @@
 (to (vector- p q) (each - p q))
 
 (to (manhattan-distance<- p q)
-  (sum-by (compose abs -) p q))
+  (sum (each (compose abs -) p q)))     ;TODO generalize sum-by?
 
 (to (bounds<- points)
   (transpose (each bounds-1d<- (transpose points))))
