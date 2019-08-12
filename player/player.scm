@@ -135,7 +135,8 @@
          (global-define! v value k))
         (else (signal k "Tried to bind in a non-environment" r v))))
 
-(define uninitialized (object<- (script<- '<uninitialized> #f '()) '*uninitialized*))
+(define uninitialized
+  (object<- (script<- '<uninitialized> #f '()) '*uninitialized*))
 
 (define (env-variables r)
   (map car r))
@@ -786,7 +787,6 @@
     (nanosleep ,prim-nanosleep)
 
     ;; Primitives only -- TODO seclude in their own env:
-    (__hash ,hash)                      ;TODO not needed when we have __place
     (__place ,hashmap-place)
     (__char-compare ,char-compare)
     (__number-compare ,number-compare)
@@ -797,7 +797,6 @@
     (__remainder ,remainder)
     (__modulo ,modulo)
     (__*/mod ,prim-*/mod)
-;    (__number-compare
     (__bit-<< ,ash)
     (__bit->> ,(lambda (x y) (ash x (- y))))
     (__bit-not ,lognot)
@@ -878,9 +877,7 @@
     (os-exit ,exit)
     ))
 
-;;(display "hey\n")
 (run-load "abcs/runtime.scm")
-;;(display "dude\n")
 
 (set! miranda-trait (get-prim 'miranda-trait))
 
