@@ -1125,7 +1125,7 @@
     (foldr1 (on (xs ys) (xs .chain ys)) arguments)))
 
 (to (some pass? xs)
-  (and (not xs.none?)
+  (and xs.some?
        (or (pass? xs.first)
            (some pass? xs.rest))))
 
