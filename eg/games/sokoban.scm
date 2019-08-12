@@ -73,7 +73,7 @@ Level ~w ~d Move ~w")
     (render [(heading .format level.+ (name .center 50) trail.count)
              "\n\n"
              (view-grid)
-             (if grid.won? '("\n\nDone!") '())])
+             (if grid.won? "\n\nDone!" '())])
 
     (may get-key.lowercase
       (be #\q 'done)
@@ -85,7 +85,7 @@ Level ~w ~d Move ~w")
         (playing level))
       (be key
         (when (directions .maps? key)
-          (let after (grid .push (directions key)))
+          (let after (grid .move (directions key)))
           (unless (= grid.unparse after.unparse)
             (trail .push! after)))
         (playing level)))))
@@ -115,7 +115,7 @@ Level ~w ~d Move ~w")
       ((" " .join (each string<- spots)) .replace "\n " "\n"))
 
     ;; Try to move the player in the direction.
-    (to (_ .push dir)
+    (to (_ .move dir)
 
       (to (find-player)
         (or (spots .find #\i #no)

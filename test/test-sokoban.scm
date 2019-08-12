@@ -16,8 +16,8 @@
 (format "~d\n" g.unparse)
 
 (let afterward
-  (for foldl ((g g) (move '(down down right)))
-    (hey (g .push move)
+  (for foldl ((g g) (dir '(down down right)))
+    (hey (g .move dir)
          (-> (format "~d\n" it.unparse)))))
 
 (print afterward.won?)
