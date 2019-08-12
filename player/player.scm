@@ -91,7 +91,8 @@
                                 (else "XXX-WTF")))
                         ">"))
         (else
-         ;;XXX other types specially? booleans at least?
+         ;; This only gets called from miranda-trait, so x already had
+         ;; a chance to depict itself in its preferred way.
          (call-with-string-output-port
           (lambda (p) (put-datum p x))))))
 
