@@ -14,7 +14,7 @@
     (train model (tokenize (with-input-file _.read-all filename))))
   (unless model.none?
     (let text (spew (random-rng<-) model start))
-    (display (fill (" " .join text) ;TODO a lazy text-wrap
+    (display (fill (" " .join text) ;TODO fill sort of splits it back -- add a function to text-wrap that wouldn't need to?
                    72))
     (newline)))
 

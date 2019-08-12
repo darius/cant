@@ -2,9 +2,11 @@
 ;; TODO try using Parson
 ;; TODO the Python names are pretty arbitrary
 
+;; Reformat text, trying to fit in width.
 (to (fill text width)
   ("\n" .join (wrap text width)))
 
+;; Reformat text into a list of lines, trying to fit in width.
 (to (wrap text width)
   (surely (< 0 width))  ;TODO 'require' or something, for preconditions
   (wrap-into (flexarray<-) (parse-tokens text.values) width))
@@ -20,8 +22,8 @@
         (be #\space   (link {space} (parse-tokens text.rest)))
         (be (? _.whitespace? ch)
           (error "I don't know how to fill whitespace like" ch))
-        (else
-          (let word (flexarray<- text.first))
+        (be ch
+          (let word (flexarray<- ch))
           (begin eating ((text text.rest))
             (if (or text.none? text.first.whitespace?)
                 (link {word (flush word)} (parse-tokens text))
