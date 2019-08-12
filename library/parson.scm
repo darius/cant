@@ -78,7 +78,7 @@
           any-1))
   (seclude
    (then q (many quoted-char) q __
-         (feed chain))))           ;XXX if empty, you'll get () instead of ""
+         (feed-list (-> ("" .join it))))))
 
 (let qstring  (string-quoted-by #\'))
 (let dqstring (string-quoted-by #\"))
