@@ -42,7 +42,7 @@
               (do (let code codes.first)
                   (chunks .push! chunk)
                   (let new-chunk (chunks code))
-                  (chunks .set! (- chunks.count 1)
+                  (chunks .set! chunks.count.-
                           (chain chunk (string<- new-chunk.first)))
                   (decoding (chunks code) codes.rest)))))))
 
