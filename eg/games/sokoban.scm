@@ -136,8 +136,8 @@ Level ~w ~d Move ~w")
         (let target? (".@I" .find? (new pos)))
         (new .set! pos (thing target?.count)))
 
-      (let d (directions dir))
       (let p (find-player))
+      (let d (directions dir))
       (move! "o@" (+ p d) (+ p d d))
       (move! "iI" p (+ p d))
 
