@@ -88,7 +88,8 @@
   (foldl + 0 ns))
 
 (to (sum-by f xs) ;TODO overload 'sum' instead? (viz. other use of name below)
-  (sum (each f xs)))
+  (for foldl ((total 0) (x xs))
+    (+ total (f x))))
 
 (to (tally xs)
   (sum-by _.count xs))
