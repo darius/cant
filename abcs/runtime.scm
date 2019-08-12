@@ -568,7 +568,7 @@
   )
 
 (make-trait sink-primitive me
-  (to (_ .display a)   (__display a me))
+  (to (_ .display a)   (unless (__display a me) (me .write a))) ; TODO is this dangerous? longer-term, design the whole display/write thing differently
   (to (_ .write-u8 u8) (__put-u8 me u8))
   (to (_ .write a)     (a .selfie me))
   (to _.close          (__close-port me))

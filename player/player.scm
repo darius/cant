@@ -80,17 +80,11 @@
 
 ;; Primitive depiction
 
-(define (prim-display x . opt-sink)
-  (let ((sink (cond ((null? opt-sink) (current-output-port))
-                    ((null? (cdr opt-sink)) (car opt-sink))
-                    (else (error 'prim-display "Too many arguments" `(,x ,@opt-sink))))))
-    ;; XXX need to support non-primitive sinks
-    (cond ((or (char? x) (string? x) (symbol? x) (number? x))
-           (display x sink))
-          ((boolean? x) ;just for completeness -- not sure I want this
-           (display (if x "#yes" "#no") sink))
-          (else
-           (display "#<XXX non-basic display>" sink))))) ;TODO
+(define (prim-display x sink)
+  (cond ((or (char? x) (string? x) (symbol? x) (number? x))
+         (display x sink)
+         #t)
+        (else #f)))
 
 (define (depict x)
   (cond ((object? x)
@@ -724,7 +718,7 @@
     (out ,(current-output-port))
     (stdin ,(current-input-port))       ;XXX inconsistent
 
-    (link ,list*) ;;TODO insist that last argument = nil or pair? TODO is this n-arg form useful? TODO needs a corresponding n-arg pattern
+    (link ,list*) ;;TODO insist that last argument = nil or pair? TODO is this n-arg form useful? 
     (link? ,pair?)
     (null? ,null?)
     (list? ,(lambda (x) (or (null? x) (pair? x))))
