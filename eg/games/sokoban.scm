@@ -30,9 +30,9 @@
 
 (to (main args)
   (let filename
-    (may args
-      (be `(,_)        "eg/games/microban")
-      (be `(,_ ,fname) fname)
+    (may args.rest
+      (be `()       "eg/games/microban")
+      (be `(,fname) fname)
       (else (error ("Usage: ~d [filename]" .format (args 0))))))
   (start @(with-input-file read-collection filename)))
 

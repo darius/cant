@@ -15,8 +15,9 @@
 (format "~d\n\n" name)
 (format "~d\n" g.unparse)
 
-(g .push 'down)  (format "~d\n" g.unparse)
-(g .push 'down)  (format "~d\n" g.unparse)
-(g .push 'right) (format "~d\n" g.unparse)
+(let afterward
+  (for foldl ((g g) (move '(down down right)))
+    (hey (g .push move)
+         (-> (format "~d\n" it.unparse)))))
 
-(print g.won?)
+(print afterward.won?)
