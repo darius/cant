@@ -29,7 +29,7 @@ insn:    {'1'+} {'#' '#'? '#'? '#'? '#'?} :make_insn.
 
 (to (run insns regs @(optional loud?))
   (begin stepping ((pc 0))
-    (when (< pc insns.count)
+    (when (insns .maps? pc)
       (when loud?
         (show insns pc regs)
         (newline))
