@@ -85,59 +85,63 @@ Level ~w ~d Move ~w")
         (playing level))
       (be key
         (when (directions .maps? key)
-          (let after grid.copy)
-          (after .push (directions key))
+          (let after (grid .push (directions key)))
           (unless (= grid.unparse after.unparse)
             (trail .push! after)))
         (playing level)))))
 
+;; We represent a grid as an array or string of characters, including
+;; the newlines, with every line the same length (which we call the
+;; width of the grid).
 (to (parse floor-plan)
   (do (let line-lengths (each _.count floor-plan.split-lines))
       (surely (= 1 line-lengths.range.count))) ;XXX require
-  (array<-list floor-plan))
+  floor-plan)
 
-(to (sokoban-grid<- grid)
-  ;; We represent a grid as a mutable array of characters, including
-  ;; the newlines, with every line the same length (which we call the
-  ;; width of the grid). Thus moving up or down from some square means a
-  ;; displacement by that same width, whatever the starting square.
-  (let width (+ (grid .find #\newline) 1))
+(to (sokoban-grid<- spots)
+  ;; Since the width is constant, moving up or down from some square
+  ;; means a displacement by that same width, whatever the starting
+  ;; square.
+  (let width (+ (spots .find #\newline) 1))
   (let directions
     (map<- `((left -1) (right 1) (down ,width) (up ,(- width)))))
 
-  (to (find-player)
-    (or (grid .find #\i #no)
-        (grid .find #\I)))
-
-  ;; Move thing from here to there if possible.
-  (to (move! thing here there)
-    (when (and (thing .find? (grid here))
-               (" ." .find? (grid there)))
-      (put! " ." here)
-      (put! thing there)))
-
-  ;; Into the square at pos, put thing.
-  (to (put! thing pos)
-    (let target? (".@I" .find? (grid pos)))
-    (grid .set! pos (thing target?.count)))
-
   (make _
+
+    (to _.won?
+      (not (spots .find? #\o)))
+
+    (to _.unparse
+      ((" " .join (each string<- spots)) .replace "\n " "\n"))
 
     ;; Try to move the player in the direction.
     (to (_ .push dir)
+
+      (to (find-player)
+        (or (spots .find #\i #no)
+            (spots .find #\I)))
+
+      ;; The spots-to-be after the move, starting as a copy of spots.
+      (let new (array<-list spots.values))
+
+      ;; Move thing from here to there if possible.
+      (to (move! thing here there)
+        (when (and (thing .find? (new here))
+                   (" ." .find? (new there)))
+          (put! " ." here)
+          (put! thing there)))
+
+      ;; Into the square at pos, put thing.
+      (to (put! thing pos)
+        (let target? (".@I" .find? (new pos)))
+        (new .set! pos (thing target?.count)))
+
       (let d (directions dir))
       (let p (find-player))
       (move! "o@" (+ p d) (+ p d d))
-      (move! "iI" p (+ p d)))
+      (move! "iI" p (+ p d))
 
-    (to _.won?
-      (not (grid .find? #\o)))
-
-    (to _.unparse
-      ((" " .join (each string<- grid)) .replace "\n " "\n"))
-
-    (to _.copy
-      (sokoban-grid<- grid.copy))))
+      (sokoban-grid<- new))))
 
 
 (export
