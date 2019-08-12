@@ -80,12 +80,6 @@
 
 ;; Primitive depiction
 
-(define (prim-display x sink)
-  (cond ((or (char? x) (string? x) (symbol? x) (number? x))
-         (display x sink)
-         #t)
-        (else #f)))
-
 (define (depict x)
   (cond ((object? x)
          (string-append "#<"

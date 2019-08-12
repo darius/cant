@@ -3,7 +3,7 @@
         as-link box<- vector-append subvector copy-range! vector-move!
         maybe-macroexpand-expr maybe-macroexpand-patt prim-halp-log
         prim-nano-now prim-nanosleep prim-*/mod prim-string-maps? 
-        prim-substring prim-vector-maps? prim-read-all 
+        prim-substring prim-vector-maps? prim-read-all prim-display
         )
 (import (chezscheme) (player util) (player parse))
 
@@ -191,5 +191,11 @@
       (if (eof-object? c)
           (list->string (reverse cs))
           (reading (cons c cs))))))
+
+(define (prim-display x sink)
+  (cond ((or (char? x) (string? x) (symbol? x) (number? x))
+         (display x sink)
+         #t)
+        (else #f)))
 
 )
