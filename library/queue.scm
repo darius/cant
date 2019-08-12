@@ -5,6 +5,10 @@
 ;; (reverse right)). Elements are removed on the left and added on the
 ;; right. The representation is split this way for amortized efficiency.
 
+;; (Called h and t for head and tail, below, because lowercase 'l'
+;; would be hard to read. TODO would tail and head make better
+;; terminology? -- so the names are backwards now? Sigh.)
+
 (let empty {queue '() '()})
 
 (to (empty? {queue h t})
