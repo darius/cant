@@ -17,7 +17,7 @@
 (let showing (display-buffer<-))
 
 ;; Return a string of glyphs representing character ch at column x.
-(to (render-glyph ch x)
+(to (render-char ch x)
   (if ch.printable?
       (string<- ch)
       ("\\x~02x" .format ch.code)))
@@ -38,7 +38,7 @@
       (let pp (+ p 1))
       (if (or (= ch "") (= ch "\n"))
           (rendering pp 0 y.+)  ;; TODO flexarray to string, i guess
-          (begin appending ((glyphs (render-glyph ch.first x))
+          (begin appending ((glyphs (render-char ch.first x))
                             (x x)
                             (y y))
             (hm (if glyphs.none? (rendering pp x y))
