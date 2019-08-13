@@ -6,10 +6,10 @@
 
   (let stem "eg/advent-of-code/18")
   (to (run code-name data-name)
-    (evaluate `(let data-name ',data-name)
-              '())
-    (evaluate `(let data-file ',("~d/data/~d" .format stem data-name))
-              '())
+    (squeam .play `(let data-name ',data-name)
+                  '())
+    (squeam .play `(let data-file ',("~d/data/~d" .format stem data-name))
+                  '())
     (load ("~d/~d.scm" .format stem code-name)))
 
   (may args

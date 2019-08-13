@@ -767,6 +767,21 @@
     (__cont-trait me message)))
 
 
+;; Interpreter
+
+(make squeam
+  (to (_ .play exp env)
+    (__evaluate (if (squeam .expression? exp)
+                    exp
+                    (squeam .parse-expression exp))
+                env))
+  (to (_ .expression? x)
+    (__expression? x))
+  (to (_ .parse-expression x @(optional context))
+    (parse-exp x (or context '())))                      ;TODO rename
+  )
+
+
 ;; Hash-maps
 ;; This is defined in the runtime, here, because the form
 ;; (export foo bar) gets expanded into code like

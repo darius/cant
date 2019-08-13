@@ -436,6 +436,9 @@
 ;  (report `(evaluate ,e))
   (evaluate-exp e r halt-cont))
 
+(define (expression?-prim x)
+  (and (object? x) (eq? (object-script x) expression-script)))
+
 (define (evaluate-exp e r k)
   (if (and (object? e) (eq? (object-script e) expression-script))
       (let* ((parsed (object-datum e))
@@ -745,7 +748,8 @@
     (sqrt ,sqrt)
     (panic ,panic-prim)
     (error ,error-prim)
-    (evaluate ,evaluate-prim)
+    (__evaluate ,evaluate-prim)
+    (__expression? ,expression?-prim)
     (open-input-file ,open-input-file)  ;XXX rename open-file-source
     (open-output-file ,open-output-file) ; open-file-sink
     (open-binary-file-source ,open-file-input-port) ; This actually has more options in Chez than just binary

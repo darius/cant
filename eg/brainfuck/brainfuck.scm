@@ -100,7 +100,7 @@
   (bf-interpret text)
   (let code (bf-compile text))
 ;;  (print code)
-  ((evaluate code '()))
+  ((squeam .play code '()))
   )
 
 

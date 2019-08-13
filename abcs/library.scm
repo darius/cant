@@ -29,5 +29,5 @@
             context))
 
 (to (load-exp exp context)
-  (let code (parse-exp exp (or context '())))
-  (evaluate code '()))
+  (let code (squeam .parse-expression exp context))
+  (squeam .play code '()))

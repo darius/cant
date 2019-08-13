@@ -58,7 +58,7 @@
       (be 'value
         (let focus-env '())              ;XXX
         (let env (link `(*focus* ,focus) focus-env))
-        (print (evaluate (read) env))
+        (print (squeam .play (read) env))
         (continue))
       (be (? count?)
         (push (focus input))) ;TODO handle out-of-range
@@ -87,7 +87,7 @@
       (interacting frame callees))
 
     (to (read-eval)
-      (evaluate (read) frame.env))
+      (squeam .play (read) frame.env))
 
     (display "debug-> ")
     (let input (read))  ; TODO read a line, then parse?
