@@ -1,6 +1,5 @@
 ;; Top level: listener and command line
 
-(let the-signal-handler (box<- panic))
 (let the-last-error (box<- #no))
 
 (to (push-signal-handler handler)
@@ -111,6 +110,3 @@
       (display "No error to debug.\n"))))
 
 (the-signal-handler .^= fallback-signal-handler)
-
-(to (__handle-error raw-k evil)
-  (the-signal-handler.^ (__wrap-cont raw-k) evil))
