@@ -15,9 +15,9 @@
 (define (listener . opt-args)
   (squeam-interpret `(call listener ',opt-args)))
 
-(run-load "abcs/functions.scm")
-(run-load "abcs/library.scm")
-(run-load "abcs/top.scm")
+(run-load "abcs/30-functions.scm")
+(run-load "abcs/40-library.scm")
+(run-load "abcs/50-top.scm")
 (squeam-interpret
  '(do
 ;    (use "test/smoke-test")

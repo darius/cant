@@ -179,10 +179,10 @@
           (script<- 'script-name prim primitive-env))))))
 
 (define expression-script
-  (load-ast-script 'expression-primitive "abcs/ast-expression"))
+  (load-ast-script 'expression-primitive "abcs/10-ast-expression"))
 
 (define pattern-script
-  (load-ast-script 'pattern-primitive "abcs/ast-pattern"))
+  (load-ast-script 'pattern-primitive "abcs/11-ast-pattern"))
 
 (define (unwrap-ast ast)
   (insist (and (object? ast)
@@ -873,7 +873,7 @@
     (os-exit ,exit)
     ))
 
-(run-load "abcs/runtime.scm")
+(run-load "abcs/20-runtime.scm")
 
 (set! miranda-trait (get-prim 'miranda-trait))
 
