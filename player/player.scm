@@ -30,7 +30,7 @@
 (define-enum
   k-halt 
   k-match-clause
-  k-ev-make-cont-script
+  k-ev-trait-make-cont
   k-ev-do-rest
   k-ev-let-match
   k-ev-let-check
@@ -482,7 +482,7 @@
            (answer k (object<- (script<- name #f clauses)
                                r))
            (ev-exp trait r
-                   (cont<- k-ev-make-cont-script k r name clauses)))))
+                   (cont<- k-ev-trait-make-cont k r name clauses)))))
    (lambda (e r k)                          ;e-do
      (unpack e (e1 e2)
        (ev-exp e1 r (cont<- k-ev-do-rest k r e2))))
@@ -573,7 +573,7 @@
         (ev-exp (cadr body) (env-extend-promises pat-r (car body)) k)
         (matching rest-clauses object script datum message k))))
 
-(define (ev-make-cont-script trait-val k0)
+(define (ev-trait-make-cont trait-val k0)
 ;     (dbg `(ev-make-cont))
   (unpack k0 (k r name clauses)
     (answer k (object<- (script<- name trait-val clauses)
@@ -648,7 +648,7 @@
   (vector
    halt-cont-fn
    match-clause-cont
-   ev-make-cont-script
+   ev-trait-make-cont
    ev-do-rest-cont
    ev-let-match-cont
    ev-let-check-cont
