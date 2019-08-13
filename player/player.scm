@@ -327,7 +327,7 @@
              (cons "Error" message))))
     (apply error 'panic message-for-chez)))
 
-(define panic-object
+(define panic-prim
   (object<- (cps-script<- 'panic
                           (lambda (datum message k)
                             (panic message)))
@@ -741,9 +741,9 @@
     (exact<-inexact ,inexact->exact)  ;XXX rename or something
     (floor ,floor)
     (not ,not)
-    (assoc ,assoc)  ;; TODO replace with 'real' hashmaps
+    (assoc ,assoc)
     (sqrt ,sqrt)
-    (panic ,panic-object)
+    (panic ,panic-prim)
     (error ,error-prim)
     (evaluate ,evaluate-prim)
     (open-input-file ,open-input-file)  ;XXX rename open-file-source
