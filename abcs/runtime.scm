@@ -633,13 +633,6 @@
 (to (__clause `(,p ,pv ,ev ,e))
   `(,(__patt p) ,pv ,ev ,(__expr e)))
 
-(make-trait __halt-cont me
-  (to _.none?         #yes)
-  (to _.first         (error "No more frames" me))
-  (to _.rest          (error "No more frames" me))
-  (to (_ .selfie sink)   (sink .display "<halt-cont>"))
-  (to message (list-trait me message)))
-
 (make-trait __cont-trait me   ;; For the non-halt cont types
   (to _.none?         #no)
   (to _.rest          (__cont-next-cont me)) ;TODO
@@ -648,6 +641,13 @@
     ((__cont-data me) .first)) ; Commonly this, but sometimes needs to be overridden.
   (to message
     (list-trait me message))) ;XXX use trait syntax instead
+
+(make-trait __halt-cont me
+  (to _.none?         #yes)
+  (to _.first         (error "No more frames" me))
+  (to _.rest          (error "No more frames" me))
+  (to (_ .selfie sink)   (sink .display "<halt-cont>"))
+  (to message (list-trait me message)))
 
 (make-trait __match-clause-cont me
   (to _.first
