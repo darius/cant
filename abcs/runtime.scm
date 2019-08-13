@@ -778,7 +778,9 @@
   (to (_ .expression? x)
     (__expression? x))
   (to (_ .parse-expression x @(optional context))
-    (parse-exp x (or context '())))                      ;TODO rename
+    (__parse-exp x (or context '())))                      ;TODO rename
+  (to (_ .parse-pattern x)
+    (__parse-pat x))
   )
 
 

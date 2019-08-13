@@ -3,7 +3,7 @@
 
 (to (run e)
   (print `(evaluating ,e))
-  (print (eval (parse-exp e) global-env)))
+  (print (eval (squeam .parse-expression e) global-env)))
 
 ;; TODO code duplicated from smoke-test.scm
 

@@ -769,8 +769,8 @@
     (gcd ,gcd)
     (__array<-list ,list->vector)
     (read ,squeam-read)
-    (parse-exp ,parse-exp)
-    (parse-pat ,parse-pat)
+    (__parse-exp ,parse-exp)
+    (__parse-pat ,parse-pat)
     (system ,system)
     ;; Should use string ports instead:
     (number<-string ,string->number)
