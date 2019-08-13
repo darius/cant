@@ -274,6 +274,27 @@
     (let ((script (extract-script object)))
       (run-script object script object message k)))))
 
+;; TODO not yet tested or used
+(define reply-prim 
+  (object<- (cps-script<- '__reply
+                          (lambda (_datum message _k)
+                            (unless (= 2 (length message))
+                              (error 'reply "Wrong #arguments" message))
+                            (let ((alleged-k (car message))
+                                  (result (cadr message)))
+                              (unless (seems-to-be-a-cont? alleged-k)
+                                (error 'reply "Not a cont" alleged-k))
+                              ;; N.B. ignore _k from above
+                              (answer alleged-k result))))
+            #f))
+
+(define (seems-to-be-a-cont? x)
+  (and (vector? x)
+       (< 0 (vector-length x))
+       (integer? (vector-ref x 0))
+       (<= 0 (vector-ref x 0))
+       (< (vector-ref x 0) (vector-length methods/cont))))
+
 (define (extract-script object)
   (cond
    ((number? object)      number-script)
@@ -303,16 +324,12 @@
    (else                  object)))
 
 (define (handle-error k evil)
-  (let* ((the-box (get-prim 'the-signal-handler)) ;TODO do this just once
-         (handler (unbox the-box)))
-    ;; Panic by default if another error occurs during error handling.
-    ;; (We're not doing this here anymore, because Squeam code is
-    ;; supposed to make similar arrangements. But you might want to go
-    ;; back to this in ticklish situations still.
-;;    (call the-box (term<- '.^= panic) halt-cont)
-    ;; OK, up to the handler now.
-    (let ((message (list (wrap-cont k) evil)))
-      (call handler message halt-cont))))
+  (let ((handler (get-prim '__handle-error)) ;TODO do this just once
+        (message (list k evil)))
+    (when (eq? handler missing)
+      (error 'handle-error "Error before the handler wrapper even got defined"
+             evil))
+    (call handler message halt-cont)))
 
 (define error-prim
   (object<- (cps-script<- 'error
@@ -764,6 +781,8 @@
     (with-ejector ,with-ejector-prim)
     (__eject ,ejector-eject-prim)
     (ejector-protect ,ejector-protect-prim)
+    (__reply ,reply-prim)
+    (__wrap-cont ,wrap-cont)
 
     ;; These will get high-level definitions later TODO
     (void ,(void))

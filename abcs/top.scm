@@ -111,3 +111,6 @@
       (display "No error to debug.\n"))))
 
 (the-signal-handler .^= fallback-signal-handler)
+
+(to (__handle-error raw-k evil)
+  (the-signal-handler.^ (__wrap-cont raw-k) evil))
