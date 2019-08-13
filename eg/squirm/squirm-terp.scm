@@ -527,7 +527,10 @@
   ;; primitive calls (mostly). We can wait to do things properly until
   ;; we're making a VM in C for real.
   (may (with-signal-handler
-        (on (squeam-k @evil)
+        (on (squeam-k evil)
+          ;; XXX wrong if the error occurs within a nested Squeam call context.
+          ;;   TODO show it can go wrong
+          ;;   We need to use an ejector to get this right.
           (squeam-k .answer {error evil}))
         (on ()
           (p @args)))

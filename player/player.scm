@@ -311,7 +311,7 @@
     ;; back to this in ticklish situations still.
 ;;    (call the-box (term<- '.^= panic) halt-cont)
     ;; OK, up to the handler now.
-    (let ((message (cons (wrap-cont k) evil)))
+    (let ((message (list (wrap-cont k) evil)))
       (call handler message halt-cont))))
 
 (define error-prim-object

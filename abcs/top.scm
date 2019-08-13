@@ -5,37 +5,37 @@
 
 (to (push-signal-handler handler)
   (let parent-handler the-signal-handler.^)
-  (to (handler/wrapped @evil)
+  (to (handler/wrapped k evil)
     ;; TODO might be cleaner with unwind-protect actions spelled out inline
     (unwind-protect
      (to (handler-thunk)
        (the-signal-handler .^= parent-handler)
-       (handler @evil))
+       (handler k evil))
      (to (unwind-thunk)
        (the-signal-handler .^= handler/wrapped))))
   (the-signal-handler .^= handler/wrapped))
 
 (to (with-signal-handler handler thunk)
   (let parent-handler the-signal-handler.^)
-  (the-signal-handler .^= (on (@evil)
+  (the-signal-handler .^= (on (k evil)
                             (the-signal-handler .^= parent-handler)
-                            (handler @evil)))
+                            (handler k evil)))
   (let result (thunk))
   (the-signal-handler .^= parent-handler)
   result)
 
 (to (unwind-protect try finally)     ;TODO better name
   (let parent-handler the-signal-handler.^)
-  (the-signal-handler .^= (to (unwind-protector @evil)
+  (the-signal-handler .^= (to (unwind-protector k evil)
                             (the-signal-handler .^= parent-handler)
                             (finally)
-                            (parent-handler @evil)))
+                            (parent-handler k evil)))
   (let result (try))
   (the-signal-handler .^= parent-handler)
   (finally)
   result)
 
-(to (fallback-signal-handler @evil)
+(to (fallback-signal-handler k evil)
   ;; XXX for some reason, the panic handler doesn't seem to be set
   ;; when we're in here. So, for now let's just set it:
   (the-signal-handler .^= panic)
@@ -49,7 +49,8 @@
     (printing xs.rest)))
 
 (to (breakpoint @values)
-  (error @`("Breakpoint" ,@values)))
+  ;; TODO automatically invoke the debugger
+  (error "Breakpoint" @values))
 
 (to (system/must-succeed command)
   (unless (= 0 (system command))
@@ -60,15 +61,15 @@
 
   (let parent-handler the-signal-handler.^)
 
-  (to (script-handler @evil)
+  (to (script-handler k evil)
     (the-signal-handler .^= parent-handler)
-    (the-last-error .^= evil)
-    (on-error-traceback @evil))
+    (the-last-error .^= {error k evil})
+    (on-error-traceback k evil))
 
-  (to (listener-handler @evil)
+  (to (listener-handler k evil)
     (the-signal-handler .^= parent-handler)
-    (the-last-error .^= evil)
-    (on-error-traceback @evil)
+    (the-last-error .^= {error k evil})
+    (on-error-traceback k evil)
     (display "Enter (debug) for more.\n")
     (interact))
 
@@ -104,7 +105,7 @@
 (to (debug)
   (import (use 'debugger) inspect-continuation)
   (may the-last-error.^
-    (be `(,k ,@evil)
+    (be {error k evil}
       (inspect-continuation k))
     (else
       (display "No error to debug.\n"))))

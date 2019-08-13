@@ -3,8 +3,8 @@
 (import (use 'traceback) on-error-traceback)
 
 (with-signal-handler
- (on (k plaint @values)
-   (on-error-traceback k plaint @values)
+ (on (k evil)
+   (on-error-traceback k evil)
    (display "Now continuing with 42\n")
    (k .answer 42))
  (:

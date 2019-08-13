@@ -4,12 +4,12 @@
 ;; when the system is borked.
 (import (use 'bounded-write) write-to-bounded-string)
 
-(to (on-error-traceback k @evil)
+(to (on-error-traceback k evil)
   (display "Error! Traceback:\n")
   (print-traceback k)
-  (complain @evil))
+  (complain evil))
 
-(to (on-error-complain k @evil)
+(to (on-error-complain k evil)
   (display "Error!\n")
   (complain @evil))
 
@@ -17,7 +17,7 @@
   (for each! ((frame (reverse k)))
     (format "  ~d\n" (write-to-bounded-string frame 77))))
 
-(to (complain @evil)
+(to (complain evil)
   (may evil
     (be `(,(? string? plaint) ,@values)
       (display plaint)
