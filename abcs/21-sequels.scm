@@ -18,8 +18,8 @@
     (__wrap-cont (me.__raw-k 1)))
   (to (_ .selfie sink)   (sink .display "<cont>")) ;TODO at least give out the tag
   (to _.env
-    ;; Commonly this, but sometimes needs to be overridden.
-    ;; When this is proper, 
+    ;; Commonly this, but needs to be overridden when there's no env.
+    ;; When present, it's always in the same slot, mentioned above.
     (me.__raw-k 2))
   (to (_ .answer result) (__reply me.__raw-k result))
   (to message
