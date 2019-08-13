@@ -496,7 +496,7 @@
    (lambda (e r k)                          ;e-make
      (unpack e (name trait clauses)
        (if (eq? trait none-exp) ; Just fast-path tuning; this IF is not logically necessary.
-           (answer k (object<- (script<- name #f clauses)
+           (answer k (object<- (script<- name #f clauses) ;TODO cache the script in the parsed 'make' exp
                                r))
            (ev-exp trait r
                    (cont<- k-ev-trait-make-cont k r name clauses)))))
@@ -704,14 +704,6 @@
      __keep-unwinding                   ;XXX not defined yet in runtime.scm
      __replace-answer-cont))
 
-;; TODO Better to do this in Squeam, but let's not change too much at once.
-;; (We shouldn't need to wrap it at all anymore.)
-(define (wrap-cont k)
-  (let* ((tag (vector-ref k 0))
-         (name (vector-ref cont-tags tag)))
-    (object<- (make-cont-script name tag) ;XXX script should be static
-              (cdr (vector->list k))))) ;TODO keep Squeam code from ever accessing an unwrapped cont at (cadr k) via extract-datum
-
 
 ;; Interpreter top level
 
@@ -782,7 +774,6 @@
     (__eject ,ejector-eject-prim)
     (ejector-protect ,ejector-protect-prim)
     (__reply ,reply-prim)
-    (__wrap-cont ,wrap-cont)
 
     ;; These will get high-level definitions later TODO
     (void ,(void))
@@ -894,13 +885,6 @@
     (__script-name ,script-name)
     (__script-trait ,script-trait)
     (__script-clauses ,script-clauses)
-    (__cont-data ,(lambda (wrapped-k)
-                    (let ((datum (object-datum wrapped-k)))
-                      (cdr datum))))
-    (__cont-next-cont ,(lambda (wrapped-k)
-                         (let* ((datum (object-datum wrapped-k))
-                                (k (car datum)))
-                           (wrap-cont k))))
     (os-exit ,exit)
     ))
 
