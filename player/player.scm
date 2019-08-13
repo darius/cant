@@ -302,8 +302,8 @@
    ;; XXX: script and cont-script too?
    (else                  object)))
 
-(define (error-prim message)
-  (let* ((the-box (get-prim 'the-signal-handler))
+(define (handle-error k evil)
+  (let* ((the-box (get-prim 'the-signal-handler)) ;TODO do this just once
          (handler (unbox the-box)))
     ;; Panic by default if another error occurs during error handling.
     ;; (We're not doing this here anymore, because Squeam code is
@@ -311,13 +311,13 @@
     ;; back to this in ticklish situations still.
 ;;    (call the-box (term<- '.^= panic) halt-cont)
     ;; OK, up to the handler now.
-    (call handler message halt-cont)))
+    (let ((message (cons (wrap-cont k) evil)))
+      (call handler message halt-cont))))
 
 (define error-prim-object
   (object<- (cps-script<- 'error
                           (lambda (datum message k)
-                            ;;TODO could *almost* just call signal
-                            (error-prim (cons (wrap-cont k) message))))
+                            (handle-error k message)))
             #f))
 
 (define (panic message)
@@ -340,8 +340,8 @@
                        (else (error 'delegating "Unknown trait type" trait)))))
     (call handler (list object message) k)))
 
-(define (signal k plaint . values)
-  (error-prim `(,(wrap-cont k) ,plaint ,@values)))
+(define (signal k . evil)
+  (handle-error k evil))
 
 (define (ejector<- ejector-k)
   (object<- ejector-script ejector-k)) ;XXX another place extract-datum could wreak havoc
