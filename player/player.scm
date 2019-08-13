@@ -314,7 +314,7 @@
     (let ((message (list (wrap-cont k) evil)))
       (call handler message halt-cont))))
 
-(define error-prim-object
+(define error-prim
   (object<- (cps-script<- 'error
                           (lambda (datum message k)
                             (handle-error k message)))
@@ -744,7 +744,7 @@
     (assoc ,assoc)  ;; TODO replace with 'real' hashmaps
     (sqrt ,sqrt)
     (panic ,panic-object)
-    (error ,error-prim-object)
+    (error ,error-prim)
     (evaluate ,evaluate-prim)
     (open-input-file ,open-input-file)  ;XXX rename open-file-source
     (open-output-file ,open-output-file) ; open-file-sink
