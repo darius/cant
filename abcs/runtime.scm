@@ -641,7 +641,7 @@
   (to _.none?         #no)
   (to _.rest
     ;; The parent cont is another raw-k, in slot 1 (except __halt-cont which has no parent).
-    (__scaffold-for-wrap-cont (me.__raw-k 1)))
+    (__wrap-cont (me.__raw-k 1)))
   (to (_ .selfie sink)   (sink .display "<cont>")) ;TODO at least give out the tag
   (to _.env
     ;; Commonly this, but sometimes needs to be overridden.
@@ -805,7 +805,7 @@
    __keep-unwinding-cont
    __replace-answer-cont])
 
-(to (__scaffold-for-wrap-cont raw-k)   ;TODO unscaffold
+(to (__wrap-cont raw-k)
   (make wrapped-cont {extending ((__cont-trait-array) (raw-k 0))}
     ;; TODO shouldn't need these methods
     (to _.__raw-k
