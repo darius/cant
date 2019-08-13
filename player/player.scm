@@ -359,7 +359,7 @@
   (vector-set! k0 3 #f)
   (answer k (void)))
 
-(define ejector-eject
+(define ejector-eject-prim
   (object<- (cps-script<-
              '__eject
              (lambda (datum message k)
@@ -405,7 +405,7 @@
   (let ((unwind-thunk (vector-ref k0 3)))
     (call unwind-thunk '() k)))
 
-(define ejector-protect                 ;TODO rename
+(define ejector-protect-prim                 ;TODO rename
   (object<- (cps-script<- 'ejector-protect do-ejector-protect) #f))
 
 
@@ -419,7 +419,7 @@
                                 (signal k "Wrong number of arguments -- evaluate" message))))
             #f))
 
-(define with-ejector
+(define with-ejector-prim
   (object<- (cps-script<- 'with-ejector
                           (lambda (datum message k)
                             ;;XXX check arity
@@ -655,7 +655,7 @@
    ev-view-match-cont
    ev-match-rest-cont
    unwind-cont             ;; XXX this is 14, plugged in above in
-                           ;; ejector-unwinding and ejector-eject. You
+                           ;; ejector-unwinding and ejector-eject-prim. You
                            ;; have to update those if you change
                            ;; anything here in methods/cont. Sheesh on
                            ;; a stick.
@@ -753,9 +753,9 @@
     (__get-u8 ,get-u8)
     (__put-u8 ,put-u8)
 ;;    (__set-dbg! ,set-dbg!)
-    (with-ejector ,with-ejector)
-    (__eject ,ejector-eject)
-    (ejector-protect ,ejector-protect)
+    (with-ejector ,with-ejector-prim)
+    (__eject ,ejector-eject-prim)
+    (ejector-protect ,ejector-protect-prim)
 
     ;; These will get high-level definitions later TODO
     (void ,(void))
