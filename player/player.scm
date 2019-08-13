@@ -68,8 +68,6 @@
 
 (define cont<- vector)
 
-(define-record-type cont-script (fields name answerer))
-
 (define halt-cont (cont<- k-halt))
 
 (define (get-prim name)
@@ -86,8 +84,6 @@
                         (let ((script (object-script x)))
                           (cond ((script? script)
                                  (script-name script))
-                                ((cont-script? script)
-                                 (cont-script-name script))
                                 (else "XXX-WTF")))
                         ">"))
         (else
@@ -239,16 +235,6 @@
                  ((cps-script-procedure script) datum message k)
                  (delegate (get-prim 'cps-primitive)
                            object message k)))
-            ((cont-script? script)
-             (if (and (term? message)
-                      (eq? '.answer (term-tag message))
-                      (= 1 (length (term-parts message))))
-                 (let ((unwrapped-k (list->vector (cons (cont-script-answerer script) datum))))
-                   ((vector-ref methods/cont (cont-script-answerer script))
-                    (car (term-parts message))
-                    unwrapped-k))
-                 (delegate (get-prim (cont-script-name script))
-                           object message k)))
             (else
              (error 'call "Not a script" script datum)))))
    ((procedure? object)
@@ -312,7 +298,6 @@
    ((eq? object (void))   void-script)
    ((eof-object? object)  eof-script)
    ((script? object)      script-script)
-   ;; XXX: cont-script? too
    ((procedure? object)   procedure-script)
    ((object? object)      (object-script object))
    (else (error 'call "Non-object" object))))
@@ -320,7 +305,7 @@
 (define (extract-datum object)
   (cond
    ((object? object)      (object-datum object))
-   ;; XXX: script and cont-script too?
+   ;; XXX: script too?
    (else                  object)))
 
 (define (handle-error k evil)
