@@ -313,10 +313,10 @@
                   (if (and (object? ejector)
                            (eq? (object-script ejector) ejector-script))
                       (let ((ejector-k (object-datum ejector)))
-                        (insist (vector? ejector-k) "ejector-eject vector"
-                                ejector-k)
-                        (insist (= k-unwind (vector-ref ejector-k 0))
+                        (insist (seems-to-be-a-raw-repr? ejector-k methods/cont)
                                 "Ejector cont is a cont" ejector-k)
+                        (insist (= k-unwind (vector-ref ejector-k 0))
+                                "Ejector cont is an unwind cont" ejector-k)
                         (if (vector-ref ejector-k 3) ;still enabled?
                             (ejector-unwinding k ejector-k value)
                             (signal k "Tried to eject to a disabled ejector"
