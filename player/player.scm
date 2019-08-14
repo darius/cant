@@ -30,7 +30,7 @@
 (define-enum
   k-halt 
   k-match-clause
-  k-ev-trait-make-cont
+  k-ev-trait-make
   k-ev-do-rest
   k-ev-let-match
   k-ev-let-check
@@ -261,23 +261,19 @@
 (define (ejector<- ejector-k)
   (object<- ejector-script ejector-k))
 
-(define (unwind-cont value k0)
-  (unpack k0 (k unwind-action)
-    (unwind-action k0 (cont<- k-replace-answer k value))))
+(define with-ejector-prim
+  (cps-prim<- #f 'with-ejector
+              (lambda (datum message k)
+                ;;XXX check arity
+                (let* ((ejector-k
+                        (cont<- k-unwind k unwind-ejector #t))
+                       (ejector (ejector<- ejector-k)))
+                  (call (car message) (list ejector) ejector-k)))))
 
-(define (replace-answer-cont value-to-ignore k0)
-  (unpack k0 (k value)
-    (answer k value)))
-
-;; k0 is like #(unwind-cont parent-k unwind-ejector enabled?)
-(define (unwind-ejector k0 k)
-  (vector-set! k0 3 #f)
-  (answer k (void)))
-
-(define ejector-eject-prim
+(define eject-prim
   (cps-prim<- #f '__eject
               (lambda (datum message k)
-                (insist (= (length message) 2) "ejector-eject wrong #arguments"
+                (insist (= (length message) 2) "__eject wrong #arguments"
                         (- (length message) 1))
                 (let ((ejector (car message))
                       (value (cadr message)))
@@ -294,6 +290,27 @@
                                     ejector)))
                       (signal k "Not an ejector" ejector))))))
 
+(define ejector-protect-prim                 ;TODO rename
+  (cps-prim<- #f 'ejector-protect
+              (lambda (datum message k)
+                ;;XXX check arity
+                (let ((thunk (car message))
+                      (unwind-thunk (cadr message)))
+                  (call thunk '() (cont<- k-unwind k call-unwinder unwind-thunk))))))
+
+(define (cont-unwind value k0)
+  (unpack k0 (k unwind-action)
+    (unwind-action k0 (cont<- k-replace-answer k value))))
+
+(define (cont-replace-answer value-to-ignore k0)
+  (unpack k0 (k value)
+    (answer k value)))
+
+;; k0 is like #(cont-unwind parent-k unwind-ejector enabled?)
+(define (unwind-ejector k0 k)
+  (vector-set! k0 3 #f)
+  (answer k (void)))
+
 (define (ejector-unwinding k ejector-k value)
   (if (eq? k ejector-k)
       (answer ejector-k value)
@@ -304,31 +321,13 @@
               (unwind-action k (cont<- k-keep-unwinding parent-k ejector-k value)))
             (ejector-unwinding parent-k ejector-k value)))))
 
-(define (keep-unwinding value-to-ignore k0)
+(define (cont-keep-unwinding value-to-ignore k0)
   (unpack k0 (k ejector-k value)
     (ejector-unwinding k ejector-k value)))
-
-(define (do-ejector-protect datum message k)
-  ;;XXX check arity
-  (let ((thunk (car message))
-        (unwind-thunk (cadr message)))
-    (call thunk '() (cont<- k-unwind k call-unwinder unwind-thunk))))
 
 (define (call-unwinder k0 k)
   (let ((unwind-thunk (vector-ref k0 3)))
     (call unwind-thunk '() k)))
-
-(define ejector-protect-prim                 ;TODO rename
-  (cps-prim<- #f 'ejector-protect do-ejector-protect))
-
-(define with-ejector-prim
-  (cps-prim<- #f 'with-ejector
-              (lambda (datum message k)
-                ;;XXX check arity
-                (let* ((ejector-k
-                        (cont<- k-unwind k unwind-ejector #t))
-                       (ejector (ejector<- ejector-k)))
-                  (call (car message) (list ejector) ejector-k)))))
 
 
 ;; A small-step interpreter
@@ -385,7 +384,7 @@
            (answer k (object<- (script<- name #f clauses) ;TODO cache the script in the parsed 'make' exp
                                r))
            (ev-exp trait r
-                   (cont<- k-ev-trait-make-cont k r name clauses)))))
+                   (cont<- k-ev-trait-make k r name clauses)))))
    (lambda (e r k)                          ;e-do
      (unpack e (e1 e2)
        (ev-exp e1 r (cont<- k-ev-do-rest k r e2))))
@@ -452,7 +451,7 @@
          (ev-pat (car subjects) (car ps) r
                  (cont<- k-ev-match-rest k r (cdr subjects) (cdr ps))))))
 
-(define (halt-cont-fn value k0) value)
+(define (cont-halt value k0) value)
 
 (define (run-script object script datum message k)
   (matching (script-clauses script) object script datum message k))
@@ -467,8 +466,8 @@
        (ev-pat message pattern pat-r
                (cont<- k-match-clause k pat-r body rest-clauses object script datum message))))))  ;XXX geeeez
 
-(define (match-clause-cont matched? k0)
-;     (dbg `(match-clause-cont))
+(define (cont-match-clause matched? k0)
+;     (dbg `(cont-match-clause))
   (unpack k0 (k pat-r body rest-clauses object script datum message)
                ;; TODO don't unpack it all till needed
   ;; body is now a list (body-vars body-exp)
@@ -476,71 +475,71 @@
         (ev-exp (cadr body) (env-extend-promises pat-r (car body)) k)
         (matching rest-clauses object script datum message k))))
 
-(define (ev-trait-make-cont trait-val k0)
+(define (cont-ev-trait-make trait-val k0)
 ;     (dbg `(ev-make-cont))
   (unpack k0 (k r name clauses)
     (answer k (object<- (script<- name trait-val clauses)
                         r))))
 
-(define (ev-do-rest-cont _ k0)
-;     (dbg `(ev-do-rest-cont))
+(define (cont-ev-do-rest _ k0)
+;     (dbg `(cont-ev-do-rest))
   (unpack k0 (k r e2)
     (ev-exp e2 r k)))
 
-(define (ev-let-match-cont val k0)
-;     (dbg `(ev-let-match-cont))
+(define (cont-ev-let-match val k0)
+;     (dbg `(cont-ev-let-match))
   (unpack k0 (k r p)
     (ev-pat val p r
             (cont<- k-ev-let-check k val))))
 
-(define (ev-let-check-cont matched? k0)
-;     (dbg `(ev-let-check-cont))
+(define (cont-ev-let-check matched? k0)
+;     (dbg `(cont-ev-let-check))
   (unpack k0 (k val)
     (if matched?
         (answer k val)
         (signal k "Match failure" val))))
 
-(define (ev-arg-cont receiver k0)
-;     (dbg `(ev-arg-cont))
+(define (cont-ev-arg receiver k0)
+;     (dbg `(cont-ev-arg))
   (unpack k0 (k r e2)
     (ev-exp e2 r
             (cont<- k-ev-call k receiver))))
 
-(define (ev-call-cont message k0)
-;     (dbg `(ev-call-cont ,receiver ,message))
+(define (cont-ev-call message k0)
+;     (dbg `(cont-ev-call ,receiver ,message))
   (unpack k0 (k receiver)
     (call receiver message k)))
 
-(define (ev-rest-args-cont val k0)
-;     (dbg `(ev-rest-args-cont))
+(define (cont-ev-rest-args val k0)
+;     (dbg `(cont-ev-rest-args))
   (unpack k0 (k r es vals)
     (ev-args es r (cons val vals) k)))
 
-(define (ev-tag-cont vals k0)
-;     (dbg `(ev-tag-cont))
+(define (cont-ev-tag vals k0)
+;     (dbg `(cont-ev-tag))
   (unpack k0 (k tag)
     (answer k (make-term tag vals))))
 
-(define (ev-and-pat-cont matched? k0)
-;     (dbg `(ev-and-pat-cont))
+(define (cont-ev-and-pat matched? k0)
+;     (dbg `(cont-ev-and-pat))
   (unpack k0 (k r subject p2)
     (if matched?
         (ev-pat subject p2 r k)
         (answer k #f))))
 
-(define (ev-view-call-cont convert k0)
-;     (dbg `(ev-view-call-cont))
+(define (cont-ev-view-call convert k0)
+;     (dbg `(cont-ev-view-call))
   (unpack k0 (k r subject p)
     (call convert (list subject)
           (cont<- k-ev-view-match k r p))))
 
-(define (ev-view-match-cont new-subject k0)
-;     (dbg `(ev-view-match-cont))
+(define (cont-ev-view-match new-subject k0)
+;     (dbg `(cont-ev-view-match))
   (unpack k0 (k r p)
     (ev-pat new-subject p r k)))
 
-(define (ev-match-rest-cont matched? k0)
-;     (dbg `(ev-match-rest-cont))
+(define (cont-ev-match-rest matched? k0)
+;     (dbg `(cont-ev-match-rest))
   (unpack k0 (k r subjects ps)
     (if matched?
         (ev-match-all subjects ps r k)
@@ -548,23 +547,23 @@
 
 (define methods/cont
   (vector
-   halt-cont-fn
-   match-clause-cont
-   ev-trait-make-cont
-   ev-do-rest-cont
-   ev-let-match-cont
-   ev-let-check-cont
-   ev-arg-cont
-   ev-call-cont
-   ev-rest-args-cont
-   ev-tag-cont
-   ev-and-pat-cont
-   ev-view-call-cont
-   ev-view-match-cont
-   ev-match-rest-cont
-   unwind-cont
-   keep-unwinding
-   replace-answer-cont))
+   cont-halt
+   cont-match-clause
+   cont-ev-trait-make
+   cont-ev-do-rest
+   cont-ev-let-match
+   cont-ev-let-check
+   cont-ev-arg
+   cont-ev-call
+   cont-ev-rest-args
+   cont-ev-tag
+   cont-ev-and-pat
+   cont-ev-view-call
+   cont-ev-view-match
+   cont-ev-match-rest
+   cont-unwind
+   cont-keep-unwinding
+   cont-replace-answer))
 
 
 ;; Interpreter top level
@@ -657,7 +656,7 @@
     (__put-u8 ,put-u8)
 ;;    (__set-dbg! ,set-dbg!)
     (with-ejector ,with-ejector-prim)
-    (__eject ,ejector-eject-prim)
+    (__eject ,eject-prim)
     (ejector-protect ,ejector-protect-prim)
     (__reply ,reply-prim)
 
