@@ -264,11 +264,12 @@
 (define with-ejector-prim
   (cps-prim<- #f 'with-ejector
               (lambda (datum message k)
-                ;;XXX check arity
-                (let* ((ejector-k
-                        (cont<- k-unwind k unwind-ejector #t))
-                       (ejector (ejector<- ejector-k)))
-                  (call (car message) (list ejector) ejector-k)))))
+                (if (= (length message) 1)
+                    (let* ((ejector-k
+                            (cont<- k-unwind k unwind-ejector #t))
+                           (ejector (ejector<- ejector-k)))
+                      (call (car message) (list ejector) ejector-k))
+                    (signal k "Wrong #arguments -- with-ejector" message)))))
 
 (define eject-prim
   (cps-prim<- #f '__eject
