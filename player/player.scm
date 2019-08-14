@@ -285,6 +285,9 @@
 (define (signal k . evil)
   (handle-error k evil))
 
+
+;; Ejectors
+
 (define (ejector<- ejector-k)
   (object<- ejector-script ejector-k)) ;XXX another place extract-datum could wreak havoc
 
