@@ -72,7 +72,7 @@
 (loud-use "eg/lambda/lambdaterp")
 (loud-use "eg/lzw")
 (loud-use "eg/max-path-sum")
-(((loud-use "eg/oodles") 'main) '(_ "garlic"))
+(((loud-use "eg/text/oodles") 'main) '(_ "garlic"))
 (loud-use "eg/sicp1")
 (loud-use "eg/sicp2")
 (((loud-use "eg/trivial72") 'main) '(_))
