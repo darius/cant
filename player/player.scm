@@ -282,6 +282,18 @@
                                      (ejector (ejector<- ejector-k)))
                                 (call receiver (list ejector) ejector-k)))))))
 
+;; Call thunk; then on either reply or unwind, call unwind-thunk
+;; before continuing back. Any reply from unwind-thunk will be
+;; dropped, but if it errors or ejects then that action takes
+;; precedence.
+(define ejector-protect-prim                 ;TODO rename
+  (cps-prim<- #f 'ejector-protect
+              (lambda (datum message k)
+                (cps-unpack message k 2 'ejector-protect
+                            (lambda (thunk unwind-thunk)
+                              (call thunk '()
+                                    (cont<- k-unwind k call-unwinder unwind-thunk)))))))
+
 ;; The method (ejector .eject result)
 (define eject-prim
   (cps-prim<- #f '__eject
@@ -301,36 +313,29 @@
                                                 ejector)))
                                   (signal k "Not an ejector" ejector)))))))
 
-;; Call thunk, then on return or unwinding call unwind-thunk.
-(define ejector-protect-prim                 ;TODO rename
-  (cps-prim<- #f 'ejector-protect
-              (lambda (datum message k)
-                (cps-unpack message k 2 'ejector-protect
-                            (lambda (thunk unwind-thunk)
-                              (call thunk '()
-                                    (cont<- k-unwind k call-unwinder unwind-thunk)))))))
-
-(define (cont-unwind value k0)
-  (unpack k0 (k unwind-action)
-    (unwind-action k0 (cont<- k-replace-answer k value))))
-
-(define (cont-replace-answer value-to-ignore k0)
-  (unpack k0 (k value)
-    (answer k value)))
-
-(define (ejector-unwinding k ejector-k value)
+(define (ejector-unwinding k ejector-k result)
   (if (eq? k ejector-k)
-      (answer ejector-k value)
+      (answer ejector-k result)
       (let ((k-action (vector-ref k 0))
             (parent-k (vector-ref k 1)))
         (if (= k-action k-unwind)
             (let ((unwind-action (vector-ref k 2)))
-              (unwind-action k (cont<- k-keep-unwinding parent-k ejector-k value)))
-            (ejector-unwinding parent-k ejector-k value)))))
+              (unwind-action k (cont<- k-keep-unwinding parent-k ejector-k result)))
+            (ejector-unwinding parent-k ejector-k result)))))
 
 (define (cont-keep-unwinding value-to-ignore k0)
-  (unpack k0 (k ejector-k value)
-    (ejector-unwinding k ejector-k value)))
+  (unpack k0 (k ejector-k result)
+    (ejector-unwinding k ejector-k result)))
+
+;; The procedure for an ordinary reply to a k-unwind record.
+(define (cont-unwind result k0)
+  (unpack k0 (k unwind-action)
+    ;; unwind-action will be either unwind-ejector or call-unwinder
+    (unwind-action k0 (cont<- k-replace-answer k result))))
+
+(define (cont-replace-answer value-to-ignore k0)
+  (unpack k0 (k result)
+    (answer k result)))
 
 ;; k0 is like [cont-unwind parent-k unwind-ejector enabled?]
 (define (unwind-ejector k0 k)
