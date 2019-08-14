@@ -632,10 +632,6 @@
   (to (_ .play exp env @(optional context))
     (__evaluate (squeam .parse-expression exp context)
                 env))
-  (to (_ .expression? x)
-    (__expression? x))
-  (to (_ .pattern? x)
-    (__pattern? x))
   (to (_ .parse-expression x @(optional context))
     (__parse-exp x (or context '())))                      ;TODO rename
   (to (_ .parse-pattern x)
