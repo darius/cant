@@ -450,7 +450,7 @@
                            (env-variables r)))
              (elaborated (elaborate-e parsed (outer-scope<- vars))))
         (ev-exp elaborated r k))
-      (evaluate-exp (parse-exp e) r k)))
+      (signal k "BUG: Not an expression -- (squeam .play" e)))
 
 (define (ev-exp e r k)
 ;  (dbg `(ev-exp)) ; ,e))
