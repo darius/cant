@@ -177,14 +177,12 @@
 (define reply-prim 
   (cps-prim<- #f '__reply
               (lambda (_datum message _k)
-                (unless (= 2 (length message))
-                  (error 'reply "Wrong #arguments" message))
-                (let ((alleged-k (car message))
-                      (result (cadr message)))
-                  (unless (seems-to-be-a-raw-repr? alleged-k methods/cont)
-                    (error 'reply "Not a cont" alleged-k))
-                  ;; N.B. ignore _k from above
-                  (answer alleged-k result)))))
+                (cps-unpack message _k 2 '__reply
+                            (lambda (alleged-k result)
+                              (unless (seems-to-be-a-raw-repr? alleged-k methods/cont)
+                                (error 'reply "Not a cont" alleged-k))
+                              ;; N.B. ignore _k from above
+                              (answer alleged-k result))))))
 
 (define (seems-to-be-a-raw-repr? x methods)
   (and (vector? x)
@@ -261,43 +259,46 @@
 (define (ejector<- ejector-k)
   (object<- ejector-script ejector-k))
 
+(define (cps-unpack message k arity name ok-fn)
+  (if (= (length message) arity)
+      (apply ok-fn message)
+      (signal k "Wrong #arguments to:" name "expects:" arity "got:" message)))
+  
 (define with-ejector-prim
   (cps-prim<- #f 'with-ejector
               (lambda (datum message k)
-                (if (= (length message) 1)
-                    (let* ((ejector-k
-                            (cont<- k-unwind k unwind-ejector #t))
-                           (ejector (ejector<- ejector-k)))
-                      (call (car message) (list ejector) ejector-k))
-                    (signal k "Wrong #arguments -- with-ejector" message)))))
+                (cps-unpack message k 1 'with-ejector
+                            (lambda (receiver)
+                              (let* ((ejector-k
+                                      (cont<- k-unwind k unwind-ejector #t))
+                                     (ejector (ejector<- ejector-k)))
+                                (call receiver (list ejector) ejector-k)))))))
 
 (define eject-prim
   (cps-prim<- #f '__eject
               (lambda (datum message k)
-                (insist (= (length message) 2) "__eject wrong #arguments"
-                        (- (length message) 1))
-                (let ((ejector (car message))
-                      (value (cadr message)))
-                  (if (and (object? ejector)
-                           (eq? (object-script ejector) ejector-script))
-                      (let ((ejector-k (object-datum ejector)))
-                        (insist (seems-to-be-a-raw-repr? ejector-k methods/cont)
-                                "Ejector cont is a cont" ejector-k)
-                        (insist (= k-unwind (vector-ref ejector-k 0))
-                                "Ejector cont is an unwind cont" ejector-k)
-                        (if (vector-ref ejector-k 3) ;still enabled?
-                            (ejector-unwinding k ejector-k value)
-                            (signal k "Tried to eject to a disabled ejector"
-                                    ejector)))
-                      (signal k "Not an ejector" ejector))))))
+                (cps-unpack message k 2 '__eject
+                            (lambda (ejector value)
+                              (if (and (object? ejector)
+                                       (eq? (object-script ejector) ejector-script))
+                                  (let ((ejector-k (object-datum ejector)))
+                                    (insist (seems-to-be-a-raw-repr? ejector-k methods/cont)
+                                            "Ejector cont is a cont" ejector-k)
+                                    (insist (= k-unwind (vector-ref ejector-k 0))
+                                            "Ejector cont is an unwind cont" ejector-k)
+                                    (if (vector-ref ejector-k 3) ;still enabled?
+                                        (ejector-unwinding k ejector-k value)
+                                        (signal k "Tried to eject to a disabled ejector"
+                                                ejector)))
+                                  (signal k "Not an ejector" ejector)))))))
 
 (define ejector-protect-prim                 ;TODO rename
   (cps-prim<- #f 'ejector-protect
               (lambda (datum message k)
-                ;;XXX check arity
-                (let ((thunk (car message))
-                      (unwind-thunk (cadr message)))
-                  (call thunk '() (cont<- k-unwind k call-unwinder unwind-thunk))))))
+                (cps-unpack message k 2 'ejector-protect
+                            (lambda (thunk unwind-thunk)
+                              (call thunk '()
+                                    (cont<- k-unwind k call-unwinder unwind-thunk)))))))
 
 (define (cont-unwind value k0)
   (unpack k0 (k unwind-action)
@@ -336,9 +337,9 @@
 (define evaluate-prim
   (cps-prim<- #f 'evaluate
               (lambda (datum message k)
-                (if (= (length message) 2)
-                    (evaluate-exp (car message) (cadr message) k)
-                    (signal k "Wrong number of arguments -- evaluate" message)))))
+                (cps-unpack message k 2 '__evaluate
+                            (lambda (e r)
+                              (evaluate-exp e r k))))))
 
 (define (evaluate e r)
 ;  (report `(evaluate ,e))
