@@ -138,15 +138,6 @@
   (map car r))
 
 
-;; Parser bootstrap
-
-(define (parse-exp e . opt-context)
-  (parse-e e (optional-context 'parse-exp opt-context)))
-
-(define (parse-pat p . opt-context)
-  (parse-p p (optional-context 'parse-pat opt-context)))
-
-
 ;; Objects, calling, and answering
 
 (define-record-type cps-script (fields name procedure))
@@ -606,6 +597,12 @@
 ;; TODO add optional context
 (define (squeam-interpret e)
   (evaluate (parse-exp e) repl-env))
+
+(define (parse-exp e . opt-context)
+  (parse-e e (optional-context 'parse-exp opt-context)))
+
+(define (parse-pat p . opt-context)
+  (parse-p p (optional-context 'parse-pat opt-context)))
 
 
 ;; Install the primitives, load the scripts and runtime env
