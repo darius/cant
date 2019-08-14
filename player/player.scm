@@ -308,11 +308,6 @@
   (unpack k0 (k value)
     (answer k value)))
 
-;; k0 is like #(cont-unwind parent-k unwind-ejector enabled?)
-(define (unwind-ejector k0 k)
-  (vector-set! k0 3 #f)
-  (answer k (void)))
-
 (define (ejector-unwinding k ejector-k value)
   (if (eq? k ejector-k)
       (answer ejector-k value)
@@ -326,6 +321,11 @@
 (define (cont-keep-unwinding value-to-ignore k0)
   (unpack k0 (k ejector-k value)
     (ejector-unwinding k ejector-k value)))
+
+;; k0 is like #(cont-unwind parent-k unwind-ejector enabled?)
+(define (unwind-ejector k0 k)
+  (vector-set! k0 3 #f)
+  (answer k (void)))
 
 (define (call-unwinder k0 k)
   (let ((unwind-thunk (vector-ref k0 3)))
