@@ -150,10 +150,9 @@
 ;; Objects, calling, and answering
 
 (define-record-type cps-script (fields name procedure))
-(define cps-script<- make-cps-script)
 
 (define (cps-prim<- datum name procedure)
-  (object<- (cps-script<- name procedure) datum))
+  (object<- (make-cps-script name procedure) datum))
 
 ;; A continuation is just a vector, whose zeroth element is a small
 ;; integer denoting which continuation procedure. Previously this
