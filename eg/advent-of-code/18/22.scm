@@ -133,7 +133,7 @@
 (to (neighbors<- `(,x ,y))
   `((,x.+ ,y)
     (,x ,y.+)
-    ,@(if (< 0 x) `((,x.- ,y))   '())
+    ,@(if (< 0 x) `((,x.- ,y)) '())
     ,@(if (< 0 y) `((,x ,y.-)) '())))
 
 ;; (specialized from utils for speed)

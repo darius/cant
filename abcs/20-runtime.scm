@@ -629,10 +629,8 @@
 ;; Interpreter
 
 (make squeam
-  (to (_ .play exp env)
-    (__evaluate (if (squeam .expression? exp)
-                    exp
-                    (squeam .parse-expression exp))
+  (to (_ .play exp env @(optional context))
+    (__evaluate (squeam .parse-expression exp context)
                 env))
   (to (_ .expression? x)
     (__expression? x))
