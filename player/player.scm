@@ -600,25 +600,6 @@
    keep-unwinding
    replace-answer-cont))
 
-(define cont-tags
-  '#(__halt-cont
-     __match-clause-cont
-     __ev-make-cont
-     __ev-do-rest-cont
-     __ev-let-match-cont
-     __ev-let-check-cont
-     __ev-arg-cont
-     __ev-call-cont
-     __ev-rest-args-cont
-     __ev-tag-cont
-     __ev-and-pat-cont
-     __ev-view-call-cont
-     __ev-view-match-cont
-     __ev-match-rest-cont
-     __unwind-cont
-     __keep-unwinding                   ;XXX not defined yet in runtime.scm
-     __replace-answer-cont))
-
 
 ;; Interpreter top level
 
