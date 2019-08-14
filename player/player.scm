@@ -46,26 +46,6 @@
   k-keep-unwinding
   k-replace-answer)
 
-(define miranda-trait    '*forward-ref*)
-
-(define boolean-script   '*forward-ref*)
-(define number-script    '*forward-ref*)
-(define nil-script       '*forward-ref*)
-(define link-script      '*forward-ref*)
-(define symbol-script    '*forward-ref*)
-(define char-script      '*forward-ref*)
-(define string-script    '*forward-ref*)
-(define array-script     '*forward-ref*)
-(define box-script       '*forward-ref*)
-(define source-script    '*forward-ref*)
-(define sink-script      '*forward-ref*)
-(define term-script      '*forward-ref*)
-(define procedure-script '*forward-ref*)
-(define void-script      '*forward-ref*)
-(define eof-script       '*forward-ref*)
-(define script-script    '*forward-ref*)
-(define ejector-script   '*forward-ref*)
-
 (define cont<- vector)
 
 (define halt-cont (cont<- k-halt))
@@ -566,7 +546,6 @@
         (ev-match-all subjects ps r k)
         (answer k #f))))
 
-
 (define methods/cont
   (vector
    halt-cont-fn
@@ -606,6 +585,26 @@
 
 
 ;; Install the primitives, load the scripts and runtime env
+
+(define miranda-trait    '*forward-ref*)
+
+(define boolean-script   '*forward-ref*)
+(define number-script    '*forward-ref*)
+(define nil-script       '*forward-ref*)
+(define link-script      '*forward-ref*)
+(define symbol-script    '*forward-ref*)
+(define char-script      '*forward-ref*)
+(define string-script    '*forward-ref*)
+(define array-script     '*forward-ref*)
+(define box-script       '*forward-ref*)
+(define source-script    '*forward-ref*)
+(define sink-script      '*forward-ref*)
+(define term-script      '*forward-ref*)
+(define procedure-script '*forward-ref*)
+(define void-script      '*forward-ref*)
+(define eof-script       '*forward-ref*)
+(define script-script    '*forward-ref*)
+(define ejector-script   '*forward-ref*)
 
 (define (get-script name)
   (script<- name (get-prim name) primitive-env))
