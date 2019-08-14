@@ -27,6 +27,7 @@
 (define-record-type script (fields name trait clauses))
 (define script<- make-script)
 
+;; These integer tags k-foo correspond to procedures named cont-foo.
 (define-enum
   k-halt 
   k-match-clause
@@ -261,9 +262,16 @@
 
 ;; Ejectors
 
+;; An ejector has two facets:
+;; An facade of 'ejector' type, exposed to ordinary Squeam code.
+;; A raw continuation vector of type k-unwind, with two data slots:
+;;   - an unwind action
+;;   - an enabled status, #t if this has not yet been unwound
+
 (define (ejector<- ejector-k)
   (object<- ejector-script ejector-k))
 
+;; Call the receiver with a new, enabled ejector.
 (define with-ejector-prim
   (cps-prim<- #f 'with-ejector
               (lambda (datum message k)
@@ -274,11 +282,12 @@
                                      (ejector (ejector<- ejector-k)))
                                 (call receiver (list ejector) ejector-k)))))))
 
+;; The method (ejector .eject result)
 (define eject-prim
   (cps-prim<- #f '__eject
               (lambda (datum message k)
                 (cps-unpack message k 2 '__eject
-                            (lambda (ejector value)
+                            (lambda (ejector result)
                               (if (and (object? ejector)
                                        (eq? (object-script ejector) ejector-script))
                                   (let ((ejector-k (object-datum ejector)))
@@ -287,11 +296,12 @@
                                     (insist (= k-unwind (vector-ref ejector-k 0))
                                             "Ejector cont is an unwind cont" ejector-k)
                                     (if (vector-ref ejector-k 3) ;still enabled?
-                                        (ejector-unwinding k ejector-k value)
+                                        (ejector-unwinding k ejector-k result)
                                         (signal k "Tried to eject to a disabled ejector"
                                                 ejector)))
                                   (signal k "Not an ejector" ejector)))))))
 
+;; Call thunk, then on return or unwinding call unwind-thunk.
 (define ejector-protect-prim                 ;TODO rename
   (cps-prim<- #f 'ejector-protect
               (lambda (datum message k)
@@ -322,11 +332,12 @@
   (unpack k0 (k ejector-k value)
     (ejector-unwinding k ejector-k value)))
 
-;; k0 is like #(cont-unwind parent-k unwind-ejector enabled?)
+;; k0 is like [cont-unwind parent-k unwind-ejector enabled?]
 (define (unwind-ejector k0 k)
-  (vector-set! k0 3 #f)
+  (vector-set! k0 3 #f)                 ; enabled? to #f
   (answer k (void)))
 
+;; k0 is like [cont-unwind parent-k call-unwinder unwind-thunk]
 (define (call-unwinder k0 k)
   (let ((unwind-thunk (vector-ref k0 3)))
     (call unwind-thunk '() k)))

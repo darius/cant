@@ -620,7 +620,7 @@
   (to (_ .eject value)
     (__eject me value))
   (to (_ .selfie sink)
-    (sink .display "#<ejector>"))
+    (sink .display "#<ejector>"))       ;TODO show enabledness
   )
 
 
