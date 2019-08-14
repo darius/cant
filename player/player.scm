@@ -152,6 +152,9 @@
 (define-record-type cps-script (fields name procedure))
 (define cps-script<- make-cps-script)
 
+(define (cps-prim<- datum name procedure)
+  (object<- (cps-script<- name procedure) datum))
+
 ;; A continuation is just a vector, whose zeroth element is a small
 ;; integer denoting which continuation procedure. Previously this
 ;; element was the Scheme procedure itself, which had to never be
@@ -202,17 +205,16 @@
       (run-script object script object message k)))))
 
 (define reply-prim 
-  (object<- (cps-script<- '__reply
-                          (lambda (_datum message _k)
-                            (unless (= 2 (length message))
-                              (error 'reply "Wrong #arguments" message))
-                            (let ((alleged-k (car message))
-                                  (result (cadr message)))
-                              (unless (seems-to-be-a-raw-repr? alleged-k methods/cont)
-                                (error 'reply "Not a cont" alleged-k))
-                              ;; N.B. ignore _k from above
-                              (answer alleged-k result))))
-            #f))
+  (cps-prim<- #f '__reply
+              (lambda (_datum message _k)
+                (unless (= 2 (length message))
+                  (error 'reply "Wrong #arguments" message))
+                (let ((alleged-k (car message))
+                      (result (cadr message)))
+                  (unless (seems-to-be-a-raw-repr? alleged-k methods/cont)
+                    (error 'reply "Not a cont" alleged-k))
+                  ;; N.B. ignore _k from above
+                  (answer alleged-k result)))))
 
 (define (seems-to-be-a-raw-repr? x methods)
   (and (vector? x)
@@ -257,10 +259,9 @@
     (call handler message halt-cont)))
 
 (define error-prim
-  (object<- (cps-script<- 'error
-                          (lambda (datum message k)
-                            (handle-error k message)))
-            #f))
+  (cps-prim<- #f 'error
+              (lambda (datum message k)
+                (handle-error k message))))
 
 (define (panic message)
   (let ((message-for-chez ;Chez Scheme is picky about arguments to (error).
@@ -270,10 +271,9 @@
     (apply error 'panic message-for-chez)))
 
 (define panic-prim
-  (object<- (cps-script<- 'panic
-                          (lambda (datum message k)
-                            (panic message)))
-            #f))
+  (cps-prim<- #f 'panic
+              (lambda (datum message k)
+                (panic message))))
 
 (define (delegate trait object message k)
 ;  (dbg `(delegate))
@@ -305,26 +305,24 @@
   (answer k (void)))
 
 (define ejector-eject-prim
-  (object<- (cps-script<-
-             '__eject
-             (lambda (datum message k)
-               (insist (= (length message) 2) "ejector-eject wrong #arguments"
-                       (- (length message) 1))
-               (let ((ejector (car message))
-                     (value (cadr message)))
-                 (if (and (object? ejector)
-                          (eq? (object-script ejector) ejector-script))
-                     (let ((ejector-k (object-datum ejector)))
-                       (insist (vector? ejector-k) "ejector-eject vector"
-                               ejector-k)
-                       (insist (= 14 (vector-ref ejector-k 0))    ;; 14 = unwind-cont XXX omg you shouldn't have to write it that way
-                               "Ejector cont is a cont" ejector-k)
-                       (if (vector-ref ejector-k 3) ;still enabled?
-                           (ejector-unwinding k ejector-k value)
-                           (signal k "Tried to eject to a disabled ejector"
-                                   ejector)))
-                     (signal k "Not an ejector" ejector)))))
-            #f))
+  (cps-prim<- #f '__eject
+              (lambda (datum message k)
+                (insist (= (length message) 2) "ejector-eject wrong #arguments"
+                        (- (length message) 1))
+                (let ((ejector (car message))
+                      (value (cadr message)))
+                  (if (and (object? ejector)
+                           (eq? (object-script ejector) ejector-script))
+                      (let ((ejector-k (object-datum ejector)))
+                        (insist (vector? ejector-k) "ejector-eject vector"
+                                ejector-k)
+                        (insist (= 14 (vector-ref ejector-k 0))    ;; 14 = unwind-cont XXX omg you shouldn't have to write it that way
+                                "Ejector cont is a cont" ejector-k)
+                        (if (vector-ref ejector-k 3) ;still enabled?
+                            (ejector-unwinding k ejector-k value)
+                            (signal k "Tried to eject to a disabled ejector"
+                                    ejector)))
+                      (signal k "Not an ejector" ejector))))))
 
 (define (ejector-unwinding k ejector-k value)
   (if (eq? k ejector-k)
@@ -351,28 +349,26 @@
     (call unwind-thunk '() k)))
 
 (define ejector-protect-prim                 ;TODO rename
-  (object<- (cps-script<- 'ejector-protect do-ejector-protect) #f))
+  (cps-prim<- #f 'ejector-protect do-ejector-protect))
 
 (define with-ejector-prim
-  (object<- (cps-script<- 'with-ejector
-                          (lambda (datum message k)
-                            ;;XXX check arity
-                            (let* ((ejector-k
-                                    (cont<- k-unwind k unwind-ejector #t))
-                                   (ejector (ejector<- ejector-k)))
-                              (call (car message) (list ejector) ejector-k))))
-            #f))
+  (cps-prim<- #f 'with-ejector
+              (lambda (datum message k)
+                ;;XXX check arity
+                (let* ((ejector-k
+                        (cont<- k-unwind k unwind-ejector #t))
+                       (ejector (ejector<- ejector-k)))
+                  (call (car message) (list ejector) ejector-k)))))
 
 
 ;; A small-step interpreter
 
 (define evaluate-prim
-  (object<- (cps-script<- 'evaluate
-                          (lambda (datum message k)
-                            (if (= (length message) 2)
-                                (evaluate-exp (car message) (cadr message) k)
-                                (signal k "Wrong number of arguments -- evaluate" message))))
-            #f))
+  (cps-prim<- #f 'evaluate
+              (lambda (datum message k)
+                (if (= (length message) 2)
+                    (evaluate-exp (car message) (cadr message) k)
+                    (signal k "Wrong number of arguments -- evaluate" message)))))
 
 (define (evaluate e r)
 ;  (report `(evaluate ,e))
