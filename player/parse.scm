@@ -33,23 +33,25 @@
 (define (pack-tag vec)
   (vector-ref vec 0))
 
-(define e-constant 0)
-(define e-variable 1)
-(define e-term     2)
-(define e-list     3)
-(define e-make     4)
-(define e-do       5)
-(define e-let      6)
-(define e-call     7)
-(define e-global   8)  ;; specialized from e-variable
+(define-enum
+  e-constant
+  e-variable
+  e-term
+  e-list
+  e-make
+  e-do
+  e-let
+  e-call
+  e-global)  ;; specialized from e-variable
 
-(define p-constant 0)
-(define p-any      1)
-(define p-variable 2)
-(define p-term     3)
-(define p-list     4)
-(define p-and      5)
-(define p-view     6)
+(define-enum
+  p-constant
+  p-any
+  p-variable
+  p-term
+  p-list
+  p-and
+  p-view)
 
 (define (optional-context caller opt-context)
   (cond ((null? opt-context) '())
