@@ -157,6 +157,9 @@
           "Must be an internal pattern" thing)
   (pattern<- thing))
 
+(define (new-parse-exp e . opt-context)
+  (parse-e e (optional-context 'parse-exp opt-context)))
+
 (define (parse-exp e . opt-context)
   (expression<- (parse-e e (optional-context 'parse-exp opt-context))))
 
@@ -260,7 +263,6 @@
     (let ((script (extract-script object)))
       (run-script object script object message k)))))
 
-;; TODO not yet tested or used
 (define reply-prim 
   (object<- (cps-script<- '__reply
                           (lambda (_datum message _k)
@@ -268,18 +270,18 @@
                               (error 'reply "Wrong #arguments" message))
                             (let ((alleged-k (car message))
                                   (result (cadr message)))
-                              (unless (seems-to-be-a-cont? alleged-k)
+                              (unless (seems-to-be-a-raw-repr? alleged-k methods/cont)
                                 (error 'reply "Not a cont" alleged-k))
                               ;; N.B. ignore _k from above
                               (answer alleged-k result))))
             #f))
 
-(define (seems-to-be-a-cont? x)
+(define (seems-to-be-a-raw-repr? x methods)
   (and (vector? x)
        (< 0 (vector-length x))
        (integer? (vector-ref x 0))
        (<= 0 (vector-ref x 0))
-       (< (vector-ref x 0) (vector-length methods/cont))))
+       (< (vector-ref x 0) (vector-length methods))))
 
 (define (extract-script object)
   (cond
@@ -421,6 +423,14 @@
                                 (signal k "Wrong number of arguments -- evaluate" message))))
             #f))
 
+(define new-evaluate-prim
+  (object<- (cps-script<- 'evaluate
+                          (lambda (datum message k)
+                            (if (= (length message) 2)
+                                (new-evaluate-exp (car message) (cadr message) k)
+                                (signal k "Wrong number of arguments -- evaluate" message))))
+            #f))
+
 (define with-ejector-prim
   (object<- (cps-script<- 'with-ejector
                           (lambda (datum message k)
@@ -437,6 +447,21 @@
 (define (evaluate e r)
 ;  (report `(evaluate ,e))
   (evaluate-exp e r halt-cont))
+
+(define (new-evaluate-exp e r k)
+  ;; An inherently incomplete sanity check, not a real security barrier:
+  (unless (seems-to-be-a-raw-repr? e methods/ev-exp)
+    (error 'evaluate-exp "You need to parse it first" e))
+
+  ;; XXX Here we just jam the vars-defined of e together
+  ;; with r's variables. This is adequate for warning about
+  ;; unbound variables in e, which is all we're currently
+  ;; using this scope for, but it won't be adequate when we
+  ;; compile to lexical addresses, etc.:
+  (let* ((vars (append (exp-vars-defined e)
+                       (env-variables r)))
+         (elaborated (elaborate-e e (outer-scope<- vars))))
+    (ev-exp elaborated r k)))
 
 (define (evaluate-exp e r k)
   (if (and (object? e) (eq? (object-script e) expression-script))
@@ -740,6 +765,7 @@
     (panic ,panic-prim)
     (error ,error-prim)
     (__evaluate ,evaluate-prim)
+    (__new-evaluate ,new-evaluate-prim)
     (open-input-file ,open-input-file)  ;XXX rename open-file-source
     (open-output-file ,open-output-file) ; open-file-sink
     (open-binary-file-source ,open-file-input-port) ; This actually has more options in Chez than just binary
@@ -760,6 +786,7 @@
     (gcd ,gcd)
     (__array<-list ,list->vector)
     (read ,squeam-read)
+    (__new-parse-exp ,new-parse-exp)
     (__parse-exp ,parse-exp)
     (__parse-pat ,parse-pat)
     (system ,system)

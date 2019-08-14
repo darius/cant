@@ -625,18 +625,139 @@
 
 
 
+;; I lied, we actually are able to call the following function within
+;; this file, once it's defined. This'll help us keep some local
+;; definitions private. TODO use tuples instead. TODO make sure I
+;; understand why this works.
+(to (list<- @arguments)
+  arguments)
+
 
 ;; Interpreter
 
 (make squeam
   (to (_ .play exp env @(optional context))
-    (__evaluate (squeam .parse-expression exp context)
-                env))
+    (__new-evaluate (__new-parse-exp exp (or context '()))
+                    env))
   (to (_ .parse-expression x @(optional context))
-    (__parse-exp x (or context '())))                      ;TODO rename
-  (to (_ .parse-pattern x)
+    (__parse-exp x (or context '())))   ;TODO wrap with ast-exp<- here
+  (to (_ .parse-pattern x)              ;TODO could use a context too
     (__parse-pat x))
   )
+
+;; Turn the Scheme-level parse into an object.
+;; TODO name them __ast-exp<- etc.
+
+(to (ast-exp<- raw)
+  (make expr
+    (to (_ .selfie sink)
+      (sink .display "#<expr ")
+      (sink .write expr.term)
+      (sink .display ">"))
+    (to _.term
+      (may (raw 0)
+        (be 0 {constant (raw 1)})
+        (be 1 {variable (raw 1)})
+        (be 2 {term (raw 1) (each ast-exp<- (raw 2))})
+        (be 3 {list (each ast-exp<- (raw 1))})
+        (be 4 {make (raw 1)
+                (ast-exp<- '[0 #no])  ;for the ignored make stamp field. TODO used where?
+                (ast-exp<- (raw 2))
+                (each ast-clause<- (raw 3))})
+        (be 5 {do (ast-exp<- (raw 1)) (ast-exp<- (raw 2))})
+        (be 6 {let (ast-pat<- (raw 1)) (ast-exp<- (raw 2))})
+        (be 7 {call (ast-exp<- (raw 1)) (ast-exp<- (raw 2))})
+        (be 8 {variable (raw 1)})))))
+
+(to (ast-clause<- `(,p ,u ,v ,e))
+  (list<- (ast-pat<- p) u v (ast-exp<- e)))
+
+(to (ast-pat<- raw)
+  (make patt
+    (to (_ .selfie sink)
+      (sink .display "#<patt ")
+      (sink .write patt.term)
+      (sink .display ">"))
+    (to _.term
+      (may (raw 0)
+        (be 0 {constant-pat (raw 1)})
+        (be 1 {any-pat})
+        (be 2 {variable-pat (raw 1)})
+        (be 3 {term-pat (raw 1) (each ast-pat<- (raw 2))})
+        (be 4 {list-pat (each ast-pat<- (raw 1))})
+        (be 5 {and-pat (ast-pat<- (raw 1)) (ast-pat<- (raw 2))})
+        (be 6 {view-pat (ast-exp<- (raw 1)) (ast-pat<- (raw 2))})))))
+
+;; (Roughly) undo parse-exp and parse-pat.
+;; Really we should track source-position info instead, and report that.
+;; This is just to make debugging less painful till then.
+
+(let (list<- unparse-exp unparse-pat unparse-clause)
+  (hide
+
+    (to (unparse-exp e)
+      (may e.term
+        (be {constant c}
+          (if (self-evaluating? c) c `',c))
+        (be {variable v}
+          v)
+        (be {make name stamp trait clauses}
+          (unparse-make name stamp trait clauses))
+        (be {do e1 e2}
+          (unparse-do e1 e2))
+        (be {let p e}
+          `(let ,(unparse-pat p) ,(unparse-exp e)))
+        (be {call e1 e2}
+          (may e2.term
+            (be {list operands}
+              `(,(unparse-exp e1) ,@(each unparse-exp operands)))
+            (be {term (? cue? cue) operands}
+              `(,(unparse-exp e1) ,cue ,@(each unparse-exp operands)))
+            (else
+              `(call ,(unparse-exp e1) ,(unparse-exp e2)))))
+        (be {term tag es}
+          (term<- tag (each unparse-exp es)))
+        (be {list es}
+          `(list<- ,@(each unparse-exp es))))) ;XXX unhygienic
+
+    (to (unparse-do e1 e2)
+      (let es
+        (begin unparsing ((tail e2))
+          (may tail.term
+            (be {do e3 e4} (link e3 (unparsing e4)))
+            (else          `(,tail)))))
+      `(do ,@(each unparse-exp (link e1 es))))
+
+    (to (unparse-make name stamp trait-term clauses)
+      (surely (= {constant #no} stamp.term)) ;XXX
+      `(make ,name
+         ,@(may trait-term.term
+             (be {constant #no} '())
+             (be trait-e        `({extending ,(unparse-exp trait-e)})))
+         ,@(each unparse-clause clauses)))
+
+    (to (unparse-clause `(,p ,p-vars ,e-vars ,e))
+      `(to ,(unparse-pat p) ,(unparse-exp e)))
+
+    (to (unparse-pat pat)
+      ;; XXX these need updating to the newer pattern syntax
+      (may pat.term
+        (be {constant-pat c}
+          (if (self-evaluating? c) c `',c))
+        (be {any-pat}
+          '_)
+        (be {variable-pat v}
+          v)
+        (be {term-pat tag ps}
+          (term<- tag (each unparse-pat ps)))
+        (be {list-pat ps}
+          (each unparse-pat ps))        ;TODO especially unacceptable now
+        (be {and-pat p1 p2}
+          `(<and-pat> ,(unparse-pat p1) ,(unparse-pat p2)))
+        (be {view-pat e p}
+          `(<view-pat> ,(unparse-exp e) ,(unparse-pat p)))))
+
+    (list<- unparse-exp unparse-pat unparse-clause)))
 
 
 ;; Hash-maps
@@ -989,9 +1110,6 @@
 (to (identity x)
   x)
 
-(to (list<- @arguments)
-  arguments)
-
 (make chain
   (to (_) '())
   (to (_ xs) xs)
@@ -1083,78 +1201,6 @@
   (let sink (string-sink<-))
   (take-sink sink)
   sink.output-string)
-
-
-;; (Roughly) undo parse-exp and parse-pat.
-;; Really we should track source-position info instead, and report that.
-;; This is just to make debugging less painful till then.
-
-(let (list<- unparse-exp unparse-pat unparse-clause)
-  (hide
-
-    (to (unparse-exp e)
-      (may e.term
-        (be {constant c}
-          (if (self-evaluating? c) c `',c))
-        (be {variable v}
-          v)
-        (be {make name stamp trait clauses}
-          (unparse-make name stamp trait clauses))
-        (be {do e1 e2}
-          (unparse-do e1 e2))
-        (be {let p e}
-          `(let ,(unparse-pat p) ,(unparse-exp e)))
-        (be {call e1 e2}
-          (may e2.term
-            (be {list operands}
-              `(,(unparse-exp e1) ,@(each unparse-exp operands)))
-            (be {term (? cue? cue) operands}
-              `(,(unparse-exp e1) ,cue ,@(each unparse-exp operands)))
-            (else
-              `(call ,(unparse-exp e1) ,(unparse-exp e2)))))
-        (be {term tag es}
-          (term<- tag (each unparse-exp es)))
-        (be {list es}
-          `(list<- ,@(each unparse-exp es))))) ;XXX unhygienic
-
-    (to (unparse-do e1 e2)
-      (let es
-        (begin unparsing ((tail e2))
-          (may tail.term
-            (be {do e3 e4} (link e3 (unparsing e4)))
-            (else          `(,tail)))))
-      `(do ,@(each unparse-exp (link e1 es))))
-
-    (to (unparse-make name stamp trait-term clauses)
-      (surely (= {constant #no} stamp.term)) ;XXX
-      `(make ,name
-         ,@(may trait-term.term
-             (be {constant #no} '())
-             (be trait-e        `({extending ,(unparse-exp trait-e)})))
-         ,@(each unparse-clause clauses)))
-
-    (to (unparse-clause `(,p ,p-vars ,e-vars ,e))
-      `(to ,(unparse-pat p) ,(unparse-exp e)))
-
-    (to (unparse-pat pat)
-      ;; XXX these need updating to the newer pattern syntax
-      (may pat.term
-        (be {constant-pat c}
-          (if (self-evaluating? c) c `',c))
-        (be {any-pat}
-          '_)
-        (be {variable-pat v}
-          v)
-        (be {term-pat tag ps}
-          (term<- tag (each unparse-pat ps)))
-        (be {list-pat ps}
-          (each unparse-pat ps))        ;TODO especially unacceptable now
-        (be {and-pat p1 p2}
-          `(<and-pat> ,(unparse-pat p1) ,(unparse-pat p2)))
-        (be {view-pat e p}
-          `(<view-pat> ,(unparse-exp e) ,(unparse-pat p)))))
-
-    (list<- unparse-exp unparse-pat unparse-clause)))
 
 
 ;; printf-ish thing. TODO do something completely different?
