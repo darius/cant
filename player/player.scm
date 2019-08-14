@@ -288,7 +288,7 @@
 ;; Ejectors
 
 (define (ejector<- ejector-k)
-  (object<- ejector-script ejector-k)) ;XXX another place extract-datum could wreak havoc
+  (object<- ejector-script ejector-k))
 
 (define (unwind-cont value k0)
   (unpack k0 (k unwind-action)
@@ -315,7 +315,7 @@
                       (let ((ejector-k (object-datum ejector)))
                         (insist (vector? ejector-k) "ejector-eject vector"
                                 ejector-k)
-                        (insist (= 14 (vector-ref ejector-k 0))    ;; 14 = unwind-cont XXX omg you shouldn't have to write it that way
+                        (insist (= k-unwind (vector-ref ejector-k 0))
                                 "Ejector cont is a cont" ejector-k)
                         (if (vector-ref ejector-k 3) ;still enabled?
                             (ejector-unwinding k ejector-k value)
@@ -328,7 +328,7 @@
       (answer ejector-k value)
       (let ((k-action (vector-ref k 0))
             (parent-k (vector-ref k 1)))
-        (if (= k-action 14)               ;; XXX 14 = unwind-cont
+        (if (= k-action k-unwind)
             (let ((unwind-action (vector-ref k 2)))
               (unwind-action k (cont<- k-keep-unwinding parent-k ejector-k value)))
             (ejector-unwinding parent-k ejector-k value)))))
