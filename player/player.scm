@@ -592,11 +592,7 @@
    ev-view-call-cont
    ev-view-match-cont
    ev-match-rest-cont
-   unwind-cont             ;; XXX this is 14, plugged in above in
-                           ;; ejector-unwinding and ejector-eject-prim. You
-                           ;; have to update those if you change
-                           ;; anything here in methods/cont. Sheesh on
-                           ;; a stick.
+   unwind-cont
    keep-unwinding
    replace-answer-cont))
 
