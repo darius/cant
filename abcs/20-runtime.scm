@@ -637,12 +637,12 @@
 
 (make squeam
   (to (_ .play exp env @(optional context))
-    (__new-evaluate (__new-parse-exp exp (or context '()))
-                    env))
+    (__evaluate (__parse-exp exp (or context '()))
+                env))
   (to (_ .parse-expression x @(optional context))
-    (__parse-exp x (or context '())))   ;TODO wrap with ast-exp<- here
+    (ast-exp<- (__parse-exp x (or context '()))))
   (to (_ .parse-pattern x)              ;TODO could use a context too
-    (__parse-pat x))
+    (ast-pat<- (__parse-pat x)))
   )
 
 ;; Turn the Scheme-level parse into an object.
@@ -691,6 +691,7 @@
 ;; (Roughly) undo parse-exp and parse-pat.
 ;; Really we should track source-position info instead, and report that.
 ;; This is just to make debugging less painful till then.
+;; TODO might as well make these into methods of the above, now.
 
 (let (list<- unparse-exp unparse-pat unparse-clause)
   (hide

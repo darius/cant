@@ -1,11 +1,8 @@
 ;; Continuations
 
-(to (__unexp e)         (unparse-exp (__expr e)))
-(to (__unpat p)         (unparse-pat (__patt p)))
-(to (__unclause clause) (unparse-clause (__clause clause)))
-
-(to (__clause `(,p ,pv ,ev ,e))
-  `(,(__patt p) ,pv ,ev ,(__expr e)))
+(to (__unexp e)         (unparse-exp (ast-exp<- e)))
+(to (__unpat p)         (unparse-pat (ast-pat<- p)))
+(to (__unclause clause) (unparse-clause (ast-clause<- clause)))
 
 ;; For the non-halt cont types.
 ;; For these, the __raw-k layout is [my-tag parent-raw-k ...data...].

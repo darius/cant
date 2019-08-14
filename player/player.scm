@@ -140,73 +140,11 @@
 
 ;; Parser bootstrap
 
-(define (expression<- vec) (object<- expression-script vec))
-(define (pattern<- vec)    (object<- pattern-script vec))
-
-(define (__expr thing)
-  (insist (and (vector? thing)
-               (< 0 (vector-length thing))
-               (number? (vector-ref thing 0)))
-          "Must be an internal expression" thing)
-  (expression<- thing))
-
-(define (__patt thing)
-  (insist (and (vector? thing)
-               (< 0 (vector-length thing))
-               (number? (vector-ref thing 0)))
-          "Must be an internal pattern" thing)
-  (pattern<- thing))
-
-(define (new-parse-exp e . opt-context)
+(define (parse-exp e . opt-context)
   (parse-e e (optional-context 'parse-exp opt-context)))
 
-(define (parse-exp e . opt-context)
-  (expression<- (parse-e e (optional-context 'parse-exp opt-context))))
-
 (define (parse-pat p . opt-context)
-  (pattern<- (parse-p p (optional-context 'parse-pat opt-context))))
-
-(define (obliviate vs value)            ;c'mon, better name?
-  (map (lambda (_) value) vs))
-
-(define (load-ast-script script-name module-name)
-  (let ((form (car (snarf (string-append module-name ".scm") squeam-read))))
-    (let ((e (parse-e form `(,module-name))))
-      ;; This stands in for calling `evaluate`, which we don't have yet:
-      (insist (equal? (pack-tag e) e-make) "Script must be `make`" e)
-      (unpack e (name trait clauses)
-;;        (insist (eq? stamp none-exp) "simple script" e)
-        (insist (eq? trait none-exp) "simple script" e)
-        (let ((prim (object<- (script<- name #f clauses)
-                              primitive-env)))
-          (script<- 'script-name prim primitive-env))))))
-
-(define expression-script
-  (load-ast-script 'expression-primitive "abcs/10-ast-expression"))
-
-(define pattern-script
-  (load-ast-script 'pattern-primitive "abcs/11-ast-pattern"))
-
-(define (unwrap-ast ast)
-  (insist (and (object? ast)
-               (or (eq? (object-script ast) expression-script)
-                   (eq? (object-script ast) pattern-script)))
-          "Not an ast object" ast)
-  (object-datum ast))
-
-(define (__ast-part ast i) (vector-ref (unwrap-ast ast) i))
-(define (__ast-tag ast)    (__ast-part ast 0))
-(define (__ast-e ast i)    (expression<- (__ast-part ast i)))
-(define (__ast-p ast i)    (pattern<- (__ast-part ast i)))
-(define (__ast-es ast i)   (map expression<- (__ast-part ast i)))
-(define (__ast-ps ast i)   (map pattern<- (__ast-part ast i)))
-(define (__ast-clauses ast i)
-  (map (lambda (clause)
-         `(,(pattern<- (car clause))
-           ,(cadr clause)
-           ,(caddr clause)
-           ,(expression<- (cadddr clause))))
-       (__ast-part ast i)))
+  (parse-p p (optional-context 'parse-pat opt-context)))
 
 
 ;; Objects, calling, and answering
@@ -419,15 +357,7 @@
   (object<- (cps-script<- 'evaluate
                           (lambda (datum message k)
                             (if (= (length message) 2)
-                                (apply evaluate-exp `(,@message ,k))
-                                (signal k "Wrong number of arguments -- evaluate" message))))
-            #f))
-
-(define new-evaluate-prim
-  (object<- (cps-script<- 'evaluate
-                          (lambda (datum message k)
-                            (if (= (length message) 2)
-                                (new-evaluate-exp (car message) (cadr message) k)
+                                (evaluate-exp (car message) (cadr message) k)
                                 (signal k "Wrong number of arguments -- evaluate" message))))
             #f))
 
@@ -448,7 +378,7 @@
 ;  (report `(evaluate ,e))
   (evaluate-exp e r halt-cont))
 
-(define (new-evaluate-exp e r k)
+(define (evaluate-exp e r k)
   ;; An inherently incomplete sanity check, not a real security barrier:
   (unless (seems-to-be-a-raw-repr? e methods/ev-exp)
     (error 'evaluate-exp "You need to parse it first" e))
@@ -462,20 +392,6 @@
                        (env-variables r)))
          (elaborated (elaborate-e e (outer-scope<- vars))))
     (ev-exp elaborated r k)))
-
-(define (evaluate-exp e r k)
-  (if (and (object? e) (eq? (object-script e) expression-script))
-      (let* ((parsed (object-datum e))
-             ;; XXX Here we just jam the vars-defined of e together
-             ;; with r's variables. This is adequate for warning about
-             ;; unbound variables in e, which is all we're currently
-             ;; using this scope for, but it won't be adequate when we
-             ;; compile to lexical addresses, etc.:
-             (vars (append (exp-vars-defined parsed)
-                           (env-variables r)))
-             (elaborated (elaborate-e parsed (outer-scope<- vars))))
-        (ev-exp elaborated r k))
-      (signal k "BUG: Not an expression -- (squeam .play" e)))
 
 (define (ev-exp e r k)
 ;  (dbg `(ev-exp)) ; ,e))
@@ -765,7 +681,6 @@
     (panic ,panic-prim)
     (error ,error-prim)
     (__evaluate ,evaluate-prim)
-    (__new-evaluate ,new-evaluate-prim)
     (open-input-file ,open-input-file)  ;XXX rename open-file-source
     (open-output-file ,open-output-file) ; open-file-sink
     (open-binary-file-source ,open-file-input-port) ; This actually has more options in Chez than just binary
@@ -786,7 +701,6 @@
     (gcd ,gcd)
     (__array<-list ,list->vector)
     (read ,squeam-read)
-    (__new-parse-exp ,new-parse-exp)
     (__parse-exp ,parse-exp)
     (__parse-pat ,parse-pat)
     (system ,system)
@@ -873,16 +787,6 @@
     (__u/ ,(lambda (a b) (logand mask32 (fx/ a b))))
     (__u<< ,(lambda (a b) (logand mask32 (ash a b))))
     (__u>> ,(lambda (a b) (logand mask32 (ash a (- b)))))
-
-    (__expr     ,__expr)
-    (__patt     ,__patt)
-    (__ast-part ,__ast-part)
-    (__ast-tag  ,__ast-tag)
-    (__ast-e    ,__ast-e)
-    (__ast-p    ,__ast-p)
-    (__ast-es   ,__ast-es)
-    (__ast-ps   ,__ast-ps)
-    (__ast-clauses ,__ast-clauses)
 
     (__cps-primitive-name ,(lambda (x)
                              (cps-script-name (object-script x))))
