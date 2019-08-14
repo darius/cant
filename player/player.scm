@@ -350,17 +350,6 @@
 (define ejector-protect-prim                 ;TODO rename
   (object<- (cps-script<- 'ejector-protect do-ejector-protect) #f))
 
-
-;; Primitives
-
-(define evaluate-prim
-  (object<- (cps-script<- 'evaluate
-                          (lambda (datum message k)
-                            (if (= (length message) 2)
-                                (evaluate-exp (car message) (cadr message) k)
-                                (signal k "Wrong number of arguments -- evaluate" message))))
-            #f))
-
 (define with-ejector-prim
   (object<- (cps-script<- 'with-ejector
                           (lambda (datum message k)
@@ -373,6 +362,14 @@
 
 
 ;; A small-step interpreter
+
+(define evaluate-prim
+  (object<- (cps-script<- 'evaluate
+                          (lambda (datum message k)
+                            (if (= (length message) 2)
+                                (evaluate-exp (car message) (cadr message) k)
+                                (signal k "Wrong number of arguments -- evaluate" message))))
+            #f))
 
 (define (evaluate e r)
 ;  (report `(evaluate ,e))
