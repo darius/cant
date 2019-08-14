@@ -184,6 +184,11 @@
                               ;; N.B. ignore _k from above
                               (answer alleged-k result))))))
 
+(define (cps-unpack message k arity name ok-fn)
+  (if (= (length message) arity)
+      (apply ok-fn message)
+      (signal k "Wrong #arguments to:" name "expects:" arity "got:" message)))
+  
 (define (seems-to-be-a-raw-repr? x methods)
   (and (vector? x)
        (< 0 (vector-length x))
@@ -259,11 +264,6 @@
 (define (ejector<- ejector-k)
   (object<- ejector-script ejector-k))
 
-(define (cps-unpack message k arity name ok-fn)
-  (if (= (length message) arity)
-      (apply ok-fn message)
-      (signal k "Wrong #arguments to:" name "expects:" arity "got:" message)))
-  
 (define with-ejector-prim
   (cps-prim<- #f 'with-ejector
               (lambda (datum message k)
