@@ -22,7 +22,7 @@
   (to message
     (list-trait me message))) ;XXX use trait syntax instead
 
-(make-trait __halt-cont me
+(make-trait __cont-halt me
   (to _.none?         #yes)
   (to _.first         (error "No more frames" me))
   (to _.rest          (error "No more frames" me))
@@ -30,7 +30,7 @@
   (to (_ .answer result) (__reply me.__raw-k result))
   (to message (list-trait me message)))
 
-(make-trait __match-clause-cont me
+(make-trait __cont-match-clause me
   (to _.first
     (let `(,pat-r ,body ,rest-clauses ,object ,script ,datum ,message) me.__data)
     `((^ ,(__unexp (body 1)))
@@ -38,7 +38,7 @@
   (to message
     (__cont-trait me message)))
 
-(make-trait __ev-trait-make-cont me
+(make-trait __cont-ev-trait-make me
   (to _.first
     (let `(,r ,name ,clauses) me.__data)
     `(make ,name ^
@@ -46,21 +46,21 @@
   (to message
     (__cont-trait me message)))
 
-(make-trait __ev-do-rest-cont me
+(make-trait __cont-ev-do-rest me
   (to _.first
     (let `(,r ,e2) me.__data)
     (__unexp e2))
   (to message
     (__cont-trait me message)))
 
-(make-trait __ev-let-match-cont me
+(make-trait __cont-ev-let-match me
   (to _.first
     (let `(,r ,p) me.__data)
     `(<match> ,(__unpat p)))          ;XXX lousy presentation
   (to message
     (__cont-trait me message)))
 
-(make-trait __ev-let-check-cont me
+(make-trait __cont-ev-let-check me
   (to _.first
     (let `(,val) me.__data)
     `(<assert-matched-then> ',val))
@@ -69,14 +69,14 @@
   (to message
     (__cont-trait me message)))
 
-(make-trait __ev-arg-cont me
+(make-trait __cont-ev-arg me
   (to _.first
     (let `(,r ,e2) me.__data)
     `(^ ,(__unexp e2)))
   (to message
     (__cont-trait me message)))
 
-(make-trait __ev-call-cont me
+(make-trait __cont-ev-call me
   (to _.first
     (let `(,receiver) me.__data)
     `(call ',receiver ^))
@@ -85,7 +85,7 @@
   (to message
     (__cont-trait me message)))
 
-(make-trait __ev-rest-args-cont me
+(make-trait __cont-ev-rest-args me
   (to _.first
     (let `(,r ,es ,vals) me.__data)
     (to (quotify v) `',v)
@@ -93,7 +93,7 @@
   (to message
     (__cont-trait me message)))
 
-(make-trait __ev-tag-cont me
+(make-trait __cont-ev-tag me
   (to _.first
     (let `(,tag) me.__data)
     `{,tag ^^^})
@@ -102,35 +102,35 @@
   (to message
     (__cont-trait me message)))
 
-(make-trait __ev-and-pat-cont me
+(make-trait __cont-ev-and-pat me
   (to _.first
     (let `(,r ,subject ,p2) me.__data)
     `(<and-match?> ,(__unpat p2)))
   (to message
     (__cont-trait me message)))
 
-(make-trait __ev-view-call-cont me
+(make-trait __cont-ev-view-call me
   (to _.first
     (let `(,r ,subject ,p) me.__data)
     `(? _ ^ ,(__unpat p)))
   (to message
     (__cont-trait me message)))
 
-(make-trait __ev-view-match-cont me
+(make-trait __cont-ev-view-match me
   (to _.first
     (let `(,r ,p) me.__data)
     (__unpat p))
   (to message
     (__cont-trait me message)))
 
-(make-trait __ev-match-rest-cont me
+(make-trait __cont-ev-match-rest me
   (to _.first
     (let `(,r ,subject ,ps) me.__data)
     `(<all-match?> ,@(each __unpat ps)))
   (to message
     (__cont-trait me message)))
 
-(make-trait __unwind-cont me
+(make-trait __cont-unwind me
   (to _.first
     '<unwind>)                          ;TODO show more
   (to _.env
@@ -138,7 +138,7 @@
   (to message
     (__cont-trait me message)))
 
-(make-trait __keep-unwinding-cont me
+(make-trait __cont-keep-unwinding me
   (to _.first
     '<keep-unwinding>)                  ;TODO show more
   (to _.env
@@ -146,7 +146,7 @@
   (to message
     (__cont-trait me message)))
 
-(make-trait __replace-answer-cont me
+(make-trait __cont-replace-answer me
   (to _.first
     (let `(,value) me.__data)
     `(<replace-answer> ',value))
@@ -156,23 +156,23 @@
     (__cont-trait me message)))
 
 (let __cont-trait-array
-  [__halt-cont
-   __match-clause-cont
-   __ev-trait-make-cont
-   __ev-do-rest-cont
-   __ev-let-match-cont
-   __ev-let-check-cont
-   __ev-arg-cont
-   __ev-call-cont
-   __ev-rest-args-cont
-   __ev-tag-cont
-   __ev-and-pat-cont
-   __ev-view-call-cont
-   __ev-view-match-cont
-   __ev-match-rest-cont
-   __unwind-cont
-   __keep-unwinding-cont
-   __replace-answer-cont])
+  [__cont-halt
+   __cont-match-clause
+   __cont-ev-trait-make
+   __cont-ev-do-rest
+   __cont-ev-let-match
+   __cont-ev-let-check
+   __cont-ev-arg
+   __cont-ev-call
+   __cont-ev-rest-args
+   __cont-ev-tag
+   __cont-ev-and-pat
+   __cont-ev-view-call
+   __cont-ev-view-match
+   __cont-ev-match-rest
+   __cont-unwind
+   __cont-keep-unwinding
+   __cont-replace-answer])
 
 (to (__wrap-cont raw-k)
   (make wrapped-cont {extending (__cont-trait-array (raw-k 0))}
