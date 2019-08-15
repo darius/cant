@@ -1,6 +1,0 @@
-# XXX what is this crap? 
-# make -s &&
-# ./squeam-binary "$@"
-# Exception: compiled program requires different compilation instance of (terp terp) from one found in terp/terp.scm
-
-./squeam.scm "$@"

@@ -19,7 +19,7 @@ capability-secure Scheme dialect, consp, persuaded me it's important
 that "all you can do is send a message" (or almost all). That is,
 Scheme has plenty of data types, plus different operations on each
 type, and the operations insist you pass them an object of just the
-type they want, never some wrapper you just made up. In Squeam, most
+type they want, never some wrapper you just made up. In Cant, most
 operations are like function calls instead; you send the object a
 message, it decides what to do with it, and you're mostly free to
 substitute your own objects that interpret the message their own way.
@@ -31,7 +31,7 @@ Collections follow a common protocol. Every collection is a kind of
 map. (Lists are sequences, which are maps from a natural-number index
 to a value (plus some extra methods).)
 
-But Squeam is not class-based or prototype-based; the expression to
+But Cant is not class-based or prototype-based; the expression to
 make an object is more like a Scheme lambda-expression. It's sort of
 like the message-passing objects in SICP chapter 3, but streamlined,
 with pattern-matching. (See the E programming language for the actual
@@ -48,7 +48,7 @@ listener can update a binding.)
 Lists and strings are immutable too. Currently the built-in hashmaps,
 arrays, etc. are mutable, though I think now they shouldn't be.
 
-Scheme has lots of undefined behavior; in Squeam the ideal is for any
+Scheme has lots of undefined behavior; in Cant the ideal is for any
 nondeterminism to be explicit. Since there's no spec, this is
 currently just a matter of what style of language we're aiming for
 someday.
@@ -102,7 +102,7 @@ What makes me unhappy?
 
 * Feeling puzzled without good reason.
 
-Priorities. Squeam should:
+Priorities. Cant should:
 
 1. Help you to understand the behavior of programs. This might be for
 explorable explanations, or for debugging and development. Understanding can
@@ -141,7 +141,7 @@ supporting powerful debugging. To not be incredibly slow, the design
 will need to get fancier.
 
 The interpreter and core library, at this writing, amount to ~4000
-lines of Scheme and Squeam. Back in the 90s I used a bytecode Scheme
+lines of Scheme and Cant. Back in the 90s I used a bytecode Scheme
 of my own at ~5000 lines of C and Scheme, and that size would not be
 too crazy a goal for this... if we stopped counting blank lines and
 comments, sigh. Over 10k lines would be disappointing.
@@ -157,10 +157,10 @@ There's plenty of unfinished crap in this repo, not clearly marked.
 
 ## Quick start for Schemers
 
-Be in this directory (the one holding the file `squeam.scm`) and then:
+Be in this directory (the one holding the file `cant.scm`) and then:
 
 ```
-$ ./squeam.scm
+$ ./cant.scm
 -> (to (I-am name) (format "Hi, ~w!\n" name))
 #<I-am>
 -> (I-am 'Alice)
@@ -205,20 +205,20 @@ ok
 ## What to read once you get bored with the following wall of text
 
 There are example programs in
-[eg/](https://github.com/darius/squeam/tree/master/eg) and
-[library/](https://github.com/darius/squeam/tree/master/library). To run an
+[eg/](https://github.com/darius/cant/tree/master/eg) and
+[library/](https://github.com/darius/cant/tree/master/library). To run an
 example (
-[FizzBuzz](https://github.com/darius/squeam/blob/master/eg/fizzbuzz.scm)
+[FizzBuzz](https://github.com/darius/cant/blob/master/eg/fizzbuzz.scm)
 here):
 
 ```
-$ ./squeam.scm eg/fizzbuzz.scm
+$ ./cant.scm eg/fizzbuzz.scm
 ```
 
 Or load it in the listener:
 
 ```
-$ ./squeam.scm
+$ ./cant.scm
 -> (load "eg/fizzbuzz.scm")
 1
 2
@@ -228,21 +228,21 @@ Fizz
 ```
 
 The global environment at startup is populated from
-[abcs/](https://github.com/darius/squeam/tree/master/abcs) (plus a
+[abcs/](https://github.com/darius/cant/tree/master/abcs) (plus a
 handful of modules from
-[library/](https://github.com/darius/squeam/tree/master/library)). Not
+[library/](https://github.com/darius/cant/tree/master/library)). Not
 that these make great example code necessarily, but they're the first
 places to look to clear up questions you may have.
 
 The underlying interpreter in Scheme lives in
-[player/](https://github.com/darius/squeam/tree/master/player).
+[player/](https://github.com/darius/cant/tree/master/player).
 
 
 ## The bikeshedding
 
 Let's start with the equivalents of familiar Scheme syntax:
 
-| Scheme                        | Squeam        | Note          |
+| Scheme                        | Cant        | Note          |
 | ----------------------------- | ------------- | ------------- |
 | `(define x 42)`                 | `(let x 42)`       |  Returns 42 as the value. Definitions are expressions.  |
 | `(define (f x) e)`              | `(to (f x) e)`     |   |
@@ -262,14 +262,14 @@ Let's start with the equivalents of familiar Scheme syntax:
 
 Scheme functions on lists:
 
-| Scheme                        | Squeam        | Note          |
+| Scheme                        | Cant        | Note          |
 | ----------------------------- | ------------- | ------------- |
 | `(cons x xs)`                 | `(link x xs)`       |  |
 | `(append xs ys)`              | `(chain xs ys)`     |  |
 | `(list x y z)`                | `(list<- x y z)`    | Though it's more common to use quasiquoting. |
 | `(null? xs)`                  | `(null? xs)`, `xs.none?`, or `(xs .none?)`     | `xs.none?` is reader sugar for the last expression. All collections answer this message, though not all objects. `null?` would be useful when you don't know if the argument is a collection. |
 | `(pair? x)`                   | `(link? x)`      |  |
-| `(list? x)`                   | `(list? x)`     |  Squeam doesn't plan to support improper lists, though I haven't got around to making them an error. |
+| `(list? x)`                   | `(list? x)`     |  Cant doesn't plan to support improper lists, though I haven't got around to making them an error. |
 | `(car xs)`                    | `xs.first` or etc.     |  |
 | `(cdr xs)`                    | `xs.rest`     |  |
 | `(length xs)`                 | `xs.count`     |  |
@@ -280,7 +280,7 @@ Scheme functions on lists:
 
 The accessors on lists above are all generic. They apply to strings too, for a start:
 
-| Scheme                        | Squeam        | Note          |
+| Scheme                        | Cant        | Note          |
 | ----------------------------- | ------------- | ------------- |
 | `(string? x)`                 | `(string? x)`       |  |
 | `(string a b c)`              | `(string<- a b c)`       |  |
@@ -293,7 +293,7 @@ The accessors on lists above are all generic. They apply to strings too, for a s
 
 Same drill with vectors:
 
-| Scheme                        | Squeam        | Note          |
+| Scheme                        | Cant        | Note          |
 | ----------------------------- | ------------- | ------------- |
 | `(vector? x)`                 | `(array? x)`       |  |
 | `(vector a b c)`              | `(array<- a b c)`       |  |
@@ -367,7 +367,7 @@ e.g. a list of mutable objects is not guaranteed in this interim
 implementation to work. This is because Chez Scheme doesn't offer a
 way to make a hashtable keying on a mix of identity (`eq?`) hashing
 and a user-defined equality predicate. A mythical future production
-Squeam system needs to define its hashmaps primitively.)
+Cant system needs to define its hashmaps primitively.)
 
 A bag is a kind of mutable map whose values are all counts. (Maybe we
 should support negative values too, like Python's `Counter`?) For a
@@ -381,7 +381,7 @@ A set is a kind of bag whose nonzero counts are 1. This is another
 case of this design prioritizing substitutability over specializing
 every subtype's interface.
 
-A list or sequence is a map whose keys are natural numbers. (Squeam
+A list or sequence is a map whose keys are natural numbers. (Cant
 calls a natural number a 'count', in its ridiculous stamp-out-jargon
 reform campaign.) There are a few extra operations like chaining two
 sequences.
@@ -396,7 +396,7 @@ shrink, a plain array has fixed length.
 The `for` form is syntactic sugar primarily for iterating over
 sequences, though it has other uses as well. For instance, `(for each
 ((x xs)) (foo x))` is equivalent to `(each (given (x) (foo x)) xs)`
-which is mostly equivalent to `(each foo xs)`, which is Squeam's name
+which is mostly equivalent to `(each foo xs)`, which is Cant's name
 for Scheme's `(map foo xs)`.
 
 The `for` form, `(for fn ((x e) ...) body ...)`, just rearranges its
@@ -425,7 +425,7 @@ arguments. A term is data, not an object with identity; its equality
 test is structural. If the arguments can be ordered, then so can the
 term. Terms are distinct from all other data types.
 
-In squeam, `(call receiver message)` is a special form. It evaluates
+In cant, `(call receiver message)` is a special form. It evaluates
 the receiver, evaluates the message, and sends the latter to the
 former.
 
@@ -522,7 +522,7 @@ no (a . b)
 exceptions, ejectors
 
 cheat sheet, like https://github.com/jeapostrophe/racket-cheat/blob/master/racket-cheat.scrbl
-squeam-mode.el
+cant-mode.el
 
 
 ## Infelicities
