@@ -1,6 +1,6 @@
 #!chezscheme
 (library (player read)
-(export squeam-read)
+(export cant-read)
 (import (chezscheme) (player util))
 
 ;; Adapted from my UTS Scheme reader.
@@ -100,7 +100,7 @@
         ((null? (cdr arg-list)) (car arg-list))
         (else (error 'optional-arg "Too many arguments to procedure" arg-list))))
 
-(define squeam-read
+(define cant-read
   (let ()
 
     (define (read-error port plaint . irritants)

@@ -1,5 +1,5 @@
 (library (player primitives)
-(export hash squeam=? char-compare number-compare string-compare hashmap-place
+(export hash cant=? char-compare number-compare string-compare hashmap-place
         as-link box<- vector-append subvector copy-range! vector-move!
         maybe-macroexpand-expr maybe-macroexpand-patt prim-halp-log
         prim-nano-now prim-nanosleep prim-*/mod prim-string-maps? 
@@ -9,10 +9,10 @@
 
 ;; Hashing and equality
 
-;; For now, I'm gonna assume Squeam-defined objects are equal iff
+;; For now, I'm gonna assume Cant-defined objects are equal iff
 ;; eq?. This means you can't reconstitute an object from its script
 ;; and datum, which would be a reasonable implementation-level
-;; operation for which squeam=? would check if script and datum are
+;; operation for which cant=? would check if script and datum are
 ;; eq?, and hashing would also have to look at both.
 
 ;; XXX above comments irrelevant since switch from Gambit to Chez.
@@ -20,7 +20,7 @@
 
 (define (hash x)
   (nat-hash    ;The Chez equal-hash doesn't mix up ints well
-   (equal-hash x)))        ;XXX semantically wrong for Squeam. quick hack to try out Chez.
+   (equal-hash x)))        ;XXX semantically wrong for Cant. quick hack to try out Chez.
 
 ;; From https://stackoverflow.com/a/12996028
 ;; unsigned int unhash(unsigned int x) {
@@ -36,24 +36,24 @@
     (logand #xFFFFFFFF (* #x119de1f3 (mix x))))
   (mix (mulmix (mulmix x))))
 
-(define (squeam=? x y)
+(define (cant=? x y)
   (cond ((term? x) (and (term? y) (term=? x y)))
         ((pair? x) (and (pair? y) (pair=? x y)))
         ((string? x) (and (string? y) (string=? x y)))
         (else (eqv? x y))))
 
 (define (pair=? x y)
-  (and (squeam=? (car x) (car y))
-       (squeam=? (cdr x) (cdr y))))
+  (and (cant=? (car x) (car y))
+       (cant=? (cdr x) (cdr y))))
 
 (define (term=? x y)
-  (and (squeam=? (term-tag x) (term-tag y))
+  (and (cant=? (term-tag x) (term-tag y))
        (let ((xs (term-parts x))
              (ys (term-parts y)))
          (and (= (length xs) (length ys))
               (let checking ((xs xs) (ys ys))
                 (or (null? xs)
-                    (and (squeam=? (car xs) (car ys))
+                    (and (cant=? (car xs) (car ys))
                          (checking (cdr xs) (cdr ys)))))))))
 
 
@@ -90,7 +90,7 @@
              (k (vector-ref keys i)))
         (cond ((eq? k none)
                (term<- 'missing-at (or slot i)))
-              ((squeam=? k key)
+              ((cant=? k key)
                (term<- 'at i))
               ((= q m)
                (if slot

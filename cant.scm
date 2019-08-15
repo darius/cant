@@ -13,13 +13,13 @@
 ;; The Squeam interpreter and global environment.
 
 (define (listener . opt-args)
-  (squeam-interpret `(call listener ',opt-args)))
+  (cant-interpret `(call listener ',opt-args)))
 
 (run-load "abcs/21-sequels.scm")
 (run-load "abcs/30-functions.scm")
 (run-load "abcs/40-library.scm")
 (run-load "abcs/50-top.scm")
-(squeam-interpret
+(cant-interpret
  '(do
 ;    (use "test/smoke-test")
     ;; Let's default to traceback-on-error:
@@ -29,6 +29,6 @@
     (import (use 'sort)       sort sort-by)
     (import (use 'bag)        bag<-)))
 
-;(unless (squeam-interpret '(the-last-error .^))
+;(unless (cant-interpret '(the-last-error .^))
 (listener (cdr (command-line)))
 ;)

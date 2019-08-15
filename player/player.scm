@@ -1,6 +1,6 @@
 #!chezscheme
 (library (player player)
-(export run-load squeam-interpret)
+(export run-load cant-interpret)
 (import (chezscheme)
   (player util)
   (player macros)
@@ -128,7 +128,7 @@
 ;; A continuation is just a vector, whose zeroth element is a small
 ;; integer denoting which continuation procedure. Previously this
 ;; element was the Scheme procedure itself, which had to never be
-;; exposed directly to Squeam code, only wrapped as an object with an
+;; exposed directly to Cant code, only wrapped as an object with an
 ;; appropriate wrapper script. Let's hope the new extra indirection
 ;; isn't too costly.
 (define (answer k value)
@@ -262,7 +262,7 @@
 ;; Ejectors
 
 ;; An ejector has two facets:
-;;   An facade of 'ejector' type, exposed to ordinary Squeam code.
+;;   An facade of 'ejector' type, exposed to ordinary Cant code.
 ;;     - This has a datum, a box holding either #f or a reference to the
 ;;       other facet. This tells either that this ejector is disabled (#f),
 ;;       or where to unwind to, when ejecting.
@@ -459,7 +459,7 @@
   (vector
    (lambda (subject p r k)              ;p-constant
      (unpack p (value)
-       (answer k (squeam=? subject value))))
+       (answer k (cant=? subject value))))
    (lambda (subject p r k)              ;p-any
      (answer k #t))
    (lambda (subject p r k)              ;p-variable
@@ -468,7 +468,7 @@
    (lambda (subject p r k)              ;p-term
      (unpack p (tag args)
        (if (not (and (term? subject)
-                     (squeam=? (term-tag subject) tag)))
+                     (cant=? (term-tag subject) tag)))
            (answer k #f)
            (ev-match-all (term-parts subject) args r k))))
    (lambda (subject p r k)              ;p-list
@@ -615,11 +615,11 @@
 ;; Interpreter top level
 
 (define (run-load filename)
-  (let ((forms (snarf filename squeam-read)))
-    (squeam-interpret `(do ,@forms))))
+  (let ((forms (snarf filename cant-read)))
+    (cant-interpret `(do ,@forms))))
 
 ;; TODO add optional context
-(define (squeam-interpret e)
+(define (cant-interpret e)
   (evaluate (parse-exp e) repl-env))
 
 (define (parse-exp e . opt-context)
@@ -660,7 +660,7 @@
             (let ((key (car pair)) (value (cadr pair)))
               (global-init! key value)))
   `((__as-link ,as-link)
-    (= ,squeam=?)
+    (= ,cant=?)
     (out ,(current-output-port))
     (stdin ,(current-input-port))       ;XXX inconsistent
 
@@ -715,7 +715,7 @@
     (abs ,abs)
     (gcd ,gcd)
     (__array<-list ,list->vector)
-    (read ,squeam-read)
+    (read ,cant-read)
     (__parse-exp ,parse-exp)
     (__parse-pat ,parse-pat)
     (system ,system)
