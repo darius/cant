@@ -19,23 +19,23 @@ Re-working the Actors roots of Scheme *could* be neat.
 
 In the short term, I wanted a Scheme that didn't often make me miss
 Python. (I was a Schemer before, and it never seemed right that Python
-didn't only have more libraries but often greater concision.) I'd say
-this much is kind of done, except for imperative-style code.
+didn't only have more libraries but often greater concision.) This much
+is kind of done, I'd say, except for imperative-style code.
 
-In the longer term I'd like to support a sort of Smalltalky
-programming environment. This goal motivated the incredibly slow
-initial implementation strategy, where the interpreter internals
-always appear as meta-objects with no optimization, and even primitive
-objects execute via high-level scripts.
+In the longer term I'd like to support a Smalltalky programming
+environment. This goal motivated the incredibly slow initial
+implementation strategy, where the interpreter internals always appear
+as meta-objects with no optimization, and even primitive objects
+execute via high-level scripts.
 
-Another feature which I'm not claiming is great is that I'm
-bikeshedding the names of everything without regard to familiarity. I
-think the language name gives fair enough warning.
+Another feature which I'm not claiming is great is that the
+bikeshedding of the names of everything without regard to
+familiarity. I think the language name gives fair enough warning.
 
 ## Example code?
 
 ```
-$ ./cant.scm       # You need Chez Scheme to run this.
+$ ./cant       # You need Chez Scheme to run this.
 -> (format "Hey, world.\n")
 Hey, world.
 -> (to (fib n) (if (< n 2) 1 (+ (fib (- n 1)) (fib (- n 2)))))
@@ -53,13 +53,13 @@ Dunno, but there are
 can run a file from the shell like
 
 ```
-$ ./cant.scm eg/fizzbuzz.scm
+$ ./cant eg/fizzbuzz.scm
 ```
 
 Or from the listener:
 
 ```
-$ ./cant.scm
+$ ./cant
 -> (load "eg/fizzbuzz.scm")
 1
 2
