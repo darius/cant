@@ -43,7 +43,8 @@
   k-ev-view-call
   k-ev-view-match
   k-ev-match-rest
-  k-unwind
+  k-disable-ejector
+  k-call-unwind-thunk
   k-keep-unwinding
   k-replace-answer)
 
@@ -263,89 +264,117 @@
 ;; Ejectors
 
 ;; An ejector has two facets:
-;; An facade of 'ejector' type, exposed to ordinary Squeam code.
-;; A raw continuation vector of type k-unwind, with two data slots:
-;;   - an unwind action
-;;   - an enabled status, #t if this has not yet been unwound
+;;   An facade of 'ejector' type, exposed to ordinary Squeam code.
+;;     - This has a datum, a box holding either #f or a reference to the
+;;       other facet. This tells either that this ejector is disabled (#f),
+;;       or where to unwind to, when ejecting.
+;;   A raw continuation vector of type k-disable-ejector, with one data slot:
+;;     - The same box described above.
+;;     The action on either replying or unwinding is to set the box to #f.
+;; (This could've had a more straightforward representation, but that
+;; would've held on to more garbage after the disabling.)
 
-(define (ejector<- ejector-k)
-  (object<- ejector-script ejector-k))
+;; The new continuation vector becomes the sequel to the receiver of
+;; the new ejector. Its parent sequel, of course, is the sequel to the
+;; with-ejector call.
+
+;; The related type of raw continuation vector, k-call-unwind-thunk, has one
+;; data slot:
+;;   - an unwind thunk
+;; On either replying or unwinding, it calls the unwind thunk before
+;; continuing back. Any reply from the thunk will be dropped, but if
+;; it errors or ejects then that action takes precedence.
 
 ;; Call the receiver with a new, enabled ejector.
 (define with-ejector-prim
-  (cps-prim<- #f 'with-ejector
-              (lambda (datum message k)
-                (cps-unpack message k 1 'with-ejector
-                            (lambda (receiver)
-                              (let* ((ejector-k
-                                      (cont<- k-unwind k unwind-ejector #t))
-                                     (ejector (ejector<- ejector-k)))
-                                (call receiver (list ejector) ejector-k)))))))
+  (cps-prim<-
+   #f 'with-ejector
+   (lambda (datum message k)
+     (cps-unpack message k 1 'with-ejector
+                 (lambda (receiver)
+                   (let* ((ejector-box (box '*))
+                          (ejector-k (cont<- k-disable-ejector k ejector-box))
+                          (ejector (object<- ejector-script ejector-box)))
+                     (set-box! ejector-box ejector-k)
+                     (call receiver (list ejector) ejector-k)))))))
 
 ;; Call thunk; then on either reply or unwind, call unwind-thunk
 ;; before continuing back. Any reply from unwind-thunk will be
 ;; dropped, but if it errors or ejects then that action takes
 ;; precedence.
+;; TODO untested
 (define ejector-protect-prim                 ;TODO rename
-  (cps-prim<- #f 'ejector-protect
-              (lambda (datum message k)
-                (cps-unpack message k 2 'ejector-protect
-                            (lambda (thunk unwind-thunk)
-                              (call thunk '()
-                                    (cont<- k-unwind k call-unwinder unwind-thunk)))))))
+  (cps-prim<-
+   #f 'ejector-protect
+   (lambda (datum message k)
+     (cps-unpack message k 2 'ejector-protect
+                 (lambda (thunk unwind-thunk)
+                   (call thunk '()
+                         (cont<- k-call-unwind-thunk k unwind-thunk)))))))
 
 ;; The method (ejector .eject result)
 (define eject-prim
-  (cps-prim<- #f '__eject
-              (lambda (datum message k)
-                (cps-unpack message k 2 '__eject
-                            (lambda (ejector result)
-                              (if (and (object? ejector)
-                                       (eq? (object-script ejector) ejector-script))
-                                  (let ((ejector-k (object-datum ejector)))
-                                    (insist (seems-to-be-a-raw-repr? ejector-k methods/cont)
-                                            "Ejector cont is a cont" ejector-k)
-                                    (insist (= k-unwind (vector-ref ejector-k 0))
-                                            "Ejector cont is an unwind cont" ejector-k)
-                                    (if (vector-ref ejector-k 3) ;still enabled?
-                                        (ejector-unwinding k ejector-k result)
-                                        (signal k "Tried to eject to a disabled ejector"
-                                                ejector)))
-                                  (signal k "Not an ejector" ejector)))))))
+  (cps-prim<-
+   #f '__eject
+   (lambda (datum message k)
+     (cps-unpack message k 2 '__eject
+                 (lambda (ejector result)
+                   (unless (and (object? ejector)
+                                (eq? (object-script ejector) ejector-script))
+                     (error 'bug "Not an ejector" ejector))
+                   (let* ((ejector-box (object-datum ejector))
+                          (state (unbox ejector-box)))
+                     (cond ((not state)
+                            (signal k "Tried to eject to a disabled ejector"
+                                    ejector))
+                           (else
+                             (insist (seems-to-be-a-raw-repr? state methods/cont)
+                                     "Ejector cont is a cont" state)
+                             (insist (= k-disable-ejector (vector-ref state 0))
+                                     "Ejector cont is legit" state)
+                             ;; TODO Is it wise to wait to disable
+                             ;; this ejector until the unwinding
+                             ;; reaches it? Or better disable it right
+                             ;; now? I'm choosing the former, so
+                             ;; unwind-thunks along the way can also
+                             ;; run this ejector, since I don't see
+                             ;; why to deny them. But I dunno, man.
+                             (ejector-unwinding k state result)))))))))
+
+(define (cont-disable-ejector result k0)
+  (unpack k0 (k state)
+    (set-box! state #f)
+    (answer k result)))
 
 (define (ejector-unwinding k ejector-k result)
-  (if (eq? k ejector-k)
-      (answer ejector-k result)
-      (let ((k-action (vector-ref k 0))
-            (parent-k (vector-ref k 1)))
-        (if (= k-action k-unwind)
-            (let ((unwind-action (vector-ref k 2)))
-              (unwind-action k (cont<- k-keep-unwinding parent-k ejector-k result)))
-            (ejector-unwinding parent-k ejector-k result)))))
+  (let ((k-action (vector-ref k 0))
+        (parent-k (vector-ref k 1)))
+    (cond ((= k-action k-disable-ejector)
+           (let ((state (vector-ref k 2)))
+             (set-box! state #f))
+           (if (eq? k ejector-k)
+               (answer k result)
+               (ejector-unwinding parent-k ejector-k result)))
+          ((= k-action k-call-unwind-thunk)
+           (let ((unwind-thunk (vector-ref k 2)))
+             (call unwind-thunk '()
+                   (cont<- k-keep-unwinding parent-k ejector-k result))))
+          (else
+           (ejector-unwinding parent-k ejector-k result)))))
 
 (define (cont-keep-unwinding value-to-ignore k0)
   (unpack k0 (k ejector-k result)
     (ejector-unwinding k ejector-k result)))
 
-;; The procedure for an ordinary reply to a k-unwind record.
-(define (cont-unwind result k0)
-  (unpack k0 (k unwind-action)
-    ;; unwind-action will be either unwind-ejector or call-unwinder
-    (unwind-action k0 (cont<- k-replace-answer k result))))
+;; The procedure for an ordinary reply to a k-call-unwind-thunk record.
+(define (cont-call-unwind-thunk result k0)
+  (unpack k0 (k unwind-thunk)
+    (call unwind-thunk '()
+          (cont<- k-replace-answer k result))))
 
 (define (cont-replace-answer value-to-ignore k0)
   (unpack k0 (k result)
     (answer k result)))
-
-;; k0 is like [cont-unwind parent-k unwind-ejector enabled?]
-(define (unwind-ejector k0 k)
-  (vector-set! k0 3 #f)                 ; enabled? to #f
-  (answer k (void)))
-
-;; k0 is like [cont-unwind parent-k call-unwinder unwind-thunk]
-(define (call-unwinder k0 k)
-  (let ((unwind-thunk (vector-ref k0 3)))
-    (call unwind-thunk '() k)))
 
 
 ;; A small-step interpreter
@@ -579,7 +608,8 @@
    cont-ev-view-call
    cont-ev-view-match
    cont-ev-match-rest
-   cont-unwind
+   cont-disable-ejector
+   cont-call-unwind-thunk
    cont-keep-unwinding
    cont-replace-answer))
 

@@ -1108,6 +1108,7 @@
       (be #no  kept)
       (be yeah (link yeah kept)))))
 
+;; names?: steady unchanged stay same self itself pass
 (to (identity x)
   x)
 

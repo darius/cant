@@ -130,9 +130,17 @@
   (to message
     (__cont-trait me message)))
 
-(make-trait __cont-unwind me
+(make-trait __cont-disable-ejector me
   (to _.first
-    '<unwind>)                          ;TODO show more
+    '<disable-ejector>)                          ;TODO show more
+  (to _.env
+    '())
+  (to message
+    (__cont-trait me message)))
+
+(make-trait __cont-call-unwind-thunk me
+  (to _.first
+    '<disable-ejector>)                          ;TODO show more
   (to _.env
     '())
   (to message
@@ -170,7 +178,8 @@
    __cont-ev-view-call
    __cont-ev-view-match
    __cont-ev-match-rest
-   __cont-unwind
+   __cont-disable-ejector
+   __cont-call-unwind-thunk
    __cont-keep-unwinding
    __cont-replace-answer])
 
