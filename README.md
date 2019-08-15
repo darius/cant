@@ -19,7 +19,7 @@ Re-working the Actors roots of Scheme *could* be neat.
 
 In the short term, I wanted a Scheme that didn't often make me miss
 Python. (I was a Schemer before, and it never seemed right that Python
-didn't only have more libraries but often greater concision.) This much
+had not only more libraries but often greater concision.) This much
 is kind of done, I'd say, except for imperative-style code.
 
 In the longer term I'd like to support a Smalltalky programming
