@@ -19,6 +19,19 @@
 ;;  #f)
 
 
+;; Argument tuples are, at the moment, lists.
+;; Pretty soon they'll be terms.
+
+(define (tuple? x)
+  (or (pair? x) (null? x)))
+
+(define (tuple<- . xs)
+  xs)
+
+(define (list<-tuple tuple)
+  tuple)
+
+
 ;; Bootstrap prereqs
 
 (define-record-type object (fields script datum))   ; Nonprimitive objects, that is.
@@ -125,6 +138,12 @@
 (define (cps-prim<- datum name procedure)
   (object<- (make-cps-script name procedure) datum))
 
+;; Helper for coding a cps-prim. Check the arguments' arity and unpack them.
+(define (cps-unpack message k arity name ok-fn)
+  (if (= (length message) arity)
+      (apply ok-fn message)
+      (signal k "Wrong #arguments to:" name "expects:" arity "got:" message)))
+  
 ;; A continuation is just a vector, whose zeroth element is a small
 ;; integer denoting which continuation procedure. Previously this
 ;; element was the Scheme procedure itself, which had to never be
@@ -145,14 +164,14 @@
       (cond ((script? script)
              (run-script object script datum message k))
             ((cps-script? script)
-             (if (or (pair? message) (null? message)) ;XXX also check for matching arity
-                 ((cps-script-procedure script) datum message k)
+             (if (tuple? message)
+                 ((cps-script-procedure script) datum (list<-tuple message) k)
                  (delegate (get-prim 'cps-primitive)
                            object message k)))
             (else
              (error 'call "Not a script" script datum)))))
    ((procedure? object)
-    (if (or (pair? message) (null? message))
+    (if (tuple? message)
         ;; Intercept Scheme-level errors:
         (call/cc
          (lambda (scheme-cont)
@@ -168,7 +187,7 @@
                            (signal k "Primitive error" exc object message))))
                     (lambda ()
                       ;; Do the Scheme call in this error-handling context.
-                      (apply object message))))))
+                      (apply object (list<-tuple message)))))))
         (run-script object procedure-script object message k)))
    (else
     (let ((script (extract-script object)))
@@ -184,11 +203,6 @@
                               ;; N.B. ignore _k from above
                               (answer alleged-k result))))))
 
-(define (cps-unpack message k arity name ok-fn)
-  (if (= (length message) arity)
-      (apply ok-fn message)
-      (signal k "Wrong #arguments to:" name "expects:" arity "got:" message)))
-  
 (define (seems-to-be-a-raw-repr? x methods)
   (and (vector? x)
        (< 0 (vector-length x))
@@ -225,7 +239,7 @@
 
 (define (handle-error k evil)
   (let ((handler (get-prim '__handle-error)) ;TODO do this just once
-        (message (list k evil)))
+        (message (tuple<- k evil)))
     (when (eq? handler missing)
       (error 'handle-error "Error before the handler wrapper even got defined"
              evil))
@@ -253,7 +267,7 @@
   (let ((handler (cond ((object? trait) trait)
                        ((not trait) miranda-trait)
                        (else (error 'delegating "Unknown trait type" trait)))))
-    (call handler (list object message) k)))
+    (call handler (tuple<- object message) k)))
 
 (define (signal k . evil)
   (handle-error k evil))
@@ -294,7 +308,7 @@
                           (ejector-k (cont<- k-disable-ejector k ejector-box))
                           (ejector (object<- ejector-script ejector-box)))
                      (set-box! ejector-box ejector-k)
-                     (call receiver (list ejector) ejector-k)))))))
+                     (call receiver (tuple<- ejector) ejector-k)))))))
 
 ;; Call thunk; then on either reply or unwind, call unwind-thunk
 ;; before continuing back. Any reply from unwind-thunk will be
@@ -575,7 +589,7 @@
 (define (cont-ev-view-call convert k0)
 ;     (dbg `(cont-ev-view-call))
   (unpack k0 (k r subject p)
-    (call convert (list subject)
+    (call convert (tuple<- subject)
           (cont<- k-ev-view-match k r p))))
 
 (define (cont-ev-view-match new-subject k0)
