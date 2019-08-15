@@ -1,9 +1,9 @@
-(import (use "eg/kernel") eval global-env)
+(import (use "eg/kernel") play global-env)
 
 
 (to (run e)
-  (print `(evaluating ,e))
-  (print (eval (squeam .parse-expression e) global-env)))
+  (format "Playing ~w\n" e)
+  (print (play (squeam .parse-expression e) global-env)))
 
 ;; TODO code duplicated from smoke-test.scm
 
