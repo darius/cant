@@ -139,10 +139,10 @@
   (object<- (make-cps-script name procedure) datum))
 
 ;; Helper for coding a cps-prim. Check the arguments' arity and unpack them.
-(define (cps-unpack message k arity name ok-fn)
-  (if (= (length message) arity)
-      (apply ok-fn message)
-      (signal k "Wrong #arguments to:" name "expects:" arity "got:" message)))
+(define (cps-unpack arguments k arity name ok-fn)
+  (if (= (length arguments) arity)
+      (apply ok-fn arguments)
+      (signal k "Wrong #arguments to:" name "expects:" arity "got:" arguments)))
   
 ;; A continuation is just a vector, whose zeroth element is a small
 ;; integer denoting which continuation procedure. Previously this
@@ -195,8 +195,8 @@
 
 (define reply-prim 
   (cps-prim<- #f '__reply
-              (lambda (_datum message _k)
-                (cps-unpack message _k 2 '__reply
+              (lambda (_datum arguments _k)
+                (cps-unpack arguments _k 2 '__reply
                             (lambda (alleged-k result)
                               (unless (seems-to-be-a-raw-repr? alleged-k methods/cont)
                                 (error 'reply "Not a cont" alleged-k))
@@ -247,8 +247,8 @@
 
 (define error-prim
   (cps-prim<- #f 'error
-              (lambda (datum message k)
-                (handle-error k message))))
+              (lambda (datum arguments k)
+                (handle-error k arguments))))
 
 (define (panic message)
   (let ((message-for-chez ;Chez Scheme is picky about arguments to (error).
@@ -259,8 +259,8 @@
 
 (define panic-prim
   (cps-prim<- #f 'panic
-              (lambda (datum message k)
-                (panic message))))
+              (lambda (datum arguments k)
+                (panic arguments))))
 
 (define (delegate trait object message k)
 ;  (dbg `(delegate))
@@ -301,8 +301,8 @@
 (define with-ejector-prim
   (cps-prim<-
    #f 'with-ejector
-   (lambda (datum message k)
-     (cps-unpack message k 1 'with-ejector
+   (lambda (datum arguments k)
+     (cps-unpack arguments k 1 'with-ejector
                  (lambda (receiver)
                    (let* ((ejector-box (box '*))
                           (ejector-k (cont<- k-disable-ejector k ejector-box))
@@ -318,8 +318,8 @@
 (define ejector-protect-prim                 ;TODO rename
   (cps-prim<-
    #f 'ejector-protect
-   (lambda (datum message k)
-     (cps-unpack message k 2 'ejector-protect
+   (lambda (datum arguments k)
+     (cps-unpack arguments k 2 'ejector-protect
                  (lambda (thunk unwind-thunk)
                    (call thunk '()
                          (cont<- k-call-unwind-thunk k unwind-thunk)))))))
@@ -328,8 +328,8 @@
 (define eject-prim
   (cps-prim<-
    #f '__eject
-   (lambda (datum message k)
-     (cps-unpack message k 2 '__eject
+   (lambda (datum arguments k)
+     (cps-unpack arguments k 2 '__eject
                  (lambda (ejector result)
                    (unless (and (object? ejector)
                                 (eq? (object-script ejector) ejector-script))
@@ -393,8 +393,8 @@
 
 (define evaluate-prim
   (cps-prim<- #f 'evaluate
-              (lambda (datum message k)
-                (cps-unpack message k 2 '__evaluate
+              (lambda (datum arguments k)
+                (cps-unpack arguments k 2 '__evaluate
                             (lambda (e r)
                               (evaluate-exp e r k))))))
 
