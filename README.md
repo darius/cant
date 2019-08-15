@@ -18,9 +18,9 @@ days. You might at most perhaps enjoy playing around.
 Re-working the Actors roots of Scheme *could* be neat. 
 
 In the short term, I wanted a Scheme that didn't often make me miss
-Python. (I was a Schemer before, and it never seemed right that Python
-had not only more libraries but often greater concision.) This much
-is kind of done, I'd say, except for imperative-style code.
+Python. (I was a Schemer before, and it never sat with me right that
+Python had not only more libraries but often greater concision.) This
+much is kind of done, I'd say, except for imperative-style code.
 
 In the longer term I'd like to support a Smalltalky programming
 environment. This goal motivated the incredibly slow initial
