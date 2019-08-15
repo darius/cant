@@ -250,17 +250,14 @@
               (lambda (datum arguments k)
                 (handle-error k arguments))))
 
-(define (panic message)
-  (let ((message-for-chez ;Chez Scheme is picky about arguments to (error).
-         (if (and (pair? message) (string? (car message)))
-             message
-             (cons "Error" message))))
-    (apply error 'panic message-for-chez)))
-
 (define panic-prim
   (cps-prim<- #f 'panic
               (lambda (datum arguments k)
-                (panic arguments))))
+                (let ((message-for-chez ;Chez Scheme is picky about arguments to (error).
+                       (if (and (pair? arguments) (string? (car arguments)))
+                           arguments
+                           (cons "Error" arguments))))
+                  (apply error 'panic message-for-chez)))))
 
 (define (delegate trait object message k)
 ;  (dbg `(delegate))
