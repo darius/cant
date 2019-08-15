@@ -107,7 +107,7 @@
               (if w (w 0) '-))
             jobs
             ("" .join outbox.values))
-    (if (some identity workers) ;clumsy, I guess
+    (if (some itself workers) ;clumsy, I guess
         (ticking t.+ (assign (work {state workers jobs})))
         t)))
 

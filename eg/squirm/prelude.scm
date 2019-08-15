@@ -28,7 +28,7 @@
     (if (ok? x) (link x ys) ys)))
 
 (to (yeahs f xs)             ;TODO better name?
-  (those identity (each f xs)))
+  (those itself (each f xs)))
 
 (to (foldl f z xs)
   (if (nil? xs)

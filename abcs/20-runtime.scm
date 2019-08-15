@@ -1102,14 +1102,13 @@
     (if (keep? x) (link x kept) kept)))
 
 (to (yeahs maybe xs)             ;TODO is this worth defining? good name?
-  ;; Inlining of (those identity (each maybe xs))
+  ;; Inlining of (those itself (each maybe xs))
   (for foldr ((x xs) (kept '()))
     (may (maybe x)
       (be #no  kept)
       (be yeah (link yeah kept)))))
 
-;; names?: steady unchanged stay same self itself pass
-(to (identity x)
+(to (itself x)
   x)
 
 (make chain

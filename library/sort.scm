@@ -2,11 +2,11 @@
 
 (make sort
   (to (_ xs)
-    (sort-by identity xs))
+    (sort-by itself xs))
   (to (_ xs {reverse})          ;TODO design a better keyword-args scheme
     ;; TODO sort by 'negation' of key instead, but allowing for
     ;; non-numbers. Make up a negation-wrapper type?
-    (reverse (sort-by identity xs))) 
+    (reverse (sort-by itself xs))) 
   ;; ...
   )
 

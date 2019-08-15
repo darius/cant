@@ -7,7 +7,7 @@
   fail empty end skip-1 take-1 any-1 skip-any-1 lit-1 lit drop
   parse)
 
-(let hug (feed-list identity))
+(let hug (feed-list itself))
 
 (to (rule-ref<- name)
   (list<- (set<- name)

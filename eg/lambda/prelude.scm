@@ -72,7 +72,7 @@
        (to (chain xs ys) (xs link ys))
 
        (to (compose f g x) (f (g x)))
-       (to (identity x) x)
+       (to (itself x) x)
 
        (to (fix maker)
          (to (r recur) (maker ([x] (recur recur x))))

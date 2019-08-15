@@ -102,7 +102,7 @@
       (be targets
         (let target
           ;; The least remaining hit points, then the first in reading order.
-          (min-by (compound-key<- units identity) targets))
+          (min-by (compound-key<- units itself) targets))
         ;;     (format "target ~w\n" target)
         (attack p target)
         #yes)))

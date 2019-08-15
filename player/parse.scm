@@ -391,7 +391,7 @@
                `(to (_) ,@body))))
     ('->     (mlambda  ; TODO experiment
               ((__)
-               `identity)               ;XXX hygiene
+               `itself)               ;XXX hygiene
               ((__ e)
                `(to (_ it) ,e))
               ((__ e . es)

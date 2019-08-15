@@ -2,7 +2,7 @@
   ;; step: return a function that takes a tail and chains my reverse to it
   (to (step x rest-fn)
     (compose rest-fn (link x)))
-  (xs step identity))
+  (xs step itself))
 
 (to (reverse xs)
   (chain-reverse xs nil))

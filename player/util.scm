@@ -1,5 +1,5 @@
 (library (player util)
-(export report starts-with? cue<- cue? boolean<- insist should= identity foldl
+(export report starts-with? cue<- cue? boolean<- insist should= foldl
         foldr all any flatmap last butlast remove-nth snarf string-join
         term<-list term<- make-term term? term-tag term-parts)
 (import (chezscheme))
@@ -32,8 +32,6 @@
 
 (define (should= x expected)
   (insist (equal? x expected) "Expected" expected))
-
-(define (identity x) x)
 
 (define (foldl f z xs)
   (if (null? xs)

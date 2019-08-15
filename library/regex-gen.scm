@@ -6,7 +6,7 @@
 
 ;; Return the strings matching r whose length is in Ns.
 (to (regex-generate r Ns)
-  (sort-by (compound-key<- _.count identity)
+  (sort-by (compound-key<- _.count itself)
            ((r Ns) .keys)))
            
 
