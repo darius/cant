@@ -80,6 +80,7 @@
 (to (a-printable-string g)
   (string<-list ((a-list-of a-printable-char) g)))
 
+;; TODO find a new name for this after the retupling
 (to ((a-tuple @gens) g)
   (for each ((gen gens))
     (gen g)))
