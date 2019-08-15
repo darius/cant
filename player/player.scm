@@ -55,8 +55,6 @@
 (define (get-prim name)
   (really-global-lookup name))
 
-(define mask32 (- (expt 2 32) 1))
-
 
 ;; Primitive depiction
 
@@ -655,6 +653,8 @@
 
 (define (get-script name)
   (script<- name (get-prim name) primitive-env))
+
+(define mask32 (- (expt 2 32) 1))
 
 (for-each (lambda (pair)
             (let ((key (car pair)) (value (cadr pair)))
