@@ -28,9 +28,9 @@ implementation strategy, where the interpreter internals always appear
 as meta-objects with no optimization, and even primitive objects
 execute via high-level scripts.
 
-Another feature which I'm not claiming is great is that the
-bikeshedding of the names of everything without regard to
-familiarity. I think the language name gives fair enough warning.
+Another feature which I'm not claiming is great is the bikeshedding of
+the names of everything without regard to familiarity. I think the
+language name gives fair enough warning.
 
 ## Example code?
 
