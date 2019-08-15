@@ -32,8 +32,8 @@
               (add1 {primitive ,(-> (+ it 1))})
               (make-church<-count {primitive ,make-church<-count})
 
-              (squeam-link {primitive ,(on (h)
-                                         {primitive (-> (link h it))})})
+              (cant-link {primitive ,(on (h)
+                                       {primitive (-> (link h it))})})
               (make-church<-list {primitive ,make-church<-list})
 
               (display {primitive ,display})
@@ -67,7 +67,7 @@
        (to (nil if-link if-nil) if-nil)
        (to (link h t if-link if-nil) (if-link h (t if-link if-nil)))
        (let church<-list (make-church<-list nil link))
-       (to (list<-church xs) (xs squeam-link '()))
+       (to (list<-church xs) (xs cant-link '()))
 
        (to (chain xs ys) (xs link ys))
 

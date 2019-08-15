@@ -77,7 +77,7 @@
     (display "-> ")
     (may (read)
       (be (? eof?) (newline))
-      (be sexpr (print-result (squeam .play sexpr '()))))) ;XXX reify a proper env object
+      (be sexpr (print-result (cant .play sexpr '()))))) ;XXX reify a proper env object
 
   ;; A separate function just to make the top of tracebacks cleaner.
   (to (print-result value)
@@ -99,7 +99,7 @@
 (to (load-and-run filename args)
   (load filename `(,filename)) ;TODO remove .scm extension
   (when (global-defined? 'main)     ;XXX hack
-    ((squeam .play 'main '()) args)))
+    ((cant .play 'main '()) args)))
 
 (to (debug)
   (import (use 'debugger) inspect-continuation)

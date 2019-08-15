@@ -527,11 +527,11 @@
   ;; primitive calls (mostly). We can wait to do things properly until
   ;; we're making a VM in C for real.
   (may (with-signal-handler
-        (on (squeam-k evil)
-          ;; XXX wrong if the error occurs within a nested Squeam call context.
+        (on (cant-k evil)
+          ;; XXX wrong if the error occurs within a nested Cant call context.
           ;;   TODO show it can go wrong
           ;;   We need to use an ejector to get this right.
-          (squeam-k .answer {error evil}))
+          (cant-k .answer {error evil}))
         (on ()
           (p @args)))
     (be {error evil}
@@ -683,7 +683,7 @@
   (surely (symbol? sym))
   sym.name)
 
-(let primitives-from-squeam
+(let primitives-from-cant
   (export
     link first rest list chain length nth slice
     nil? link? list? number? integer? symbol? claim? char? string? tuple?
@@ -703,7 +703,7 @@
     ))
 
 (let builtins-map
-  (map<- (for each ((`(,name ,value) primitives-from-squeam.items))
+  (map<- (for each ((`(,name ,value) primitives-from-cant.items))
            `(,name {primitive ,value}))))
 
 (builtins-map .set! 'apply {apply})

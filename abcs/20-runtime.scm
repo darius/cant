@@ -635,7 +635,7 @@
 
 ;; Interpreter
 
-(make squeam
+(make cant
   (to (_ .play exp env @(optional context))
     (__evaluate (__parse-exp exp (or context '()))
                 env))

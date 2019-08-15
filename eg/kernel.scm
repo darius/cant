@@ -104,12 +104,12 @@
     (to (_ .bind var value)
       (error "Tried to change immutable env" var))))
 
-;; TODO interpose appropriate definitions for 'squeam', 'use', 'load', ...
+;; TODO interpose appropriate definitions for 'cant', 'use', 'load', ...
 (make global-env
   (to (_ (? symbol? var))
-    (squeam .play var '()))             ;oof, expensive
+    (cant .play var '()))             ;oof, expensive
   (to (_ .bind var val)
-    (squeam .play `(let ,var ',val) '())))
+    (cant .play `(let ,var ',val) '())))
 
 
 (export play env<-map env-extend global-env)

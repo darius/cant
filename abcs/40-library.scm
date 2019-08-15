@@ -18,8 +18,8 @@
 
 (to (load filename @(optional context))
   (let exp `(do ,@(with-input-file read-all filename)))
-  (squeam .play exp '() context))
+  (cant .play exp '() context))
 
 (to (load-module filename @(optional context))
   (let exp `(hide ,@(with-input-file read-all filename)))
-  (squeam .play exp '() context))
+  (cant .play exp '() context))

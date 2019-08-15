@@ -1,4 +1,4 @@
-;; OK, let's get an idea what search-squeam-code should look like,
+;; OK, let's get an idea what search-cant-code should look like,
 ;; from an actual application: finding instances of the pattern syntax
 ;; I'm about to outlaw. I.e., patterns like (a b) instead of `(,a ,b).
 

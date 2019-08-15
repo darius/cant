@@ -57,6 +57,6 @@
   (to (_ filename ,context)
     (let code (for with-input-file ((source filename))
                 `(hide ,@(read-all source))))
-    (squeam .parse-expression code context)))
+    (cant .parse-expression code context)))
 
 (export search)

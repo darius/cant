@@ -3,7 +3,7 @@
 
 (to (run e)
   (format "Playing ~w\n" e)
-  (print (play (squeam .parse-expression e) global-env)))
+  (print (play (cant .parse-expression e) global-env)))
 
 ;; TODO code duplicated from smoke-test.scm
 
