@@ -68,7 +68,8 @@ Fizz
 
 ## Documentation?
 
-Not yet, but there's an abortive start in overview.md.
+Not yet, but there's an abortive start in
+[overview.md](https://github.com/darius/cant/blob/master/overview.md).
 
 ## Isn't 'Cant' the [Chevy Nova](https://www.snopes.com/fact-check/chevrolet-nova-name-spanish/) of language names?
 
@@ -79,9 +80,9 @@ aspirational for now, though.)
 ## Thanks
 
 Of course, this project would not exist without Scheme or E. It's
-pretty likely to get more like E, because so far I've been using my
-decades-old memory instead of actually consulting it, and E probably
-did things better.
+pretty likely to get more like E, because so far I've been consulting
+my decades-old memory instead of the sources, and E probably did
+things better.
 
 Thanks to Kragen Sitaker for early discussions about the language.
 
