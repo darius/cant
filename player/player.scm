@@ -28,6 +28,8 @@
 (define (tuple<- . xs)
   xs)
 
+(define null-tuple '())
+
 (define (list<-tuple tuple)
   tuple)
 
@@ -318,7 +320,7 @@
    (lambda (datum arguments k)
      (cps-unpack arguments k 2 'ejector-protect
                  (lambda (thunk unwind-thunk)
-                   (call thunk '()
+                   (call thunk null-tuple
                          (cont<- k-call-unwind-thunk k unwind-thunk)))))))
 
 ;; The method (ejector .eject result)
@@ -378,7 +380,7 @@
 ;; The procedure for an ordinary reply to a k-call-unwind-thunk record.
 (define (cont-call-unwind-thunk result k0)
   (unpack k0 (k unwind-thunk)
-    (call unwind-thunk '()
+    (call unwind-thunk null-tuple
           (cont<- k-replace-answer k result))))
 
 (define (cont-replace-answer value-to-ignore k0)
