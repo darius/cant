@@ -7,7 +7,7 @@ EcmaScript](https://github.com/Agoric/SES) and
 [Monte](https://monte.readthedocs.io/en/latest/). You probably want to
 look at those instead.
 
-## So, the message is "buzz off"?
+## So the message is "buzz off"?
 
 Well, no, but I'm changing my mind all the time; even given a usable
 implementation (it's totally not), your own code could rot in
