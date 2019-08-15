@@ -68,9 +68,8 @@
                     (looking xs.rest)))))))
 
 (to (deletions<- s)
-  (for each ((i (range<- s.count)))
-    `(,(s .slice 0 i)
-      ,(s .slice (+ i 1)))))
+  (for each ((i (0 .to< s.count.-)))
+    `(,(s .slice 0 i) ,(s .slice i.+))))
 
 (to (chain-lines lines)
   (chain @(for each ((line lines))

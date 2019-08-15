@@ -21,8 +21,8 @@
     (newline)))
 
 (to (queens-problem n)
-  (conjoin (for each ((r (range<- n)))
-             (disjoin (for each ((c (range<- n)))
+  (conjoin (for each ((r (0 .to< n)))
+             (disjoin (for each ((c (0 .to< n)))
                         (place-queen n r c))))))
 
 (to (conjoin nodes) (foldr1 bdd-and nodes))
@@ -37,37 +37,40 @@
                (<= 0 cc) (< cc n))
       (env .set! (queen n rr cc) #no)))
   
-  (for each! ((cc (range<- n)))
+  (for each! ((cc (0 .to< n)))
     (exclude r cc))
-  (for each! ((rr (range<- n)))
+
+  (for each! ((rr (0 .to< n)))
     (exclude rr c))
-  (for each! ((dd (range<- (+ (- n) 1) n)))
+
+  (for each! ((dd ((- n.-) .to< n))) ; diagonals
     (exclude (+ r dd) (+ c dd))
     (exclude (+ r dd) (- c dd))
     (exclude (- r dd) (+ c dd))
     (exclude (- r dd) (- c dd)))
-  (env .set! (queen n r c) #yes)
+
+  (env .set! (queen n r c) #yes) ; (Overlaps and overrides the above no's)
 
   (match-env env))
 
+;; Return a BDD that evaluates to 1 just when every variable in env
+;; has its given value.
 (to (match-env env)                 ;TODO move this to bdd.scm?
-  ;; Return a BDD that evaluates to 1 just when every variable in env
-  ;; has its given value.
   (for foldl ((tree lit1)
               (`(,var ,value) (sort env.items {reverse})))
     (if value
         (build-choice var lit0 tree)
         (build-choice var tree lit0))))
 
+;; The variable for a queen at (row r, column c) in an n*n board.
 (to (queen n r c)
-  ;; The variable for a queen at (row r, column c) in an n*n board.
-  (+ 2 (* n r) c))  ;; vars must be >= 2, to not clash with lits.
+  (+ 2 (* n r) c))  ; Variables must be >= 2, to not clash with literals.
 
+;; Return a 2-d array of distinct variables: each means there's a
+;; queen at its position. Row/column numbers start from 0.
 (to (board<- n)
-  ;; Return a 2-d array of distinct variables: each means there's a
-  ;; queen at its position. Row/column numbers start from 0.
-  (for each ((r (range<- n)))
-    (range<- (+ 2 (* n r))
-             (+ 2 (* n r.+)))))
+  (for each ((r (0 .to< n)))
+    (interval<- (+ 2 (* n r))
+                (+ 2 (* n r.+)))))
 
 (export queens queens-problem print-board)

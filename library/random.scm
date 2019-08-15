@@ -26,7 +26,7 @@
       (xs (rng .random-integer xs.count)))
     (to (_ .shuffle! vec)
       (let n vec.count)
-      (for each! ((i (range<- n)))
+      (for each! ((i (0 .to< n)))
         (vec .swap! i (+ i (rng .random-integer (- n i))))))
     ))
 
@@ -46,7 +46,7 @@
 
 ;; Read a 4-byte unsigned int, big-endian. TODO should be in a library
 (to (read-u32 source)
-  (for foldl ((n 0) (_ (range<- 4))) 
+  (for foldl ((n 0) (_ (0 .to< 4))) 
     (+ (n .<< 8)
        source.read-char.code)))
 

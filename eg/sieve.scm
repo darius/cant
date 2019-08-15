@@ -14,7 +14,7 @@
       (for each! ((i (0 .to SIZE)))
         (when (flags i)
           (let prime (+ i i 3))
-          (for each! ((k (range<- (+ i prime) SIZE.+ prime)))
+          (for each! ((k (interval<- (+ i prime) SIZE.+ prime)))
             (flags .set! k #no))
           (count .update _.+)))
       count.^))

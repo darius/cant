@@ -4,7 +4,7 @@
   (to (step bits)
     (each rule (neighborhoods bits)))
   (show
-   (for foldl ((state start-bits) (_ (range<- n-steps)))
+   (for foldl ((state start-bits) (_ (1 .to n-steps)))
      (show state)
      (step state))))
 

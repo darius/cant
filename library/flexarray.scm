@@ -65,7 +65,7 @@
       (count .^= c.+)
       i)                                 ;TODO what's a good return value?
     (to _.values ;; more efficient than array-trait's
-      (each vec.^ (range<- count.^)))
+      (each vec.^ (0 .to< count.^)))
     (to _.snapshot
       (vec.^ .slice 0 count.^))         ;XXX make immutable
     (to (_ .move! dst source lo bound)

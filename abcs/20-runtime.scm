@@ -70,7 +70,7 @@
     (not (map .intersects? map2)))
   (to _.domain
     (set<-list map.keys))   ;TODO usually worth specializing
-  (to _.range  ; TODO rename range<- to something else
+  (to _.range
     (set<-list map.values))
   (to _.inverse
     (let inverse (map<-))
@@ -134,7 +134,7 @@
                 (be d d)))))
   ;; A sequence is a kind of collection. Start implementing that:
   (to _.keys
-    (range<- list.count)) ;TODO move this impl to array-trait; here, enum lazily.
+    (0 .to< list.count)) ;TODO move this impl to array-trait; here, enum lazily.
   (to _.values
     list)
   (to _.items
@@ -173,7 +173,7 @@
     ;;TODO a method to get an empty seq of my type; and then factor out duplicate code
     (may n
       (be 0 '())             
-      (else (chain @(for each ((_ (range<- n)))
+      (else (chain @(for each ((_ (0 .to< n)))
                       list)))))
   (to _.maybe  ;; TODO an experiment TODO could be defined on maps in general too
     (if list.none?
@@ -219,9 +219,9 @@
   (to (_ .and b)       (__bit-and me b))
   (to (_ .or b)        (__bit-or  me b))
   (to (_ .xor b)       (__bit-xor me b))
-  (to (_ .to< b)       (range<- me b))
-  (to (_ .to b)        (range<- me b.+))
-  (to (_ .span n)      (range<- me (+ me n)))
+  (to (_ .to< b)       (interval<- me b))
+  (to (_ .to b)        (interval<- me b.+))
+  (to (_ .span n)      (interval<- me (+ me n)))
   (to _.even?          (surely (integer? me)) (= 0 (me .modulo 2)))
   (to _.odd?           (surely (integer? me)) (not= 0 (me .modulo 2)))
   (to (_ .divides? b)  (surely (integer? me)) (= 0 (b .modulo me)))
@@ -304,14 +304,14 @@
     ;; TODO no-op if in range and (me,dst) == (source,lo)
     (let lo->dst (- dst lo))
     (for each! ((i (if (<= dst lo)
-                       (range<- lo bound)
-                       (range<- bound.- lo -1))))
+                       (interval<- lo bound)
+                       (interval<- bound.- lo -1))))
       (me .set! (+ i lo->dst)
           (source i))))
   (to _.values
-    (each me (range<- me.count)))   ;TODO cheaper to represent by self -- when can we get away with that?
+    (each me (interval<- 0 me.count)))   ;TODO cheaper to represent by self -- when can we get away with that?
   (to _.items
-    (for each ((i (range<- me.count)))
+    (for each ((i (interval<- 0 me.count)))
       `(,i ,(me i))))
   (to (_ .get key default)
     (hm (unless (count? key) default)
@@ -480,7 +480,7 @@
                    me
                    (" " .repeat half)))))
   (to (_ .repeat n)
-    ("" .join (each (-> me) (range<- n))))
+    ("" .join (each (-> me) (interval<- 0 n))))
   (to (_ .format @arguments)
     (string<-writer (-> (format .to-sink it me @arguments))))
   (to _.split-lines
@@ -527,9 +527,9 @@
       (be (? integer?) (char<- (- me.code b)))
       (be (? char?)    (- me.code b.code))
       (else (error "Bad arg type" b))))
-  (to (_ .to< b)      (range<- me b))       ;These methods should be in a trait
-  (to (_ .to b)       (range<- me b.+))    ;if they're a good idea at all...
-  (to (_ .span n)     (range<- me (+ me n)))
+  (to (_ .to< b)      (interval<- me b))       ;These methods should be in a trait
+  (to (_ .to b)       (interval<- me b.+))    ;if they're a good idea at all...
+  (to (_ .span n)     (interval<- me (+ me n)))
   (to _.+             (me .+ 1))      ;experiment
   (to _.-             (me .- 1))      ;experiment
   )
@@ -1128,14 +1128,14 @@
       (and (pass? xs.first)
            (every pass? xs.rest))))
 
-(make range<-
+(make interval<-
   (to (_ first limit)
     (if (<= limit first)
         '()
         (make range {extending list-trait}
           (to _.none? #no)
           (to _.first first)
-          (to _.rest  (range<- first.+ limit))
+          (to _.rest  (interval<- first.+ limit))
           (to _.count (- limit first))
           (to (_ i)
             (if (not (integer? i))
@@ -1151,7 +1151,7 @@
           ;; TODO: .compare
           )))
   (to (_ limit)
-    (range<- 0 limit))
+    (interval<- 0 limit))
   (to (_ first limit stride)
     ;; TODO factor the code better
     (hm (if (< 0 stride)
@@ -1160,7 +1160,7 @@
                 (make range {extending list-trait}
                   (to _.none? #no)
                   (to _.first first)
-                  (to _.rest  (range<- (+ first stride) limit stride))
+                  (to _.rest  (interval<- (+ first stride) limit stride))
                   (to (_ i)
                     (error "TODO" range `(,i)))
                   (to (_ .maps? i)
@@ -1172,7 +1172,7 @@
                 (make range {extending list-trait}
                   (to _.none? #no)
                   (to _.first first)
-                  (to _.rest  (range<- (+ first stride) limit stride))
+                  (to _.rest  (interval<- (+ first stride) limit stride))
                   (to (_ i)
                     (error "TODO" range `(,i)))
                   (to (_ .maps? i)

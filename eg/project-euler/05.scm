@@ -9,6 +9,7 @@
   (foldr1 intersect (each multiples<- ns)))
 
 ;; Pre: xs and ys are sorted and infinite.
+;; TODO ssets module could be made to work with infinite sets
 (to (intersect xs ys)
   (may (xs.first .compare ys.first)
     (be -1 (intersect xs.rest ys))
@@ -16,7 +17,7 @@
     (be  0 (link/lazy xs.first
                       (: (intersect xs.rest ys.rest))))))
 
-(to (multiples<- n)                     ;TODO infinite range<- with stride
+(to (multiples<- n)                     ;TODO infinite interval<- with stride
   (begin listing ((k n))
     (link/lazy k (: (listing (+ k n))))))
 

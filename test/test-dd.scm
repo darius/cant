@@ -39,7 +39,7 @@
 
 (display "\nMcCarthy identities:\n")
 
-(let `(,a ,b ,c ,d ,p ,q ,r) (each claim<- (range<- 7)))
+(let `(,a ,b ,c ,d ,p ,q ,r) (each claim<- (0 .to 6)))
 
 (print (valid? (== a (lit0 a b))))
 (print (valid? (== b (lit1 a b))))

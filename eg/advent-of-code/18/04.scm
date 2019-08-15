@@ -27,7 +27,7 @@ _:         :whitespace.
 (let zzzs (map<-))            ; guard -> bag of minutes they're asleep
 (for each! ((`(,guard ,naps) shifts))
   (for each! ((nap naps))
-    ((zzzs .get-set! guard bag<-) .add-all! (range<- @nap))))
+    ((zzzs .get-set! guard bag<-) .add-all! (interval<- @nap))))
 
 (let guards zzzs.keys)
 
