@@ -34,7 +34,7 @@
       (actor<- (script<- (if trait (play trait r) miranda-trait)
                          clauses)
                r))
-    (be {do e1 e2}                      ;eliminable (let _ e1)
+    (be {do e1 e2}
       (play e1 r)
       (play e2 r))
     (be {let p e1}
