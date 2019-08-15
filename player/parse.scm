@@ -89,9 +89,9 @@
         (parse-make '_ clauses ctx))
        (('do e1)
         (parse-e e1 ctx))
-       (('do e1 ('XXX-halp-spot start end) . es)
-        (pack<- e-do (parse-e `(__halp-log ,start ,end ,e1) ctx)  ;XXX hygiene
-                (parse-e `(do ,@es) ctx)))
+;;       (('do e1 ('XXX-halp-spot start end) . es)
+;;        (pack<- e-do (parse-e `(__halp-log ,start ,end ,e1) ctx)  ;XXX hygiene
+;;                (parse-e `(do ,@es) ctx)))
        (('do e1 . es)
         (pack<- e-do (parse-e e1 ctx) (parse-e `(do ,@es) ctx)))
        (('do)
