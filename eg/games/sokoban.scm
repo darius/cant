@@ -133,11 +133,11 @@ Level ~w ~d Move ~w")
         (let target? (".@I" .find? (new pos)))
         (new .set! pos (thing target?.count)))
 
-      (let player (or (spots .find #\i #no)
-                      (spots .find #\I)))
+      (let i (or (spots .find #\i #no)  ; The player's spot.
+                 (spots .find #\I)))
       (let d (directions dir))
-      (move! "o@" (+ player d) (+ player d d)) ; Try to push any block in the way.
-      (move! "iI" player (+ player d))
+      (move! "o@" (+ i d) (+ i d d)) ; Try to push any block in the way.
+      (move! "iI" i (+ i d))
 
       (sokoban-grid<- new))))
 
