@@ -3,7 +3,7 @@
 ;; I'm about to outlaw. I.e., patterns like (a b) instead of `(,a ,b).
 
 (import (use 'pretty-print) pp)
-(import (use 'squeam-source-walker)
+(import (use 'cant-source-walker)
   expr-subparts patt-subparts macroexpand-outer-patt)
 
 (to (main `(,_ ,@filenames))
