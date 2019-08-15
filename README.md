@@ -1,6 +1,4 @@
-# Cant
-
-## A message-oriented language
+# Cant, a message-oriented language
 
 This is a hobby project: a programming language descended mainly from
 [E](http://erights.org/) and Scheme. Nowadays there are at least two
@@ -13,7 +11,7 @@ look at those instead.
 
 Well, no, but I'm changing my mind all the time; even given a usable
 implementation (it's totally not), your own code could rot in
-days. You might perhaps enjoy playing around, at most.
+days. You might at most perhaps enjoy playing around.
 
 ## What's so great about this, at least in aspiration?
 
@@ -21,14 +19,18 @@ Re-working the Actors roots of Scheme *could* be neat.
 
 In the short term, I wanted a Scheme that didn't often make me miss
 Python. (I was a Schemer before, and it never seemed right that Python
-didn't just have more libraries but often greater concision.) I'd call
-this achieved now, except for imperative-style code.
+didn't only have more libraries but often greater concision.) I'd say
+this much is kind of done, except for imperative-style code.
 
 In the longer term I'd like to support a sort of Smalltalky
 programming environment. This goal motivated the incredibly slow
 initial implementation strategy, where the interpreter internals
 always appear as meta-objects with no optimization, and even primitive
 objects execute via high-level scripts.
+
+Another feature which I'm not claiming is great is that I'm
+bikeshedding the names of everything without regard to familiarity. I
+think the language name gives fair enough warning.
 
 ## Example code?
 
@@ -68,14 +70,14 @@ Fizz
 
 ## Documentation?
 
-Not yet, but there's an abortive start in
+Not yet, but there's an abortive start at
 [overview.md](https://github.com/darius/cant/blob/master/overview.md).
 
 ## Isn't 'Cant' the [Chevy Nova](https://www.snopes.com/fact-check/chevrolet-nova-name-spanish/) of language names?
 
 Expressing *inabilities* in code is still underemphasized; I'm just
-fine with a name calling attention to what you can't do. (It's only
-aspirational for now, though.)
+fine with a name that calls attention to what you can't do. (Although
+it's only aspirational for now.)
 
 ## Thanks
 
