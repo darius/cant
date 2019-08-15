@@ -1,4 +1,4 @@
-;; A kernel-Squeam interpreter in direct-style Squeam.
+;; A kernel-Cant interpreter in direct-style Cant.
 ;; TODO is this still up to date wrt player.scm?
 
 ;; Variable names:

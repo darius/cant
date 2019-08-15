@@ -522,7 +522,7 @@
     ))
 
 (to (apply-primitive p args k)
-  ;; Ugh, Squeam's error-catching stuff is pretty clumsy.
+  ;; Ugh, Cant's error-catching stuff is pretty clumsy.
   ;; I'm not going to try to handle errors everywhere; only in these
   ;; primitive calls (mostly). We can wait to do things properly until
   ;; we're making a VM in C for real.

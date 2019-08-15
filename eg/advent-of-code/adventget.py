@@ -2,7 +2,7 @@
 """
 Adapted from https://github.com/ambertests/advent_of_code_2018/blob/master/aoc_day01.py
 For other ways see also https://old.reddit.com/r/adventofcode/comments/a2lesz/2018_day_3_solutions/eb1hd1z/
-To be run from ../.. (the main Squeam dir).
+To be run from ../.. (the main Cant dir).
 TODO: command-line arg to choose the year
 """
 

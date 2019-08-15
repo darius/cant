@@ -1,4 +1,4 @@
-;; Squirm code, not Squeam. These definitions go into the global
+;; Squirm code, not Cant. These definitions go into the global
 ;; environment.
 
 (to ((compose f g) x)  ;; TODO varargs

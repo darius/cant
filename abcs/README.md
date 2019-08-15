@@ -1,4 +1,4 @@
-The 'primer' for a newborn Squeam system. It must learn these ABCs
+The 'primer' for a newborn Cant system. It must learn these ABCs
 first to be able to use the `library/`.
 
 The source files here get specially loaded in the order they're

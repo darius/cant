@@ -15,5 +15,5 @@
 ;(print (euler4 10 100))
 ;(print (euler4 100 1000))
 
-;; This code'd be adequate on a nice fast Squeam system; but
+;; This code'd be adequate on a nice fast Cant system; but
 ;; it's absurdly too slow right now. Need a cleverer algorithm.

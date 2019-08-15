@@ -18,7 +18,7 @@
       v))
 ;; TODO seems clumsy. How about:
 ;;  (may (s .subst val)
-;;    (be (and (? variable? v) (not (= val)))   ;TODO Squeam only has (= val) patterns, not not
+;;    (be (and (? variable? v) (not (= val)))   ;TODO Cant only has (= val) patterns, not not
 ;;      (apply s v))
 ;;    (be other other)))
 

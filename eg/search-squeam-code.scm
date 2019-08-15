@@ -1,5 +1,5 @@
 ;; Let's try and make it easy to find instances of a pattern
-;; in Squeam source code.
+;; in Cant source code.
 ;;XXX untested - e.g. walk-clauses below isn't filled in
 
 (to (main `(,_ ,@filenames))

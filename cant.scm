@@ -10,7 +10,7 @@
   (player primitives)
   (player player))
 
-;; The Squeam interpreter and global environment.
+;; The Cant interpreter and global environment.
 
 (define (listener . opt-args)
   (cant-interpret `(call listener ',opt-args)))

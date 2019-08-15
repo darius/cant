@@ -111,7 +111,7 @@
 
 
 ;; Equality... TODO explain me
-;; N.B. their 'claim' is not a Squeam claim type
+;; N.B. their 'claim' is not a Cant claim type
 
 ;; Pre: the app is a call with same name as the def.
 (to (equality/def claim path app {def name formals meaning})
