@@ -17,9 +17,9 @@
 
 (define (cue? x)
   (and (symbol? x)
-       ;; XXX just gonna assume a 0-length symbol won't come up, here
-       (char=? (string-ref (symbol->string x) 0)
-               #\.)))
+       (let ((name (symbol->string x)))
+         (and (< 0 (string-length name))
+              (char=? #\. (string-ref name 0))))))
 
 ;;TODO: make this something like ('coerce boolean? x)
 (define (boolean<- x)                   
@@ -87,8 +87,6 @@
                  head
                  (append head tween (appending (cdr ls))))))))))
 
-;; XXX better name? record? struct? row? tagged tuple? glom? functor? (hah)
-;(define-structure term tag parts)
 (define-record-type term (fields tag parts))
   
 (define (term<-list list)
