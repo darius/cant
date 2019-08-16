@@ -25,7 +25,7 @@
 
 (to (update grid)
   (let active (bag<- (gather neighbors grid.keys)))
-  (_.range (for yeahs ((`(,pos ,n-live) active.items))
+  (_.range (for yeahs (((_ pos n-live) active.items))
              (may n-live
                (be 3 pos)
                (be 2 (and (grid .maps? pos) pos))
@@ -55,8 +55,8 @@
              (not ch.whitespace?))))
 
 (to (map<-lines lines)
-  (map<-lists (for gather ((`(,row ,line) lines.items))
-                (for each ((`(,col ,ch) line.items))
+  (map<-lists (for gather (((_ row line) lines.items))
+                (for each (((_ col ch) line.items))
                   `((,col ,(- row)) ,ch))))) ; minus so y-coordinates increase upwards
 
 (let r-pentomino (paint '(" **"

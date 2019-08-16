@@ -33,16 +33,16 @@
 ;;  - Sometimes it's *almost* applicable, but ok? needs to take `(,i ,x) as the argument.
 ;;    But if we made it like that, then it's barely different from yeahs.
 (to (where ok? xs)
-  (for yeahs ((`(,i ,x) xs.items))
+  (for yeahs (((_ i x) xs.items))
     (and (ok? x) i)))
 
 (to (map-by f keys) ;TODO maybe name it map<-keys ? along with a map<-values ?
-  (map<-items (for each ((key keys))
-                `(,key ,(f key)))))
+  (map<-list (for each ((key keys))
+               (_ key (f key)))))
 
 (to (map<-values f values)
-  (map<-items (for each ((value values))
-                `(,(f value) ,value))))
+  (map<-list (for each ((value values))
+               (_ (f value) value))))
 
 ;; What's a good name for this? I like 'cartesian*' even less.
 (to (grid* xs ys)                     ;TODO generalize

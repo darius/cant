@@ -30,7 +30,7 @@
 
 (to (match-brackets program)
   (let jump (map<-))
-  (for foldl ((stack '()) (`(,i ,ch) program.items))
+  (for foldl ((stack '()) ((_ i ch) program.items))
     (may ch
       (be #\[ (link i stack))
       (be #\] (jump .set! stack.first i.+)

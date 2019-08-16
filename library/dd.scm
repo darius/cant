@@ -33,7 +33,7 @@
                               ;; Can't be this because it requires comparability of constants/none:
                               ;; ((<=> nodes.keys (each _.constant-value nodes))
                               ;; This is ok but wordier:
-                              ;; ((for every ((`(,i ,node) nodes.items)) (= i node.constant-value))
+                              ;; ((for every (((_ i node) nodes.items)) (= i node.constant-value))
                               ;; So for now we end up with:
                               (if (= (as-list nodes.keys) (each _.constant-value nodes))
                                   choice)
@@ -78,7 +78,7 @@
     (if (not= none node.constant-value)
         (and (= goal node.constant-value)
              env)
-        (for foldr/lazy ((`(,value ,branch) node.branches.items)
+        (for foldr/lazy (((_ value branch) node.branches.items)
                          (try-remaining-branches (: #no)))
           (if (`(,none ,goal) .find? branch.constant-value)
               (do (env .set! node.rank value)

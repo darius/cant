@@ -56,7 +56,7 @@
 
 (to (check-timeouts)
   (let now (nano-now))
-  (for each! ((`(,process ,time) waiting-timeouts.items))
+  (for each! (((_ process time) waiting-timeouts.items))
 ;;    (format "time ~w: checking ~w\n" (msecs now) (msecs time))
     (when (<= time now)
       (waiting-timeouts .delete! process)
@@ -704,7 +704,7 @@
     ))
 
 (let builtins-map
-  (map<-lists (for each ((`(,name ,value) primitives-from-cant.items))
+  (map<-lists (for each (((_ name value) primitives-from-cant.items))
            `(,name {primitive ,value}))))
 
 (builtins-map .set! 'apply {apply})

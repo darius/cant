@@ -89,9 +89,9 @@
     (to (_ .selfie sink)
       (let lines (each (_ .slice 1 9)
                        (squares .slice 1 9)))
-      (for each! ((`(,i ,line) lines.items))
+      (for each! (((_ i line) lines.items))
         (format .to-sink sink "~w|" (- 8 i))
-        (for each! ((`(,j ,piece) line.items))
+        (for each! (((_ j piece) line.items))
           (format .to-sink sink " ~d" (if (and (= piece #\space)
                                                ((+ i j) .odd?))
                                           #\. ; An empty black square.
@@ -194,8 +194,8 @@
 
     (to _.gen-piece-moves
       (let white? (= mover 'white))
-      (for gather ((`(,r ,row) squares.items))
-        (for gather ((`(,c ,piece) row.items))
+      (for gather (((_ r row) squares.items))
+        (for gather (((_ c piece) row.items))
           (if (and piece.letter? (= piece.uppercase? white?))
               (board .gen-moves-from r c piece.uppercase white?)
               '()))))

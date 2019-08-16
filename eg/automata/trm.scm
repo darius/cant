@@ -76,12 +76,12 @@ insn:    {'1'+} {'#' '#'? '#'? '#'? '#'?} :make_insn.
   (let pc   (or ?pc   0))
   (let regs (or ?regs (regs<-)))
   (let left
-    (for each ((`(,addr ,{insn fn n}) insns.items))
+    (for each (((_ addr {insn fn n}) insns.items))
       (let show-addr (if (= addr pc)
                          "   "
                          ("~3w" .format (abs (- pc addr)))))
       ("~d ~d ~w" .format show-addr fn.name n)))
-  (let right (for each ((`(,i ,str) regs.items.rest))
+  (let right (for each (((_ i str) regs.items.rest))
                ("\tr~w: ~d" .format i str)))
   (for each! ((line (abut left right)))
     (format "~d\n" line)))

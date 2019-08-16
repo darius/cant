@@ -117,7 +117,7 @@ insn:    :nat ' ' :nat ' ' :nat ' ' :nat '\n' :hug.
       (let op-name (((candidates opcode) .keys) .first)) ;clumsy
       (assignments .set! opcode op-name)
       (candidates .delete! opcode)
-      (for each! ((`(,op2 ,names2) candidates.items))
+      (for each! (((_ op2 names2) candidates.items))
         (names2 .delete! op-name))
       (when candidates.some?
         (pruning))))

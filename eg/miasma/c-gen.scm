@@ -120,7 +120,7 @@
 
 (to (c-enum items)
   ("" .join `("enum {\n"
-              ,@(for each ((`(,sym ,val) items))
+              ,@(for each (((_ sym val) items))
                   ("  ~d = ~d,\n"
                    .format (as-legal-c-identifier sym.name) (c-int-literal val)))
               "};")))

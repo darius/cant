@@ -54,7 +54,7 @@ dir:  {'N' | 'S' | 'E' | 'W'} :Dir.
     (if es.none?
         (map<- (_ p d))
         (do (let map1 (visit p d es.first))
-            (merge-best (for each ((`(,p1 ,d1) map1.items))
+            (merge-best (for each (((_ p1 d1) map1.items))
                           (visit-seq p1 d1 es.rest))))))
 
   (let visit (memoize really-visit))
@@ -78,7 +78,7 @@ dir:  {'N' | 'S' | 'E' | 'W'} :Dir.
 (to (merge2 map1 map2)
   ;; TODO there should be a union-with-combiner method
   (let result map1.copy)
-  (for each! ((`(,k2 ,v2) map2.items))
+  (for each! (((_ k2 v2) map2.items))
     (result .set! k2 (may (map1 .get k2)
                        (be #no v2)
                        (be v1 (min v1 v2)))))

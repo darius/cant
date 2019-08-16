@@ -11,7 +11,7 @@
   (to (add-cart! i dir)
     (tracks .push! (erase-cart dir))
     (carts .set! i {cart dir 0}))
-  (for each! ((`(,i ,ch) world-str.items))
+  (for each! (((_ i ch) world-str.items))
     (may ch
       (be #\> (add-cart! i E))
       (be #\< (add-cart! i W))
@@ -76,7 +76,7 @@
 (let world0 (parse inputs))
 
 (to (show {world tracks w carts})
-  (for each! ((`(,i ,ch) tracks.items))
+  (for each! (((_ i ch) tracks.items))
     (display (may (carts .get i)
                (be #no  ch)
                (be cart (show-cart cart)))))

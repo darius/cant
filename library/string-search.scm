@@ -31,7 +31,7 @@
   (if (< m 0)
       (on (dat) 0)
       (do (let skip (array<-count alphabet-size pat.count))
-          (for each! ((`(,i ,ch) pat.items))
+          (for each! (((_ i ch) pat.items))
             (skip .set! ch.code (- m i)))
           ;; On a mismatch whose last char of dat == (pat i), we'll
           ;; slide right by 1 + (|pat| - i). Then that last char will

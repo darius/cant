@@ -44,7 +44,7 @@
   (let n bag.total)  ;; Pre: n > 0
   (begin counting ((k (rng .random-integer n))
                    (items bag.items))
-    (let `(,key ,count) items.first)
+    (let (_ key count) items.first)
     (if (< k count)
         key
         (counting (- k count) items.rest))))

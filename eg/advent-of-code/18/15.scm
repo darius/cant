@@ -66,7 +66,7 @@
 
   ;; For each unit, do a turn. Return yes if the round completed.
   (to (do-round)
-    (for every ((`(,p ,unit) (sort units.items)))
+    (for every (((_ p unit) (sort units.items)))
       ;; This unit may have been killed in a preceding unit's turn,
       ;; but it can't have moved yet.
       (or (not (units .maps? p)) ; (must've been killed)
@@ -168,7 +168,7 @@
   
   (to (show)
     (let notes (flexarray<-))
-    (for each! ((`(,p ,ch) area.items))
+    (for each! (((_ p ch) area.items))
       (may ch
         (be #\newline
           (format "   ~d\n" (", " .join notes.values))

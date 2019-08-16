@@ -23,7 +23,7 @@
         (else
           ;; Fight a round.
           (attacking (map<-lists (chain a1 a2)))
-          (for each! ((`(,army ,groups) armies.items))
+          (for each! (((_ army groups) armies.items))
             (armies .set! army (those _.alive? groups)))
           
           (let counts-after (each tally armies.values))
@@ -35,12 +35,12 @@
   (let result (flexarray<-))
   (let enemies (flexarray<-list enemy-groups)) ;; clumsy? probably ought to be a set
   (let enemy-nums (flexarray<-list (1 .to enemy-groups.count)))  ;; just for the messages
-  (for each! ((`(,i ,group) (sort-by (on (`(,_ ,group)) group.target-selection-key)
-                                     my-groups.items)))
+  (for each! (((_ i group) (sort-by (on ((_ _ group)) group.target-selection-key)
+                                    my-groups.items)))
     (when enemies.some?
       (let damages (for each ((enemy enemies.values))
                      (group .would-damage enemy)))
-;;      (for each! ((`(,j ,damage) damages.items))
+;;      (for each! (((_ j damage) damages.items))
 ;;        (format "~d group ~w would deal defending group ~w ~w damage\n"
 ;;                my-name (+ i 1) (enemy-nums j) damage))
       (let j (for max-by ((j enemies.keys))
@@ -139,9 +139,9 @@ separator: '\n'.
 (display "\nPart 1\n")
 
 (to (show-count armies)
-  (for each! ((`(,army ,groups) (sort armies.items)))
+  (for each! (((_ army groups) (sort armies.items)))
     (format "~d:\n" army)
-    (for each! ((`(,i ,group) groups.items))
+    (for each! (((_ i group) groups.items))
       (format "Group ~w contains ~w units\n" i.+ group.count))))
 
 (to (part-1)

@@ -88,13 +88,13 @@
     ((move rows) .none?)))
 
 (to (random-empty-square rng rows)
-  (rng .pick (for gather ((`(,r ,row) rows.items))
-               (for yeahs ((`(,c ,v) row.items))
+  (rng .pick (for gather (((_ r row) rows.items))
+               (for yeahs (((_ c v) row.items))
                  (and (= v 0) `(,r ,c))))))
 
 (to (update rows at new-value)
-  (for each ((`(,r ,row) rows.items))
-    (for each ((`(,c ,v) row.items))
+  (for each (((_ r row) rows.items))
+    (for each (((_ c v) row.items))
       (if (= at `(,r ,c)) new-value v))))
 
 ;; Try to slide the board leftward; return a list of boards to

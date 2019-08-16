@@ -36,8 +36,8 @@
 
 (to (paint grid top left lines)
   (let bottom (+ top lines.count -1))
-  (for each! ((`(,i ,line) lines.items))
-    (for each! ((`(,j ,ch) line.items))
+  (for each! (((_ i line) lines.items))
+    (for each! (((_ j ch) line.items))
       (grid .set! (- bottom i) (+ left j)
             (if ch.whitespace? 0 1)))))
 

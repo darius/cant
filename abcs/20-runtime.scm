@@ -43,8 +43,8 @@
     (not= (map .get key missing) missing))
   (to _.none?  (= map.count 0))  ; or map.items.none? - is that better?
   (to _.some?  (not map.none?))
-  (to _.keys   (each _.first map.items))
-  (to _.values (each (on (`(,_ ,v)) v) map.items))
+  (to _.keys   (each (on ((_ k _)) k) map.items))
+  (to _.values (each (on ((_ _ v)) v) map.items))
   (to (_ .find? value)
     (map.values .find? value))
   (to (_ .find value default)
@@ -52,7 +52,7 @@
       (if items.none?
           default
           (may items.first
-            (be `(,k ,v) (if (= v value) k (searching items.rest)))
+            (be (_ k v) (if (= v value) k (searching items.rest)))
             (else (searching items.rest))))))
   (to (_ .find value)
     (make missing)
@@ -74,7 +74,7 @@
     (set<-list map.values))
   (to _.inverse
     (let inverse (map<-))
-    (for each! ((`(,k ,v) map.items))
+    (for each! (((_ k v) map.items))
       (when (inverse .maps? v)
         (error ".inverse of noninvertible map" map))  ; or just allow it?
       (inverse .set! v k))
@@ -312,7 +312,7 @@
     (each me (interval<- 0 me.count)))   ;TODO cheaper to represent by self -- when can we get away with that?
   (to _.items
     (for each ((i (interval<- 0 me.count)))
-      `(,i ,(me i))))
+      (_ i (me i))))
   (to (_ .get key default)
     (hm (unless (count? key) default)
         (if (<= me.count key) default)
@@ -821,7 +821,7 @@
           (let old-vals vals.^)
           (keys .^= (array<-count new-capacity none))
           (vals .^= (array<-count new-capacity))
-          (for each! ((`(,i ,key) old-keys.items))
+          (for each! (((_ i key) old-keys.items))
             (unless (or (= key none) (= key deleted))
               (let {missing-at j} (place key))
               (keys.^ .set! j key)
@@ -857,7 +857,7 @@
             (let ks keys.^)
             (let vs vals.^)
             (for each ((i (occupants)))
-              `(,(ks i) ,(vs i))))
+              (_ (ks i) (vs i))))
           (to (_ .get-set! key value<-)
             (may (place key)
               (be {at i}
@@ -912,14 +912,14 @@
     (m .set! k v))
   m)
 
+(let map<-items map<-list)
+(let map<-zip map<-list)
+
 (to (map<-lists lists)
   (let m (map<-))
   (for each! ((`(,k ,v) lists))
     (m .set! k v))
   m)
-
-(let map<-items map<-lists)
-(let map<-zip map<-list)
 
 ;; Sets via hashtable
 ;; TODO unify with hashmaps
@@ -1202,7 +1202,7 @@
         '()
         (make enumeration {extending list-trait}
           (to _.none? #no)
-          (to _.first `(,i ,xs.first))
+          (to _.first (_ i xs.first))
           (to _.rest  (enumerate xs.rest i.+))))))
 
 (to (array<- @elements)

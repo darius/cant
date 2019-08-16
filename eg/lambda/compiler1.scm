@@ -63,7 +63,7 @@
       ))
 
   (to (interpret prelude {module builtins}) ;TODO rename
-    (let scope (module-scope<- (map<-lists (for each ((`(,k ,v) builtins.items))
+    (let scope (module-scope<- (map<-lists (for each (((_ k v) builtins.items))
                                         `(,k ,{const v})))))
     ((fill (exp-parse prelude)) .gen scope (prepend {return} nil-seq)))
 

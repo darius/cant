@@ -16,7 +16,7 @@
 
 (for each! ((registers possible-registers.values))
   ;; TODO use an .update! method along with registers.inverse
-  (for each! ((`(,num ,name) registers.items))
+  (for each! (((_ num name) registers.items))
     (surely (not (register-number .maps? name)))
     (register-number .set! name num)))
 

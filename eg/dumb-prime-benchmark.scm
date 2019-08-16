@@ -25,5 +25,5 @@
                     (L20 a p.+))))))))
 
 (when #no
-  (for each! ((`(,i ,fi) f.items))
+  (for each! (((_ i fi) f.items))
     (format "~3w ~w\n" i fi)))

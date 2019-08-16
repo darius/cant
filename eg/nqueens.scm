@@ -57,7 +57,7 @@
 ;; has its given value.
 (to (match-env env)                 ;TODO move this to bdd.scm?
   (for foldl ((tree lit1)
-              (`(,var ,value) (sort env.items {reverse})))
+              ((_ var value) (sort env.items {reverse})))
     (if value
         (build-choice var lit0 tree)
         (build-choice var tree lit0))))
