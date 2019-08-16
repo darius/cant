@@ -23,11 +23,11 @@
       (may (property @inputs)
         (be #yes    (display "."))
         (be outcome (display "X")
-                    (failures .push! `(,outcome ,inputs)))))
+                    (failures .push! (_ outcome inputs)))))
     (newline)
     (when failures.some?
       (format "Failures for ~w:\n" property)
-      (for each! ((`(,outcome ,inputs) failures))
+      (for each! (((_ outcome inputs) failures))
         (format "~w: ~w\n" outcome inputs)))
     failures.none?))
 
