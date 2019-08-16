@@ -26,7 +26,9 @@ In the longer term I'd like to support a Smalltalky programming
 environment. This goal motivated the incredibly slow initial
 implementation strategy, where the interpreter internals always appear
 as meta-objects with no optimization, and even primitive objects
-execute via high-level scripts.
+execute via high-level scripts. This same general goal also suggests
+work on metaprogramming, reflection, and such, but I've barely started
+thinking about it.
 
 Another feature which I'm not claiming is great is the bikeshedding of
 the names of everything without regard to familiarity. I think the
