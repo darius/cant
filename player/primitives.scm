@@ -170,7 +170,8 @@
     (sleep (make-time 'time-duration n (quotient nsec 1000000000)))))
 
 (define (prim-*/mod n1 n2 d)
-  (call-with-values (lambda () (div-and-mod (* n1 n2) d)) list))
+  (call-with-values (lambda () (div-and-mod (* n1 n2) d))
+    (lambda (d m) (make-term '_ (list d m)))))
 
 (define (prim-string-maps? me i)
   (and (integer? i)

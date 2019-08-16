@@ -13,7 +13,7 @@
   (let state (box<- seed))
 
   (to (next)
-    (let `(,_ ,r) (state.^ .*/mod 16807 D))
+    (let (_ _ r) (state.^ .*/mod 16807 D))
     (state .^= r)
     r)
 

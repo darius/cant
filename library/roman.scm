@@ -16,7 +16,7 @@
                         "XLCDM")))
 
 (to (roman<-int n)
-  (let `(,tens ,ones) (n ./mod 10))
+  (let (_ tens ones) (n ./mod 10))
   (chain (may tens
            (be 0 "")
            (else (times-X (roman<-int tens))))
