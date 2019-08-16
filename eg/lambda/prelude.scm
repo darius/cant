@@ -28,7 +28,7 @@
     {module
      (map<- (_ 'make-church<-claim {primitive make-church<-claim})
 
-            (_ 'add1 {primitive (-> (+ it 1))})
+            (_ 'add1 {primitive _.+})
             (_ 'make-church<-count {primitive make-church<-count})
 
             (_ 'cant-link {primitive (on (h)
