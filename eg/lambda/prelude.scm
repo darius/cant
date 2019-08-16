@@ -14,7 +14,7 @@
        {primitive (let counting
                     (given
                       (be 0            lc-zero)
-                      (be (? count? n) (apply lc-succ (counting (- n 1))))))})})
+                      (be (? count? n) (apply lc-succ (counting n.-)))))})})
 
   (to (make-church<-list lc-nil)
     {primitive
