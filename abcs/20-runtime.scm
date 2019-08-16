@@ -906,14 +906,13 @@
         m)
       )))
 
-(to (map<-list tuples)
+(to (map<-items tuples)
   (let m (map<-))
   (for each! (((_ k v) tuples))
     (m .set! k v))
   m)
 
-(let map<-items map<-list)
-(let map<-zip map<-list)
+(let map<-zip map<-items)
 
 (to (map<-lists lists)
   (let m (map<-))

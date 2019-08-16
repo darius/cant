@@ -37,12 +37,12 @@
     (and (ok? x) i)))
 
 (to (map-by f keys) ;TODO maybe name it map<-keys ? along with a map<-values ?
-  (map<-list (for each ((key keys))
-               (_ key (f key)))))
+  (map<-items (for each ((key keys))
+                (_ key (f key)))))
 
 (to (map<-values f values)
-  (map<-list (for each ((value values))
-               (_ (f value) value))))
+  (map<-items (for each ((value values))
+                (_ (f value) value))))
 
 ;; What's a good name for this? I like 'cartesian*' even less.
 (to (grid* xs ys)                     ;TODO generalize
