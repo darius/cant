@@ -91,7 +91,7 @@
       (point .^= 0))
 
     (to _.go-to-end
-      (point .^= (- code.count 1)))
+      (point .^= code.count.-))
 
     (to (_ .shift-by offset)
       (shift-by offset))

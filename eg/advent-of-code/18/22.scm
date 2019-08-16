@@ -21,8 +21,8 @@
              (be '(0 0)     0)
              (be `(,x 0)    (* x 16807))
              (be `(0 ,y)    (* y 48271))
-             (be `(,x ,y)   (* (erosion-level<- `(,(- x 1) ,y))
-                               (erosion-level<- `(,x ,(- y 1))))))))
+             (be `(,x ,y)   (* (erosion-level<- `(,x.- ,y))
+                               (erosion-level<- `(,x ,y.-)))))))
 
 (to (erosion-level<- p)
   ((+ (geologic-index<- p) depth) .modulo 20183))

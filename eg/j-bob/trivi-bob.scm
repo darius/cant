@@ -340,12 +340,12 @@
     (be (? nat?) (may e1 (be {call f args} {call f (set-arg args dir e2)})))))
 
 (to (get-arg args n)
-  (args (- n 1)))
+  (args n.-))
 
 (to (set-arg args n e)
   (if (= n 1)
       (link e args.rest)
-      (link args.first (set-arg args.rest (- n 1) e))))
+      (link args.first (set-arg args.rest n.- e))))
 
 
 ;; Check okayness of a path.
