@@ -65,7 +65,7 @@
      "\n\n"]))
 
 (let tiles
-  (map<- `((   0                                      "  . ")
+  (map<-lists `((   0                                      "  . ")
            (   2 ,(on-blue (white                     "  2 ")))
            (   4 ,(on-red (black                      "  4 ")))
            (   8 ,(white (on-magenta                  "  8 ")))

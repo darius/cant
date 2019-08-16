@@ -21,7 +21,7 @@
 (to (random-encrypt rng text)
   (let values (hey (array<-list alphabet)
                    (-> (rng .shuffle! it))))
-  (let code (map<- (zip alphabet values)))
+  (let code (map<-zip (zip alphabet values)))
   (string<-list (for each ((ch text.lowercase))
                   (code .get ch ch))))
 

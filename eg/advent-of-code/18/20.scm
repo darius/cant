@@ -16,9 +16,9 @@ f:    g*     :Seq.
 g:    dir | '(' e ')'.
 dir:  {'N' | 'S' | 'E' | 'W'} :Dir.
 "))
-(let semantics (grammar (map<- `((Alt ,(feed alt<-))
-                                 (Seq ,(feed seq<-))
-                                 (Dir ,(feed dir<-))))))
+(let semantics (grammar (map<- (_ 'Alt (feed alt<-))
+                               (_ 'Seq (feed seq<-))
+                               (_ 'Dir (feed dir<-)))))
 (let parse-main (semantics 'main))
 (to (parse string)
   (_.result (parson-parse parse-main string)))
@@ -52,7 +52,7 @@ dir:  {'N' | 'S' | 'E' | 'W'} :Dir.
 
   (to (really-visit-seq p d es)
     (if es.none?
-        (map<- `((,p ,d)))
+        (map<- (_ p d))
         (do (let map1 (visit p d es.first))
             (merge-best (for each ((`(,p1 ,d1) map1.items))
                           (visit-seq p1 d1 es.rest))))))
@@ -84,10 +84,10 @@ dir:  {'N' | 'S' | 'E' | 'W'} :Dir.
                        (be v1 (min v1 v2)))))
   result)
 
-(let step (map<- '((#\N (0 -1))
-                   (#\S (0  1))
-                   (#\E (1  0))
-                   (#\W (-1 0)))))
+(let step (map<-lists '((#\N (0 -1))
+                        (#\S (0  1))
+                        (#\E (1  0))
+                        (#\W (-1 0)))))
 
 (to (test str)
   (format "~w...: " (str .slice 0 40))

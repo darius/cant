@@ -50,8 +50,8 @@
 
 ;; Make a transit function from a list of (state mark actions next-state)
 (to (transit<- entries)
-  (map<- (for each ((`(,state ,mark ,acts ,next-state) entries))
-           `(,(_ state mark) ,(_ acts next-state)))))
+  (map<-lists (for each ((`(,state ,mark ,acts ,next-state) entries))
+                `(,(_ state mark) ,(_ acts next-state)))))
 
 
 ;; Examples

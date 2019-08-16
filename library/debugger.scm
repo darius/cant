@@ -8,7 +8,7 @@
             short full text)))
 
 (to (collect-abbrevs vocab)
-  (map<- (for each ((`(,short ,full ,_) vocab))
+  (map<-lists (for each ((`(,short ,full ,_) vocab))
            `(,short ,full))))
 
 ;; TODO unify with inspect-continuation

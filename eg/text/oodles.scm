@@ -29,7 +29,7 @@ word:   :letter+ {'!'}? :join.
       token))
 
 (let menu
-  (map<-
+  (map<-lists
    '(("tomatoes" "tomatoes on macaroni (and tomatoes only), exquisitely spiced")
      ("macaroni" "macaroni and cheese (a repast of Naples, Italy)")
      ("repast" "rather extraordinary pasta and sauce, typical")

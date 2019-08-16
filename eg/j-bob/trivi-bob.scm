@@ -204,7 +204,7 @@
 ;; Substitute vars -> args in an expression.
 
 (to (sub-e vars args e)
-  (let subst (map<- (zip vars args)))
+  (let subst (map<-zip (zip vars args)))
   (begin subbing ((e e))
     (may e
       (be {constant _}    e)

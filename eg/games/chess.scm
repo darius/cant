@@ -58,8 +58,8 @@
                                                    depth.-)))))))))
 
 (let piece-values
-  (map<- '((#\space 0)
-           (#\-     0))))
+  (map<- (_ #\space 0)
+         (_ #\-     0)))
 (for each! ((p "pnbrqk")
             (v '(10 31 33 50 90 10000)))
   (piece-values .set! p.lowercase v)
@@ -323,10 +323,10 @@
 
 (to (main<-rng rng)
   (let strategy-names
-    (map<- `(("human"   ,human-player)
-             ("greedy"  ,greedy-player)
-             ("random"  ,(random-player<- rng))
-             ("minimax" ,(minimax-player<- 2)))))
+    (map<- (_ "human"   human-player)
+           (_ "greedy"  greedy-player)
+           (_ "random"  (random-player<- rng))
+           (_ "minimax" (minimax-player<- 2))))
   (main<- strategy-names))
   
 (export main<-rng)

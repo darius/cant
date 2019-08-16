@@ -61,7 +61,7 @@
       (error "Missing value" value))
     key)
   (to _.copy
-    (map<- map.items))
+    (map<-items map.items))
   (to (_ .intersects? map2)
     ;; TODO: maybe iterate over the one with smaller .count ?
     (for some ((k map.keys))
@@ -760,7 +760,7 @@
 ;; Hash-maps
 ;; This is defined in the runtime, here, because the form
 ;; (export foo bar) gets expanded into code like
-;;   (map<- `((foo ,foo) (bar ,bar))) 
+;;   (map<- (_ 'foo foo) (_ 'bar bar))
 ;; (but hygienic, when I get to fixing the current bad hygiene).
 
 ;; TODO:
@@ -888,7 +888,7 @@
             (keys .^= [none])
             (vals .^= [#no]))
           (to _.copy
-            (map<- map.items))
+            (map<-items map.items))
           (to (_ .update key f)         ;TODO define in a mutable-map-trait ?
             (let value (f (map key)))  ;TODO what about a (map .get key) version? how to factor this?
             (map .set! key value)
@@ -899,11 +899,27 @@
             (sink .display ")>"))
           ))
 
-      (to (_ a-list) ;TODO invent a concise constructor; frozen by default
+      (to (_ @pairs)
         (let m (map<-))
-        (for each! ((`(,k ,v) a-list))
+        (for each! (((_ k v) pairs))
           (m .set! k v))
-        m))))
+        m)
+      )))
+
+(to (map<-list tuples)
+  (let m (map<-))
+  (for each! (((_ k v) tuples))
+    (m .set! k v))
+  m)
+
+(to (map<-lists lists)
+  (let m (map<-))
+  (for each! ((`(,k ,v) lists))
+    (m .set! k v))
+  m)
+
+(let map<-items map<-lists)
+(let map<-zip map<-lists)
 
 ;; Sets via hashtable
 ;; TODO unify with hashmaps

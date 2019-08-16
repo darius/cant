@@ -26,11 +26,11 @@
            (r .slice count)}))
 
 (let dictionary
-  (map<- `((+ ,(stack-op-2-1<- +))
-           (- ,(stack-op-2-1<- -))
-           (* ,(stack-op-2-1<- *))
-           (/ ,(stack-op-2-1<- /))
-           )))
+  (map<- (_ '+ (stack-op-2-1<- +))
+         (_ '- (stack-op-2-1<- -))
+         (_ '* (stack-op-2-1<- *))
+         (_ '/ (stack-op-2-1<- /))
+         ))
 
 (to (compile tokens)
   (let code (flexarray<-))

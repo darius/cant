@@ -1,7 +1,7 @@
 ;; Roman numerals
 
 (let values
-  (map<- '((#\M 1000) (#\D 500) (#\C 100) (#\L 50) (#\X 10) (#\V 5) (#\I 1))))
+  (map<-lists '((#\M 1000) (#\D 500) (#\C 100) (#\L 50) (#\X 10) (#\V 5) (#\I 1))))
 
 ;; TODO: expose as a parson grammar, too?
 (to (int<-roman str)
@@ -12,8 +12,8 @@
   total)
 
 (let digits (" I II III IV V VI VII VIII IX" .split " "))
-(let places (map<- (zip "IVXLC"
-                        "XLCDM")))
+(let places (map<-zip (zip "IVXLC"
+                           "XLCDM")))
 
 (to (roman<-int n)
   (let (_ tens ones) (n ./mod 10))

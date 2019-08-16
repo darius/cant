@@ -455,9 +455,9 @@
               ((__ . names)
                (insist (all symbol? names) "bad syntax" names)
                `(map<-  ;; XXX unhygienic; was `',the-map<- but that
-                        ;; requires importing from player.scm
-                 (',list ,@(map (lambda (name) `(',list ',name ,name))
-                                 names))))))
+                            ;; requires importing from player.scm
+                 ,@(map (lambda (name) `(_ ',name ,name))
+                        names)))))
     ('quasiquote (mlambda
                   ((__ q) (expand-quasiquote q))))
     (__ #f)))

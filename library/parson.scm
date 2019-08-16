@@ -167,24 +167,24 @@
     rules))
 
 (let default-subs
-  (map<- `((skip ,skip-any-1)
-           (anyone ,any-1)            ;XXX all these should probably skip instead of capture
-           (letter ,(take-1 _.letter?))
-           (digit ,(take-1 _.digit?))
-           (end ,end)
-           (hug ,hug)
-           (join ,(feed chain))
-           (drop ,drop)
-           (whitespace ,(skip-1 _.whitespace?))
-           (nat ,(seclude                                        ;TODO rename
+  (map<- (_ 'skip skip-any-1)
+         (_ 'anyone any-1) ;XXX all these should probably skip instead of capture
+         (_ 'letter (take-1 _.letter?))
+         (_ 'digit (take-1 _.digit?))
+         (_ 'end end)
+         (_ 'hug hug)
+         (_ 'join (feed chain))
+         (_ 'drop drop)
+         (_ 'whitespace (skip-1 _.whitespace?))
+         (_ 'nat (seclude                                        ;TODO rename
                   (then (capture (at-least-1 (skip-1 _.digit?))) ;; TODO no leading 0s
                         (feed number<-string))))
-           (int ,(seclude
+         (_ 'int (seclude
                   (then (capture (then (maybe (lit-1 #\-))
                                        (at-least-1 (skip-1 _.digit?))));; TODO no leading 0s
                         (feed number<-string))))
-           ;; TODO: more
-           )))
+         ;; TODO: more
+         ))
 
 (make default-builder
   (to (_ .literal string) (lit string))

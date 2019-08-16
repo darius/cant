@@ -55,9 +55,9 @@
              (not ch.whitespace?))))
 
 (to (map<-lines lines)
-  (map<- (for gather ((`(,row ,line) lines.items))
-           (for each ((`(,col ,ch) line.items))
-             `((,col ,(- row)) ,ch))))) ; minus so y-coordinates increase upwards
+  (map<-lists (for gather ((`(,row ,line) lines.items))
+                (for each ((`(,col ,ch) line.items))
+                  `((,col ,(- row)) ,ch))))) ; minus so y-coordinates increase upwards
 
 (let r-pentomino (paint '(" **"
                           "** "

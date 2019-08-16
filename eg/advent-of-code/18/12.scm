@@ -13,7 +13,7 @@
 (display "\nPart 1\n")
 
 (let rules
-  (_.range (for where ((outcome (map<- inputs)))
+  (_.range (for where ((outcome (map<-lists inputs)))
              (= outcome "#"))))
 
 (to (state<-lineup lineup)
