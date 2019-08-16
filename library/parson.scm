@@ -7,7 +7,6 @@
   fail empty end skip-1 take-1 any-1 skip-any-1 lit-1 lit drop
   parse)
 
-(let hug (feed-list itself))
 
 ;; {lifted refs f} is a 'lifted' parser.
 ;;   - refs: A set of symbols, the names of grammar rules used by this parser.
@@ -49,6 +48,11 @@
 (to (unquote<- name)
   {lifted (set<-)
           (on (_ _ subs) (subs name))})
+
+
+;; The grammar for Parson grammars
+
+(let hug (feed-list itself))
 
 (to (push-lit<- string)
   (constant<- (push string)))
@@ -137,6 +141,9 @@
 (let parson-grammar
   (then __ (at-least-1 rule) end))
 
+
+;; Semantics of Parson grammars
+
 (make none)
 
 (to (union-map<- map backup)
@@ -206,6 +213,9 @@
 
   skeletons)
 
+
+;; TODO move to actual tests
+
 (when #no
   (let text "
 r: 'yo' z.
@@ -217,5 +227,6 @@ t: .
   (let skeletons (parse-grammar text))
   (for each! ((`(,name ,{lifted refs _}) skeletons))
     (format "~d: ~w\n" name refs)))
+
 
 (export grammar<- parse feed push)
