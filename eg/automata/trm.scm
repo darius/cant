@@ -18,7 +18,7 @@ insn:    {'1'+} {'#' '#'? '#'? '#'? '#'?} :make_insn.
 "))
 
 (to (insn<- ones hashes)
-  `(,(insn-table hashes.count) ,ones.count))
+  {insn (insn-table hashes.count) ones.count})
 
 (let parser
   ((grammar (map<- `((make_insn ,(feed insn<-)))))
@@ -33,7 +33,7 @@ insn:    {'1'+} {'#' '#'? '#'? '#'? '#'?} :make_insn.
       (when loud?
         (show insns pc regs)
         (newline))
-      (let `(,fn ,n) (insns pc))
+      (let {insn fn n} (insns pc))
       (let d (fn n regs))
       (surely (not= d 0))
       (stepping (+ pc d))))
@@ -76,7 +76,7 @@ insn:    {'1'+} {'#' '#'? '#'? '#'? '#'?} :make_insn.
   (let pc   (or ?pc   0))
   (let regs (or ?regs (regs<-)))
   (let left
-    (for each ((`(,addr (,fn ,n)) insns.items))
+    (for each ((`(,addr ,{insn fn n}) insns.items))
       (let show-addr (if (= addr pc)
                          "   "
                          ("~3w" .format (abs (- pc addr)))))

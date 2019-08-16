@@ -13,14 +13,14 @@
       (may (unaries .get op)
         (be #no
           ("~w(~d)" .format op (fmt x 0)))
-        (be `(,prefix ,postfix)
+        (be {unary prefix postfix}
           (hm (if prefix  (enclose prefix p ("~w~d" .format op (fmt x prefix))))
               (if postfix (enclose prefix p ("~d~w" .format (fmt x prefix) op)))))))
     (be `(,op ,x ,y)
       (may (binaries .get op)
         (be #no
           ("~w(~d, ~d)" .format op (fmt x 0) (fmt y 0)))
-        (be `(,left ,right)
+        (be {binary left right}
           (enclose left p
                    ("~d ~w ~d" .format (fmt x left) op (fmt y right))))))))
 
@@ -32,10 +32,10 @@
 (let unaries (map<-))
 (let binaries (map<-))
 
-(to (def-prefix name p)  (unaries .set! name `(,p #no)))
-(to (def-postfix name p) (unaries .set! name `(#no ,p)))
+(to (def-prefix name p)  (unaries .set! name {unary p #no}))
+(to (def-postfix name p) (unaries .set! name {unary #no p}))
 
-(to (def-infix name p)   (binaries .set! name `(,p ,p.+)))
+(to (def-infix name p)   (binaries .set! name {binary p p.+}))
 
 (def-prefix '- 100)                     ;XXX dunno
 
@@ -43,7 +43,7 @@
 (def-infix '- 10)
 (def-infix '* 20)
 (def-infix '/ 20)
-(binaries .set! '^ '(30 30))   ; right-to-left associativity (is this correct?)
+(binaries .set! '^ {binary 30 30})   ; right-to-left associativity (is this correct?)
 
 ;; smoke test
 

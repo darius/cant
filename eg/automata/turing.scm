@@ -1,7 +1,7 @@
 ;; Turing machine interpreter
 
 ;; mark = value that can appear in a tape square.
-;; transit = map from `(,state ,mark) to `(,acts ,state).
+;; transit = map from (_ state mark) to (_ acts state).
 ;; act = '< | '> | mark
 ;;   (< = step left, > = right)
 
@@ -24,16 +24,16 @@
 (to (show-config {machine transit state {tape L h R}})
   (to (show-squares squares)
     (" " .join (each (-> ("~w" .format it)) squares)))
-  (let next-acts (may (transit .get `(,state ,h))
-                   (be #no         '())
-                   (be `(,acts ,_) acts)))
+  (let next-acts (may (transit .get (_ state h))
+                   (be #no        '())
+                   (be (_ acts _) acts)))
 
   (let before (show-squares (reverse L)))
   (format "~d ~d ~d\n" before (show-squares `(,h)) (show-squares R))
   (format "~d ~w ~w\n" (" " .repeat before.count) state next-acts))
 
 (to (step {machine transit state (and tape {tape _ head _})})
-  (for mayhap ((`(,acts ,next-state) (transit .get `(,state ,head))))
+  (for mayhap (((_ acts next-state) (transit .get (_ state head))))
     {machine transit next-state (foldl perform tape acts)}))
 
 (to (perform {tape L h R} act)
@@ -51,7 +51,7 @@
 ;; Make a transit function from a list of (state mark actions next-state)
 (to (transit<- entries)
   (map<- (for each ((`(,state ,mark ,acts ,next-state) entries))
-           `((,state ,mark) (,acts ,next-state)))))
+           `(,(_ state mark) ,(_ acts next-state)))))
 
 
 ;; Examples
