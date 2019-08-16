@@ -919,7 +919,7 @@
   m)
 
 (let map<-items map<-lists)
-(let map<-zip map<-lists)
+(let map<-zip map<-list)
 
 ;; Sets via hashtable
 ;; TODO unify with hashmaps
@@ -1093,10 +1093,11 @@
     (begin zipping ((xs xs) (ys ys))
       (hm (if xs.none? (if ys.none? '() (mismatch)))
           (if ys.none? (mismatch))
-          (else `((,xs.first ,ys.first)
-                  ,@(zipping xs.rest ys.rest))))))
+          (else (link (_ xs.first ys.first)
+                      (zipping xs.rest ys.rest))))))
   (to (_ @lists)
-    (transpose lists)))
+    (for each ((row (transpose lists)))
+      (term<- '_ row))))
 
 ;; TODO: name it (zip @rows) instead, like Python?
 (to (transpose rows)

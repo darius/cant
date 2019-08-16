@@ -551,7 +551,8 @@
           (be #yes clause))))))
 
 (to (match-pats r map ps vals)
-  (for every ((`(,p ,val) (zip ps vals))) ;TODO ensure left-to-right order
+  ;; TODO n-arg every
+  (for every (((_ p val) (zip ps vals))) ;TODO ensure left-to-right order
     (match-pat r map p val)))
 
 (to (match-pat r map p val)

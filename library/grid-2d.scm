@@ -65,7 +65,7 @@
       A.count)
 
     (to _.items
-      (zip grid-2d.keys A.values))
+      (each (on ((_ k v)) `(,k ,v)) (zip grid-2d.keys A.values)) ;; XXX temp 
     (to _.keys
       ;; Could be a one-liner: (grid* (xl .to xh) (yl .to yh))
       ;; except that'd be column-major order. Hm, hm.

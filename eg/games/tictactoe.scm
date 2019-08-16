@@ -184,9 +184,9 @@
                                     (reverse (player-bits q))
                                     spaces)))
                 (may slot
-                  (be `(1 0 ,_) (marks 0))
-                  (be `(0 1 ,_) (marks 1))
-                  (be `(0 0 ,s) s))))
+                  (be (_ 1 0 _) (marks 0))
+                  (be (_ 0 1 _) (marks 1))
+                  (be (_ 0 0 s) s))))
   (grid-format .format @values))
 
 (let grid-format ("\n" .join ('(" ~d ~d ~d") .repeat 3)))
