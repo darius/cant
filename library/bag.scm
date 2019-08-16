@@ -1,7 +1,7 @@
 ;; A bag is a multiset, i.e. a map from a key to a count of its occurrences.
 
 (make bag<-
-  (to '()
+  (to (_)
     (let map (map<-))
     (make bag {extending map-trait} ;; XXX make sure map-trait methods are OK
       (to _.none?              map.none?)

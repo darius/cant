@@ -64,7 +64,12 @@
 (define (parse-e e ctx)
   (cond
     ((and (pair? e) (look-up-macro (car e)))
-     => (lambda (expand) (parse-e (expand e) ctx)))
+     => (lambda (expand)
+          (let ((new (expand e)))
+;            (write `(old ,e)) (newline)
+;            (write `(new ,new)) (newline)
+;            (newline)
+            (parse-e new ctx))))
     (else
      (mcase e
        ((: __ symbol?)
@@ -114,14 +119,7 @@
     (((: cue cue?) . operands)
      (parse-term-e cue operands ctx))
     (operands
-;;     (parse-term-e '_ operands ctx))))
-        ;; XXX The following is not an acceptable meaning for (_ x y z) because
-        ;;  if message = (_ 'x) then (message 0) currently would evaluate to 'x
-        ;;  which doesn't match the behavior of other message objects like _.count.
-        ;;  But I'm using it for the interim until we migrate away from lists as messages.
-     (if (has-spread-operator? operands)
-         (parse-e `(',list* ,@(remove-spread-operator operands)) ctx)
-         (pack<- e-list (parse-es operands ctx))))))
+     (parse-term-e '_ operands ctx))))
 
 (define (parse-term-e tag operands ctx)
   (if (has-spread-operator? operands)
@@ -184,6 +182,7 @@
        ((: __ term?)
         (parse-term-pat p ctx))
        ((: __ vector?)
+        ;; TODO optimize if no spread op
         ;; N.B. the spread operator (like [a b @cs] still binds cs to
         ;;  a *list*, not an array. I guess that's surprising? I'm not
         ;;  sure it's bad.
@@ -200,8 +199,7 @@
     (((: cue cue?) . operands)
      (parse-term-pat (make-term cue operands) ctx))
     (ps
-     ;; XXX see the comment above about the ('_ . operands) expression form
-     (parse-list-pat ps ctx))))
+     (parse-term-pat (make-term '_ ps) ctx))))
 
 (define (maybe-vector->list x)
   (and (vector? x) (vector->list x)))
@@ -372,7 +370,7 @@
                   ,@(map (mlambda
                           (('be pat . body)
                            `(to (_ ,pat) ,@body))
-                          (('else . body)
+                          (('else . body) ;TODO check that it's the last clause
                            `(to (_ _) ,@body))
                           (clause
                            (error 'parse "Bad clause: 'be' or 'else' missing" clause)))
@@ -449,7 +447,7 @@
               ((__ m . names)
                (insist (all symbol? names) "bad syntax" names)
                (let ((map-var (gensym)))
-                 `(let (list<- ,@names)
+                 `(let (list<- ,@names) ;TODO use a tuple instead
                     (hide (let ,map-var ,m)
                           (',list ,@(map (lambda (name) `(,map-var ',name))
                                          names))))))))

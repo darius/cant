@@ -13,7 +13,9 @@
 ;; The Cant interpreter and global environment.
 
 (define (listener . opt-args)
-  (cant-interpret `(call listener ',opt-args)))
+  ;; TODO nicer way to call it to start
+  (let ((e `(listener ,@(map (lambda (arg) `',arg) opt-args))))
+    (cant-interpret e)))
 
 (run-load "abcs/21-sequels.scm")
 (run-load "abcs/30-functions.scm")

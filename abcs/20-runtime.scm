@@ -625,10 +625,6 @@
 
 
 
-;; I lied, we actually are able to call the following function within
-;; this file, once it's defined. This'll help us keep some local
-;; definitions private. TODO use tuples instead. TODO make sure I
-;; understand why this works.
 (to (list<- @arguments)
   arguments)
 
@@ -693,7 +689,7 @@
 ;; This is just to make debugging less painful till then.
 ;; TODO might as well make these into methods of the above, now.
 
-(let (list<- unparse-exp unparse-pat unparse-clause)
+(let (_ unparse-exp unparse-pat unparse-clause)
   (hide
 
     (to (unparse-exp e)
@@ -714,7 +710,7 @@
               `(,(unparse-exp e1) ,@(each unparse-exp operands)))
             (be {term (? cue? cue) operands}
               `(,(unparse-exp e1) ,cue ,@(each unparse-exp operands)))
-            (else
+            (else                       ;TODO shorthand for tuples
               `(call ,(unparse-exp e1) ,(unparse-exp e2)))))
         (be {term tag es}
           (term<- tag (each unparse-exp es)))
@@ -758,7 +754,7 @@
         (be {view-pat e p}
           `(<view-pat> ,(unparse-exp e) ,(unparse-pat p)))))
 
-    (list<- unparse-exp unparse-pat unparse-clause)))
+    (_ unparse-exp unparse-pat unparse-clause)))
 
 
 ;; Hash-maps
@@ -789,7 +785,7 @@
 
     (make map<-
 
-      (to '()
+      (to (_)
         (let count (box<- 0))
         (let keys  (box<- [none]))  ;; size a power of 2
         (let vals  (box<- [#no]))   ;; same size

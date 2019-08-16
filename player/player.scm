@@ -11,27 +11,30 @@
   (player primitives)
   )
 
-;; (define (set-dbg! debug?)
-;;   (set! dbg (if debug? pp (lambda (x) #f))))
+;(define (set-dbg! debug?)
+;  (set! dbg (if debug? pp (lambda (x) #f))))
 
-;; (define (dbg x)
-;; ;  (pp x))
-;;  #f)
+;(define (dbg x)
+;  (pp x))
+;  (report x)
+; #f)
 
 
-;; Argument tuples are, at the moment, lists.
-;; Pretty soon they'll be terms.
+;; Argument tuples used to be lists, now they're terms.
 
 (define (tuple? x)
-  (or (pair? x) (null? x)))
+  (and (term? x) (eq? (term-tag x) '_)))
 
 (define (tuple<- . xs)
-  xs)
+  (make-term '_ xs))
 
-(define null-tuple '())
+(define null-tuple
+  (make-term '_ '()))
 
 (define (list<-tuple tuple)
-  tuple)
+  ;;TODO drop insist if expensive -- should be redundant
+  (insist (tuple? tuple) "Expected a tuple" tuple)
+  (term-parts tuple))
 
 
 ;; Bootstrap prereqs
@@ -181,6 +184,7 @@
                    (with-exception-handler
                     (lambda (exc)
                       (scheme-cont
+                       (display "XXX scheme exc\n")
                        (if (condition? exc)
                            (let ((plaint
                                   (with-output-to-string
@@ -398,7 +402,7 @@
                               (evaluate-exp e r k))))))
 
 (define (evaluate e r)
-;  (report `(evaluate ,e))
+;;  (report `(evaluate ,e))
   (evaluate-exp e r halt-cont))
 
 (define (evaluate-exp e r k)
@@ -417,7 +421,7 @@
     (ev-exp elaborated r k)))
 
 (define (ev-exp e r k)
-;  (dbg `(ev-exp)) ; ,e))
+;;  (dbg `(ev-exp ,(pack-tag e))) ; ,e))
   ((vector-ref methods/ev-exp (pack-tag e))
    e r k))
 
