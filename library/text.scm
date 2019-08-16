@@ -44,7 +44,7 @@
   (to (clip-range p span)
     (let q (clip p))
     (let h (clip (+ q (max 0 span))))
-    `(,q ,(- h q)))
+    {range q (- h q)})
 
   ;; Pre: p is in [0..size).
   (to (get-char-after p)
@@ -52,7 +52,7 @@
 
   ;; Return the `span` characters after `p0` as a string.
   (to (get p0 span0)
-    (let `(,p ,span) (clip-range p0 span0))
+    (let {range p span} (clip-range p0 span0))
     (string<-list (each get-char-after (p .span span))))
 
   ;; Return the position after the character in the text that is in
@@ -104,7 +104,7 @@
   ;; Replace the `span` characters after `p` by `replacement`.
   ;; TODO this code is hard to follow
   (to (replace p0 span0 replacement)
-    (let `(,p ,span) (clip-range p0 span0))
+    (let {range p span} (clip-range p0 span0))
      
     ;; Make position p start the tail.
     (if (<= p head.^)
