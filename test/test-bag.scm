@@ -35,7 +35,7 @@
   (let a (box<- '())) ;; A list of keys seen so far.
   (for each! ((key keys))
     (let m-val (m .get key 0))
-    (let a-val ((for those ((k a.^)) (= k key)) .count))
+    (let a-val (tally-by (-> (= key it)) a.^))
     (surely (= m-val a-val) "mismatch" key m-val a-val)
 
     (m .add! key)
