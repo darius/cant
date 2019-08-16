@@ -72,7 +72,7 @@ Fizz
 
 ### Documentation?
 
-Not yet, but there's an abortive start at
+There's an abortive start at
 [overview.md](https://github.com/darius/cant/blob/master/overview.md).
 
 ### Isn't 'Cant' the [Chevy Nova](https://www.snopes.com/fact-check/chevrolet-nova-name-spanish/) of language names?
