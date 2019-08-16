@@ -9,35 +9,46 @@
 
 (let hug (feed-list itself))
 
+;; {lifted refs f} is a 'lifted' parser.
+;;   - refs: A set of symbols, the names of grammar rules used by this parser.
+;;       This is used to warn about undefined rules before you try to run anything.
+;;       We might also warn about unused rules with this, though currently we don't.
+;;   - f: A function from (_ builder rules subs) to an un-lifted parser.
+;;     - builder: Tells how to turn different kinds of Parson literals into parsers.
+;;     - rules: The map from rule-name to un-lifted parser. It's mutable, to resolve recursion.
+;;     - subs: Substitutions, i.e. the map from symbol to un-lifted parser,
+;;         which is passed in from the client to link this Parson grammar to
+;;         semantic actions and to other grammars.
+
 (to (rule-ref<- name)
-  (list<- (set<- name)
+  {lifted (set<- name)
           (on (_ rules _)
-            (delay (: (rules name))))))
+            (delay (: (rules name))))})
 
 (to (constant<- p)
-  (list<- (set<-)
-          (on (_ _ _) p)))
+  {lifted (set<-)
+          (on (_ _ _) p)})
 
 (to (lift peg-op)
   (feed-list
    (on (lifted)
-     (list<- (union-over (for each ((`(,refs ,_) lifted))
+     {lifted (union-over (for each (({lifted refs _} lifted))
                            refs))
              (on (builder rules subs)
-               (peg-op @(for each ((`(,_ ,f) lifted))
-                          (f builder rules subs))))))))
+               (peg-op @(for each (({lifted _ f} lifted))
+                          (f builder rules subs))))})))
 
 (to (literal<- string)
-  (list<- (set<-)
-          (on (builder _ _) (builder .literal string))))
+  {lifted (set<-)
+          (on (builder _ _) (builder .literal string))})
 
 (to (keyword<- string)
-  (list<- (set<-)
-          (on (builder _ _) (builder .keyword string))))
+  {lifted (set<-)
+          (on (builder _ _) (builder .keyword string))})
 
 (to (unquote<- name)
-  (list<- (set<-)
-          (on (_ _ subs) (subs name))))
+  {lifted (set<-)
+          (on (_ _ subs) (subs name))})
 
 (to (push-lit<- string)
   (constant<- (push string)))
@@ -143,7 +154,7 @@
     (let full-subs (union-map<- subs default-subs))
     (let rules (for map-by ((name (each _.first skeletons)))
                  (delay (: (rules name)))))
-    (for each! ((`(,name (,_ ,f)) skeletons)) ;XXX better name than f
+    (for each! ((`(,name ,{lifted _ f}) skeletons)) ;XXX better name than f
       (let peg (f builder rules full-subs))
       (rules .set! name peg))
     rules))
@@ -187,7 +198,7 @@
   (when duplicates.some?
     (error "Multiply-defined rules" (sort duplicates)))
 
-  (let all-refs (union-over (for each ((`(,_ (,refs ,_)) skeletons))
+  (let all-refs (union-over (for each ((`(,_ ,{lifted refs _}) skeletons))
                               refs)))
   (let undefined (all-refs .difference lhses))
   (when undefined.some?
@@ -204,7 +215,7 @@ s: r.
 t: .
 ")
   (let skeletons (parse-grammar text))
-  (for each! ((`(,name (,refs ,_)) skeletons))
+  (for each! ((`(,name ,{lifted refs _}) skeletons))
     (format "~d: ~w\n" name refs)))
 
 (export grammar<- parse feed push)
