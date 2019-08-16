@@ -48,7 +48,7 @@
     (play grids name 0)))
 
 (let directions (map<-lists `((#\h  left) (#\j up) (#\k  down) (#\l   right)
-                         (left left) (up  up) (down down) (right right))))
+                              (left left) (up  up) (down down) (right right))))
 
 ;; The UI to a sequence of Sokoban levels.
 (to (play grids name level)

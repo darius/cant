@@ -22,7 +22,7 @@
           immune-system.some?)
         (else
           ;; Fight a round.
-          (attacking (map<-lists (chain a1 a2)))
+          (attacking (map<-items (chain a1 a2)))
           (for each! (((_ army groups) armies.items))
             (armies .set! army (those _.alive? groups)))
           
@@ -49,7 +49,7 @@
                        enemy.effective-power
                        enemy.initiative)))
       (when (< 0 (damages j))
-        (result .push! `(,group ,(enemies j)))
+        (result .push! (_ group (enemies j)))
         (enemies .pop! j)
         (enemy-nums .pop! j))))
   result.values)
@@ -78,8 +78,9 @@
   (let n-units (box<- initial-n-units))
   (to (effective-power) (* n-units.^ attack-damage))
   (surely (not (immunities .intersects? weaknesses)))  ; TODO method .disjoint?
-  (let qualities (map<-lists (chain (for each ((immune immunities.keys)) `(,immune immunity))
-                                    (for each ((weak   weaknesses.keys)) `(,weak weakness)))))
+  (let qualities
+    (map<-items (chain (for each ((immune immunities.keys)) (_ immune 'immunity))
+                       (for each ((weak   weaknesses.keys)) (_ weak 'weakness)))))
   (make group
     (to _.count
       n-units.^)
@@ -145,9 +146,9 @@ separator: '\n'.
       (format "Group ~w contains ~w units\n" i.+ group.count))))
 
 (to (part-1)
-  (let armies (map<-lists (for each ((`(,name ,group-makers) matchup))
-                            `(,name ,(for each ((group-maker group-makers))
-                                       (group-maker 0))))))
+  (let armies (map<-items (for each ((`(,name ,group-makers) matchup))
+                            (_ name (for each ((group-maker group-makers))
+                                      (group-maker 0))))))
   (show-count armies)
   (battle armies)
   (sum-by tally armies.values))
@@ -165,12 +166,12 @@ separator: '\n'.
         (bounding high))))
 
 (to (enough-boost? boost)
-  (let armies (map<-lists (for each ((`(,name ,group-makers) matchup))
-                            `(,name ,(do (let my-boost (may name
-                                                         (be "Immune System" boost)
-                                                         (else               0)))
-                                         (for each ((group-maker group-makers))
-                                           (group-maker my-boost)))))))
+  (let armies (map<-items (for each ((`(,name ,group-makers) matchup))
+                            (_ name (do (let my-boost (may name
+                                                        (be "Immune System" boost)
+                                                        (else               0)))
+                                        (for each ((group-maker group-makers))
+                                          (group-maker my-boost)))))))
   (format "Trying immune boost of ~w\n" boost)
   (let win? (battle armies))
   (format "Immune boost of ~w ~d\n" boost (if win? "WORKED!" "failed"))

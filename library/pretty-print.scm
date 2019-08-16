@@ -8,9 +8,9 @@
   (newline))
 
 (let abbrevs (map<-lists '((quote      "'")
-                      (quasiquote "`")
-                      (unquote    ",")
-                      (unquote-splicing ",@"))))
+                           (quasiquote "`")
+                           (unquote    ",")
+                           (unquote-splicing ",@"))))
 
 (to (doc<-sx x)
   (may x

@@ -704,8 +704,8 @@
     ))
 
 (let builtins-map
-  (map<-lists (for each (((_ name value) primitives-from-cant.items))
-           `(,name {primitive ,value}))))
+  (map<-items (for each (((_ name value) primitives-from-cant.items))
+                (_ name {primitive value}))))
 
 (builtins-map .set! 'apply {apply})
 (builtins-map .set! 'eval  {eval})
@@ -716,9 +716,9 @@
   {recursive-env (map<-defs module) (or env global-env)})
 
 (to (map<-defs defs)
-  (map<-lists (for each ((def defs))
-           (may def
-             (be {to name _ _} `(,name ,def))))))
+  (map<-items (for each ((def defs))
+                (may def
+                  (be {to name _ _} (_ name def))))))
 
 ;; Add the prelude to the global environment.
 (let global-env
