@@ -7,13 +7,13 @@ EcmaScript](https://github.com/Agoric/SES) and
 [Monte](https://monte.readthedocs.io/en/latest/). You probably want to
 look at those instead.
 
-## So the message is "buzz off"?
+### So the message is "buzz off"?
 
 Well, no, but I'm changing my mind all the time; even given a usable
 implementation (it's totally not), your own code could rot in
 days. You might at most perhaps enjoy playing around.
 
-## What's so great about this, at least in aspiration?
+### What's so great about this, at least in aspiration?
 
 Re-working the Actors roots of Scheme *could* be neat. 
 
@@ -32,7 +32,7 @@ Another feature which I'm not claiming is great is the bikeshedding of
 the names of everything without regard to familiarity. I think the
 language name gives fair enough warning.
 
-## Example code?
+### Example code?
 
 ```
 $ ./cant       # You need Chez Scheme to run this.
@@ -45,7 +45,7 @@ Hey, world.
 -> 
 ```
 
-## Well, *interesting* example code?
+### Any *interesting* example code?
 
 Dunno, but there are
 [eg/](https://github.com/darius/cant/tree/master/eg) and
@@ -68,18 +68,18 @@ Fizz
 
 ```
 
-## Documentation?
+### Documentation?
 
 Not yet, but there's an abortive start at
 [overview.md](https://github.com/darius/cant/blob/master/overview.md).
 
-## Isn't 'Cant' the [Chevy Nova](https://www.snopes.com/fact-check/chevrolet-nova-name-spanish/) of language names?
+### Isn't 'Cant' the [Chevy Nova](https://www.snopes.com/fact-check/chevrolet-nova-name-spanish/) of language names?
 
 Expressing *inabilities* in code is still underemphasized; I'm just
 fine with a name that calls attention to what you can't do. (Although
 it's only aspirational for now.)
 
-## Thanks
+### Thanks
 
 Of course, this project would not exist without Scheme or E. It's
 pretty likely to get more like E, because so far I've been consulting
