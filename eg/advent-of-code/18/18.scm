@@ -61,12 +61,12 @@
   (count-at x.+ y.+)
 
   (may (grid p)
-    (#\. (if (<= 3 wood.^) #\| #\.))
-    (#\| (if (<= 3 lumber.^) #\# #\|))
-    (#\# (if (and (<= 1 lumber.^)
-                  (<= 1 wood.^))
-             #\#
-             #\.))))
+    (be #\. (if (<= 3 wood.^) #\| #\.))
+    (be #\| (if (<= 3 lumber.^) #\# #\|))
+    (be #\# (if (and (<= 1 lumber.^)
+                     (<= 1 wood.^))
+                #\#
+                #\.))))
 
 (format "~w\n" (part-1))
 
