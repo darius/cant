@@ -34,14 +34,14 @@
       (be `()       "eg/games/microban")
       (be `(,fname) fname)
       (else (error ("Usage: ~d [filename]" .format (args 0))))))
-  (start @(with-input-file read-collection filename)))
+  (call start (with-input-file read-collection filename)))
 
 (to (read-collection source)
   (let name source.read-line)
   (let levels-str source.read-all)
   (let grids (for each ((floor-plan (levels-str .split "\n\n")))
                (sokoban-grid<- (parse floor-plan))))
-  `(,grids ,name))
+  (_ grids name))
 
 (to (start grids name)
   (for cbreak-mode ()
