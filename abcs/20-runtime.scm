@@ -588,7 +588,7 @@
       (sink .write arg))
     (sink .display "}"))
   (to (_ .compare t)
-    (`(,me.tag ,@me.arguments) .compare `(,t.tag ,@t.arguments))) ;XXX untested
+    ((link me.tag me.arguments) .compare (link t.tag t.arguments)))
   )
 
 (make-trait void-primitive me
