@@ -12,8 +12,8 @@
   total)
 
 (let digits (" I II III IV V VI VII VIII IX" .split " "))
-(let places (map<-zip (zip "IVXLC"
-                           "XLCDM")))
+(let places (map<-items (zip "IVXLC"
+                             "XLCDM")))
 
 (to (roman<-int n)
   (let (_ tens ones) (n ./mod 10))

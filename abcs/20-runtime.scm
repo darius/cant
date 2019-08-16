@@ -899,20 +899,19 @@
             (sink .display ")>"))
           ))
 
-      (to (_ @pairs)
+      (to (_ @items)
+;;        (map<-items items))
         (let m (map<-))
-        (for each! (((_ k v) pairs))
+        (for each! (((_ k v) items))
           (m .set! k v))
         m)
       )))
 
-(to (map<-items tuples)
+(to (map<-items items)
   (let m (map<-))
-  (for each! (((_ k v) tuples))
+  (for each! (((_ k v) items))
     (m .set! k v))
   m)
-
-(let map<-zip map<-items)
 
 (to (map<-lists lists)
   (let m (map<-))
