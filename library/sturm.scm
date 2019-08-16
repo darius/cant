@@ -60,12 +60,13 @@
 (let restore-and-show (chain cursor-pos-restore cursor-show))
 (let cr-lf            (chain clear-to-right "\r\n"))
 
-(to (state<- fg bg styles)
-  (make state
-    (to _.reveal            `(,fg ,bg ,styles))
-    (to (_ .set-fg code)    (state<- code bg   styles))
-    (to (_ .set-bg code)    (state<- fg   code styles))
-    (to (_ .add-style code) (state<- fg   bg   (styles .or code)))))
+(make state<-
+  (to (and (_ fg bg styles) tuple)
+    (make state
+      (to _.reveal            tuple)
+      (to (_ .set-fg code)    (state<- code bg   styles))
+      (to (_ .set-bg code)    (state<- fg   code styles))
+      (to (_ .add-style code) (state<- fg   bg   (styles .or code))))))
 
 (let default-state (state<- 39 49 0))
 
@@ -74,7 +75,7 @@
   (let bg     (box<- 49))
   (let styles (box<- 0))
   (to (_ .establish! state)
-    (let `(,want-fg ,want-bg ,want-styles) state.reveal)
+    (let (_ want-fg want-bg want-styles) state.reveal)
     (unless (= styles.^ want-styles)
       (display (sgr 0))
       (fg .^= 39)
