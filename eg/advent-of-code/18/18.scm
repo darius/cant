@@ -7,11 +7,10 @@
 
 (let width input.first.count)
 (let height input.count)
-(let bottom-right `(,(- width 1) ,(- height 1)))
+(let bottom-right (_ width.- height.-))
 
-(let input-grid (grid-2d<- '(0 0)
-                           bottom-right
-                           {map (on (`(,x ,y)) ((input y) x))}))
+(let input-grid (grid-2d<- (_ 0 0) bottom-right
+                           {map (on ((_ x y)) ((input y) x))}))
 
 (to (show grid)
   (grid .show (on (row)
@@ -35,21 +34,19 @@
   (* (bag #\#) (bag #\|)))
 
 (to (step grid)
-  (grid-2d<- '(0 0)
-             bottom-right
-             {map (update grid)}))
+  (grid-2d<- (_ 0 0) bottom-right {map (update grid)}))
 
 (to ((update grid) p)
   ;; Somewhat clumsy code for 'speed'
   (let wood (box<- 0))
   (let lumber (box<- 0))
   (to (count-at x1 y1)
-    (may (grid .get `(,x1 ,y1))
+    (may (grid .get (_ x1 y1))
       (be #\.)
       (be #\| (wood .update _.+))
       (be #\# (lumber .update _.+))
       (else)))
-  (let `(,x ,y) p)
+  (let (_ x y) p)
   (count-at x.- y.-)
   (count-at x   y.-)
   (count-at x.+ y.-)

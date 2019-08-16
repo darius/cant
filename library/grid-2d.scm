@@ -14,7 +14,8 @@
 
 ;; TODO APL/numpy-style ops
 
-(to (grid-2d<- `(,xl ,yl) `(,xh ,yh) initializer)
+;; TODO are inclusive bounds really how you want to express it?
+(to (grid-2d<- (_ xl yl) (_ xh yh) initializer)
   (let x-extent (+ (- xh xl) 1))
   (let y-extent (+ (- yh yl) 1))
   (surely (<= 0 x-extent))
@@ -41,22 +42,22 @@
     (be {map f}
       (for each! ((y (yl .to yh)))
         (for each! ((x (xl .to xh)))
-          (A .set! (at x y) (f `(,x ,y)))))))
+          (A .set! (at x y) (f (_ x y)))))))
 
   (make grid-2d {extending map-trait}
     
-    (to (_ `(,x ,y))
+    (to (_ (_ x y))
       (check x y)
       (A (at x y)))
-    (to (_ .set! `(,x ,y) value)
+    (to (_ .set! (_ x y) value)
       (check x y)
       (A .set! (at x y) value))
-    (to (_ .get `(,x ,y) default)
+    (to (_ .get (_ x y) default)
       (if (and (<= xl x xh)
                (<= yl y yh))
           (A (at x y))
           default))
-    (to (_ .maps? `(,x ,y))
+    (to (_ .maps? (_ x y))
       (and (<= xl x xh)
            (<= yl y yh)))
 
@@ -70,7 +71,7 @@
       ;; except that'd be column-major order. Hm, hm.
       (for gather ((y (yl .to yh)))
         (for each ((x (xl .to xh)))
-          `(,x ,y))))
+          (_ x y))))
     (to _.values
       A.values)
 
@@ -87,14 +88,15 @@
 
 (export grid-2d<-)
 
-;; -> (let g (grid-2d<- '(2 1) '(4 2) '*))
+;; TODO add to tests
+;; -> (let g (grid-2d<- (_ 2 1) (_ 4 2) '*))
 ;; #<grid-2d (2,1)..(4,2)>
 ;; -> (g 2 2)
 ;; ...
 ;; Match failure: (#<grid-2d (2,1)..(4,2)> (2 2))
 ;; -> (g '(2 2))
 ;; *
-;; -> (g .set! '(2 2) 'a)
+;; -> (g .set! (_ 2 2) 'a)
 ;; -> g
 ;; #<grid-2d (2,1)..(4,2)>
 ;; -> g.show
@@ -105,17 +107,17 @@
 ;; ***
 ;; a**
 ;; #no
-;; -> (g .set! '(3 1) 'b)
+;; -> (g .set! (_ 3 1) 'b)
 ;; -> (g .show (on (row) (format "~d\n" ("" .join (each _.name row)))))
 ;; *b*
 ;; a**
 ;; #no
-;; -> (g .get '(3 1))
+;; -> (g .get (_ 3 1))
 ;; b
-;; -> (g .get '(3 3))
+;; -> (g .get (_ 3 3))
 ;; #no
-;; -> (g .get '(3 3) 'blah)
+;; -> (g .get (_ 3 3) 'blah)
 ;; blah
-;; -> (g '(2 42))
+;; -> (g (_ 2 42))
 ;; ...
 ;; y coordinate out of range: (42)
