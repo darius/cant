@@ -35,7 +35,7 @@
         (point-x .^= x)
         (point-y .^= y))
       (let ch (text .get p 1))
-      (let pp (+ p 1))
+      (let pp p.+)
       (if (or (= ch "") (= ch "\n"))
           (rendering pp 0 y.+)  ;; TODO flexarray to string, i guess
           (begin appending ((glyphs (render-char ch.first x))

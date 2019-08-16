@@ -38,7 +38,7 @@
           (be {break}
             (link (flush line) (wrap-into (flexarray<-) tokens.rest width)))
           (be {space}
-            (scanning (+ spaces 1) tokens.rest))
+            (scanning spaces.+ tokens.rest))
           (be {word s}
             (if (<= (+ line.count spaces s.count) width)
                 (do (line .extend! (chain (" " .repeat spaces) s))

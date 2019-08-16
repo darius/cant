@@ -5,7 +5,7 @@
 ;; So no, we're no longer quite *that* slow, if we ever were.
 
 (let w 500)
-(let f (array<-count (+ w 1) 0))
+(let f (array<-count w.+ 0))
 
 (to (square n)
   (* n n))
