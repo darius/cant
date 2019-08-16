@@ -447,17 +447,17 @@
               ((__ m . names)
                (insist (all symbol? names) "bad syntax" names)
                (let ((map-var (gensym)))
-                 `(let (list<- ,@names) ;TODO use a tuple instead
+                 `(let (_ ,@names) ;TODO use a tuple instead
                     (hide (let ,map-var ,m)
-                          (',list ,@(map (lambda (name) `(,map-var ',name))
-                                         names))))))))
+                          (_ ,@(map (lambda (name) `(,map-var ',name))
+                                    names))))))))
     ('export (mlambda
               ((__ . names)
                (insist (all symbol? names) "bad syntax" names)
-               (list 'map<-   ;; XXX unhygienic; was `',the-map<- but that requires importing from terp.scm
-                     (list 'quasiquote
-                           (map (lambda (name) (list name (list 'unquote name)))
-                                names))))))
+               `(map<-  ;; XXX unhygienic; was `',the-map<- but that
+                        ;; requires importing from player.scm
+                 (',list ,@(map (lambda (name) `(',list ',name ,name))
+                                 names))))))
     ('quasiquote (mlambda
                   ((__ q) (expand-quasiquote q))))
     (__ #f)))
