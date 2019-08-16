@@ -447,7 +447,7 @@
               ((__ m . names)
                (insist (all symbol? names) "bad syntax" names)
                (let ((map-var (gensym)))
-                 `(let (_ ,@names) ;TODO use a tuple instead
+                 `(let (_ ,@names)
                     (hide (let ,map-var ,m)
                           (_ ,@(map (lambda (name) `(,map-var ',name))
                                     names))))))))
