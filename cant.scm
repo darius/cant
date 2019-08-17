@@ -17,10 +17,10 @@
   (let ((e `(listener ,@(map (lambda (arg) `',arg) opt-args))))
     (cant-interpret e)))
 
-(run-load "abcs/21-sequels.scm")
-(run-load "abcs/30-functions.scm")
-(run-load "abcs/40-library.scm")
-(run-load "abcs/50-top.scm")
+(run-load "abcs/21-sequels.cant")
+(run-load "abcs/30-functions.cant")
+(run-load "abcs/40-library.cant")
+(run-load "abcs/50-top.cant")
 (cant-interpret
  '(do
 ;    (use "test/smoke-test")

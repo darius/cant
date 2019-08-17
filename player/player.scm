@@ -828,7 +828,7 @@
     (os-exit ,exit)
     ))
 
-(run-load "abcs/20-runtime.scm")
+(run-load "abcs/20-runtime.cant")
 
 (set! miranda-trait (get-prim 'miranda-trait))
 

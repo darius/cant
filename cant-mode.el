@@ -1,3 +1,10 @@
+;; You'll probably want to run this too:
+;; (add-to-list 'auto-mode-alist '(".*\\.cant\\'" . cant-mode))
+;; (I forget why it has that ' at the of the string.)
+;; and of course
+;; (load-library "/path/to/cant/cant-mode.el")
+;; Yeah, I'll learn to make an Emacs package sometime.
+
 (defvar cant-mode-map
   (let ((map (make-sparse-keymap)))
     (define-key map "\C-cg" 'cant-mode-splat)
