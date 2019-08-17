@@ -157,10 +157,10 @@ There's plenty of unfinished crap in this repo, not clearly marked.
 
 ## Quick start for Schemers
 
-Be in this directory (the one holding the file `cant.scm`) and then:
+Be in this directory (the one holding the file `incant`) and then:
 
 ```
-$ ./cant.scm
+$ ./incant
 -> (to (I-am name) (format "Hi, ~w!\n" name))
 #<I-am>
 -> (I-am 'Alice)
@@ -212,13 +212,13 @@ example (
 here):
 
 ```
-$ ./cant.scm eg/fizzbuzz.scm
+$ ./incant eg/fizzbuzz.scm
 ```
 
 Or load it in the listener:
 
 ```
-$ ./cant.scm
+$ ./incant
 -> (load "eg/fizzbuzz.scm")
 1
 2
