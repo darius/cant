@@ -59,18 +59,18 @@
 (to (nand x y)
   ((x .and y) .not))     ;XXX why bitwise not here? only 1 bit, right?
 
-(to (tabulate-inputs n-inputs)
-  ;; An inputs array is an array of n-inputs bitvectors. It holds all
+(to (tabulate-inputs n)
+  ;; An inputs array is an array of n bitvectors. It holds all
   ;; possible input patterns 'transposed': that is, the kth test case
   ;; can be formed out of bit #k of each the list's elements, one
   ;; element per circuit input. Transposed is the most useful form
   ;; because we can compute all test cases in parallel with bitwise
   ;; operators.
-  (if (= n-inputs 0)
+  (if (= n 0)
       '()
-      (do (let shift (pow2 (- n-inputs 1)))
+      (do (let shift (pow2 n.-))
           (link (- (pow2 shift) 1)
-                (for each ((iv (tabulate-inputs (- n-inputs 1))))
+                (for each ((iv (tabulate-inputs n.-)))
                   (iv .or (iv .<< shift)))))))
 
 
