@@ -388,13 +388,8 @@
               ((__ . body)
                `(to (_) ,@body))))
     ('->     (mlambda  ; TODO experiment
-              ((__)
-               `itself)               ;XXX hygiene
-              ((__ e)
-               `(to (_ it) ,e))
               ((__ e . es)
-               `(compose (-> ,@es) (to (_ it) ,e))) ;XXX hygiene
-              ))
+               `(to (_ it) ,e ,@es))))
     ('for    (mlambda
               ((__ fn bindings . body)
                (let ((name-for (if (symbol? fn)
