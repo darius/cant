@@ -75,12 +75,6 @@ Fizz
 There's an abortive start at
 [overview.md](https://github.com/darius/cant/blob/master/overview.md).
 
-### Isn't 'Cant' the [Chevy Nova](https://www.snopes.com/fact-check/chevrolet-nova-name-spanish/) of language names?
-
-Expressing *inabilities* in code is still underemphasized; I'm just
-fine with a name that calls attention to what you can't do. (Although
-it's only aspirational for now.)
-
 ### Thanks
 
 Of course, this project would not exist without Scheme or E. It's
@@ -89,6 +83,3 @@ my decades-old memory instead of the sources, and E probably did
 things better.
 
 Thanks to Kragen Sitaker for early discussions about the language.
-
-Some early work was done at [Recurse Center](https://www.recurse.com),
-a great place for feedback.
