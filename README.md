@@ -37,7 +37,7 @@ language name gives fair enough warning.
 ### Example code?
 
 ```
-$ ./cant       # You need Chez Scheme to run this.
+$ ./incant       # You need Chez Scheme to run this.
 -> (format "Hey, world.\n")
 Hey, world.
 -> (to (fib n) (if (< n 2) 1 (+ (fib (- n 1)) (fib (- n 2)))))
@@ -55,13 +55,13 @@ Dunno, but there are
 can run a file from the shell like
 
 ```
-$ ./cant eg/fizzbuzz.scm
+$ ./incant eg/fizzbuzz.scm
 ```
 
 Or from the listener:
 
 ```
-$ ./cant
+$ ./incant
 -> (load "eg/fizzbuzz.scm")
 1
 2
