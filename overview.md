@@ -135,7 +135,7 @@ which I'm not sure have ever run a program for actual use.
 
 It's sort of Smalltalky, where for now the interpreter internals
 always appear as meta-objects with no optimization, and even primitive
-objects execute via high-level scripts (in `abcs/runtime.scm`). This is
+objects execute via high-level scripts (in `abcs/runtime.cant`). This is
 motivated by the goal of a self-sustaining whole system eventually
 supporting powerful debugging. To not be incredibly slow, the design
 will need to get fancier.
@@ -208,18 +208,18 @@ There are example programs in
 [eg/](https://github.com/darius/cant/tree/master/eg) and
 [library/](https://github.com/darius/cant/tree/master/library). To run an
 example (
-[FizzBuzz](https://github.com/darius/cant/blob/master/eg/fizzbuzz.scm)
+[FizzBuzz](https://github.com/darius/cant/blob/master/eg/fizzbuzz.cant)
 here):
 
 ```
-$ ./incant eg/fizzbuzz.scm
+$ ./incant eg/fizzbuzz.cant
 ```
 
 Or load it in the listener:
 
 ```
 $ ./incant
--> (load "eg/fizzbuzz.scm")
+-> (load "eg/fizzbuzz.cant")
 1
 2
 Fizz
@@ -459,11 +459,11 @@ You can use terms and patterns in non-OO code as well. For instance,
 patterns work in `let` forms and function parameters:
 
 ```
-(to (c+ {complex x1 y1} {complex x2 y2})    ;; from lib/complex.scm
+(to (c+ {complex x1 y1} {complex x2 y2})    ;; from lib/complex.cant
   {complex (+ x1 x2)
            (+ y1 y2)})
 
-(let {pq min1 rest1} pq1)                   ;; from lib/pairing-heap.scm
+(let {pq min1 rest1} pq1)                   ;; from lib/pairing-heap.cant
 ```
 
 The `match` form, like `make`, finds the first successful match in a

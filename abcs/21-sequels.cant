@@ -195,6 +195,6 @@
 
 (to (__handle-error raw-k evil)
   ;; TODO set the-signal-handler to a backup handler before invoking the current one.
-  ;; There's logic for this in top.scm, but let's try to not mix this with the fancier
+  ;; There's logic for this in top.cant, but let's try to not mix this with the fancier
   ;; stuff there.
   (the-signal-handler.^ (__wrap-cont raw-k) evil))

@@ -97,7 +97,7 @@
       (load-and-run filename cmd-line-args))))
 
 (to (load-and-run filename args)
-  (load filename `(,filename)) ;TODO remove .scm extension
+  (load filename `(,filename)) ;TODO remove .cant extension
   (when (global-defined? 'main)     ;XXX hack
     ((cant .play 'main '()) args)))
 

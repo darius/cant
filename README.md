@@ -55,14 +55,14 @@ Dunno, but there are
 can run a file from the shell like
 
 ```
-$ ./incant eg/fizzbuzz.scm
+$ ./incant eg/fizzbuzz.cant
 ```
 
 Or from the listener:
 
 ```
 $ ./incant
--> (load "eg/fizzbuzz.scm")
+-> (load "eg/fizzbuzz.cant")
 1
 2
 Fizz

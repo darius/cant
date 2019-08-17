@@ -1,0 +1,19 @@
+(import (use "eg/squirm/squirm-terp")
+  run-file)
+
+(let test-names '("test/smoke-test.cant"
+                  "eg/hello.cant"
+                  "eg/universal_server.cant"
+                  "test/mod-test.cant"
+                  "test/throw-test.cant"
+                  "test/monitor-test.cant"
+                  "test/partner-test.cant"
+                  "test/error-test.cant"
+                  "test/recur-test.cant"
+                  "test/timeout-test.cant"
+                  "test/quasiquote-test.cant"
+                  ))
+
+(for each! ((test test-names))
+  (format "\nTesting ~d\n" test)
+  (run-file (chain "eg/squirm/" test)))

@@ -1,0 +1,4 @@
+(load "eg/j-bob/runtime.cant")
+(load "eg/j-bob/trivi-bob.cant")
+(load "eg/j-bob/prelude.cant")
+(load "eg/j-bob/smoketest.cant")

@@ -13,7 +13,7 @@
                 (chain "library/" file-stem.name)
                 file-stem))
   (or (the-modules .get stem)
-      (hey (load-module (chain stem ".scm") `(,stem))
+      (hey (load-module (chain stem ".cant") `(,stem))
            (-> (the-modules .set! stem it)))))
 
 (to (load filename @(optional context))

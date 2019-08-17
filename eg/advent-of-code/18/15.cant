@@ -1,0 +1,221 @@
+;; (Use run.cant to run this.)
+
+(import (use 'queue)
+  empty empty?                          ;TODO too-generic names
+  push extend
+  peek)
+
+;(let input (with-input-file _.read-all "advent15.test"))
+;(let input (with-input-file _.read-all "advent15.movement"))
+;(let input (with-input-file _.read-all "advent15.movement2"))
+;(let input (with-input-file _.read-all "advent15.combat1"))
+;(let input (with-input-file _.read-all "advent15.combat2"))
+;(let input (with-input-file _.read-all "advent15.combat3"))
+;(let input (with-input-file _.read-all "advent15.combat4"))
+;(let input (with-input-file _.read-all "advent15.combat5"))
+(let input (with-input-file _.read-all data-file))
+
+(to (part-1)
+  (let field (field<- input 3))
+  (let n-rounds
+    (begin battling ((t 0))
+      (show t field)
+      (if field.do-round!
+          (battling t.+)
+          t)))
+  (let hp field.total-hit-points)
+  (format "Done after ~w rounds with ~w hit points left.\n"
+          n-rounds hp)
+  (* n-rounds hp))
+
+(to (show t field)
+  (format "After ~w rounds:\n" t)
+  field.show
+  (newline))
+
+(to (field<- field-string elf-attack-power)
+
+  (let width field-string.split-lines.first.count.+)
+  (surely (for every ((line field-string.split-lines))
+            (= width line.count.+)))
+
+  (let area (array<-list field-string))
+
+  (to (coords<- p)
+    ("~w,~w" .format (p .quotient width) (p .modulo width)))
+
+  ;; Step in directions N E S W
+  (let steps (list<- (- width) 1 width -1))
+
+  (to (neighbors<- p)
+    (for each ((s steps))
+      (+ p s)))
+
+  (to (open-neighbors<- p)
+    (for those ((q (neighbors<- p)))
+      (= (area q) #\.)))
+
+  ;; A unit is a goblin or elf.
+  (to (unit? char)
+    ("GE" .find? char))
+
+  ;; Map from each remaining unit's position to its hit points,
+  ;; initially 200. (A unit's species is known by its G or E on the
+  ;; map.)
+  (let units (map-by (-> 200) (where unit? area)))
+
+  ;; For each unit, do a turn. Return yes if the round completed.
+  (to (do-round)
+    (for every (((_ p unit) (sort units.items)))
+      ;; This unit may have been killed in a preceding unit's turn,
+      ;; but it can't have moved yet.
+      (or (not (units .maps? p)) ; (must've been killed)
+          (do-turn p))))
+
+  ;; For the unit at p, do a turn. Return yes if it found a target.
+  (to (do-turn p)
+    (let targets (find-targets (area p)))
+    (unless (maybe-attack p)
+      ;;  (format "targets for ~w: ~w\n" p (sort targets))
+      (let goals (set<-list (gather open-neighbors<- targets)))
+      (may (find-shortest-paths p goals)
+        (be '())
+        (be paths
+          (let chosen-path
+            (min-by (compound-key<- _.last _.first) paths))
+          (let spot chosen-path.first)
+          (move! p spot)
+          (unless (maybe-attack spot)
+;           (format "unit ~d did not attack\n" (coords<- spot))
+            'ok))))
+    targets.some?)
+
+  (to (find-targets species)
+    (for where ((q units))
+      (not= species (area q))))
+
+  (to (maybe-attack p)
+    (let enemy (enemy<- (area p)))
+    (may (for those ((q (neighbors<- p)))
+          (= enemy (area q)))
+      (be '() #no)
+      (be targets
+        (let target
+          ;; The least remaining hit points, then the first in reading order.
+          (min-by (compound-key<- units itself) targets))
+        ;;     (format "target ~w\n" target)
+        (attack p target)
+        #yes)))
+
+  (to (attack p target)
+    (let hp-left (- (units target)
+                    (may (area p)
+                      (be #\G 3)
+                      (be #\E elf-attack-power))))                      
+;    (format "attack: from ~d@~d to ~d@~d leaving ~w hp\n"
+;            (area p) (coords<- p) (area target) (coords<- target) hp-left)
+    (hm (when (<= hp-left 0)
+          (units .delete! target)
+          (area .set! target #\.))
+        (else
+          (units .set! target hp-left))))
+
+  (to (move! from-p to-p)
+    (let species (area from-p))
+    (let hp (units from-p))
+    (units .delete! from-p)
+    (area .set! from-p #\.)
+    (units .set! to-p hp)
+    (area .set! to-p species))
+
+  (to (find-shortest-paths start-pos goals)
+    ;; Simple breadth-first search
+    (let successes (flexarray<-))
+    (let already (set<-)) ; Spots not to enqueue again.
+
+    (to (expand trail)
+      (for yeahs ((q (sort (open-neighbors<- trail.first))))
+        (and (not (already .maps? q))
+             (do (already .add! q)
+                 (link q trail)))))
+
+    (begin exploring ((queue
+                       (extend empty (for each ((trail (expand `(,start-pos))))
+                                       `(,trail.first)))))
+;;      (surely (sorted? (for each ((trail (list<-queue queue)))
+;;                         `(,trail.count ,(reverse trail)))))
+      (may (peek queue)
+        (be {empty}
+          (each reverse successes.values))
+        (be {nonempty trail queue-1}
+          (let spot trail.first)
+          (if (goals .maps? spot)
+              (if (and successes.some?
+                       (< successes.first.count trail.count))
+                  (each reverse successes.values)
+                  (do (successes .push! trail)
+                      (exploring (extend queue-1 (expand trail)))))
+              (exploring (extend queue-1 (expand trail))))))))
+
+;;  (to (list<-queue {queue h t})
+;;    (chain h (reverse t)))
+
+  (to (sorted? xs)                      ;TODO extract to lib
+    (or xs.none?
+        xs.rest.none?
+        (and (<= xs.first xs.rest.first)
+             (sorted? xs.rest))))
+  
+  (to (show)
+    (let notes (flexarray<-))
+    (for each! (((_ p ch) area.items))
+      (may ch
+        (be #\newline
+          (format "   ~d\n" (", " .join notes.values))
+          notes.clear!)
+        (else
+          (when (unit? ch)
+            (notes .push! ("~d(~w)" .format ch (units p))))
+          (display ch)))))
+
+  (make field
+    (to _.do-round!        (do-round))
+    (to _.show             (show))
+    (to _.total-hit-points (sum units.values))
+    (to _.census           (bag<- area.values))
+    ))
+
+(let enemy<- (map<-lists '((#\G #\E)
+                           (#\E #\G))))
+
+;(format "Part 1 answer: ~w\n" (part-1))
+
+
+
+(to (part-2)
+  (display "\nPart 2\n")
+
+  (begin trying ((power 4))
+    (newline)
+    (format "Trying attack power ~w\n" power)
+    (let field (field<- input power))
+    (may (battle-sans-elf-casualties field power)
+      (be #no (trying power.+))
+      (be outcome outcome))))
+
+(to (battle-sans-elf-casualties field power)
+  (let n-elves (field.census .get #\E))
+  (begin battling ((t 0))
+    (show t field)
+    (hm (unless (= n-elves (field.census .get #\E))
+          (format "Elf casualties, aborting the battle\n\n")
+          #no)
+        (when field.do-round!
+          (battling t.+))
+        (else
+          (let hp field.total-hit-points)
+          (format "Done after ~w rounds with ~w hit points left.\n"
+                  t hp)
+          (* t hp)))))
+
+(format "~w\n" (part-2))
