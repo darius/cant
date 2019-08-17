@@ -1,40 +1,11 @@
-;;; Hacks to scheme-mode to better handle Cant code.
-;;; TODO don't overwrite scheme-mode settings
-;;; TODO make an actual cant-mode instead
+(defvar cant-mode-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map "\C-cg" 'cant-mode-splat)
+    map))
 
-;; Basing this on http://community.schemewiki.org/?emacs-syntax-hilight
-
-(put 'begin 'scheme-indent-function 2)
-(put 'do 'scheme-indent-function 0)
-(put 'else 'scheme-indent-function 0)
-(put 'export 'scheme-indent-function 0)
-(put 'for 'scheme-indent-function 2)
-(put 'given 'scheme-indent-function 0)
-(put 'hide 'scheme-indent-function 0)  ; or nil)
-(put 'import 'scheme-indent-function 1)
-(put 'let 'scheme-indent-function 1)
-(put 'make 'scheme-indent-function 1)
-(put 'make-trait 'scheme-indent-function 2)
-(put 'match 'scheme-indent-function 1)
-(put 'to 'scheme-indent-function 1)
-(put 'unless 'scheme-indent-function 1)
-(put 'when 'scheme-indent-function 1)
-
-;; TODO revisit these experiments
-(put ': 'scheme-indent-function 0)
-(put '-> 'scheme-indent-function 0)
-(put 'be 'scheme-indent-function 1)
-(put 'hm 'scheme-indent-function 0)
-(put 'may 'scheme-indent-function 1)
-(put 'on 'scheme-indent-function 1)
-
-(defconst cant-font-lock-keywords 
-  '() 
-  "Custom highlighting in Scheme modes.")
-
-(defun cant-mode-hook ()
-  "Custom Cant mode hook."
-  (interactive)
+(define-derived-mode cant-mode
+  scheme-mode "Cant"
+  "Major mode for Cant."
   (setq cant-font-lock-keywords
         (append scheme-font-lock-keywords-2
                 (eval-when-compile
@@ -52,8 +23,40 @@
            scheme-font-lock-keywords-1
            cant-font-lock-keywords)
           ,@(cdr font-lock-defaults)))
-  (local-set-key "\C-cg" 'cant-mode-splat)
+  (cant-mode-set-indents))
+
+(defconst cant-font-lock-keywords 
+  '() 
+  "Custom highlighting in Cont modes.")
+
+(defun cant-mode-set-indents ()
+  ;; Based on http://community.schemewiki.org/?emacs-syntax-hilight
+  ;; TODO can't we do this without stepping on scheme-mode's toes?
+  (put 'begin 'scheme-indent-function 2)
+  (put 'do 'scheme-indent-function 0)
+  (put 'else 'scheme-indent-function 0)
+  (put 'export 'scheme-indent-function 0)
+  (put 'for 'scheme-indent-function 2)
+  (put 'given 'scheme-indent-function 0)
+  (put 'hide 'scheme-indent-function 0)  ; or nil)
+  (put 'import 'scheme-indent-function 1)
+  (put 'let 'scheme-indent-function 1)
+  (put 'make 'scheme-indent-function 1)
+  (put 'make-trait 'scheme-indent-function 2)
+  (put 'match 'scheme-indent-function 1)
+  (put 'to 'scheme-indent-function 1)
+  (put 'unless 'scheme-indent-function 1)
+  (put 'when 'scheme-indent-function 1)
+
+  ;; TODO revisit these experiments
+  (put ': 'scheme-indent-function 0)
+  (put '-> 'scheme-indent-function 0)
+  (put 'be 'scheme-indent-function 1)
+  (put 'hm 'scheme-indent-function 0)
+  (put 'may 'scheme-indent-function 1)
+  (put 'on 'scheme-indent-function 1)
   )
+
 
 ;; A really crude goto-def and create-def:
 
@@ -112,4 +115,5 @@ them."
 (defun cant-mode-insert (template sexp)
   (insert (replace-regexp-in-string "&" (format "%s" sexp) template)))
 
-(add-hook 'scheme-mode-hook 'cant-mode-hook)
+
+(provide 'cant-mode)
