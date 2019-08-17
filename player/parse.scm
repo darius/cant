@@ -388,8 +388,8 @@
               ((__ . body)
                `(to (_) ,@body))))
     ('->     (mlambda  ; TODO experiment
-              ((__ e . es)
-               `(to (_ it) ,e ,@es))))
+              ((__ e)
+               `(on (it) ,e))))
     ('for    (mlambda
               ((__ fn bindings . body)
                (let ((name-for (if (symbol? fn)
