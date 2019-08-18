@@ -247,7 +247,7 @@ Let's start with the equivalents of familiar Scheme syntax:
 | `(define x 42)`                 | `(let x 42)`       |  Returns 42 as the value. Definitions are expressions.  |
 | `(define (f x) e)`              | `(to (f x) e)`     |   |
 | `(define (f x) (lambda (y) x))` | `(to ((f x) y) x)` |   |
-| `(lambda (x y) e)`              | `(given (x y) e)`  |   |
+| `(lambda (x y) e)`              | `(on (x y) e)`     | plus `(: e)` and `(-> it)` TODO  |
 | `(begin a b c)`                 | `(do a b c)`       |   |
 | `(let () a b c)`                | `(hide a b c)`     |   |
 | `(if t p q)`                    | `(if t p q)`       | `p` and `q` are in nested scopes, as if in `hide` blocks. |
@@ -255,7 +255,7 @@ Let's start with the equivalents of familiar Scheme syntax:
 | `(or x y)`                      | `(or x y)`         | Ditto. |
 | `(if p (begin a b))`            | `(when p a b)`     | `a` and `b` are in their own common nested scope.  |
 | `(if (not p) (begin a b))`      | `(unless p a b)`   |   |
-| `(cond (p a) (else b))`         | `(case (p a) (else b))`  |  `case` isn't the greatest name. Suggestions? |
+| `(cond (p a) (else b))`         | `(hm (when p a) (else b))`  |  TODO explain `hm`; it supports more clauses like `unless` |
 | `#t`                            | `#yes`  |   |
 | `#f`                            | `#no`  |   |
 | `(let looping ((v init)) body)` | `(begin looping ((v init)) body)` |  The 'ing' is a convention. |
@@ -276,7 +276,7 @@ Scheme functions on lists:
 | `(list-ref xs n)`             | `(xs n)`     |  |
 | `(list-tail xs n)`            | `(xs .slice n)`     |  There's also `(xs .slice start-index after-index)` |
 | `(member x xs)`               | `(xs .slice (xs .find x))`     |  (Provided `x` is in `xs`. More on `.find` below.) |
-| `(cadr (assoc 'x '((a b) (x y))))`   | `((map<- '((a b) (x y))) 'x)`     |  More on `map<-` below. |
+| `(cadr (assoc 'x '((a b) (x y))))`   | `((map<-lists '((a b) (x y))) 'x)`     |  More on `map<-` below. |
 
 The accessors on lists above are all generic. They apply to strings too, for a start:
 
@@ -395,7 +395,7 @@ shrink, a plain array has fixed length.
 
 The `for` form is syntactic sugar primarily for iterating over
 sequences, though it has other uses as well. For instance, `(for each
-((x xs)) (foo x))` is equivalent to `(each (given (x) (foo x)) xs)`
+((x xs)) (foo x))` is equivalent to `(each (on (x) (foo x)) xs)`
 which is mostly equivalent to `(each foo xs)`, which is Cant's name
 for Scheme's `(map foo xs)`.
 
@@ -417,7 +417,7 @@ Expressions like `m.keys` and `(bag .add! key)` are syntactic sugar:
 | ------------------- | ------------- | ------------- | ---- |
 | `m.keys`            | `(m .keys)`        | `(call m {.keys})` |   |
 | `(bag .add! key)`   | `(bag .add! key)`  | `(call bag {.add! key})` |   |
-| `(f x y z)`         | `(f x y z)`        | ```(call f `(,x ,y ,z))``` | (Assuming `f` is not defined as syntax.) |
+| `(f x y z)`         | `(f x y z)`        | ```(call f {~ x y z})``` | (Assuming `f` is not defined as syntax.) |
 
 The subexpression `{tag e1 e2 e3}` evaluates its subexpressions `e1`,
 `e2`, `e3`, and creates a datum called a *term*. A term has a tag and
