@@ -23,13 +23,13 @@
 ;; Argument tuples used to be lists, now they're terms.
 
 (define (tuple? x)
-  (and (term? x) (eq? (term-tag x) '_)))
+  (and (term? x) (eq? (term-tag x) '~)))
 
 (define (tuple<- . xs)
-  (make-term '_ xs))
+  (make-term '~ xs))
 
 (define null-tuple
-  (make-term '_ '()))
+  (make-term '~ '()))
 
 (define (list<-tuple tuple)
   ;;TODO drop insist if expensive -- should be redundant

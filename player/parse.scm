@@ -103,8 +103,6 @@
         (pack<- e-constant (void)))          ;I guess
        (('call e1 e2)
         (pack<- e-call (parse-e e1 ctx) (parse-e e2 ctx)))
-       (('_ . operands)                   ; TODO experiment: syntax for messages
-        (parse-message-e operands ctx))
        (('~ . operands)
         (parse-message-e operands ctx))
        ((addressee . operands)
@@ -121,7 +119,7 @@
     (((: cue cue?) . operands)
      (parse-term-e cue operands ctx))
     (operands
-     (parse-term-e '_ operands ctx))))
+     (parse-term-e '~ operands ctx))))
 
 (define (parse-term-e tag operands ctx)
   (if (has-spread-operator? operands)
@@ -179,8 +177,6 @@
                        (parse-p `(link ,@rest-ps) ctx)))
        (('term<- tag-p arguments-p)
         (make-term-pat (parse-p tag-p ctx) (parse-p arguments-p ctx)))
-       (('_ . ps)                   ; TODO experiment: syntax for messages
-        (parse-message-pat ps ctx))
        (('~ . ps)
         (parse-message-pat ps ctx))
        ((: __ term?)
@@ -203,7 +199,7 @@
     (((: cue cue?) . operands)
      (parse-term-pat (make-term cue operands) ctx))
     (ps
-     (parse-term-pat (make-term '_ ps) ctx))))
+     (parse-term-pat (make-term '~ ps) ctx))))
 
 (define (maybe-vector->list x)
   (and (vector? x) (vector->list x)))
@@ -278,7 +274,7 @@
 (define (expand-definition-pattern dp)
   (mcase dp
     ((: __ list?)
-     `(_ ,@dp))
+     `(~ ,@dp))
     ((: __ term?)
      dp)
     (__ (error 'parse "Bad definition pattern" dp))))
@@ -373,9 +369,9 @@
                `(make _
                   ,@(map (mlambda
                           (('be pat . body)
-                           `(to (_ ,pat) ,@body))
+                           `(to (~ ,pat) ,@body))
                           (('else . body) ;TODO check that it's the last clause
-                           `(to (_ _) ,@body))
+                           `(to (~ _) ,@body))
                           (clause
                            (error 'parse "Bad clause: 'be' or 'else' missing" clause)))
                          clauses)))))
@@ -402,13 +398,13 @@
                  (parse-bindings bindings
                    (lambda (ps es)
                      `(,fn (make ,name-for
-                             (to (_ ,@ps) ,@body))
+                             (to (~ ,@ps) ,@body))
                            ,@es)))))))
     ('begin  (mlambda
               ((__ (: proc symbol?) bindings . body)
                (parse-bindings bindings
                  (lambda (ps es)
-                   `((hide (make ,proc (to (_ ,@ps) ,@body)))
+                   `((hide (make ,proc (to (~ ,@ps) ,@body)))
                      ,@es))))))
     ('if     (mlambda
               ((__ test if-so if-not)
@@ -446,16 +442,16 @@
               ((__ m . names)
                (insist (all symbol? names) "bad syntax" names)
                (let ((map-var (gensym)))
-                 `(let (_ ,@names)
+                 `(let (~ ,@names)
                     (hide (let ,map-var ,m)
-                          (_ ,@(map (lambda (name) `(,map-var ',name))
+                          (~ ,@(map (lambda (name) `(,map-var ',name))
                                     names))))))))
     ('export (mlambda
               ((__ . names)
                (insist (all symbol? names) "bad syntax" names)
                `(map<-  ;; XXX unhygienic; was `',the-map<- but that
                             ;; requires importing from player.scm
-                 ,@(map (lambda (name) `(_ ',name ,name))
+                 ,@(map (lambda (name) `(~ ',name ,name))
                         names)))))
     ('quasiquote (mlambda
                   ((__ q) (expand-quasiquote q))))

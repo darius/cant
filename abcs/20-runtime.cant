@@ -1095,7 +1095,7 @@
                       (zipping xs.rest ys.rest))))))
   (to (~ @lists)
     (for each ((row (transpose lists)))
-      (term<- '_ row))))
+      (term<- '~ row))))                ;TODO tuple-constructor function
 
 ;; TODO: name it (zip @rows) instead, like Python?
 (to (transpose rows)

@@ -171,7 +171,7 @@
 
 (define (prim-*/mod n1 n2 d)
   (call-with-values (lambda () (div-and-mod (* n1 n2) d))
-    (lambda (d m) (make-term '_ (list d m)))))
+    (lambda (d m) (make-term '~ (list d m))))) ;TODO define tuple stuff in utils.scm
 
 (define (prim-string-maps? me i)
   (and (integer? i)
