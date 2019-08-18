@@ -82,7 +82,7 @@
 (define (symbol-constituent? c)
   (or (char-alphabetic? c)
       (char-numeric? c)
-      (memv c '(#\! #\$ #\% #\^ #\& #\* #\/ #\? #\= #\+ #\- #\_ #\< #\> #\:))))
+      (memv c '(#\~ #\! #\$ #\% #\^ #\& #\* #\/ #\? #\= #\+ #\- #\_ #\< #\> #\:))))
 
 (define (flush-input-line port)
   (let loop ()
