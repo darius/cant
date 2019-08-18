@@ -466,13 +466,13 @@ patterns work in `let` forms and function parameters:
 (let {pq min1 rest1} pq1)                   ;; from lib/pairing-heap.cant
 ```
 
-The `match` form, like `make`, finds the first successful match in a
+The `may` form, like `make`, finds the first successful match in a
 sequence of clauses and then evaluates the body of that clause:
 
 ```
-(match (m .get key)
-  (#no   "Missing key")
-  (value `("The result is" ,value)))
+(may (m .get key)
+  (be #no   "Missing key")
+  (be value `("The result is" ,value)))
 ```
 
 The difference is that the subject being matched against is the value
