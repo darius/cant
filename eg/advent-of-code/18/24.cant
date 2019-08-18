@@ -3,7 +3,7 @@
 (import (use 'pretty-print)
   pp)
 
-(let input (with-input-file _.read-all data-file))
+(let input (with-input-file ~.read-all data-file))
 
 ;; Return yes if Immune System wins.
 (to (battle armies)
@@ -11,20 +11,20 @@
     (let immune-system (armies "Immune System"))
     (let infection     (armies "Infection"))
     (format "Round: ~w vs. ~w\n" 
-            (each _.count infection)
-            (each _.count immune-system))
+            (each ~.count infection)
+            (each ~.count immune-system))
 ;    (when (= (each _.count infection) '(1273))
 ;      (error "break"))
     (let a1 (select-targets "Infection"     infection immune-system))
     (let a2 (select-targets "Immune System" immune-system infection))
     (let counts-before (each tally armies.values))
-    (hm (when (some _.none? armies.values) ;TODO a little confusing
+    (hm (when (some ~.none? armies.values) ;TODO a little confusing
           immune-system.some?)
         (else
           ;; Fight a round.
           (attacking (map<-items (chain a1 a2)))
-          (for each! (((_ army groups) armies.items))
-            (armies .set! army (those _.alive? groups)))
+          (for each! (((~ army groups) armies.items))
+            (armies .set! army (those ~.alive? groups)))
           
           (let counts-after (each tally armies.values))
           (if (= counts-before counts-after)
@@ -35,12 +35,12 @@
   (let result (flexarray<-))
   (let enemies (flexarray<-list enemy-groups)) ;; clumsy? probably ought to be a set
   (let enemy-nums (flexarray<-list (1 .to enemy-groups.count)))  ;; just for the messages
-  (for each! (((_ i group) (sort-by (on ((_ _ group)) group.target-selection-key)
+  (for each! (((~ i group) (sort-by (on ((~ _ group)) group.target-selection-key)
                                     my-groups.items)))
     (when enemies.some?
       (let damages (for each ((enemy enemies.values))
                      (group .would-damage enemy)))
-;;      (for each! (((_ j damage) damages.items))
+;;      (for each! (((~ j damage) damages.items))
 ;;        (format "~d group ~w would deal defending group ~w ~w damage\n"
 ;;                my-name (+ i 1) (enemy-nums j) damage))
       (let j (for max-by ((j enemies.keys))
@@ -49,7 +49,7 @@
                        enemy.effective-power
                        enemy.initiative)))
       (when (< 0 (damages j))
-        (result .push! (_ group (enemies j)))
+        (result .push! (~ group (enemies j)))
         (enemies .pop! j)
         (enemy-nums .pop! j))))
   result.values)
@@ -79,37 +79,37 @@
   (to (effective-power) (* n-units.^ attack-damage))
   (surely (not (immunities .intersects? weaknesses)))  ; TODO method .disjoint?
   (let qualities
-    (map<-items (chain (for each ((immune immunities.keys)) (_ immune 'immunity))
-                       (for each ((weak   weaknesses.keys)) (_ weak 'weakness)))))
+    (map<-items (chain (for each ((immune immunities.keys)) (~ immune 'immunity))
+                       (for each ((weak   weaknesses.keys)) (~ weak 'weakness)))))
   (make group
-    (to _.count
+    (to ~.count
       n-units.^)
-    (to _.effective-power
+    (to ~.effective-power
       (effective-power))
-    (to _.initiative
+    (to ~.initiative
       initiative)
-    (to _.target-selection-key
+    (to ~.target-selection-key
       (list<- (- (effective-power)) (- initiative)))
-    (to (_ .would-damage target)
+    (to (~ .would-damage target)
       (target .damage-from attack-type (effective-power)))
-    (to (_ .attack! target)
+    (to (~ .attack! target)
 ;;     (format "attack: ~w ~w\n" attack-type (effective-power))
       (target .receive! attack-type (effective-power)))
-    (to (_ .damage-from attacker-attack-type attack-power)
+    (to (~ .damage-from attacker-attack-type attack-power)
       (may (qualities .get attacker-attack-type)
         (be 'immunity 0)
         (be 'weakness (* 2 attack-power))
         (be #no       attack-power)))
-    (to (_ .receive! attacker-attack-type attack-power)
+    (to (~ .receive! attacker-attack-type attack-power)
       (let damage (group .damage-from attacker-attack-type attack-power))
       (let mortality (min n-units.^ (damage .quotient hit-points)))
       (n-units .^= (- n-units.^ mortality))
 ;;     (format "power ~w, damage ~w, killing ~w units, leaving ~w\n"
 ;;             attack-power damage mortality n-units.^)
       )
-    (to _.alive?
+    (to ~.alive?
       (< 0 n-units.^))
-    (to _.show
+    (to ~.show
       (pp {group {size n-units.^}
                  {hp hit-points}
                  {immune-to immunities.keys}
@@ -129,10 +129,10 @@ quality_list: {'weak'|'immune'} ' to ' [word++', ' :hug] :hug.
 word: :letter+ :join.  # TODO ugly
 separator: '\n'.
 "))
-(let semantics (grammar (map<- (_ 'Group (feed cook-group)))))
+(let semantics (grammar (map<- (~ 'Group (feed cook-group)))))
 (let parse-main (semantics 'main))
 (to (parse string)
-  (_.results (parson-parse parse-main string)))
+  (~.results (parson-parse parse-main string)))
 
 (let matchup (parse input))
 
@@ -140,14 +140,14 @@ separator: '\n'.
 (display "\nPart 1\n")
 
 (to (show-count armies)
-  (for each! (((_ army groups) (sort armies.items)))
+  (for each! (((~ army groups) (sort armies.items)))
     (format "~d:\n" army)
-    (for each! (((_ i group) groups.items))
+    (for each! (((~ i group) groups.items))
       (format "Group ~w contains ~w units\n" i.+ group.count))))
 
 (to (part-1)
   (let armies (map<-items (for each ((`(,name ,group-makers) matchup))
-                            (_ name (for each ((group-maker group-makers))
+                            (~ name (for each ((group-maker group-makers))
                                       (group-maker 0))))))
   (show-count armies)
   (battle armies)
@@ -167,7 +167,7 @@ separator: '\n'.
 
 (to (enough-boost? boost)
   (let armies (map<-items (for each ((`(,name ,group-makers) matchup))
-                            (_ name (do (let my-boost (may name
+                            (~ name (do (let my-boost (may name
                                                         (be "Immune System" boost)
                                                         (else               0)))
                                         (for each ((group-maker group-makers))
@@ -176,7 +176,7 @@ separator: '\n'.
   (let win? (battle armies))
   (format "Immune boost of ~w ~d\n" boost (if win? "WORKED!" "failed"))
   (when win?
-    (format "leaving ~w units\n" (sum-by _.count (armies "Immune System"))))
+    (format "leaving ~w units\n" (sum-by ~.count (armies "Immune System"))))
   (newline)
   win?)
 

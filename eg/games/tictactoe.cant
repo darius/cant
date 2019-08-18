@@ -72,8 +72,8 @@
   (render [(or plaint "") "\n\n" shown-grid "\n\n" message "\n\n"]))
 
 (make human-play
-  (to _.name "Human")
-  (to (_ grid) 
+  (to ~.name "Human")
+  (to (~ grid) 
     (begin asking ((plaint #no))
       (ttt-render (take grid (if plaint show-with-moves show))
                   [(whose-move grid) " move? [1-9; Q to quit] " cursor]
@@ -86,7 +86,7 @@
                     (asking "Hey, that's not a move. Give me one of the digits below.")))))))
 
 (to (show-with-moves grid)
-  (each (highlight-if _.digit?) (show grid (1 .to 9))))
+  (each (highlight-if ~.digit?) (show grid (1 .to 9))))
 
 (to ((highlight-if special?) x)
   (if (special? x) (green x) x))
@@ -99,8 +99,8 @@
 
 (to (ai<- name evaluate)
   (make ai
-    (to _.name name)
-    (to (_ grid) (min-by evaluate (successors grid)))))
+    (to ~.name name)
+    (to (~ grid) (min-by evaluate (successors grid)))))
 
 (let spock-evaluate
   (memoize (on (grid)
@@ -184,9 +184,9 @@
                                     (reverse (player-bits q))
                                     spaces)))
                 (may slot
-                  (be (_ 1 0 _) (marks 0))
-                  (be (_ 0 1 _) (marks 1))
-                  (be (_ 0 0 s) s))))
+                  (be (~ 1 0 _) (marks 0))
+                  (be (~ 0 1 _) (marks 1))
+                  (be (~ 0 0 s) s))))
   (grid-format .format @values))
 
 (let grid-format ("\n" .join ('(" ~d ~d ~d") .repeat 3)))

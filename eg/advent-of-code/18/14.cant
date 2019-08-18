@@ -10,7 +10,7 @@
 
 (to (step!)
   (board .extend! (digits<- (sum-by at elves)))
-  (for each! (((_ i elf) elves.items)) ;maybe a method like array .update!
+  (for each! (((~ i elf) elves.items)) ;maybe a method like array .update!
     (elves .set! i (coord (+ elf 1 (at elf))))))
 
 (to (at elf)
@@ -33,7 +33,7 @@
   ("" .join (each string<-number digits)))
 
 (to (show)
-  (for each! (((_ i recipe) board.items))
+  (for each! (((~ i recipe) board.items))
     (let f (hm (if (= i (coord (elves 0))) "(~w)")
                (if (= i (coord (elves 1))) "[~w]")
                (else                       " ~w ")))
@@ -57,7 +57,7 @@
 ;    (show)
     (begin checking ((j i))
       (if (< (+ j pc) board.count)
-          (do (when (for every (((_ k p) pattern.items))   ;(= pattern (board .slice j (+ j pc)))   ; ugh
+          (do (when (for every (((~ k p) pattern.items))   ;(= pattern (board .slice j (+ j pc)))   ; ugh
                       (= p (board (+ j k))))
                 (print j)
                 (os-exit 0))

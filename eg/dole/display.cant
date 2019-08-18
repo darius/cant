@@ -6,7 +6,7 @@
   logs)
 
 ;; The screen size.
-(let (_ rows cols) (_ 18 80))          ;TODO query for it or something
+(let (~ rows cols) (~ 18 80))          ;TODO query for it or something
 (let console-rows 5) ; #rows extra, reserved for the debugging console
 
 ;; An array of strings, one per screen row.
@@ -48,13 +48,13 @@
                 (if (< y.+ rows) (appending glyphs.rest 0 y.+))
                 (else            'done))))))
   (make _
-    (to _.point-visible?  (yeah? point-y.^))
+    (to ~.point-visible?  (yeah? point-y.^))
     ;; XXX doesn't mean 'is centered' any more:
-    (to _.point-centered? (and point-y.^ (<= point-y.^ (rows .quotient 2))))
-    (to _.show
+    (to ~.point-centered? (and point-y.^ (<= point-y.^ (rows .quotient 2))))
+    (to ~.show
       (display cursor-hide)
       (display home)
-      (for each! (((_ i line) lines.items))
+      (for each! (((~ i line) lines.items))
         (unless (= line (showing i))
           (display (goto 0 i))
           (display line)

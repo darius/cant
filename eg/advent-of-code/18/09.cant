@@ -1,6 +1,6 @@
 ;; (Use run.cant to run this.)
 
-(let input (with-input-file _.read-all data-file))
+(let input (with-input-file ~.read-all data-file))
 
 (let parse
   (simple-parser<- ":nat ' players; last marble is worth ' :nat ' points\n'"))
@@ -50,10 +50,10 @@
 
   (make circle
 
-    (to _.count
+    (to ~.count
       (+ L.^ (- N H.^)))
 
-    (to (_ .pop! i)
+    (to (~ .pop! i)
       (let lo L.^)
       (let hi H.^)
       (if (< i lo)
@@ -77,7 +77,7 @@
               (H .^= k.+)
               popped)))
 
-    (to (_ .insert! i value)
+    (to (~ .insert! i value)
       (let lo L.^)
       (let hi H.^)
       (if (<= i lo)
@@ -100,7 +100,7 @@
               (H .^= k)
               )))
 
-    (to _.values
+    (to ~.values
       (chain (V .slice 0 L.^)
              (V .slice H.^)))
     ))

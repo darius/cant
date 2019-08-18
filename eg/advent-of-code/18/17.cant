@@ -3,7 +3,7 @@
 (import (use 'grid-2d)
   grid-2d<-)
 
-(let input (with-input-file _.read-lines data-file))
+(let input (with-input-file ~.read-lines data-file))
 
 (let parse
   (simple-parser<- ":anyone '=' :int ', ' :anyone '=' :int '..' :int"))
@@ -23,7 +23,7 @@
 
 (let spring-x 500)
 (let spring-y   0)
-(let spring (_ spring-x spring-y))
+(let spring (~ spring-x spring-y))
 
 (let clay-spots
   (for gather ((input inputs))
@@ -37,11 +37,11 @@
 (let xl xl0.-)
 (let xh xh0.+)
 
-(let grid (grid-2d<- (_ xl yl) (_ xh yh) {constant #no}))
+(let grid (grid-2d<- (~ xl yl) (~ xh yh) {constant #no}))
 (for each! ((p clay-spots))
   (grid .set! (tuple<-list p) #\#))
 
-(to (escaped? (_ _ y))
+(to (escaped? (~ _ y))
   (< yh y))
 
 (to (clay? p)
@@ -50,7 +50,7 @@
 (to (show-map)
   (for each! ((y (spring-y .to< yl)))
     (for each! ((x (xl .to xh)))
-      (let p (_ x y))
+      (let p (~ x y))
       (display (if (= spring p) #\+ #\.)))
     (newline))
   (grid .show (on (chars)
@@ -64,11 +64,11 @@
 ;; TODO redo vector+
 ;;(to (under p)
 ;;  (vector+ p '(0 1)))
-(to (under (_ x y))
-  (_ x y.+))
+(to (under (~ x y))
+  (~ x y.+))
 
 (to (flood)
-  (let under-spring (_ spring-x yl))
+  (let under-spring (~ spring-x yl))
   (surely (<= spring-y yl))
   (surely (not (clay? under-spring)))  ;; gonna assume this for simplicity
   (flooding under-spring))
@@ -85,10 +85,10 @@
       (flooding below))
     (when (blocked? below)
       ;; Spill to the sides.
-      (let (_ x0 y0) p)
+      (let (~ x0 y0) p)
       (to (spilling x dx)
         (let x1 (+ x dx))
-        (let next (_ x1 y0))
+        (let next (~ x1 y0))
         (may (grid .get next)
           (be #no
             (grid .set! next #\|)
@@ -104,10 +104,10 @@
       (let x-min (spilling x0 -1))
       (let x-max (spilling x0 1))
       (let span (for each ((x (x-min .to x-max)))
-                  (_ x y0)))
+                  (~ x y0)))
       (when (and (every (compose blocked? under) span)  ;; TODO I think this logic is now performed above
-                 (blocked? (_ x-min.- y0))
-                 (blocked? (_ x-max.+ y0)))
+                 (blocked? (~ x-min.- y0))
+                 (blocked? (~ x-max.+ y0)))
         (for each! ((spot span))
           (surely (= #\| (grid .get spot)) "Converting flowing to still water")
           (grid .set! spot #\~))))))

@@ -119,7 +119,7 @@
 ;; Python code constructors
 
 (to (py-enum items)
-  ("\n" .join (for each (((_ sym val) items))
+  ("\n" .join (for each (((~ sym val) items))
                 (chain (as-legal-py-identifier sym.name)
                        " = "
                        (py-int-literal val)))))

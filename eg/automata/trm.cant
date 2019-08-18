@@ -21,7 +21,7 @@ insn:    {'1'+} {'#' '#'? '#'? '#'? '#'?} :make_insn.
   {insn (insn-table hashes.count) ones.count})
 
 (let parser
-  ((grammar (map<- (_ 'make_insn (feed insn<-))))
+  ((grammar (map<- (~ 'make_insn (feed insn<-))))
    'program))
 
 (to (regs<- @strings)
@@ -43,24 +43,24 @@ insn:    {'1'+} {'#' '#'? '#'? '#'? '#'?} :make_insn.
   (array<-
    'illegal-insn
    (make _
-     (to _.name "add-1")
-     (to (_ n regs)
+     (to ~.name "add-1")
+     (to (~ n regs)
        (regs .set! n (chain (regs n) "1"))
        1))
    (make _
-     (to _.name "add-#")
-     (to (_ n regs)
+     (to ~.name "add-#")
+     (to (~ n regs)
        (regs .set! n (chain (regs n) "#"))
        1))
    (make _
-     (to _.name "forward")
-     (to (_ n regs) n))
+     (to ~.name "forward")
+     (to (~ n regs) n))
    (make _
-     (to _.name "backward")
-     (to (_ n regs) (- n)))
+     (to ~.name "backward")
+     (to (~ n regs) (- n)))
    (make _
-     (to _.name "case")
-     (to (_ n regs)
+     (to ~.name "case")
+     (to (~ n regs)
        (may (regs .get n "")           ;TODO how about just (regs n)?
          (be "" 1)
          (be str
@@ -76,12 +76,12 @@ insn:    {'1'+} {'#' '#'? '#'? '#'? '#'?} :make_insn.
   (let pc   (or ?pc   0))
   (let regs (or ?regs (regs<-)))
   (let left
-    (for each (((_ addr {insn fn n}) insns.items))
+    (for each (((~ addr {insn fn n}) insns.items))
       (let show-addr (if (= addr pc)
                          "   "
                          ("~3w" .format (abs (- pc addr)))))
       ("~d ~d ~w" .format show-addr fn.name n)))
-  (let right (for each (((_ i str) regs.items.rest))
+  (let right (for each (((~ i str) regs.items.rest))
                ("\tr~w: ~d" .format i str)))
   (for each! ((line (abut left right)))
     (format "~d\n" line)))
@@ -95,10 +95,10 @@ insn:    {'1'+} {'#' '#'? '#'? '#'? '#'?} :make_insn.
 
 (to (transpose-padded lists padding)
   (begin zipping ((lists lists))
-    (if (every _.none? lists)
+    (if (every ~.none? lists)
         '()
-        (link (each (_ .get 0 padding) lists)
-              (zipping (each (_ .slice 1) lists))))))
+        (link (each (~ .get 0 padding) lists)
+              (zipping (each (~ .slice 1) lists))))))
 
 ;; Smoke test
 (to (main _)

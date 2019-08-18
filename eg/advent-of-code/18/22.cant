@@ -6,7 +6,7 @@
 (import (use 'pairing-heap)
   priority-queues<-)
 
-(let input (with-input-file _.read-all data-file))
+(let input (with-input-file ~.read-all data-file))
 
 (let parse
   (simple-parser<- "'depth: ' :nat '\ntarget: ' [:nat ',' :nat :hug] '\n'"))
@@ -66,7 +66,7 @@
 
   ;; Map from state to earliest time when it's been found to be
   ;; reachable, so far.
-  (let bests (map<- (_ start-state 0)))
+  (let bests (map<- (~ start-state 0)))
 
   ;; An 'effort' is a state at a time it can be reached. TODO better name?
   (let start-effort {at 0 start-state})

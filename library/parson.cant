@@ -12,7 +12,7 @@
 ;;   - refs: A set of symbols, the names of grammar rules used by this parser.
 ;;       This is used to warn about undefined rules before you try to run anything.
 ;;       We might also warn about unused rules with this, though currently we don't.
-;;   - f: A function from (_ builder rules subs) to an un-lifted parser.
+;;   - f: A function (f builder rules subs) to an un-lifted parser.
 ;;     - builder: Tells how to turn different kinds of Parson literals into parsers.
 ;;     - rules: The map from rule-name to un-lifted parser. It's mutable, to resolve recursion.
 ;;     - subs: Substitutions, i.e. the map from symbol to un-lifted parser,
@@ -68,7 +68,7 @@
                     empty))))
 
 (let whitespace
-  (at-least-1 (either (skip-1 _.whitespace?)
+  (at-least-1 (either (skip-1 ~.whitespace?)
                       (then (lit-1 #\#) eat-line))))
 
 (let __ (maybe whitespace))
@@ -159,7 +159,7 @@
   (let builder default-builder)         ;TODO parameterize
   (on (subs)
     (let full-subs (union-map<- subs default-subs))
-    (let rules (for map-by ((name (each _.first skeletons)))
+    (let rules (for map-by ((name (each ~.first skeletons)))
                  (delay (: (rules name)))))
     (for each! ((`(,name ,{lifted _ f}) skeletons)) ;XXX better name than f
       (let peg (f builder rules full-subs))
@@ -167,29 +167,29 @@
     rules))
 
 (let default-subs
-  (map<- (_ 'skip skip-any-1)
-         (_ 'anyone any-1) ;XXX all these should probably skip instead of capture
-         (_ 'letter (take-1 _.letter?))
-         (_ 'digit (take-1 _.digit?))
-         (_ 'end end)
-         (_ 'hug hug)
-         (_ 'join (feed chain))
-         (_ 'drop drop)
-         (_ 'whitespace (skip-1 _.whitespace?))
-         (_ 'nat (seclude                                        ;TODO rename
-                  (then (capture (at-least-1 (skip-1 _.digit?))) ;; TODO no leading 0s
+  (map<- (~ 'skip skip-any-1)
+         (~ 'anyone any-1) ;XXX all these should probably skip instead of capture
+         (~ 'letter (take-1 ~.letter?))
+         (~ 'digit (take-1 ~.digit?))
+         (~ 'end end)
+         (~ 'hug hug)
+         (~ 'join (feed chain))
+         (~ 'drop drop)
+         (~ 'whitespace (skip-1 ~.whitespace?))
+         (~ 'nat (seclude                                        ;TODO rename
+                  (then (capture (at-least-1 (skip-1 ~.digit?))) ;; TODO no leading 0s
                         (feed number<-string))))
-         (_ 'int (seclude
+         (~ 'int (seclude
                   (then (capture (then (maybe (lit-1 #\-))
-                                       (at-least-1 (skip-1 _.digit?))));; TODO no leading 0s
+                                       (at-least-1 (skip-1 ~.digit?))));; TODO no leading 0s
                         (feed number<-string))))
          ;; TODO: more
          ))
 
 (make default-builder
-  (to (_ .literal string) (lit string))
-  (to (_ .keyword string) (then (lit string) word-boundary))
-  (to (_ .match regex-string) (surely #no))  ;TODO
+  (to (~ .literal string) (lit string))
+  (to (~ .keyword string) (then (lit string) word-boundary))
+  (to (~ .match regex-string) (surely #no))  ;TODO
   )
 
 (to (parse-grammar text)
@@ -200,7 +200,7 @@
     outcome.display (newline)
     (error "Ungrammatical grammar"))
 
-  (let lhses (bag<- (each _.first skeletons)))
+  (let lhses (bag<- (each ~.first skeletons)))
   (let duplicates (for where ((count lhses)) (< 1 count)))
   (when duplicates.some?
     (error "Multiply-defined rules" (sort duplicates)))

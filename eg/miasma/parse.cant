@@ -6,12 +6,12 @@
   (let params (for those ((p params+))
                 (not= p '{bytes u 0 0})))
   (make spec                            ;TODO struct maker?
-    (to _.mnemonic   mnemonic)
-    (to _.stem       stem)
-    (to _.params     params)
-    (to _.doc-string doc-string)
-    (to _.uses       uses)
-    (to _.unparse    `(,mnemonic
+    (to ~.mnemonic   mnemonic)
+    (to ~.stem       stem)
+    (to ~.params     params)
+    (to ~.doc-string doc-string)
+    (to ~.uses       uses)
+    (to ~.unparse    `(,mnemonic
                        ,@(each unparse-param params)
                        ,doc-string))))
 

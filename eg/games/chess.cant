@@ -58,8 +58,8 @@
                                                    depth.-)))))))))
 
 (let piece-values
-  (map<- (_ #\space 0)
-         (_ #\-     0)))
+  (map<- (~ #\space 0)
+         (~ #\-     0)))
 (for each! ((p "pnbrqk")
             (v '(10 31 33 50 90 10000)))
   (piece-values .set! p.lowercase v)
@@ -83,15 +83,15 @@
 (to (board<- mover squares castling en-passant-target outcome-param)
   (make board
 
-    (to _.mover
+    (to ~.mover
       mover)
 
-    (to (_ .selfie sink)
-      (let lines (each (_ .slice 1 9)
+    (to (~ .selfie sink)
+      (let lines (each (~ .slice 1 9)
                        (squares .slice 1 9)))
-      (for each! (((_ i line) lines.items))
+      (for each! (((~ i line) lines.items))
         (format .to-sink sink "~w|" (- 8 i))
-        (for each! (((_ j piece) line.items))
+        (for each! (((~ j piece) line.items))
           (format .to-sink sink " ~d" (if (and (= piece #\space)
                                                ((+ i j) .odd?))
                                           #\. ; An empty black square.
@@ -105,14 +105,14 @@
                 (be w     ("~d wins!" .format (side-name w))))))
 
     ;; Return #no, draw, black, or white (meaning the winner).
-    (to _.outcome
+    (to ~.outcome
       (hm (or outcome-param)
           (if board.checkmate?            (opponent mover))
           (if board.get-piece-moves.none? 'draw)
           (else                           #no)))
 
     ;; Is the player to move checkmated?
-    (to _.checkmate?  ;;XXX are we getting this at the start? why?
+    (to ~.checkmate?  ;;XXX are we getting this at the start? why?
       ;; Or: is the mover in check now, and in check after every possible move?
       ;; XXX also seems buggy in other ways, though these boards are hard to read in the console
       (to (in-check?)                    ;XXX redundant and untested. Not yet in the Python version.
@@ -124,10 +124,10 @@
         (not (for every ((succ swap-players.gen-successors))
                (succ.squares .find? my-king))))
       (and (in-check?)
-           (every _.checking? board.gen-successors)))
+           (every ~.checking? board.gen-successors)))
 
     ;; Is the opponent in check?
-    (to _.checking?
+    (to ~.checking?
       ;; Operationalized as: can the mover take the opposing king?
       (let opposing-king (may mover
                            (be 'white #\k)
@@ -136,15 +136,15 @@
              (succ.squares .find? opposing-king))))
 
     ;; The boards that can result from a move (other than resigning).
-    (to _.gen-successors
+    (to ~.gen-successors
       (for each ((move board.get-piece-moves))
         (update move board)))
 
-    (to _.resign
+    (to ~.resign
       (let oppo (opponent mover))
       (board<- oppo squares castling #no oppo))
 
-    (to (_ .move-piece place0 place1 ?en-passant-target)
+    (to (~ .move-piece place0 place1 ?en-passant-target)
       (let `(,r0 ,c0) place0)
       (let `(,r1 ,c1) place1)
       (let rows (array<-list (each array<-list squares)))
@@ -158,16 +158,16 @@
       (board<- (opponent mover) (each string<-list rows.values)
                new-castling ?en-passant-target #no))
 
-    (to (_ .move-en-passant place0 place1)
+    (to (~ .move-en-passant place0 place1)
       XXX)
 
-    (to (_ .move-promoting place0 place1)
+    (to (~ .move-promoting place0 place1)
       XXX)
 
-    (to _.castle
+    (to ~.castle
       XXX)
 
-    (to (_ .play-turn `(,white-player ,black-player))
+    (to (~ .play-turn `(,white-player ,black-player))
       (let player (may mover
                     (be 'white white-player)
                     (be 'black black-player)))
@@ -179,28 +179,28 @@
         (format "~d plays ~d.\n\n" (side-name mover) (unparse-move move)))
       (update move board))
 
-    (to (_ .parse-move string)    ;N.B. #no if invalid, unlike in my Python
+    (to (~ .parse-move string)    ;N.B. #no if invalid, unlike in my Python
       ((map<-values unparse-move board.get-moves) .get string))
 
-    (to _.gen-legal-moves
+    (to ~.gen-legal-moves
       (for those ((move board.gen-piece-moves))
-        (not (_.checking? (update move board)))))
+        (not (~.checking? (update move board)))))
 
-    (to _.get-moves
+    (to ~.get-moves
       (link {resign} board.get-piece-moves))
 
-    (to _.get-piece-moves
+    (to ~.get-piece-moves
       board.gen-piece-moves)
 
-    (to _.gen-piece-moves
+    (to ~.gen-piece-moves
       (let white? (= mover 'white))
-      (for gather (((_ r row) squares.items))
-        (for gather (((_ c piece) row.items))
+      (for gather (((~ r row) squares.items))
+        (for gather (((~ c piece) row.items))
           (if (and piece.letter? (= piece.uppercase? white?))
               (board .gen-moves-from r c piece.uppercase white?)
               '()))))
 
-    (to (_ .gen-moves-from r c piece white?)
+    (to (~ .gen-moves-from r c piece white?)
 
       (to (takeable? r1 c1)
         (or (empty? r1 c1) (has-opponent? r1 c1)))
@@ -279,7 +279,7 @@
         (be #\space '())
         (be #\-     '())))
 
-    (to _.squares
+    (to ~.squares
       ("" .join squares))
 
     ))
@@ -323,10 +323,10 @@
 
 (to (main<-rng rng)
   (let strategy-names
-    (map<- (_ "human"   human-player)
-           (_ "greedy"  greedy-player)
-           (_ "random"  (random-player<- rng))
-           (_ "minimax" (minimax-player<- 2))))
+    (map<- (~ "human"   human-player)
+           (~ "greedy"  greedy-player)
+           (~ "random"  (random-player<- rng))
+           (~ "minimax" (minimax-player<- 2))))
   (main<- strategy-names))
   
 (export main<-rng)

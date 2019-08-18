@@ -7,7 +7,7 @@
 (to (main _)
   (format "10 iterations\n")
   (let result
-    (for foldl ((_ 0) (iter (1 .to 10)))
+    (for foldl ((~ 0) (iter (1 .to 10)))
       (let count (box<- 0))
       (for each! ((i (0 .to SIZE)))     ;TODO .fill! method
         (flags .set! i #yes))
@@ -16,6 +16,6 @@
           (let prime (+ i i 3))
           (for each! ((k (interval<- (+ i prime) SIZE.+ prime)))
             (flags .set! k #no))
-          (count .update _.+)))
+          (count .update ~.+)))
       count.^))
   (format "~w primes\n" result))

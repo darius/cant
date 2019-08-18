@@ -11,7 +11,7 @@
 (to (main argv)
   (let model (map<-))
   (for each! ((filename argv.rest))
-    (train model (tokenize (with-input-file _.read-all filename))))
+    (train model (tokenize (with-input-file ~.read-all filename))))
   (unless model.none?
     (let text (spew (random-rng<-) model start))
     (display (fill (" " .join text) ;TODO fill sort of splits it back -- add a function to text-wrap that wouldn't need to?
@@ -44,7 +44,7 @@
   (let n bag.total)  ;; Pre: n > 0
   (begin counting ((k (rng .random-integer n))
                    (items bag.items))
-    (let (_ key count) items.first)
+    (let (~ key count) items.first)
     (if (< k count)
         key
         (counting (- k count) items.rest))))

@@ -20,7 +20,7 @@
       (may text.first
         (be #\newline (link {break} (parse-tokens text.rest)))
         (be #\space   (link {space} (parse-tokens text.rest)))
-        (be (? _.whitespace? ch)
+        (be (? ~.whitespace? ch)
           (error "I don't know how to fill whitespace like" ch))
         (be ch
           (let word (flexarray<- ch))

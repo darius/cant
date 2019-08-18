@@ -3,7 +3,7 @@
 (import (use 'memoize)
   memoize)
 
-(let input (with-input-file _.read-all data-file))
+(let input (with-input-file ~.read-all data-file))
 
 (to (alt<- @es) {alt es})
 (to (seq<- @es) {seq es})
@@ -16,12 +16,12 @@ f:    g*     :Seq.
 g:    dir | '(' e ')'.
 dir:  {'N' | 'S' | 'E' | 'W'} :Dir.
 "))
-(let semantics (grammar (map<- (_ 'Alt (feed alt<-))
-                               (_ 'Seq (feed seq<-))
-                               (_ 'Dir (feed dir<-)))))
+(let semantics (grammar (map<- (~ 'Alt (feed alt<-))
+                               (~ 'Seq (feed seq<-))
+                               (~ 'Dir (feed dir<-)))))
 (let parse-main (semantics 'main))
 (to (parse string)
-  (_.result (parson-parse parse-main string)))
+  (~.result (parson-parse parse-main string)))
 
 
 (let infinity 999999)
@@ -52,9 +52,9 @@ dir:  {'N' | 'S' | 'E' | 'W'} :Dir.
 
   (to (really-visit-seq p d es)
     (if es.none?
-        (map<- (_ p d))
+        (map<- (~ p d))
         (do (let map1 (visit p d es.first))
-            (merge-best (for each (((_ p1 d1) map1.items))
+            (merge-best (for each (((~ p1 d1) map1.items))
                           (visit-seq p1 d1 es.rest))))))
 
   (let visit (memoize really-visit))
@@ -78,7 +78,7 @@ dir:  {'N' | 'S' | 'E' | 'W'} :Dir.
 (to (merge2 map1 map2)
   ;; TODO there should be a union-with-combiner method
   (let result map1.copy)
-  (for each! (((_ k2 v2) map2.items))
+  (for each! (((~ k2 v2) map2.items))
     (result .set! k2 (may (map1 .get k2)
                        (be #no v2)
                        (be v1 (min v1 v2)))))

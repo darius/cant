@@ -66,18 +66,18 @@
      "\n\n"]))
 
 (let tiles
-  (map<- (_    0                                      "  . ")
-         (_    2  (on-blue (white                     "  2 ")))
-         (_    4  (on-red (black                      "  4 ")))
-         (_    8  (white (on-magenta                  "  8 ")))
-         (_   16  (black (on-cyan                     " 16 ")))
-         (_   32  (black (on-green                    " 32 ")))
-         (_   64  (black (on-yellow                   " 64 ")))
-         (_  128  (black (on-white                    "128 ")))
-         (_  256  (bold (blue (on-black               "256 "))))
-         (_  512  (bold (magenta (on-black            "512 "))))
-         (_ 1024  (underlined (bold (red (on-black    "1024")))))
-         (_ 2048  (underlined (bold (yellow (on-black "2048")))))))
+  (map<- (~    0                                      "  . ")
+         (~    2  (on-blue (white                     "  2 ")))
+         (~    4  (on-red (black                      "  4 ")))
+         (~    8  (white (on-magenta                  "  8 ")))
+         (~   16  (black (on-cyan                     " 16 ")))
+         (~   32  (black (on-green                    " 32 ")))
+         (~   64  (black (on-yellow                   " 64 ")))
+         (~  128  (black (on-white                    "128 ")))
+         (~  256  (bold (blue (on-black               "256 "))))
+         (~  512  (bold (magenta (on-black            "512 "))))
+         (~ 1024  (underlined (bold (red (on-black    "1024")))))
+         (~ 2048  (underlined (bold (yellow (on-black "2048")))))))
 
 (to (won? rows)
   (for some ((row rows))
@@ -89,14 +89,14 @@
     ((move rows) .none?)))
 
 (to (random-empty-square rng rows)
-  (rng .pick (for gather (((_ r row) rows.items))
-               (for yeahs (((_ c v) row.items))
-                 (and (= v 0) (_ r c))))))
+  (rng .pick (for gather (((~ r row) rows.items))
+               (for yeahs (((~ c v) row.items))
+                 (and (= v 0) (~ r c))))))
 
 (to (update rows at new-value)
-  (for each (((_ r row) rows.items))
-    (for each (((_ c v) row.items))
-      (if (= at (_ r c)) new-value v))))
+  (for each (((~ r row) rows.items))
+    (for each (((~ c v) row.items))
+      (if (= at (~ r c)) new-value v))))
 
 ;; Try to slide the board leftward; return a list of boards to
 ;; animate the move -- an empty list if there's no move leftward.

@@ -26,10 +26,10 @@
            (r .slice count)}))
 
 (let dictionary
-  (map<- (_ '+ (stack-op-2-1<- +))
-         (_ '- (stack-op-2-1<- -))
-         (_ '* (stack-op-2-1<- *))
-         (_ '/ (stack-op-2-1<- /))
+  (map<- (~ '+ (stack-op-2-1<- +))
+         (~ '- (stack-op-2-1<- -))
+         (~ '* (stack-op-2-1<- *))
+         (~ '/ (stack-op-2-1<- /))
          ))
 
 (to (compile tokens)

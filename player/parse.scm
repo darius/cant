@@ -105,6 +105,8 @@
         (pack<- e-call (parse-e e1 ctx) (parse-e e2 ctx)))
        (('_ . operands)                   ; TODO experiment: syntax for messages
         (parse-message-e operands ctx))
+       (('~ . operands)
+        (parse-message-e operands ctx))
        ((addressee . operands)
         (pack<- e-call
                 (parse-e addressee ctx)
@@ -178,6 +180,8 @@
        (('term<- tag-p arguments-p)
         (make-term-pat (parse-p tag-p ctx) (parse-p arguments-p ctx)))
        (('_ . ps)                   ; TODO experiment: syntax for messages
+        (parse-message-pat ps ctx))
+       (('~ . ps)
         (parse-message-pat ps ctx))
        ((: __ term?)
         (parse-term-pat p ctx))

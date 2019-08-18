@@ -41,7 +41,7 @@
   (let levels-str source.read-all)
   (let grids (for each ((floor-plan (levels-str .split "\n\n")))
                (sokoban-grid<- (parse floor-plan))))
-  (_ grids name))
+  (~ grids name))
 
 (to (start grids name)
   (for cbreak-mode ()
@@ -94,7 +94,7 @@ Level ~w ~d Move ~w")
 ;; the newlines, with every line the same length (which we call the
 ;; width of the grid).
 (to (parse floor-plan)
-  (do (let line-lengths (each _.count floor-plan.split-lines))
+  (do (let line-lengths (each ~.count floor-plan.split-lines))
       (surely (= 1 line-lengths.range.count))) ;XXX require
   floor-plan)
 
@@ -104,19 +104,19 @@ Level ~w ~d Move ~w")
   ;; square.
   (let width (+ (spots .find #\newline) 1))
   (let directions
-    (map<- (_ 'left -1) (_ 'right 1) (_ 'down width) (_ 'up (- width))))
+    (map<- (~ 'left -1) (~ 'right 1) (~ 'down width) (~ 'up (- width))))
 
   (make grid
 
-    (to _.won?
+    (to ~.won?
       (not (spots .find? #\o)))
 
-    (to _.unparse
+    (to ~.unparse
       ((" " .join (each string<- spots.values))
        .replace "\n " "\n"))
 
     ;; Try to move the player in the direction.
-    (to (_ .move dir)
+    (to (~ .move dir)
 
       ;; The spots-to-be after the move, starting as a copy of spots.
       (let new (array<-list spots.values))

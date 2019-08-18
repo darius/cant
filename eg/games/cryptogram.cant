@@ -55,7 +55,7 @@
                          (cv .jot #\space))
           (be 'del       (cv .jot #\space)
                          (cv .shift-by 1))
-          (be (and (? char?) (? _.uppercase?))
+          (be (and (? char?) (? ~.uppercase?))
                          (cv .shift-to-code 1 key))
           (else          (when (or (= key #\space) (alphabet .find? key))
                            (cv .jot key)
@@ -64,15 +64,15 @@
 
 (to (cryptoview<- cryptogram)
 
-  (let code (those _.letter? cryptogram.uppercase))
+  (let code (those ~.letter? cryptogram.uppercase))
   (surely code.some?)            ;XXX 'require' or something
   (let decoder (map-by (-> #\space) code.range.keys))
   (let point (box<- 0))                ; Index in `code` of the cursor
 
   (let lines (each clean cryptogram.uppercase.split-lines))
   (let line-starts
-    (_.range (running-sum (for each ((line lines))
-                            (tally-by _.letter? line)))))
+    (~.range (running-sum (for each ((line lines))
+                            (tally-by ~.letter? line)))))
 
   (to (shift-by offset)
     (point .^= ((+ point.^ offset) .modulo code.count)))
@@ -84,33 +84,33 @@
 
   (make _
 
-    (to (_ .jot letter)
+    (to (~ .jot letter)
       (decoder .set! (code point.^) letter))
 
-    (to _.go-to-start
+    (to ~.go-to-start
       (point .^= 0))
 
-    (to _.go-to-end
+    (to ~.go-to-end
       (point .^= code.count.-))
 
-    (to (_ .shift-by offset)
+    (to (~ .shift-by offset)
       (shift-by offset))
 
-    (to (_ .shift-line offset)
+    (to (~ .shift-line offset)
       (shift-till offset (: (line-starts .maps? point.^))))
 
-    (to (_ .shift-to-space offset)
+    (to (~ .shift-to-space offset)
       (when (decoder .find? #\space)
         (shift-till offset (: (= #\space (decoder (code point.^)))))))
 
-    (to (_ .shift-to-code offset letter)
+    (to (~ .shift-to-code offset letter)
       (when (code .find? letter)
         (shift-till offset (: (= letter (code point.^))))))
 
-    (to (_ .view show-cursor?)
+    (to (~ .view show-cursor?)
       (let counts (hey (bag<- decoder.values)
                        (-> (it .delete! #\space))))
-      (let clashes (_.range (for where ((n counts))
+      (let clashes (~.range (for where ((n counts))
                               (< 1 n))))
       (let letters-left (for each ((ch alphabet))
                           (if (counts .maps? ch) #\space ch)))
@@ -127,7 +127,7 @@
           (when (and show-cursor? ch.letter?)
             (when (= pos.^ point.^)
               (emit cursor))
-            (pos .update _.+))
+            (pos .update ~.+))
           (emit (decoder .get ch ch)))
         (emit #\newline)
         (for each! ((ch line))

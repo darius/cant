@@ -1,6 +1,6 @@
 ;; (Use run.cant to run this.)
 
-(let input (with-input-file _.read-lines data-file))
+(let input (with-input-file ~.read-lines data-file))
 
 (let the-ip (number<-string (input.first.split 1)))
 (print the-ip)
@@ -22,7 +22,7 @@
 (to (vm<- regs ip program)
   (make vm
 
-    (to _.run
+    (to ~.run
       (begin running ()
 ;       (when vm.step (running))))
         (when (program .maps? (regs ip))
@@ -31,7 +31,7 @@
           (format " ~w\n" regs)
           (running))))
 
-    (to _.step
+    (to ~.step
       (let here (regs ip))
       (for mayhap ((`(,op ,a ,b ,c) (program .get here)))
         (vm .do op a b c)
@@ -40,7 +40,7 @@
           (format "ip=~w ~w ~d " (regs ip) regs (show (program (regs ip)))))
         #yes))
 
-    (to (_ .do op a b c)
+    (to (~ .do op a b c)
       (let result
         (may op
 
@@ -60,18 +60,18 @@
           (be 'seti  a)
        
           ;; TODO I'm not sure about this method name claim.count
-          (be 'gtir  (_.count (> a (regs b))))
-          (be 'gtri  (_.count (> (regs a) b)))
-          (be 'gtrr  (_.count (> (regs a) (regs b))))
+          (be 'gtir  (~.count (> a (regs b))))
+          (be 'gtri  (~.count (> (regs a) b)))
+          (be 'gtrr  (~.count (> (regs a) (regs b))))
        
-          (be 'eqir  (_.count (= a (regs b))))
-          (be 'eqri  (_.count (= (regs a) b)))
-          (be 'eqrr  (_.count (= (regs a) (regs b))))
+          (be 'eqir  (~.count (= a (regs b))))
+          (be 'eqri  (~.count (= (regs a) b)))
+          (be 'eqrr  (~.count (= (regs a) (regs b))))
        
          ))
       (regs .set! c result))
 
-    (to _.get-regs
+    (to ~.get-regs
       regs)
     ))
 

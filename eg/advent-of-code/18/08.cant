@@ -5,9 +5,9 @@
   (begin parsing ()
     (let nc (read source)) (surely (not (eof? nc)))
     (let nm (read source)) (surely (not (eof? nm)))
-    {node (for each/seq ((_ (1 .to nc)))
+    {node (for each/seq ((~ (1 .to nc)))
             (parsing))
-          (for each/seq ((_ (1 .to nm)))
+          (for each/seq ((~ (1 .to nm)))
             (read source))}))
 
 (to (each/seq f xs) ;force calls in left-to-right order. kinda embarrassing.

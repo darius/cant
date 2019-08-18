@@ -26,7 +26,7 @@
 (let rng (rng<- 1234567))
 
 (to (random-tests n-trials)            ;TODO use squickcheck
-  (for each! ((_ (0 .to< n-trials)))
+  (for each! ((~ (0 .to< n-trials)))
     (exercise-em (for each ((value (0 .to< 50))) ;TODO did I mean to use the value?
                    (rng .random-integer 5)))))
 

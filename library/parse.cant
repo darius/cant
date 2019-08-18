@@ -10,7 +10,7 @@
 
   ;; Return a list of those rules where cat starts the rhs.
   (to (rules-starting-with cat)
-    (those (_ .starts-with? cat) rules))
+    (those (~ .starts-with? cat) rules))
 
   ;; Look for the categories needed to complete the parse.
   (to (extend-parse lhs rhs rest needed)
@@ -32,11 +32,11 @@
   (make grammar
 
     ;; Return all complete parses of a list of words.
-    (to (_ .parse words)
-      (each _.tree (those _.complete? (grammar .parse-prefixes words))))
+    (to (~ .parse words)
+      (each ~.tree (those ~.complete? (grammar .parse-prefixes words))))
 
     ;; Return all parses of any prefix of words (working bottom-up).
-    (to (_ .parse-prefixes words)
+    (to (~ .parse-prefixes words)
       (if words.none?
           '()
           (for gather ((rule (lexical-rules words.first)))
@@ -48,27 +48,27 @@
 
 (to (rule<- lhs rhs)
   (make _
-    (to _.lhs lhs)
-    (to _.rhs rhs)
-    (to (_ .starts-with? cat)
+    (to ~.lhs lhs)
+    (to ~.rhs rhs)
+    (to (~ .starts-with? cat)
       (may rhs
         (be `(,(= cat) ,@_) #yes)
         (else               #no)))))
 
 (to (tree<- lhs rhs)
   (make _
-    (to _.lhs lhs)
-    (to _.rhs rhs)
-    (to (_ .selfie sink) (sink .write `(,lhs ,@rhs)))))
+    (to ~.lhs lhs)
+    (to ~.rhs rhs)
+    (to (~ .selfie sink) (sink .write `(,lhs ,@rhs)))))
 
 ;; A parse tree and a remainder.
 (to (parse<- tree remainder)
   (make
-    (to _.tree      tree)
-    (to _.remainder remainder)
-    (to _.lhs       tree.lhs)
-    (to _.complete? remainder.none?)
-    (to (_ .selfie sink)
+    (to ~.tree      tree)
+    (to ~.remainder remainder)
+    (to ~.lhs       tree.lhs)
+    (to ~.complete? remainder.none?)
+    (to (~ .selfie sink)
       (sink .write `((tree: ,tree)
                      (remainder: ,remainder))))))
 

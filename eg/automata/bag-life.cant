@@ -18,14 +18,14 @@
     (display cursor-show)))
 
 (to (run grid n-steps)
-  (for foldl ((grid grid) (_ (1 .to n-steps)))
+  (for foldl ((grid grid) (~ (1 .to n-steps)))
     (display clear-screen)
     (show grid)
     (update grid)))
 
 (to (update grid)
   (let active (bag<- (gather neighbors grid.keys)))
-  (_.range (for yeahs (((_ pos n-live) active.items))
+  (~.range (for yeahs (((~ pos n-live) active.items))
              (may n-live
                (be 3 pos)
                (be 2 (and (grid .maps? pos) pos))
@@ -51,13 +51,13 @@
     ,(max @numbers)))
 
 (to (paint lines)
-  (_.range (for where ((ch (map<-lines lines)))
+  (~.range (for where ((ch (map<-lines lines)))
              (not ch.whitespace?))))
 
 (to (map<-lines lines)
-  (map<-items (for gather (((_ row line) lines.items))
-                (for each (((_ col ch) line.items))
-                  (_ `(,col ,(- row)) ; minus so y-coordinates increase upwards
+  (map<-items (for gather (((~ row line) lines.items))
+                (for each (((~ col ch) line.items))
+                  (~ `(,col ,(- row)) ; minus so y-coordinates increase upwards
                      ch)))))
 
 (let r-pentomino (paint '(" **"

@@ -9,8 +9,8 @@
 (expect '(1 2 3)     ((make (xs xs)) 1 2 3))
 (expect 2            (if #no 1 2))
 (expect 1            (if #yes 1 2))
-(expect 'no          ((make ('(#no) 'no) (_ 'yes)) #no))
-(expect 'yes         ((make ('(#no) 'no) (_ 'yes)) #yes))
+(expect 'no          ((make ('(#no) 'no) (~ 'yes)) #no))
+(expect 'yes         ((make ('(#no) 'no) (~ 'yes)) #yes))
 (expect '(hello yes) `(hello ,(if #yes 'yes 'no)))
 (expect 5            (2 .+ 3))
 (expect 55           (hide (let x 55)))
@@ -19,5 +19,5 @@
                        (to (factorial n)
                          (may n
                            (0 1)
-                           (_ (n .* (factorial (n .- 1))))))
+                           (~ (n .* (factorial (n .- 1))))))
                        (factorial 5)))

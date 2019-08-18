@@ -26,17 +26,17 @@
 
   (let builtins-env
     {module
-     (map<- (_ 'make-church<-claim {primitive make-church<-claim})
+     (map<- (~ 'make-church<-claim {primitive make-church<-claim})
 
-            (_ 'add1 {primitive _.+})
-            (_ 'make-church<-count {primitive make-church<-count})
+            (~ 'add1 {primitive ~.+})
+            (~ 'make-church<-count {primitive make-church<-count})
 
-            (_ 'cant-link {primitive (on (h)
+            (~ 'cant-link {primitive (on (h)
                                        {primitive (-> (link h it))})})
-            (_ 'make-church<-list {primitive make-church<-list})
+            (~ 'make-church<-list {primitive make-church<-list})
 
-            (_ 'display {primitive display})
-            (_ 'error {primitive (to (lambda-error _)
+            (~ 'display {primitive display})
+            (~ 'error {primitive (to (lambda-error _)
                                    (error "Error in lambda-calculus program"))})
             )})
 

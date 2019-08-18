@@ -1,6 +1,6 @@
 ;; (Use run.cant to run this.)
 
-(let input (with-input-file _.read-lines data-file))
+(let input (with-input-file ~.read-lines data-file))
 
 (to (parse line)
   (each number<-string (line.trim .split ","))) ;TODO I thought it was #\,
@@ -31,7 +31,7 @@
         (be #no i)
         (be j   (chasing j)))))
   (make partitioning
-    (to (_ .join! x y)
+    (to (~ .join! x y)
       (let xi (chase x))
       (let yi (chase y))
       ;; TODO path compression, etc.
@@ -39,7 +39,7 @@
         (be 0)
         (be -1 (next .set! yi xi))
         (be +1 (next .set! xi yi))))
-    (to _.count
+    (to ~.count
       ;; TODO: there's a trickier but more efficient method looking only at the next array, right?
       (let representatives (each chase elements))
       representatives.range.count)

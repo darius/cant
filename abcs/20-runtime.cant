@@ -12,7 +12,7 @@
 ;; definitions, transitively.
 
 (make-trait miranda-trait me
-  (to (_ .selfie sink) (sink .display (__depict me)))
+  (to (~ .selfie sink) (sink .display (__depict me)))
   (to message (error "Match failure" me message)))
 
 ;; Generic map trait
@@ -30,51 +30,51 @@
 ;; uglyish and kinda expensive.
 
 (make-trait map-trait map
-  (to (_ key)
+  (to (~ key)
     (make missing)
     (let answer (map .get key missing))
     (if (= answer missing)
         (error "Missing key" map key)
         answer))
-  (to (_ .get key)
+  (to (~ .get key)
     (map .get key #no))
-  (to (_ .maps? key)
+  (to (~ .maps? key)
     (make missing)
     (not= (map .get key missing) missing))
-  (to _.none?  (= map.count 0))  ; or map.items.none? - is that better?
-  (to _.some?  (not map.none?))
-  (to _.keys   (each (on ((_ k _)) k) map.items))
-  (to _.values (each (on ((_ _ v)) v) map.items))
-  (to (_ .find? value)
+  (to ~.none?  (= map.count 0))  ; or map.items.none? - is that better?
+  (to ~.some?  (not map.none?))
+  (to ~.keys   (each (on ((~ k _)) k) map.items))
+  (to ~.values (each (on ((~ _ v)) v) map.items))
+  (to (~ .find? value)
     (map.values .find? value))
-  (to (_ .find value default)
+  (to (~ .find value default)
     (begin searching ((items map.items))
       (if items.none?
           default
           (may items.first
-            (be (_ k v) (if (= v value) k (searching items.rest)))
+            (be (~ k v) (if (= v value) k (searching items.rest)))
             (else (searching items.rest))))))
-  (to (_ .find value)
+  (to (~ .find value)
     (make missing)
     (let key (map .find value missing))
     (when (= key missing)
       (error "Missing value" value))
     key)
-  (to _.copy
+  (to ~.copy
     (map<-items map.items))
-  (to (_ .intersects? map2)
+  (to (~ .intersects? map2)
     ;; TODO: maybe iterate over the one with smaller .count ?
     (for some ((k map.keys))
       (map2 .maps? k)))
-  (to (_ .disjoint? map2)                    ;too trivial?
+  (to (~ .disjoint? map2)                    ;too trivial?
     (not (map .intersects? map2)))
-  (to _.domain
+  (to ~.domain
     (set<-list map.keys))   ;TODO usually worth specializing
-  (to _.range
+  (to ~.range
     (set<-list map.values))
-  (to _.inverse
+  (to ~.inverse
     (let inverse (map<-))
-    (for each! (((_ k v) map.items))
+    (for each! (((~ k v) map.items))
       (when (inverse .maps? v)
         (error ".inverse of noninvertible map" map))  ; or just allow it?
       (inverse .set! v k))
@@ -82,50 +82,50 @@
 
   ;; What's the right definition & interface for these for maps?
   ;; TODO also, rename to .or, .and ?
-  (to (_ .union other)
+  (to (~ .union other)
     (error "unimplemented .union"))
-  (to (_ .intersect other)                 
+  (to (~ .intersect other)                 
     (error "unimplemented .intersect"))
-  (to (_ .difference other)
+  (to (~ .difference other)
     (error "unimplemented .difference"))
 
-;;  (to (_ .compare xs)
-;;  (to (_ .slice keys)
+;;  (to (~ .compare xs)
+;;  (to (~ .slice keys)
   )
 
 (make-trait list-trait list
-  (to (_ i)
+  (to (~ i)
     (if (= i 0)
         list.first
         (list.rest i.-)))
-  (to _.none?
+  (to ~.none?
     (= 0 list.count)) ;N.B. these default implementations are circular
-  (to _.first
+  (to ~.first
     (list 0))
-  (to _.rest
+  (to ~.rest
     (list .slice 1))
-  (to _.count
+  (to ~.count
     ;; TODO non-tail-recursive would be more OO in style. Go back to that?
     (begin counting ((remainder list) (count 0))
       (if remainder.none?              ;XXX why can't this be .none?
           count
           (counting remainder.rest count.+))))
-  (to (_ .slice i)
+  (to (~ .slice i)
     (surely (<= 0 i))
     (hm (if (= i 0) list)
         (if list.none? list)
         (else (list.rest .slice i.-))))
-  (to (_ .slice i bound)     ;XXX result is a link-list; be more generic?
+  (to (~ .slice i bound)     ;XXX result is a link-list; be more generic?
     (surely (<= 0 i))
     (hm (if list.none? list)
         (if (<= bound i) '())
         (if (= i 0) (link list.first (list.rest .slice 0 bound.-)))
         (else (list.rest .slice i.- bound.-))))
-  (to (_ .chain seq)                         ;TODO self if seq is ()
+  (to (~ .chain seq)                         ;TODO self if seq is ()
     (if list.none?
         seq
         (link list.first (list.rest .chain seq))))
-  (to (_ .compare xs)
+  (to (~ .compare xs)
     ;; N.B. mutable arrays compare by this method, so it's really a comparison as of right now
     (hm (if list.none? (if xs.none? 0 -1))
         (if xs.none? 1)
@@ -133,55 +133,55 @@
                 (be 0 (list.rest .compare xs.rest))
                 (be d d)))))
   ;; A sequence is a kind of collection. Start implementing that:
-  (to _.keys
+  (to ~.keys
     (0 .to< list.count)) ;TODO move this impl to array-trait; here, enum lazily.
-  (to _.values
+  (to ~.values
     list)
-  (to _.items
+  (to ~.items
     (enumerate list))
-  (to (_ .get key default)
+  (to (~ .get key default)
     (if (count? key)
         (begin walking ((k key) (xs list))
           (hm (if xs.none? default)
               (if (= k 0) xs.first)
               (else (walking k.- xs.rest))))
         default))
-  (to (_ .maps? key)
+  (to (~ .maps? key)
     (and list.some?
          (or (= 0 key)
              (and (< 0 key)
                   (list.rest .maps? key.-)))))
-  (to (_ .find value default)    ;; XXX update the other collections to have this too
+  (to (~ .find value default)    ;; XXX update the other collections to have this too
     (begin looking ((i 0) (values list))
       (hm (if values.none? default)
           (if (= value values.first) i)
           (else (looking i.+ values.rest)))))
-  (to (_ .find value)
+  (to (~ .find value)
     (may (list .find value #no)
       (be #no (error "Missing value" value))
       (be key key)))
-  (to (_ .find? value)
+  (to (~ .find? value)
     (may (list .find value #no)
       (be #no #no)
       (else   #yes)))
-  (to (_ .last)
+  (to (~ .last)
     (let rest list.rest)
     (if rest.none? list.first rest.last))
-  (to (_ .prefix? p)
+  (to (~ .prefix? p)
     (= (list .slice 0 p.count) p))   ;TODO more efficient
-  (to (_ .repeat n)
+  (to (~ .repeat n)
     ;;TODO a method to get an empty seq of my type; and then factor out duplicate code
     (may n
       (be 0 '())             
-      (else (chain @(for each ((_ (0 .to< n)))
+      (else (chain @(for each ((~ (0 .to< n)))
                       list)))))
-  (to _.maybe  ;; TODO an experiment TODO could be defined on maps in general too
+  (to ~.maybe  ;; TODO an experiment TODO could be defined on maps in general too
     (if list.none?
         #no
         (do (unless list.rest.none?
               (error "Tried to convert to maybe from count >1" list))
             list.first)))
-  (to _.only  ;; TODO an experiment TODO could be defined on maps in general too
+  (to ~.only  ;; TODO an experiment TODO could be defined on maps in general too
     (when list.none?
       (error "Tried to .only from empty" list))
     (unless list.rest.none?
@@ -191,9 +191,9 @@
     (map-trait list message)))
 
 (make-trait claim-primitive me
-  (to _.count       (if me 1 0))
-  (to (_ .selfie sink) (sink .display (if me "#yes" "#no")))
-  (to (_ .compare a)
+  (to ~.count       (if me 1 0))
+  (to (~ .selfie sink) (sink .display (if me "#yes" "#no")))
+  (to (~ .compare a)
     (hm (and (claim? a))
         (if (= me a) 0)
         (if me       1)
@@ -204,71 +204,71 @@
   )
 
 (make-trait number-primitive me
-  (to (_ .+ a)         (__+ me a))
-  (to (_ .- a)         (__- me a))
-  (to (_ .* a)         (__* me a))
-  (to (_ .compare a)   (__number-compare me a))
-  (to (_ .quotient b)  (__quotient me b))
-  (to (_ .remainder b) (__remainder me b))
-  (to (_ .modulo b)    (__modulo me b))
-  (to (_ .*/mod m d)   (__*/mod me m d))
-  (to (_ ./mod d)      (__*/mod me 1 d))
-  (to (_ .<< b)        (__bit-<<  me b))
-  (to (_ .>> b)        (__bit->>  me b))
-  (to _.not            (__bit-not me))
-  (to (_ .and b)       (__bit-and me b))
-  (to (_ .or b)        (__bit-or  me b))
-  (to (_ .xor b)       (__bit-xor me b))
-  (to (_ .to< b)       (interval<- me b))
-  (to (_ .to b)        (interval<- me b.+))
-  (to (_ .span n)      (interval<- me (+ me n)))
-  (to _.even?          (surely (integer? me)) (= 0 (me .modulo 2)))
-  (to _.odd?           (surely (integer? me)) (not= 0 (me .modulo 2)))
-  (to (_ .divides? b)  (surely (integer? me)) (= 0 (b .modulo me)))
-  (to _.+              (__+ me 1))      ;experiment
-  (to _.-              (__- me 1))      ;experiment
+  (to (~ .+ a)         (__+ me a))
+  (to (~ .- a)         (__- me a))
+  (to (~ .* a)         (__* me a))
+  (to (~ .compare a)   (__number-compare me a))
+  (to (~ .quotient b)  (__quotient me b))
+  (to (~ .remainder b) (__remainder me b))
+  (to (~ .modulo b)    (__modulo me b))
+  (to (~ .*/mod m d)   (__*/mod me m d))
+  (to (~ ./mod d)      (__*/mod me 1 d))
+  (to (~ .<< b)        (__bit-<<  me b))
+  (to (~ .>> b)        (__bit->>  me b))
+  (to ~.not            (__bit-not me))
+  (to (~ .and b)       (__bit-and me b))
+  (to (~ .or b)        (__bit-or  me b))
+  (to (~ .xor b)       (__bit-xor me b))
+  (to (~ .to< b)       (interval<- me b))
+  (to (~ .to b)        (interval<- me b.+))
+  (to (~ .span n)      (interval<- me (+ me n)))
+  (to ~.even?          (surely (integer? me)) (= 0 (me .modulo 2)))
+  (to ~.odd?           (surely (integer? me)) (not= 0 (me .modulo 2)))
+  (to (~ .divides? b)  (surely (integer? me)) (= 0 (b .modulo me)))
+  (to ~.+              (__+ me 1))      ;experiment
+  (to ~.-              (__- me 1))      ;experiment
   ;; XXX sketchy support for 32-bit word ops:
-  (to (_ .u+ a)        (__u+ me a))
-  (to (_ .u- a)        (__u- me a))
-  (to (_ .u/ a)        (__u/ me a))
-  (to (_ .u>> a)       (__u>> me a))
-  (to (_ .u<< a)       (__u<< me a))
-  (to (_ .s+ a)        (__s+ me a))
-  (to (_ .s* a)        (__s* me a))
+  (to (~ .u+ a)        (__u+ me a))
+  (to (~ .u- a)        (__u- me a))
+  (to (~ .u/ a)        (__u/ me a))
+  (to (~ .u>> a)       (__u>> me a))
+  (to (~ .u<< a)       (__u<< me a))
+  (to (~ .s+ a)        (__s+ me a))
+  (to (~ .s* a)        (__s* me a))
   )
 
 (make-trait symbol-primitive me
-  (to _.name           (__symbol->string me))
-  (to (_ .compare a)   (and (symbol? a)
+  (to ~.name           (__symbol->string me))
+  (to (~ .compare a)   (and (symbol? a)
                             (me.name .compare a.name)))
-  (to (_ .selfie sink) (sink .display me.name))
+  (to (~ .selfie sink) (sink .display me.name))
   ;; TODO experiment:
-  (to _.term<-         (on (@arguments) (term<- me arguments)))
-  (to _.method         (on (actor @arguments) ;TODO experiment; vs. method<- in stdlib
+  (to ~.term<-         (on (@arguments) (term<- me arguments)))
+  (to ~.method         (on (actor @arguments) ;TODO experiment; vs. method<- in stdlib
                          (call actor (term<- me arguments))))
   ;; Some silly conveniences for sturm:
-  (to _.lowercase      (symbol<- me.name.lowercase))
-  (to _.uppercase      (symbol<- me.name.uppercase))
+  (to ~.lowercase      (symbol<- me.name.lowercase))
+  (to ~.uppercase      (symbol<- me.name.uppercase))
   )
 
 (make-trait nil-primitive me
-  (to _.none?          #yes)
-  (to _.first          (error "Empty list" '.first))
-  (to _.rest           (error "Empty list" '.rest))
-  (to _.count          0)
-  (to (_ i)            (error "Empty list" 'nth i))
-  (to (_ .chain a)     a)
-  (to (_ .selfie sink) (sink .display "()"))
+  (to ~.none?          #yes)
+  (to ~.first          (error "Empty list" '.first))
+  (to ~.rest           (error "Empty list" '.rest))
+  (to ~.count          0)
+  (to (~ i)            (error "Empty list" 'nth i))
+  (to (~ .chain a)     a)
+  (to (~ .selfie sink) (sink .display "()"))
   (to message          (list-trait me message))) ;XXX use trait syntax instead
 
 (make-trait link-primitive me
-  (to _.none?       #no)
-  (to _.first       (__car me))
-  (to _.rest        (__cdr me))
-  (to _.count       (__length me))
-  (to (_ i)         (__list-ref me i))    ;XXX just use the trait method? then can e.g. mix lazy and eager list nodes
-  (to (_ .chain a)  (__append me a))
-  (to (_ .selfie sink)
+  (to ~.none?       #no)
+  (to ~.first       (__car me))
+  (to ~.rest        (__cdr me))
+  (to ~.count       (__length me))
+  (to (~ i)         (__list-ref me i))    ;XXX just use the trait method? then can e.g. mix lazy and eager list nodes
+  (to (~ .chain a)  (__append me a))
+  (to (~ .selfie sink)
     (may me
       (be `(quote ,x)
         (sink .display "'")
@@ -290,17 +290,17 @@
     (list-trait me message))) ;XXX use trait syntax instead
 
 (make-trait array-trait me
-  (to (_ .slice i)
+  (to (~ .slice i)
     (me .slice i me.count))
-  (to (_ .slice i bound)                     ;XXX untested
+  (to (~ .slice i bound)                     ;XXX untested
     (let v (array<-count (- bound i)))
     (v .move! 0 me i bound)
     v)
-  (to _.last
+  (to ~.last
     (me me.count.-))
-  (to (_ .copy! v)
+  (to (~ .copy! v)
     (me .move! 0 v 0 v.count))
-  (to (_ .move! dst source lo bound)
+  (to (~ .move! dst source lo bound)
     ;; TODO no-op if in range and (me,dst) == (source,lo)
     (let lo->dst (- dst lo))
     (for each! ((i (if (<= dst lo)
@@ -308,16 +308,16 @@
                        (interval<- bound.- lo -1))))
       (me .set! (+ i lo->dst)
           (source i))))
-  (to _.values
+  (to ~.values
     (each me (interval<- 0 me.count)))   ;TODO cheaper to represent by self -- when can we get away with that?
-  (to _.items
+  (to ~.items
     (for each ((i (interval<- 0 me.count)))
-      (_ i (me i))))
-  (to (_ .get key default)
+      (~ i (me i))))
+  (to (~ .get key default)
     (hm (unless (count? key) default)
         (if (<= me.count key) default)
         (else (me key))))
-  (to (_ .swap! i j)
+  (to (~ .swap! i j)
     (let t (me i))
     (me .set! i (me j))
     (me .set! j t))
@@ -325,29 +325,29 @@
     (list-trait me message))) ;XXX use trait syntax instead
 
 (make-trait array-primitive me
-  (to _.none?         (= 0 me.count))   ;redundant definition(s) for speed
-  (to _.first         (me 0))
-  (to _.rest          (me .slice 1))
-  (to (_ .set! i val) (__vector-set! me i val))
-  (to _.count         (__vector-length me))
-  (to (_ i)           (__vector-ref me i))
-  (to (_ .maps? i)    (__vector-maps? me i))
-  (to (_ .chain v)    (__vector-append me v))
-  (to _.values        (__vector->list me))
-  (to (_ .slice i)    (__subvector me i me.count))
-  (to (_ .slice i j)  (__subvector me i j))
-  (to (and (_ .move! dst source lo bound)
+  (to ~.none?         (= 0 me.count))   ;redundant definition(s) for speed
+  (to ~.first         (me 0))
+  (to ~.rest          (me .slice 1))
+  (to (~ .set! i val) (__vector-set! me i val))
+  (to ~.count         (__vector-length me))
+  (to (~ i)           (__vector-ref me i))
+  (to (~ .maps? i)    (__vector-maps? me i))
+  (to (~ .chain v)    (__vector-append me v))
+  (to ~.values        (__vector->list me))
+  (to (~ .slice i)    (__subvector me i me.count))
+  (to (~ .slice i j)  (__subvector me i j))
+  (to (and (~ .move! dst source lo bound)
            message)
     ;; Block-copy source[lo..bound) to me[dst..dst+(bound-lo)).
     (if (array? source)
         (__vector-move! me dst source lo bound)
         (array-trait me message)))
-  (to _.copy          (__vector-copy me))
-  (to (_ .update key f)         ;TODO define in a mutable-map-trait ?
+  (to ~.copy          (__vector-copy me))
+  (to (~ .update key f)         ;TODO define in a mutable-map-trait ?
     (let value (f (me key)))
     (me .set! key value)
     value)
-  (to (_ .selfie sink)
+  (to (~ .selfie sink)
     (sink .display "[")
     (when (< 0 me.count)
       (sink .write (me 0))
@@ -360,20 +360,20 @@
     (array-trait me message))) ;XXX use trait syntax instead
 
 (make-trait string-primitive me
-  (to _.none?        (= 0 me.count))
-  (to _.first        (me 0))
-  (to _.rest         (me .slice 1))
-  (to _.count        (__string-length me))
-  (to (_ i)          (__string-ref me i))
-  (to (_ .maps? i)   (__string-maps? me i))
-  (to (_ .chain s)   (__string-append me s))
-  (to (_ .slice i)   (__substring me i me.count))
-  (to (_ .slice i j) (__substring me i j))
-  (to (_ .compare s)
+  (to ~.none?        (= 0 me.count))
+  (to ~.first        (me 0))
+  (to ~.rest         (me .slice 1))
+  (to ~.count        (__string-length me))
+  (to (~ i)          (__string-ref me i))
+  (to (~ .maps? i)   (__string-maps? me i))
+  (to (~ .chain s)   (__string-append me s))
+  (to (~ .slice i)   (__substring me i me.count))
+  (to (~ .slice i j) (__substring me i j))
+  (to (~ .compare s)
     (if (string? s)
         (__string-compare me s)          ; just a speedup
-        (list-trait me (_ .compare s))))   ; but is this what we really want? (<=> "a" '(#\a))
-  (to (_ .join ss)   ;should this be a function, not a method?
+        (list-trait me (~ .compare s))))   ; but is this what we really want? (<=> "a" '(#\a))
+  (to (~ .join ss)   ;should this be a function, not a method?
     (if ss.none?
         ""
         ;; De-quadratified (foldr1 (on (x y) (chain x me y)) ss)
@@ -381,13 +381,13 @@
             (string<-list (foldr1 (on (s chars)
                                     (s.values .chain (mine .chain chars.values)))
                                   ss)))))
-  (to _.values       (list<-string me))
-  (to (_ .get key)   (me .get key #no)) ;TODO duplicated because delegation is slow
-  (to (_ .get key default)      ;TODO could be shared with array-trait
+  (to ~.values       (list<-string me))
+  (to (~ .get key)   (me .get key #no)) ;TODO duplicated because delegation is slow
+  (to (~ .get key default)      ;TODO could be shared with array-trait
     (if (me .maps? key)
         (me key)
         default))
-  (to (_ .trim-left)
+  (to (~ .trim-left)
     (let limit me.count)
     (begin scanning ((i 0))
       (hm (when (= i limit)
@@ -396,7 +396,7 @@
           (unless c.whitespace?
             (me .slice i))
           (else (scanning i.+)))))
-  (to _.trim-right
+  (to ~.trim-right
     (begin scanning ((i me.count))
       (hm (when (= i 0)
             "")
@@ -404,9 +404,9 @@
           (unless c.whitespace?
             (me .slice 0 i))
           (else (scanning i.-)))))
-  (to _.trim
+  (to ~.trim
     me.trim-left.trim-right)
-  (to _.split
+  (to ~.split
     ;; TODO dequadratify
     (begin splitting ((s me.trim-left))
       (if s.none?
@@ -418,7 +418,7 @@
                         (link (s .slice 0 i)
                               (splitting ((s .slice i.+) .trim-left))))
                     (else (scanning i.+))))))))
-  (to (_ .split delimiter)
+  (to (~ .split delimiter)
     ;; TODO deduplicate code
     ;; TODO define a strstr and use that
     (if me.none?
@@ -433,10 +433,10 @@
                             (link (s .slice 0 i)
                                   (splitting (s .slice (+ i delimiter.count)))))
                         (else (scanning i.+)))))))))
-  (to _.lowercase (string<-list (each _.lowercase me)))
-  (to _.uppercase (string<-list (each _.uppercase me)))
-  (to _.capitalize (chain ((me .slice 0 1) .uppercase) (me .slice 1)))
-  (to (_ .replace pattern replacement) ;TODO more efficient
+  (to ~.lowercase (string<-list (each ~.lowercase me)))
+  (to ~.uppercase (string<-list (each ~.uppercase me)))
+  (to ~.capitalize (chain ((me .slice 0 1) .uppercase) (me .slice 1)))
+  (to (~ .replace pattern replacement) ;TODO more efficient
     ;; TODO unify the cases?
     (hm (if pattern.none?
             (for foldr ((ch me) (rest replacement))
@@ -451,27 +451,27 @@
                     (chain (list<-string replacement)
                            (scanning (+ i pattern.count))))
                 (else (link (me i) (scanning i.+)))))))))
-  (to (_ .justify n)
+  (to (~ .justify n)
     (me .justify n #\space))
-  (to (_ .justify n pad)
+  (to (~ .justify n pad)
     (if (< n 0)
         (me .left-justify (- n) pad)
         (me .right-justify n    pad)))
-  (to (_ .left-justify n)
+  (to (~ .left-justify n)
     (me .left-justify n #\space))
-  (to (_ .left-justify n pad-char)
+  (to (~ .left-justify n pad-char)
     (let pad (- n me.count))
     (if (<= pad 0)
         me
         (chain me ((string<- pad-char) .repeat pad))))
-  (to (_ .right-justify n)
+  (to (~ .right-justify n)
     (me .right-justify n #\space))
-  (to (_ .right-justify n pad-char)
+  (to (~ .right-justify n pad-char)
     (let pad (- n me.count))
     (if (<= pad 0)
         me
         (chain ((string<- pad-char) .repeat pad) me)))
-  (to (_ .center n)
+  (to (~ .center n)
     (let pad (- n me.count))
     (if (<= pad 0)
         me
@@ -479,11 +479,11 @@
             (chain (" " .repeat (- pad half))
                    me
                    (" " .repeat half)))))
-  (to (_ .repeat n)
+  (to (~ .repeat n)
     ("" .join (each (-> me) (interval<- 0 n))))
-  (to (_ .format @arguments)
+  (to (~ .format @arguments)
     (string<-writer (-> (format .to-sink it me @arguments))))
-  (to _.split-lines
+  (to ~.split-lines
     ;; TODO ugly. This 'if' is needed because we want a final "\n" to
     ;; yield the same output as a string with no final "\n". N.B. while
     ;; that's convenient it's also information-destroying.
@@ -492,7 +492,7 @@
                      me))
     ;; TODO it'd be nice for efficiency if tweaked could be a view instead of a copy
     (tweaked .split "\n"))
-  (to (_ .selfie sink)
+  (to (~ .selfie sink)
     (sink .display #\")
     (for each! ((c me))
       (sink .display (may c            ;XXX super slow. We might prefer to use the Scheme built-in.
@@ -508,53 +508,53 @@
     (list-trait me message))) ;XXX use trait syntax instead
 
 (make-trait char-primitive me
-  (to _.code          (__char->integer me))
-  (to _.letter?       (__char-letter? me))
-  (to _.digit?        (__char-digit? me))
-  (to _.whitespace?   (__char-whitespace? me))
-  (to _.alphanumeric? (or me.letter? me.digit?))
-  (to _.lowercase?    (__char-lowercase? me))
-  (to _.uppercase?    (__char-uppercase? me))
-  (to _.lowercase     (__char-lowercase me))
-  (to _.uppercase     (__char-uppercase me))
-  (to _.printable?    (<= 32 (__char->integer me) 126))  ; TODO better name?
-  (to (_ .compare c)  (__char-compare me c))
-  (to (_ .+ n)   ;; Is this a good idea?
+  (to ~.code          (__char->integer me))
+  (to ~.letter?       (__char-letter? me))
+  (to ~.digit?        (__char-digit? me))
+  (to ~.whitespace?   (__char-whitespace? me))
+  (to ~.alphanumeric? (or me.letter? me.digit?))
+  (to ~.lowercase?    (__char-lowercase? me))
+  (to ~.uppercase?    (__char-uppercase? me))
+  (to ~.lowercase     (__char-lowercase me))
+  (to ~.uppercase     (__char-uppercase me))
+  (to ~.printable?    (<= 32 (__char->integer me) 126))  ; TODO better name?
+  (to (~ .compare c)  (__char-compare me c))
+  (to (~ .+ n)   ;; Is this a good idea?
     (surely (integer? n) "Bad arg type" n)
     (char<- (+ me.code n)))
-  (to (_ .- b)
+  (to (~ .- b)
     (may b
       (be (? integer?) (char<- (- me.code b)))
       (be (? char?)    (- me.code b.code))
       (else (error "Bad arg type" b))))
-  (to (_ .to< b)      (interval<- me b))       ;These methods should be in a trait
-  (to (_ .to b)       (interval<- me b.+))    ;if they're a good idea at all...
-  (to (_ .span n)     (interval<- me (+ me n)))
-  (to _.+             (me .+ 1))      ;experiment
-  (to _.-             (me .- 1))      ;experiment
+  (to (~ .to< b)      (interval<- me b))       ;These methods should be in a trait
+  (to (~ .to b)       (interval<- me b.+))    ;if they're a good idea at all...
+  (to (~ .span n)     (interval<- me (+ me n)))
+  (to ~.+             (me .+ 1))      ;experiment
+  (to ~.-             (me .- 1))      ;experiment
   )
 
 ;; TODO: should a box be a collection?
 (make-trait box-primitive me
-  (to _.^             (__box-value me))
-  (to (_ .^= val)     (__box-value-set! me val))
-  (to (_ .update f) ;TODO better name? I left out the '!' to emphasize it returns the value
+  (to ~.^             (__box-value me))
+  (to (~ .^= val)     (__box-value-set! me val))
+  (to (~ .update f) ;TODO better name? I left out the '!' to emphasize it returns the value
     (let value (f me.^))
     (me .^= value)
     value)                              ;TODO return void instead?
-  (to (_ .selfie sink)
+  (to (~ .selfie sink)
     (sink .display "<box ")
     (sink .write me.^)
     (sink .display ">"))
   )
 
 (make-trait source-primitive me
-  (to _.read-char   (__read-char me))
-  (to _.read-u8     (__get-u8 me))
-  (to _.read-all    (__read-all me))
-  (to _.close       (__close-port me))
-  (to _.ready?      (__char-ready? me))
-  (to _.read-line
+  (to ~.read-char   (__read-char me))
+  (to ~.read-u8     (__get-u8 me))
+  (to ~.read-all    (__read-all me))
+  (to ~.close       (__close-port me))
+  (to ~.ready?      (__char-ready? me))
+  (to ~.read-line
     (let ch me.read-char)
     (if (eof? ch)
         ch
@@ -563,31 +563,31 @@
            (if (or (eof? ch) (= ch #\newline))
                '()
                (link ch (reading me.read-char)))))))
-  (to _.read-lines
+  (to ~.read-lines
     me.read-all.split-lines)  ;; TODO inefficient. also, maybe include the newlines?
   )
 
 (make-trait sink-primitive me
-  (to (_ .display a)   (unless (__display a me) (me .write a))) ; TODO is this dangerous? longer-term, design the whole display/write thing differently
-  (to (_ .write-u8 u8) (__put-u8 me u8))
-  (to (_ .write a)     (a .selfie me))
-  (to _.close          (__close-port me))
-  (to _.output-string                 ;XXX for string-sink only
+  (to (~ .display a)   (unless (__display a me) (me .write a))) ; TODO is this dangerous? longer-term, design the whole display/write thing differently
+  (to (~ .write-u8 u8) (__put-u8 me u8))
+  (to (~ .write a)     (a .selfie me))
+  (to ~.close          (__close-port me))
+  (to ~.output-string                 ;XXX for string-sink only
     (__get-output-string me))
   )
 
 (make-trait term-primitive me
-  (to (_ receiver)     (call receiver me))
-  (to _.tag            (__term-tag me))
-  (to _.arguments      (__term-arguments me))
-  (to (_ .selfie sink)
+  (to (~ receiver)     (call receiver me))
+  (to ~.tag            (__term-tag me))
+  (to ~.arguments      (__term-arguments me))
+  (to (~ .selfie sink)
     (sink .display "{")
     (sink .write me.tag)
     (for each! ((arg me.arguments))
       (sink .display " ")
       (sink .write arg))
     (sink .display "}"))
-  (to (_ .compare t)
+  (to (~ .compare t)
     ((link me.tag me.arguments) .compare (link t.tag t.arguments)))
   )
 
@@ -600,26 +600,26 @@
   )
 
 (make-trait script-primitive me
-  (to _.name    (__script-name me))
-  (to _.trait   (__script-trait me))
-  (to _.clauses (__script-clauses me))
-  (to (_ .selfie sink)
+  (to ~.name    (__script-name me))
+  (to ~.trait   (__script-trait me))
+  (to ~.clauses (__script-clauses me))
+  (to (~ .selfie sink)
     (sink .display "<script ")
     (sink .display me.name)
     (sink .display ">"))
   )
 
 (make-trait cps-primitive me
-  (to (_ .selfie sink)
+  (to (~ .selfie sink)
     (sink .display "#<primitive ")
     (sink .display (__cps-primitive-name me))
     (sink .display ">"))
   )
 
 (make-trait ejector-primitive me
-  (to (_ .eject value)
+  (to (~ .eject value)
     (__eject me value))
-  (to (_ .selfie sink)
+  (to (~ .selfie sink)
     (sink .display "#<ejector>"))       ;TODO show enabledness
   )
 
@@ -632,12 +632,12 @@
 ;; Interpreter
 
 (make cant
-  (to (_ .play exp env @(optional context))
+  (to (~ .play exp env @(optional context))
     (__evaluate (__parse-exp exp (or context '()))
                 env))
-  (to (_ .parse-expression x @(optional context))
+  (to (~ .parse-expression x @(optional context))
     (ast-exp<- (__parse-exp x (or context '()))))
-  (to (_ .parse-pattern x)              ;TODO could use a context too
+  (to (~ .parse-pattern x)              ;TODO could use a context too
     (ast-pat<- (__parse-pat x)))
   )
 
@@ -646,11 +646,11 @@
 
 (to (ast-exp<- raw)
   (make expr
-    (to (_ .selfie sink)
+    (to (~ .selfie sink)
       (sink .display "#<expr ")
       (sink .write expr.term)
       (sink .display ">"))
-    (to _.term
+    (to ~.term
       (may (raw 0)
         (be 0 {constant (raw 1)})
         (be 1 {variable (raw 1)})
@@ -670,11 +670,11 @@
 
 (to (ast-pat<- raw)
   (make patt
-    (to (_ .selfie sink)
+    (to (~ .selfie sink)
       (sink .display "#<patt ")
       (sink .write patt.term)
       (sink .display ">"))
-    (to _.term
+    (to ~.term
       (may (raw 0)
         (be 0 {constant-pat (raw 1)})
         (be 1 {any-pat})
@@ -689,7 +689,7 @@
 ;; This is just to make debugging less painful till then.
 ;; TODO might as well make these into methods of the above, now.
 
-(let (_ unparse-exp unparse-pat unparse-clause)
+(let (~ unparse-exp unparse-pat unparse-clause)
   (hide
 
     (to (unparse-exp e)
@@ -754,13 +754,13 @@
         (be {view-pat e p}
           `(<view-pat> ,(unparse-exp e) ,(unparse-pat p)))))
 
-    (_ unparse-exp unparse-pat unparse-clause)))
+    (~ unparse-exp unparse-pat unparse-clause)))
 
 
 ;; Hash-maps
 ;; This is defined in the runtime, here, because the form
 ;; (export foo bar) gets expanded into code like
-;;   (map<- (_ 'foo foo) (_ 'bar bar))
+;;   (map<- (~ 'foo foo) (~ 'bar bar))
 ;; (but hygienic, when I get to fixing the current bad hygiene).
 
 ;; TODO:
@@ -785,7 +785,7 @@
 
     (make map<-
 
-      (to (_)
+      (to (~)
         (let count (box<- 0))
         (let keys  (box<- [none]))  ;; size a power of 2
         (let vals  (box<- [#no]))   ;; same size
@@ -821,22 +821,22 @@
           (let old-vals vals.^)
           (keys .^= (array<-count new-capacity none))
           (vals .^= (array<-count new-capacity))
-          (for each! (((_ i key) old-keys.items))
+          (for each! (((~ i key) old-keys.items))
             (unless (or (= key none) (= key deleted))
               (let {missing-at j} (place key))
               (keys.^ .set! j key)
               (vals.^ .set! j (old-vals i)))))
        
         (make map {extending map-trait}
-          (to (_ key)
+          (to (~ key)
             (may (place key)
               (be {at i} (vals.^ i))
               (else      (error "Missing key" map key))))
-          (to (_ .get key @(optional default))
+          (to (~ .get key @(optional default))
             (may (place key)
               (be {at i} (vals.^ i))
               (else      default)))
-          (to (_ .set! key val)
+          (to (~ .set! key val)
             (may (place key)
               (be {at i}
                 (vals.^ .set! i val))
@@ -845,20 +845,20 @@
                 (vals.^ .set! i val)
                 (count .^= count.^.+)
                 (maybe-grow))))
-          (to (_ .maps? key)
+          (to (~ .maps? key)
             (may (place key)
               (be {at _} #yes)
               (else      #no)))
-          (to _.none? (= count.^ 0))
-          (to _.count  count.^)
-          (to _.keys   (each keys.^ (occupants))) ;XXX lazy-map
-          (to _.values (each vals.^ (occupants)))
-          (to _.items
+          (to ~.none? (= count.^ 0))
+          (to ~.count  count.^)
+          (to ~.keys   (each keys.^ (occupants))) ;XXX lazy-map
+          (to ~.values (each vals.^ (occupants)))
+          (to ~.items
             (let ks keys.^)
             (let vs vals.^)
             (for each ((i (occupants)))
-              (_ (ks i) (vs i))))
-          (to (_ .get-set! key value<-)
+              (~ (ks i) (vs i))))
+          (to (~ .get-set! key value<-)
             (may (place key)
               (be {at i}
                 (vals.^ i))
@@ -868,48 +868,48 @@
                 ;; might have changed things too:
                 (map .set! key value)
                 value)))
-          (to (_ .delete! key)
+          (to (~ .delete! key)
             (may (place key)
               (be {at i}
                 (keys.^ .set! i deleted)
                 (count .^= count.^.-)
                 #no)
               (else #no)))   ;XXX error instead? It is in Python.
-          (to (_ .find? value)
+          (to (~ .find? value)
             (map.values .find? value))
-          (to (_ .find value default)
+          (to (~ .find value default)
             (let vs vals.^)
             (begin searching ((js (occupants)))  ;XXX should be lazy
               (hm (if js.none? default)
                   (if (= value (vs js.first)) (keys.^ js.first))
                   (else (searching js.rest)))))
-          (to _.clear!
+          (to ~.clear!
             (count .^= 0)
             (keys .^= [none])
             (vals .^= [#no]))
-          (to _.copy
+          (to ~.copy
             (map<-items map.items))
-          (to (_ .update key f)         ;TODO define in a mutable-map-trait ?
+          (to (~ .update key f)         ;TODO define in a mutable-map-trait ?
             (let value (f (map key)))  ;TODO what about a (map .get key) version? how to factor this?
             (map .set! key value)
             value)
-          (to (_ .selfie sink)
+          (to (~ .selfie sink)
             (sink .display "#<map (")
             (sink .write count.^)
             (sink .display ")>"))
           ))
 
-      (to (_ @items)
+      (to (~ @items)
 ;;        (map<-items items))
         (let m (map<-))
-        (for each! (((_ k v) items))
+        (for each! (((~ k v) items))
           (m .set! k v))
         m)
       )))
 
 (to (map<-items items)
   (let m (map<-))
-  (for each! (((_ k v) items))
+  (for each! (((~ k v) items))
     (m .set! k v))
   m)
 
@@ -935,41 +935,41 @@
 (to (hash-set<-)                        ;XXX shouldn't be a global
   (let map (map<-)) ;TODO would be nice to avoid storing all the #yes values
   (make set {extending map-trait}
-    (to _.none?           map.none?)
-    (to _.count            map.count)
-    (to _.keys             map.keys)
-    (to (_ .maps? key)     (map .maps? key))
-    (to _.copy             (set<-list map.keys)) ;TODO tune
-    (to (_ .add! key)      (map .set! key 1))    ;N.B. matching the bag type here
-    (to (_ .add-all! vals) (for each! ((v vals)) (set .add! v)))
-    (to (_ .union! other)  (set .add-all! other.keys))
-    (to (_ .union other)
+    (to ~.none?           map.none?)
+    (to ~.count            map.count)
+    (to ~.keys             map.keys)
+    (to (~ .maps? key)     (map .maps? key))
+    (to ~.copy             (set<-list map.keys)) ;TODO tune
+    (to (~ .add! key)      (map .set! key 1))    ;N.B. matching the bag type here
+    (to (~ .add-all! vals) (for each! ((v vals)) (set .add! v)))
+    (to (~ .union! other)  (set .add-all! other.keys))
+    (to (~ .union other)
       (let result set.copy)
       (result .union! other)
       result)
-    (to (_ .intersect other)                 ;TODO rename to .and, etc., I guess
+    (to (~ .intersect other)                 ;TODO rename to .and, etc., I guess
       (let result (set<-))
       (for each! ((x map.keys))
         (when (other .maps? x)
           (result .add! x)))
       result)
-    (to (_ .difference other)
+    (to (~ .difference other)
       (let result (set<-))
       (for each! ((x map.keys))
         (unless (other .maps? x)
           (result .add! x)))
       result)
-    (to (_ .intersects? map2)
+    (to (~ .intersects? map2)
       (map .intersects? map2))
-    (to _.clear!         map.clear!)
-    (to (_ .get key)     (map .maps? key))
-    (to (_ key)          (map .get key 0)) ;I'm not sure this is a good idea, but it's to match the bag type
-    (to _.items          map.items)
-    (to _.values         map.values)
-    (to (_ .delete! key) (map .delete! key))
-    (to _.total          map.count)        ;like bags again
+    (to ~.clear!         map.clear!)
+    (to (~ .get key)     (map .maps? key))
+    (to (~ key)          (map .get key 0)) ;I'm not sure this is a good idea, but it's to match the bag type
+    (to ~.items          map.items)
+    (to ~.values         map.values)
+    (to (~ .delete! key) (map .delete! key))
+    (to ~.total          map.count)        ;like bags again
     ;; XXX fill in rest of set interface (just the map interface, I guess)
-    (to (_ .selfie sink)
+    (to (~ .selfie sink)
       (sink .display "#<set")
       (sink .write map.keys)
       (sink .display ">"))
@@ -989,38 +989,38 @@
   (not (= x y)))
 
 (make +
-  (to (_) 0)
-  (to (_ a) a)
-  (to (_ a b) (a .+ b))
-  (to (_ a b @arguments)
+  (to (~) 0)
+  (to (~ a) a)
+  (to (~ a b) (a .+ b))
+  (to (~ a b @arguments)
     (foldl (on (x y) (x .+ y)) (a .+ b) arguments)))
 
 (make *
-  (to (_) 1)
-  (to (_ a) a)
-  (to (_ a b) (a .* b))
-  (to (_ a b @arguments)
+  (to (~) 1)
+  (to (~ a) a)
+  (to (~ a b) (a .* b))
+  (to (~ a b @arguments)
     (foldl (on (x y) (x .* y)) (a .* b) arguments)))
 
 (make -
-  (to (_ a) (0 .- a))
-  (to (_ a b) (a .- b))
-  (to (_ a b @arguments)
+  (to (~ a) (0 .- a))
+  (to (~ a b) (a .- b))
+  (to (~ a b @arguments)
     (foldl (on (x y) (x .- y)) (a .- b) arguments)))
 
 (make-trait transitive-comparison compare?
-  (to (_ x @xs)
+  (to (~ x @xs)
     (begin comparing ((x0 x) (xs xs))
       (may xs
         (be `()           #yes)
         (be `(,x1 ,@rest) (and (compare? x0 x1)
                                (comparing x1 rest)))))))
 
-(make <   {extending transitive-comparison} (to (_ a b)      (= (compare a b) -1)))
-(make <=  {extending transitive-comparison} (to (_ a b) (not (= (compare a b)  1))))
-(make <=> {extending transitive-comparison} (to (_ a b)      (= (compare a b)  0))) ; XXX better name?
-(make >=  {extending transitive-comparison} (to (_ a b) (not (= (compare a b) -1))))
-(make >   {extending transitive-comparison} (to (_ a b)      (= (compare a b)  1)))
+(make <   {extending transitive-comparison} (to (~ a b)      (= (compare a b) -1)))
+(make <=  {extending transitive-comparison} (to (~ a b) (not (= (compare a b)  1))))
+(make <=> {extending transitive-comparison} (to (~ a b)      (= (compare a b)  0))) ; XXX better name?
+(make >=  {extending transitive-comparison} (to (~ a b) (not (= (compare a b) -1))))
+(make >   {extending transitive-comparison} (to (~ a b)      (= (compare a b)  1)))
 
 (to (compare a b)
   (let result (a .compare b))
@@ -1068,41 +1068,41 @@
       (f xs.first (foldr1 f tail))))
 
 (make each
-  (to (_ f xs)
+  (to (~ f xs)
     (for foldr ((x xs) (results '()))
       (link (f x) results)))
-  (to (_ f @lists)
+  (to (~ f @lists)
     (for each ((args (transpose lists)))
       (f @args))))
 
 (make each!
-  (to (_ f xs)
+  (to (~ f xs)
     (unless xs.none?
       (f xs.first)
       (each! f xs.rest)))
-  (to (_ f @lists)
+  (to (~ f @lists)
     (for each! ((args (transpose lists)))
       (f @args))))
 
 (make zip
-  (to (_ xs ys)                           ;specialized for speed
+  (to (~ xs ys)                           ;specialized for speed
     (to (mismatch)
       (error "zip: mismatched arguments" xs ys))
     (begin zipping ((xs xs) (ys ys))
       (hm (if xs.none? (if ys.none? '() (mismatch)))
           (if ys.none? (mismatch))
-          (else (link (_ xs.first ys.first)
+          (else (link (~ xs.first ys.first)
                       (zipping xs.rest ys.rest))))))
-  (to (_ @lists)
+  (to (~ @lists)
     (for each ((row (transpose lists)))
       (term<- '_ row))))
 
 ;; TODO: name it (zip @rows) instead, like Python?
 (to (transpose rows)
-  (if (every _.none? rows)   ; and make it (some _.none? rows)?
+  (if (every ~.none? rows)   ; and make it (some _.none? rows)?
       '()
-      `(,(each _.first rows)
-        ,@(transpose (each _.rest rows)))))
+      `(,(each ~.first rows)
+        ,@(transpose (each ~.rest rows)))))
 
 (to (gather f xs)
   (for foldr ((x xs) (gathered '()))
@@ -1123,10 +1123,10 @@
   x)
 
 (make chain
-  (to (_) '())
-  (to (_ xs) xs)
-  (to (_ xs ys) (xs .chain ys))
-  (to (_ @arguments)
+  (to (~) '())
+  (to (~ xs) xs)
+  (to (~ xs ys) (xs .chain ys))
+  (to (~ @arguments)
     (foldr1 (on (xs ys) (xs .chain ys)) arguments)))
 
 (to (some pass? xs)
@@ -1140,68 +1140,68 @@
            (every pass? xs.rest))))
 
 (make interval<-
-  (to (_ first limit)
+  (to (~ first limit)
     (if (<= limit first)
         '()
         (make range {extending list-trait}
-          (to _.none? #no)
-          (to _.first first)
-          (to _.rest  (interval<- first.+ limit))
-          (to _.count (- limit first))
-          (to (_ i)
+          (to ~.none? #no)
+          (to ~.first first)
+          (to ~.rest  (interval<- first.+ limit))
+          (to ~.count (- limit first))
+          (to (~ i)
             (if (not (integer? i))
                 (error "Key error" range i)
                 (do (let j (+ first i))
                     (if (and (<= first j) (< j limit))
                         j
                         (error "Out of range" range i)))))
-          (to (_ .maps? i)
+          (to (~ .maps? i)
             (and (integer? i)
                  (do (let j (+ first i))
                      (and (<= first j) (< j limit)))))
           ;; TODO: .compare
           )))
-  (to (_ limit)
+  (to (~ limit)
     (interval<- 0 limit))
-  (to (_ first limit stride)
+  (to (~ first limit stride)
     ;; TODO factor the code better
     (hm (if (< 0 stride)
             (if (<= limit first)
                 '()
                 (make range {extending list-trait}
-                  (to _.none? #no)
-                  (to _.first first)
-                  (to _.rest  (interval<- (+ first stride) limit stride))
-                  (to (_ i)
+                  (to ~.none? #no)
+                  (to ~.first first)
+                  (to ~.rest  (interval<- (+ first stride) limit stride))
+                  (to (~ i)
                     (error "TODO" range `(,i)))
-                  (to (_ .maps? i)
-                    (error "TODO" range (_ .maps? i)))
+                  (to (~ .maps? i)
+                    (error "TODO" range (~ .maps? i)))
                   )))
         (if (< stride 0)
             (if (< first limit)
                 '()
                 (make range {extending list-trait}
-                  (to _.none? #no)
-                  (to _.first first)
-                  (to _.rest  (interval<- (+ first stride) limit stride))
-                  (to (_ i)
+                  (to ~.none? #no)
+                  (to ~.first first)
+                  (to ~.rest  (interval<- (+ first stride) limit stride))
+                  (to (~ i)
                     (error "TODO" range `(,i)))
-                  (to (_ .maps? i)
-                    (error "TODO" range (_ .maps? i)))
+                  (to (~ .maps? i)
+                    (error "TODO" range (~ .maps? i)))
                   )))
         (else
           (error "Zero stride" first limit stride)))))
 
 (make enumerate
-  (to (_ xs)
+  (to (~ xs)
     (enumerate xs 0))
-  (to (_ xs i)
+  (to (~ xs i)
     (if xs.none?
         '()
         (make enumeration {extending list-trait}
-          (to _.none? #no)
-          (to _.first (_ i xs.first))
-          (to _.rest  (enumerate xs.rest i.+))))))
+          (to ~.none? #no)
+          (to ~.first (~ i xs.first))
+          (to ~.rest  (enumerate xs.rest i.+))))))
 
 (to (array<- @elements)
   (array<-list elements))
@@ -1220,9 +1220,9 @@
   (hide
 
     (make format
-      (to (_ format-string @arguments)
+      (to (~ format-string @arguments)
         (scanning out format-string.values arguments))
-      (to (_ .to-sink sink format-string @arguments)
+      (to (~ .to-sink sink format-string @arguments)
         (scanning sink format-string.values arguments)))
 
     ;;TODO actually design the format language
@@ -1252,20 +1252,20 @@
         (error "Incomplete format")) ;TODO report the format-string
       (may s.first
         (be #\w
-          (maybe-pad sink pad sign width (_ .write args.first))
+          (maybe-pad sink pad sign width (~ .write args.first))
           (scanning sink s.rest args.rest))
         (be #\d
-          (maybe-pad sink pad sign width (_ .display args.first))
+          (maybe-pad sink pad sign width (~ .display args.first))
           (scanning sink s.rest args.rest))
         (be #\~
           (sink .display "~") ;TODO: complain if there were formatting directives before "~"?
           (scanning sink s.rest args))
-        (be (? _.digit? ch)
+        (be (? ~.digit? ch)
           (let new-width (+ (- ch #\0)
                             (if width (* 10 width) 0)))
           (parsing sink s.rest pad sign new-width args))
         (be #\x  ; hex number, XXX works wrong on negative numbers
-          (maybe-pad sink pad sign width (_ .display ((string<-number args.first 16) .lowercase)))
+          (maybe-pad sink pad sign width (~ .display ((string<-number args.first 16) .lowercase)))
           (scanning sink s.rest args.rest))
         (else
           (error "Bad format string" (string<-list s)))))

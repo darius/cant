@@ -9,7 +9,7 @@
 
 (to (collect-abbrevs vocab)
   (map<-items (for each ((`(,short ,full ,_) vocab))
-                (_ short full))))
+                (~ short full))))
 
 ;; TODO unify with inspect-continuation
 (to (inspect initial-focus)
@@ -123,6 +123,6 @@
         (continue "Huh? Enter 'help' for help.\n")))))
 
 (to (show-env env)
-  (print (each _.first env)))
+  (print (each ~.first env)))
 
 (export inspect inspect-continuation)

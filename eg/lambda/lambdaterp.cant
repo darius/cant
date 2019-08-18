@@ -29,74 +29,74 @@
 ;; ASTs and continuations
 
 (make halt
-  (to _.none? #yes)                     ;TODO use list-trait for .some?, bleah.
-  (to (_ .inject k<-) halt)
-  (to (_ .take-step val) val)
-  (to (_ .take val) val))
+  (to ~.none? #yes)                     ;TODO use list-trait for .some?, bleah.
+  (to (~ .inject k<-) halt)
+  (to (~ .take-step val) val)
+  (to (~ .take val) val))
 
 
 ;; Constant
 (to (constant<- c)
   (make constant
-    (to _.source           c)
-    (to (_ .eval-step r k) (debugging (value-step<- constant r k)))
-    (to (_ .evaluate r k)  (k .take c))))
+    (to ~.source           c)
+    (to (~ .eval-step r k) (debugging (value-step<- constant r k)))
+    (to (~ .evaluate r k)  (k .take c))))
 
 ;; Variable reference
 (to (var-ref<- v)
   (make var-ref
-    (to _.source
+    (to ~.source
       v)
-    (to (_ .eval-step r k)
+    (to (~ .eval-step r k)
       (debugging (value-step<- var-ref r k)))
-    (to (_ .evaluate r k)
+    (to (~ .evaluate r k)
       (lookup r v k))))
 
 ;; Lambda expression
 (to (abstraction<- v body)
   (make abstraction
-    (to _.source
+    (to ~.source
       `(& ,v ,body.source))
-    (to (_ .eval-step r k)
+    (to (~ .eval-step r k)
       (debugging (value-step<- abstraction r k)))
-    (to (_ .evaluate r k)
+    (to (~ .evaluate r k)
       (k .take (make _
-                 (to _.survey
+                 (to ~.survey
                    `(,v -> <body>))
-                 (to (_ .call arg k2)
+                 (to (~ .call arg k2)
                    (body .evaluate (extend r v arg) k2))
-                 (to (_ .call-step arg k2)
+                 (to (~ .call-step arg k2)
                    (body .eval-step (extend r v arg) k2)))))))
 
 ;; Application
 (to (call<- operator operand)
   (make app
-    (to _.source
+    (to ~.source
       `(,operator.source ,operand.source))
-    (to (_ .eval-step r k)
+    (to (~ .eval-step r k)
       (debugging (subeval-step<- operator r (ev-arg-cont<- operand r k))))
-    (to (_ .evaluate r k)
+    (to (~ .evaluate r k)
       (operator .evaluate r (ev-arg-cont<- operand r k)))))
 
 (to (ev-arg-cont<- operand r k)
-  (make (to _.none? #no)
-        (to _.rest  k)
-        (to _.first `(^ ,operand.source))
-        (to (_ .inject k<-) (ev-arg-cont<- operand r (k<- k)))
-        (to (_ .take fn)
+  (make (to ~.none? #no)
+        (to ~.rest  k)
+        (to ~.first `(^ ,operand.source))
+        (to (~ .inject k<-) (ev-arg-cont<- operand r (k<- k)))
+        (to (~ .take fn)
           (operand .evaluate r (call-cont<- fn k)))
-        (to (_ .take-step fn)
+        (to (~ .take-step fn)
           (operand .eval-step r (call-cont<- fn k)))
         ))
 
 (to (call-cont<- fn k)
-  (make (to _.none? #no)
-        (to _.rest  k)
-        (to _.first `(,(survey fn) ^))
-        (to (_ .inject k<-) (call-cont<- fn (k<- k)))
-        (to (_ .take arg)
+  (make (to ~.none? #no)
+        (to ~.rest  k)
+        (to ~.first `(,(survey fn) ^))
+        (to (~ .inject k<-) (call-cont<- fn (k<- k)))
+        (to (~ .take arg)
           (fn .call arg k))
-        (to (_ .take-step arg)
+        (to (~ .take-step arg)
           (fn .call-step arg k))
         ))
 
@@ -109,17 +109,17 @@
       value.survey))
 
 (make prim+
-  (to _.survey '+)
-  (to (_ .call-step arg1 k1)
+  (to ~.survey '+)
+  (to (~ .call-step arg1 k1)
     XXX)
-  (to (_ .call arg1 k1)
+  (to (~ .call arg1 k1)
     (if (number? arg1)
         (k1 .take (make _
-                    (to _.survey
+                    (to ~.survey
                       `(+ ,(survey arg1)))
-                    (to (_ .call-step arg2 k2)
+                    (to (~ .call-step arg2 k2)
                       XXX)
-                    (to (_ .call arg2 k2)
+                    (to (~ .call arg2 k2)
                       (if (number? arg2)
                           (k2 .take (+ arg1 arg2))
                           ;; XXX should supply self, too:
@@ -179,48 +179,48 @@
 
 (to (value-step<- e r k)
   (make value-step
-    (to _.show
+    (to ~.show
       (display "ev-> ") (print e.source))
-    (to _.b
+    (to ~.b
       (traceback k)
       (debugging value-step))
-    (to _.continue
+    (to ~.continue
       (e .evaluate r k))
-    (to _.hop
+    (to ~.hop
       (e .evaluate r (k .inject debugger-trap-cont<-)))
-    (to _.step
+    (to ~.step
       value-step.hop)
     ))
 
 (to (subeval-step<- e r k)
   (make subeval-step
-    (to _.show
+    (to ~.show
       (display "ev-> ") (print e.source))
-    (to _.b
+    (to ~.b
       (traceback k)
       (debugging subeval-step))
-    (to _.continue
+    (to ~.continue
       (e .evaluate r k))
-    (to _.hop
+    (to ~.hop
       (e .evaluate r (k .inject debugger-trap-cont<-)))
-    (to _.step
+    (to ~.step
       (e .eval-step r k))
     ))
 
 (to (out-step<- k value)
   (make out-step
-    (to _.show
+    (to ~.show
       (display "<-ret ") (print (survey value)))
-    (to _.b
+    (to ~.b
       (traceback k)
       (debugging out-step))
-    (to _.continue
+    (to ~.continue
       (k .take value))
-    (to _.hop
+    (to ~.hop
       ((k .inject debugger-trap-cont<-) .take value))
-    (to _.step 
+    (to ~.step 
       (k .take-step value))
-    (to (_ .value new-value)
+    (to (~ .value new-value)
       (debugging (out-step<- k new-value)))
     ))
 
@@ -228,7 +228,7 @@
   (if (= k halt)
       k
       (make _
-        (to (_ .take value) (debugging (out-step<- k value)))
+        (to (~ .take value) (debugging (out-step<- k value)))
         ;; XXX (.inject ...) ?
         (to message (call k message)))))
 
@@ -250,11 +250,11 @@
  (try '(((+ 1) y) 2))
 
  (try '((lambda (x) ((+ y) 1)) 42)
-      (_ .value 42)
-      _.continue)
+      (~ .value 42)
+      ~.continue)
  (try '((lambda (x) ((+ y) 1)) 42)
-      (_ .value 42)
-      _.hop
-      _.b
-      _.hop)
+      (~ .value 42)
+      ~.hop
+      ~.b
+      ~.hop)
 )

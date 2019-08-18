@@ -1,23 +1,23 @@
 (make display
-  (to (_ x)      (out .display x))
-  (to (_ x sink) (sink .display x)))
+  (to (~ x)      (out .display x))
+  (to (~ x sink) (sink .display x)))
 
 (make newline
-  (to (_)      (out .display #\newline))
-  (to (_ sink) (sink .display #\newline)))
+  (to (~)      (out .display #\newline))
+  (to (~ sink) (sink .display #\newline)))
 
 (to (yeah? x)
   (not= x #no))
 
 ;; XXX float contagion
 (make min
-  (to (_ a) a)
-  (to (_ a b) (if (< a b) a b))
-  (to (_ a b @rest) (min (min a b) @rest)))  ;TODO why aren't we using foldl? geez.
+  (to (~ a) a)
+  (to (~ a b) (if (< a b) a b))
+  (to (~ a b @rest) (min (min a b) @rest)))  ;TODO why aren't we using foldl? geez.
 (make max
-  (to (_ a) a)
-  (to (_ a b) (if (< a b) b a))
-  (to (_ a b @rest) (max (max a b) @rest)))
+  (to (~ a) a)
+  (to (~ a b) (if (< a b) b a))
+  (to (~ a b @rest) (max (max a b) @rest)))
 
 (to (min-by key<- xs) (foldr1 (on (x y) (if (< (key<- x) (key<- y)) x y))
                               xs))
@@ -33,16 +33,16 @@
 ;;  - Sometimes it's *almost* applicable, but ok? needs to take `(,i ,x) as the argument.
 ;;    But if we made it like that, then it's barely different from yeahs.
 (to (where ok? xs)
-  (for yeahs (((_ i x) xs.items))
+  (for yeahs (((~ i x) xs.items))
     (and (ok? x) i)))
 
 (to (map-by f keys) ;TODO maybe name it map<-keys ? along with a map<-values ?
   (map<-items (for each ((key keys))
-                (_ key (f key)))))
+                (~ key (f key)))))
 
 (to (map<-values f values)
   (map<-items (for each ((value values))
-                (_ (f value) value))))
+                (~ (f value) value))))
 
 ;; What's a good name for this? I like 'cartesian*' even less.
 (to (grid* xs ys)                     ;TODO generalize
@@ -59,9 +59,9 @@
 
 (to (link/lazy x thunk)
   (make lazy-list {extending list-trait}
-    (to _.none? #no)
-    (to _.first x)
-    (to _.rest  (thunk))
+    (to ~.none? #no)
+    (to ~.first x)
+    (to ~.rest  (thunk))
     ;; XXX override parts of list-trait that need it for laziness
     ))
 
@@ -100,10 +100,10 @@
     (+ total (f x))))
 
 (to (tally xs)
-  (sum-by _.count xs))
+  (sum-by ~.count xs))
 
 (to (tally-by f xs)
-  (sum-by (compose _.count f) xs))
+  (sum-by (compose ~.count f) xs))
 ;; TODO hm, I was thinking of f as returning a claim, but as written,
 ;; it could be any function that returns a countable thing, such as a
 ;; collection. What's a good name for this from that point of view?
@@ -157,9 +157,9 @@
 
 ;: TODO better name 'with'?
 (make take
-  (to (_ input f)            ;for speed, a specialization of the below
+  (to (~ input f)            ;for speed, a specialization of the below
     (f input))
-  (to (_ input @transforms)
+  (to (~ input @transforms)
     (for foldl ((result input) (f transforms))
       (f result))))
 

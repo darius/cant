@@ -56,7 +56,7 @@
 
 (to (check-timeouts)
   (let now (nano-now))
-  (for each! (((_ process time) waiting-timeouts.items))
+  (for each! (((~ process time) waiting-timeouts.items))
 ;;    (format "time ~w: checking ~w\n" (msecs now) (msecs time))
     (when (<= time now)
       (waiting-timeouts .delete! process)
@@ -66,7 +66,7 @@
 (let pid-counter (box<- -1))
 
 (to (process<- start-state)
-  (let pid-num (pid-counter .update _.+)) ; Just for display.
+  (let pid-num (pid-counter .update ~.+)) ; Just for display.
   (let state (box<- start-state))       ; State of execution.
   (let inbox-checked (box<- empty))     ; Messages that didn't match the current receive.
   (let inbox-unchecked (box<- empty))   ; Messages not yet checked against the current receive.
@@ -84,24 +84,24 @@
 
   (make process
 
-    (to (_ .selfie sink)
+    (to (~ .selfie sink)
       (format .to-sink sink "#<~w>" pid-num))
 
-    (to (_ .subscribe watcher)
+    (to (~ .subscribe watcher)
       (watchers .add! watcher))
-    (to (_ .unsubscribe watcher)
+    (to (~ .unsubscribe watcher)
       (watchers .delete! watcher))
 
-    (to (_ .receive-signal pid outcome)
+    (to (~ .receive-signal pid outcome)
       (process .enqueue ['DOWN pid outcome]))
 
-    (to (_ .partner pid)
+    (to (~ .partner pid)
       (partners .add! pid))
-    (to (_ .unpartner pid)
+    (to (~ .unpartner pid)
       (surely (partners .maps? pid))
       (partners .delete! pid))
 
-    (to (_ .partner-died pid outcome)
+    (to (~ .partner-died pid outcome)
       (surely (partners .maps? pid))     ;uh right?
       (partners .delete! pid)
       (may state.^
@@ -110,19 +110,19 @@
           (state .^= {exit 'partner-died}) ;TODO or whatever
           (on-death 'partner-died))))      ;TODO or whatever
 
-    (to (_ .enqueue message)
+    (to (~ .enqueue message)
       ;; TODO: error if exited? Probably not.
       (push! inbox-unchecked message)
       process.wake)
 
-    (to _.wake
+    (to ~.wake
       (may state.^
         (be (and {blocked _ _ _ _ _} thunk)
           (schedule! process)
           (state .^= {go thunk #no})) ;(TODO still a bit clumsy)
         (else)))
 
-    (to (_ .receive deadline after-e clauses r k)
+    (to (~ .receive deadline after-e clauses r k)
       (begin checking ()  ;; TODO finer time-slicing?
         (may (peek inbox-unchecked.^)
           (be {empty}
@@ -150,7 +150,7 @@
                   (waiting-timeouts .delete! process)) ;TODO might not be needed?
                 (sev exp {local-env map r} k)))))))
 
-    (to _.run-a-slice
+    (to ~.run-a-slice
       (may state.^
         (be {go k value}
           (the-running-process .^= process)
@@ -285,7 +285,7 @@
           (for each! ((pair pairs))
             (surely (and (list? pair) (= pair.count 2))))
           `(do
-             (to (,f ,@(each _.first pairs))
+             (to (,f ,@(each ~.first pairs))
                ,@body)
              (f ,@(for each ((pair pairs)) (pair 1)))))))
     (be 'case
@@ -304,7 +304,7 @@
         (be `(,f ,pairs ,@body)
           (for each! ((pair pairs))
             (surely (and (list? pair) (= pair.count 2))))
-          `(,f (on ,(each _.first pairs) ,@body)
+          `(,f (on ,(each ~.first pairs) ,@body)
                ,@(for each ((pair pairs)) (pair 1))))))
     (be 'or
       (may operands
@@ -322,13 +322,13 @@
         (be `(,test ,@body)
           `(be ,test
              (#no ,@body)
-             (_ #no)))))
+             (~ #no)))))
     (be 'when
       (may operands
         (be `(,test ,@body)
           `(be ,test
              (#no #no)
-             (_ ,@body)))))
+             (~ ,@body)))))
     (else #no)))
 
 ;; Expand a quasiquoted expression or pattern (either one).
@@ -552,7 +552,7 @@
 
 (to (match-pats r map ps vals)
   ;; TODO n-arg every
-  (for every (((_ p val) (zip ps vals))) ;TODO ensure left-to-right order
+  (for every (((~ p val) (zip ps vals))) ;TODO ensure left-to-right order
     (match-pat r map p val)))
 
 (to (match-pat r map p val)
@@ -658,11 +658,11 @@
   (surely (count? n))
   (x n))
 (make slice
-  (to (_ x n)
+  (to (~ x n)
     (surely (sequence? x))
     (surely (count? n))
     (x .slice n))
-  (to (_ x m n)
+  (to (~ x m n)
     (surely (sequence? x))
     (surely (count? m))
     (surely (count? n))
@@ -704,8 +704,8 @@
     ))
 
 (let builtins-map
-  (map<-items (for each (((_ name value) primitives-from-cant.items))
-                (_ name {primitive value}))))
+  (map<-items (for each (((~ name value) primitives-from-cant.items))
+                (~ name {primitive value}))))
 
 (builtins-map .set! 'apply {apply})
 (builtins-map .set! 'eval  {eval})
@@ -718,7 +718,7 @@
 (to (map<-defs defs)
   (map<-items (for each ((def defs))
                 (may def
-                  (be {to name _ _} (_ name def))))))
+                  (be {to name _ _} (~ name def))))))
 
 ;; Add the prelude to the global environment.
 (let global-env

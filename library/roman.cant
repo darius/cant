@@ -5,10 +5,10 @@
 
 ;; TODO: expose as a parson grammar, too?
 (to (int<-roman str)
-  (let (_ _ total)
+  (let (~ _ total)
     (for foldr ((digit (each values str.uppercase))
-                ((_ next total) (_ 0 0)))
-      (_ digit ((if (<= next digit) + -) total digit))))
+                ((~ next total) (~ 0 0)))
+      (~ digit ((if (<= next digit) + -) total digit))))
   total)
 
 (let digits (" I II III IV V VI VII VIII IX" .split " "))
@@ -16,7 +16,7 @@
                              "XLCDM")))
 
 (to (roman<-int n)
-  (let (_ tens ones) (n ./mod 10))
+  (let (~ tens ones) (n ./mod 10))
   (chain (may tens
            (be 0 "")
            (else (times-X (roman<-int tens))))

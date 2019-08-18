@@ -1,6 +1,6 @@
 ;; (Use run.cant to run this.)
 
-(let input (with-input-file _.read-all data-file))
+(let input (with-input-file ~.read-all data-file))
 
 (let grammar (grammar<- "
 main: clause* :hug '\n\n' program.  # N.B. no :end
@@ -14,7 +14,7 @@ insn:    :nat ' ' :nat ' ' :nat ' ' :nat '\n' :hug.
 (let semantics (grammar (map<-)))
 (let parse-main (semantics 'main))
 (to (parse string)
-  (_.results (parson-parse parse-main string)))
+  (~.results (parson-parse parse-main string)))
 
 (let `(,observations ,program) (parse input))
 ;(each! print program)
@@ -32,7 +32,7 @@ insn:    :nat ' ' :nat ' ' :nat ' ' :nat '\n' :hug.
 
 (to (vm<- regs)
   (make vm
-    (to (_ .do op a b c)
+    (to (~ .do op a b c)
       (let result
         (may op
 
@@ -52,18 +52,18 @@ insn:    :nat ' ' :nat ' ' :nat ' ' :nat '\n' :hug.
           (be 'seti  a)
        
           ;; TODO I'm not sure about this method name claim.count
-          (be 'gtir  (_.count (> a (regs b))))
-          (be 'gtri  (_.count (> (regs a) b)))
-          (be 'gtrr  (_.count (> (regs a) (regs b))))
+          (be 'gtir  (~.count (> a (regs b))))
+          (be 'gtri  (~.count (> (regs a) b)))
+          (be 'gtrr  (~.count (> (regs a) (regs b))))
        
-          (be 'eqir  (_.count (= a (regs b))))
-          (be 'eqri  (_.count (= (regs a) b)))
-          (be 'eqrr  (_.count (= (regs a) (regs b))))
+          (be 'eqir  (~.count (= a (regs b))))
+          (be 'eqri  (~.count (= (regs a) b)))
+          (be 'eqrr  (~.count (= (regs a) (regs b))))
        
           ))
       (regs .set! c result))
 
-    (to _.get-regs regs)
+    (to ~.get-regs regs)
     ))
 
 (let all-op-names
@@ -95,7 +95,7 @@ insn:    :nat ' ' :nat ' ' :nat ' ' :nat '\n' :hug.
 (to (part-2)
   ;; TODO: map-reduce with intersection
   (let op-name-set all-op-names.range)
-  (let opcodes ((each _.first constraints) .range))
+  (let opcodes ((each ~.first constraints) .range))
   (let candidates (map-by (-> op-name-set) opcodes.keys))
   (for each! ((`(,opcode ,op-names) constraints))
     (candidates .set! opcode
@@ -111,13 +111,13 @@ insn:    :nat ' ' :nat ' ' :nat ' ' :nat '\n' :hug.
   ;; Trivial constraint satisfaction turns out to be good enough:
   (let assignments (map<-))
   (begin pruning ()
-    (let opcode (min-by (compose _.count candidates)
+    (let opcode (min-by (compose ~.count candidates)
                         candidates.keys))
-    (when (= 1 (_.count (candidates opcode)))
+    (when (= 1 (~.count (candidates opcode)))
       (let op-name (((candidates opcode) .keys) .first)) ;clumsy
       (assignments .set! opcode op-name)
       (candidates .delete! opcode)
-      (for each! (((_ op2 names2) candidates.items))
+      (for each! (((~ op2 names2) candidates.items))
         (names2 .delete! op-name))
       (when candidates.some?
         (pruning))))

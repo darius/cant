@@ -30,33 +30,33 @@
 
 (to (fail text far i vals)
   (make failure
-    (to (_ .continue _)     failure)
-    (to (_ .else p j vs)    (p text far j vs))
-    (to _.invert            empty)
-    (to (_ .capture-from _) failure)
-    (to (_ .prefix _)       failure)
-    (to _.leftovers         (error "Parse failed" failure.postmortem))
-    (to _.?results          #no)
-    (to _.results           (error "Parse failed" failure.postmortem))
-    (to _.result            (error "Parse failed" failure.postmortem))
-    (to _.postmortem        `(,(text .slice 0 far) /
+    (to (~ .continue _)     failure)
+    (to (~ .else p j vs)    (p text far j vs))
+    (to ~.invert            empty)
+    (to (~ .capture-from _) failure)
+    (to (~ .prefix _)       failure)
+    (to ~.leftovers         (error "Parse failed" failure.postmortem))
+    (to ~.?results          #no)
+    (to ~.results           (error "Parse failed" failure.postmortem))
+    (to ~.result            (error "Parse failed" failure.postmortem))
+    (to ~.postmortem        `(,(text .slice 0 far) /
                               ,(text .slice far)))
-    (to _.display                         ;TODO change to .selfie
+    (to ~.display                         ;TODO change to .selfie
       (let `(,left / ,right) failure.postmortem)
       (format "failed: ~w/~w" left right))))
 
 (to (empty text far i vals)
   (make success
-    (to (_ .continue p)       (p text far i vals))
-    (to (_ .else _ _ _)       success)
-    (to _.invert              fail)
-    (to (_ .capture-from j)   (empty text far i `(,@vals ,(text .slice j i))))
-    (to (_ .prefix pre-vals)  (empty text far i (chain pre-vals vals)))
-    (to _.leftovers           i)
-    (to _.?results            vals)
-    (to _.results             vals)
-    (to _.result              vals.maybe)    ;TODO nicer error on wrong # of vals
-    (to _.display
+    (to (~ .continue p)       (p text far i vals))
+    (to (~ .else _ _ _)       success)
+    (to ~.invert              fail)
+    (to (~ .capture-from j)   (empty text far i `(,@vals ,(text .slice j i))))
+    (to (~ .prefix pre-vals)  (empty text far i (chain pre-vals vals)))
+    (to ~.leftovers           i)
+    (to ~.?results            vals)
+    (to ~.results             vals)
+    (to ~.result              vals.maybe)    ;TODO nicer error on wrong # of vals
+    (to ~.display
       (format "~w ~w" (text .slice i) vals))))
 
 ;; (invert p): a parser that succeeds from a state just when p fails
@@ -183,18 +183,18 @@
 
 (make many
   ;; Parse as 0 or more p's in sequence, i.e. Kleene star.
-  (to (_ p)
+  (to (~ p)
     (let p* (maybe (then p (delay (: p*))))))
   ;; 0 or more p's, with separator in between each.
-  (to (_ p separator)
+  (to (~ p separator)
     (maybe (then p (many (then separator p))))))
 
 (make at-least-1
   ;; Parse as 1 or more p's in sequence, i.e. Kleene plus.
-  (to (_ p)
+  (to (~ p)
     (let p+ (then p (maybe (delay (: p+))))))
   ;; 1 or more p's, with separator in between each.
-  (to (_ p separator)
+  (to (~ p separator)
     (then p (many (then separator p)))))
 
 (export invert capture either then feed-list feed push seclude delay

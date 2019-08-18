@@ -31,7 +31,7 @@
 (to (match-brackets program)
   (let jump (map<-))
   (for foldl ((stack '())
-              ((_ i ch) program.items))
+              ((~ i ch) program.items))
     (may ch
       (be #\[ (link i stack))
       (be #\] (jump .set! stack.first i.+)
@@ -81,10 +81,10 @@
 (let bf-prelude
   '((let data (array<-count 30000 0))
     (to (decr d)
-      (data .update d _.-)
+      (data .update d ~.-)
       d)
     (to (incr d)
-      (data .update d _.+)
+      (data .update d ~.+)
       d)
     (to (emit d)
       (display (char<- (data d)))
@@ -97,7 +97,7 @@
 ;; Smoke test
 
 (to (main _)
-  (let text (with-input-file _.read-all "eg/brainfuck/hello.bf"))
+  (let text (with-input-file ~.read-all "eg/brainfuck/hello.bf"))
   (bf-interpret text)
   (let code (bf-compile text))
 ;;  (print code)

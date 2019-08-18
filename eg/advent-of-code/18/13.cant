@@ -1,9 +1,9 @@
 ;; (Use run.cant to run this.)
 
-(let inputs (with-input-file _.read-all data-file))
+(let inputs (with-input-file ~.read-all data-file))
 
 (to (parse world-str)
-  (surely (hide (let widths (each _.count world-str.split-lines))
+  (surely (hide (let widths (each ~.count world-str.split-lines))
                 (= 1 widths.range.count)))
   (let width world-str.split-lines.first.count.+)
   (let carts (map<-))
@@ -11,7 +11,7 @@
   (to (add-cart! i dir)
     (tracks .push! (erase-cart dir))
     (carts .set! i {cart dir 0}))
-  (for each! (((_ i ch) world-str.items))
+  (for each! (((~ i ch) world-str.items))
     (may ch
       (be #\> (add-cart! i E))
       (be #\< (add-cart! i W))
@@ -76,7 +76,7 @@
 (let world0 (parse inputs))
 
 (to (show {world tracks w carts})
-  (for each! (((_ i ch) tracks.items))
+  (for each! (((~ i ch) tracks.items))
     (display (may (carts .get i)
                (be #no  ch)
                (be cart (show-cart cart)))))
@@ -94,7 +94,7 @@
           (ticking state1 t.+)))))
 
 (to (xy-coords {world _ width _} pos)
-  (let (_ y x) (pos ./mod width))
+  (let (~ y x) (pos ./mod width))
   `(,x ,y))
 
 (to (tick {world tracks width carts})

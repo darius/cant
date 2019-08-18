@@ -134,20 +134,20 @@
     (size .^= (+ size.^ r-size)))
 
   (make text
-    (to _.clear!
+    (to ~.clear!
       (head .^= 0)
       (gap  .^= 0)
       (size .^= 0))
-    (to (_ .clip p)             (clip p))
-    (to (_ .get p span)         (get p span))
-    (to (_ .delete p span)      (replace p span "")) ;TODO rename these with !
-    (to (_ .insert p str)       (replace p 0 str))
-    (to (_ .replace p span str) (replace p span str))
-    (to _.count                 size.^)
-    (to (_ .find-char-set p dir char-set)
+    (to (~ .clip p)             (clip p))
+    (to (~ .get p span)         (get p span))
+    (to (~ .delete p span)      (replace p span "")) ;TODO rename these with !
+    (to (~ .insert p str)       (replace p 0 str))
+    (to (~ .replace p span str) (replace p span str))
+    (to ~.count                 size.^)
+    (to (~ .find-char-set p dir char-set)
       (find-char-set p dir char-set))
     ;; TODO: delegate to a string trait? but strings are immutable...
-    (to _.keys
+    (to ~.keys
       (0 .to< size.^))
     ))
 

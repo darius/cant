@@ -13,7 +13,7 @@
 
 (to (script<- trait clauses)
   (make script
-    (to (_ .receive message actor parent-r)
+    (to (~ .receive message actor parent-r)
       (begin matching ((clauses clauses))
         (may clauses
           (be '()
@@ -87,11 +87,11 @@
 (to (env-extend parent-r vars)
   (let values (array<-count vars.count *uninitialized*))
   (make env
-    (to (_ key)
+    (to (~ key)
       (may (vars .find key #no)
         (be #no (parent-r key))
         (be i   (values i))))
-    (to (_ .bind var value)
+    (to (~ .bind var value)
       (let i (vars .find var))
       (unless (= (values i) *uninitialized*)
         (error "Re-binding" var))
@@ -99,16 +99,16 @@
 
 (to (env<-map parent map)
   (make env
-    (to (_ var)
+    (to (~ var)
       (take var (if (map .maps? var) map parent)))
-    (to (_ .bind var value)
+    (to (~ .bind var value)
       (error "Tried to change immutable env" var))))
 
 ;; TODO interpose appropriate definitions for 'cant', 'use', 'load', ...
 (make global-env
-  (to (_ (? symbol? var))
+  (to (~ (? symbol? var))
     (cant .play var '()))             ;oof, expensive
-  (to (_ .bind var val)
+  (to (~ .bind var val)
     (cant .play `(let ,var ',val) '())))
 
 

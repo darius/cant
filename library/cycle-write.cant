@@ -22,7 +22,7 @@
 ;; TODO better names?
 
 (to (cycle-write thing @(optional sink-arg))
-  (let (_ cycle-sink flush-to) (cycle-sink<-))
+  (let (~ cycle-sink flush-to) (cycle-sink<-))
   (cycle-sink .write thing)             ;TODO name it .write
   (flush-to (or sink-arg out))
   flush-to.close)
@@ -37,11 +37,11 @@
 
   (make flush-to
 
-    (to (_ sink)
+    (to (~ sink)
       (hey sink @buffer.values)
       buffer.clear!)
 
-    (to _.close
+    (to ~.close
       buffer.clear!
       tags.clear!))
 
@@ -56,13 +56,13 @@
 
   (make cycle-sink
 
-    (to (and (_ .display atom) message)
+    (to (and (~ .display atom) message)
       (buffer .push! message))
 
-    (to (and (_ .write-u8 u8) message)
+    (to (and (~ .write-u8 u8) message)
       (buffer .push! message))
 
-    (to (_ .write thing)
+    (to (~ .write thing)
       (if (or (symbol? thing) (self-evaluating? thing))  ;; TODO skip other atom types
           (thing .selfie cycle-sink)
           (may (tags .get thing)
@@ -79,16 +79,16 @@
             (be tag
               (let id (may tag
                         (be 0   ;; Second visit. Give thing a fresh id:
-                          (hey (id-counter .update _.+)
+                          (hey (id-counter .update ~.+)
                                (-> (tags .set! thing it))))
                         (else   ;; Thereafter, just use that one:
                           tag)))
               (buffer .push! (on (sink)
                                (format .to-sink sink "#~w" id)))))))
   
-    (to _.close
+    (to ~.close
       tags.clear!))
 
-  (_ cycle-sink flush-to))
+  (~ cycle-sink flush-to))
 
 (export cycle-write)

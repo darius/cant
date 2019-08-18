@@ -25,36 +25,36 @@
       (error "Bad index" flexarray i)))
 
   (make flexarray {extending array-trait}
-    (to (_ i)
+    (to (~ i)
       (count-check i)
       (vec.^ i))
-    (to _.count
+    (to ~.count
       count.^)
-    (to (_ .set! i value)
+    (to (~ .set! i value)
       (count-check i)
       (vec.^ .set! i value))
-    (to (_ .push! value)
+    (to (~ .push! value)
       (let i count.^)
       (when (= i vec.^.count) (grow))
       (vec.^ .set! i value)
       (count .^= i.+)
       i)                              ; (should we be returning this?)
-    (to _.pop!
+    (to ~.pop!
       (let i count.^.-)
       (when (< i 0)
         (error "Underflow" flexarray))
       (count .^= i)
       (vec.^ i))
-    (to (_ .pop! i)
+    (to (~ .pop! i)
       (when (< i 0)
         (error "Out of range" flexarray))
       (count-check i)
       (let popped (vec.^ i))
 ;     (vec.^ .move! i (+ i 1) (- count.^ (+ i 1)))
       (__vector-move! vec.^ i vec.^ i.+ count.^)
-      (count .update _.-)
+      (count .update ~.-)
       popped)
-    (to (_ .insert! i value)                 ;TODO code duplication .push!
+    (to (~ .insert! i value)                 ;TODO code duplication .push!
       (let c count.^)
       (unless (<= i c)
         (error "Bad index" flexarray i))
@@ -64,34 +64,34 @@
       (vec.^ .set! i value)
       (count .^= c.+)
       i)                                 ;TODO what's a good return value?
-    (to _.values ;; more efficient than array-trait's
+    (to ~.values ;; more efficient than array-trait's
       (each vec.^ (0 .to< count.^)))
-    (to _.snapshot
+    (to ~.snapshot
       (vec.^ .slice 0 count.^))         ;XXX make immutable
-    (to (_ .move! dst source lo bound)
+    (to (~ .move! dst source lo bound)
       (when (< lo bound)
         (count-check (+ dst (- bound lo) -1))
         (vec.^ .move! dst source lo bound)))
-    (to (_ .extend! values)
+    (to (~ .extend! values)
       (for each! ((v values))
         (flexarray .push! v)))
-    (to (_ .selfie sink)
+    (to (~ .selfie sink)
       (sink .display "#<flexarray (")
       (sink .write count.^)
       (sink .display ")>"))     
-    (to (_ .resize! n)
+    (to (~ .resize! n)
       (let old vec.^)
       (when (< old.count n) ;; TODO maybe we should always change the physical size
         (let new (array<-count n))
         (new .move! 0 old 0 (min old.count n))
         (vec .^= new))
       (count .^= n))
-    (to _.clear!
+    (to ~.clear!
       (count .^= 0))                     ;TODO also reset vec?
 
     ;; inefficient:
-    (to (_ .chain v)        (flexarray.snapshot .chain v))
-    (to (_ .slice lo bound) (flexarray.snapshot .slice lo bound))
+    (to (~ .chain v)        (flexarray.snapshot .chain v))
+    (to (~ .slice lo bound) (flexarray.snapshot .slice lo bound))
     ))
 
 (export

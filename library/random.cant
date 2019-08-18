@@ -13,18 +13,18 @@
   (let state (box<- seed))
 
   (to (next)
-    (let (_ _ r) (state.^ .*/mod 16807 D))
+    (let (~ _ r) (state.^ .*/mod 16807 D))
     (state .^= r)
     r)
 
   (make rng
-    (to (_ .random-integer n)                ;TODO rename .random-count or something
+    (to (~ .random-integer n)                ;TODO rename .random-count or something
       ((next) .modulo n))                ;XXX could be better
-    (to (_ .random-range lo hi)
+    (to (~ .random-range lo hi)
       (+ lo (rng .random-integer (- hi lo))))
-    (to (_ .pick xs)
+    (to (~ .pick xs)
       (xs (rng .random-integer xs.count)))
-    (to (_ .shuffle! vec)
+    (to (~ .shuffle! vec)
       (let n vec.count)
       (for each! ((i (0 .to< n)))
         (vec .swap! i (+ i (rng .random-integer (- n i))))))
@@ -46,7 +46,7 @@
 
 ;; Read a 4-byte unsigned int, big-endian. TODO should be in a library
 (to (read-u32 source)
-  (for foldl ((n 0) (_ (0 .to< 4))) 
+  (for foldl ((n 0) (~ (0 .to< 4))) 
     (+ (n .<< 8)
        source.read-char.code)))
 

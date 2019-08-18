@@ -63,8 +63,8 @@
       ))
 
   (to (interpret prelude {module builtins}) ;TODO rename
-    (let scope (module-scope<- (map<-items (for each (((_ k v) builtins.items))
-                                             (_ k {const v})))))
+    (let scope (module-scope<- (map<-items (for each (((~ k v) builtins.items))
+                                             (~ k {const v})))))
     ((fill (exp-parse prelude)) .gen scope (prepend {return} nil-seq)))
 
   (let assembly (build-prelude interpret apply))
@@ -83,18 +83,18 @@
 ;; We cache the label in an object to keep constant-time access.
 
 (make nil-seq
-  (to _.label 0)
-  (to _.tail? #no)
-  (to _.insns '()))
+  (to ~.label 0)
+  (to ~.tail? #no)
+  (to ~.insns '()))
 
 (to (prepend insn rest)
   (let label rest.label.+)
   (let insns (link insn rest.insns))
   (make link-seq
-    (to _.label label)
-    (to _.tail? (= insn {return}))
-    (to _.insns insns)
-    (to _.rest  rest)))                   ;kinda funky
+    (to ~.label label)
+    (to ~.tail? (= insn {return}))
+    (to ~.insns insns)
+    (to ~.rest  rest)))                   ;kinda funky
 
 ;;XXX 
 ;;(to (show assembly)
@@ -106,19 +106,19 @@
 
 (to (const<- c)
   (make constant
-    (to _.fvs empty-set)
-    (to (_ .gen s then) (prepend {const c} then))))
+    (to ~.fvs empty-set)
+    (to (~ .gen s then) (prepend {const c} then))))
 
 (to (var<- v)
   (make variable
-    (to _.fvs (sset<- v))
-    (to (_ .gen s then) (prepend (s v) then))))
+    (to ~.fvs (sset<- v))
+    (to (~ .gen s then) (prepend (s v) then))))
 
 (to (lam<- v body src)
   (let fvs (sset-remove body.fvs v))
   (make lambda
-    (to _.fvs fvs)
-    (to (_ .gen s then)
+    (to ~.fvs fvs)
+    (to (~ .gen s then)
      (let cvs ;; closure variables
        (sset-elements (sset-difference fvs (sset<-list s.known.keys))))
      (let fetches (for each ((v cvs))
@@ -131,8 +131,8 @@
 
 (to (app<- f a src)
   (make application
-    (to _.fvs (sset-union f.fvs a.fvs))
-    (to (_ .gen s then)
+    (to ~.fvs (sset-union f.fvs a.fvs))
+    (to (~ .gen s then)
      (let code (a .gen s
                   (f .gen s
                      (prepend {invoke src} (if then.tail? then.rest then)))))
@@ -145,18 +145,18 @@
 
 (to (module-scope<- known)
   (make module-scope
-    (to (_ v) (known v))
-    (to _.known known)))
+    (to (~ v) (known v))
+    (to ~.known known)))
 
 (to (scope<- param var-offsets known)
   (make scope
-    (to (_ v)
+    (to (~ v)
       (if (= v param)
           {fetch 'local}
           (may (var-offsets .get v)
             (be #no (known v))
             (be n   {fetch n}))))
-    (to _.known known)))
+    (to ~.known known)))
 
 
 ;; Smoke test
