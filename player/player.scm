@@ -230,6 +230,7 @@
    ((char? object)        char-script)
    ((boolean? object)     boolean-script)
    ((term? object)        term-script)
+   ((mapi? object)        mapi-script)
    ((eq? object (void))   void-script)
    ((eof-object? object)  eof-script)
    ((script? object)      script-script)
@@ -667,6 +668,7 @@
 (define eof-script       '*forward-ref*)
 (define script-script    '*forward-ref*)
 (define ejector-script   '*forward-ref*)
+(define mapi-script      '*forward-ref*)
 
 (define (get-script name)
   (script<- name (get-prim name) primitive-env))
@@ -708,7 +710,7 @@
     (exact<-inexact ,inexact->exact)  ;XXX rename or something
     (floor ,floor)
     (not ,not)
-    (assoc ,assoc)
+    (assoc ,assoc)                      ;XXX doesn't use cant=?
     (sqrt ,sqrt)
     (panic ,panic-prim)
     (error ,error-prim)
@@ -755,6 +757,10 @@
     (nanosleep ,prim-nanosleep)
 
     ;; Primitives only -- TODO seclude in their own env:
+    (mapi? ,mapi?)
+    (mapi<-items ,prim-mapi<-items)
+    (__mapi-items ,mapi-items)
+    (__mapi-get ,prim-mapi-get)
     (__place ,hashmap-place)
     (__char-compare ,char-compare)
     (__number-compare ,number-compare)
@@ -849,6 +855,7 @@
 (set! eof-script    (get-script 'eof-primitive))
 (set! script-script (get-script 'script-primitive))
 (set! ejector-script (get-script 'ejector-primitive))
+(set! mapi-script   (get-script 'mapi-primitive))
 
 
 ;; For tuning later.

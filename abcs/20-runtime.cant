@@ -41,7 +41,7 @@
   (to (~ .maps? key)
     (make missing)
     (not= (map .get key missing) missing))
-  (to ~.none?  (= map.count 0))  ; or map.items.none? - is that better?
+  (to ~.none?  (= map.count 0))  ; or map.items.none? - is that better? depends.
   (to ~.some?  (not map.none?))
   (to ~.keys   (each (on ((~ k _)) k) map.items))
   (to ~.values (each (on ((~ _ v)) v) map.items))
@@ -918,6 +918,33 @@
   (for each! ((`(,k ,v) lists))
     (m .set! k v))
   m)
+
+
+;; Immutable maps, placeholder implementation
+;; TODO rename once all in place
+
+(make-trait mapi-primitive mapi
+  (to (~ key)
+    (may (__mapi-get key mapi)
+      (be #no (error "Missing key" mapi key))
+      (be (~ _ v) v)))
+  (to (~ .get key @(optional default))
+    (may (__mapi-get key mapi)
+      (be #no default)
+      (be (~ _ v) v)))
+  (to (~ .maps? key)
+    (not (not (__mapi-get key mapi))))
+  (to ~.none?  (null? (__mapi-items mapi)))
+  (to ~.items  (__mapi-items mapi))
+  (to ~.count  (~.count (__mapi-items mapi))) ;TODO move to map-trait
+  (to (~ .selfie sink)
+    (sink .display "#<mapi")
+    (for each! ((item (__mapi-items mapi)))
+      (sink .display #\space)
+      (sink .write item))
+    (sink .display ">"))
+  (to message
+    (map-trait mapi message)))
 
 
 ;; Sets via hashtable

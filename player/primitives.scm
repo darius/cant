@@ -4,6 +4,7 @@
         maybe-macroexpand-expr maybe-macroexpand-patt prim-halp-log
         prim-nano-now prim-nanosleep prim-*/mod prim-string-maps? 
         prim-substring prim-vector-maps? prim-read-all prim-display
+        mapi? mapi-items prim-mapi<-items prim-mapi-get
         )
 (import (chezscheme) (player util) (player parse))
 
@@ -40,6 +41,7 @@
   (cond ((term? x) (and (term? y) (term=? x y)))
         ((pair? x) (and (pair? y) (pair=? x y)))
         ((string? x) (and (string? y) (string=? x y)))
+        ((mapi? x) (and (mapi? y) (cant=? (mapi-items x) (mapi-items y))))
         (else (eqv? x y))))
 
 (define (pair=? x y)
@@ -76,6 +78,47 @@
        (cond ((string<? x y) -1)
              ((string=? x y)  0)
              (else            +1))))
+
+
+;; Immutable maps: placeholder implementation
+
+(define-record-type mapi (fields items))
+
+(define (prim-mapi<-items items)
+  (make-mapi (mapi-dedup items)))
+
+(define (mapi-dedup items)
+  (let building ((already '())   ; Keys of the prefix up to here, sans duplicates
+                 (suffix items)) ; Items not yet scanned
+    (cond ((null? suffix) '())
+          ((not (pair? suffix))
+           (error '__mapi-dedup "Not a list of items" items))
+          (else
+           (let ((item (car suffix)))
+             (unless (and (term? item)
+                          (eq? (term-tag item) '~)
+                          (length=2? (term-parts item)))
+               (error '__mapi-dedup "Not an item" item))
+             (let ((key (car (term-parts item))))
+               (if (memq key already)
+                   (building already (cdr suffix))
+                   (let ((built (building (cons key already) (cdr suffix))))
+                     (if (eq? built (cdr suffix))
+                         suffix
+                         (cons item built))))))))))
+
+(define (length=2? xs)
+  (= (length xs) 2))      ;TODO don't have to compute the whole length
+
+(define (prim-mapi-get key mapi)
+  (let searching ((items (mapi-items mapi)))
+    (if (null? items)
+        #f
+        (let* ((item (car items))
+               (k (car (term-parts item))))
+          (if (cant=? key k)
+              item
+              (searching (cdr items)))))))
 
 
 ;; Misc primitives
