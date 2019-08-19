@@ -230,7 +230,7 @@
    ((char? object)        char-script)
    ((boolean? object)     boolean-script)
    ((term? object)        term-script)
-   ((mapi? object)        mapi-script)
+   ((mapi? object)        map-script)
    ((eq? object (void))   void-script)
    ((eof-object? object)  eof-script)
    ((script? object)      script-script)
@@ -668,7 +668,7 @@
 (define eof-script       '*forward-ref*)
 (define script-script    '*forward-ref*)
 (define ejector-script   '*forward-ref*)
-(define mapi-script      '*forward-ref*)
+(define map-script      '*forward-ref*)
 
 (define (get-script name)
   (script<- name (get-prim name) primitive-env))
@@ -758,7 +758,7 @@
 
     ;; Primitives only -- TODO seclude in their own env:
     (immutable-map? ,mapi?)             ;TODO sheesh the name
-    (mapi<-items ,prim-mapi<-items)
+    (map<-items ,prim-mapi<-items)
     (__mapi-items ,mapi-items)
     (__mapi-get ,prim-mapi-get)
     (__place ,hashmap-place)
@@ -855,7 +855,7 @@
 (set! eof-script    (get-script 'eof-primitive))
 (set! script-script (get-script 'script-primitive))
 (set! ejector-script (get-script 'ejector-primitive))
-(set! mapi-script   (get-script 'mapi-primitive))
+(set! map-script    (get-script 'map-primitive))
 
 
 ;; For tuning later.

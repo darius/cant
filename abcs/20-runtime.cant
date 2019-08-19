@@ -921,30 +921,38 @@
 
 
 ;; Immutable maps, placeholder implementation
-;; TODO rename once all in place
 
-(make-trait mapi-primitive mapi
+(make-trait map-primitive map
   (to (~ key)
-    (may (__mapi-get key mapi)
-      (be #no (error "Missing key" mapi key))
+    (may (__mapi-get key map)
+      (be #no (error "Missing key" map key))
       (be (~ _ v) v)))
   (to (~ .get key @(optional default))
-    (may (__mapi-get key mapi)
+    (may (__mapi-get key map)
       (be #no default)
       (be (~ _ v) v)))
   (to (~ .maps? key)
-    (not (not (__mapi-get key mapi))))
-  (to ~.none?  (null? (__mapi-items mapi)))
-  (to ~.items  (__mapi-items mapi))
-  (to ~.count  (~.count (__mapi-items mapi))) ;TODO move to map-trait
+    (not (not (__mapi-get key map))))
+  (to ~.none?
+    (null? (__mapi-items map)))
+  (to ~.items
+    (__mapi-items map))
+  (to ~.count
+    (~.count (__mapi-items map))) ;TODO move to map-trait
   (to (~ .selfie sink)
-    (sink .display "#<mapi")
-    (for each! ((item (__mapi-items mapi)))
+    (sink .display "#<map")
+    (for each! ((key map.keys))
       (sink .display #\space)
-      (sink .write item))
+      (sink .write key))
     (sink .display ">"))
   (to message
-    (map-trait mapi message)))
+    (map-trait map message)))
+
+(to (map<- @items)
+  (map<-items items))
+
+(to (map<-lists lists)
+  (map<-items (each (-> (term<- '~ it)) lists)))
 
 
 ;; Sets via hashtable
