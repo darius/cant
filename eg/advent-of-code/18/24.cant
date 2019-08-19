@@ -166,12 +166,12 @@ separator: '\n'.
         (bounding high))))
 
 (to (enough-boost? boost)
-  (let armies (map<-items (for each ((`(,name ,group-makers) matchup))
-                            (~ name (do (let my-boost (may name
-                                                        (be "Immune System" boost)
-                                                        (else               0)))
-                                        (for each ((group-maker group-makers))
-                                          (group-maker my-boost)))))))
+  (let armies (!map<-items (for each ((`(,name ,group-makers) matchup))
+                             (~ name (do (let my-boost (may name
+                                                         (be "Immune System" boost)
+                                                         (else               0)))
+                                         (for each ((group-maker group-makers))
+                                           (group-maker my-boost)))))))
   (format "Trying immune boost of ~w\n" boost)
   (let win? (battle armies))
   (format "Immune boost of ~w ~d\n" boost (if win? "WORKED!" "failed"))

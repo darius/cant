@@ -907,21 +907,17 @@
         m)
       )))
 
-(to (map<-items items)
+(to (!map<-items items)
   (let m (!map<-))
   (for each! (((~ k v) items))
     (m .set! k v))
   m)
 
-(to (map<-lists lists)
+(to (!map<-lists lists)
   (let m (!map<-))
   (for each! ((`(,k ,v) lists))
     (m .set! k v))
   m)
-
-;; Scaffolding
-(let !map<-items map<-items)
-(let !map<-lists map<-lists)
 
 
 ;; Immutable maps, placeholder implementation

@@ -757,7 +757,7 @@
     (nanosleep ,prim-nanosleep)
 
     ;; Primitives only -- TODO seclude in their own env:
-    (mapi? ,mapi?)
+    (immutable-map? ,mapi?)             ;TODO sheesh the name
     (mapi<-items ,prim-mapi<-items)
     (__mapi-items ,mapi-items)
     (__mapi-get ,prim-mapi-get)
