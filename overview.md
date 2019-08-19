@@ -46,7 +46,9 @@ mutable variable; also, by special dispensation, definitions at the
 listener can update a binding.)
 
 Lists and strings are immutable too. Currently the built-in hashmaps,
-arrays, etc. are mutable, though I think now they shouldn't be.
+arrays, etc. are mutable, though I think now they shouldn't be. (As a
+placeholder towards that future, there's an immutable map type, though
+it's essentially an association list.)
 
 Scheme has lots of undefined behavior; in Cant the ideal is for any
 nondeterminism to be explicit. Since there's no spec, this is
