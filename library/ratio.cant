@@ -56,7 +56,7 @@
 (to (as-float {ratio n d})
   (/ (inexact<-exact n) d))
 
-(!map<- (~ 'ratio? ratio?)              ;TODO immutable
+(map<- (~ 'ratio? ratio?)
        (~ 'ratio<- ratio<-)
        (~ '+ r+)
        (~ '- r-)

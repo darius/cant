@@ -149,8 +149,8 @@
 (to (ctrl ch)
   (- ch.uppercase 64))
 
-(let key-map                               ;TODO immutable
-  (!map<- (~ (string<- (ctrl #\X))   'esc) ;XXX a hack until the timeout works
+(let key-map
+  (map<- (~ (string<- (ctrl #\X))   'esc) ;XXX a hack until the timeout works
          (~ (string<- (char<- 127)) 'backspace)
 
          (~ (chain esc "[1~")  'home)   (~ (chain esc "[H") 'home)

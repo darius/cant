@@ -26,7 +26,7 @@
 
   (let builtins-env
     {module
-     (!map<- (~ 'make-church<-claim {primitive make-church<-claim}) ;TODO immutable
+     (map<- (~ 'make-church<-claim {primitive make-church<-claim})
 
             (~ 'add1 {primitive ~.+})
             (~ 'make-church<-count {primitive make-church<-count})

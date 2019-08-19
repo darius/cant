@@ -47,7 +47,7 @@
   (for cbreak-mode ()
     (play grids name 0)))
 
-(let directions (!map<-lists `((#\h  left) (#\j up) (#\k  down) (#\l   right) ;TODO immutable
+(let directions (map<-lists `((#\h  left) (#\j up) (#\k  down) (#\l   right)
                               (left left) (up  up) (down down) (right right))))
 
 ;; The UI to a sequence of Sokoban levels.
@@ -104,7 +104,7 @@ Level ~w ~d Move ~w")
   ;; square.
   (let width (+ (spots .find #\newline) 1))
   (let directions
-    (!map<- (~ 'left -1) (~ 'right 1) (~ 'down width) (~ 'up (- width)))) ;TODO immutable
+    (map<- (~ 'left -1) (~ 'right 1) (~ 'down width) (~ 'up (- width))))
 
   (make grid
 

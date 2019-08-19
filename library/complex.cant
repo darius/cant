@@ -35,7 +35,7 @@
        (conjugate c)))
 
 ;; TODO fancier syntax for 'export' to handle this. Or just plain map literals.
-(!map<- (~ 'conjugate conjugate)        ;TODO immutable
+(map<- (~ 'conjugate conjugate)
        (~ 'abs^2 c-abs^2)
        (~ 'abs c-abs)
        (~ '+ c+)

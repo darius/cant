@@ -167,7 +167,7 @@
     rules))
 
 (let default-subs
-  (!map<- (~ 'skip skip-any-1)          ;TODO immutable
+  (map<- (~ 'skip skip-any-1)
          (~ 'anyone any-1) ;XXX all these should probably skip instead of capture
          (~ 'letter (take-1 ~.letter?))
          (~ 'digit (take-1 ~.digit?))

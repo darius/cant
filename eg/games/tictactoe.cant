@@ -124,7 +124,7 @@
   (/ (sum numbers) numbers.count))
 
 (let player-registry
-  (for !map<-values ((player `(,human-play ;TODO immutable
+  (for map<-values ((player `(,human-play
                               ,spock-play
                               ,(ai<- "Drunk" drunk-evaluate)
                               ,(ai<- "Max" (compound-key<- spock-evaluate
