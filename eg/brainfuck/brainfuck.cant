@@ -6,7 +6,7 @@
 ;; Interpreter
 
 (to (bf-interpret program)
-  (let data (map<-))                    ; run-time data store
+  (let data (!map<-))                    ; run-time data store
   (let jump (match-brackets program))   ; jump targets
   (begin running ((i 0)                 ; instruction pointer
                   (d 0))                ; data pointer
@@ -29,7 +29,7 @@
                                d)))))))
 
 (to (match-brackets program)
-  (let jump (map<-))
+  (let jump (!map<-))
   (for foldl ((stack '())
               ((~ i ch) program.items))
     (may ch

@@ -449,7 +449,7 @@
     ('export (mlambda
               ((__ . names)
                (insist (all symbol? names) "bad syntax" names)
-               `(map<-  ;; XXX unhygienic; was `',the-map<- but that
+               `(!map<-  ;; XXX unhygienic; was `',the-map<- but that
                             ;; requires importing from player.scm
                  ,@(map (lambda (name) `(~ ',name ,name))
                         names)))))

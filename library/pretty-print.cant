@@ -7,7 +7,7 @@
   (display (pretty-print (doc<-sx sexpr) (or width 72)))
   (newline))
 
-(let abbrevs (map<-lists '((quote      "'")
+(let abbrevs (!map<-lists '((quote      "'") ;TODO immutable
                            (quasiquote "`")
                            (unquote    ",")
                            (unquote-splicing ",@"))))

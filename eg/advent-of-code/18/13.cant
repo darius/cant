@@ -6,7 +6,7 @@
   (surely (hide (let widths (each ~.count world-str.split-lines))
                 (= 1 widths.range.count)))
   (let width world-str.split-lines.first.count.+)
-  (let carts (map<-))
+  (let carts (!map<-))
   (let tracks (flexarray<-))
   (to (add-cart! i dir)
     (tracks .push! (erase-cart dir))

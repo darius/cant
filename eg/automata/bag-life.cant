@@ -55,10 +55,10 @@
              (not ch.whitespace?))))
 
 (to (map<-lines lines)
-  (map<-items (for gather (((~ row line) lines.items))
-                (for each (((~ col ch) line.items))
-                  (~ `(,col ,(- row)) ; minus so y-coordinates increase upwards
-                     ch)))))
+  (!map<-items (for gather (((~ row line) lines.items)) ;TODO immutable?
+                 (for each (((~ col ch) line.items))
+                   (~ `(,col ,(- row)) ; minus so y-coordinates increase upwards
+                      ch)))))
 
 (let r-pentomino (paint '(" **"
                           "** "

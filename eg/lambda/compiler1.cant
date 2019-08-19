@@ -63,8 +63,8 @@
       ))
 
   (to (interpret prelude {module builtins}) ;TODO rename
-    (let scope (module-scope<- (map<-items (for each (((~ k v) builtins.items))
-                                             (~ k {const v})))))
+    (let scope (module-scope<- (!map<-items (for each (((~ k v) builtins.items)) ;TODO immutable
+                                              (~ k {const v})))))
     ((fill (exp-parse prelude)) .gen scope (prepend {return} nil-seq)))
 
   (let assembly (build-prelude interpret apply))

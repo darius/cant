@@ -58,7 +58,7 @@
                                                    depth.-)))))))))
 
 (let piece-values
-  (map<- (~ #\space 0)
+  (!map<- (~ #\space 0)                 ;TODO immutable after init
          (~ #\-     0)))
 (for each! ((p "pnbrqk")
             (v '(10 31 33 50 90 10000)))
@@ -180,7 +180,7 @@
       (update move board))
 
     (to (~ .parse-move string)    ;N.B. #no if invalid, unlike in my Python
-      ((map<-values unparse-move board.get-moves) .get string))
+      ((!map<-values unparse-move board.get-moves) .get string)) ;TODO immutable
 
     (to ~.gen-legal-moves
       (for those ((move board.gen-piece-moves))
@@ -323,7 +323,7 @@
 
 (to (main<-rng rng)
   (let strategy-names
-    (map<- (~ "human"   human-player)
+    (!map<- (~ "human"   human-player)  ;TODO immutable
            (~ "greedy"  greedy-player)
            (~ "random"  (random-player<- rng))
            (~ "minimax" (minimax-player<- 2))))

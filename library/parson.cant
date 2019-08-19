@@ -159,7 +159,7 @@
   (let builder default-builder)         ;TODO parameterize
   (on (subs)
     (let full-subs (union-map<- subs default-subs))
-    (let rules (for map-by ((name (each ~.first skeletons)))
+    (let rules (for !map-by ((name (each ~.first skeletons)))
                  (delay (: (rules name)))))
     (for each! ((`(,name ,{lifted _ f}) skeletons)) ;XXX better name than f
       (let peg (f builder rules full-subs))
@@ -167,7 +167,7 @@
     rules))
 
 (let default-subs
-  (map<- (~ 'skip skip-any-1)
+  (!map<- (~ 'skip skip-any-1)          ;TODO immutable
          (~ 'anyone any-1) ;XXX all these should probably skip instead of capture
          (~ 'letter (take-1 ~.letter?))
          (~ 'digit (take-1 ~.digit?))

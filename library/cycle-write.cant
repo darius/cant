@@ -51,7 +51,7 @@
   
   ;; TODO exclude known-to-be-acyclic types from the tags map
 
-  (let tags (map<-))
+  (let tags (!map<-))
   (let id-counter (box<- 0))    ; The highest unique id needed so far.
 
   (make cycle-sink

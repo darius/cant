@@ -9,7 +9,7 @@
 (let esc (char<- 27))
 
 (to (key-map<- default-command)
-  (let bindings (map<-))
+  (let bindings (!map<-))
   (make key-map
     (to (~ .set! key command)
       (bindings .set! key command))

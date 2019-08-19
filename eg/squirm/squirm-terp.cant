@@ -52,7 +52,7 @@
 
 (let run-queue (box<- empty))
 (let the-running-process (box<- #no))
-(let waiting-timeouts (map<-))
+(let waiting-timeouts (!map<-))
 
 (to (check-timeouts)
   (let now (nano-now))
@@ -137,9 +137,9 @@
                   {blocked deadline after-e clauses r k})))
           (be {nonempty msg rest}
             (inbox-unchecked .^= rest)
-            (let map (map<-))
+            (let !map (!map<-))
             ;; TODO handle {after ...} clauses
-            (may (match-clauses r map clauses msg)
+            (may (match-clauses r !map clauses msg)
               (be #no
                 (push! inbox-checked msg)
                 (checking))
@@ -148,7 +148,7 @@
                 (inbox-checked .^= empty)
                 (when deadline
                   (waiting-timeouts .delete! process)) ;TODO might not be needed?
-                (sev exp {local-env map r} k)))))))
+                (sev exp {local-env !map r} k)))))))
 
     (to ~.run-a-slice
       (may state.^
@@ -173,7 +173,7 @@
 
 ;; Modules
 
-(let modules (map<-))
+(let modules (!map<-))
 
 (let autoload-base "eg/squirm/lib/")
 
@@ -447,12 +447,12 @@
     (be {blocked deadline after-e clauses r k}
       (the-running-process.^ .receive deadline after-e clauses r k))
     (be {matching clauses r k}
-      (let map (map<-))                  ;TODO factor dupe?
-      (may (match-clauses r map clauses value)
+      (let !map (!map<-))                  ;TODO factor dupe?
+      (may (match-clauses r !map clauses value)
         (be #no
           (exit k "Match failure"))
         (be {clause _ e}
-          (sev e {local-env map r} k))))
+          (sev e {local-env !map r} k))))
     (be {receive-timeout e clauses r k}
       (may value
         (be (? count?)
@@ -495,12 +495,12 @@
   (may f
     (be {closure r ps e}
       (surely (= args.count ps.count) "arity mismatch")
-      (let map (map<-))
-      (may (match-pats r map ps args)
+      (let !map (!map<-))
+      (may (match-pats r !map ps args)
         (be #no
           (exit k "Match failure"))
         (be #yes
-          (sev e {local-env map r} k))))
+          (sev e {local-env !map r} k))))
     (be {primitive p}
       (apply-primitive p args k))
     (be {apply}
@@ -539,28 +539,28 @@
     (be result
       {go k result})))
 
-(to (match-clauses r map clauses datum)
+(to (match-clauses r !map clauses datum)
   (begin matching ((clauses clauses))
     (may clauses
       (be '()
         #no)
       (be `(,(and clause {clause p e}) ,@rest)
-        map.clear!
-        (may (match-pat r map p datum)
+        !map.clear!
+        (may (match-pat r !map p datum)
           (be #no  (matching rest))
           (be #yes clause))))))
 
-(to (match-pats r map ps vals)
+(to (match-pats r !map ps vals)
   ;; TODO n-arg every
   (for every (((~ p val) (zip ps vals))) ;TODO ensure left-to-right order
-    (match-pat r map p val)))
+    (match-pat r !map p val)))
 
-(to (match-pat r map p val)
-;;  (print `(match-pat ,map ,p ,val))
+(to (match-pat r !map p val)
+;;  (print `(match-pat ,!map ,p ,val))
   (may p
     (be {bind name}
-      (surely (not (map .maps? name)) "already set")
-      (map .set! name val)
+      (surely (not (!map .maps? name)) "already set")
+      (!map .set! name val)
       #yes)
     (be {ignore}
       #yes)
@@ -568,12 +568,12 @@
       (= constant val))
     (be {link pf pr}
       (and (link? val)
-           (match-pat r map pf val.first)
-           (match-pat r map pr val.rest)))
+           (match-pat r !map pf val.first)
+           (match-pat r !map pr val.rest)))
     (be {tuple-pat ps}
       (and (array? val)
            (= ps.count val.count)
-           (match-pats r map ps val)))
+           (match-pats r !map ps val)))
     (be {expect-var name}
       (= (env-get r name) val))
     ))
@@ -583,12 +583,12 @@
 
 (to (env-get r name)
   (may r
-    (be {local-env map parent}
-      (may (map .get name)
+    (be {local-env !map parent}
+      (may (!map .get name)
         (be #no   (env-get parent name))
         (be value value)))
-    (be {recursive-env map parent}
-      (may (map .get name)
+    (be {recursive-env !map parent}
+      (may (!map .get name)
         (be #no
           (env-get parent name))
         (be {to f params body}
@@ -611,7 +611,7 @@
   ;; TODO error if not a pid in the end
   (if (symbol? pid) (registry pid) pid))
 
-(let registry (map<-))
+(let registry (!map<-))
 
 (to (register name pid)
   (registry .set! name (as-pid pid)) ;; TODO is the as-pid a good idea?
@@ -704,8 +704,8 @@
     ))
 
 (let builtins-map
-  (map<-items (for each (((~ name value) primitives-from-cant.items))
-                (~ name {primitive value}))))
+  (!map<-items (for each (((~ name value) primitives-from-cant.items)) ;TODO immutable after init
+                 (~ name {primitive value}))))
 
 (builtins-map .set! 'apply {apply})
 (builtins-map .set! 'eval  {eval})
@@ -716,9 +716,9 @@
   {recursive-env (map<-defs module) (or env global-env)})
 
 (to (map<-defs defs)
-  (map<-items (for each ((def defs))
-                (may def
-                  (be {to name _ _} (~ name def))))))
+  (!map<-items (for each ((def defs))   ;TODO immutable?
+                 (may def
+                   (be {to name _ _} (~ name def))))))
 
 ;; Add the prelude to the global environment.
 (let global-env

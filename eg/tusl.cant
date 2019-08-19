@@ -26,7 +26,7 @@
            (r .slice count)}))
 
 (let dictionary
-  (map<- (~ '+ (stack-op-2-1<- +))
+  (!map<- (~ '+ (stack-op-2-1<- +))     ;TODO immutable
          (~ '- (stack-op-2-1<- -))
          (~ '* (stack-op-2-1<- *))
          (~ '/ (stack-op-2-1<- /))

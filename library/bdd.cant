@@ -20,11 +20,11 @@
 (let ifs   [if0s if1s])
 
 (to (dedup memo k1 k2 k3)
-  (let mem1 (memo .get-set! k1 map<-))
-  (let mem2 (mem1 .get-set! k2 map<-))
+  (let mem1 (memo .get-set! k1 !map<-))
+  (let mem2 (mem1 .get-set! k2 !map<-))
   (list<- (mem2 .get k3) mem2))
 
-(let choice-memo (map<-))
+(let choice-memo (!map<-))
 
 ;; Given a variable numbered `rank` and two bdd nodes, return a bdd
 ;; node for the expression "if variable_rank = 0 then if0 else if1".
@@ -65,7 +65,7 @@
       (else
           (choose node if0 if1))))
 
-(let choose-memo (map<-))
+(let choose-memo (!map<-))
 
 ;; Like `do-choose`, but McCarthy-standardized, presupposing the
 ;; arguments are all McCarthy-standardized.
@@ -98,7 +98,7 @@
 ;; goal, if possible; else #no.
 (to (satisfy-first node goal)
   (let goal-node (constant<- goal))
-  (let env (map<-))
+  (let env (!map<-))
   (begin walking ((node node))
     (hm (when (<= node lit1)
           (and (= node goal-node) env))

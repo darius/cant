@@ -9,7 +9,7 @@
 (let start ('("START") .repeat order)) 
 
 (to (main argv)
-  (let model (map<-))
+  (let model (!map<-))
   (for each! ((filename argv.rest))
     (train model (tokenize (with-input-file ~.read-all filename))))
   (unless model.none?

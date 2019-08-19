@@ -84,7 +84,7 @@
 
 (define-record-type mapi (fields items))
 
-(define (prim-mapi<-items items)
+(define (prim-mapi<-items items) ;TODO handle item-lists that aren't concrete lists
   (make-mapi (mapi-dedup items)))
 
 (define (mapi-dedup items)

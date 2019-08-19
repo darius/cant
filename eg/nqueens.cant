@@ -30,7 +30,7 @@
 
 (to (place-queen n r c)
 
-  (let env (map<-))
+  (let env (!map<-))
 
   (to (exclude rr cc)
     (when (and (<= 0 rr) (< rr n)

@@ -3,7 +3,7 @@
 (make not-yet)
 
 (to (memoize f)
-  (let memos (map<-))
+  (let memos (!map<-))
   (to (memoized @arguments)
     ;; TODO what's the performance of turning this into a one-liner:
     ;; (memos .get-set! arguments (: (f @arguments)))

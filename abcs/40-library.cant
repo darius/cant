@@ -1,6 +1,6 @@
 ;; Using modules and loading source files
 
-(let the-modules (map<-))
+(let the-modules (!map<-))
 
 ;; To make it possible to reload a module by calling (use file-stem)
 ;; again afterward. N.B. that won't mutate the existing module object.

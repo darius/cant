@@ -22,7 +22,7 @@
           immune-system.some?)
         (else
           ;; Fight a round.
-          (attacking (map<-items (chain a1 a2)))
+          (attacking (!map<-items (chain a1 a2))) ;TODO immutable?
           (for each! (((~ army groups) armies.items))
             (armies .set! army (those ~.alive? groups)))
           
@@ -78,9 +78,9 @@
   (let n-units (box<- initial-n-units))
   (to (effective-power) (* n-units.^ attack-damage))
   (surely (not (immunities .intersects? weaknesses)))  ; TODO method .disjoint?
-  (let qualities
-    (map<-items (chain (for each ((immune immunities.keys)) (~ immune 'immunity))
-                       (for each ((weak   weaknesses.keys)) (~ weak 'weakness)))))
+  (let qualities                                       ;TODO immutable?
+    (!map<-items (chain (for each ((immune immunities.keys)) (~ immune 'immunity))
+                        (for each ((weak   weaknesses.keys)) (~ weak 'weakness)))))
   (make group
     (to ~.count
       n-units.^)
@@ -129,7 +129,7 @@ quality_list: {'weak'|'immune'} ' to ' [word++', ' :hug] :hug.
 word: :letter+ :join.  # TODO ugly
 separator: '\n'.
 "))
-(let semantics (grammar (map<- (~ 'Group (feed cook-group)))))
+(let semantics (grammar (!map<- (~ 'Group (feed cook-group))))) ;TODO immutable
 (let parse-main (semantics 'main))
 (to (parse string)
   (~.results (parson-parse parse-main string)))
@@ -146,9 +146,9 @@ separator: '\n'.
       (format "Group ~w contains ~w units\n" i.+ group.count))))
 
 (to (part-1)
-  (let armies (map<-items (for each ((`(,name ,group-makers) matchup))
-                            (~ name (for each ((group-maker group-makers))
-                                      (group-maker 0))))))
+  (let armies (!map<-items (for each ((`(,name ,group-makers) matchup))
+                             (~ name (for each ((group-maker group-makers))
+                                       (group-maker 0))))))
   (show-count armies)
   (battle armies)
   (sum-by tally armies.values))

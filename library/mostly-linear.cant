@@ -106,10 +106,10 @@
     ))
 
 (to (constant<- value)
-  (combo<- (map<- (~ 'const-term value)))) ;TODO use sorted lists instead?
+  (combo<- (!map<- (~ 'const-term value)))) ;TODO immutable ;TODO use sorted lists instead?
 
 (to (variable<- name)
-  (combo<- (map<- (~ name one))))
+  (combo<- (!map<- (~ name one))))      ;TODO immutable
 
 (to (combo<- terms)
   terms)                               ;since we're using exact ratios

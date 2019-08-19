@@ -50,8 +50,8 @@
 
 ;; Make a transit function from a list of (state mark actions next-state)
 (to (transit<- entries)
-  (map<-items (for each ((`(,state ,mark ,acts ,next-state) entries))
-                (~ (~ state mark) (~ acts next-state)))))
+  (!map<-items (for each ((`(,state ,mark ,acts ,next-state) entries)) ;TODO immutable
+                 (~ (~ state mark) (~ acts next-state)))))
 
 
 ;; Examples

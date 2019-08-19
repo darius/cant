@@ -73,7 +73,7 @@
   (not (satisfy node 0)))
 
 (to (satisfy node goal)
-  (let env (map<-))
+  (let env (!map<-))
   (begin walking ((node node))
     (if (not= none node.constant-value)
         (and (= goal node.constant-value)

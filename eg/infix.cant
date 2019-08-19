@@ -29,8 +29,8 @@
        ("(~d)" .format string)
        string))
 
-(let unaries (map<-))
-(let binaries (map<-))
+(let unaries (!map<-))
+(let binaries (!map<-))
 
 (to (def-prefix name p)  (unaries .set! name {unary p #no}))
 (to (def-postfix name p) (unaries .set! name {unary #no p}))

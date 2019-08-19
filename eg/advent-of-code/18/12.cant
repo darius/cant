@@ -13,7 +13,7 @@
 (display "\nPart 1\n")
 
 (let rules
-  (~.range (for where ((outcome (map<-lists inputs)))
+  (~.range (for where ((outcome (!map<-lists inputs))) ;TODO immutable
              (= outcome "#"))))
 
 (to (state<-lineup lineup)

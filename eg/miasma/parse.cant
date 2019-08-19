@@ -40,7 +40,7 @@
     (else           '())))
 
 ;; A map of all specs by fully-qualified mnemonic.
-(let the-specs (map<-))
+(let the-specs (!map<-))
 
 ;; Load the specs from the i386 instruction table.
 (to (setup-spec-table)

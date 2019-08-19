@@ -11,7 +11,7 @@ clause: 'Before: [' [:nat ', ' :nat ', ' :nat ', ' :nat :hug] ']\n'
 program: insn* :hug.
 insn:    :nat ' ' :nat ' ' :nat ' ' :nat '\n' :hug.
 "))
-(let semantics (grammar (map<-)))
+(let semantics (grammar (!map<-)))      ;TODO immutable
 (let parse-main (semantics 'main))
 (to (parse string)
   (~.results (parson-parse parse-main string)))
@@ -96,20 +96,20 @@ insn:    :nat ' ' :nat ' ' :nat ' ' :nat '\n' :hug.
   ;; TODO: map-reduce with intersection
   (let op-name-set all-op-names.range)
   (let opcodes ((each ~.first constraints) .range))
-  (let candidates (map-by (-> op-name-set) opcodes.keys))
+  (let candidates (!map-by (-> op-name-set) opcodes.keys))
   (for each! ((`(,opcode ,op-names) constraints))
     (candidates .set! opcode
                 ((candidates opcode) .intersect op-names.range)))
 
 ;; It turns out the above could've been just
 ;;  (let candidates
-;;    (map<-lists (for each ((`(,opcode ,op-names) constraints))
-;;                  `(,opcode ,op-names.range))))
+;;    (!map<-lists (for each ((`(,opcode ,op-names) constraints))
+;;                   `(,opcode ,op-names.range))))
 ;; even though `constraints` has multiple entries per opcode, sometimes
 ;; different ones. But the above could've been needed, depending on the data.
 
   ;; Trivial constraint satisfaction turns out to be good enough:
-  (let assignments (map<-))
+  (let assignments (!map<-))
   (begin pruning ()
     (let opcode (min-by (compose ~.count candidates)
                         candidates.keys))

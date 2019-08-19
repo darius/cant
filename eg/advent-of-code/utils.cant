@@ -79,7 +79,7 @@
 (to (simple-parser<- template)
   (let grammar (grammar<- (chain "start: " template " :end.\n"
                                  "_ = :whitespace*.")))
-  (let peg ((grammar (map<-)) 'start))
+  (let peg ((grammar (!map<-)) 'start)) ;TODO immutable
   (make parser
     (to (~ string)        ((parson-parse peg string) .results))
     (to (~ .parse string) (parson-parse peg string))))

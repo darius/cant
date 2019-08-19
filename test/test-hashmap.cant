@@ -1,4 +1,4 @@
-(let a (map<-))
+(let a (!map<-))
 (print a)
 (print (a .get 42))
 (a .set! 'x "yay")
@@ -34,7 +34,7 @@
                    `(,key ,op)))))
 
 (to (exercise-em pairs)
-  (let m (map<-))     ;; The hashmap under test.
+  (let m (!map<-))     ;; The hashmap under test.
   (let a (box<- '())) ;; An a-list that should be equivalent.
   (for each! ((`(,key ,op) pairs))
     (may op

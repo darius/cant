@@ -2,28 +2,28 @@
 
 (make bag<-
   (to (~)
-    (let map (map<-))
+    (let !map (!map<-))
     (make bag {extending map-trait} ;; XXX make sure map-trait methods are OK
-      (to ~.none?              map.none?)
-      (to ~.count              map.count)
-      (to ~.keys               map.keys)
-      (to ~.values             map.values)
-      (to ~.items              map.items)
-      (to (~ .maps? key)       (map .maps? key))
-      (to (~ key)              (map .get key 0)) ; TODO (map key) would be safer... revisit this
-      (to (~ .get key default) (map .get key default))
-      (to (~ .get key)         (map .get key))
-      (to (~ .add! key)        (map .set! key
-                                    (+ (map .get key 0) 1)))
+      (to ~.none?              !map.none?)
+      (to ~.count              !map.count)
+      (to ~.keys               !map.keys)
+      (to ~.values             !map.values)
+      (to ~.items              !map.items)
+      (to (~ .maps? key)       (!map .maps? key))
+      (to (~ key)              (!map .get key 0)) ; TODO (!map key) would be safer... revisit this
+      (to (~ .get key default) (!map .get key default))
+      (to (~ .get key)         (!map .get key))
+      (to (~ .add! key)        (!map .set! key
+                                    (+ (!map .get key 0) 1)))
       (to (~ .add-all! vals)   (for each! ((v vals))
                                  (bag .add! v)))
-      (to (~ .delete! key)     (map .delete! key))  ; TODO should this decrement the value instead? Or should that be a different method?
-      (to ~.clear!             map.clear!)
-      (to ~.total              (sum map.values))
+      (to (~ .delete! key)     (!map .delete! key))  ; TODO should this decrement the value instead? Or should that be a different method?
+      (to ~.clear!             !map.clear!)
+      (to ~.total              (sum !map.values))
       ;; XXX fill in rest of bag interface (just the map interface, I guess)
       (to (~ .selfie sink)
         (sink .display "#<bag (")
-        (sink .write map.count)
+        (sink .write !map.count)
         (sink .display ")>"))
       ))
 

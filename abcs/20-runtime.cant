@@ -60,8 +60,8 @@
     (when (= key missing)
       (error "Missing value" value))
     key)
-  (to ~.copy
-    (map<-items map.items))
+  (to ~.copy ;TODO rename .diverge; check that all uses want a !map result
+    (!map<-items map.items))
   (to (~ .intersects? map2)
     ;; TODO: maybe iterate over the one with smaller .count ?
     (for some ((k map.keys))
@@ -73,7 +73,7 @@
   (to ~.range
     (set<-list map.values))
   (to ~.inverse
-    (let inverse (map<-))
+    (let inverse (!map<-))
     (for each! (((~ k v) map.items))
       (when (inverse .maps? v)
         (error ".inverse of noninvertible map" map))  ; or just allow it?
@@ -777,13 +777,13 @@
 ;;   store hash codes instead of recomputing?
 ;;   etc.
 
-(let map<-
+(let !map<-
   (hide
 
     (make none)
     (make deleted)
 
-    (make map<-
+    (make !map<-
 
       (to (~)
         (let count (box<- 0))
@@ -827,11 +827,11 @@
               (keys.^ .set! j key)
               (vals.^ .set! j (old-vals i)))))
        
-        (make map {extending map-trait}
+        (make !map {extending map-trait}
           (to (~ key)
             (may (place key)
               (be {at i} (vals.^ i))
-              (else      (error "Missing key" map key))))
+              (else      (error "Missing key" !map key))))
           (to (~ .get key @(optional default))
             (may (place key)
               (be {at i} (vals.^ i))
@@ -866,7 +866,7 @@
                 (let value (value<-))
                 ;; Alas, we can't just stick it in at i because (value<-)
                 ;; might have changed things too:
-                (map .set! key value)
+                (!map .set! key value)
                 value)))
           (to (~ .delete! key)
             (may (place key)
@@ -876,7 +876,7 @@
                 #no)
               (else #no)))   ;XXX error instead? It is in Python.
           (to (~ .find? value)
-            (map.values .find? value))
+            (!map.values .find? value))
           (to (~ .find value default)
             (let vs vals.^)
             (begin searching ((js (occupants)))  ;XXX should be lazy
@@ -888,36 +888,40 @@
             (keys .^= [none])
             (vals .^= [#no]))
           (to ~.copy
-            (map<-items map.items))
+            (!map<-items !map.items))
           (to (~ .update key f)         ;TODO define in a mutable-map-trait ?
-            (let value (f (map key)))  ;TODO what about a (map .get key) version? how to factor this?
-            (map .set! key value)
+            (let value (f (!map key)))  ;TODO what about a (!map .get key) version? how to factor this?
+            (!map .set! key value)
             value)
           (to (~ .selfie sink)
-            (sink .display "#<map (")
+            (sink .display "#<map (")   ;TODO rename !map
             (sink .write count.^)
             (sink .display ")>"))
           ))
 
       (to (~ @items)
-;;        (map<-items items))
-        (let m (map<-))
+;;        (!map<-items items))
+        (let m (!map<-))
         (for each! (((~ k v) items))
           (m .set! k v))
         m)
       )))
 
 (to (map<-items items)
-  (let m (map<-))
+  (let m (!map<-))
   (for each! (((~ k v) items))
     (m .set! k v))
   m)
 
 (to (map<-lists lists)
-  (let m (map<-))
+  (let m (!map<-))
   (for each! ((`(,k ,v) lists))
     (m .set! k v))
   m)
+
+;; Scaffolding
+(let !map<-items map<-items)
+(let !map<-lists map<-lists)
 
 
 ;; Immutable maps, placeholder implementation
@@ -961,14 +965,14 @@
   s)
 
 (to (hash-set<-)                        ;XXX shouldn't be a global
-  (let map (map<-)) ;TODO would be nice to avoid storing all the #yes values
+  (let !map (!map<-)) ;TODO would be nice to avoid storing all the #yes values
   (make set {extending map-trait}
-    (to ~.none?           map.none?)
-    (to ~.count            map.count)
-    (to ~.keys             map.keys)
-    (to (~ .maps? key)     (map .maps? key))
-    (to ~.copy             (set<-list map.keys)) ;TODO tune
-    (to (~ .add! key)      (map .set! key 1))    ;N.B. matching the bag type here
+    (to ~.none?            !map.none?)
+    (to ~.count            !map.count)
+    (to ~.keys             !map.keys)
+    (to (~ .maps? key)     (!map .maps? key))
+    (to ~.copy             (set<-list !map.keys)) ;TODO tune
+    (to (~ .add! key)      (!map .set! key 1))    ;N.B. matching the bag type here
     (to (~ .add-all! vals) (for each! ((v vals)) (set .add! v)))
     (to (~ .union! other)  (set .add-all! other.keys))
     (to (~ .union other)
@@ -977,29 +981,29 @@
       result)
     (to (~ .intersect other)                 ;TODO rename to .and, etc., I guess
       (let result (set<-))
-      (for each! ((x map.keys))
+      (for each! ((x !map.keys))
         (when (other .maps? x)
           (result .add! x)))
       result)
     (to (~ .difference other)
       (let result (set<-))
-      (for each! ((x map.keys))
+      (for each! ((x !map.keys))
         (unless (other .maps? x)
           (result .add! x)))
       result)
     (to (~ .intersects? map2)
-      (map .intersects? map2))
-    (to ~.clear!         map.clear!)
-    (to (~ .get key)     (map .maps? key))
-    (to (~ key)          (map .get key 0)) ;I'm not sure this is a good idea, but it's to match the bag type
-    (to ~.items          map.items)
-    (to ~.values         map.values)
-    (to (~ .delete! key) (map .delete! key))
-    (to ~.total          map.count)        ;like bags again
+      (!map .intersects? map2))
+    (to ~.clear!         !map.clear!)
+    (to (~ .get key)     (!map .maps? key))
+    (to (~ key)          (!map .get key 0)) ;I'm not sure this is a good idea, but it's to match the bag type
+    (to ~.items          !map.items)
+    (to ~.values         !map.values)
+    (to (~ .delete! key) (!map .delete! key))
+    (to ~.total          !map.count)        ;like bags again
     ;; XXX fill in rest of set interface (just the map interface, I guess)
     (to (~ .selfie sink)
       (sink .display "#<set")
-      (sink .write map.keys)
+      (sink .write !map.keys)
       (sink .display ">"))
     ))
 

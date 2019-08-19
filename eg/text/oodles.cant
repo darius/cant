@@ -21,7 +21,7 @@
 phrase: (word | :anyone)*.
 word:   :letter+ {'!'}? :join.
 "))
-(let parser ((grammar (map<-)) 'phrase))
+(let parser ((grammar (!map<-)) 'phrase)) ;TODO immutable
 
 (to (expand token probability)
   (if (and (menu .maps? token) (< (rng .random-integer 1000) probability))
@@ -29,7 +29,7 @@ word:   :letter+ {'!'}? :join.
       token))
 
 (let menu
-  (map<-lists
+  (!map<-lists                          ;TODO immutable
    '(("tomatoes" "tomatoes on macaroni (and tomatoes only), exquisitely spiced")
      ("macaroni" "macaroni and cheese (a repast of Naples, Italy)")
      ("repast" "rather extraordinary pasta and sauce, typical")

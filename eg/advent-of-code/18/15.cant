@@ -62,7 +62,7 @@
   ;; Map from each remaining unit's position to its hit points,
   ;; initially 200. (A unit's species is known by its G or E on the
   ;; map.)
-  (let units (map-by (-> 200) (where unit? area)))
+  (let units (!map-by (-> 200) (where unit? area)))
 
   ;; For each unit, do a turn. Return yes if the round completed.
   (to (do-round)
@@ -185,8 +185,8 @@
     (to ~.census           (bag<- area.values))
     ))
 
-(let enemy<- (map<-lists '((#\G #\E)
-                           (#\E #\G))))
+(let enemy<- (!map<-lists '((#\G #\E)   ;TODO immutable
+                            (#\E #\G))))
 
 ;(format "Part 1 answer: ~w\n" (part-1))
 

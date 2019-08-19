@@ -21,7 +21,7 @@
 (to (random-encrypt rng text)
   (let values (hey (array<-list alphabet)
                    (-> (rng .shuffle! it))))
-  (let code (map<-items (zip alphabet values)))
+  (let code (!map<-items (zip alphabet values))) ;TODO immutable
   (string<-list (for each ((ch text.lowercase))
                   (code .get ch ch))))
 
@@ -66,7 +66,7 @@
 
   (let code (those ~.letter? cryptogram.uppercase))
   (surely code.some?)            ;XXX 'require' or something
-  (let decoder (map-by (-> #\space) code.range.keys))
+  (let decoder (!map-by (-> #\space) code.range.keys))
   (let point (box<- 0))                ; Index in `code` of the cursor
 
   (let lines (each clean cryptogram.uppercase.split-lines))

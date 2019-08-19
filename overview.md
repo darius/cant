@@ -355,7 +355,9 @@ In mutable maps:
 Equality of mutable maps, as for any object that's not pure data, is
 by identity.
 
-You can create a mutable hash-map with `(map<-)` (initially empty), `(map<-
+You can create a mutable hash-map with `(!map<-)` (initially empty),
+
+XXX `(map<-
 association-list)`, or `(export name1 name2 ...)` which is like
 ```(map<- `((name1 ,name1) (name2 ,name2) ...))```.
 
