@@ -178,14 +178,12 @@
 (let autoload-base "eg/squirm/lib/")
 
 (to (module-ref mod-name var-name)
-  (may (modules .get mod-name)
-    (be #no
-      (let filename (chain autoload-base mod-name.name ".cant"))
-      (module-load mod-name filename)
-      (env-get (modules mod-name)
-               var-name))
-    (be mod-env
-      (env-get mod-env var-name))))
+  (let mod-env
+    (or (modules .get mod-name)
+        (do (let filename (chain autoload-base mod-name.name ".cant"))
+            (module-load mod-name filename)
+            (modules mod-name))))
+  (env-get mod-env var-name))
 
 (to (module-load mod-name filename)
   (surely (not (modules .maps? mod-name))) ;XXX for now
