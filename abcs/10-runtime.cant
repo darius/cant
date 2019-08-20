@@ -998,43 +998,12 @@
     (for each! ((args (transpose lists)))
       (f @args))))
 
-(make zip
-  (to (~ xs ys)                           ;specialized for speed
-    (to (mismatch)
-      (error "zip: mismatched arguments" xs ys))
-    (begin zipping ((xs xs) (ys ys))
-      (hm (if xs.none? (if ys.none? '() (mismatch)))
-          (if ys.none? (mismatch))
-          (else (link (~ xs.first ys.first)
-                      (zipping xs.rest ys.rest))))))
-  (to (~ @lists)
-    (for each ((row (transpose lists)))
-      (term<- '~ row))))                ;TODO tuple-constructor function
-
 ;; TODO: name it (zip @rows) instead, like Python?
 (to (transpose rows)
   (if (every ~.none? rows)   ; and make it (some _.none? rows)?
       '()
       `(,(each ~.first rows)
         ,@(transpose (each ~.rest rows)))))
-
-(to (gather f xs)
-  (for foldr ((x xs) (gathered '()))
-    (chain (f x) gathered)))
-
-(to (those keep? xs)
-  (for foldr ((x xs) (kept '()))
-    (if (keep? x) (link x kept) kept)))
-
-(to (yeahs maybe xs)             ;TODO is this worth defining? good name?
-  ;; Inlining of (those itself (each maybe xs))
-  (for foldr ((x xs) (kept '()))
-    (may (maybe x)
-      (be #no  kept)
-      (be yeah (link yeah kept)))))
-
-(to (itself x)
-  x)
 
 (make chain
   (to (~) '())
