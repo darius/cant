@@ -17,6 +17,7 @@
   (let ((e `(listener ,@(map (lambda (arg) `',arg) opt-args))))
     (cant-interpret e)))
 
+(run-load "abcs/20-cant.cant")
 (run-load "abcs/21-sequels.cant")
 (run-load "abcs/30-functions.cant")
 (run-load "abcs/40-library.cant")
