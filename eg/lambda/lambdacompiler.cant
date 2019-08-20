@@ -76,7 +76,7 @@
 
 ;; Lambda expression
 (to (abstraction<- v body)
-  (let free-vars (body.free-vars .difference (set<- v)))
+  (let free-vars (body.free-vars .except v))
   (make _
     (to ~.free-vars
       free-vars)

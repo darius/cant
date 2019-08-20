@@ -995,6 +995,12 @@
         (unless (other .maps? x)
           (result .add! x)))
       result)
+    (to (~ .except other)               ;TODO add to map-trait?
+      (let result (set<-))
+      (for each! ((x !map.keys))
+        (unless (= other x)
+          (result .add! x)))
+      result)
     (to (~ .intersects? map2)
       (!map .intersects? map2))
     (to ~.clear!         !map.clear!)
