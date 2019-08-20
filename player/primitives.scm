@@ -111,10 +111,8 @@
   (= (length xs) 2))      ;TODO don't have to compute the whole length
 
 ;; Is x among xs?
-(define (mem-cant=? x xs)
-  (cond ((null? xs) #f)
-        ((cant=? x (car xs)) #t)
-        (else (mem-cant=? x (cdr xs)))))
+(define (mem-cant=? key xs)
+  (memp (lambda (x) (cant=? key x)) xs))
 
 (define (prim-mapi-get key mapi)
   (let searching ((items (mapi-items mapi)))
