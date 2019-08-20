@@ -100,7 +100,7 @@
                           (length=2? (term-parts item)))
                (error '__mapi-dedup "Not an item" item))
              (let ((key (car (term-parts item))))
-               (if (memq key already)
+               (if (mem-cant=? key already)
                    (building already (cdr suffix))
                    (let ((built (building (cons key already) (cdr suffix))))
                      (if (eq? built (cdr suffix))
@@ -109,6 +109,12 @@
 
 (define (length=2? xs)
   (= (length xs) 2))      ;TODO don't have to compute the whole length
+
+;; Is x among xs?
+(define (mem-cant=? x xs)
+  (cond ((null? xs) #f)
+        ((cant=? x (car xs)) #t)
+        (else (mem-cant=? x (cdr xs)))))
 
 (define (prim-mapi-get key mapi)
   (let searching ((items (mapi-items mapi)))
