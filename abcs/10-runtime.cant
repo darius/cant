@@ -579,16 +579,16 @@
 (make-trait term-primitive me
   (to (~ receiver)     (call receiver me))
   (to ~.tag            (__term-tag me))
-  (to ~.arguments      (__term-arguments me))
+  (to ~.parts          (__term-parts me))
   (to (~ .selfie sink)
     (sink .display "{")
     (sink .write me.tag)
-    (for each! ((arg me.arguments))
+    (for each! ((arg me.parts))
       (sink .display " ")
       (sink .write arg))
     (sink .display "}"))
   (to (~ .compare t)
-    ((link me.tag me.arguments) .compare (link t.tag t.arguments)))
+    ((link me.tag me.parts) .compare (link t.tag t.parts)))
   )
 
 (make-trait void-primitive me

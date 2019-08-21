@@ -63,10 +63,10 @@
     (be {list-pat p-args}
       (and (list? subject)
            (match-all subject p-args r)))
-    (be {term-pat tag p-args}
+    (be {term-pat tag p-parts}
       (and (term? subject)
            (= subject.tag tag) ;; N.B. it'd be nice for efficiency to bundle the arity in at desugar time
-           (match-all subject.arguments p-args r)))
+           (match-all subject.parts p-parts r)))
     (be {and-pat p1 p2}
       (and (match subject p1 r)
            (match subject p2 r)))

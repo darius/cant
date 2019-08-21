@@ -16,10 +16,6 @@
 (to (tuple<-list xs)
   (term<- '_ xs))
 
-(to (tuple-get tuple n)        ;not used, but it's gonna come up again
-  (surely (and (term? tuple) (= tuple.tag '_)))
-  (tuple.arguments n))
-
 
 (let spring-x 500)
 (let spring-y   0)

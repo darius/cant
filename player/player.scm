@@ -809,7 +809,7 @@
     (__box-value ,unbox)
     (__box-value-set! ,set-box!)
     (__term-tag ,term-tag)
-    (__term-arguments ,term-parts)
+    (__term-parts ,term-parts)
     (__close-port ,close-port)
     (__read-char ,read-char)
     (__char-ready? ,char-ready?)

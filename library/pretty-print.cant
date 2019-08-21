@@ -19,7 +19,7 @@
         (be #no    (call-like "(" sym x.rest ")"))
         (be abbrev (group (<> (text abbrev) (nest abbrev.count (doc<-sx operand)))))))
     (be (? list?)  (maybe-call-like "(" x ")"))
-    (be (? term?)  (maybe-call-like "{" `(,x.tag ,@x.arguments) "}"))
+    (be (? term?)  (maybe-call-like "{" `(,x.tag ,@x.parts) "}"))
     (be (? array?) (hug "[" x "]"))
     (be (? box?)   (call-like "#<" 'box `(,x.^) ">"))
     (else          (text ("~w" .format x)))))

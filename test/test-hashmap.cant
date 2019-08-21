@@ -53,7 +53,7 @@
         (a .^= `((,key ,value) ,@(a-list-remove key a.^)))
         ;; TODO test equivalence here
         )))
-  (let r1 (each ~.arguments (sort m.items)))
+  (let r1 (each ~.parts (sort m.items)))
   (let r2 (sort a.^))
   (surely (= r1 r2) "Final maps diverge" r1 r2))
 

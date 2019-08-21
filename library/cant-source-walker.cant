@@ -11,7 +11,7 @@
     (be (? symbol?)                    none)
     (be (? self-evaluating?)           none)
     (be `(quote ,_)                    none)
-    (be (? term? t)                    `(,t.arguments ()))
+    (be (? term? t)                    `(,t.parts ()))
     (be `(let ,p ,e)                   `((,e) (,p)))
     (be `(make ,(? symbol?) ,@clauses) (make-subparts clauses))
     (be `(make ,(? string?) ,@clauses) (make-subparts clauses))
@@ -63,7 +63,7 @@
     (be `(quote ,_)            none)
     (be `(and ,@ps)            `(() ,ps))
     (be `(view ,e ,p)          `((,e) (,p)))
-    (be (? term? t)            `(() ,(list-subpatts t.arguments)))
+    (be (? term? t)            `(() ,(list-subpatts t.parts)))
     (be `(@ ,_) (error "An @-pattern must be at the end of a list" patt))
     (be (list<- 'quasiquote q) `(() ,(quasiquote-subpatts q)))
     (be (? list? ps)           `(() ,(list-subpatts ps))))) ;TODO remove
@@ -80,7 +80,7 @@
 
 (to (qq-term-subpatts term)
   (surely (symbol? term.tag))           ;XXX require
-  (quasiquote-subpatts term.arguments))
+  (quasiquote-subpatts term.parts))
 
 (to (list-subpatts p-list)
   (may p-list
