@@ -660,7 +660,10 @@
   (map<-items items))
 
 (to (map<-lists lists)
-  (map<-items (each (-> (term<- '~ it)) lists)))
+  (map<-items (each tuple<-list lists)))
+
+(to (tuple<-list xs)
+  (term<- '~ (as-list xs)))
 
 
 ;; I think quasiquote currently expands into calls to this sometimes  TODO checkme

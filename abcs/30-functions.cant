@@ -28,9 +28,6 @@
   (to (~ @lists)
     (each tuple<-list (transpose lists))))
 
-(to (tuple<-list xs)
-  (term<- '~ (as-list xs)))
-
 (make display
   (to (~ x)      (out .display x))
   (to (~ x sink) (sink .display x)))
