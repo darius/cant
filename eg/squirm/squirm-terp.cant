@@ -175,7 +175,7 @@
 
 (let modules (!map<-))
 
-(let autoload-base "eg/squirm/lib/")
+(let autoload-base "eg/squirm/library/")
 
 (to (module-ref mod-name var-name)
   (let mod-env
