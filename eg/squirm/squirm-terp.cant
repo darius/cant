@@ -668,6 +668,7 @@
 
 (to (sequence? x) (or (array? x) (string? x) (list? x)))
 
+;; N.B. different from what Cant is now calling 'tuple'. Could get awkward.
 (let tuple? array?)
 (let tuple<- array<-)
 (let tuple<-list array<-list)

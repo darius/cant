@@ -11,12 +11,6 @@
 (let inputs (each parse input))
 
 
-;;TODO reconcile use of lists and tuples
-
-(to (tuple<-list xs)
-  (term<- '_ xs))
-
-
 (let spring-x 500)
 (let spring-y   0)
 (let spring (~ spring-x spring-y))

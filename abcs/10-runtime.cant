@@ -43,8 +43,8 @@
     (not= (map .get key missing) missing))
   (to ~.none?  (= map.count 0))  ; or map.items.none? - is that better? depends.
   (to ~.some?  (not map.none?))
-  (to ~.keys   (each (on ((~ k _)) k) map.items))
-  (to ~.values (each (on ((~ _ v)) v) map.items))
+  (to ~.keys   (each (~ .part 0) map.items))
+  (to ~.values (each (~ .part 1) map.items))
   (to (~ .find? value)
     (map.values .find? value))
   (to (~ .find value default)
@@ -580,6 +580,7 @@
   (to (~ receiver)     (call receiver me))
   (to ~.tag            (__term-tag me))
   (to ~.parts          (__term-parts me))
+  (to (~ .part n)      ((__term-parts me) n))
   (to (~ .selfie sink)
     (sink .display "{")
     (sink .write me.tag)

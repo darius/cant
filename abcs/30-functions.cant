@@ -26,8 +26,10 @@
           (else (link (~ xs.first ys.first)
                       (zipping xs.rest ys.rest))))))
   (to (~ @lists)
-    (for each ((row (transpose lists)))
-      (term<- '~ row))))                ;TODO tuple-constructor function
+    (each tuple<-list (transpose lists))))
+
+(to (tuple<-list xs)
+  (term<- '~ (as-list xs)))
 
 (make display
   (to (~ x)      (out .display x))
