@@ -146,6 +146,7 @@
 
 (make none)
 
+;; TODO use map.override once that's efficient
 (to (union-map<- map backup)
   ;; TODO: rest of map interface?
   (on (key)
