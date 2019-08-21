@@ -106,7 +106,7 @@
     ))
 
 (to (constant<- value)
-  (combo<- (map<- (~ 'const-term value)))) ;TODO use sorted lists instead?
+  (combo<- (map<- (~ 'const-term value)))) ;TODO use ssets instead?
 
 (to (variable<- name)
   (combo<- (map<- (~ name one))))

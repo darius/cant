@@ -463,11 +463,11 @@ You can use terms and patterns in non-OO code as well. For instance,
 patterns work in `let` forms and function parameters:
 
 ```
-(to (c+ {complex x1 y1} {complex x2 y2})    ;; from lib/complex.cant
+(to (c+ {complex x1 y1} {complex x2 y2})    ;; from library/complex.cant
   {complex (+ x1 x2)
            (+ y1 y2)})
 
-(let {pq min1 rest1} pq1)                   ;; from lib/pairing-heap.cant
+(let {pq min1 rest1} pq1)                   ;; from library/pairing-heap.cant
 ```
 
 The `may` form, like `make`, finds the first successful match in a

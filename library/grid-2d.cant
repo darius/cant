@@ -6,7 +6,7 @@
 ;; TODO the input ranges are inclusive. Is that the Right Thing?
 ;; Probably not.
 
-;; TODO make this go together somehow with lib/format-tables
+;; TODO make this go together somehow with library/format-tables
 
 ;; TODO design a tensor abstraction; this would be a specialized
 ;; implementation, maybe? Or would we prefer anchoring tensor ranges
