@@ -14,7 +14,8 @@
 ;;       We might also warn about unused rules with this, though currently we don't.
 ;;   - f: A function (f builder rules subs) to an un-lifted parser.
 ;;     - builder: Tells how to turn different kinds of Parson literals into parsers.
-;;     - rules: The map from rule-name to un-lifted parser. It's mutable, to resolve recursion.
+;;     - rules: The map from rule-name to un-lifted parser. It's mutable,
+;;         to resolve recursion.
 ;;     - subs: Substitutions, i.e. the map from symbol to un-lifted parser,
 ;;         which is passed in from the client to link this Parson grammar to
 ;;         semantic actions and to other grammars.
