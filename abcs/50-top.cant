@@ -55,7 +55,8 @@
   (unless (= 0 (system command))
     (error "Failed system command" command)))
 
-(to (listener @(optional command-line-args))    ;TODO rename
+;; TODO keep out of the props?
+(to (start-playing @(optional command-line-args))
   (import (use 'traceback) on-error-traceback)
 
   (let parent-handler the-signal-handler.^)

@@ -12,9 +12,9 @@
 
 ;; The Cant interpreter and global environment.
 
-(define (listener . opt-args)
+(define (start-playing . opt-args)
   ;; TODO nicer way to call it to start
-  (let ((e `(listener ,@(map (lambda (arg) `',arg) opt-args))))
+  (let ((e `(start-playing ,@(map (lambda (arg) `',arg) opt-args))))
     (cant-interpret e)))
 
 (run-load "abcs/20-cant.cant")
@@ -33,5 +33,5 @@
     (import (use 'bag)        bag<-)))
 
 ;(unless (cant-interpret '(the-last-error .^))
-(listener (cdr (command-line)))
+(start-playing (cdr (command-line)))
 ;)
