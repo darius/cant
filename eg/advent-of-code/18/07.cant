@@ -15,12 +15,12 @@
 
 (let all-steps (~.range (chain @ordering)))
 (let nodes all-steps.keys)
-(let succs-set (for !map-by ((~ nodes)) ;TODO immutable
+(let succs-set (for map-by ((~ nodes))
                  (set<-)))
 (for each! ((`(,pre ,post) ordering))   ;TODO use a mapreduce
   ((succs-set pre) .add! post))             ;TODO maybe use .get-set!
 
-(let succs (for !map-by ((node nodes))  ;TODO immutable
+(let succs (for map-by ((node nodes))
              (sort (~.keys (succs-set node)))))
 
 (to (merge xs ys)                       ;TODO should be in a sort module or something
