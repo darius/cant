@@ -15,7 +15,7 @@
 
 (let all-steps (~.range (chain @ordering)))
 (let nodes all-steps.keys)
-(let succs-set (for map-by ((~ nodes))
+(let succs-set (for map-by ((_ nodes))
                  (set<-)))
 (for each! ((`(,pre ,post) ordering))   ;TODO use a mapreduce
   ((succs-set pre) .add! post))             ;TODO maybe use .get-set!
