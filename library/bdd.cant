@@ -112,4 +112,8 @@
 
 (export satisfy-first build-choice bdd-and bdd-or lit0 lit1 constant<- bdd-evaluate)
 ;; TODO export more, rename
-;; XXX why is build-choice exported? why isn't `choose`? did I just get confused?
+;; XXX why is build-choice exported? well, you need to explicitly create the variable,
+;;       though this interface sucks: 1. make-choice is better
+;;                                    2. doesn't guarantee it's standardized
+;;   why isn't `choose`? did I just get confused?
+;;    (or rather 'do-choose', with but named 'choose'.)
