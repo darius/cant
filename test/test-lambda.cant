@@ -1,11 +1,11 @@
 (import (use "eg/lambda/terp")
   run)
 
-(let test-names '("trivial1.cant"
-                  "trivial2.cant"
-                  "church.cant"
-                  "factorial.cant"
-                  "reverse.cant"
+(let test-names '("trivial1.lambda"
+                  "trivial2.lambda"
+                  "church.lambda"
+                  "factorial.lambda"
+                  "reverse.lambda"
                   ))
 
 (for each! ((test test-names))

@@ -1,3 +1,5 @@
+;; -*- cant -*-
+
 ;; Elementary cellular automata
 
 (to (snil if-link if-nil) if-nil)

@@ -1,3 +1,5 @@
+;; -*- cant -*-
+
 ;; Factorial of Church numbers
 
 (let one (succ zero))

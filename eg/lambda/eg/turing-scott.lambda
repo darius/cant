@@ -1,4 +1,7 @@
+;; -*- cant -*-
+
 ;; Simulate Turing machines
+;; Based on ../../automata/turing.cant
 
 
 ;; Scott lists

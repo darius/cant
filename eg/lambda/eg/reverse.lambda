@@ -1,3 +1,5 @@
+;; -*- cant -*-
+
 (to (chain-reverse xs)
   ;; step: return a function that takes a tail and chains my reverse to it
   (to (step x rest-fn)
