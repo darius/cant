@@ -18,7 +18,7 @@
     (display cursor-show)))
 
 (to (run grid n-steps)
-  (for foldl ((grid grid) (~ (1 .to n-steps)))
+  (for foldl ((grid grid) (_ (1 .to n-steps)))
     (display clear-screen)
     (show grid)
     (update grid)))
