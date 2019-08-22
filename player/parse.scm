@@ -73,6 +73,8 @@
     (else
      (mcase e
        ((: __ symbol?)
+        (when (eq? e '~)
+          (error 'parse-exp "Forbidden variable name" e))
         (pack<- e-variable e))
        (('quote datum)
         (pack<- e-constant datum))
@@ -157,6 +159,8 @@
        ('_
         (pack<- p-any))
        ((: __ symbol?)
+        (when (eq? p '~)
+          (error 'parse "Forbidden variable name" p))
         (pack<- p-variable p))
        ((: __ self-evaluating?)
         (pack<- p-constant p))

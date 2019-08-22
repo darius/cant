@@ -115,13 +115,13 @@
     (to ~.previous-page
       ;; (update-origin)
       ;; point .^= origin
-      (for each! ((~ (1 .to rows)))
+      (for each! ((_ (1 .to rows)))
         (previous-line)))
 
     (to ~.next-page
       ;; (update-origin)
       ;; point .^= origin
-      (for each! ((~ (1 .to rows)))
+      (for each! ((_ (1 .to rows)))
         (next-line)))
 
     (to ~.redisplay

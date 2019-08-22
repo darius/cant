@@ -46,7 +46,7 @@
 
 ;; Read a 4-byte unsigned int, big-endian. TODO should be in a library
 (to (read-u32 source)
-  (for foldl ((n 0) (~ (0 .to< 4))) 
+  (for foldl ((n 0) (_ (0 .to< 4))) 
     (+ (n .<< 8)
        source.read-char.code)))
 

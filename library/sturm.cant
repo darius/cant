@@ -74,7 +74,7 @@
   (let fg     (box<- 39))
   (let bg     (box<- 49))
   (let styles (box<- 0))
-  (to (~ .establish! state)
+  (to (_ .establish! state)
     (let (~ want-fg want-bg want-styles) state.reveal)
     (unless (= styles.^ want-styles)
       (display (sgr 0))
