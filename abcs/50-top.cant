@@ -23,7 +23,7 @@
   (the-signal-handler .^= parent-handler)
   result)
 
-(to (unwind-protect try finally)     ;TODO better name
+(to (unwind-protect try finally) ;TODO better name; reconcile/integrate with ejectors
   (let parent-handler the-signal-handler.^)
   (the-signal-handler .^= (to (unwind-protector k evil)
                             (the-signal-handler .^= parent-handler)
@@ -71,6 +71,11 @@
       (the-signal-handler .^= script-handler)
       (load-and-run filename command-line-args))))
 
+(to (load-and-run filename args)
+  (load filename `(,filename)) ;TODO remove .cant extension
+  (when (global-defined? 'main)     ;XXX hack
+    ((cant .play 'main '()) args)))
+
 (to (listener<- props signal-handler)
 
   (to (listener-handler k evil)
@@ -93,11 +98,6 @@
       (may (read)
         (be (? eof?) (newline))
         (be sexpr (print-result (cant .play sexpr props)))))))
-
-(to (load-and-run filename args)
-  (load filename `(,filename)) ;TODO remove .cant extension
-  (when (global-defined? 'main)     ;XXX hack
-    ((cant .play 'main '()) args)))
 
 (to (debug)
   (import (use 'debugger) inspect-continuation)
