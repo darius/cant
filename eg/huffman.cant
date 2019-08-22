@@ -6,6 +6,7 @@
   pq-empty? pq-min
   empty-pq unit-pq pq-merge pq-insert pq-remove-min)
 
+;; TODO take a bag instead, or anyway a bag's items list
 (to (build-tree freqs)
   (let pqs (for each ((`(,frequency ,symbol) freqs))
              (unit-pq `(,frequency {leaf ,symbol}))))
