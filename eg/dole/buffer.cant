@@ -59,9 +59,9 @@
   (to (previous-line)
     (let start      (find-line point.^ backward))
     (let offset     (- point.^ start))
-    (let prev-start (find-line (- start 1) backward))
+    (let prev-start (find-line start.- backward))
     (point .^= (min (+ prev-start offset)
-                    (text .clip (- start 1)))))
+                    (text .clip start.-))))
 
   (to (next-line)
     (let start      (find-line point.^ backward))
@@ -69,7 +69,7 @@
     (let next-start (find-line start forward)) ;XXX why not start from point?
     (let next-end   (find-line next-start forward))
     (point .^= (min (+ next-start offset)
-                    (text .clip (- next-end 1)))))
+                    (text .clip next-end.-))))
   ;; XXX this can wrap around since text .clip moves `nowhere` to 0.
    
   (let key-map (key-map<- (on (ch)
@@ -85,7 +85,7 @@
       (origin .^= 0))
 
     (to ~.backward-delete-char
-      (text .delete (- point.^ 1) 1)
+      (text .delete point.^.- 1)
       (buffer .move-char backward))
 
     (to ~.forward-delete-char
