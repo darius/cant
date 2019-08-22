@@ -59,9 +59,7 @@
     (on-error-traceback k evil))
 
   (to (listener-handler k evil)
-    (the-signal-handler .^= parent-handler)
-    (the-last-error .^= {error k evil})
-    (on-error-traceback k evil)
+    (script-handler k evil)
     (display "Enter (debug) for more.\n")
     (interact))
 
