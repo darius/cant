@@ -18,8 +18,8 @@
   (format "~d\n" (line .center 80)))
 
 (to (rule<-index n)
-  (on ((~ a b c))
-    (let i (+ (* a 4) (* b 2) c))
+  (on ((~ left center right))
+    (let i (+ (* left 4) (* center 2) right))
     ((n .>> i) .and 1)))
 
 (run (rule<-index 110) '(1) 30)
