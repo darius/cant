@@ -47,14 +47,6 @@
     (out .display #\newline)
     (printing xs.rest)))
 
-(to (breakpoint @values)
-  ;; TODO automatically invoke the debugger
-  (error "Breakpoint" @values))
-
-(to (system/must-succeed command)
-  (unless (= 0 (system command))
-    (error "Failed system command" command)))
-
 ;; TODO keep out of the props?
 (to (start-playing @(optional command-line-args))
   (import (use 'traceback) on-error-traceback)
@@ -109,5 +101,9 @@
       (inspect-continuation k))
     (else
       (display "No error to debug.\n"))))
+
+(to (breakpoint @values)
+  ;; TODO automatically invoke the debugger
+  (error "Breakpoint" @values))
 
 (the-signal-handler .^= fallback-signal-handler)

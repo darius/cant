@@ -186,6 +186,10 @@
       '()
       (link thing (read-all source))))
 
+(to (system/must-succeed command)
+  (unless (= 0 (system command))
+    (error "Failed system command" command)))
+
 
 ;; Experiments
 
