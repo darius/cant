@@ -6,6 +6,7 @@
                   "church.lambda"
                   "factorial.lambda"
                   "reverse.lambda"
+                  "turing-scott.lambda"
                   ))
 
 (for each! ((test test-names))
