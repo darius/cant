@@ -58,34 +58,41 @@
     (the-last-error .^= {error k evil})
     (on-error-traceback k evil))
 
-  (to (listener-handler k evil)
-    (script-handler k evil)
-    (display "Enter (debug) for more.\n")
-    (interact))
+  (let listener (listener<- '() script-handler))
 
-  (to (interact)
-    (the-signal-handler .^= listener-handler)
-    (display "-> ")
-    (may (read)
-      (be (? eof?) (newline))
-      (be sexpr (print-result (cant .play sexpr '()))))) ;XXX reify a proper env object
+  (may command-line-args
+    (be #no (listener))
+    (be '() (listener))
+    (be `("-i" ,filename ,@_)
+      (the-signal-handler .^= listener.signal-handler)
+      (load-and-run filename command-line-args.rest)
+      (listener))
+    (be `(,filename ,@_)
+      (the-signal-handler .^= script-handler)
+      (load-and-run filename command-line-args))))
+
+(to (listener<- props signal-handler)
+
+  (to (listener-handler k evil)
+    (signal-handler k evil)
+    (display "Enter (debug) for more.\n")
+    (listener))
 
   ;; A separate function just to make the top of tracebacks cleaner.
   (to (print-result value)
     (unless (= value void)
       (print value))
-    (interact))
+    (listener))
 
-  (may command-line-args
-    (be #no (interact))
-    (be '() (interact))
-    (be `("-i" ,filename ,@_)
+  (make listener
+    (to ~.signal-handler
+      listener-handler)
+    (to (~)
       (the-signal-handler .^= listener-handler)
-      (load-and-run filename command-line-args.rest)
-      (interact))
-    (be `(,filename ,@_)
-      (the-signal-handler .^= script-handler)
-      (load-and-run filename command-line-args))))
+      (display "-> ")
+      (may (read)
+        (be (? eof?) (newline))
+        (be sexpr (print-result (cant .play sexpr props)))))))
 
 (to (load-and-run filename args)
   (load filename `(,filename)) ;TODO remove .cant extension
