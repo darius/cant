@@ -55,7 +55,7 @@
   (unless (= 0 (system command))
     (error "Failed system command" command)))
 
-(to (listener @(optional cmd-line-args))    ;TODO rename
+(to (listener @(optional command-line-args))    ;TODO rename
   (import (use 'traceback) on-error-traceback)
 
   (let parent-handler the-signal-handler.^)
@@ -85,16 +85,16 @@
       (print value))
     (interact))
 
-  (may cmd-line-args
+  (may command-line-args
     (be #no (interact))
     (be '() (interact))
     (be `("-i" ,filename ,@_)
       (the-signal-handler .^= listener-handler)
-      (load-and-run filename cmd-line-args.rest)
+      (load-and-run filename command-line-args.rest)
       (interact))
     (be `(,filename ,@_)
       (the-signal-handler .^= script-handler)
-      (load-and-run filename cmd-line-args))))
+      (load-and-run filename command-line-args))))
 
 (to (load-and-run filename args)
   (load filename `(,filename)) ;TODO remove .cant extension
