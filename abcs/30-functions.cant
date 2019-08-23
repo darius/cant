@@ -1,17 +1,25 @@
-(to (gather f xs)
-  (for foldr ((x xs) (gathered '()))
-    (chain (f x) gathered)))
+(make gather {extending zipped-list-transducer}
+  (to (~ f xs)
+    (for foldr ((x xs) (gathered '()))
+      (chain (f x) gathered))))
 
+;; No {extending zipped-list-transducer} for this one, because the
+;; one-arg case is not substitutable for the n-arg: the n-arg version
+;; would return a list of n-tuples, but a 1-tuple of x is not equal to
+;; x itself. I rather wish it were, but 1-tuples seem to need to be
+;; distinct for the sake of message dispatch.
 (to (those keep? xs)
   (for foldr ((x xs) (kept '()))
     (if (keep? x) (link x kept) kept)))
 
-(to (yeahs maybe xs)             ;TODO is this worth defining? good name?
-  ;; Inlining of (those itself (each maybe xs))
-  (for foldr ((x xs) (kept '()))
-    (may (maybe x)
-      (be #no  kept)
-      (be yeah (link yeah kept)))))
+;;TODO is this worth defining? good name?
+(make yeahs {extending zipped-list-transducer}
+  (to (~ maybe xs)
+    ;; Inlining of (those itself (each maybe xs))
+    (for foldr ((x xs) (kept '()))
+      (may (maybe x)
+        (be #no  kept)
+        (be yeah (link yeah kept))))))
 
 (to (itself x)
   x)
@@ -98,6 +106,8 @@
     (to ~.rest  (thunk))
     ;; XXX override parts of list-trait that need it for laziness
     ))
+
+;; TODO zipped-list-transducer for the below?
 
 (to (those/lazy keep? xs)
   (if xs.none?

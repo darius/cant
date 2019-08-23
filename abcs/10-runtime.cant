@@ -996,23 +996,6 @@
       xs.first
       (f xs.first (foldr1 f tail))))
 
-(make each
-  (to (~ f xs)
-    (for foldr ((x xs) (results '()))
-      (link (f x) results)))
-  (to (~ f @lists)
-    (for each ((args (transpose lists)))
-      (f @args))))
-
-(make each!
-  (to (~ f xs)
-    (unless xs.none?
-      (f xs.first)
-      (each! f xs.rest)))
-  (to (~ f @lists)
-    (for each! ((args (transpose lists)))
-      (f @args))))
-
 ;; TODO: name it (zip @rows) instead, like Python?
 (to (transpose rows)
   (if (every ~.none? rows)   ; and make it (some _.none? rows)?
@@ -1020,19 +1003,35 @@
       `(,(each ~.first rows)
         ,@(transpose (each ~.rest rows)))))
 
-(to (some pass? xs)
-  (and xs.some?
-       (or (pass? xs.first)
-           (some pass? xs.rest))))
+(make-trait zipped-list-transducer transducer
+  (to (~ f @lists)
+    (for transducer ((args (transpose lists)))
+      (f @args)))
+  (to message
+    (miranda-trait transducer message)))
 
-(make every
+(make each {extending zipped-list-transducer}
+  (to (~ f xs)
+    (for foldr ((x xs) (results '()))
+      (link (f x) results))))
+
+(make each! {extending zipped-list-transducer}
+  (to (~ f xs)
+    (unless xs.none?
+      (f xs.first)
+      (each! f xs.rest))))
+
+(make some {extending zipped-list-transducer}
+  (to (~ pass? xs)
+    (and xs.some?
+         (or (pass? xs.first)
+             (some pass? xs.rest)))))
+
+(make every {extending zipped-list-transducer}
   (to (~ pass? xs)
     (or xs.none?
         (and (pass? xs.first)
-             (every pass? xs.rest))))
-  (to (~ pass? @lists)
-    (for every ((args (transpose lists)))
-      (pass? @args))))
+             (every pass? xs.rest)))))
 
 (make interval<-
   (to (~ first limit)
