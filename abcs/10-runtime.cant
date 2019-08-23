@@ -1023,10 +1023,14 @@
        (or (pass? xs.first)
            (some pass? xs.rest))))
 
-(to (every pass? xs)
-  (or xs.none?
-      (and (pass? xs.first)
-           (every pass? xs.rest))))
+(make every
+  (to (~ pass? xs)
+    (or xs.none?
+        (and (pass? xs.first)
+             (every pass? xs.rest))))
+  (to (~ pass? @lists)
+    (for every ((args (transpose lists)))
+      (pass? @args))))
 
 (make interval<-
   (to (~ first limit)
