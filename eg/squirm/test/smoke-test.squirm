@@ -1,3 +1,5 @@
+;; -*- cant -*-
+
 (to (main)
   (let pid (spawn (on ()
                     (report (or #no "hey"))

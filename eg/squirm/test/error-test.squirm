@@ -1,3 +1,5 @@
+;; -*- cant -*-
+
 (to (main)
   (print 0)
   (print (catch

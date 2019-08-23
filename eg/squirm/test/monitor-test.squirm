@@ -1,7 +1,9 @@
-;; TODO more tests
+;; -*- cant -*-
+
 (to (main)
   (print 0)
-  (let pid (spawn-partner screw-around))
+  (let pid (spawn screw-around))
+  (monitor pid)                         ;does erlang have a spawn_monitor BIF?
   (? (msg (print "got it")
           (print msg))))
 

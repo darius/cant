@@ -721,7 +721,7 @@
 
 ;; Add the prelude to the global environment.
 (let global-env
-  (module-read "eg/squirm/prelude.cant" {builtins-env}))
+  (module-read "eg/squirm/prelude.squirm" {builtins-env}))
 
 
 (export

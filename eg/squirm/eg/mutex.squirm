@@ -1,3 +1,5 @@
+;; -*- cant -*-
+
 ;; exports: start stop wait signal
 
 ;; This example is interesting in that the state I'd at first think of

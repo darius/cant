@@ -1,3 +1,5 @@
+;; -*- cant -*-
+
 (to (main)
 ;  (to ((compose f g) x)  ;; TODO varargs
 ;    (f (g x)))

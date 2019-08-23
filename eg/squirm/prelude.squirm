@@ -1,3 +1,5 @@
+;; -*- cant -*-
+
 ;; Squirm code, not Cant. These definitions go into the global
 ;; environment.
 

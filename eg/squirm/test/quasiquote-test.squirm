@@ -1,3 +1,5 @@
+;; -*- cant -*-
+
 (to (main)
   (let d 7)
   (let f 11)

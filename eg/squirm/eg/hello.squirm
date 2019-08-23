@@ -1,3 +1,5 @@
+;; -*- cant -*-
+
 (to (main)
   (let parent (me))
   (spawn (on ()
