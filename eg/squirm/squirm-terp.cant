@@ -591,9 +591,8 @@
           (env-get parent name))
         (be {to f params body}
           {closure r params body})))
-    (be {builtins-env}
-      (builtins-map name))
-    ))
+    (be {empty-env}
+      (error "Unbound variable" name))))
 
 
 ;; Primitive procedures and the global environment
@@ -711,6 +710,8 @@
          (for each (((~ name value) primitives-from-cant.items))
            (~ name {primitive value})))))
 
+(let builtins-env {local-env builtins-map {empty-env}})
+
 (to (module-env<- module @(optional env))
   {recursive-env (map<-defs module) (or env global-env)})
 
@@ -721,7 +722,7 @@
 
 ;; Add the prelude to the global environment.
 (let global-env
-  (module-read "eg/squirm/prelude.squirm" {builtins-env}))
+  (module-read "eg/squirm/prelude.squirm" builtins-env))
 
 
 (export
