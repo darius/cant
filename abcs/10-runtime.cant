@@ -974,8 +974,10 @@
   (to (~ @arguments)
     (foldr1 (on (xs ys) (xs .chain ys)) arguments)))
 
-(to (reverse xs)
-  (for foldl ((result '()) (x xs))
+;; Using the optional suffix is like (chain (reverse xs) suffix).
+(to (reverse xs @(optional suffix))
+  (for foldl ((result (or suffix '()))
+              (x xs))
     (link x result)))
 
 (to (foldl f z xs)           ; 'z' connoting zero from f's perspective

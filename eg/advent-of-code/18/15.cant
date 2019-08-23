@@ -157,9 +157,6 @@
                       (exploring (extend queue-1 (expand trail)))))
               (exploring (extend queue-1 (expand trail))))))))
 
-;;  (to (list<-queue {queue h t})
-;;    (chain h (reverse t)))
-
   (to (sorted? xs)                      ;TODO extract to lib
     (or xs.none?
         xs.rest.none?

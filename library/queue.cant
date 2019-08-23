@@ -18,7 +18,7 @@
   {queue h (link element t)})
 
 (to (extend {queue h t} elements)
-  {queue h (chain (reverse elements) t)}) ;TODO chain-reverse
+  {queue h (reverse elements t)})
 
 (to (peek {queue h t})
   (hm (when (and h.none? t.none?)
