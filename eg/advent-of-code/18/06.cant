@@ -16,8 +16,8 @@
 (let parse (simple-parser<- ":nat ', ' :nat"))
 (let centers (each parse input))
 
-(let names (!map<-items (zip centers    ;TODO immutable
-                             (#\a .span centers.count))))
+(let names (map<-items (zip centers
+                            (#\a .span centers.count))))
 
 (let `((,xl ,yl) (,xh ,yh)) (bounds<- centers))
 (format "bounds ~w\n" (bounds<- centers))

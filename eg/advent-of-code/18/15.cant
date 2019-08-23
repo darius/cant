@@ -185,8 +185,8 @@
     (to ~.census           (bag<- area.values))
     ))
 
-(let enemy<- (!map<-lists '((#\G #\E)   ;TODO immutable
-                            (#\E #\G))))
+(let enemy<- (map<-lists '((#\G #\E)
+                           (#\E #\G))))
 
 ;(format "Part 1 answer: ~w\n" (part-1))
 

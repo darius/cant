@@ -129,7 +129,7 @@ quality_list: {'weak'|'immune'} ' to ' [word++', ' :hug] :hug.
 word: :letter+ :join.  # TODO ugly
 separator: '\n'.
 "))
-(let semantics (grammar (!map<- (~ 'Group (feed cook-group))))) ;TODO immutable
+(let semantics (grammar (map<- (~ 'Group (feed cook-group)))))
 (let parse-main (semantics 'main))
 (to (parse string)
   (~.results (parson-parse parse-main string)))

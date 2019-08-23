@@ -180,7 +180,7 @@
       (update move board))
 
     (to (~ .parse-move string)    ;N.B. #no if invalid, unlike in my Python
-      ((map<-values unparse-move board.get-moves) .get string)) ;TODO immutable
+      ((map<-values unparse-move board.get-moves) .get string))
 
     (to ~.gen-legal-moves
       (for those ((move board.gen-piece-moves))

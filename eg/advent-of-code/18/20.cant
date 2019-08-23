@@ -16,7 +16,7 @@ f:    g*     :Seq.
 g:    dir | '(' e ')'.
 dir:  {'N' | 'S' | 'E' | 'W'} :Dir.
 "))
-(let semantics (grammar (!map<- (~ 'Alt (feed alt<-)) ;TODO immutable
+(let semantics (grammar (map<- (~ 'Alt (feed alt<-))
                                (~ 'Seq (feed seq<-))
                                (~ 'Dir (feed dir<-)))))
 (let parse-main (semantics 'main))
@@ -84,10 +84,10 @@ dir:  {'N' | 'S' | 'E' | 'W'} :Dir.
                        (be v1 (min v1 v2)))))
   result)
 
-(let step (!map<-lists '((#\N (0 -1))   ;TODO immutable
-                         (#\S (0  1))
-                         (#\E (1  0))
-                         (#\W (-1 0)))))
+(let step (map<-lists '((#\N (0 -1))
+                        (#\S (0  1))
+                        (#\E (1  0))
+                        (#\W (-1 0)))))
 
 (to (test str)
   (format "~w...: " (str .slice 0 40))
