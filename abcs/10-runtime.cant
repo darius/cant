@@ -967,6 +967,13 @@
 (to (string<-list chars) (__string<-list (as-list chars)))
 (to (array<-list xs)     (__array<-list (as-list xs)))
 
+(make chain
+  (to (~) '())
+  (to (~ xs) xs)
+  (to (~ xs ys) (xs .chain ys))
+  (to (~ @arguments)
+    (foldr1 (on (xs ys) (xs .chain ys)) arguments)))
+
 (to (reverse xs)
   (for foldl ((result '()) (x xs))
     (link x result)))
@@ -1010,13 +1017,6 @@
       '()
       `(,(each ~.first rows)
         ,@(transpose (each ~.rest rows)))))
-
-(make chain
-  (to (~) '())
-  (to (~ xs) xs)
-  (to (~ xs ys) (xs .chain ys))
-  (to (~ @arguments)
-    (foldr1 (on (xs ys) (xs .chain ys)) arguments)))
 
 (to (some pass? xs)
   (and xs.some?
