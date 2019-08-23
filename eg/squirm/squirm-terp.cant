@@ -581,12 +581,12 @@
 
 (to (env-get r name)
   (may r
-    (be {local-env !map parent}
-      (may (!map .get name)
+    (be {local-env map parent}
+      (may (map .get name)
         (be #no   (env-get parent name))
         (be value value)))
-    (be {recursive-env !map parent}
-      (may (!map .get name)
+    (be {recursive-env map parent}
+      (may (map .get name)
         (be #no
           (env-get parent name))
         (be {to f params body}
@@ -703,21 +703,21 @@
     ))
 
 (let builtins-map
-  (!map<-items (for each (((~ name value) primitives-from-cant.items)) ;TODO immutable after init
-                 (~ name {primitive value}))))
-
-(builtins-map .set! 'apply {apply})
-(builtins-map .set! 'eval  {eval})
-(builtins-map .set! 'throw {throw})
-(builtins-map .set! 'exit  {exit})
+  (map<-items
+   (link (~ 'apply {apply})
+         (~ 'eval  {eval})
+         (~ 'exit  {exit})
+         (~ 'throw {throw})
+         (for each (((~ name value) primitives-from-cant.items))
+           (~ name {primitive value})))))
 
 (to (module-env<- module @(optional env))
   {recursive-env (map<-defs module) (or env global-env)})
 
 (to (map<-defs defs)
-  (!map<-items (for each ((def defs))   ;TODO immutable?
-                 (may def
-                   (be {to name _ _} (~ name def))))))
+  (map<-items (for each ((def defs))
+                (may def
+                  (be {to name _ _} (~ name def))))))
 
 ;; Add the prelude to the global environment.
 (let global-env
