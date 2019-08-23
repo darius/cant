@@ -582,9 +582,9 @@
 (to (env-get r name)
   (may r
     (be {local-env map parent}
-      (may (map .get name)
-        (be #no   (env-get parent name))
-        (be value value)))
+      (if (map .maps? name)
+          (map name)
+          (env-get parent name)))
     (be {recursive-env map parent}
       (may (map .get name)
         (be #no

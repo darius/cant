@@ -1,6 +1,8 @@
 ;; -*- cant -*-
 
 (to (main)
+  (let negative #no)
+  (print negative)
   (let pid (spawn (on ()
                     (report (or #no "hey"))
                     (report "dud")
