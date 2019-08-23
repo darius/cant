@@ -184,7 +184,6 @@
                    (with-exception-handler
                     (lambda (exc)
                       (scheme-cont
-                       (display "XXX scheme exc\n")
                        (if (condition? exc)
                            (let ((plaint
                                   (with-output-to-string
