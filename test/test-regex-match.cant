@@ -3,9 +3,9 @@
 (to (test regex inputs)
   (let r (regex-parse regex))
   (format "~d\n~d\n" regex ("-" .repeat regex.count))
-  (for each! ((str inputs))
-    (let m (regex-match r str))
-    (format "~d ~w\n" (if m "*" " ") str))
+  (for each! ((string inputs))
+    (let m (regex-match r string))
+    (format "~d ~w\n" (if m "*" " ") string))
   (newline))
 
 (print (regex-parse "."))
