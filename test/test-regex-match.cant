@@ -28,3 +28,5 @@
 (test "a[bc]*d"  '("ad" "abcd") '("ab" "B"))
 
 ; TODO more tests
+
+(export test)
