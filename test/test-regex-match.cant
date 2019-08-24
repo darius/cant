@@ -1,22 +1,30 @@
 (import (use 'regex-match) regex-match regex-parse)
 
-(to (test regex inputs)
+(to (test regex should-match should-not)
   (let r (regex-parse regex))
   (format "~d\n~d\n" regex ("-" .repeat regex.count))
-  (for each! ((string inputs))
-    (let m (regex-match r string))
-    (format "~d ~w\n" (if m "*" " ") string))
+  (for each! ((string should-match))
+    (test-1 r string #yes))
+  (for each! ((string should-not))
+    (test-1 r string #no))
   (newline))
+
+(to (test-1 parsed string should?)
+  (let match? (regex-match parsed string))
+  (format "~4d ~d ~w\n"
+          (if (= match? should?) "" "FAIL")
+          (if match? "y" "n")
+          string))
 
 (print (regex-parse "."))
 
-(test "." '("" "a" "ab"))
-(test "X" '("hey" "X"))
-(test "XY" '("hey" "X" "XY" "XYZ"))
-(test "X|Y" '("hey" "X" "Y" "Z"))
-(test "X*" '("" "X" "XX" "hey"))
-(test "a(b|c)*d" '("ad" "ab" "abcd" "B"))
-(test "a.*d" '("ad" "ab" "abcd" "B"))
-(test "a[bc]*d" '("ad" "ab" "abcd" "B"))
+(test "."        '("a")         '("" "ab"))
+(test "X"        '("X")         '("hey"))
+(test "XY"       '("XY")        '("hey" "X" "XYZ"))
+(test "X|Y"      '("X" "Y")     '("hey" "Z"))
+(test "X*"       '("" "X" "XX") '("hey"))
+(test "a(b|c)*d" '("ad" "abcd") '("ab" "B"))
+(test "a.*d"     '("ad" "abcd") '("ab" "B"))
+(test "a[bc]*d"  '("ad" "abcd") '("ab" "B"))
 
 ; TODO more tests
