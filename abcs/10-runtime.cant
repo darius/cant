@@ -909,22 +909,22 @@
   (not (= x y)))
 
 (make +
+  (to (~ a b) (a .+ b))
   (to (~) 0)
   (to (~ a) a)
-  (to (~ a b) (a .+ b))
   (to (~ a b @arguments)
     (foldl (on (x y) (x .+ y)) (a .+ b) arguments)))
 
 (make *
+  (to (~ a b) (a .* b))
   (to (~) 1)
   (to (~ a) a)
-  (to (~ a b) (a .* b))
   (to (~ a b @arguments)
     (foldl (on (x y) (x .* y)) (a .* b) arguments)))
 
 (make -
-  (to (~ a) (0 .- a))
   (to (~ a b) (a .- b))
+  (to (~ a) (0 .- a))
   (to (~ a b @arguments)
     (foldl (on (x y) (x .- y)) (a .- b) arguments)))
 
