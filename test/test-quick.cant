@@ -69,6 +69,6 @@
 (((loud-use "eg/text/oodles") 'main) '(~ "garlic"))
 (loud-use "eg/sicp1")
 (loud-use "eg/sicp2")
-(((loud-use "eg/trivial72") 'main) '(~))
-(((loud-use "eg/tusl") 'main) '(~))
+(((loud-use "eg/trivial72") 'main) '(ignore))
+(((loud-use "eg/tusl") 'main) '(ignore))
 
