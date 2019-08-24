@@ -941,16 +941,11 @@
 (make >   {extending transitive-comparison} (to (~ a b)      (= (compare a b)  1)))
 
 (to (compare a b)
-  (let result (a .compare b))
-  (if (comparison? result) result (error "Incomparable" a b)))
-
-(to (comparison? x)
-  (may x
-    (be -1 #yes)
-    (be  0 #yes)
-    (be +1 #yes)
-    (else  #no)))
-
+  (may (a .compare b)
+    (be -1 -1)
+    (be  0  0)
+    (be +1 +1)
+    (else  (error "Incomparable" a b))))
 
 ;;XXX so should some of these be in list-trait?
 
