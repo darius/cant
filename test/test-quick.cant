@@ -8,12 +8,6 @@
   (newline)
   (use filename))
 
-(loud-use 'memoize)
-(loud-use 'parson-core)
-(loud-use 'regex-match)
-(loud-use 'parse)
-(loud-use 'unify)
-
 (loud-use "eg/squickcheck-examples")    ;TODO put in order below
 
 (loud-use "test/test-export-import")
