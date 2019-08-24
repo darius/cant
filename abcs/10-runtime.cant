@@ -908,25 +908,23 @@
 (to (not= x y)
   (not (= x y)))
 
-(make +
+(make-trait left-folding-operation operation
+  (to (~ a b @arguments)
+    (foldl operation (operation a b) arguments)))
+
+(make + {extending left-folding-operation}
   (to (~ a b) (a .+ b))
   (to (~) 0)
-  (to (~ a) a)
-  (to (~ a b @arguments)
-    (foldl (on (x y) (x .+ y)) (a .+ b) arguments)))
+  (to (~ a) a))
 
-(make *
+(make * {extending left-folding-operation}
   (to (~ a b) (a .* b))
   (to (~) 1)
-  (to (~ a) a)
-  (to (~ a b @arguments)
-    (foldl (on (x y) (x .* y)) (a .* b) arguments)))
+  (to (~ a) a))
 
-(make -
+(make - {extending left-folding-operation}
   (to (~ a b) (a .- b))
-  (to (~ a) (0 .- a))
-  (to (~ a b @arguments)
-    (foldl (on (x y) (x .- y)) (a .- b) arguments)))
+  (to (~ a) (0 .- a)))
 
 (make-trait transitive-comparison compare?
   (to (~ x @xs)
