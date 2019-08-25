@@ -1,9 +1,9 @@
-(import (use "eg/kernel") play global-env)
+(import (use "eg/kernel") play global-setting)
 
 
 (to (run e)
   (format "Playing ~w\n" e)
-  (print (play (cant .parse-expression e) global-env)))
+  (print (play (cant .parse-expression e) global-setting)))
 
 ;; TODO code duplicated from smoke-test.cant
 
