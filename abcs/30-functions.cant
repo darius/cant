@@ -53,11 +53,9 @@
 
 ;; XXX float contagion
 (make min {extending left-folding-operation}
-  (to (~ a b) (if (< a b) a b))
-  (to (~ a) a))
+  (to (~ a b) (if (< a b) a b)))
 (make max {extending left-folding-operation}
-  (to (~ a b) (if (< a b) b a))
-  (to (~ a) a))
+  (to (~ a b) (if (< a b) b a)))
 
 (to (min-by key<- xs) (foldr1 (on (x y) (if (< (key<- x) (key<- y)) x y))
                               xs))
@@ -143,6 +141,7 @@
 (to (sum ns)
   (foldl + 0 ns))
 
+;; TODO zipped-list-transducer?
 (to (sum-by f xs) ;TODO overload 'sum' instead? (viz. other use of name below)
   (for foldl ((total 0) (x xs))
     (+ total (f x))))
@@ -150,6 +149,7 @@
 (to (tally xs)
   (sum-by ~.count xs))
 
+;; TODO zipped-list-transducer?
 (to (tally-by f xs)
   (sum-by (compose ~.count f) xs))
 ;; TODO hm, I was thinking of f as returning a claim, but as written,
