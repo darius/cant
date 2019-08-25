@@ -1,5 +1,10 @@
 ;; Interpreter
 
+;; TODO real environments
+(let computational-setting '())         ;TODO name: unpowered-setting ?
+(let full-powered-setting '())
+(let main-interactive-setting '())
+
 (make cant
   (to (~ .play exp env @(optional context))
     (__evaluate (__parse-exp exp (or context '()))

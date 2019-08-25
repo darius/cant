@@ -73,9 +73,9 @@
 (to (load-and-run filename args)
   (load filename `(,filename)) ;TODO remove .cant extension
   (when (global-defined? 'main)     ;XXX hack
-    ((cant .play 'main '()) args)))
+    ((cant .play 'main full-powered-setting) args)))
 
-(to (listener<- props signal-handler)
+(to (listener<- setting signal-handler)
 
   (to (listener-handler k evil)
     (signal-handler k evil)
@@ -96,7 +96,7 @@
       (display "-> ")
       (may (read)
         (be (? eof?) (newline))
-        (be sexpr (print-result (cant .play sexpr props)))))))
+        (be sexpr (print-result (cant .play sexpr setting)))))))
 
 (to (debug)
   (import (use 'debugger) inspect-continuation)

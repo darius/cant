@@ -101,7 +101,7 @@
   (bf-interpret text)
   (let code (bf-compile text))
 ;;  (print code)
-  ((cant .play code '()))
+  ((cant .play code full-powered-setting))
   )
 
 

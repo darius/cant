@@ -56,7 +56,7 @@
       (be 'datum
         (push (extract-datum focus)))
       (be 'value
-        (let focus-env '())              ;XXX
+        (let focus-env full-powered-setting) ;XXX
         (let env (link `(*focus* ,focus) focus-env))
         (print (cant .play (read) env))
         (continue))

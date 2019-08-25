@@ -6,10 +6,9 @@
 
   (let stem "eg/advent-of-code/18")
   (to (run code-name data-name)
-    (cant .play `(let data-name ',data-name)
-                '())
-    (cant .play `(let data-file ',("~d/data/~d" .format stem data-name))
-                '())
+    (cant .play `(do (let data-name ',data-name)
+                     (let data-file ',("~d/data/~d" .format stem data-name)))
+                full-powered-setting)
     (load ("~d/~d.cant" .format stem code-name)))
 
   (may args
