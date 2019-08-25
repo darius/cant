@@ -68,8 +68,8 @@
 ;;  - Most often we want result.range
 ;;  - Sometimes it's *almost* applicable, but ok? needs to take `(,i ,x) as the argument.
 ;;    But if we made it like that, then it's barely different from yeahs.
-(to (where ok? xs)
-  (for yeahs (((~ i x) xs.items))
+(to (where ok? map)
+  (for yeahs (((~ i x) map.items))
     (and (ok? x) i)))
 
 (to (map-by f keys) ;TODO maybe name it map<-keys ? along with a map<-values ?
