@@ -39,13 +39,13 @@
 
 (make context<-
   (to (~ rng)
-    (context<- rng 20))             ; TODO: is 20 a good default size?
+    (context<- rng 20)) ; TODO we'll want a bigger number when we're no longer super-slow
   (to (~ rng size)
     ;; TODO better method names
     (make gen
       (to ~.size           size)
       (to (~ .natural n)   (rng .random-integer n))
-      (to (~ .range lo hi) (rng .random-range lo hi))
+      (to (~ .range lo hi) (rng .random-range lo hi)) ;TODO rename, .interval ?
       (to ~.a-size         (rng .random-integer size))
       (to (~ .choose xs)   (rng .pick xs)))))
 
