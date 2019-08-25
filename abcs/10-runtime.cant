@@ -95,9 +95,9 @@
 
 (make-trait list-trait list
   (to (~ i)
-    (if (= i 0)
-        list.first
-        (list.rest i.-)))
+    (may i
+      (be 0 list.first)
+      (else (list.rest i.-))))
   (to ~.none?
     (= 0 list.count)) ;N.B. these default implementations are circular
   (to ~.first
@@ -107,7 +107,7 @@
   (to ~.count
     ;; TODO non-tail-recursive would be more OO in style. Go back to that?
     (begin counting ((remainder list) (count 0))
-      (if remainder.none?              ;XXX why can't this be .none?
+      (if remainder.none?
           count
           (counting remainder.rest count.+))))
   (to (~ .slice i)
