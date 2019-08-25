@@ -20,6 +20,11 @@
       (to (~ .delete! key)     (!map .delete! key))  ; TODO should this decrement the value instead? Or should that be a different method?
       (to ~.clear!             !map.clear!)
       (to ~.total              (sum !map.values))
+      (to (~ .most-common @(optional n))
+        ;; TODO heap-based n-largest function
+        (take (sort-by (~ .part 1) !map.items)
+              reverse
+              (if n (~ .slice 0 n) itself)))
       ;; XXX fill in rest of bag interface (just the map interface, I guess)
       (to (~ .selfie sink)
         (sink .display "#<bag (")
