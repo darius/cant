@@ -1,14 +1,15 @@
 ;; Interpreter
 
 ;; TODO real environments
-(let computational-setting '())         ;TODO name: unpowered-setting ?
-(let full-powered-setting '())
-(let main-interactive-setting '())
+(let empty-setting (__setting<- '()))
+(let computational-setting (__setting<- '())) ;TODO name: unpowered-setting ?
+(let full-powered-setting (__setting<- '()))
+(let main-interactive-setting (__setting<- '()))
 
 (make cant
-  (to (~ .play exp env @(optional context))
+  (to (~ .play exp setting @(optional context))
     (__evaluate (__parse-exp exp (or context '()))
-                env))
+                setting))
   (to (~ .parse-expression x @(optional context))
     (ast-exp<- (__parse-exp x (or context '()))))
   (to (~ .parse-pattern x)              ;TODO could use a context too

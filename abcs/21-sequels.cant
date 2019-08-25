@@ -17,7 +17,7 @@
   (to ~.setting
     ;; Commonly this, but needs to be overridden when there's no env.
     ;; When present, it's always in the same slot, mentioned above.
-    (me.__raw-k 2))
+    (__setting<- (me.__raw-k 2)))
   (to (~ .answer result) (__reply me.__raw-k result))
   (to message
     (list-trait me message))) ;XXX use trait syntax instead
@@ -65,7 +65,7 @@
     (let `(,val) me.__data)
     `(<assert-matched-then> ',val))
   (to ~.setting
-    '())
+    empty-setting)
   (to message
     (__cont-trait me message)))
 
@@ -81,7 +81,7 @@
     (let `(,receiver) me.__data)
     `(call ',receiver ^))
   (to ~.setting
-    '())
+    empty-setting)
   (to message
     (__cont-trait me message)))
 
@@ -98,7 +98,7 @@
     (let `(,tag) me.__data)
     `{,tag ^^^})
   (to ~.setting
-    '())
+    empty-setting)
   (to message
     (__cont-trait me message)))
 
@@ -134,7 +134,7 @@
   (to ~.first
     '<disable-ejector>)                          ;TODO show more
   (to ~.setting
-    '())
+    empty-setting)
   (to message
     (__cont-trait me message)))
 
@@ -142,7 +142,7 @@
   (to ~.first
     '<disable-ejector>)                          ;TODO show more
   (to ~.setting
-    '())
+    empty-setting)
   (to message
     (__cont-trait me message)))
 
@@ -150,7 +150,7 @@
   (to ~.first
     '<keep-unwinding>)                  ;TODO show more
   (to ~.setting
-    '())
+    empty-setting)
   (to message
     (__cont-trait me message)))
 
@@ -159,7 +159,7 @@
     (let `(,value) me.__data)
     `(<replace-answer> ',value))
   (to ~.setting
-    '())
+    empty-setting)
   (to message
     (__cont-trait me message)))
 

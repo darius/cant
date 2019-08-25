@@ -669,6 +669,24 @@
   (term<- '~ (as-list xs)))
 
 
+;; XXX especially temporary defs
+(make-trait setting-primitive setting
+  (to (~ variable)                      ;TODO different name?
+    (__setting-lookup setting variable))
+  (to (~ .binds? variable)
+    (or (yeah? (assoc variable (__setting-a-list setting)))
+        (global-defined? variable)))
+  (to (~ .extend variables values)
+    (__setting<- (chain (each list<- variables values)
+                        (__setting-a-list setting))))
+  (to ~.variables
+    (each ~.first (__setting-a-list setting)))
+  )
+
+(to (yeah? x)
+  (not (not x)))
+
+
 ;; I think quasiquote currently expands into calls to this sometimes  TODO checkme
 (to (list<- @arguments)
   arguments)

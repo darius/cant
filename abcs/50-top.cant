@@ -57,7 +57,7 @@
     (the-last-error .^= {error k evil})
     (on-error-traceback k evil))
 
-  (let listener (listener<- '() script-handler))
+  (let listener (listener<- main-interactive-setting script-handler))
 
   (may command-line-args
     (be #no (listener))
@@ -72,8 +72,8 @@
 
 (to (load-and-run filename args)
   (load filename `(,filename)) ;TODO remove .cant extension
-  (when (global-defined? 'main)     ;XXX hack
-    ((cant .play 'main full-powered-setting) args)))
+  (when (main-interactive-setting .binds? 'main)
+    ((main-interactive-setting 'main) args)))
 
 (to (listener<- setting signal-handler)
 

@@ -48,9 +48,6 @@
   (to (~)      (out .display #\newline))
   (to (~ sink) (sink .display #\newline)))
 
-(to (yeah? x)
-  (not= x #no))
-
 ;; XXX float contagion
 (make min {extending left-folding-operation}
   (to (~ a b) (if (< a b) a b)))

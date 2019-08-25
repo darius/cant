@@ -234,6 +234,7 @@
    ((eof-object? object)  eof-script)
    ((script? object)      script-script)
    ((procedure? object)   procedure-script)
+   ((setting? object)     setting-script)
    ((object? object)      (object-script object))
    (else (error 'call "Non-object" object))))
 
@@ -394,31 +395,42 @@
 
 ;; A small-step interpreter
 
+(define setting-lookup-prim
+  (cps-prim<- #f '__setting-lookup
+              (lambda (datum arguments k)
+                (cps-unpack arguments k 2 '__evaluate
+                            (lambda (setting variable)
+                              (env-lookup setting variable k))))))
+
 (define evaluate-prim
   (cps-prim<- #f 'evaluate
               (lambda (datum arguments k)
                 (cps-unpack arguments k 2 '__evaluate
-                            (lambda (e r)
-                              (evaluate-exp e r k))))))
+                            (lambda (e setting)
+                              (evaluate-exp e setting k))))))
 
-(define (evaluate e r)
+(define (evaluate e setting)
 ;;  (report `(evaluate ,e))
-  (evaluate-exp e r halt-cont))
+  (evaluate-exp e setting halt-cont))
 
-(define (evaluate-exp e r k)
+(define (evaluate-exp e setting k)
   ;; An inherently incomplete sanity check, not a real security barrier:
   (unless (seems-to-be-a-raw-repr? e methods/ev-exp)
     (error 'evaluate-exp "You need to parse it first" e))
+  
+  (unless (setting? setting)
+    (error 'evaluate-exp "Wrong type: expected a setting" setting))
+  (let ((r (setting-a-list setting)))
 
-  ;; XXX Here we just jam the vars-defined of e together
-  ;; with r's variables. This is adequate for warning about
-  ;; unbound variables in e, which is all we're currently
-  ;; using this scope for, but it won't be adequate when we
-  ;; compile to lexical addresses, etc.:
-  (let* ((vars (append (exp-vars-defined e)
-                       (env-variables r)))
-         (elaborated (elaborate-e e (outer-scope<- vars))))
-    (ev-exp elaborated r k)))
+    ;; XXX Here we just jam the vars-defined of e together
+    ;; with r's variables. This is adequate for warning about
+    ;; unbound variables in e, which is all we're currently
+    ;; using this scope for, but it won't be adequate when we
+    ;; compile to lexical addresses, etc.:
+    (let* ((vars (append (exp-vars-defined e)
+                         (env-variables r)))
+           (elaborated (elaborate-e e (outer-scope<- vars))))
+      (ev-exp elaborated r k))))
 
 (define (ev-exp e r k)
 ;;  (dbg `(ev-exp ,(pack-tag e))) ; ,e))
@@ -635,9 +647,9 @@
   (let ((forms (snarf filename cant-read)))
     (cant-interpret `(do ,@forms))))
 
-;; TODO add optional context
+;; TODO add setting & optional context
 (define (cant-interpret e)
-  (evaluate (parse-exp e) repl-env))
+  (evaluate (parse-exp e) (make-setting repl-env)))
 
 (define (parse-exp e . opt-context)
   (parse-e e (optional-context 'parse-exp opt-context)))
@@ -667,7 +679,8 @@
 (define eof-script       '*forward-ref*)
 (define script-script    '*forward-ref*)
 (define ejector-script   '*forward-ref*)
-(define map-script      '*forward-ref*)
+(define map-script       '*forward-ref*)
+(define setting-script   '*forward-ref*)
 
 (define (get-script name)
   (script<- name (get-prim name) primitive-env))
@@ -754,10 +767,14 @@
     (__halp-log ,prim-halp-log)
     (nano-now ,prim-nano-now)
     (nanosleep ,prim-nanosleep)
-
-    ;; Primitives only -- TODO seclude in their own env:
+    (setting? ,setting?)
     (immutable-map? ,mapi?)             ;TODO sheesh the name
     (map<-items ,prim-mapi<-items)
+
+    ;; Primitives only -- TODO seclude in their own env:
+    (__setting<- ,make-setting)
+    (__setting-a-list ,setting-a-list)
+    (__setting-lookup ,setting-lookup-prim)
     (__mapi-items ,mapi-items)
     (__mapi-get ,prim-mapi-get)
     (__place ,hashmap-place)
@@ -835,26 +852,27 @@
 
 (run-load "abcs/10-runtime.cant")
 
-(set! miranda-trait (get-prim 'miranda-trait))
+(set! miranda-trait  (get-prim 'miranda-trait))
 
 (set! boolean-script (get-script 'claim-primitive))
-(set! number-script (get-script 'number-primitive))
-(set! nil-script    (get-script 'nil-primitive))
-(set! link-script   (get-script 'link-primitive))
-(set! symbol-script (get-script 'symbol-primitive))
-(set! char-script   (get-script 'char-primitive))
-(set! string-script (get-script 'string-primitive))
-(set! array-script  (get-script 'array-primitive))
-(set! box-script    (get-script 'box-primitive))
-(set! source-script (get-script 'source-primitive))
-(set! sink-script   (get-script 'sink-primitive))
-(set! term-script   (get-script 'term-primitive))
+(set! number-script  (get-script 'number-primitive))
+(set! nil-script     (get-script 'nil-primitive))
+(set! link-script    (get-script 'link-primitive))
+(set! symbol-script  (get-script 'symbol-primitive))
+(set! char-script    (get-script 'char-primitive))
+(set! string-script  (get-script 'string-primitive))
+(set! array-script   (get-script 'array-primitive))
+(set! box-script     (get-script 'box-primitive))
+(set! source-script  (get-script 'source-primitive))
+(set! sink-script    (get-script 'sink-primitive))
+(set! term-script    (get-script 'term-primitive))
 (set! procedure-script (get-script 'procedure-primitive))
-(set! void-script   (get-script 'void-primitive))
-(set! eof-script    (get-script 'eof-primitive))
-(set! script-script (get-script 'script-primitive))
+(set! void-script    (get-script 'void-primitive))
+(set! eof-script     (get-script 'eof-primitive))
+(set! script-script  (get-script 'script-primitive))
 (set! ejector-script (get-script 'ejector-primitive))
-(set! map-script    (get-script 'map-primitive))
+(set! map-script     (get-script 'map-primitive))
+(set! setting-script (get-script 'setting-primitive))
 
 
 ;; For tuning later.
