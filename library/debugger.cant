@@ -24,7 +24,8 @@
   (let abbrevs (collect-abbrevs vocab))
 
   (display "Enter ? for help.\n")
-  (begin interacting ((focus initial-focus) (trail '()))
+  (begin interacting ((focus initial-focus)
+                      (trail '()))
 
     (to (continue @messages)
       (each! display messages)
