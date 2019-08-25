@@ -12,17 +12,16 @@
       (script .receive message actor r))))
 
 (to (script<- trait clauses)
-  (make script
-    (to (~ .receive message actor parent-r)
-      (begin matching ((clauses clauses))
-        (may clauses
-          (be '()
-            (trait actor message))
-          (be `((,pattern ,pat-vars ,body-vars ,body) ,@rest)
-            (let pat-r (setting-extend parent-r pat-vars))
-            (if (match message pattern pat-r)
-                (play body (setting-extend pat-r body-vars))
-                (matching rest))))))))
+  (to (script .receive message actor parent-r)
+    (begin matching ((clauses clauses))
+      (may clauses
+        (be '()
+          (trait actor message))
+        (be `((,pattern ,pat-vars ,body-vars ,body) ,@rest)
+          (let pat-r (setting-extend parent-r pat-vars))
+          (if (match message pattern pat-r)
+              (play body (setting-extend pat-r body-vars))
+              (matching rest)))))))
 
 (to (play e r)
   (may e.term
