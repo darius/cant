@@ -208,12 +208,9 @@
 ;; Experiments
 
 ;: TODO better name 'with'?
-(make take
-  (to (~ input f)            ;for speed, a specialization of the below
-    (f input))
-  (to (~ input @transforms)
-    (for foldl ((result input) (f transforms))
-      (f result))))
+(make take {extending left-folding-operation}
+  (to (~ input f)
+    (f input)))
 
 (to (hey focus @actions)                ;TODO better name 'also'?
   (each! (-> (it focus)) actions)
