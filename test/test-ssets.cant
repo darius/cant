@@ -17,10 +17,14 @@
   (let mx (set<-list x))
   (should = (sset-elements sx) (sort mx.keys)))
 
-(for all ((x (a-list-of a-count))
-          (y (a-list-of a-count)))
-  (let sx (sset<-list x)) (let sy (sset<-list y)) (let sr (sset-union sx sy))
-  (let mx (set<-list x))  (let my (set<-list y))  (let mr (mx .union my))
-  (should = (sset-elements sr) (sort mr.keys)))
+;; TODO failures won't be as easy to decipher as I'd like
+(to (test-binary-ops-correspond sset-op set-op)
+  (for all ((x (a-list-of a-count))
+            (y (a-list-of a-count)))
+    (let sx (sset<-list x)) (let sy (sset<-list y)) (let sr (sset-op sx sy))
+    (let mx (set<-list x))  (let my (set<-list y))  (let mr (set-op mx my))
+    (should = (sset-elements sr) (sort mr.keys))))
 
-;; TODO this is getting pretty clumsy
+(test-binary-ops-correspond sset-union (on (x y) (x .union y)))
+;;(test-binary-ops-correspond sset-intersect (on (x y) (x .intersect y)))
+(test-binary-ops-correspond sset-difference (on (x y) (x .difference y)))

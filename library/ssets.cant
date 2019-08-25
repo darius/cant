@@ -40,4 +40,7 @@
               (be  0 (sset-difference xs.rest ys.rest))
               (be  1 (sset-difference xs ys.rest))))))
 
-(export sset<- sset<-list sset-elements sset-insert sset-remove sset-union sset-difference)
+;; TODO intersect
+
+(export
+  sset<- sset<-list sset-elements sset-insert sset-remove sset-union sset-difference)
