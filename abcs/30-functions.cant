@@ -136,7 +136,9 @@
 (make compose {extending right-folding-operation}
   (to (~ f g)                   ;TODO support (to ((~ f g) @arguments)
     (on (@arguments)
-      (f (g @arguments)))))
+      (f (g @arguments))))
+  (to (~)
+    itself))
 
 (to (sum ns)
   (foldl + 0 ns))
