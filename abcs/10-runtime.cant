@@ -912,6 +912,10 @@
   (to (~ a b @arguments)
     (foldl operation (operation a b) arguments)))
 
+(make-trait right-folding-operation operation
+  (to (~ @arguments)
+    (foldr1 operation arguments)))
+
 (make + {extending left-folding-operation}
   (to (~ a b) (a .+ b))
   (to (~) 0)
@@ -960,12 +964,9 @@
 (to (string<-list chars) (__string<-list (as-list chars)))
 (to (array<-list xs)     (__array<-list (as-list xs)))
 
-(make chain
-  (to (~) '())
-  (to (~ xs) xs)
+(make chain {extending right-folding-operation}
   (to (~ xs ys) (xs .chain ys))
-  (to (~ @arguments)
-    (foldr1 (on (xs ys) (xs .chain ys)) arguments)))
+  (to (~) '()))
 
 ;; Using the optional suffix is like (chain (reverse xs) suffix).
 (to (reverse xs @(optional suffix))
