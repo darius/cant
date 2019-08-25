@@ -12,7 +12,7 @@
   peek)
 
 (let ratio-m (use 'ratio))
-(import ratio-m ratio<-)
+(import ratio-m ratio<- ratio?)
 
 (let `(,r+ ,r- ,r* ,r/) (each ratio-m '(+ - * /)))
 (let r-cmp (ratio-m 'compare))
@@ -105,6 +105,24 @@
               (constant<- (fn value)))))
     ))
 
+(to (scale combo scalar)
+  (error "stub: scale"))
+
+(to (combine e1 coeff e2)
+  (error "stub: combine"))
+
+(to (expand combo)
+  (error "stub: expand"))
+
+(to (eliminate-a-variable terms)
+  (error "stub: eliminate-a-variable"))
+
+(to (zeroish? a)
+  (error "stub: zeroish?"))
+
+(to (constant terms)
+  (error "stub: constant"))
+
 (to (constant<- value)
   (combo<- (map<- (~ 'const-term value)))) ;TODO use ssets instead?
 
@@ -115,10 +133,8 @@
   terms)                               ;since we're using exact ratios
 
 (to (varies? terms)
-  (not (terms .maps? const-term)))
+  (not (terms .maps? 'const-term)))
 
 (to (get-constant terms)
   (surely (not (varies? terms)))
-  (terms .get const-term zero))
-
-;; TODO more
+  (terms .get 'const-term zero))
