@@ -13,7 +13,7 @@
     a))
 
  (import a-module f g)
- (display "f and g") (newline)
+ (display "f and g\n")
  (print f)
  (print g)
 )

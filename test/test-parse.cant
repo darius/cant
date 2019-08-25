@@ -42,7 +42,7 @@
 
 (hide
  (to (try grammar sentence)
-   (write sentence) (display ":") (newline)
+   (format "~w:\n" sentence)
    (each! print (grammar .parse sentence))
    (newline))
 
