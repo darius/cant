@@ -47,7 +47,6 @@
     (out .display #\newline)
     (printing xs.rest)))
 
-;; TODO keep out of the props?
 (to (start-playing @(optional command-line-args))
   (import (use 'traceback) on-error-traceback)
 

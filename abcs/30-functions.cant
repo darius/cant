@@ -1,3 +1,7 @@
+;; Misc functions I want to be generally available without needing an import.
+;; Some such functions are defined at an earlier stage in abcs/ because they're
+;; used by other earlier-stage code.
+
 (make gather {extending zipped-list-transducer}
   (to (~ f xs)
     (for foldr ((x xs) (gathered '()))
