@@ -208,6 +208,7 @@
 ;; Experiments
 
 ;: TODO better name 'with'?
+;; Hm, (take x) is just x, so this could also replace 'itself'...
 (make take {extending left-folding-operation}
   (to (~ input f)
     (f input)))
