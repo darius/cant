@@ -51,7 +51,7 @@
                 (hm (when (varies? terms)
                       (eliminate-a-variable terms)
                       (solving inconsistent? #yes pending))
-                    (when (or defaulty? (zeroish? (constant terms)))
+                    (when (or defaulty? (= zero (constant terms)))
                       ;; The equation was either only a default (whose
                       ;; inconsistency is allowed) or it reduced to an
                       ;; uninformative 0=0: drop it.
@@ -116,9 +116,6 @@
 
 (to (eliminate-a-variable terms)
   (error "stub: eliminate-a-variable"))
-
-(to (zeroish? a)
-  (error "stub: zeroish?"))
 
 (to (constant terms)
   (error "stub: constant"))
