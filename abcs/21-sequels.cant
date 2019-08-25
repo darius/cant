@@ -14,7 +14,7 @@
     ;; The parent cont is another raw-k, in slot 1 (except __halt-cont which has no parent).
     (__wrap-cont (me.__raw-k 1)))
   (to (~ .selfie sink)   (sink .display "<cont>")) ;TODO at least give out the tag
-  (to ~.env
+  (to ~.setting
     ;; Commonly this, but needs to be overridden when there's no env.
     ;; When present, it's always in the same slot, mentioned above.
     (me.__raw-k 2))
@@ -64,7 +64,7 @@
   (to ~.first
     (let `(,val) me.__data)
     `(<assert-matched-then> ',val))
-  (to ~.env
+  (to ~.setting
     '())
   (to message
     (__cont-trait me message)))
@@ -80,7 +80,7 @@
   (to ~.first
     (let `(,receiver) me.__data)
     `(call ',receiver ^))
-  (to ~.env
+  (to ~.setting
     '())
   (to message
     (__cont-trait me message)))
@@ -97,7 +97,7 @@
   (to ~.first
     (let `(,tag) me.__data)
     `{,tag ^^^})
-  (to ~.env
+  (to ~.setting
     '())
   (to message
     (__cont-trait me message)))
@@ -133,7 +133,7 @@
 (make-trait __cont-disable-ejector me
   (to ~.first
     '<disable-ejector>)                          ;TODO show more
-  (to ~.env
+  (to ~.setting
     '())
   (to message
     (__cont-trait me message)))
@@ -141,7 +141,7 @@
 (make-trait __cont-call-unwind-thunk me
   (to ~.first
     '<disable-ejector>)                          ;TODO show more
-  (to ~.env
+  (to ~.setting
     '())
   (to message
     (__cont-trait me message)))
@@ -149,7 +149,7 @@
 (make-trait __cont-keep-unwinding me
   (to ~.first
     '<keep-unwinding>)                  ;TODO show more
-  (to ~.env
+  (to ~.setting
     '())
   (to message
     (__cont-trait me message)))
@@ -158,7 +158,7 @@
   (to ~.first
     (let `(,value) me.__data)
     `(<replace-answer> ',value))
-  (to ~.env
+  (to ~.setting
     '())
   (to message
     (__cont-trait me message)))

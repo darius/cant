@@ -20,7 +20,7 @@
       (t top       "up all the way to the original focus")
       (s script    "inspect the script of the focus")
       (d datum     "inspect the datum of the focus")
-      (v value     "evaluate an expression in the focus's env (+ *focus*)")))
+      (v value     "evaluate an expression in the focus's setting (+ *focus*)")))
   (let abbrevs (collect-abbrevs vocab))
 
   (display "Enter ? for help.\n")
@@ -56,9 +56,9 @@
       (be 'datum
         (push (extract-datum focus)))
       (be 'value
-        (let focus-env full-powered-setting) ;XXX
-        (let env (link `(*focus* ,focus) focus-env))
-        (print (cant .play (read) env))
+        (let focus-setting full-powered-setting) ;XXX
+        (let setting (link `(*focus* ,focus) focus-setting))
+        (print (cant .play (read) setting))
         (continue))
       (be (? count?)
         (push (focus input))) ;TODO handle out-of-range
@@ -74,8 +74,8 @@
       (r resume    "continue from here, with the value of an expression")
       (u up        "up to caller")
       (d down      "down to callee")
-      (e env       "enumerate the variables in the current environment")
-      (v value     "evaluate an expression in the current environment")
+      (s setting   "enumerate the variables in the current setting")
+      (v value     "evaluate an expression in the current setting")
       (b backtrace "show all of the stack up from here")))
   (let abbrevs (collect-abbrevs vocab))
 
@@ -87,7 +87,7 @@
       (interacting frame callees))
 
     (to (read-eval)
-      (cant .play (read) frame.env))
+      (cant .play (read) frame.setting))
 
     (display "debug-> ")
     (let input (read))  ; TODO read a line, then parse?
@@ -110,8 +110,8 @@
         (if callees.none?
             (continue "At bottom.\n")
             (interacting callees.first callees.rest)))
-      (be 'env
-        (show-env frame.env)
+      (be 'setting
+        (show-setting frame.setting)
         (continue))
       (be 'value
         (print (read-eval))
@@ -122,7 +122,7 @@
       (else
         (continue "Huh? Enter 'help' for help.\n")))))
 
-(to (show-env env)
-  (print (each ~.first env)))
+(to (show-setting setting)
+  (print (each ~.first setting)))       ;XXX
 
 (export inspect inspect-continuation)
