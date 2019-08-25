@@ -1,10 +1,12 @@
 ;; Format a sequence of strings in columns.
 ;; Based on github.com/darius/columnize
 
-;; Given a list of rows, each a list of strings, return a list of lines.
-;; Each line is the corresponding row joined by `spacer`, with each
-;; column padded to its max width.
-(to (format-table rows @(optional ?spacer ?justify))
+;; Given a list of rows, each a list of things, return a list of lines.
+;; Each line is the corresponding row displayed as strings joined by
+;; `spacer`, with each column padded to its max width.
+;; TODO right-justify numeric columns, or parameterize justification by column
+(to (format-table rows-of-things @(optional ?spacer ?justify))
+  (let rows (each (-> (each string-display it)) rows-of-things))
   (let spacer  (or ?spacer  " "))
   (let justify (or ?justify ('.left-justify .method)))
   (surely (hide (let lengths (each ~.count rows))
@@ -14,6 +16,9 @@
                 (max @(each ~.count column))))
   (for each ((row rows))
     (spacer .join (each justify row widths))))
+
+(to (string-display thing)
+  (string<-writer {.display thing}))
 
 ;; Given a sequence of strings, return a matrix of the same strings in
 ;; column order, trying to fit them in the given width.
