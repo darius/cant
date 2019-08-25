@@ -194,10 +194,10 @@
   (to ~.count       (if me 1 0))
   (to (~ .selfie sink) (sink .display (if me "#yes" "#no")))
   (to (~ .compare a)
-    (hm (and (claim? a))
-        (if (= me a) 0)
-        (if me       1)
-        (else       -1)))
+    (may a
+      (be #no  (if me 1 0))
+      (be #yes (if me 0 -1))
+      (else #no)))
   )
 
 (make-trait procedure-primitive me
@@ -268,7 +268,7 @@
   (to ~.rest        (__cdr me))
   (to ~.count       (__length me))
   (to (~ i)         (__list-ref me i))    ;XXX just use the trait method? then can e.g. mix lazy and eager list nodes
-  (to (~ .chain a)  (__append me a))
+  (to (~ .chain a)  (__append me a)) ;TODO fall back to list-trait if a is not a list
   (to (~ .selfie sink)
     (may me
       (be `(quote ,x)
