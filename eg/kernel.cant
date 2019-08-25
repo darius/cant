@@ -86,9 +86,9 @@
 (to (setting-extend parent-r vars)
   (let values (array<-count vars.count *uninitialized*))
   (make setting
-    (to (~ key)
-      (may (vars .find key #no)
-        (be #no (parent-r key))
+    (to (~ var)
+      (may (vars .find var #no)
+        (be #no (parent-r var))
         (be i   (values i))))
     (to (~ .bind var value)
       (let i (vars .find var))
