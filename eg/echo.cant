@@ -13,7 +13,7 @@
 (to (run)
   (let strokes (flexarray<-))
   (begin running ()
-    (let echoes (fill (" " .join strokes) screen-width))
+    (let echoes (fill (" " .join strokes.values) screen-width))
     (render ["Hit some keys; or hit capital Q to quit.\n\n"
              echoes cursor])
     (let key (get-key))
