@@ -1,5 +1,6 @@
 ;; A UI for cryptogram puzzles.
 ;; Ported from github.com/darius/sturm.
+;; (Hit control-X to quit.)
 
 (import (use 'sturm)
   cbreak-mode get-key render
