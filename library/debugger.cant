@@ -112,7 +112,7 @@
             (continue "At bottom.\n")
             (interacting callees.first callees.rest)))
       (be 'setting
-        (print frame.setting.variables)
+        (print frame.setting.non-global-variables)
         (continue))
       (be 'value
         (print (read-eval))

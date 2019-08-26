@@ -685,10 +685,13 @@
     ;; TODO what's the answer for a not-yet-resolved variable?
     (or (yeah? (assoc variable (__setting-a-list setting)))
         (global-defined? variable)))
-  (to ~.variables
+  (to ~.non-global-variables
     ;; TODO a .really-all-the-variables including the globals
     (each ~.first (__setting-a-list setting)))
-  )
+  (to (~ .selfie sink)
+    (sink .display "#<setting ")
+    (sink .write setting.non-global-variables)
+    (sink .display ">")))
 
 (to (yeah? x)
   (not (not x)))
@@ -832,7 +835,7 @@
             (!map .set! key value)
             value)
           (to (~ .selfie sink)
-            (sink .display "#<map (")   ;TODO rename !map
+            (sink .display "#<!map (")
             (sink .write count.^)
             (sink .display ")>"))
           ))
