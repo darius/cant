@@ -1,13 +1,6 @@
 #! /usr/bin/scheme --program
 #!chezscheme
 (import (chezscheme)
-  (player util)
-  (player macros)
-  (player read)
-  (player parse)
-  (player env)
-  (player elaborate)
-  (player primitives)
   (player player))
 
 ;; The Cant interpreter and global environment.
