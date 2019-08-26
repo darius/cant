@@ -426,7 +426,7 @@
     (be {catch e}
       (sev e r {catch-frame k}))
     (be {define defs e}
-      (sev e {recursive-env (map<-defs defs) r} k))
+      (sev e {recursive-env (map<-parsed-defs defs) r} k))
     ))
 
 (to (go kk value)
@@ -712,12 +712,12 @@
 (let builtins-env {local-env builtins-map {empty-env}})
 
 (to (module-env<- module @(optional env))
-  {recursive-env (map<-defs module) (or env global-env)})
+  {recursive-env (map<-parsed-defs module) (or env global-env)})
 
-(to (map<-defs defs)
-  (map<-items (for each ((def defs))
-                (may def
-                  (be {to name _ _} (~ name def))))))
+(to (map<-parsed-defs defs)
+  ;; Associate each def with its name.
+  (map<-items (zip (each (~ .part 0) defs)
+                   defs)))
 
 ;; Add the prelude to the global environment.
 (let global-env
