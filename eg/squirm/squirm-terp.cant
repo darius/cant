@@ -715,9 +715,7 @@
   {recursive-env (map<-parsed-defs module) (or env global-env)})
 
 (to (map<-parsed-defs defs)
-  ;; Associate each def with its name.
-  (map<-items (zip (each (~ .part 0) defs)
-                   defs)))
+  (map<-values (~ .part 0) defs)) ; From each def's name to the def itself.
 
 ;; Add the prelude to the global environment.
 (let global-env
