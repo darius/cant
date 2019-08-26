@@ -101,6 +101,7 @@
   (bf-interpret text)
   (let code (bf-compile text))
 ;;  (print code)
+  ;; TODO unpowered setting, and pass in our read-1 function.
   ((cant .play code full-powered-setting))
   )
 
