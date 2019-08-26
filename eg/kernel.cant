@@ -18,9 +18,9 @@
         (be '()
           (trait actor message))
         (be `((,pattern ,pat-vars ,body-vars ,body) ,@rest)
-          (let pat-r (setting-extend parent-r pat-vars))
+          (let pat-r (parent-r .extend-promises pat-vars))
           (if (match message pattern pat-r)
-              (play body (setting-extend pat-r body-vars))
+              (play body (pat-r .extend-promises body-vars))
               (matching rest)))))))
 
 (to (play e r)
@@ -55,7 +55,7 @@
     (be {any-pat}
       #yes)
     (be {variable-pat name}
-      (r .bind name subject)
+      (r .resolve! name subject)
       #yes)
     (be {constant-pat value}
       (= subject value))
@@ -79,37 +79,4 @@
                  (match-all values.rest  pats.rest  r)))))
 
 
-;; Settings
-;; TODO use built-in Cant settings
-
-(make *uninitialized*)
-
-(to (setting-extend parent-r vars)
-  (let values (array<-count vars.count *uninitialized*))
-  (make setting
-    (to (~ var)
-      (may (vars .find var #no)
-        (be #no (parent-r var))
-        (be i   (values i))))
-    (to (~ .bind var value)
-      (let i (vars .find var))
-      (unless (= (values i) *uninitialized*)
-        (error "Re-binding" var))
-      (values .set! i value))))
-
-(to (setting<-map parent map)
-  (make setting
-    (to (~ var)
-      (take var (if (map .maps? var) map parent)))
-    (to (~ .bind var value)
-      (error "Tried to change immutable setting" var))))
-
-;; TODO parameterize, interpose appropriate definitions for 'cant', 'use', 'load', ...
-(make global-setting
-  (to (~ (? symbol? var))
-    (cant .play var full-powered-setting))             ;oof, expensive
-  (to (~ .bind var val)
-    (cant .play `(let ,var ',val) full-powered-setting)))
-
-
-(export play setting<-map setting-extend global-setting)
+(export play match)

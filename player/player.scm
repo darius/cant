@@ -398,9 +398,16 @@
 (define setting-lookup-prim
   (cps-prim<- #f '__setting-lookup
               (lambda (datum arguments k)
-                (cps-unpack arguments k 2 '__evaluate
-                            (lambda (setting variable)
-                              (env-lookup setting variable k))))))
+                (cps-unpack arguments k 2 '__setting-lookup
+                            (lambda (r variable)
+                              (env-lookup r variable k))))))
+
+(define setting-resolve!-prim
+  (cps-prim<- #f '__setting-resolve!
+              (lambda (datum arguments k)
+                (cps-unpack arguments k 3 '__setting-resolve!
+                            (lambda (r variable value)
+                              (env-resolve! r variable value k))))))
 
 (define evaluate-prim
   (cps-prim<- #f 'evaluate
@@ -775,6 +782,8 @@
     (__setting<- ,make-setting)
     (__setting-a-list ,setting-a-list)
     (__setting-lookup ,setting-lookup-prim)
+    (__setting-extend-promises ,env-extend-promises)
+    (__setting-resolve! ,setting-resolve!-prim)
     (__mapi-items ,mapi-items)
     (__mapi-get ,prim-mapi-get)
     (__place ,hashmap-place)
