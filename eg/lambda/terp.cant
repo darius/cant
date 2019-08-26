@@ -22,6 +22,7 @@
 
 
 ;; Environments
+;; TODO use Cant settings instead?
 
 (to (lookup r v)
   (may r
@@ -37,13 +38,14 @@
 
 ;; Main
 
-(to (main argv)
-  (for each! ((filename argv.rest))
+(to (main args)
+  (for each! ((filename args.rest))
     (format "\n~d:\n" filename)
     (print (run filename))))
 
 (to (run filename)
   (let es (with-input-file read-all filename))
   (terp `(do ,@es)))
+
 
 (export run terp prelude-env)
