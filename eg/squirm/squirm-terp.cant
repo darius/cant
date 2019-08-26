@@ -586,7 +586,7 @@
           (env-get parent name)))
     (be {recursive-env map parent}
       (may (map .get name)
-        (be #no
+        (be #no ; (In this frame all of the values are {to ...} terms, never #no.)
           (env-get parent name))
         (be {to f params body}
           {closure r params body})))
