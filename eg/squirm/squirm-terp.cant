@@ -577,6 +577,8 @@
 
 
 ;; Environments
+;; We don't use Cant's built-in settings type because we want to
+;; implement recursion in a different, pure-functional way.
 
 (to (env-get r name)
   (may r
