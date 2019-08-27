@@ -10,6 +10,12 @@
   ;; ...
   )
 
+(to (sorted? xs)
+  (or xs.none?
+      xs.rest.none?
+      (and (<= xs.first xs.rest.first)
+           (sorted? xs.rest))))
+
 (to (sort-by key<- sequence)
 
   (to (merge-sort seq)
@@ -32,4 +38,4 @@
   (merge-sort sequence))
 
 (export
-  sort sort-by)
+  sort sort-by sorted?)

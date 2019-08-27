@@ -1,5 +1,7 @@
 ;; (Use run.cant to run this.)
 
+(import (use 'sort)
+  sorted?)
 (import (use 'queue)
   empty empty?                          ;TODO too-generic names
   push extend
@@ -97,7 +99,7 @@
   (to (maybe-attack p)
     (let enemy (enemy<- (area p)))
     (may (for those ((q (neighbors<- p)))
-          (= enemy (area q)))
+           (= enemy (area q)))
       (be '() #no)
       (be targets
         (let target
@@ -157,12 +159,6 @@
                       (exploring (extend queue-1 (expand trail)))))
               (exploring (extend queue-1 (expand trail))))))))
 
-  (to (sorted? xs)                      ;TODO extract to lib
-    (or xs.none?
-        xs.rest.none?
-        (and (<= xs.first xs.rest.first)
-             (sorted? xs.rest))))
-  
   (to (show)
     (let notes (flexarray<-))
     (for each! (((~ p ch) area.items))
@@ -196,15 +192,14 @@
     (newline)
     (format "Trying attack power ~w\n" power)
     (let field (field<- input power))
-    (may (battle-sans-elf-casualties field power)
-      (be #no (trying power.+))
-      (be outcome outcome))))
+    (or (battle-sans-elf-casualties field power)
+        (trying power.+))))
 
 (to (battle-sans-elf-casualties field power)
-  (let n-elves (field.census .get #\E))
+  (let n-elves (field.census #\E))
   (begin battling ((t 0))
     (show t field)
-    (hm (unless (= n-elves (field.census .get #\E))
+    (hm (unless (= n-elves (field.census #\E))
           (format "Elf casualties, aborting the battle\n\n")
           #no)
         (when field.do-round!

@@ -71,7 +71,7 @@
   (let point (box<- 0))                ; Index in `code` of the cursor
 
   (let lines (each clean cryptogram.uppercase.split-lines))
-  (let line-starts
+  (let line-starts                ; Set of positions that start a line
     (~.range (running-sum (for each ((line lines))
                             (tally-by ~.letter? line)))))
 
