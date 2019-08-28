@@ -156,7 +156,7 @@
           (r .push! #\space))
         (else
           (r .push! ch))))
-  (string<-list r.values))
+  r.values)
 
 (to (running-sum numbers)
   (let sums (flexarray<- 0))
