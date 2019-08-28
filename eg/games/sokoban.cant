@@ -112,8 +112,7 @@ Level ~w ~d Move ~w")
       (not (spots .find? #\o)))
 
     (to ~.unparse
-      ((" " .join (each string<- spots.values))
-       .replace "\n " "\n"))
+      (chain " " (" " .join (each string<- spots.values))))
 
     ;; Try to move the player in the direction.
     (to (~ .move dir)
