@@ -105,8 +105,10 @@
         (else (global-lookup v k))))
 
 (define (env-extend-promises r vs)
-  (append (map (lambda (var) (list var uninitialized)) vs)
-          r))
+  (let consing ((vs vs) (r r))
+    (if (null? vs)
+        r
+        (consing (cdr vs) (cons (list (car vs) uninitialized) r)))))
 
 (define (env-resolve! r v value k)
   (cond ((assq v r) => (lambda (pair)
