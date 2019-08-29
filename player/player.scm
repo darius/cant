@@ -100,7 +100,7 @@
         (answer k value))))
 
 (define (env-lookup r v k)
-  (define (succeed pair) (answer k (cadr pair)))
+  (define (succeed pair) (answer k (cdr pair)))
   (cond ((assq v r) => succeed)
         (else (global-lookup v k))))
 
@@ -108,13 +108,13 @@
   (let consing ((vs vs) (r r))
     (if (null? vs)
         r
-        (consing (cdr vs) (cons (list (car vs) uninitialized) r)))))
+        (consing (cdr vs) (cons (cons (car vs) uninitialized) r)))))
 
 (define (env-resolve! r v value k)
   (cond ((assq v r) => (lambda (pair)
-                         (if (not (eq? (cadr pair) uninitialized))
+                         (if (not (eq? (cdr pair) uninitialized))
                              (signal k "Multiple definition" v)
-                             (begin (set-car! (cdr pair) value)
+                             (begin (set-cdr! pair value)
                                     (answer k #t)))))
         ((null? r)
          (really-global-define! v value)
