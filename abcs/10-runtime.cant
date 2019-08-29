@@ -683,8 +683,7 @@
                                             variables)))
   (to (~ .binds? variable)
     ;; TODO what's the answer for a not-yet-resolved variable?
-    (or (yeah? (assoc variable (__setting-a-list setting)))
-        (global-defined? variable)))
+    (__setting-binds? setting variable))
   (to ~.non-global-variables
     ;; TODO a .really-all-the-variables including the globals
     (each ~.first (__setting-a-list setting)))

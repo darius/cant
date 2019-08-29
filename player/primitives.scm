@@ -4,7 +4,6 @@
         maybe-macroexpand-expr maybe-macroexpand-patt prim-halp-log
         prim-nano-now prim-nanosleep prim-*/mod prim-string-maps? 
         prim-substring prim-vector-maps? prim-read-all prim-display
-        setting? make-setting setting-a-list
         mapi? mapi-items prim-mapi<-items prim-mapi-get
         )
 (import (chezscheme) (player util) (player parse))
@@ -79,12 +78,6 @@
        (cond ((string<? x y) -1)
              ((string=? x y)  0)
              (else            +1))))
-
-
-;; Wrapper for settings
-;; The representation will change soon
-
-(define-record-type setting (fields a-list))
 
 
 ;; Immutable maps: placeholder implementation
