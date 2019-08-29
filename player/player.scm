@@ -93,10 +93,6 @@
 
 ;; Environments
 
-(define (global-define! v value k)
-  (really-global-define! v value)
-  (answer k #t))
-
 (define (global-lookup v k)
   (let ((value (really-global-lookup v)))
     (if (eq? value missing)
@@ -126,7 +122,8 @@
                              (begin (set-car! (cdr pair) value)
                                     (answer k #t)))))
         ((null? r)
-         (global-define! v value k))
+         (really-global-define! v value)
+         (answer k #t))
         (else (signal k "Tried to bind in a non-environment" r v))))
 
 (define uninitialized
