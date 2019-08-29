@@ -9,7 +9,6 @@
         e-do
         e-let
         e-call
-        e-global
         p-constant
         p-any
         p-variable
@@ -41,8 +40,7 @@
   e-make
   e-do
   e-let
-  e-call
-  e-global)  ;; specialized from e-variable
+  e-call)
 
 (define-enum
   p-constant

@@ -22,9 +22,7 @@
        (let ((addr (scope-find s name)))
          (unless addr
            (printf "Warning: unbound variable: ~s\n" name)) ;TODO don't repeat the same warning
-         (mcase addr
-           (('global _) (pack<- e-global name))
-           (__ e)))))
+         e)))
    (lambda (e s)                        ;e-term
      (unpack e (tag args)
        (pack<- e-term tag (elaborate-es args s))))

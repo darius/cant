@@ -467,9 +467,6 @@
    (lambda (e r k)                          ;e-call
      (unpack e (e1 e2)
        (ev-exp e1 r (cont<- k-ev-arg k r e2))))
-   (lambda (e r k)                          ;e-global
-     (unpack e (var)
-       (global-lookup var k)))
    ))
 
 (define (ev-args es r vals k)

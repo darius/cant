@@ -22,4 +22,4 @@
 
 (to (load-module filename @(optional context))
   (let exp `(hide ,@(with-input-file read-all filename)))
-  (cant .play exp computational-setting context)) ;TODO some modules use full-powered, currently
+  (cant .play exp full-powered-setting context)) ;TODO reduce to computational-setting
