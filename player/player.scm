@@ -99,21 +99,14 @@
         (signal k "Unbound variable" v)
         (answer k value))))
 
-(define (env-defined? r v)
-  (define (succeed pair) #t)  ;XXX or (not (eq? (cadr pair) uninitialized)))
-  (cond ((assq v r) => succeed)
-        (else (global-defined? v))))
-
 (define (env-lookup r v k)
   (define (succeed pair) (answer k (cadr pair)))
   (cond ((assq v r) => succeed)
         (else (global-lookup v k))))
 
-(define (env-extend r vs values)
-  (append (map list vs values) r))
-
 (define (env-extend-promises r vs)
-  (env-extend r vs (map (lambda (_) uninitialized) vs)))
+  (append (map (lambda (var) (list var uninitialized)) vs)
+          r))
 
 (define (env-resolve! r v value k)
   (cond ((assq v r) => (lambda (pair)
