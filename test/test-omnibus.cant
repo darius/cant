@@ -1,0 +1,14 @@
+;; Another bunch of examples
+
+(to (loud-use filename)
+  (newline)
+  (display "-------- ")
+  (display filename)
+  (display " --------")
+  (newline)
+  (use filename))
+
+(loud-use "test/test-lambda")
+(loud-use "test/test-euler")
+(loud-use "test/test-nqueens")
+(loud-use "test/test-squirm")
