@@ -1,10 +1,22 @@
 (library (player elaborate)
-(export elaborate-e elaborate-p
-        outer-scope<-
-        )
+(export elaborate)
 (import (chezscheme) (player util) (player macros) (player parse) (player env))
 
 ;; Analyze and transform a parsed AST.
+
+(define (elaborate e setting)
+  ;; XXX Here we just jam the vars-defined of e together
+  ;; with r's variables. This is adequate for warning about
+  ;; unbound variables in e, which is all we're currently
+  ;; using this scope for, but it won't be adequate when we
+  ;; compile to lexical addresses, etc.:
+  (let* ((vars (append (exp-vars-defined e)
+                       (env-variables setting)))
+         (e-e (elaborate-e e (outer-scope<- vars))))
+    (list e-e setting)))
+
+(define (env-variables r)
+  (map car r))
 
 (define (elaborate-e e s)
   ((vector-ref methods/elaborate-e (pack-tag e))

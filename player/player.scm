@@ -124,9 +124,6 @@
 (define uninitialized
   (object<- (script<- '<uninitialized> #f '()) '*uninitialized*))
 
-(define (env-variables r)
-  (map car r))
-
 
 ;; Objects, calling, and answering
 
@@ -416,20 +413,13 @@
   ;; An inherently incomplete sanity check, not a real security barrier:
   (unless (seems-to-be-a-raw-repr? e methods/ev-exp)
     (error 'evaluate-exp "You need to parse it first" e))
-  
   (unless (setting? setting)
     (error 'evaluate-exp "Wrong type: expected a setting" setting))
   (let ((r (setting-a-list setting)))
-
-    ;; XXX Here we just jam the vars-defined of e together
-    ;; with r's variables. This is adequate for warning about
-    ;; unbound variables in e, which is all we're currently
-    ;; using this scope for, but it won't be adequate when we
-    ;; compile to lexical addresses, etc.:
-    (let* ((vars (append (exp-vars-defined e)
-                         (env-variables r)))
-           (elaborated (elaborate-e e (outer-scope<- vars))))
-      (ev-exp elaborated r k))))
+    (let* ((elaboration (elaborate e r))
+           (elaborated-e (car elaboration))
+           (maybe-extended-r (cadr elaboration)))
+      (ev-exp elaborated-e maybe-extended-r k))))
 
 (define (ev-exp e r k)
 ;;  (dbg `(ev-exp ,(pack-tag e))) ; ,e))
