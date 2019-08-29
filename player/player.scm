@@ -8,6 +8,7 @@
   (player parse)
   (player env)
   (player setting)
+  (player thing)
   (player elaborate)
   (player primitives)
   )
@@ -39,12 +40,6 @@
 
 
 ;; Bootstrap prereqs
-
-(define-record-type object (fields script datum))   ; Nonprimitive objects, that is.
-(define object<- make-object)
-
-(define-record-type script (fields name trait clauses))
-(define script<- make-script)
 
 ;; These integer tags k-foo correspond to procedures named cont-foo.
 (define-enum
@@ -121,9 +116,6 @@
          (really-global-define! v value)
          (answer k #t))
         (else (signal k "Tried to bind in a non-environment" r v))))
-
-(define uninitialized
-  (object<- (script<- '<uninitialized> #f '()) '*uninitialized*))
 
 
 ;; Objects, calling, and answering
@@ -416,11 +408,10 @@
     (error 'evaluate-exp "You need to parse it first" e))
   (unless (setting? setting)
     (error 'evaluate-exp "Wrong type: expected a setting" setting))
-  (let ((r (setting-a-list setting)))
-    (let* ((elaboration (elaborate e r))
-           (elaborated-e (car elaboration))
-           (maybe-extended-r (cadr elaboration)))
-      (ev-exp elaborated-e maybe-extended-r k))))
+  (let* ((elaboration (elaborate e setting))
+         (elaborated-e (car elaboration))
+         (maybe-extended-setting (cadr elaboration)))
+    (ev-exp elaborated-e (setting-a-list maybe-extended-setting) k)))
 
 (define (ev-exp e r k)
 ;;  (dbg `(ev-exp ,(pack-tag e))) ; ,e))

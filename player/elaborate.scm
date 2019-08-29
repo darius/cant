@@ -6,18 +6,15 @@
 ;; Analyze and transform a parsed AST.
 
 (define (elaborate e setting)
-  ;; XXX Here we just jam the vars-defined of e together
-  ;; with r's variables. This is adequate for warning about
-  ;; unbound variables in e, which is all we're currently
-  ;; using this scope for, but it won't be adequate when we
-  ;; compile to lexical addresses, etc.:
-  (let* ((vars (append (exp-vars-defined e)
-                       (env-variables setting)))
-         (e-e (elaborate-e e (outer-scope<- vars))))
-    (list e-e setting)))
+  (let* ((defined (exp-vars-defined e))
+         (scope (if (or (null? defined) (mutable-setting? setting))
+                    (make-scope defined setting)
+                    (make-scope '() (setting-extend-promises setting defined))))
+         (e-e (elaborate-e e scope)))
+    (list e-e (scope-setting scope))))
 
-(define (env-variables r)
-  (map car r))
+(define (mutable-setting? setting)
+  (null? (setting-a-list setting)))
 
 (define (elaborate-e e s)
   ((vector-ref methods/elaborate-e (pack-tag e))
@@ -26,16 +23,17 @@
 (define (elaborate-es es s)
   (map (lambda (e) (elaborate-e e s)) es))
 
+;; TODO none of this rewriting actually changes anything right now
+
 (define methods/elaborate-e
   (vector
    (lambda (e s)                        ;e-constant
      e)
    (lambda (e s)                        ;e-variable
      (unpack e (name)
-       (let ((addr (scope-find s name)))
-         (unless addr
-           (printf "Warning: unbound variable: ~s\n" name)) ;TODO don't repeat the same warning
-         e)))
+       (unless (scope-find? s name)
+         (printf "Warning: unbound variable: ~s\n" name)) ;TODO don't repeat the same warning
+       e))
    (lambda (e s)                        ;e-term
      (unpack e (tag args)
        (pack<- e-term tag (elaborate-es args s))))
@@ -104,29 +102,14 @@
        (pack<- p-view (elaborate-e e1 s)
                       (elaborate-p p1 s))))))
 
-(define-record-type scope (fields outer inner))
-(define (outer-scope<- vars)
-  (make-scope vars '()))
+(define-record-type scope (fields vars setting))
 
-(define (scope-find scope v)
-  (let walking ((f 0) (frames (scope-inner scope)))
-    (cond ((null? frames)
-           (cond ((frame-index (scope-outer scope) v)
-                  => (lambda (i) `(outer ,i)))
-                 ((global-defined? v) `(global ,v))
-                 (else #f)))
-          ((frame-index (car frames) v)
-           => (lambda (i) `(inner ,f ,i)))
-          (else (walking (+ f 1) (cdr frames))))))
-
-(define (frame-index vars v)
-  (let scanning ((i 0) (vars vars))
-    (cond ((null? vars) #f)
-          ((eq? (car vars) v) i)
-          (else (scanning (+ i 1) (cdr vars))))))
+(define (scope-find? scope v)
+  (or (not (not (memq v (scope-vars scope))))
+      (setting-binds? (scope-setting scope) v)))
 
 (define (scope-extend scope vars)
-  (make-scope (scope-outer scope)
-              (cons vars (scope-inner scope))))
+  (make-scope (append vars (scope-vars scope))
+              (scope-setting scope)))
 
 )
