@@ -635,8 +635,11 @@
 (define map-script       '*forward-ref*)
 (define setting-script   '*forward-ref*)
 
+;; TODO invoking these primitive scripts always goes through a failing
+;;  matching loop against the '() clauses before delegating to the
+;;  (get-prim name) trait. Just delegate immediately.
 (define (get-script name)
-  (script<- name (get-prim name) primitive-env))
+  (script<- name (get-prim name) '()))
 
 (define mask32 (- (expt 2 32) 1))
 
