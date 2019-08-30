@@ -15,9 +15,10 @@
 
 (define setting/missing (list '*missing*))
 
-(define (setting-lookup r variable)     ;r is the a-list of a setting, for now
-  (cond ((assq variable r) => cdr)
-        (else (global-lookup variable))))
+(define (setting-lookup setting variable)
+  (let ((r (setting-a-list setting)))
+    (cond ((assq variable r) => cdr)
+          (else (global-lookup variable)))))
 
 (define (global-lookup v)
   (let ((value (really-global-lookup v)))
@@ -25,7 +26,7 @@
         setting/missing
         value)))
 
-(define (setting-extend-promises r vs) ;r is the a-list of a setting, for now
+(define (setting-extend-promises r vs)
 ;;  (let consing ((vs vs) (r (setting-a-list setting)))
   (let consing ((vs vs) (r r))
     (if (null? vs)
@@ -33,16 +34,17 @@
         (consing (cdr vs) (cons (cons (car vs) uninitialized) r)))))
 
 ;; Return #f on success, else a complaint.
-(define (setting-resolve! r name value) ;r is the a-list of a setting, for now
-  (cond ((assq name r)
-         => (lambda (pair)
-              (if (eq? (cdr pair) uninitialized)
-                  (begin (set-cdr! pair value) #f)
-                  "Multiple definition")))
-        ((null? r)
-         (really-global-define! name value)
-         #f)
-        (else "Tried to bind in a non-environment")))
+(define (setting-resolve! setting name value)
+  (let ((r (setting-a-list setting)))
+    (cond ((assq name r)
+           => (lambda (pair)
+                (if (eq? (cdr pair) uninitialized)
+                    (begin (set-cdr! pair value) #f)
+                    "Multiple definition")))
+          ((null? r)
+           (really-global-define! name value)
+           #f)
+          (else "Tried to bind in a non-environment"))))
 
 (define (mutable-setting? setting)
   (null? (setting-a-list setting)))

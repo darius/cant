@@ -391,7 +391,7 @@
        (answer k value)))
    (lambda (e r k)                          ;e-variable
      (unpack e (var)
-       (let ((value (setting-lookup r var)))
+       (let ((value (setting-lookup (make-setting r) var)))
          (if (eq? value setting/missing)
              (signal k "Unbound variable" var)
              (answer k value)))))
@@ -440,7 +440,7 @@
      (answer k #t))
    (lambda (subject p r k)              ;p-variable
      (unpack p (name)
-       (cond ((setting-resolve! r name subject)
+       (cond ((setting-resolve! (make-setting r) name subject)
               => (lambda (plaint)
                    (signal k plaint name)))
              (else (answer k #t)))))
@@ -637,8 +637,8 @@
 
 (define mask32 (- (expt 2 32) 1))
 
-(define (prim-setting-lookup a-list variable)
-  (let ((value (setting-lookup a-list variable)))
+(define (prim-setting-lookup setting variable)
+  (let ((value (setting-lookup setting variable)))
     (if (eq? value setting/missing)
         (error 'setting-lookup "Unbound variable" variable)
         value)))

@@ -672,9 +672,9 @@
 ;; XXX especially temporary defs
 (make-trait setting-primitive setting
   (to (~ variable)                      ;TODO different name?
-    (__setting-lookup (__setting-a-list setting) variable))
+    (__setting-lookup setting variable))
   (to (~ .resolve! variable value)
-    (__setting-resolve! (__setting-a-list setting) variable value))
+    (__setting-resolve! setting variable value))
   (to (~ .extend variables values)
     (__setting<- (chain (each list<- variables values)
                         (__setting-a-list setting))))
