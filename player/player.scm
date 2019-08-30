@@ -89,17 +89,6 @@
 
 ;; Environments
 
-(define (global-lookup v k)
-  (let ((value (really-global-lookup v)))
-    (if (eq? value missing)
-        (signal k "Unbound variable" v)
-        (answer k value))))
-
-(define (env-lookup r v k)
-  (define (succeed pair) (answer k (cdr pair)))
-  (cond ((assq v r) => succeed)
-        (else (global-lookup v k))))
-
 (define (env-extend-promises r vs)
   (let consing ((vs vs) (r r))
     (if (null? vs)
@@ -377,13 +366,6 @@
 
 ;; A small-step interpreter
 
-(define setting-lookup-prim
-  (cps-prim<- #f '__setting-lookup
-              (lambda (datum arguments k)
-                (cps-unpack arguments k 2 '__setting-lookup
-                            (lambda (r variable)
-                              (env-lookup r variable k))))))
-
 (define setting-resolve!-prim
   (cps-prim<- #f '__setting-resolve!
               (lambda (datum arguments k)
@@ -425,7 +407,10 @@
        (answer k value)))
    (lambda (e r k)                          ;e-variable
      (unpack e (var)
-       (env-lookup r var k)))
+       (let ((value (setting-lookup r var)))
+         (if (eq? value setting/missing)
+             (signal k "Unbound variable" var)
+             (answer k value)))))
    (lambda (e r k)                          ;e-term
      (unpack e (tag es)
        (ev-args es r '()
@@ -665,6 +650,12 @@
 
 (define mask32 (- (expt 2 32) 1))
 
+(define (prim-setting-lookup a-list variable)
+  (let ((value (setting-lookup a-list variable)))
+    (if (eq? value setting/missing)
+        (error 'setting-lookup "Unbound variable" variable)
+        value)))
+
 (for-each (lambda (pair)
             (let ((key (car pair)) (value (cadr pair)))
               (global-init! key value)))
@@ -752,7 +743,7 @@
     ;; Primitives only -- TODO seclude in their own env:
     (__setting<- ,make-setting)
     (__setting-a-list ,setting-a-list)
-    (__setting-lookup ,setting-lookup-prim)
+    (__setting-lookup ,prim-setting-lookup)
     (__setting-extend-promises ,env-extend-promises)
     (__setting-resolve! ,setting-resolve!-prim)
     (__setting-binds? ,setting-binds?)
