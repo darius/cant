@@ -6,6 +6,7 @@
         setting-lookup global-lookup
         setting-extend-promises setting-resolve!
         setting-extend
+        setting-inner-variables
         )
 (import (chezscheme) (player thing) (player env))
 
@@ -58,5 +59,9 @@
 (define (setting-binds? setting variable)
   (or (assq variable (setting-a-list setting))
       (global-defined? variable)))
+
+(define (setting-inner-variables setting)
+  ;; TODO dedupe
+  (map car (setting-a-list setting)))
 
 )

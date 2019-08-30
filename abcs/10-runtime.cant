@@ -685,7 +685,7 @@
     (__setting-binds? setting variable))
   (to ~.inner-variables
     ;; TODO a .really-all-the-variables including the globals
-    (each ~.first (__setting-a-list setting)))
+    (__setting-inner-variables setting))
   (to (~ .selfie sink)
     (sink .display "#<setting ")
     (sink .write setting.inner-variables)

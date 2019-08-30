@@ -737,6 +737,7 @@
     (__setting-resolve! ,setting-resolve!-prim)
     (__setting-binds? ,setting-binds?)
     (__setting-extend ,setting-extend)
+    (__setting-inner-variables ,setting-inner-variables)
     (__mapi-items ,mapi-items)
     (__mapi-get ,prim-mapi-get)
     (__place ,hashmap-place)
