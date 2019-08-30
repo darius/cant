@@ -736,6 +736,7 @@
     (__setting-extend-promises ,setting-extend-promises)
     (__setting-resolve! ,setting-resolve!-prim)
     (__setting-binds? ,setting-binds?)
+    (__setting-extend ,setting-extend)
     (__mapi-items ,mapi-items)
     (__mapi-get ,prim-mapi-get)
     (__place ,hashmap-place)

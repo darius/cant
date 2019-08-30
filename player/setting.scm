@@ -5,6 +5,7 @@
         setting/missing
         setting-lookup global-lookup
         setting-extend-promises setting-resolve!
+        setting-extend
         )
 (import (chezscheme) (player thing) (player env))
 
@@ -14,6 +15,11 @@
 (define-record-type setting (fields a-list))
 
 (define setting/missing (list '*missing*))
+
+(define (setting-extend variables values setting)
+  (make-setting
+   (append (map cons variables values)
+           (setting-a-list setting))))
 
 (define (setting-lookup setting variable)
   (let ((r (setting-a-list setting)))
