@@ -68,7 +68,6 @@
 ;; scaffolding XXX
 
 (define globals (make-eq-hashtable))
-(define missing (list '*missing*))
 
 (define (global-defined? v)
   ;;XXX or (not (eq? value uninitialized))
