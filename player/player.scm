@@ -6,7 +6,6 @@
   (player macros)
   (player read)
   (player parse)
-  (player env)
   (player setting)
   (player thing)
   (player elaborate)

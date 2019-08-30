@@ -3,7 +3,7 @@
         script? script<- script-name script-trait script-clauses
         uninitialized
         )
-(import (chezscheme) (player util) (player env))
+(import (chezscheme) (player util))
 
 ;; Basic data model
 
