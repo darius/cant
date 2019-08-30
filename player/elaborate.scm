@@ -13,9 +13,6 @@
          (e-e (elaborate-e e scope)))
     (list e-e (scope-setting scope))))
 
-(define (mutable-setting? setting)
-  (null? (setting-a-list setting)))
-
 (define (elaborate-e e s)
   ((vector-ref methods/elaborate-e (pack-tag e))
    e s))

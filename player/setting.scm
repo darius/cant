@@ -1,6 +1,7 @@
 (library (player setting)
 (export setting? make-setting setting-a-list
         setting-binds? setting-extend-promises
+        mutable-setting?
         )
 (import (chezscheme) (player thing) (player env))
 
@@ -8,6 +9,9 @@
 ;; The representation will change soon
 
 (define-record-type setting (fields a-list))
+
+(define (mutable-setting? setting)
+  (null? (setting-a-list setting)))
 
 (define (setting-binds? setting variable)
   (or (assq variable (setting-a-list setting))
