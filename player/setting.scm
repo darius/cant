@@ -4,6 +4,7 @@
         mutable-setting?
         setting/missing
         setting-lookup global-lookup
+        setting-resolve!
         )
 (import (chezscheme) (player thing) (player env))
 
@@ -23,6 +24,18 @@
     (if (eq? value missing)
         setting/missing
         value)))
+
+;; Return #f on success, else a complaint.
+(define (setting-resolve! r name value) ;r is the a-list of a setting, for now
+  (cond ((assq name r)
+         => (lambda (pair)
+              (if (eq? (cdr pair) uninitialized)
+                  (begin (set-cdr! pair value) #f)
+                  "Multiple definition")))
+        ((null? r)
+         (really-global-define! name value)
+         #f)
+        (else "Tried to bind in a non-environment")))
 
 (define (mutable-setting? setting)
   (null? (setting-a-list setting)))

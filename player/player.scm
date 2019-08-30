@@ -95,17 +95,6 @@
         r
         (consing (cdr vs) (cons (cons (car vs) uninitialized) r)))))
 
-(define (env-resolve! r v value k)
-  (cond ((assq v r) => (lambda (pair)
-                         (if (not (eq? (cdr pair) uninitialized))
-                             (signal k "Multiple definition" v)
-                             (begin (set-cdr! pair value)
-                                    (answer k #t)))))
-        ((null? r)
-         (really-global-define! v value)
-         (answer k #t))
-        (else (signal k "Tried to bind in a non-environment" r v))))
-
 
 ;; Objects, calling, and answering
 
@@ -366,12 +355,16 @@
 
 ;; A small-step interpreter
 
+;; TODO needn't be cps really
 (define setting-resolve!-prim
   (cps-prim<- #f '__setting-resolve!
               (lambda (datum arguments k)
                 (cps-unpack arguments k 3 '__setting-resolve!
                             (lambda (r variable value)
-                              (env-resolve! r variable value k))))))
+                              (cond ((setting-resolve! r variable value)
+                                     => (lambda (plaint)
+                                          (signal k plaint variable)))
+                                    (else (answer k #t))))))))
 
 (define evaluate-prim
   (cps-prim<- #f 'evaluate
@@ -456,7 +449,10 @@
      (answer k #t))
    (lambda (subject p r k)              ;p-variable
      (unpack p (name)
-       (env-resolve! r name subject k)))
+       (cond ((setting-resolve! r name subject)
+              => (lambda (plaint)
+                   (signal k plaint name)))
+             (else (answer k #t)))))
    (lambda (subject p r k)              ;p-term
      (unpack p (tag args)
        (if (not (and (term? subject)
