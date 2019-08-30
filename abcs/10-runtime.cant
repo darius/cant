@@ -684,12 +684,12 @@
   (to (~ .binds? variable)
     ;; TODO what's the answer for a not-yet-resolved variable?
     (__setting-binds? setting variable))
-  (to ~.non-global-variables
+  (to ~.inner-variables
     ;; TODO a .really-all-the-variables including the globals
     (each ~.first (__setting-a-list setting)))
   (to (~ .selfie sink)
     (sink .display "#<setting ")
-    (sink .write setting.non-global-variables)
+    (sink .write setting.inner-variables)
     (sink .display ">")))
 
 (to (yeah? x)
