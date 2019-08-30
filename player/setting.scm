@@ -33,11 +33,13 @@
         setting/missing
         value)))
 
-(define (setting-extend-promises r vs)
-;;  (let consing ((vs vs) (r (setting-a-list setting)))
-  (let consing ((vs vs) (r r))
+;; TODO skip if vs null
+(define (setting-extend-promises setting vs)
+  (let consing ((vs vs)
+                (r (setting-a-list setting)))
+;;  (let consing ((vs vs) (r r))
     (if (null? vs)
-        r
+        (make-setting r)
         (consing (cdr vs) (cons (cons (car vs) uninitialized) r)))))
 
 ;; Return #f on success, else a complaint.

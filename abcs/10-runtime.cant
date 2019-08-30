@@ -678,8 +678,7 @@
   (to (~ .extend variables values)
     (__setting-extend variables values setting))
   (to (~ .extend-promises variables)
-    (__setting<- (__setting-extend-promises (__setting-a-list setting)
-                                            variables)))
+    (__setting-extend-promises setting variables))
   (to (~ .binds? variable)
     ;; TODO what's the answer for a not-yet-resolved variable?
     (__setting-binds? setting variable))

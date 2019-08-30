@@ -488,7 +488,7 @@
     (()
      (delegate (script-trait script) object message k))
     (((pattern pat-vars . body) . rest-clauses)
-     (let ((pat-r (setting-extend-promises setting pat-vars)))
+     (let ((pat-r (setting-a-list (setting-extend-promises (make-setting setting) pat-vars)))) ;XXX
        (ev-pat message pattern pat-r
                (cont<- k-match-clause k pat-r body rest-clauses object script setting message))))))  ;XXX geeeez
 
@@ -498,7 +498,9 @@
                ;; TODO don't unpack it all till needed
   ;; body is now a list (body-vars body-exp)
     (if matched?
-        (ev-exp (cadr body) (setting-extend-promises pat-r (car body)) k)
+        (ev-exp (cadr body)
+                (setting-a-list (setting-extend-promises (make-setting pat-r) (car body)))  ;XXX
+                k)
         (matching rest-clauses object script setting message k))))
 
 (define (cont-ev-trait-make trait-val k0)
