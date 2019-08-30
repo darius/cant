@@ -4,7 +4,7 @@
         mutable-setting?
         setting/missing
         setting-lookup global-lookup
-        setting-resolve!
+        setting-extend-promises setting-resolve!
         )
 (import (chezscheme) (player thing) (player env))
 
@@ -25,6 +25,13 @@
         setting/missing
         value)))
 
+(define (setting-extend-promises r vs) ;r is the a-list of a setting, for now
+;;  (let consing ((vs vs) (r (setting-a-list setting)))
+  (let consing ((vs vs) (r r))
+    (if (null? vs)
+        r
+        (consing (cdr vs) (cons (cons (car vs) uninitialized) r)))))
+
 ;; Return #f on success, else a complaint.
 (define (setting-resolve! r name value) ;r is the a-list of a setting, for now
   (cond ((assq name r)
@@ -43,12 +50,5 @@
 (define (setting-binds? setting variable)
   (or (assq variable (setting-a-list setting))
       (global-defined? variable)))
-
-;; TODO duplicate in player.scm
-(define (setting-extend-promises setting vs)
-  (let consing ((vs vs) (r (setting-a-list setting)))
-    (if (null? vs)
-        (make-setting r)
-        (consing (cdr vs) (cons (cons (car vs) uninitialized) r)))))
 
 )

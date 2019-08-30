@@ -87,15 +87,6 @@
           (lambda (p) (put-datum p x))))))
 
 
-;; Environments
-
-(define (env-extend-promises r vs)
-  (let consing ((vs vs) (r r))
-    (if (null? vs)
-        r
-        (consing (cdr vs) (cons (cons (car vs) uninitialized) r)))))
-
-
 ;; Objects, calling, and answering
 
 (define-record-type cps-script (fields name procedure))
@@ -495,7 +486,7 @@
     (()
      (delegate (script-trait script) object message k))
     (((pattern pat-vars . body) . rest-clauses)
-     (let ((pat-r (env-extend-promises datum pat-vars)))
+     (let ((pat-r (setting-extend-promises datum pat-vars)))
        (ev-pat message pattern pat-r
                (cont<- k-match-clause k pat-r body rest-clauses object script datum message))))))  ;XXX geeeez
 
@@ -505,7 +496,7 @@
                ;; TODO don't unpack it all till needed
   ;; body is now a list (body-vars body-exp)
     (if matched?
-        (ev-exp (cadr body) (env-extend-promises pat-r (car body)) k)
+        (ev-exp (cadr body) (setting-extend-promises pat-r (car body)) k)
         (matching rest-clauses object script datum message k))))
 
 (define (cont-ev-trait-make trait-val k0)
@@ -740,7 +731,7 @@
     (__setting<- ,make-setting)
     (__setting-a-list ,setting-a-list)
     (__setting-lookup ,prim-setting-lookup)
-    (__setting-extend-promises ,env-extend-promises)
+    (__setting-extend-promises ,setting-extend-promises)
     (__setting-resolve! ,setting-resolve!-prim)
     (__setting-binds? ,setting-binds?)
     (__mapi-items ,mapi-items)
