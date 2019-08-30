@@ -144,10 +144,12 @@
                     (lambda ()
                       ;; Do the Scheme call in this error-handling context.
                       (apply object (list<-tuple message)))))))
-        (run-script object procedure-script object message k)))
+        (run-script object procedure-script primordial-env message k)))
    (else
     (let ((script (extract-script object)))
-      (run-script object script object message k)))))
+      (run-script object script primordial-env message k)))))
+
+(define primordial-setting ='())             ;XXX 
 
 (define reply-prim 
   (cps-prim<- #f '__reply
@@ -477,27 +479,27 @@
 
 (define (cont-halt value k0) value)
 
-(define (run-script object script datum message k)
-  (matching (script-clauses script) object script datum message k))
+(define (run-script object script setting message k)
+  (matching (script-clauses script) object script setting message k))
 
-(define (matching clauses object script datum message k)
+(define (matching clauses object script setting message k)
 ;  (dbg `(matching)) ; ,clauses))
   (mcase clauses
     (()
      (delegate (script-trait script) object message k))
     (((pattern pat-vars . body) . rest-clauses)
-     (let ((pat-r (setting-extend-promises datum pat-vars)))
+     (let ((pat-r (setting-extend-promises setting pat-vars)))
        (ev-pat message pattern pat-r
-               (cont<- k-match-clause k pat-r body rest-clauses object script datum message))))))  ;XXX geeeez
+               (cont<- k-match-clause k pat-r body rest-clauses object script setting message))))))  ;XXX geeeez
 
 (define (cont-match-clause matched? k0)
 ;     (dbg `(cont-match-clause))
-  (unpack k0 (k pat-r body rest-clauses object script datum message)
+  (unpack k0 (k pat-r body rest-clauses object script setting message)
                ;; TODO don't unpack it all till needed
   ;; body is now a list (body-vars body-exp)
     (if matched?
         (ev-exp (cadr body) (setting-extend-promises pat-r (car body)) k)
-        (matching rest-clauses object script datum message k))))
+        (matching rest-clauses object script setting message k))))
 
 (define (cont-ev-trait-make trait-val k0)
 ;     (dbg `(ev-make-cont))
