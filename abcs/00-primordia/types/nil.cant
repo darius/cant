@@ -1,0 +1,9 @@
+(make-trait nil-primitive me
+  (to ~.none?          #yes)
+  (to ~.first          (error "Empty list" '.first))
+  (to ~.rest           (error "Empty list" '.rest))
+  (to ~.count          0)
+  (to (~ i)            (error "Empty list" 'nth i))
+  (to (~ .chain a)     a)
+  (to (~ .selfie sink) (sink .display "()"))
+  (to message          (list-trait me message))) ;XXX use trait syntax instead

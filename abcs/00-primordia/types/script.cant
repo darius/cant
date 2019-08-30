@@ -1,0 +1,9 @@
+(make-trait script-primitive me
+  (to ~.name    (__script-name me))
+  (to ~.trait   (__script-trait me))
+  (to ~.clauses (__script-clauses me))
+  (to (~ .selfie sink)
+    (sink .display "<script ")
+    (sink .display me.name)
+    (sink .display ">"))
+  )

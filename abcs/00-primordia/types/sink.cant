@@ -1,0 +1,8 @@
+(make-trait sink-primitive me
+  (to (~ .display a)   (unless (__display a me) (me .write a))) ; TODO is this dangerous? longer-term, design the whole display/write thing differently
+  (to (~ .write-u8 u8) (__put-u8 me u8))
+  (to (~ .write a)     (a .selfie me))
+  (to ~.close          (__close-port me))
+  (to ~.output-string                 ;XXX for string-sink only
+    (__get-output-string me))
+  )

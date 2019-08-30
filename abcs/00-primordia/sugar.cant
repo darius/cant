@@ -1,0 +1,18 @@
+;; Definitions used by desugared code
+
+(to (as-list seq)            ;XXX naming convention for coercions?
+  (if (list? seq)
+      seq
+      (begin copying ((seq seq))
+        (if seq.none?
+            '()
+            (link seq.first (copying seq.rest))))))
+
+(to (array<-list xs)
+  (__array<-list (as-list xs)))
+
+(to (array<- @elements)
+  (array<-list elements))
+
+(to (map<- @items)
+  (map<-items items))

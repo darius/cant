@@ -1,0 +1,27 @@
+(make-trait link-primitive me
+  (to ~.none?       #no)
+  (to ~.first       (__car me))
+  (to ~.rest        (__cdr me))
+  (to ~.count       (__length me))
+  (to (~ i)         (__list-ref me i))    ;XXX just use the trait method? then can e.g. mix lazy and eager list nodes
+  (to (~ .chain a)  (__append me a)) ;TODO fall back to list-trait if a is not a list
+  (to (~ .selfie sink)
+    (may me
+      (be `(quote ,x)
+        (sink .display "'")
+        (sink .write x))
+      (else
+       (sink .display "(")
+       (sink .write me.first)
+       (begin printing ((r me.rest))
+         (hm (when (link? r)
+               (sink .display " ")
+               (sink .write r.first)
+               (printing r.rest))
+             (when (null? r) 'ok)
+             (else
+               (sink .display " . ")       ;XXX we're not supporting this in read, iirc
+               (sink .write r))))
+       (sink .display ")"))))
+  (to message
+    (list-trait me message))) ;XXX use trait syntax instead

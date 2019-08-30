@@ -1,0 +1,518 @@
+;; Definitions transitively used by 00-primordia and 01-sugar
+
+;; XXX the following comments apply more to 00-primordia
+
+;; This special source file must be written to load without actually
+;; invoking any primitive object, because this code *defines* their
+;; scripts. Only after this file is loaded will the definitions get
+;; magically connected to the primitives.
+
+;; That works out because the top level here is just definitions, with
+;; no top-level actions.
+
+;; There's also a definition of map<-, needed to implement (export ...).
+
+;; Aaand this includes further definitions used by the above-needed
+;; definitions, transitively.
+
+
+(to (map<-lists lists)
+  (map<-items (each tuple<-list lists)))
+
+(to (tuple<-list xs)
+  (term<- '~ (as-list xs)))
+
+
+
+(to (yeah? x)
+  (not (not x)))
+
+
+(to (list<- @arguments)
+  arguments)
+
+
+;; Hash-maps
+
+;; TODO:
+;;   extend map-trait
+;;   test deletion more
+;;   nonlinear probing -- now quadratic, but how about xor probing?
+;;   preserving insertion order
+;;   immutable snapshots
+;;
+;;   impl without a million boxes
+;;   N.B. impl needs shared closures for efficiency
+;;        (capacity, occupants, ..., hashmap)
+;;   special-case impls for small maps and common-typed maps
+;;   store hash codes instead of recomputing?
+;;   etc.
+
+(let !map<-
+  (hide
+
+    (make none)
+    (make deleted)
+
+    (make !map<-
+
+      (to (~)
+        (let count (box<- 0))
+        (let keys  (box<- [none]))  ;; size a power of 2
+        (let vals  (box<- [#no]))   ;; same size
+
+       ;; temp performance tracking
+;;       (let n-places (box<- 0))
+;;       (let n-probes (box<- 0))
+
+        (to (capacity) keys.^.count)
+
+        (to (occupants)
+          (begin walking ((i (- (capacity) 1)))
+            (hm (if (< i 0)       '())
+                (do (let k (keys.^ i)))
+                (if (= k none)    (walking i.-))
+                (if (= k deleted) (walking i.-))
+                (else             (link i (walking i.-))))))
+
+        (to (place key)
+          (__place key keys.^ none deleted))
+
+        (to (maybe-grow)
+          (when (< (* 2 (capacity))
+                   (* 3 count.^))
+            (resize (* 2 (capacity)))))
+
+        (to (resize new-capacity)
+;;         (print `(resize ,new-capacity places ,n-places.^ probes ,n-probes.^
+;;                         average ,(inexact<-exact (/ n-probes.^ (max 1 n-places.^)))))
+;;         (n-places .^= 0)
+;;         (n-probes .^= 0)
+          (let old-keys keys.^)
+          (let old-vals vals.^)
+          (keys .^= (array<-count new-capacity none))
+          (vals .^= (array<-count new-capacity))
+          (for each! (((~ i key) old-keys.items))
+            (unless (or (= key none) (= key deleted))
+              (let {missing-at j} (place key))
+              (keys.^ .set! j key)
+              (vals.^ .set! j (old-vals i)))))
+       
+        (make !map {extending map-trait}
+          (to (~ key)
+            (may (place key)
+              (be {at i} (vals.^ i))
+              (else      (error "Missing key" !map key))))
+          (to (~ .get key @(optional default))
+            (may (place key)
+              (be {at i} (vals.^ i))
+              (else      default)))
+          (to (~ .set! key val)
+            (may (place key)
+              (be {at i}
+                (vals.^ .set! i val))
+              (be {missing-at i}
+                (keys.^ .set! i key)
+                (vals.^ .set! i val)
+                (count .^= count.^.+)
+                (maybe-grow))))
+          (to (~ .maps? key)
+            (may (place key)
+              (be {at _} #yes)
+              (else      #no)))
+          (to ~.none? (= count.^ 0))
+          (to ~.count  count.^)
+          (to ~.keys   (each keys.^ (occupants))) ;XXX lazy-map
+          (to ~.values (each vals.^ (occupants)))
+          (to ~.items
+            (let ks keys.^)
+            (let vs vals.^)
+            (for each ((i (occupants)))
+              (~ (ks i) (vs i))))
+          (to (~ .get-set! key value<-)
+            (may (place key)
+              (be {at i}
+                (vals.^ i))
+              (be {missing-at _}
+                (let value (value<-))
+                ;; Alas, we can't just stick it in at i because (value<-)
+                ;; might have changed things too:
+                (!map .set! key value)
+                value)))
+          (to (~ .delete! key)
+            (may (place key)
+              (be {at i}
+                (keys.^ .set! i deleted)
+                (count .^= count.^.-)
+                #no)
+              (else #no)))   ;XXX error instead? It is in Python.
+          (to (~ .find? value)
+            (!map.values .find? value))
+          (to (~ .find value default)
+            (let vs vals.^)
+            (begin searching ((js (occupants)))  ;XXX should be lazy
+              (hm (if js.none? default)
+                  (if (= value (vs js.first)) (keys.^ js.first))
+                  (else (searching js.rest)))))
+          (to ~.clear!
+            (count .^= 0)
+            (keys .^= [none])
+            (vals .^= [#no]))
+          (to ~.copy
+            (!map<-items !map.items))
+          (to (~ .update key f)         ;TODO define in a mutable-map-trait ?
+            (let value (f (!map key)))  ;TODO what about a (!map .get key) version? how to factor this?
+            (!map .set! key value)
+            value)
+          (to (~ .selfie sink)
+            (sink .display "#<!map (")
+            (sink .write count.^)
+            (sink .display ")>"))
+          ))
+
+      (to (~ @items)
+;;        (!map<-items items))
+        (let m (!map<-))
+        (for each! (((~ k v) items))
+          (m .set! k v))
+        m)
+      )))
+
+(to (!map<-items items)
+  (let m (!map<-))
+  (for each! (((~ k v) items))
+    (m .set! k v))
+  m)
+
+(to (!map<-lists lists)
+  (let m (!map<-))
+  (for each! ((`(,k ,v) lists))
+    (m .set! k v))
+  m)
+
+
+;; Sets via hashtable
+;; TODO unify with hashmaps
+
+(to (set<- @vals)            ;XXX this name is better saved for frozen sets
+  (let s (hash-set<-))
+  (s .add-all! vals)
+  s)
+
+(to (set<-list vals)            ;XXX this name is better saved for frozen sets
+  (let s (hash-set<-))
+  (s .add-all! vals)
+  s)
+
+(to (hash-set<-)                        ;XXX shouldn't be a global
+  (let !map (!map<-)) ;TODO would be nice to avoid storing all the #yes values
+  (make set {extending map-trait}
+    (to ~.none?            !map.none?)
+    (to ~.count            !map.count)
+    (to ~.keys             !map.keys)
+    (to (~ .maps? key)     (!map .maps? key))
+    (to ~.copy             (set<-list !map.keys)) ;TODO tune
+    (to (~ .add! key)      (!map .set! key 1))    ;N.B. matching the bag type here
+    (to (~ .add-all! vals) (for each! ((v vals)) (set .add! v)))
+    (to (~ .union! other)  (set .add-all! other.keys))
+    (to (~ .union other)
+      (let result set.copy)
+      (result .union! other)
+      result)
+    (to (~ .intersect other)                 ;TODO rename to .and, etc., I guess
+      (let result (set<-))
+      (for each! ((x !map.keys))
+        (when (other .maps? x)
+          (result .add! x)))
+      result)
+    (to (~ .difference other)
+      (let result (set<-))
+      (for each! ((x !map.keys))
+        (unless (other .maps? x)
+          (result .add! x)))
+      result)
+    (to (~ .except other)               ;TODO add to map-trait?
+      (let result (set<-))
+      (for each! ((x !map.keys))
+        (unless (= other x)
+          (result .add! x)))
+      result)
+    (to (~ .intersects? map2)
+      (!map .intersects? map2))
+    (to ~.clear!         !map.clear!)
+    (to (~ .get key)     (!map .maps? key))
+    (to (~ key)          (!map .get key 0)) ;I'm not sure this is a good idea, but it's to match the bag type
+    (to ~.items          !map.items)
+    (to ~.values         !map.values)
+    (to (~ .delete! key) (!map .delete! key))
+    (to ~.total          !map.count)        ;like bags again
+    ;; XXX fill in rest of set interface (just the map interface, I guess)
+    (to (~ .selfie sink)
+      (sink .display "#<set")
+      (sink .write !map.keys)
+      (sink .display ">"))
+    ))
+
+
+;; stdlib
+
+(to (surely ok? @arguments)
+  (unless ok?
+    (error @(if arguments.none? '("Assertion failed") arguments))))
+
+(to (count? x)
+  (and (integer? x) (<= 0 x)))
+
+(to (not= x y)
+  (not (= x y)))
+
+(make-trait left-folding-operation operation
+  (to (~ a b @arguments)
+    (foldl operation (operation a b) arguments))
+  (to (~ a) a))      ; Of course this no-op by default is overridable.
+
+(make-trait right-folding-operation operation
+  (to (~ @arguments)
+    (foldr1 operation arguments)))
+
+(make + {extending left-folding-operation}
+  (to (~ a b) (a .+ b))
+  (to (~) 0))
+
+(make * {extending left-folding-operation}
+  (to (~ a b) (a .* b))
+  (to (~) 1))
+
+(make - {extending left-folding-operation}
+  (to (~ a b) (a .- b))
+  (to (~ a) (0 .- a)))
+
+(make-trait transitive-comparison compare?
+  (to (~ x @xs)
+    (begin comparing ((x0 x) (xs xs))
+      (may xs
+        (be `()           #yes)
+        (be `(,x1 ,@rest) (and (compare? x0 x1)
+                               (comparing x1 rest)))))))
+
+(make <   {extending transitive-comparison} (to (~ a b)      (= (compare a b) -1)))
+(make <=  {extending transitive-comparison} (to (~ a b) (not (= (compare a b)  1))))
+(make <=> {extending transitive-comparison} (to (~ a b)      (= (compare a b)  0))) ; XXX better name?
+(make >=  {extending transitive-comparison} (to (~ a b) (not (= (compare a b) -1))))
+(make >   {extending transitive-comparison} (to (~ a b)      (= (compare a b)  1)))
+
+(to (compare a b)
+  (may (a .compare b)
+    (be -1 -1)
+    (be  0  0)
+    (be +1 +1)
+    (else  (error "Incomparable" a b))))
+
+;;XXX so should some of these be in list-trait?
+
+(to (string<-list chars) (__string<-list (as-list chars)))
+
+
+(make chain {extending right-folding-operation}
+  (to (~ xs ys) (xs .chain ys))
+  (to (~) '()))
+
+;; Using the optional suffix is like (chain (reverse xs) suffix).
+(to (reverse xs @(optional suffix))
+  (for foldl ((result (or suffix '()))
+              (x xs))
+    (link x result)))
+
+(to (foldl f z xs)           ; 'z' connoting zero from f's perspective
+  (if xs.none?
+      z
+      (foldl f (f z xs.first) xs.rest)))
+
+(to (foldr f xs z) ;N.B. some other languages have a different argument order
+  (if xs.none?
+      z
+      (f xs.first (foldr f xs.rest z))))
+
+(to (foldr1 f xs)
+  (let tail xs.rest)
+  (if tail.none?
+      xs.first
+      (f xs.first (foldr1 f tail))))
+
+;; TODO: name it (zip @rows) instead, like Python?
+(to (transpose rows)
+  (if (every ~.none? rows)   ; and make it (some _.none? rows)?
+      '()
+      `(,(each ~.first rows)
+        ,@(transpose (each ~.rest rows)))))
+
+(make-trait zipped-list-transducer transducer
+  (to (~ f @lists)
+    (for transducer ((args (transpose lists)))
+      (f @args)))
+  (to message
+    (miranda-trait transducer message)))
+
+(make each {extending zipped-list-transducer}
+  (to (~ f xs)
+    (for foldr ((x xs) (results '()))
+      (link (f x) results))))
+
+(make each! {extending zipped-list-transducer}
+  (to (~ f xs)
+    (unless xs.none?
+      (f xs.first)
+      (each! f xs.rest))))
+
+(make some {extending zipped-list-transducer}
+  (to (~ pass? xs)
+    (and xs.some?
+         (or (pass? xs.first)
+             (some pass? xs.rest)))))
+
+(make every {extending zipped-list-transducer}
+  (to (~ pass? xs)
+    (or xs.none?
+        (and (pass? xs.first)
+             (every pass? xs.rest)))))
+
+(make interval<-
+  (to (~ first limit)
+    (if (<= limit first)
+        '()
+        (make range {extending list-trait}
+          (to ~.none? #no)
+          (to ~.first first)
+          (to ~.rest  (interval<- first.+ limit))
+          (to ~.count (- limit first))
+          (to (~ i)
+            (if (not (integer? i))
+                (error "Key error" range i)
+                (do (let j (+ first i))
+                    (if (and (<= first j) (< j limit))
+                        j
+                        (error "Out of range" range i)))))
+          (to (~ .maps? i)
+            (and (integer? i)
+                 (do (let j (+ first i))
+                     (and (<= first j) (< j limit)))))
+          ;; TODO: .compare
+          )))
+  (to (~ limit)
+    (interval<- 0 limit))
+  (to (~ first limit stride)
+    ;; TODO factor the code better
+    (hm (if (< 0 stride)
+            (if (<= limit first)
+                '()
+                (make range {extending list-trait}
+                  (to ~.none? #no)
+                  (to ~.first first)
+                  (to ~.rest  (interval<- (+ first stride) limit stride))
+                  (to (~ i)
+                    (error "TODO" range `(,i)))
+                  (to (~ .maps? i)
+                    (error "TODO" range (~ .maps? i)))
+                  )))
+        (if (< stride 0)
+            (if (< first limit)
+                '()
+                (make range {extending list-trait}
+                  (to ~.none? #no)
+                  (to ~.first first)
+                  (to ~.rest  (interval<- (+ first stride) limit stride))
+                  (to (~ i)
+                    (error "TODO" range `(,i)))
+                  (to (~ .maps? i)
+                    (error "TODO" range (~ .maps? i)))
+                  )))
+        (else
+          (error "Zero stride" first limit stride)))))
+
+(make enumerate
+  (to (~ xs)
+    (enumerate xs 0))
+  (to (~ xs i)
+    (if xs.none?
+        '()
+        (make enumeration {extending list-trait}
+          (to ~.none? #no)
+          (to ~.first (~ i xs.first))
+          (to ~.rest  (enumerate xs.rest i.+))))))
+
+(to (string<- @chars)
+  (string<-list chars))
+
+(to (string<-writer take-sink)
+  (let sink (string-sink<-))
+  (take-sink sink)
+  sink.output-string)
+
+
+;; printf-ish thing. TODO do something completely different?
+(let format
+  (hide
+
+    (make format
+      (to (~ format-string @arguments)
+        (scanning out format-string.values arguments))
+      (to (~ .to-sink sink format-string @arguments)
+        (scanning sink format-string.values arguments)))
+
+    ;;TODO actually design the format language
+
+    (to (scanning sink s args)
+      (if s.none? 
+          (when args.some?
+            (error "Leftover arguments to .format" args))
+          (may s.first
+            (be #\~
+              (parse sink s.rest args))
+            (be ch
+              (sink .display ch)
+              (scanning sink s.rest args)))))
+
+    ;; Parse a ~ field, then go back to scanning the rest of s.
+    (to (parse sink s args)
+      (let {pair sign s1} (if (s .prefix? '(#\-))
+                              {pair -1 s.rest}
+                              {pair #no s}))
+      (if (s1 .prefix? '(#\0))
+          (parsing sink s1.rest #\0     sign 0   args)
+          (parsing sink s1      #\space sign #no args)))
+
+    (to (parsing sink s pad sign width args)
+      (when s.none?
+        (error "Incomplete format")) ;TODO report the format-string
+      (may s.first
+        (be #\w
+          (maybe-pad sink pad sign width (~ .write args.first))
+          (scanning sink s.rest args.rest))
+        (be #\d
+          (maybe-pad sink pad sign width (~ .display args.first))
+          (scanning sink s.rest args.rest))
+        (be #\~
+          (sink .display "~") ;TODO: complain if there were formatting directives before "~"?
+          (scanning sink s.rest args))
+        (be (? ~.digit? ch)
+          (let new-width (+ (- ch #\0)
+                            (if width (* 10 width) 0)))
+          (parsing sink s.rest pad sign new-width args))
+        (be #\x  ; hex number, XXX works wrong on negative numbers
+          (maybe-pad sink pad sign width
+                     (~ .display ((string<-number args.first 16) .lowercase)))
+          (scanning sink s.rest args.rest))
+        (else
+          (error "Bad format string" (string<-list s)))))
+
+    (to (maybe-pad sink pad sign width message)
+      (hm (when width
+            ;; TODO fix: we're currently justifying to width, but not truncating
+            (let w (if sign (* sign width) width))
+            (sink .display ((string<-writer message) .justify w pad)))
+          (when sign
+            (error "Missing width in format string"))
+          (else
+            (call sink message))))
+
+    format))

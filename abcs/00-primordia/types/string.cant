@@ -1,0 +1,147 @@
+(make-trait string-primitive me
+  (to ~.none?        (= 0 me.count))
+  (to ~.first        (me 0))
+  (to ~.rest         (me .slice 1))
+  (to ~.count        (__string-length me))
+  (to (~ i)          (__string-ref me i))
+  (to (~ .maps? i)   (__string-maps? me i))
+  (to (~ .chain s)   (__string-append me s))
+  (to (~ .slice i)   (__substring me i me.count))
+  (to (~ .slice i j) (__substring me i j))
+  (to (~ .compare s)
+    (if (string? s)
+        (__string-compare me s)          ; just a speedup
+        (list-trait me (~ .compare s))))   ; but is this what we really want? (<=> "a" '(#\a))
+  (to (~ .join ss)   ;should this be a function, not a method?
+    (if ss.none?
+        ""
+        ;; De-quadratified (foldr1 (on (x y) (chain x me y)) ss)
+        (do (let mine me.values)
+            (string<-list (foldr1 (on (s chars)
+                                    (s.values .chain (mine .chain chars.values)))
+                                  ss)))))
+  (to ~.values       (list<-string me))
+  (to (~ .get key)   (me .get key #no)) ;TODO duplicated because delegation is slow
+  (to (~ .get key default)      ;TODO could be shared with array-trait
+    (if (me .maps? key)
+        (me key)
+        default))
+  (to (~ .trim-left)
+    (let limit me.count)
+    (begin scanning ((i 0))
+      (hm (when (= i limit)
+            "")
+          (do (let c (me i)))
+          (unless c.whitespace?
+            (me .slice i))
+          (else (scanning i.+)))))
+  (to ~.trim-right
+    (begin scanning ((i me.count))
+      (hm (when (= i 0)
+            "")
+          (do (let c (me i.-)))
+          (unless c.whitespace?
+            (me .slice 0 i))
+          (else (scanning i.-)))))
+  (to ~.trim
+    me.trim-left.trim-right)
+  (to ~.split
+    ;; TODO dequadratify
+    (begin splitting ((s me.trim-left))
+      (if s.none?
+          '()
+          (do (let limit s.count)
+              (begin scanning ((i 1))
+                (hm (if (= i limit) `(,s))
+                    (if ((s i) .whitespace?)
+                        (link (s .slice 0 i)
+                              (splitting ((s .slice i.+) .trim-left))))
+                    (else (scanning i.+))))))))
+  (to (~ .split delimiter)
+    ;; TODO deduplicate code
+    ;; TODO define a strstr and use that
+    (if me.none?
+        '()
+        (begin splitting ((s me))
+          (if s.none?
+              '("")
+              (do (let limit s.count)
+                  (begin scanning ((i 0))
+                    (hm (if (= i limit) `(,s))
+                        (if (= delimiter (s .slice i (+ i delimiter.count)))
+                            (link (s .slice 0 i)
+                                  (splitting (s .slice (+ i delimiter.count)))))
+                        (else (scanning i.+)))))))))
+  (to ~.lowercase (string<-list (each ~.lowercase me)))
+  (to ~.uppercase (string<-list (each ~.uppercase me)))
+  (to ~.capitalize (chain ((me .slice 0 1) .uppercase) (me .slice 1)))
+  (to (~ .replace pattern replacement) ;TODO more efficient
+    ;; TODO unify the cases?
+    (hm (if pattern.none?
+            (for foldr ((ch me) (rest replacement))
+              (chain replacement (string<- ch) rest)))
+        (else
+         (let limit me.count)
+         (string<-list
+          ;; TODO define a strstr and use that
+          (begin scanning ((i 0))
+            (hm (if (= i limit) '())
+                (if (= pattern (me .slice i (+ i pattern.count)))
+                    (chain (list<-string replacement)
+                           (scanning (+ i pattern.count))))
+                (else (link (me i) (scanning i.+)))))))))
+  (to (~ .justify n)
+    (me .justify n #\space))
+  (to (~ .justify n pad)
+    (if (< n 0)
+        (me .left-justify (- n) pad)
+        (me .right-justify n    pad)))
+  (to (~ .left-justify n)
+    (me .left-justify n #\space))
+  (to (~ .left-justify n pad-char)
+    (let pad (- n me.count))
+    (if (<= pad 0)
+        me
+        (chain me ((string<- pad-char) .repeat pad))))
+  (to (~ .right-justify n)
+    (me .right-justify n #\space))
+  (to (~ .right-justify n pad-char)
+    (let pad (- n me.count))
+    (if (<= pad 0)
+        me
+        (chain ((string<- pad-char) .repeat pad) me)))
+  (to (~ .center n)
+    (let pad (- n me.count))
+    (if (<= pad 0)
+        me
+        (do (let half (pad .quotient 2))
+            (chain (" " .repeat (- pad half))
+                   me
+                   (" " .repeat half)))))
+  (to (~ .repeat n)
+    ("" .join (each (-> me) (interval<- 0 n))))
+  (to (~ .format @arguments)
+    (string<-writer (-> (format .to-sink it me @arguments))))
+  (to ~.split-lines
+    ;; TODO ugly. This 'if' is needed because we want a final "\n" to
+    ;; yield the same output as a string with no final "\n". N.B. while
+    ;; that's convenient it's also information-destroying.
+    (let tweaked (if (and me.some? (= me.last #\newline))
+                     (me .slice 0 me.count.-)
+                     me))
+    ;; TODO it'd be nice for efficiency if tweaked could be a view instead of a copy
+    (tweaked .split "\n"))
+  (to (~ .selfie sink)
+    (sink .display #\")
+    (for each! ((c me))
+      (sink .display (may c            ;XXX super slow. We might prefer to use the Scheme built-in.
+                       (be #\\ "\\\\")
+                       (be #\" "\\\"")
+                       (be #\newline "\\n")
+                       (be #\tab     "\\t")
+                       (be #\return  "\\r")
+                       ;; XXX escape the control chars
+                       (else c))))
+    (sink .display #\"))
+  (to message
+    (list-trait me message))) ;XXX use trait syntax instead

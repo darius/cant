@@ -1,0 +1,96 @@
+(make-trait list-trait list
+  (to (~ i)
+    (may i
+      (be 0 list.first)
+      (else (list.rest i.-))))
+  (to ~.none?
+    (= 0 list.count)) ;N.B. these default implementations are circular
+  (to ~.first
+    (list 0))
+  (to ~.rest
+    (list .slice 1))
+  (to ~.count
+    ;; TODO non-tail-recursive would be more OO in style. Go back to that?
+    (begin counting ((remainder list) (count 0))
+      (if remainder.none?
+          count
+          (counting remainder.rest count.+))))
+  (to (~ .slice i)
+    (surely (<= 0 i))
+    (hm (if (= i 0) list)
+        (if list.none? list)
+        (else (list.rest .slice i.-))))
+  (to (~ .slice i bound)     ;XXX result is a link-list; be more generic?
+    (surely (<= 0 i))
+    (hm (if list.none? list)
+        (if (<= bound i) '())
+        (if (= i 0) (link list.first (list.rest .slice 0 bound.-)))
+        (else (list.rest .slice i.- bound.-))))
+  (to (~ .chain seq)                         ;TODO self if seq is ()
+    (if list.none?
+        seq
+        (link list.first (list.rest .chain seq))))
+  (to (~ .compare xs)
+    ;; N.B. mutable arrays compare by this method, so it's really a comparison as of right now
+    (hm (if list.none? (if xs.none? 0 -1))
+        (if xs.none? 1)
+        (else (may (list.first .compare xs.first)
+                (be 0 (list.rest .compare xs.rest))
+                (be d d)))))
+  ;; A sequence is a kind of collection. Start implementing that:
+  (to ~.keys
+    (0 .to< list.count)) ;TODO move this impl to array-trait; here, enum lazily.
+  (to ~.values
+    list)
+  (to ~.items
+    (enumerate list))
+  (to (~ .get key default)
+    (if (count? key)
+        (begin walking ((k key) (xs list))
+          (hm (if xs.none? default)
+              (if (= k 0) xs.first)
+              (else (walking k.- xs.rest))))
+        default))
+  (to (~ .maps? key)
+    (and list.some?
+         (or (= 0 key)
+             (and (< 0 key)
+                  (list.rest .maps? key.-)))))
+  (to (~ .find value default)    ;; XXX update the other collections to have this too
+    (begin looking ((i 0) (values list))
+      (hm (if values.none? default)
+          (if (= value values.first) i)
+          (else (looking i.+ values.rest)))))
+  (to (~ .find value)
+    (may (list .find value #no)
+      (be #no (error "Missing value" value))
+      (be key key)))
+  (to (~ .find? value)
+    (may (list .find value #no)
+      (be #no #no)
+      (else   #yes)))
+  (to (~ .last)
+    (let rest list.rest)
+    (if rest.none? list.first rest.last))
+  (to (~ .prefix? p)
+    (= (list .slice 0 p.count) p))   ;TODO more efficient
+  (to (~ .repeat n)
+    ;;TODO a method to get an empty seq of my type; and then factor out duplicate code
+    (may n
+      (be 0 '())             
+      (else (chain @(for each ((_ (0 .to< n)))
+                      list)))))
+  (to ~.maybe  ;; TODO an experiment TODO could be defined on maps in general too
+    (if list.none?
+        #no
+        (do (unless list.rest.none?
+              (error "Tried to convert to maybe from count >1" list))
+            list.first)))
+  (to ~.only  ;; TODO an experiment TODO could be defined on maps in general too
+    (when list.none?
+      (error "Tried to .only from empty" list))
+    (unless list.rest.none?
+      (error "Tried to .only from count >1" list))
+    list.first)
+  (to message
+    (map-trait list message)))

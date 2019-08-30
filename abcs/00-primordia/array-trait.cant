@@ -1,0 +1,34 @@
+(make-trait array-trait me
+  (to (~ .slice i)
+    (me .slice i me.count))
+  (to (~ .slice i bound)                     ;XXX untested
+    (let v (array<-count (- bound i)))
+    (v .move! 0 me i bound)
+    v)
+  (to ~.last
+    (me me.count.-))
+  (to (~ .copy! v)
+    (me .move! 0 v 0 v.count))
+  (to (~ .move! dst source lo bound)
+    ;; TODO no-op if in range and (me,dst) == (source,lo)
+    (let lo->dst (- dst lo))
+    (for each! ((i (if (<= dst lo)
+                       (interval<- lo bound)
+                       (interval<- bound.- lo -1))))
+      (me .set! (+ i lo->dst)
+          (source i))))
+  (to ~.values
+    (each me (interval<- 0 me.count)))   ;TODO cheaper to represent by self -- when can we get away with that?
+  (to ~.items
+    (for each ((i (interval<- 0 me.count)))
+      (~ i (me i))))
+  (to (~ .get key default)
+    (hm (unless (count? key) default)
+        (if (<= me.count key) default)
+        (else (me key))))
+  (to (~ .swap! i j)
+    (let t (me i))
+    (me .set! i (me j))
+    (me .set! j t))
+  (to message
+    (list-trait me message))) ;XXX use trait syntax instead

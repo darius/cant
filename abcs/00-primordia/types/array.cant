@@ -1,0 +1,34 @@
+(make-trait array-primitive me
+  (to ~.none?         (= 0 me.count))   ;redundant definition(s) for speed
+  (to ~.first         (me 0))
+  (to ~.rest          (me .slice 1))
+  (to (~ .set! i val) (__vector-set! me i val))
+  (to ~.count         (__vector-length me))
+  (to (~ i)           (__vector-ref me i))
+  (to (~ .maps? i)    (__vector-maps? me i))
+  (to (~ .chain v)    (__vector-append me v))
+  (to ~.values        (__vector->list me))
+  (to (~ .slice i)    (__subvector me i me.count))
+  (to (~ .slice i j)  (__subvector me i j))
+  (to (and (~ .move! dst source lo bound)
+           message)
+    ;; Block-copy source[lo..bound) to me[dst..dst+(bound-lo)).
+    (if (array? source)
+        (__vector-move! me dst source lo bound)
+        (array-trait me message)))
+  (to ~.copy          (__vector-copy me))
+  (to (~ .update key f)         ;TODO define in a mutable-map-trait ?
+    (let value (f (me key)))
+    (me .set! key value)
+    value)
+  (to (~ .selfie sink)
+    (sink .display "[")
+    (when (< 0 me.count)
+      (sink .write (me 0))
+      (for each! ((x ((__vector->list me) .rest)))
+        (sink .display #\space)
+        (sink .write x)))
+    (sink .display "]"))
+;   (sink .write (__vector->list me)))
+  (to message
+    (array-trait me message))) ;XXX use trait syntax instead

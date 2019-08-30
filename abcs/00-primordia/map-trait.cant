@@ -1,0 +1,77 @@
+;; Generic map trait
+;; requires:
+;;  .get key default
+;;  .count -- hm, we could impl as .items.count
+;;  .items
+
+;; TODO untested, unused yet
+;; TODO mutable-map trait?
+
+;(make missing)
+;; Problem: (map .get key missing) might save `missing` for later.
+;; For now, we'll make a new `missing` every time, though that's
+;; uglyish and kinda expensive.
+
+(make-trait map-trait map
+  (to (~ key)
+    (make missing)
+    (let answer (map .get key missing))
+    (if (= answer missing)
+        (error "Missing key" map key)
+        answer))
+  (to (~ .get key)
+    (map .get key #no))
+  (to (~ .maps? key)
+    (make missing)
+    (not= (map .get key missing) missing))
+  (to ~.none?  (= map.count 0))  ; or map.items.none? - is that better? depends.
+  (to ~.some?  (not map.none?))
+  (to ~.keys   (each (~ .part 0) map.items))
+  (to ~.values (each (~ .part 1) map.items))
+  (to (~ .find? value)
+    (map.values .find? value))
+  (to (~ .find value default)
+    (begin searching ((items map.items))
+      (if items.none?
+          default
+          (may items.first
+            (be (~ k v) (if (= v value) k (searching items.rest)))
+            (else (searching items.rest))))))
+  (to (~ .find value)
+    (make missing)
+    (let key (map .find value missing))
+    (when (= key missing)
+      (error "Missing value" value))
+    key)
+  (to ~.copy ;TODO rename .diverge; check that all uses want a !map result
+    (!map<-items map.items))
+  (to (~ .intersects? map2)
+    ;; TODO: maybe iterate over the one with smaller .count ?
+    (for some ((k map.keys))
+      (map2 .maps? k)))
+  (to (~ .disjoint? map2)                    ;too trivial?
+    (not (map .intersects? map2)))
+  (to ~.domain
+    (set<-list map.keys))   ;TODO usually worth specializing
+  (to ~.range
+    (set<-list map.values))
+  (to ~.inverse
+    (let inverse (!map<-))
+    (for each! (((~ k v) map.items))
+      (when (inverse .maps? v)
+        (error ".inverse of noninvertible map" map))  ; or just allow it?
+      (inverse .set! v k))
+    inverse)
+
+  ;; What's the right definition & interface for these for maps?
+  ;; TODO also, rename to .or, .and ?
+  (to (~ .union other)
+    (error "unimplemented .union"))
+  (to (~ .intersect other)                 
+    (error "unimplemented .intersect"))
+  (to (~ .difference other)
+    (error "unimplemented .difference"))
+
+;;  (to (~ .compare xs)
+;;  (to (~ .slice keys)
+  )

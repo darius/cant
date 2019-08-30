@@ -1,0 +1,5 @@
+;; The default trait for scripts without an explicit trait.
+
+(make-trait miranda-trait me
+  (to (~ .selfie sink) (sink .display (__depict me)))
+  (to message (error "Match failure" me message)))

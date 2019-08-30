@@ -1,0 +1,26 @@
+(make-trait char-primitive me
+  (to ~.code          (__char->integer me))
+  (to ~.letter?       (__char-letter? me))
+  (to ~.digit?        (__char-digit? me))
+  (to ~.whitespace?   (__char-whitespace? me))
+  (to ~.alphanumeric? (or me.letter? me.digit?))
+  (to ~.lowercase?    (__char-lowercase? me))
+  (to ~.uppercase?    (__char-uppercase? me))
+  (to ~.lowercase     (__char-lowercase me))
+  (to ~.uppercase     (__char-uppercase me))
+  (to ~.printable?    (<= 32 (__char->integer me) 126))  ; TODO better name?
+  (to (~ .compare c)  (__char-compare me c))
+  (to (~ .+ n)   ;; Is this a good idea?
+    (surely (integer? n) "Bad arg type" n)
+    (char<- (+ me.code n)))
+  (to (~ .- b)
+    (may b
+      (be (? integer?) (char<- (- me.code b)))
+      (be (? char?)    (- me.code b.code))
+      (else (error "Bad arg type" b))))
+  (to (~ .to< b)      (interval<- me b))       ;These methods should be in a trait
+  (to (~ .to b)       (interval<- me b.+))    ;if they're a good idea at all...
+  (to (~ .span n)     (interval<- me (+ me n)))
+  (to ~.+             (me .+ 1))      ;experiment
+  (to ~.-             (me .- 1))      ;experiment
+  )

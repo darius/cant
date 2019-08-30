@@ -819,7 +819,47 @@
     (os-exit ,exit)
     ))
 
-(run-load "abcs/10-runtime.cant")
+;;(run-load "abcs/10-runtime.cant")
+(let ()
+  (define trait-names '(miranda-trait
+                        map-trait
+                        list-trait
+                        array-trait))
+  (define type-names '(array
+                       box
+                       char
+                       claim
+                       cps
+                       ejector
+                       eof
+                       link
+                       map
+                       nil
+                       number
+                       procedure
+                       script
+                       setting
+                       sink
+                       source
+                       string
+                       symbol
+                       term
+                       void))
+  (define (read-source parts)
+    (let ((filename (string-append
+                     (string-join "/" (list* "abcs" "00-primordia"
+                                             (map (lambda (part)
+                                                    (if (symbol? part)
+                                                        (symbol->string part)
+                                                        part))
+                                                  parts)))
+                     ".cant")))
+      (snarf filename cant-read)))
+  (let ((all-traits (flatmap read-source (map list trait-names)))
+        (primitives (flatmap read-source (map (lambda (t) (list "types" t)) type-names)))
+        (sugar   (read-source '("sugar")))
+        (runtime (read-source '("runtime"))))
+    (cant-interpret `(do ,@(append all-traits primitives sugar runtime)))))
 
 (set! miranda-trait  (get-prim 'miranda-trait))
 

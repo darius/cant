@@ -1,0 +1,32 @@
+;; Immutable maps, placeholder implementation
+;; N.B. (export foo bar) gets expanded into code like
+;;   (map<- (~ 'foo foo) (~ 'bar bar))
+;; (but hygienic, when I get to fixing the current bad hygiene).
+
+(make-trait map-primitive map
+  (to (~ key)
+    (may (__mapi-get key map)
+      (be #no (error "Missing key" map key))
+      (be (~ _ v) v)))
+  (to (~ .get key @(optional default))
+    (may (__mapi-get key map)
+      (be #no default)
+      (be (~ _ v) v)))
+  (to (~ .maps? key)
+    (not (not (__mapi-get key map))))
+  (to ~.none?
+    (null? (__mapi-items map)))
+  (to ~.items
+    (__mapi-items map))
+  (to ~.count
+    (~.count (__mapi-items map))) ;TODO move to map-trait
+  (to (~ .override other-map) ;TODO name; TODO efficient impl; TODO find where it's used
+    (map<-items (chain map.items other-map.items)))
+  (to (~ .selfie sink)
+    (sink .display "#<map")
+    (for each! ((key map.keys))
+      (sink .display #\space)
+      (sink .write key))
+    (sink .display ">"))
+  (to message
+    (map-trait map message)))
