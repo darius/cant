@@ -149,7 +149,7 @@
     (let ((script (extract-script object)))
       (run-script object script primordial-setting message k)))))
 
-(define primordial-setting '())             ;XXX 
+(define primordial-setting (make-setting '()))             ;XXX 
 
 (define reply-prim 
   (cps-prim<- #f '__reply
@@ -379,7 +379,7 @@
   (let* ((elaboration (elaborate e setting))
          (elaborated-e (car elaboration))
          (maybe-extended-setting (cadr elaboration)))
-    (ev-exp elaborated-e (setting-a-list maybe-extended-setting) k)))
+    (ev-exp elaborated-e maybe-extended-setting k)))
 
 (define (ev-exp e r k)
 ;;  (dbg `(ev-exp ,(pack-tag e))) ; ,e))
@@ -393,7 +393,7 @@
        (answer k value)))
    (lambda (e r k)                          ;e-variable
      (unpack e (var)
-       (let ((value (setting-lookup (make-setting r) var)))
+       (let ((value (setting-lookup r var)))
          (if (eq? value setting/missing)
              (signal k "Unbound variable" var)
              (answer k value)))))
@@ -442,7 +442,7 @@
      (answer k #t))
    (lambda (subject p r k)              ;p-variable
      (unpack p (name)
-       (cond ((setting-resolve! (make-setting r) name subject)
+       (cond ((setting-resolve! r name subject)
               => (lambda (plaint)
                    (signal k plaint name)))
              (else (answer k #t)))))
@@ -488,7 +488,7 @@
     (()
      (delegate (script-trait script) object message k))
     (((pattern pat-vars . body) . rest-clauses)
-     (let ((pat-r (setting-a-list (setting-extend-promises (make-setting setting) pat-vars)))) ;XXX
+     (let ((pat-r (setting-extend-promises setting pat-vars)))
        (ev-pat message pattern pat-r
                (cont<- k-match-clause k pat-r body rest-clauses object script setting message))))))  ;XXX geeeez
 
@@ -499,7 +499,7 @@
   ;; body is now a list (body-vars body-exp)
     (if matched?
         (ev-exp (cadr body)
-                (setting-a-list (setting-extend-promises (make-setting pat-r) (car body)))  ;XXX
+                (setting-extend-promises pat-r (car body))
                 k)
         (matching rest-clauses object script setting message k))))
 
