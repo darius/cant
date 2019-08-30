@@ -144,12 +144,12 @@
                     (lambda ()
                       ;; Do the Scheme call in this error-handling context.
                       (apply object (list<-tuple message)))))))
-        (run-script object procedure-script primordial-env message k)))
+        (run-script object procedure-script primordial-setting message k)))
    (else
     (let ((script (extract-script object)))
-      (run-script object script primordial-env message k)))))
+      (run-script object script primordial-setting message k)))))
 
-(define primordial-setting ='())             ;XXX 
+(define primordial-setting '())             ;XXX 
 
 (define reply-prim 
   (cps-prim<- #f '__reply
@@ -353,8 +353,8 @@
   (cps-prim<- #f '__setting-resolve!
               (lambda (datum arguments k)
                 (cps-unpack arguments k 3 '__setting-resolve!
-                            (lambda (r variable value)
-                              (cond ((setting-resolve! r variable value)
+                            (lambda (setting variable value)
+                              (cond ((setting-resolve! setting variable value)
                                      => (lambda (plaint)
                                           (signal k plaint variable)))
                                     (else (answer k #t))))))))
