@@ -66,7 +66,7 @@
 (define halt-cont (cont<- k-halt))
 
 (define (get-prim name)
-  (really-global-lookup name))
+  (global-lookup name))
 
 
 ;; Primitive depiction
@@ -199,7 +199,7 @@
 (define (handle-error k evil)
   (let ((handler (get-prim '__handle-error)) ;TODO do this just once
         (message (tuple<- k evil)))
-    (when (eq? handler missing)
+    (when (eq? handler setting/missing)
       (error 'handle-error "Error before the handler wrapper even got defined"
              evil))
     (call handler message halt-cont)))

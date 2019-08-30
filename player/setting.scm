@@ -8,9 +8,8 @@
         setting-extend
         setting-inner-variables
 
-        really-global-lookup global-init! 
+        global-lookup global-init! 
         global-defined? really-global-define!
-        missing
         )
 (import (chezscheme) (player thing))
 
@@ -30,12 +29,6 @@
   (let ((r (setting-a-list setting)))
     (cond ((assq variable r) => cdr)
           (else (global-lookup variable)))))
-
-(define (global-lookup v)
-  (let ((value (really-global-lookup v)))
-    (if (eq? value missing)
-        setting/missing
-        value)))
 
 ;; TODO skip if vs null
 (define (setting-extend-promises setting vs)
@@ -81,8 +74,8 @@
   ;;XXX or (not (eq? value uninitialized))
   (eq-hashtable-contains? globals v))
 
-(define (really-global-lookup v)
-  (eq-hashtable-ref globals v missing))
+(define (global-lookup v)
+  (eq-hashtable-ref globals v setting/missing))
 
 (define (global-init! v value)
   (eq-hashtable-set! globals v value))
@@ -92,8 +85,8 @@
   ;; now. This aids development at the repl, but we
   ;; need a more systematic solution.
   ;;(signal k "Global redefinition" v)
-  (let ((value (eq-hashtable-ref globals v missing)))
-    (unless (eq? value missing)
+  (let ((value (eq-hashtable-ref globals v setting/missing)))
+    (unless (eq? value setting/missing)
       (display "\nWarning: redefined ")
       (write v)
       (newline)))
