@@ -600,9 +600,11 @@
   (let ((forms (snarf filename cant-read)))
     (cant-interpret `(do ,@forms))))
 
+(define repl-env (make-setting '()))
+
 ;; TODO add setting & optional context
 (define (cant-interpret e)
-  (evaluate (parse-exp e) (make-setting repl-env)))
+  (evaluate (parse-exp e) repl-env))
 
 (define (parse-exp e . opt-context)
   (parse-e e (optional-context 'parse-exp opt-context)))

@@ -9,7 +9,6 @@
         setting-inner-variables
 
         really-global-lookup global-init! 
-        repl-env
         global-defined? really-global-define!
         missing
         )
@@ -74,8 +73,6 @@
 
 
 ;; scaffolding XXX
-
-(define repl-env '())
 
 (define globals (make-eq-hashtable))
 (define missing (list '*missing*))
