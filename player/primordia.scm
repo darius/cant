@@ -1,27 +1,8 @@
 #!chezscheme
 (library (player primordia)
 (export primordial-setting
-        miranda-trait
-        script/array
-        script/box  
-        script/char 
-        script/claim
-        script/cps  
-        script/ejector
-        script/eof   
-        script/link  
-        script/map   
-        script/nil   
-        script/number
-        script/procedure
-        script/script 
-        script/setting
-        script/sink  
-        script/source
-        script/string
-        script/symbol
-        script/term
-        script/void)
+        miranda-trait script/cps script/procedure script/ejector
+        extract-script extract-datum)
 (import (chezscheme)
   (player util)
   (player macros)
@@ -31,6 +12,7 @@
   (player setting)
   (player thing)
   (player elaborate)
+  (player primitives)
   )
 
 (define trait-names '("miranda-trait"
@@ -178,5 +160,34 @@
 (define script/symbol    (script-for 'symbol))
 (define script/term      (script-for 'term))
 (define script/void      (script-for 'void))
+
+(define (extract-script object)
+  (cond
+   ((number? object)      script/number)
+   ((vector? object)      script/array)
+   ((pair? object)        script/link)
+   ((box? object)         script/box)
+   ((string? object)      script/string)
+   ((null? object)        script/nil)
+   ((symbol? object)      script/symbol)
+   ((output-port? object) script/sink)
+   ((input-port? object)  script/source)
+   ((char? object)        script/char)
+   ((boolean? object)     script/claim)
+   ((term? object)        script/term)
+   ((mapi? object)        script/map)
+   ((eq? object (void))   script/void)
+   ((eof-object? object)  script/eof)
+   ((script? object)      script/script)
+   ((procedure? object)   script/procedure)
+   ((setting? object)     script/setting)
+   ((object? object)      (object-script object))
+   (else (error 'call "Non-object" object))))
+
+(define (extract-datum object)
+  (cond
+   ((object? object)      (object-datum object))
+   ;; XXX: script too?
+   (else                  object)))
 
 )

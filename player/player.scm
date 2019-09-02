@@ -166,36 +166,6 @@
        (<= 0 (vector-ref x 0))
        (< (vector-ref x 0) (vector-length methods))))
 
-;; TODO move to primordia.scm
-(define (extract-script object)
-  (cond
-   ((number? object)      script/number)
-   ((vector? object)      script/array)
-   ((pair? object)        script/link)
-   ((box? object)         script/box)
-   ((string? object)      script/string)
-   ((null? object)        script/nil)
-   ((symbol? object)      script/symbol)
-   ((output-port? object) script/sink)
-   ((input-port? object)  script/source)
-   ((char? object)        script/char)
-   ((boolean? object)     script/claim)
-   ((term? object)        script/term)
-   ((mapi? object)        script/map)
-   ((eq? object (void))   script/void)
-   ((eof-object? object)  script/eof)
-   ((script? object)      script/script)
-   ((procedure? object)   script/procedure)
-   ((setting? object)     script/setting)
-   ((object? object)      (object-script object))
-   (else (error 'call "Non-object" object))))
-
-(define (extract-datum object)
-  (cond
-   ((object? object)      (object-datum object))
-   ;; XXX: script too?
-   (else                  object)))
-
 (define (handle-error k evil)
   (let ((handler (get-prim '__handle-error)) ;TODO do this just once
         (message (tuple<- k evil)))
