@@ -2,10 +2,16 @@
 (library (player parse)
 (export parse-e parse-p
         look-up-macro look-up-pat-macro 
-        optional-context
+        parse-exp parse-pat optional-context
         self-evaluating?
         )
 (import (chezscheme) (player util) (player macros) (player ast))
+
+(define (parse-exp e . opt-context)
+  (parse-e e (optional-context 'parse-exp opt-context)))
+
+(define (parse-pat p . opt-context)
+  (parse-p p (optional-context 'parse-pat opt-context)))
 
 (define (optional-context caller opt-context)
   (cond ((null? opt-context) '())

@@ -606,12 +606,6 @@
 (define (cant-interpret e)
   (evaluate (parse-exp e) repl-env))
 
-(define (parse-exp e . opt-context)
-  (parse-e e (optional-context 'parse-exp opt-context)))
-
-(define (parse-pat p . opt-context)
-  (parse-p p (optional-context 'parse-pat opt-context)))
-
 
 ;; Install the primitives, load the scripts and runtime env
 

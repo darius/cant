@@ -66,9 +66,6 @@
     (parse-exp `(do ,@(snarf filename cant-read)))))
 
 ;;XXX dupe code
-(define (parse-exp e . opt-context)
-  (parse-e e (optional-context 'parse-exp opt-context)))
-
 (define code-a-list
   (map (lambda (name)
          (cons name (read-source (if (symbol? name)
