@@ -34,7 +34,6 @@
 (define (setting-extend-promises setting vs)
   (let consing ((vs vs)
                 (r (setting-a-list setting)))
-;;  (let consing ((vs vs) (r r))
     (if (null? vs)
         (make-setting r)
         (consing (cdr vs) (cons (cons (car vs) uninitialized) r)))))
