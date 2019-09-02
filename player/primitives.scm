@@ -38,11 +38,12 @@
   (mix (mulmix (mulmix x))))
 
 (define (cant=? x y)
-  (cond ((term? x) (and (term? y) (term=? x y)))
-        ((pair? x) (and (pair? y) (pair=? x y)))
-        ((string? x) (and (string? y) (string=? x y)))
-        ((mapi? x) (and (mapi? y) (cant=? (mapi-items x) (mapi-items y))))
-        (else (eqv? x y))))
+  (or (eqv? x y)
+      (cond ((term? x)   (and (term? y) (term=? x y)))
+            ((pair? x)   (and (pair? y) (pair=? x y)))
+            ((string? x) (and (string? y) (string=? x y)))
+            ((mapi? x)   (and (mapi? y) (cant=? (mapi-items x) (mapi-items y))))
+            (else        #f))))
 
 (define (pair=? x y)
   (and (cant=? (car x) (car y))
