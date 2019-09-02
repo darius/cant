@@ -2,7 +2,7 @@
 (library (player parse)
 (export parse-e parse-p
         look-up-macro look-up-pat-macro 
-        parse-exp parse-pat optional-context
+        parse-exp parse-pat
         self-evaluating?
         )
 (import (chezscheme) (player util) (player macros) (player ast))
