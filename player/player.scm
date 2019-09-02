@@ -607,7 +607,7 @@
   (evaluate (parse-exp e) repl-env))
 
 
-;; Install the primitives, load the scripts and runtime env
+;; Install the primitives and the remaining primordia
 
 (define mask32 (- (expt 2 32) 1))
 
