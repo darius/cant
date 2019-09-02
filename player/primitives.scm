@@ -6,7 +6,7 @@
         prim-substring prim-vector-maps? prim-read-all prim-display
         mapi? mapi-items prim-mapi<-items prim-mapi-get
         )
-(import (chezscheme) (player util))
+(import (chezscheme) (player util) (player parse))
 
 ;; Hashing and equality
 
