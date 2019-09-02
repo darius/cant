@@ -47,7 +47,6 @@
                    ".cant")))
     (parse-exp `(do ,@(snarf filename cant-read)))))
 
-;;XXX dupe code
 (define code-a-list
   (map (lambda (name)
          (cons name (read-source (if (symbol? name)
