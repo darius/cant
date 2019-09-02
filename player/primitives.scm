@@ -66,7 +66,7 @@
   (and (char? x) (char? y)      ;; XXX raise an error instead?
        (cond ((char<? x y) -1)
              ((char=? x y)  0)
-             (else            +1))))
+             (else         +1))))
 
 (define (number-compare x y)
   (and (number? x) (number? y)      ;; XXX raise an error instead?
@@ -78,7 +78,7 @@
   (and (string? x) (string? y)      ;; XXX raise an error instead?
        (cond ((string<? x y) -1)
              ((string=? x y)  0)
-             (else            +1))))
+             (else           +1))))
 
 
 ;; Immutable maps: placeholder implementation
