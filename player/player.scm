@@ -9,6 +9,7 @@
   (player setting)
   (player thing)
   (player elaborate)
+  (player primordia)
   (player primitives)
   )
 
@@ -66,7 +67,7 @@
 (define halt-cont (cont<- k-halt))
 
 (define (get-prim name)
-  (global-lookup name))
+  (global-lookup name))                 ;XXX
 
 
 ;; Primitive depiction
@@ -121,8 +122,7 @@
             ((cps-script? script)
              (if (tuple? message)
                  ((cps-script-procedure script) datum (list<-tuple message) k)
-                 (delegate (get-prim 'cps-primitive)
-                           object message k)))
+                 (delegate script/cps object message k)))
             (else
              (error 'call "Not a script" script datum)))))
    ((procedure? object)
@@ -143,12 +143,10 @@
                     (lambda ()
                       ;; Do the Scheme call in this error-handling context.
                       (apply object (list<-tuple message)))))))
-        (run-script object procedure-script primordial-setting message k)))
+        (run-script object script/procedure primordial-setting message k)))
    (else
     (let ((script (extract-script object)))
       (run-script object script primordial-setting message k)))))
-
-(define primordial-setting (make-setting '()))             ;XXX 
 
 (define reply-prim 
   (cps-prim<- #f '__reply
@@ -167,26 +165,27 @@
        (<= 0 (vector-ref x 0))
        (< (vector-ref x 0) (vector-length methods))))
 
+;; TODO move to primordia.scm
 (define (extract-script object)
   (cond
-   ((number? object)      number-script)
-   ((vector? object)      array-script)
-   ((pair? object)        link-script)
-   ((box? object)         box-script)
-   ((string? object)      string-script)
-   ((null? object)        nil-script)
-   ((symbol? object)      symbol-script)
-   ((output-port? object) sink-script)
-   ((input-port? object)  source-script)
-   ((char? object)        char-script)
-   ((boolean? object)     boolean-script)
-   ((term? object)        term-script)
-   ((mapi? object)        map-script)
-   ((eq? object (void))   void-script)
-   ((eof-object? object)  eof-script)
-   ((script? object)      script-script)
-   ((procedure? object)   procedure-script)
-   ((setting? object)     setting-script)
+   ((number? object)      script/number)
+   ((vector? object)      script/array)
+   ((pair? object)        script/link)
+   ((box? object)         script/box)
+   ((string? object)      script/string)
+   ((null? object)        script/nil)
+   ((symbol? object)      script/symbol)
+   ((output-port? object) script/sink)
+   ((input-port? object)  script/source)
+   ((char? object)        script/char)
+   ((boolean? object)     script/claim)
+   ((term? object)        script/term)
+   ((mapi? object)        script/map)
+   ((eq? object (void))   script/void)
+   ((eof-object? object)  script/eof)
+   ((script? object)      script/script)
+   ((procedure? object)   script/procedure)
+   ((setting? object)     script/setting)
    ((object? object)      (object-script object))
    (else (error 'call "Non-object" object))))
 
@@ -262,7 +261,7 @@
                  (lambda (receiver)
                    (let* ((ejector-box (box '*))
                           (ejector-k (cont<- k-disable-ejector k ejector-box))
-                          (ejector (object<- ejector-script ejector-box)))
+                          (ejector (object<- script/ejector ejector-box)))
                      (set-box! ejector-box ejector-k)
                      (call receiver (tuple<- ejector) ejector-k)))))))
 
@@ -288,7 +287,7 @@
      (cps-unpack arguments k 2 '__eject
                  (lambda (ejector result)
                    (unless (and (object? ejector)
-                                (eq? (object-script ejector) ejector-script))
+                                (eq? (object-script ejector) script/ejector))
                      (error 'bug "Not an ejector" ejector))
                    (let* ((ejector-box (object-datum ejector))
                           (state (unbox ejector-box)))
@@ -406,7 +405,7 @@
    (lambda (e r k)                          ;e-make
      (unpack e (name trait clauses)
        (if (eq? trait none-exp) ; Just fast-path tuning; this IF is not logically necessary.
-           (answer k (object<- (script<- name #f clauses) ;TODO cache the script in the parsed 'make' exp
+           (answer k (object<- (script<- name #f clauses) ;TODO cache the script in the parsed 'make' exp. TODO miranda-trait instead of #f?
                                r))
            (ev-exp trait r
                    (cont<- k-ev-trait-make k r name clauses)))))
@@ -615,36 +614,9 @@
 
 ;; Install the primitives, load the scripts and runtime env
 
-(define miranda-trait    '*forward-ref*)
-
-(define boolean-script   '*forward-ref*)
-(define number-script    '*forward-ref*)
-(define nil-script       '*forward-ref*)
-(define link-script      '*forward-ref*)
-(define symbol-script    '*forward-ref*)
-(define char-script      '*forward-ref*)
-(define string-script    '*forward-ref*)
-(define array-script     '*forward-ref*)
-(define box-script       '*forward-ref*)
-(define source-script    '*forward-ref*)
-(define sink-script      '*forward-ref*)
-(define term-script      '*forward-ref*)
-(define procedure-script '*forward-ref*)
-(define void-script      '*forward-ref*)
-(define eof-script       '*forward-ref*)
-(define script-script    '*forward-ref*)
-(define ejector-script   '*forward-ref*)
-(define map-script       '*forward-ref*)
-(define setting-script   '*forward-ref*)
-
-;; TODO invoking these primitive scripts always goes through a failing
-;;  matching loop against the '() clauses before delegating to the
-;;  (get-prim name) trait. Just delegate immediately.
-(define (get-script name)
-  (script<- name (get-prim name) '()))
-
 (define mask32 (- (expt 2 32) 1))
 
+;; TODO moveme
 (define (prim-setting-lookup setting variable)
   (let ((value (setting-lookup setting variable)))
     (if (eq? value setting/missing)
@@ -819,70 +791,7 @@
     (os-exit ,exit)
     ))
 
-;;(run-load "abcs/10-runtime.cant")
-(let ()
-  (define trait-names '(miranda-trait
-                        map-trait
-                        list-trait
-                        array-trait))
-  (define type-names '(array
-                       box
-                       char
-                       claim
-                       cps
-                       ejector
-                       eof
-                       link
-                       map
-                       nil
-                       number
-                       procedure
-                       script
-                       setting
-                       sink
-                       source
-                       string
-                       symbol
-                       term
-                       void))
-  (define (read-source parts)
-    (let ((filename (string-append
-                     (string-join "/" (list* "abcs" "00-primordia"
-                                             (map (lambda (part)
-                                                    (if (symbol? part)
-                                                        (symbol->string part)
-                                                        part))
-                                                  parts)))
-                     ".cant")))
-      (snarf filename cant-read)))
-  (let ((all-traits (flatmap read-source (map list trait-names)))
-        (primitives (flatmap read-source (map (lambda (t) (list "types" t)) type-names)))
-        (sugar   (read-source '("sugar")))
-        (runtime (read-source '("runtime"))))
-    (cant-interpret `(do ,@(append all-traits primitives sugar runtime)))))
-
-(set! miranda-trait  (get-prim 'miranda-trait))
-
-(set! boolean-script (get-script 'claim-primitive))
-(set! number-script  (get-script 'number-primitive))
-(set! nil-script     (get-script 'nil-primitive))
-(set! link-script    (get-script 'link-primitive))
-(set! symbol-script  (get-script 'symbol-primitive))
-(set! char-script    (get-script 'char-primitive))
-(set! string-script  (get-script 'string-primitive))
-(set! array-script   (get-script 'array-primitive))
-(set! box-script     (get-script 'box-primitive))
-(set! source-script  (get-script 'source-primitive))
-(set! sink-script    (get-script 'sink-primitive))
-(set! term-script    (get-script 'term-primitive))
-(set! procedure-script (get-script 'procedure-primitive))
-(set! void-script    (get-script 'void-primitive))
-(set! eof-script     (get-script 'eof-primitive))
-(set! script-script  (get-script 'script-primitive))
-(set! ejector-script (get-script 'ejector-primitive))
-(set! map-script     (get-script 'map-primitive))
-(set! setting-script (get-script 'setting-primitive))
-
+(run-load "abcs/00-primordia/runtime.cant")
 
 ;; For tuning later.
 
