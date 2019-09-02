@@ -1,7 +1,7 @@
 (library (player elaborate)
 (export elaborate)
 (import (chezscheme)
-  (player util) (player macros) (player parse) (player setting))
+  (player util) (player macros) (player ast) (player setting))
 
 ;; Analyze and transform a parsed AST.
 

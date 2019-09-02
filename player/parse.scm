@@ -1,55 +1,11 @@
 #!chezscheme
 (library (player parse)
-(export pack<- pack-tag 
-        e-constant
-        e-variable
-        e-term
-        e-list
-        e-make
-        e-do
-        e-let
-        e-call
-        p-constant
-        p-any
-        p-variable
-        p-term
-        p-list
-        p-and
-        p-view
-        parse-e parse-p
-        exp-vars-defined pat-vars-defined
+(export parse-e parse-p
         look-up-macro look-up-pat-macro 
         optional-context
-        none-exp
         self-evaluating?
         )
-(import (chezscheme) (player util) (player macros))
-
-;; Parse expressions and patterns to ASTs
-
-(define pack<- vector)
-
-(define (pack-tag vec)
-  (vector-ref vec 0))
-
-(define-enum
-  e-constant
-  e-variable
-  e-term
-  e-list
-  e-make
-  e-do
-  e-let
-  e-call)
-
-(define-enum
-  p-constant
-  p-any
-  p-variable
-  p-term
-  p-list
-  p-and
-  p-view)
+(import (chezscheme) (player util) (player macros) (player ast))
 
 (define (optional-context caller opt-context)
   (cond ((null? opt-context) '())
@@ -339,8 +295,6 @@
                  none-exp
                  (parse-clauses clauses ctx)))))))
 
-(define none-exp (pack<- e-constant '#f))
-
 (define (parse-clause clause ctx)
   (mcase clause
     (('to pat . body)
@@ -548,63 +502,5 @@
            (eqv? (cdr pair) d))
       pair
       (cons a d)))
-
-
-;; Variables defined
-
-(define (exp-vars-defined e)
-  ((vector-ref methods/exp-vars-defined (pack-tag e))
-   e))
-
-(define methods/exp-vars-defined
-  (vector
-   (lambda (e) '())                         ;e-constant
-   (lambda (e) '())                         ;e-variable
-   (lambda (e)                              ;e-term
-     (unpack e (tag args)
-       (flatmap exp-vars-defined args)))
-   (lambda (e)                              ;e-list
-     (unpack e (args)
-       (flatmap exp-vars-defined args)))
-   (lambda (e)                              ;e-make
-     '())
-   (lambda (e)                              ;e-do
-     (unpack e (e1 e2)
-       (append (exp-vars-defined e1)
-               (exp-vars-defined e2))))
-   (lambda (e)                              ;e-let
-     (unpack e (p1 e1)
-       (append (pat-vars-defined p1)
-               (exp-vars-defined e1))))
-   (lambda (e)                              ;e-call
-     (unpack e (e1 e2)
-       (append (exp-vars-defined e1)
-               (exp-vars-defined e2))))))
-
-(define (pat-vars-defined p)
-  ((vector-ref methods/pat-vars-defined (pack-tag p))
-   p))
-
-(define methods/pat-vars-defined
-  (vector
-   (lambda (p) '())                         ;p-constant
-   (lambda (p) '())                         ;p-any
-   (lambda (p)                              ;p-variable
-     (unpack p (var)
-       (list var)))
-   (lambda (p)                              ;p-term
-     (unpack p (tag args)
-       (flatmap pat-vars-defined args)))
-   (lambda (p)                              ;p-list
-     (unpack p (args)
-       (flatmap pat-vars-defined args)))
-   (lambda (p)                              ;p-and
-     (unpack p (p1 p2)
-       (append (pat-vars-defined p1)
-               (pat-vars-defined p2))))
-   (lambda (p)                              ;p-view
-     (unpack p (e1 p1)
-       (append (exp-vars-defined e1)
-               (pat-vars-defined p1))))))
 
 )

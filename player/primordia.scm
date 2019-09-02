@@ -26,6 +26,7 @@
   (player util)
   (player macros)
   (player read)
+  (player ast)
   (player parse)
   (player setting)
   (player thing)
