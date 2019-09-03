@@ -317,17 +317,6 @@
 
 ;; A small-step interpreter
 
-;; TODO needn't be cps really
-(define setting-resolve!-prim
-  (cps-prim<- #f '__setting-resolve!
-              (lambda (datum arguments k)
-                (cps-unpack arguments k 3 '__setting-resolve!
-                            (lambda (setting variable value)
-                              (cond ((setting-resolve! setting variable value)
-                                     => (lambda (plaint)
-                                          (signal k plaint variable)))
-                                    (else (answer k #t))))))))
-
 (define evaluate-prim
   (cps-prim<- #f 'evaluate
               (lambda (datum arguments k)
@@ -581,6 +570,12 @@
 (define mask32 (- (expt 2 32) 1))
 
 ;; TODO moveme
+(define (prim-setting-resolve! setting variable value)
+  (cond ((setting-resolve! setting variable value)
+         => (lambda (plaint)
+              (error '__setting-resolve! plaint variable)))
+        (else #t)))
+
 (define (prim-setting-lookup setting variable)
   (let ((value (setting-lookup setting variable)))
     (if (eq? value setting/missing)
@@ -678,7 +673,7 @@
     (__setting-a-list ,setting-a-list)
     (__setting-lookup ,prim-setting-lookup)
     (__setting-extend-promises ,setting-extend-promises)
-    (__setting-resolve! ,setting-resolve!-prim)
+    (__setting-resolve! ,prim-setting-resolve!)
     (__setting-binds? ,setting-binds?)
     (__setting-extend ,setting-extend)
     (__setting-inner-variables ,setting-inner-variables)
