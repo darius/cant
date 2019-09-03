@@ -2,7 +2,8 @@
 (library (player primordia)
 (export primordial-setting
         miranda-trait script/cps script/procedure script/ejector
-        extract-script extract-datum)
+        extract-script extract-datum
+        runtime)
 (import (chezscheme)
   (player util)
   (player macros)
@@ -54,15 +55,16 @@
                                      (list name)))))
        (append trait-names type-names '("sugar"))))
 
+(define runtime (read-source '("runtime")))
+
 (define primordial-setting
   (make-setting '()))                   ;TODO
 
 (define (bleah e)                       ;TODO actually call this
-  (let* ((elaboration (elaborate e primordial-setting))
-         (elaborated-e (car elaboration))
-         (elaboration-setting (cadr elaboration)))
-    (insist (eq? elaboration-setting primordial-setting)
-            "mutable setting for now" elaboration-setting)
+  (let* ((maybe-extended-setting (elaborate-setting e primordial-setting))
+         (elaborated-e (elaborate e maybe-extended-setting)))
+    (insist (eq? maybe-extended-setting primordial-setting)
+            "mutable setting for now" maybe-extended-setting)
     (ev-primordia elaborated-e primordial-setting)))
 
 (define (ev-primordia e r)

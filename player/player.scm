@@ -345,9 +345,8 @@
     (error 'evaluate-exp "You need to parse it first" e))
   (unless (setting? setting)
     (error 'evaluate-exp "Wrong type: expected a setting" setting))
-  (let* ((elaboration (elaborate e setting))
-         (elaborated-e (car elaboration))
-         (maybe-extended-setting (cadr elaboration)))
+  (let* ((maybe-extended-setting (elaborate-setting e setting))
+         (elaborated-e (elaborate e maybe-extended-setting)))
     (ev-exp elaborated-e maybe-extended-setting k)))
 
 (define (ev-exp e r k)
@@ -756,7 +755,11 @@
     (os-exit ,exit)
     ))
 
-(run-load "abcs/00-primordia/runtime.cant")
+(let ((e runtime)
+      (setting primordial-setting))
+  (let* ((maybe-extended-setting (elaborate-setting e setting))
+         (elaborated-e (elaborate e maybe-extended-setting)))
+    (ev-exp elaborated-e maybe-extended-setting halt-cont)))
 
 ;; For tuning later.
 

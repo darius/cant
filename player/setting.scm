@@ -6,12 +6,13 @@
         setting-lookup global-lookup
         setting-extend-promises setting-resolve!
         setting-extend
+        setting-ensure-bound
         setting-inner-variables
 
         global-lookup global-init! 
         global-defined? really-global-define!
         )
-(import (chezscheme) (player thing))
+(import (chezscheme) (player util) (player thing))
 
 ;; Wrapper for settings
 ;; The representation will change soon
@@ -29,6 +30,18 @@
   (let ((r (setting-a-list setting)))
     (cond ((assq variable r) => cdr)
           (else (global-lookup variable)))))
+
+(define (setting-ensure-bound setting variables)
+  (cond ((null? variables) setting)
+        ((mutable-setting? setting)
+         ;; Not currently needed, but a placeholder for what will be
+         (for-each (lambda (v)
+                     (insist (not (setting-binds? setting v)) "Already bound" v)
+                     (global-init! v uninitialized))
+                   variables)
+         setting)
+        (else
+         (setting-extend-promises setting variables))))
 
 ;; TODO skip if vs null
 (define (setting-extend-promises setting vs)
@@ -84,12 +97,11 @@
   ;; need a more systematic solution.
   ;;(signal k "Global redefinition" v)
   (let ((value (eq-hashtable-ref globals v setting/missing)))
-    (unless (eq? value setting/missing)
+    (unless (or (eq? value setting/missing)
+                (eq? value uninitialized))
       (display "\nWarning: redefined ")
       (write v)
       (newline)))
   (eq-hashtable-set! globals v value))
-
-
 
 )

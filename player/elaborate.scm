@@ -1,17 +1,15 @@
 (library (player elaborate)
-(export elaborate)
+(export elaborate elaborate-setting)
 (import (chezscheme)
   (player util) (player macros) (player ast) (player setting))
 
 ;; Analyze and transform a parsed AST.
 
+(define (elaborate-setting e setting)
+  (setting-ensure-bound setting (exp-vars-defined e)))
+
 (define (elaborate e setting)
-  (let* ((defined (exp-vars-defined e))
-         (scope (if (or (null? defined) (mutable-setting? setting))
-                    (make-scope defined setting)
-                    (make-scope '() (setting-extend-promises setting defined))))
-         (e-e (elaborate-e e scope)))
-    (list e-e (scope-setting scope))))
+  (elaborate-e e (make-scope '() setting)))
 
 (define (elaborate-e e s)
   ((vector-ref methods/elaborate-e (pack-tag e))
