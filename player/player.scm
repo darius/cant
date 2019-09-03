@@ -4,6 +4,7 @@
 (import (chezscheme)
   (player util)
   (player macros)
+  (player equality)
   (player read)
   (player ast)
   (player parse)

@@ -7,13 +7,13 @@
 (import (chezscheme)
   (player util)
   (player macros)
+  (player equality)
   (player read)
   (player ast)
   (player parse)
   (player setting)
   (player thing)
   (player elaborate)
-  (player primitives)
   )
 
 (define trait-names '("miranda-trait"

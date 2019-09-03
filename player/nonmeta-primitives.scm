@@ -2,6 +2,7 @@
 (export nonmeta-a-list)
 (import (chezscheme)
   (player util)
+  (player equality)
   (player read)
   (player parse)                        ;just for self-evaluating? ?
   (player setting)
