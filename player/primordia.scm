@@ -60,13 +60,6 @@
 (define primordial-setting
   (make-setting '()))                   ;TODO
 
-(define (bleah e)                       ;TODO actually call this
-  (let* ((maybe-extended-setting (elaborate-setting e primordial-setting))
-         (elaborated-e (elaborate e maybe-extended-setting)))
-    (insist (eq? maybe-extended-setting primordial-setting)
-            "mutable setting for now" maybe-extended-setting)
-    (ev-primordia elaborated-e primordial-setting)))
-
 (define (ev-primordia e r)
   ((vector-ref methods/ev-primordia (pack-tag e))
    e r))
@@ -127,7 +120,8 @@
 (define value-a-list
   (map (lambda (pair)
          (cons (car pair)
-               (ev-primordia (cdr pair) primordial-setting)))
+               (ev-primordia (cdr pair) ;TODO (elaborate (cdr pair) primordial-setting)
+                             primordial-setting)))
        code-a-list))
 
 (define (value-for name)
