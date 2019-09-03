@@ -625,8 +625,6 @@
     (assoc ,assoc)                      ;XXX doesn't use cant=?
     (sqrt ,sqrt)
     (panic ,panic-prim)
-    (error ,error-prim)
-    (__evaluate ,evaluate-prim)
     (open-input-file ,open-input-file)  ;XXX rename open-file-source
     (open-output-file ,open-output-file) ; open-file-sink
     (open-binary-file-source ,open-file-input-port) ; This actually has more options in Chez than just binary
@@ -634,10 +632,15 @@
     (__get-u8 ,get-u8)
     (__put-u8 ,put-u8)
 ;;    (__set-dbg! ,set-dbg!)
+
+    ;; CPS primitives and other ties to interpreter internals
+    (__evaluate ,evaluate-prim)
+    (error ,error-prim)
     (with-ejector ,with-ejector-prim)
     (__eject ,eject-prim)
     (ejector-protect ,ejector-protect-prim)
     (__reply ,reply-prim)
+    (global-defined? ,global-defined?)
 
     ;; These will get high-level definitions later TODO
     (void ,(void))
@@ -661,7 +664,6 @@
     (maybe-macroexpand-expr ,maybe-macroexpand-expr)
     (maybe-macroexpand-patt ,maybe-macroexpand-patt)
     (open-subprocess ,process)
-    (global-defined? ,global-defined?)
     (extract-script ,extract-script)
     (extract-datum ,extract-datum)
     (__halp-log ,prim-halp-log)
