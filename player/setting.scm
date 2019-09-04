@@ -36,7 +36,7 @@
         ((mutable-setting? setting)
          ;; Not currently needed, but a placeholder for what will be
          (for-each (lambda (v)
-                     (insist (not (setting-binds? setting v)) "Already bound" v)
+                     (insist (not (already-bound? setting v)) "Already bound" v)
                      (global-init! v uninitialized))
                    variables)
          setting)
@@ -66,6 +66,11 @@
 
 (define (mutable-setting? setting)
   (null? (setting-a-list setting)))
+
+;; XXX hackety hack hack hack
+(define (already-bound? setting variable)
+  (or (assq variable (setting-a-list setting))
+      (not (eq? uninitialized (eq-hashtable-ref globals variable uninitialized)))))
 
 (define (setting-binds? setting variable)
   (or (assq variable (setting-a-list setting))

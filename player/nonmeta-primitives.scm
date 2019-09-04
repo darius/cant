@@ -7,7 +7,6 @@
   (player parse)                        ;just for self-evaluating? ?
   (player setting)
   (player thing)
-  (player primordia)
   (player primitives))
 
 ;; Primitive depiction
@@ -114,8 +113,6 @@
     (maybe-macroexpand-expr ,maybe-macroexpand-expr)
     (maybe-macroexpand-patt ,maybe-macroexpand-patt)
     (open-subprocess ,process)
-    (extract-script ,extract-script)
-    (extract-datum ,extract-datum)
     (__halp-log ,prim-halp-log)
     (nano-now ,prim-nano-now)
     (nanosleep ,prim-nanosleep)

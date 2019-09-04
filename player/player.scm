@@ -557,6 +557,8 @@
                     (global-defined? ,global-defined?)
                     (__cps-primitive-name ,(lambda (x)
                                              (cps-script-name (object-script x))))
+                    (extract-script ,extract-script)
+                    (extract-datum ,extract-datum)
                     (__script-name ,script-name)
                     (__script-trait ,script-trait)
                     (__script-clauses ,script-clauses)

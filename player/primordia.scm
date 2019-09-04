@@ -14,6 +14,7 @@
   (player setting)
   (player thing)
   (player elaborate)
+  (player nonmeta-primitives)
   )
 
 (define trait-names '("miranda-trait"
@@ -56,9 +57,6 @@
        (append trait-names type-names '("sugar"))))
 
 (define runtime (read-source '("runtime")))
-
-(define primordial-setting
-  (make-setting '()))                   ;TODO
 
 (define (ev-primordia e r)
   ((vector-ref methods/ev-primordia (pack-tag e))
@@ -117,10 +115,32 @@
    ev-pat-unsupported                   ;p-view
    ))
 
+(define primordial-setting
+  (setting-ensure-bound
+   (make-setting '())
+   (append (map car nonmeta-a-list)
+           '(__evaluate
+             error
+             with-ejector
+             __eject
+             ejector-protect
+             __reply
+             global-defined?
+             __cps-primitive-name
+             extract-script
+             extract-datum
+             __script-name
+             __script-trait
+             __script-clauses)
+           (flatmap (lambda (pair)
+                      (exp-vars-defined (cdr pair)))
+                    code-a-list)
+           (exp-vars-defined runtime))))
+
 (define value-a-list
   (map (lambda (pair)
          (cons (car pair)
-               (ev-primordia (cdr pair) ;TODO (elaborate (cdr pair) primordial-setting)
+               (ev-primordia (elaborate (cdr pair) primordial-setting)
                              primordial-setting)))
        code-a-list))
 
