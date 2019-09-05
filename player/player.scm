@@ -326,10 +326,10 @@
      (unpack e (value)
        (answer k value)))
    (lambda (e r k)                          ;e-variable
-     (unpack e (depth offset var)
-       (let ((value (setting-lookup r var)))
+     (unpack e (depth offset)
+       (let ((value (setting-address-fetch r depth offset)))
          (if (eq? value setting/missing)
-             (signal k "Unbound variable" var)
+             (signal k "Unbound variable" (vector-ref e 3))  ; e[3]: variable name
              (answer k value)))))
    (lambda (e r k)                          ;e-term
      (unpack e (tag es)
@@ -376,7 +376,7 @@
      (answer k #t))
    (lambda (subject p r k)              ;p-variable
      (unpack p (depth offset name)
-       (cond ((setting-resolve! r name subject)
+       (cond ((setting-address-resolve! r depth offset name subject)
               => (lambda (plaint)
                    (signal k plaint name)))
              (else (answer k #t)))))

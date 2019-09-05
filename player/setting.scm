@@ -3,8 +3,8 @@
         setting-binds? setting-extend-promises
         mutable-setting?
         setting/missing
-        setting-address setting-lookup
-        setting-extend-promises setting-resolve!
+        setting-address setting-lookup setting-address-fetch
+        setting-extend-promises setting-resolve! setting-address-resolve!
         setting-extend
         setting-ensure-bound
         setting-inner-variables
@@ -64,6 +64,21 @@
                 (vector-set! values index value)
                 #f))))))
 
+(define (setting-address-resolve! setting depth offset variable value)
+  (let walking ((s setting) (d depth))
+    (cond ((= d 0)
+           (let* ((values (setting-values s))
+                  (redef? (not (eq? (vector-ref values offset) uninitialized))))
+             (if (and redef? (not (eq-hashtable? (setting-table s))))
+                 "Multiple definition"
+                 (begin
+                   (when redef?
+                     (display "\nWarning: redefined ") (write variable) (newline))
+                   (vector-set! values offset value)
+                   #f))))
+          (else
+           (walking (setting-parent s) (- d 1))))))
+
 (define (setting-binds? setting variable)
   (let walking ((setting setting))
     (and setting
@@ -85,6 +100,12 @@
            => (lambda (parent)
                 (walking (+ depth 1) parent)))
           (else #f))))
+
+(define (setting-address-fetch setting depth offset)
+  (let walking ((s setting) (d depth))
+    (if (= d 0)
+        (vector-ref (setting-values s) offset)
+        (walking (setting-parent s) (- d 1)))))
 
 (define (setting-lookup setting variable)
   (let walking ((setting setting))
