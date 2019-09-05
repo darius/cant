@@ -58,7 +58,7 @@
         (push (extract-datum focus)))
       (be 'value
         (let setting (main-interactive-setting ;TODO parameterize
-                      .extend '(*focus*) `(,focus)))
+                      .extend '(*focus*) [focus]))
         (print (cant .play (read) setting))
         (continue))
       (be (? count?)
@@ -112,7 +112,7 @@
             (continue "At bottom.\n")
             (interacting callees.first callees.rest)))
       (be 'setting
-        (print frame.setting.non-global-variables)
+        (print frame.setting.inner-variables)
         (continue))
       (be 'value
         (print (read-eval))

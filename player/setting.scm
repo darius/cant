@@ -1,112 +1,123 @@
 (library (player setting)
-(export setting? make-setting setting-a-list
+(export setting? empty-setting setting-extend-mutable
         setting-binds? setting-extend-promises
         mutable-setting?
         setting/missing
-        setting-lookup global-lookup
+        setting-lookup
         setting-extend-promises setting-resolve!
         setting-extend
         setting-ensure-bound
         setting-inner-variables
-
-        global-lookup global-init! 
-        global-defined? really-global-define!
         )
 (import (chezscheme) (player util) (player thing))
 
-;; Wrapper for settings
-;; The representation will change soon
+(define-record-type setting (fields table values parent))
+;; parent: #f or another setting
+;; Two variants:
+;;   - interactive:
+;;       table: an eq-hashtable
+;;       values: #f
+;;   - non:
+;;       table: a list of symbols
+;;       values: a vector, of the same length
 
-(define-record-type setting (fields a-list))
+(define empty-setting (make-setting '() (vector) #f))
+
+(define (setting-extend-mutable setting)
+  (make-setting (make-eq-hashtable) #f setting))
+
+(define (mutable-setting? x)
+  (and (setting? x)
+       (eq-hashtable? (setting-table x))))
 
 (define setting/missing (list '*missing*))
 
 (define (setting-extend variables values setting)
-  (make-setting
-   (append (map cons variables values)
-           (setting-a-list setting))))
+  (make-setting variables values setting))
+
+(define (setting-extend-promises setting variables)
+  (if (null? variables)
+      setting
+      (make-setting variables
+                    (make-vector (length variables) uninitialized)
+                    setting)))
+
+;; Return #f on success, else a complaint.
+(define (setting-resolve! setting variable value)
+  (let ((table (setting-table setting)))
+    (cond ((and (pair? table) (frame-index table variable))
+           => (lambda (i)
+                (let ((values (setting-values setting)))
+                  (cond ((eq? (vector-ref values i) uninitialized)
+                         (vector-set! values i value)
+                         #f)
+                        (else "Multiple definition")))))
+          ((eq-hashtable? table)
+           (if (setting-binds? (setting-parent setting) variable)
+               "An interactive setting may not shadow its parent" 
+               (begin
+                 (unless (eq? (eq-hashtable-ref table variable uninitialized)
+                              uninitialized)
+                   (display "\nWarning: redefined ") (write variable) (newline))
+                 (eq-hashtable-set! table variable value)
+                 #f)))
+          (else
+           "Somehow trying to bind a variable in the wrong frame"))))
+
+(define (setting-binds? setting variable)
+  (let walking ((setting setting))
+    (and setting
+         (let ((table (setting-table setting)))
+           (or (if (eq-hashtable? table)
+                   (eq-hashtable-contains? table variable) ;TODO what about uninitialized?
+                   (memq variable table))
+               (walking (setting-parent setting)))))))
 
 (define (setting-lookup setting variable)
-  (let ((r (setting-a-list setting)))
-    (cond ((assq variable r) => cdr)
-          (else (global-lookup variable)))))
+  (define (walking setting)
+    (let ((table (setting-table setting)))
+      (if (eq-hashtable? table)
+          (let ((v (eq-hashtable-ref table variable setting/missing)))
+            (if (eq? v setting/missing)
+                (keep-walking setting)
+                v))
+          (cond ((frame-index table variable)
+                 => (lambda (n) (vector-ref (setting-values setting) n)))
+                (else (keep-walking setting))))))
+  (define (keep-walking setting)
+    (cond ((setting-parent setting) => walking)
+          (else setting/missing)))
+  (walking setting))
 
 (define (setting-ensure-bound setting variables)
   (cond ((null? variables) setting)
         ((mutable-setting? setting)
-         ;; Not currently needed, but a placeholder for what will be
-         (for-each (lambda (v)
-                     (insist (not (already-bound? setting v)) "Already bound" v)
-                     (global-init! v uninitialized))
-                   variables)
+         (let ((table (setting-table setting)))
+           (for-each (lambda (v)
+                       (insist (eq? (eq-hashtable-ref table v uninitialized)
+                                    uninitialized)
+                               "Already bound" v)
+                       (eq-hashtable-set! table v uninitialized))
+                     variables))
          setting)
         (else
          (setting-extend-promises setting variables))))
 
-;; TODO skip if vs null
-(define (setting-extend-promises setting vs)
-  (let consing ((vs vs)
-                (r (setting-a-list setting)))
-    (if (null? vs)
-        (make-setting r)
-        (consing (cdr vs) (cons (cons (car vs) uninitialized) r)))))
-
-;; Return #f on success, else a complaint.
-(define (setting-resolve! setting name value)
-  (let ((r (setting-a-list setting)))
-    (cond ((assq name r)
-           => (lambda (pair)
-                (if (eq? (cdr pair) uninitialized)
-                    (begin (set-cdr! pair value) #f)
-                    "Multiple definition")))
-          ((null? r)
-           (really-global-define! name value)
-           #f)
-          (else "Tried to bind in a non-environment"))))
-
-(define (mutable-setting? setting)
-  (null? (setting-a-list setting)))
-
-;; XXX hackety hack hack hack
-(define (already-bound? setting variable)
-  (or (assq variable (setting-a-list setting))
-      (not (eq? uninitialized (eq-hashtable-ref globals variable uninitialized)))))
-
-(define (setting-binds? setting variable)
-  (or (assq variable (setting-a-list setting))
-      (global-defined? variable)))
-
 (define (setting-inner-variables setting)
-  ;; TODO dedupe
-  (map car (setting-a-list setting)))
+  (let walking ((setting setting))
+    (if (not (setting-parent setting))
+        '()
+        ;; TODO dedupe
+        (append (let ((table (setting-table setting)))
+                  (if (eq-hashtable? table)
+                      (vector->list (hashtable-keys table))
+                      table))
+                (walking (setting-parent setting))))))
 
-
-
-;; scaffolding XXX
-
-(define globals (make-eq-hashtable))
-
-(define (global-defined? v)
-  ;;XXX or (not (eq? value uninitialized))
-  (eq-hashtable-contains? globals v))
-
-(define (global-lookup v)
-  (eq-hashtable-ref globals v setting/missing))
-
-(define (global-init! v value)
-  (eq-hashtable-set! globals v value))
-
-(define (really-global-define! v value)
-  ;;XXX as a hack, allow global redefinition for
-  ;; now. This aids development at the repl, but we
-  ;; need a more systematic solution.
-  ;;(signal k "Global redefinition" v)
-  (let ((value (eq-hashtable-ref globals v setting/missing)))
-    (unless (or (eq? value setting/missing)
-                (eq? value uninitialized))
-      (display "\nWarning: redefined ")
-      (write v)
-      (newline)))
-  (eq-hashtable-set! globals v value))
+(define (frame-index vars v)
+  (let scanning ((i 0) (vars vars))
+    (cond ((null? vars) #f)
+          ((eq? (car vars) v) i)
+          (else (scanning (+ i 1) (cdr vars))))))
 
 )

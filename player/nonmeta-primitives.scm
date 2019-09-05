@@ -121,8 +121,8 @@
     (map<-items ,prim-mapi<-items)
 
     ;; Primitives only -- TODO seclude in their own env:
-    (__setting<- ,make-setting)
-    (__setting-a-list ,setting-a-list)
+    (empty-setting ,empty-setting)
+    (__setting-extend-mutable ,setting-extend-mutable)
     (__setting-lookup ,prim-setting-lookup)
     (__setting-extend-promises ,setting-extend-promises)
     (__setting-resolve! ,prim-setting-resolve!)

@@ -117,7 +117,7 @@
 
 (define primordial-setting
   (setting-ensure-bound
-   (make-setting '())
+   empty-setting
    (append (map car nonmeta-a-list)
            '(__evaluate
              error

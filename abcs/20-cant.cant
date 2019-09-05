@@ -1,11 +1,5 @@
 ;; Interpreter
 
-;; TODO real environments
-(let empty-setting (__setting<- '()))
-(let computational-setting (__setting<- '())) ;TODO name: unpowered-setting ?
-(let full-powered-setting (__setting<- '()))
-(let main-interactive-setting (__setting<- '()))
-
 (make cant
   (to (~ .play exp setting @(optional context))
     (__evaluate (__parse-exp exp (or context '()))

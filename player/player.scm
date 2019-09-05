@@ -70,7 +70,7 @@
 (define halt-cont (cont<- k-halt))
 
 (define (get-prim name)
-  (global-lookup name))                 ;XXX
+  (setting-lookup repl-env name))       ;XXX proper setting
 
 
 ;; Objects, calling, and answering
@@ -308,7 +308,8 @@
   ;; An inherently incomplete sanity check, not a real security barrier:
   (unless (seems-to-be-a-raw-repr? e methods/ev-exp)
     (error 'evaluate-exp "You need to parse it first" e))
-  (unless (setting? setting)
+  (unless (or (not setting)  ;XXX
+              (setting? setting))
     (error 'evaluate-exp "Wrong type: expected a setting" setting))
   (let* ((maybe-extended-setting (elaborate-setting e setting))
          (elaborated-e (elaborate e maybe-extended-setting)))
@@ -530,11 +531,11 @@
 
 ;; Interpreter top level
 
+(define repl-env #f)                    ;XXX
+
 (define (run-load filename)
   (let ((forms (snarf filename cant-read)))
     (cant-interpret `(do ,@forms))))
-
-(define repl-env (make-setting '()))
 
 ;; TODO add setting & optional context
 (define (cant-interpret e)
@@ -545,7 +546,7 @@
 
 (for-each (lambda (pair)
             (let ((key (car pair)) (value (cadr pair)))
-              (global-init! key value)))
+              (setting-resolve! primordial-setting key value)))
           (append nonmeta-a-list
                   `(;; CPS primitives and other ties to interpreter internals
                     (__evaluate ,evaluate-prim)
@@ -554,7 +555,6 @@
                     (__eject ,eject-prim)
                     (ejector-protect ,ejector-protect-prim)
                     (__reply ,reply-prim)
-                    (global-defined? ,global-defined?)
                     (__cps-primitive-name ,(lambda (x)
                                              (cps-script-name (object-script x))))
                     (extract-script ,extract-script)
@@ -564,11 +564,19 @@
                     (__script-clauses ,script-clauses)
                     )))
 
-(let ((e runtime)
-      (setting primordial-setting))
-  (let* ((maybe-extended-setting (elaborate-setting e setting))
-         (elaborated-e (elaborate e maybe-extended-setting)))
-    (ev-exp elaborated-e maybe-extended-setting halt-cont)))
+(let ((elaborated-e (elaborate runtime primordial-setting)))
+  (ev-exp elaborated-e primordial-setting halt-cont))
+
+(set! repl-env (setting-extend-mutable primordial-setting)) ;TODO not really
+
+;; XXX total hack
+(setting-ensure-bound repl-env '(
+                                 computational-setting  ;TODO name: unpowered-setting ?
+                                 full-powered-setting 
+                                 main-interactive-setting))
+(setting-resolve! repl-env 'computational-setting repl-env)
+(setting-resolve! repl-env 'full-powered-setting repl-env)
+(setting-resolve! repl-env 'main-interactive-setting repl-env)
 
 ;; For tuning later.
 
