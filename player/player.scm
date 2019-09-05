@@ -326,7 +326,7 @@
      (unpack e (value)
        (answer k value)))
    (lambda (e r k)                          ;e-variable
-     (unpack e (var)
+     (unpack e (depth offset var)
        (let ((value (setting-lookup r var)))
          (if (eq? value setting/missing)
              (signal k "Unbound variable" var)
@@ -375,7 +375,7 @@
    (lambda (subject p r k)              ;p-any
      (answer k #t))
    (lambda (subject p r k)              ;p-variable
-     (unpack p (name)
+     (unpack p (depth offset name)
        (cond ((setting-resolve! r name subject)
               => (lambda (plaint)
                    (signal k plaint name)))

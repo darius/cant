@@ -104,7 +104,7 @@
    (lambda (subject p r)                ;p-any
      #t)
    (lambda (subject p r)                ;p-variable
-     (unpack p (name)
+     (unpack p (_depth _offset name)
        (cond ((setting-resolve! r name subject)
               => (lambda (plaint)
                    (error 'ev-primordial-pat plaint name)))

@@ -25,10 +25,13 @@
    (lambda (e s)                        ;e-constant
      e)
    (lambda (e s)                        ;e-variable
-     (unpack e (name)
-       (unless (setting-binds? s name)
-         (printf "Warning: unbound variable: ~s\n" name)) ;TODO don't repeat the same warning
-       e))
+     (unpack e (_depth _offset name)
+       (let ((address (setting-address s name)))
+         (cond (address
+                (pack<- e-variable (car address) (cadr address) name))
+               (else
+                (printf "Warning: unbound variable: ~s\n" name) ;TODO don't repeat the same warning
+                e)))))
    (lambda (e s)                        ;e-term
      (unpack e (tag args)
        (pack<- e-term tag (elaborate-es args s))))
@@ -82,7 +85,14 @@
    (lambda (p s)                        ;p-any
      p)
    (lambda (p s)                        ;p-variable
-     p)
+     (unpack p (_depth _offset name)
+       (let ((address (setting-address s name)))
+         (cond (address
+                ;; TODO is (car address) always 0?
+                (pack<- p-variable (car address) (cadr address) name))
+               (else
+                ;; TODO this would be a bug, right?
+                p)))))
    (lambda (p s)                        ;p-term
      (unpack p (tag args)
        (pack<- p-term tag (elaborate-ps args s))))

@@ -22,7 +22,7 @@
     (to ~.term
       (may (raw 0)
         (be 0 {constant (raw 1)})
-        (be 1 {variable (raw 1)})
+        (be 1 {variable (raw 3)})
         (be 2 {term (raw 1) (each ast-exp<- (raw 2))})
         (be 3 {list (each ast-exp<- (raw 1))})
         (be 4 {make (raw 1)
@@ -31,8 +31,7 @@
                 (each ast-clause<- (raw 3))})
         (be 5 {do (ast-exp<- (raw 1)) (ast-exp<- (raw 2))})
         (be 6 {let (ast-pat<- (raw 1)) (ast-exp<- (raw 2))})
-        (be 7 {call (ast-exp<- (raw 1)) (ast-exp<- (raw 2))})
-        (be 8 {variable (raw 1)})))))
+        (be 7 {call (ast-exp<- (raw 1)) (ast-exp<- (raw 2))})))))
 
 (to (ast-clause<- `(,p ,u ,v ,e))
   (list<- (ast-pat<- p) u v (ast-exp<- e)))
@@ -47,7 +46,7 @@
       (may (raw 0)
         (be 0 {constant-pat (raw 1)})
         (be 1 {any-pat})
-        (be 2 {variable-pat (raw 1)})
+        (be 2 {variable-pat (raw 3)})
         (be 3 {term-pat (raw 1) (each ast-pat<- (raw 2))})
         (be 4 {list-pat (each ast-pat<- (raw 1))})
         (be 5 {and-pat (ast-pat<- (raw 1)) (ast-pat<- (raw 2))})

@@ -3,7 +3,7 @@
         setting-binds? setting-extend-promises
         mutable-setting?
         setting/missing
-        setting-lookup
+        setting-address setting-lookup
         setting-extend-promises setting-resolve!
         setting-extend
         setting-ensure-bound
@@ -72,6 +72,19 @@
                    (eq-hashtable-contains? table variable) ;TODO what about uninitialized?
                    (memq variable table))
                (walking (setting-parent setting)))))))
+
+(define (setting-address setting variable)
+  (let walking ((depth 0) (setting setting))
+    (cond ((let ((table (setting-table setting)))
+             (if (eq-hashtable? table)
+                 (eq-hashtable-ref table variable #f)
+                 (frame-index table variable)))
+           => (lambda (index)
+                (list depth index)))
+          ((setting-parent setting)
+           => (lambda (parent)
+                (walking (+ depth 1) parent)))
+          (else #f))))
 
 (define (setting-lookup setting variable)
   (let walking ((setting setting))

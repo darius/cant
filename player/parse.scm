@@ -35,7 +35,7 @@
        ((: __ symbol?)
         (when (eq? e '~)
           (error 'parse-exp "Forbidden variable name" e))
-        (pack<- e-variable e))
+        (pack<- e-variable #f #f e))
        (('quote datum)
         (pack<- e-constant datum))
        ((: __ self-evaluating?)
@@ -121,7 +121,7 @@
        ((: __ symbol?)
         (when (eq? p '~)
           (error 'parse "Forbidden variable name" p))
-        (pack<- p-variable p))
+        (pack<- p-variable #f #f p))
        ((: __ self-evaluating?)
         (pack<- p-constant p))
        (('quote datum)
@@ -273,7 +273,7 @@
         (unpack cdr-pat (cdr-value)
           (pack<- p-constant (cons car-value cdr-value)))) ;TODO avoid re-consing when possible
       (pack<- p-view
-              (pack<- e-variable '__as-link)
+              (pack<- e-variable #f #f '__as-link)
               (pack<- p-term 'link (list car-pat cdr-pat)))))
 
 (define (self-evaluating? x)

@@ -89,7 +89,7 @@
    (lambda (p) '())                         ;p-constant
    (lambda (p) '())                         ;p-any
    (lambda (p)                              ;p-variable
-     (unpack p (var)
+     (unpack p (depth offset var)
        (list var)))
    (lambda (p)                              ;p-term
      (unpack p (tag args)
