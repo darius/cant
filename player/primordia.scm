@@ -125,7 +125,6 @@
              __eject
              ejector-protect
              __reply
-             global-defined?
              __cps-primitive-name
              extract-script
              extract-datum

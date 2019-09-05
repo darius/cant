@@ -548,7 +548,8 @@
             (let ((key (car pair)) (value (cadr pair)))
               (setting-resolve! primordial-setting key value)))
           (append nonmeta-a-list
-                  `(;; CPS primitives and other ties to interpreter internals
+                  `(;; CPS primitives and other ties to interpreter internals.
+                    ;; N.B. in primordia.scm there's a list you have to keep in sync.
                     (__evaluate ,evaluate-prim)
                     (error ,error-prim)
                     (with-ejector ,with-ejector-prim)
@@ -571,10 +572,8 @@
 
 ;; XXX total hack
 (setting-ensure-bound repl-env '(
-                                 computational-setting  ;TODO name: unpowered-setting ?
                                  full-powered-setting 
                                  main-interactive-setting))
-(setting-resolve! repl-env 'computational-setting repl-env)
 (setting-resolve! repl-env 'full-powered-setting repl-env)
 (setting-resolve! repl-env 'main-interactive-setting repl-env)
 
