@@ -48,21 +48,12 @@
 
 ;; Return #f on success, else a complaint.
 (define (setting-resolve! setting variable value)
-  (let* ((table (setting-table setting))
-         (index (if (eq-hashtable? table)
-                    (eq-hashtable-ref table variable #f)
-                    (frame-index table variable))))
-    (if (not index)
-        "Somehow trying to bind a variable in the wrong frame"
-        (let* ((values (setting-values setting))
-               (redef? (not (eq? (vector-ref values index) uninitialized))))
-          (if (and redef? (not (eq-hashtable? table)))
-              "Multiple definition"
-              (begin
-                (when redef?
-                  (display "\nWarning: redefined ") (write variable) (newline))
-                (vector-set! values index value)
-                #f))))))
+  (cond ((setting-address setting variable)
+         => (lambda (pair)
+              (let ((depth (car pair)) (offset (cadr pair)))
+                (setting-address-resolve! setting depth offset variable value))))
+        (else 
+         "Somehow trying to bind a variable in the wrong frame")))
 
 (define (setting-address-resolve! setting depth offset variable value)
   (let walking ((s setting) (d depth))
@@ -108,14 +99,11 @@
         (walking (setting-parent s) (- d 1)))))
 
 (define (setting-lookup setting variable)
-  (let walking ((setting setting))
-    (let* ((table (setting-table setting))
-           (index (if (eq-hashtable? table)
-                      (eq-hashtable-ref table variable #f)
-                      (frame-index table variable))))
-      (cond (index (vector-ref (setting-values setting) index))
-            ((setting-parent setting) => walking)
-            (else setting/missing)))))
+  (cond ((setting-address setting variable)
+         => (lambda (pair)
+              (let ((depth (car pair)) (offset (cadr pair)))
+                (setting-address-fetch setting depth offset))))
+        (else setting/missing)))
 
 (define (setting-ensure-bound setting variables)
   (cond ((mutable-setting? setting)
