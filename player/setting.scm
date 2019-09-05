@@ -11,20 +11,21 @@
         )
 (import (chezscheme) (player util) (player thing))
 
-(define-record-type setting (fields table values parent))
+(define-record-type setting (fields table (mutable values) parent))
 ;; parent: #f or another setting
+;; values: a vector, of length = the number of variables in the table
 ;; Two variants:
 ;;   - interactive:
-;;       table: an eq-hashtable
-;;       values: #f
+;;       table: an eq-hashtable, symbol -> index into values
 ;;   - non:
 ;;       table: a list of symbols
-;;       values: a vector, of the same length
+
+;; TODO values is a bad name since it's a Scheme primitive these days
 
 (define empty-setting (make-setting '() (vector) #f))
 
 (define (setting-extend-mutable setting)
-  (make-setting (make-eq-hashtable) #f setting))
+  (make-setting (make-eq-hashtable) (vector) setting))
 
 (define (mutable-setting? x)
   (and (setting? x)
@@ -33,6 +34,9 @@
 (define setting/missing (list '*missing*))
 
 (define (setting-extend variables values setting)
+  (insist (and (vector? values)
+               (= (length variables) (vector-length values)))
+          "values must be a vector matching variables" values)
   (make-setting variables values setting))
 
 (define (setting-extend-promises setting variables)
@@ -44,25 +48,21 @@
 
 ;; Return #f on success, else a complaint.
 (define (setting-resolve! setting variable value)
-  (let ((table (setting-table setting)))
-    (cond ((and (pair? table) (frame-index table variable))
-           => (lambda (i)
-                (let ((values (setting-values setting)))
-                  (cond ((eq? (vector-ref values i) uninitialized)
-                         (vector-set! values i value)
-                         #f)
-                        (else "Multiple definition")))))
-          ((eq-hashtable? table)
-           (if (setting-binds? (setting-parent setting) variable)
-               "An interactive setting may not shadow its parent" 
-               (begin
-                 (unless (eq? (eq-hashtable-ref table variable uninitialized)
-                              uninitialized)
-                   (display "\nWarning: redefined ") (write variable) (newline))
-                 (eq-hashtable-set! table variable value)
-                 #f)))
-          (else
-           "Somehow trying to bind a variable in the wrong frame"))))
+  (let* ((table (setting-table setting))
+         (index (if (eq-hashtable? table)
+                    (eq-hashtable-ref table variable #f)
+                    (frame-index table variable))))
+    (if (not index)
+        "Somehow trying to bind a variable in the wrong frame"
+        (let* ((values (setting-values setting))
+               (redef? (not (eq? (vector-ref values index) uninitialized))))
+          (if (and redef? (not (eq-hashtable? table)))
+              "Multiple definition"
+              (begin
+                (when redef?
+                  (display "\nWarning: redefined ") (write variable) (newline))
+                (vector-set! values index value)
+                #f))))))
 
 (define (setting-binds? setting variable)
   (let walking ((setting setting))
@@ -74,30 +74,39 @@
                (walking (setting-parent setting)))))))
 
 (define (setting-lookup setting variable)
-  (define (walking setting)
-    (let ((table (setting-table setting)))
-      (if (eq-hashtable? table)
-          (let ((v (eq-hashtable-ref table variable setting/missing)))
-            (if (eq? v setting/missing)
-                (keep-walking setting)
-                v))
-          (cond ((frame-index table variable)
-                 => (lambda (n) (vector-ref (setting-values setting) n)))
-                (else (keep-walking setting))))))
-  (define (keep-walking setting)
-    (cond ((setting-parent setting) => walking)
-          (else setting/missing)))
-  (walking setting))
+  (let walking ((setting setting))
+    (let* ((table (setting-table setting))
+           (index (if (eq-hashtable? table)
+                      (eq-hashtable-ref table variable #f)
+                      (frame-index table variable))))
+      (cond (index (vector-ref (setting-values setting) index))
+            ((setting-parent setting) => walking)
+            (else setting/missing)))))
 
 (define (setting-ensure-bound setting variables)
-  (cond ((null? variables) setting)
-        ((mutable-setting? setting)
+  (cond ((mutable-setting? setting)
          (let ((table (setting-table setting)))
            (for-each (lambda (v)
-                       (insist (eq? (eq-hashtable-ref table v uninitialized)
-                                    uninitialized)
-                               "Already bound" v)
-                       (eq-hashtable-set! table v uninitialized))
+                       ;; TODO un-quadratify
+                       (cond ((eq-hashtable-ref table v #f)
+                              => (lambda (i)
+                                   (insist (eq? (vector-ref (setting-values setting) i)
+                                                uninitialized)
+                                           "Already bound" v)))
+                             ((setting-binds? (setting-parent setting) v)
+                              (error 'setting-ensure-bound
+                                     "An interactive setting may not shadow its parent"
+                                     v))
+                             (else
+                              (let* ((old-values (setting-values setting))
+                                     (n (vector-length old-values))
+                                     (new-values (make-vector (+ n 1))))
+                                (do ((i 0 (+ i 1)))
+                                    ((= i n))
+                                  (vector-set! new-values i (vector-ref old-values i)))
+                                (vector-set! new-values n uninitialized)
+                                (setting-values-set! setting new-values)
+                                (eq-hashtable-set! table v n)))))
                      variables))
          setting)
         (else
