@@ -9,7 +9,7 @@
   (setting-ensure-bound setting (exp-vars-defined e)))
 
 (define (elaborate e setting)
-  (elaborate-e e (make-scope '() setting)))
+  (elaborate-e e setting))
 
 (define (elaborate-e e s)
   ((vector-ref methods/elaborate-e (pack-tag e))
@@ -26,7 +26,7 @@
      e)
    (lambda (e s)                        ;e-variable
      (unpack e (name)
-       (unless (scope-find? s name)
+       (unless (setting-binds? s name)
          (printf "Warning: unbound variable: ~s\n" name)) ;TODO don't repeat the same warning
        e))
    (lambda (e s)                        ;e-term
@@ -58,11 +58,12 @@
     ((p pvs evs e)
      (let ((vs (append pvs evs)))
        (check-for-duplicates vs)
-       (let ((nest-s (scope-extend s vs)))
-         `(,(elaborate-p p nest-s)
+       (let* ((s-p (setting-extend-promises s pvs))
+              (s-e (setting-extend-promises s-p evs)))
+         `(,(elaborate-p p s-p)
            ,pvs
            ,evs
-           ,(elaborate-e e nest-s)))))))
+           ,(elaborate-e e s-e)))))))
 
 (define (check-for-duplicates vars)
   'ok)                                  ;TODO
@@ -96,15 +97,5 @@
      (unpack p (e1 p1)
        (pack<- p-view (elaborate-e e1 s)
                       (elaborate-p p1 s))))))
-
-(define-record-type scope (fields vars setting))
-
-(define (scope-find? scope v)
-  (or (not (not (memq v (scope-vars scope))))
-      (setting-binds? (scope-setting scope) v)))
-
-(define (scope-extend scope vars)
-  (make-scope (append vars (scope-vars scope))
-              (scope-setting scope)))
 
 )
