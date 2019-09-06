@@ -233,3 +233,33 @@
 (to (method<- actor cue)
   (on (@arguments)
     (call actor (term<- cue arguments))))
+
+
+(let computational-setting
+  (setting<-map
+   (export
+     ;; TODO also computational-setting, cant
+     ;; TODO: nonrandom order
+     ;; TODO: sort-by sort flexarray<- flexarray<-list bag<- unwind-protect
+     intercalate compound-key<- yeahs where split-on itself max min-by
+     those !map-by compose those/lazy
+     take foldr/lazy gather chain/lazy sum-by tally-by zip setting<-map
+     gather/lazy method<- link/lazy map-by
+     hey max-by tally min union-over each/lazy map<-values mayhap
+     grid* sum = link link? null? list? number? integer? symbol? cue?
+     claim? char? string? array? box? term? source? sink? eof? box<-
+     symbol<- term<- char<- array<-count inexact<-exact exact<-inexact
+     floor not sqrt void / expt abs gcd number<-string string<-number
+     list<-string string-source<- string-sink<- self-evaluating?
+     maybe-macroexpand-expr maybe-macroexpand-patt
+     setting? immutable-map? map<-items empty-setting
+     error with-ejector ejector-protect
+     map-trait list-trait array-trait
+     as-list array<-list array<- map<- map<-lists tuple<-list yeah?
+     list<- !map<- !map<-items !map<-lists set<- set<-list hash-set<-
+     surely count? not= left-folding-operation right-folding-operation
+     + * - transitive-comparison < <= <=> >= > compare string<-list
+     chain reverse foldl foldr foldr1 transpose zipped-list-transducer
+     each each! some every interval<- enumerate string<- string<-writer
+     format
+     )))
