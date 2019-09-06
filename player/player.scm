@@ -577,9 +577,4 @@
 (setting-resolve! repl-env 'full-powered-setting repl-env)
 (setting-resolve! repl-env 'main-interactive-setting repl-env)
 
-;; For tuning later.
-
-;(define (report-stats)
-;  'ok)
-
 )
