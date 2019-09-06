@@ -5,11 +5,8 @@
 
 ;; The Cant interpreter and global environment.
 
-(define (start-playing . opt-args)
-  ;; TODO nicer way to call it to start
-  (let ((e `(start-playing ,@(map (lambda (arg) `',arg) opt-args))))
-    (cant-interpret e)))
-
+(define (start-playing args)
+  (cant-interpret `(start-playing ',args)))
 
 (run-load "abcs/20-cant.cant")
 (run-load "abcs/21-sequels.cant")
