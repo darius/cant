@@ -134,6 +134,8 @@
         (else
          (setting-extend-promises setting variables))))
 
+;; TODO actually this is returning all of the variables, including 'globals',
+;; since globals are now being created by extending empty-setting.
 (define (setting-inner-variables setting)
   (let walking ((setting setting))
     (if (not (setting-parent setting))
