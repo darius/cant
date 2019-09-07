@@ -208,7 +208,7 @@
     (error "Failed system command" command)))
 
 (to (setting<-map map)
-  (empty-setting .extend map.keys (array<-list map.values)))
+  (__setting<- map.keys (array<-list map.values) #no))
 
 
 ;; Experiments

@@ -1,5 +1,5 @@
 (library (player setting)
-(export setting? empty-setting setting-extend-mutable
+(export setting? empty-setting make-setting setting-extend-mutable
         setting-binds? setting-extend-promises
         mutable-setting?
         setting/missing

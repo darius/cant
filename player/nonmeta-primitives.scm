@@ -122,6 +122,7 @@
 
     ;; Primitives only -- TODO seclude in their own env:
     (empty-setting ,empty-setting)
+    (__setting<- ,make-setting)
     (__setting-extend-mutable ,setting-extend-mutable)
     (__setting-lookup ,prim-setting-lookup)
     (__setting-extend-promises ,setting-extend-promises)
