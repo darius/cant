@@ -1,6 +1,6 @@
 #!chezscheme
 (library (player player)
-(export run-load cant-interpret)
+(export evaluate)
 (import (chezscheme)
   (player util)
   (player macros)
@@ -530,19 +530,6 @@
    cont-replace-answer))
 
 
-;; Interpreter top level
-
-(define repl-env #f)                    ;XXX
-
-(define (run-load filename)
-  (let ((forms (snarf filename cant-read)))
-    (cant-interpret `(do ,@forms))))
-
-;; TODO add setting & optional context
-(define (cant-interpret e)
-  (evaluate (parse-exp e) repl-env))
-
-
 ;; Install the primitives and the remaining primordia
 
 (for-each (lambda (pair)
@@ -569,14 +556,5 @@
 
 (let ((elaborated-e (elaborate runtime primordial-setting)))
   (ev-exp elaborated-e primordial-setting halt-cont))
-
-(set! repl-env (setting-extend-mutable primordial-setting)) ;TODO not really
-
-;; XXX total hack
-(setting-ensure-bound repl-env '(
-                                 full-powered-setting 
-                                 main-interactive-setting))
-(setting-resolve! repl-env 'full-powered-setting repl-env)
-(setting-resolve! repl-env 'main-interactive-setting repl-env)
 
 )
