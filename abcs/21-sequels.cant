@@ -198,3 +198,5 @@
   ;; There's logic for this in top.cant, but let's try to not mix this with the fancier
   ;; stuff there.
   (the-signal-handler.^ (__wrap-cont raw-k) evil))
+
+(__raw-signal-handler-box .^= __handle-error)

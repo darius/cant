@@ -69,9 +69,6 @@
 
 (define halt-cont (cont<- k-halt))
 
-(define (get-prim name)
-  (setting-lookup repl-env name))       ;XXX proper setting
-
 
 ;; Objects, calling, and answering
 
@@ -152,12 +149,14 @@
        (< (vector-ref x 0) (vector-length methods))))
 
 (define (handle-error k evil)
-  (let ((handler (get-prim '__handle-error)) ;TODO do this just once
+  (let ((handler (unbox raw-signal-handler-box))
         (message (tuple<- k evil)))
     (when (eq? handler setting/missing)
       (error 'handle-error "Error before the handler wrapper even got defined"
              evil))
     (call handler message halt-cont)))
+
+(define raw-signal-handler-box (box #f))
 
 (define error-prim
   (cps-prim<- #f 'error
@@ -550,6 +549,7 @@
           (append nonmeta-a-list
                   `(;; CPS primitives and other ties to interpreter internals.
                     ;; N.B. in primordia.scm there's a list you have to keep in sync.
+                    (__raw-signal-handler-box ,raw-signal-handler-box)
                     (__evaluate ,evaluate-prim)
                     (error ,error-prim)
                     (with-ejector ,with-ejector-prim)

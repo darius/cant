@@ -119,7 +119,8 @@
   (setting-ensure-bound
    empty-setting
    (append (map car nonmeta-a-list)
-           '(__evaluate
+           '(__raw-signal-handler-box
+             __evaluate
              error
              with-ejector
              __eject
