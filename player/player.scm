@@ -151,7 +151,7 @@
 (define (handle-error k evil)
   (let ((handler (unbox raw-signal-handler-box))
         (message (tuple<- k evil)))
-    (when (eq? handler setting/missing)
+    (when (not handler)
       (error 'handle-error "Error before the handler wrapper even got defined"
              evil))
     (call handler message halt-cont)))
