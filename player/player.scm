@@ -149,12 +149,11 @@
        (< (vector-ref x 0) (vector-length methods))))
 
 (define (handle-error k evil)
-  (let ((handler (unbox raw-signal-handler-box))
-        (message (tuple<- k evil)))
-    (when (not handler)
+  (let ((handler (unbox raw-signal-handler-box)))
+    (unless handler
       (error 'handle-error "Error before the handler wrapper even got defined"
              evil))
-    (call handler message halt-cont)))
+    (call handler (tuple<- k evil) halt-cont)))
 
 (define raw-signal-handler-box (box #f))
 
