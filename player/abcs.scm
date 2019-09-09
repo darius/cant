@@ -9,15 +9,13 @@
   (player primordia)
   (player player))
 
-(define repl-env #f)                    ;XXX
-
 (define (run-load filename)
   (let ((forms (snarf filename cant-read)))
     (cant-interpret `(do ,@forms))))
 
 ;; TODO add setting & optional context
 (define (cant-interpret e)
-  (evaluate (parse-exp e) repl-env))
+  (evaluate (parse-exp e) primordial-setting))
 
 (define (load-abcs)
   (run-load "abcs/20-cant.cant")
@@ -36,13 +34,7 @@
       (import (use 'bag)        bag<-)
       (the-last-error .^))))
 
-;; XXX total hack
-(set! repl-env (setting-extend-mutable primordial-setting)) ;TODO not really
-
-(setting-ensure-bound repl-env '(
-                                 full-powered-setting 
-                                 main-interactive-setting))
-(setting-resolve! repl-env 'full-powered-setting repl-env)
-(setting-resolve! repl-env 'main-interactive-setting repl-env)
+(setting-ensure-bound primordial-setting '(primordial-setting))
+(setting-resolve! primordial-setting 'primordial-setting primordial-setting)
 
 )

@@ -23,3 +23,5 @@
 (to (load-module filename @(optional context))
   (let exp `(hide ,@(with-input-file read-all filename)))
   (cant .play exp full-powered-setting context)) ;TODO reduce to computational-setting
+
+(let full-powered-setting primordial-setting) ;XXX

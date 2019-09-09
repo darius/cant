@@ -111,3 +111,5 @@
   (error "Breakpoint" @values))
 
 (the-signal-handler .^= fallback-signal-handler)
+
+(let main-interactive-setting primordial-setting) ;XXX

@@ -117,7 +117,7 @@
 
 (define primordial-setting
   (setting-ensure-bound
-   empty-setting
+   (setting-extend-mutable #f)
    (append (map car nonmeta-a-list)
            '(__raw-signal-handler-box
              __evaluate
