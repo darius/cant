@@ -24,4 +24,19 @@
   (let exp `(hide ,@(with-input-file read-all filename)))
   (cant .play exp full-powered-setting context)) ;TODO reduce to computational-setting
 
-(let full-powered-setting primordial-setting) ;XXX
+(let full-powered-setting-extra-names
+  '(real-full-powered-setting          ;XXX
+    newline write print displayln with-input-file with-output-file
+    system/must-succeed
+    the-modules unuse load load-module
+    the-last-error push-signal-handler with-signal-handler unwind-protect
+    listener<- debug breakpoint
+    display))
+(let real-full-powered-setting ;XXX
+  (empty-setting .extend-promises
+                 (chain full-powered-setting-extra-names
+                        computational-setting-library-imports
+                        computational-setting-names)))
+
+(let full-powered-setting
+  primordial-setting)                   ;XXX
