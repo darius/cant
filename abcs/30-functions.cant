@@ -241,6 +241,7 @@
      ;; TODO also computational-setting, cant
      ;; TODO: nonrandom order
      ;; TODO: sort-by sort flexarray<- flexarray<-list bag<- unwind-protect
+     read-all 
      intercalate compound-key<- yeahs where split-on itself max min-by
      those !map-by compose those/lazy
      take foldr/lazy gather chain/lazy sum-by tally-by zip setting<-map
