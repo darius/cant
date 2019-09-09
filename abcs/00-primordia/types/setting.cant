@@ -11,10 +11,9 @@
   (to (~ .binds? variable)
     ;; TODO what's the answer for a not-yet-resolved variable?
     (__setting-binds? setting variable))
-  (to ~.inner-variables
-    ;; TODO a .really-all-the-variables including the globals
-    (__setting-inner-variables setting))
+  (to ~.variables
+    (__setting-variables setting))
   (to (~ .selfie sink)
     (sink .display "#<setting ")
-    (sink .write setting.inner-variables)
+    (sink .write setting.variables)   ;TODO a more concise/useful list
     (sink .display ">")))
