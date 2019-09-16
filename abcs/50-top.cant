@@ -110,8 +110,6 @@
   ;; TODO automatically invoke the debugger
   (error "Breakpoint" @values))
 
-(let main-interactive-setting full-powered-setting.extend-mutable)
-
 (full-powered-setting .resolve-each! primordial-setting full-powered-setting-extra-names)
 
 (import (use 'flexarray)  flexarray<- flexarray<-list)

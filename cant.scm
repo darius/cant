@@ -6,5 +6,6 @@
 
 ;; The Cant interpreter
 
-(unless (load-abcs)
-  (cant-interpret `(start-playing ',(cdr (command-line)))))
+(if (load-abcs)
+    (display "Bailing after error in start-up.\n")
+    (cant-interpret `(start-playing ',(cdr (command-line)))))

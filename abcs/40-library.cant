@@ -18,10 +18,10 @@
 
 (to (load filename @(optional context))
   (let exp `(do ,@(with-input-file read-all filename)))
-  (let setting (full-powered-setting .extend '(use) [use])) ;TODO relative
-  (cant .play exp setting context))
+  (cant .play exp main-interactive-setting context))
 
 (to (load-module filename @(optional context))
+  ;; TODO the 'let' is a hack
   (let exp `(hide (let use ',use) ,@(with-input-file read-all filename)))
   ;;TODO reduce to computational-setting
   (let setting full-powered-setting)
@@ -46,5 +46,6 @@
                         computational-setting-names)))
 (full-powered-setting .resolve-each! primordial-setting computational-setting-names)
 
-;(let full-powered-setting
-;  primordial-setting)                   ;XXX
+(let main-interactive-setting 
+  ((full-powered-setting .extend '(load use) [load use])  ;XXX hacky
+   .extend-mutable))
