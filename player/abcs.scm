@@ -29,9 +29,6 @@
       ;; Let's default to traceback-on-error:
       ;; TODO: also stash the error in the-last-error for below
                                         ;    (push-signal-handler ((use 'traceback) 'on-error-traceback))
-      (import (use 'flexarray)  flexarray<- flexarray<-list)
-      (import (use 'sort)       sort sort-by)
-      (import (use 'bag)        bag<-)
       (the-last-error .^))))
 
 (setting-ensure-bound primordial-setting '(primordial-setting))

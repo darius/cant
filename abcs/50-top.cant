@@ -110,6 +110,10 @@
   ;; TODO automatically invoke the debugger
   (error "Breakpoint" @values))
 
+(import (use 'flexarray)  flexarray<- flexarray<-list)
+(import (use 'sort)       sort sort-by)
+(import (use 'bag)        bag<-)
+
 (the-signal-handler .^= fallback-signal-handler)
 
 ;(real-full-powered-setting .resolve-each! primordial-setting full-powered-setting-names)
