@@ -110,11 +110,14 @@
   ;; TODO automatically invoke the debugger
   (error "Breakpoint" @values))
 
+(let main-interactive-setting full-powered-setting.extend-mutable)
+
+(full-powered-setting .resolve-each! primordial-setting full-powered-setting-extra-names)
+
 (import (use 'flexarray)  flexarray<- flexarray<-list)
 (import (use 'sort)       sort sort-by)
 (import (use 'bag)        bag<-)
 
 (the-signal-handler .^= fallback-signal-handler)
 
-;(real-full-powered-setting .resolve-each! primordial-setting full-powered-setting-names)
-(let main-interactive-setting primordial-setting) ;XXX
+(full-powered-setting .resolve-each! primordial-setting computational-setting-library-imports)

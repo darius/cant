@@ -253,7 +253,7 @@
     maybe-macroexpand-expr maybe-macroexpand-patt
     setting? immutable-map? map<-items empty-setting
     error with-ejector ejector-protect
-    map-trait list-trait array-trait
+    miranda-trait map-trait list-trait array-trait
     as-list array<-list array<- map<- map<-lists tuple<-list yeah?
     list<- !map<- !map<-items !map<-lists set<- set<-list hash-set<-
     surely count? not= left-folding-operation right-folding-operation
@@ -261,6 +261,9 @@
     chain reverse foldl foldr foldr1 transpose zipped-list-transducer
     each each! some every interval<- enumerate string<- string<-writer
     format
+    assoc  ;; TODO remove
+    __as-link __array<-list ;; used implicitly by parse expansion
+    __vector-move! ;; TODO is this safe for computational-setting?
     ))
 (let computational-setting-library-imports
   '(sort-by sort flexarray<- flexarray<-list bag<-))

@@ -18,25 +18,33 @@
 
 (to (load filename @(optional context))
   (let exp `(do ,@(with-input-file read-all filename)))
-  (cant .play exp full-powered-setting context))
+  (let setting (full-powered-setting .extend '(use) [use])) ;TODO relative
+  (cant .play exp setting context))
 
 (to (load-module filename @(optional context))
-  (let exp `(hide ,@(with-input-file read-all filename)))
-  (cant .play exp full-powered-setting context)) ;TODO reduce to computational-setting
+  (let exp `(hide (let use ',use) ,@(with-input-file read-all filename)))
+  ;;TODO reduce to computational-setting
+  (let setting full-powered-setting)
+  (cant .play exp setting context))
 
 (let full-powered-setting-extra-names
-  '(real-full-powered-setting          ;XXX
+  '(full-powered-setting
+    main-interactive-setting          ;XXX
+    nano-now nanosleep out stdin read os-exit
+    extract-datum extract-script
     newline write print displayln with-input-file with-output-file
     system/must-succeed
     the-modules unuse load load-module
-    the-last-error push-signal-handler with-signal-handler unwind-protect
+    the-last-error push-signal-handler with-signal-handler the-signal-handler
+    unwind-protect                      ;XXX used?
     listener<- debug breakpoint
     display))
-(let real-full-powered-setting ;XXX
+(let full-powered-setting ;XXX
   (empty-setting .extend-promises
                  (chain full-powered-setting-extra-names
                         computational-setting-library-imports
                         computational-setting-names)))
+(full-powered-setting .resolve-each! primordial-setting computational-setting-names)
 
-(let full-powered-setting
-  primordial-setting)                   ;XXX
+;(let full-powered-setting
+;  primordial-setting)                   ;XXX

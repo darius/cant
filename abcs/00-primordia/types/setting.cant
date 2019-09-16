@@ -8,6 +8,8 @@
     (__setting-extend variables values setting))
   (to (~ .extend-promises variables)
     (__setting-extend-promises setting variables))
+  (to ~.extend-mutable
+    (__setting-extend-mutable setting))
   (to (~ .binds? variable)
     ;; TODO what's the answer for a not-yet-resolved variable?
     (__setting-binds? setting variable))
