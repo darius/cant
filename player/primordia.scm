@@ -18,9 +18,10 @@
   )
 
 (define trait-names '("miranda-trait"
-                      "map-trait"
+                      "array-trait"
                       "list-trait"
-                      "array-trait"))
+                      "map-trait"
+                      "sink-trait"))
 
 (define type-names '(array
                      box

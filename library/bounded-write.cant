@@ -17,10 +17,9 @@
        (total .^= (+ total.^ buffer.last.count))
        (when (<= width total.^)
          (ejector .eject (output))))
-     (make bounded-sink
+     (make bounded-sink {extending sink-trait}
        (to (~ .display a)   (ss .display a)   (cut-off))
        (to (~ .write-u8 u8) (ss .write-u8 u8) (cut-off))
-       (to (~ .write a)     (a .selfie bounded-sink))
        (to ~.close          ss.close))
      (bounded-sink .write thing)
      (output))))

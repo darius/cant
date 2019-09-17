@@ -253,7 +253,7 @@
     maybe-macroexpand-expr maybe-macroexpand-patt
     setting? immutable-map? map<-items empty-setting
     error with-ejector ejector-protect
-    miranda-trait map-trait list-trait array-trait
+    miranda-trait array-trait list-trait map-trait sink-trait
     as-list array<-list array<- map<- map<-lists tuple<-list yeah?
     list<- !map<- !map<-items !map<-lists set<- set<-list hash-set<-
     surely count? not= left-folding-operation right-folding-operation
