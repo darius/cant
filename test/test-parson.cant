@@ -3,8 +3,8 @@
   fail empty skip-1 take-1 any-1 skip-any-1 lit-1 lit)
 
 (to (try p text)
-  (write text)
-  (display " --> ")
+  (out .write text)
+  (out .display " --> ")
   ((p text 0 0 '()) .display)
   out.newline)
 

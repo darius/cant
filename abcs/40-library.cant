@@ -31,7 +31,7 @@
   '(full-powered-setting
     nano-now nanosleep out stdin read os-exit
     extract-datum extract-script
-    write print with-input-file with-output-file
+    print with-input-file with-output-file
     system/must-succeed
     the-modules unuse load load-module
     the-last-error push-signal-handler with-signal-handler the-signal-handler

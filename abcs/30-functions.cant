@@ -170,11 +170,8 @@
         `(,(reverse r-head) ,xs)
         (scanning (link xs.first r-head) xs.rest))))
 
-(to (write x)                      ;TODO rename
-  (out .write x))
-
 (to (print x)                      ;TODO rename
-  (write x)
+  (out .write x)
   out.newline)
 
 (to (with-input-file fn filename)

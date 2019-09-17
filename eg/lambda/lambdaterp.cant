@@ -164,11 +164,7 @@
   (debugging (out-step<- k 'default-error-value)))
 
 (to (complain plaint irritant)
-  (display "Lambdaterp error: ")
-  (write plaint)
-  (display ": ")
-  (write irritant)
-  out.newline)
+  (out .say "Lambdaterp error: ~w: ~w\n" plaint irritant))
 
 (to (traceback k)
   (each! print k))

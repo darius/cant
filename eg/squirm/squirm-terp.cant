@@ -683,6 +683,9 @@
   (surely (symbol? sym))
   sym.name)
 
+(to (write x)
+  (out .write x))
+
 (let primitives-from-cant
   (export
     link first rest list chain length nth slice

@@ -5,12 +5,12 @@
 (import (use 'bounded-write) write-to-bounded-string)
 
 (to (on-error-traceback k evil)
-  (display "Error! Traceback:\n")
+  (out .display "Error! Traceback:\n")
   (print-traceback k)
   (complain evil))
 
 (to (on-error-complain k evil)
-  (display "Error!\n")
+  (out .display "Error!\n")
   (complain @evil))
 
 (to (print-traceback k)
@@ -20,12 +20,12 @@
 (to (complain evil)
   (may evil
     (be `(,(? string? plaint) ,@values)
-      (display plaint)
-      (display ": ")
-      (display (write-to-bounded-string values (* 80 20))))
+      (out .display plaint)
+      (out .display ": ")
+      (out .display (write-to-bounded-string values (* 80 20))))
     (else
-      (display "Nonstandard evil: ")
-      (write evil)))
+      (out .display "Nonstandard evil: ")
+      (out .write evil)))
   out.newline)
 
 (export on-error-traceback on-error-complain complain print-traceback)
