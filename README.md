@@ -38,7 +38,7 @@ language name gives fair enough warning.
 
 ```
 $ ./incant       # You need Chez Scheme to run this.
--> (format "Hey, world.\n")
+-> (out .say "Hey, world.\n")
 Hey, world.
 -> (to (fib n) (if (< n 2) 1 (+ (fib (- n 1)) (fib (- n 2)))))
 #<fib>

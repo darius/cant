@@ -6,7 +6,7 @@
 
 (to (show-move dir board)
   (show board)
-  (format " ------- ~w:\n" dir)
+  (out .say " ------- ~w:\n" dir)
   (for each! ((moved (dir board)))
     (show moved)
     out.newline)
@@ -15,7 +15,7 @@
 (to (show rows)
   (for each! ((row rows))
     (for each! ((v row))
-      (format " ~d" (if (= v 0) "." v)))
+      (out .say " ~d" (if (= v 0) "." v)))
     out.newline))
 
 (exercise '((2 4 2 2)

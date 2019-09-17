@@ -241,7 +241,6 @@
     + * - transitive-comparison < <= <=> >= > compare string<-list
     chain reverse foldl foldr foldr1 transpose zipped-list-transducer
     each each! some every interval<- enumerate string<- string<-writer
-    format
     read
     assoc  ;; TODO remove
     __as-link __array<-list ;; used implicitly by parse expansion

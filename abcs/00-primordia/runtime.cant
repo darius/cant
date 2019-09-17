@@ -454,8 +454,6 @@
   (hide
 
     (make format
-      (to (~ format-string @arguments)
-        (scanning out format-string.values arguments))
       (to (~ .to-sink sink format-string @arguments)
         (scanning sink format-string.values arguments)))
 

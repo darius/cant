@@ -12,12 +12,12 @@
 ")))
 
 (let g (grids 0))
-(format "~d\n\n" name)
-(format "~d\n" g.unparse)
+(out .say "~d\n\n" name)
+(out .say "~d\n" g.unparse)
 
 (let afterward
   (for foldl ((g g) (dir '(down down right)))
     (hey (g .move dir)
-         (-> (format "~d\n" it.unparse)))))
+         (-> (out .say "~d\n" it.unparse)))))
 
 (out .print afterward.won?)

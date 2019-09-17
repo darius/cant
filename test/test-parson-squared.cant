@@ -3,7 +3,7 @@
 (to (try grammar-text start-symbol subs inputs)
   (let parser ((grammar<- grammar-text) subs))
   (let start (parser start-symbol))
-  (format "trying ~w: ~w\n" start-symbol start)
+  (out .say "trying ~w: ~w\n" start-symbol start)
   (for each! ((input inputs))
     (out .print input)
     (let outcome (parse start input))

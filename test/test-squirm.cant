@@ -17,5 +17,5 @@
                   ))
 
 (for each! ((test test-names))
-  (format "\nTesting ~d\n" test)
+  (out .say "\nTesting ~d\n" test)
   (run-file (chain "eg/squirm/" test)))

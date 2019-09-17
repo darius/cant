@@ -15,10 +15,10 @@ out.newline
   (let t (text<-))
   (t .replace 0 0 "aXbXc")
   (let X (set<- #\X))
-  (format "~d\n" (t .get 0 t.count))
+  (out .say "~d\n" (t .get 0 t.count))
   (each! (-> (out .display it)) t.keys)
   out.newline
   (for each! ((i (0 .to t.count)))
-    (format "back from ~w: ~w\n"
-            i (t .find-char-set i backward X)))
+    (out .say "back from ~w: ~w\n"
+              i (t .find-char-set i backward X)))
   )

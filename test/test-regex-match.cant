@@ -2,7 +2,7 @@
 
 (to (test regex should-match should-not)
   (let r (regex-parse regex))
-  (format "~d\n~d\n" regex ("-" .repeat regex.count))
+  (out .say "~d\n~d\n" regex ("-" .repeat regex.count))
   (for each! ((string should-match))
     (test-1 r string #yes))
   (for each! ((string should-not))
@@ -11,10 +11,10 @@
 
 (to (test-1 parsed string should?)
   (let match? (regex-match parsed string))
-  (format "~4d ~d ~w\n"
-          (if (= match? should?) "" "FAIL")
-          (if match? "y" "n")
-          string))
+  (out .say "~4d ~d ~w\n"
+            (if (= match? should?) "" "FAIL")
+            (if match? "y" "n")
+            string))
 
 (out .print (regex-parse "."))
 

@@ -2,8 +2,8 @@
 
 
 (to (run e)
-  (format "Playing ~w\n" e)
-  (out .print (play (cant .parse-expression e) full-powered-setting)))  ;global-setting)))
+  (out .say "Playing ~w\n" e)
+  (out .print (play (cant .parse-expression e) full-powered-setting)))
 
 ;; TODO code duplicated from smoke-test.cant
 

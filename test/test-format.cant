@@ -1,5 +1,5 @@
-(format "Dear ~w,\n\nI wish to ~d to ~~100% of your ~w.\n"
-        "Archimedes" "subscribe" 'codices)
+(out .say "Dear ~w,\n\nI wish to ~d to ~~100% of your ~w.\n"
+          "Archimedes" "subscribe" 'codices)
 
 (let p (string-sink<-))
 (p .say "hey ~d how r ya" 42)

@@ -2,10 +2,10 @@
 
 (to (test regex n)
   (let r (regex-parse regex))
-  (format "~d (~w)\n~d\n" regex n ("-" .repeat regex.count))
+  (out .say "~d (~w)\n~d\n" regex n ("-" .repeat regex.count))
   (let Ns ((0 .to n) .range))
   (for each! ((string (regex-generate r Ns)))
-    (format "~w\n" string))
+    (out .say "~w\n" string))
   out.newline)
 
 (out .print (regex-parse "."))
