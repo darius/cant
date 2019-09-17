@@ -21,7 +21,7 @@ main: '#' :nat ' @ ' :nat ',' :nat ': ' :nat 'x' :nat :end.
 (to (part-1)
   'xxx)
 
-(format "~w\n" (part-1))
+(out .say "~w\n" (part-1))
 
 
 ;(display "\nPart 2\n")
@@ -29,4 +29,4 @@ main: '#' :nat ' @ ' :nat ',' :nat ': ' :nat 'x' :nat :end.
 (to (part-2)
   'xxx)
 
-;(format "~w\n" (part-2))
+;(out .say "~w\n" (part-2))

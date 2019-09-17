@@ -10,7 +10,7 @@
 
 (to (main `(,_ ,@words))
   (let expanded (expand-text (" " .join words) 1000))
-  (format "~d\n" (fill expanded 72)))
+  (out .say "~d\n" (fill expanded 72)))
 
 (to (expand-text text probability)
   ("" .join (for each ((token ((parse parser text) .results)))

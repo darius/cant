@@ -49,8 +49,8 @@ _:         :whitespace.
 (print `(the sleepiest is ,guard1 at ,(tally-winks guard1) minutes))
 
 (let minute1 (max-winks guard1))
-(format "their sleepiest minute is ~w\n" minute1)
-(format "result code ~w\n" (* guard1 minute1))
+(out .say "their sleepiest minute is ~w\n" minute1)
+(out .say "result code ~w\n" (* guard1 minute1))
 
 
 (display "\nPart 2\n")

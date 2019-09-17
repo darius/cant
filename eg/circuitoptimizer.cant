@@ -28,11 +28,11 @@
       (let g (v-name (+ i n-inputs)))
       (let L (v-name (L-input i)))
       (let R (v-name (R-input i)))
-      (format "~d = ~d ~~& ~d; " g L R))
+      (out .say "~d = ~d ~~& ~d; " g L R))
     (newline))
 
   (to (find-for-n n-gates)
-    (format "Trying ~w gates...\n" n-gates)
+    (out .say "Trying ~w gates...\n" n-gates)
     (let n-wires (+ n-inputs n-gates))
     (let L-input (array<-count n-gates #no))
     (let R-input (array<-count n-gates #no))

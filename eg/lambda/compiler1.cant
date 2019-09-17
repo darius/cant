@@ -55,7 +55,7 @@
         (be 'local     argument)
         (be (? count?) (vals f))))
 
-    ;;    (format "at ~w: ~w\n" pc (code pc.-))
+    ;;    (out .say "at ~w: ~w\n" pc (code pc.-))
     (may (code pc.-)
       (be {const c}
         (running pc.- r (link c st) k))
@@ -105,7 +105,7 @@
 ;;XXX 
 ;;(to (show assembly)
 ;;  (for each! ((insn insns))
-;;    (format "~2w ~w\n" insn.label insn)))
+;;    (out .say "~2w ~w\n" insn.label insn)))
 
 
 ;; Expression objects cache the free-variable sets, again to avoid algorithmic blow-up.
@@ -180,7 +180,7 @@
 
 (to (main argv)
   (for each! ((filename argv.rest))
-    (format "\n~d:\n" filename)
+    (out .say "\n~d:\n" filename)
     (print (run-file filename))))
 
 (to (run-file filename)

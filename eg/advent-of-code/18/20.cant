@@ -62,7 +62,7 @@ dir:  {'N' | 'S' | 'E' | 'W'} :Dir.
   (visit '(0 0) 0 exp)
   (let how-many (for tally-by ((dist rooms.values))
                   (<= 1000 dist)))
-  (format "count for >= 1000 distance: ~w\n" how-many)
+  (out .say "count for >= 1000 distance: ~w\n" how-many)
   (max @rooms.values))
 
 (to (vec? p)
@@ -90,7 +90,7 @@ dir:  {'N' | 'S' | 'E' | 'W'} :Dir.
                         (#\W (-1 0)))))
 
 (to (test str)
-  (format "~w...: " (str .slice 0 40))
+  (out .say "~w...: " (str .slice 0 40))
   (let exp (parse str))
   (print (furthest-distance exp)))
 
@@ -109,4 +109,4 @@ dir:  {'N' | 'S' | 'E' | 'W'} :Dir.
 (to (part-1-and-2)
   (furthest-distance (parse input)))
 
-(format "~w\n" (part-1-and-2))
+(out .say "~w\n" (part-1-and-2))

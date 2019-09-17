@@ -10,9 +10,9 @@
   (begin battling ()
     (let immune-system (armies "Immune System"))
     (let infection     (armies "Infection"))
-    (format "Round: ~w vs. ~w\n" 
-            (each ~.count infection)
-            (each ~.count immune-system))
+    (out .say "Round: ~w vs. ~w\n" 
+              (each ~.count infection)
+              (each ~.count immune-system))
 ;    (when (= (each _.count infection) '(1273))
 ;      (error "break"))
     (let a1 (select-targets "Infection"     infection immune-system))
@@ -41,7 +41,7 @@
       (let damages (for each ((enemy enemies.values))
                      (group .would-damage enemy)))
 ;;      (for each! (((~ j damage) damages.items))
-;;        (format "~d group ~w would deal defending group ~w ~w damage\n"
+;;        (out .say "~d group ~w would deal defending group ~w ~w damage\n"
 ;;                my-name (+ i 1) (enemy-nums j) damage))
       (let j (for max-by ((j enemies.keys))
                (let enemy (enemies j))
@@ -93,7 +93,7 @@
     (to (~ .would-damage target)
       (target .damage-from attack-type (effective-power)))
     (to (~ .attack! target)
-;;     (format "attack: ~w ~w\n" attack-type (effective-power))
+;;     (out .say "attack: ~w ~w\n" attack-type (effective-power))
       (target .receive! attack-type (effective-power)))
     (to (~ .damage-from attacker-attack-type attack-power)
       (may (qualities .get attacker-attack-type)
@@ -104,7 +104,7 @@
       (let damage (group .damage-from attacker-attack-type attack-power))
       (let mortality (min n-units.^ (damage .quotient hit-points)))
       (n-units .^= (- n-units.^ mortality))
-;;     (format "power ~w, damage ~w, killing ~w units, leaving ~w\n"
+;;     (out .say "power ~w, damage ~w, killing ~w units, leaving ~w\n"
 ;;             attack-power damage mortality n-units.^)
       )
     (to ~.alive?
@@ -141,9 +141,9 @@ separator: '\n'.
 
 (to (show-count armies)
   (for each! (((~ army groups) (sort armies.items)))
-    (format "~d:\n" army)
+    (out .say "~d:\n" army)
     (for each! (((~ i group) groups.items))
-      (format "Group ~w contains ~w units\n" i.+ group.count))))
+      (out .say "Group ~w contains ~w units\n" i.+ group.count))))
 
 (to (part-1)
   (let armies (!map<-items (for each ((`(,name ,group-makers) matchup))
@@ -153,7 +153,7 @@ separator: '\n'.
   (battle armies)
   (sum-by tally armies.values))
 
-(format "Part 1: ~w\n" (part-1))
+(out .say "Part 1: ~w\n" (part-1))
 
 
 (display "\nPart 2\n")
@@ -172,11 +172,11 @@ separator: '\n'.
                                                          (else               0)))
                                          (for each ((group-maker group-makers))
                                            (group-maker my-boost)))))))
-  (format "Trying immune boost of ~w\n" boost)
+  (out .say "Trying immune boost of ~w\n" boost)
   (let win? (battle armies))
-  (format "Immune boost of ~w ~d\n" boost (if win? "WORKED!" "failed"))
+  (out .say "Immune boost of ~w ~d\n" boost (if win? "WORKED!" "failed"))
   (when win?
-    (format "leaving ~w units\n" (sum-by ~.count (armies "Immune System"))))
+    (out .say "leaving ~w units\n" (sum-by ~.count (armies "Immune System"))))
   (newline)
   win?)
 
@@ -195,4 +195,4 @@ separator: '\n'.
                 (searching L M)
                 (searching M H))))))
 
-(format "Part 2: ~w\n" (part-2))
+(out .say "Part 2: ~w\n" (part-2))

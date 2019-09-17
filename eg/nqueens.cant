@@ -7,7 +7,7 @@
 (to (main args)
   (may args.rest
     (be `(,n) (queens (number<-string n)))
-    (else     (format "Usage: ~d board-size\n" (args 0)))))
+    (else     (out .say "Usage: ~d board-size\n" (args 0)))))
 
 (to (queens n)
   (may (satisfy-first (queens-problem n) 1)
@@ -17,7 +17,7 @@
 (to (print-board n env)
   (for each! ((row (board<- n)))
     (for each! ((var row))
-      (format "~d " (".Q" (env var))))
+      (out .say "~d " (".Q" (env var))))
     (newline)))
 
 (to (queens-problem n)

@@ -16,13 +16,13 @@
 
 (let input (with-input-file read-tree data-file))
 
-(format "Part 1\n")
+(out .say "Part 1\n")
 
 (to (sum-metadata {node children metadata})
   (+ (sum metadata)
      (sum-by sum-metadata children)))
 
-(format "result 1: ~w\n" (sum-metadata input))
+(out .say "result 1: ~w\n" (sum-metadata input))
 
 
 (display "\nPart 2\n")
@@ -33,5 +33,5 @@
            (for yeahs ((n metadata))
              (mayhap value<- (children .get n.-))))))
 
-(format "result 2: ~w\n" (value<- input))
+(out .say "result 2: ~w\n" (value<- input))
 

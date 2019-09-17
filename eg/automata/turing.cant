@@ -29,8 +29,8 @@
                    (be (~ acts _) acts)))
 
   (let before (show-squares (reverse L)))
-  (format "~d ~d ~d\n" before (show-squares `(,h)) (show-squares R))
-  (format "~d ~w ~w\n" (" " .repeat before.count) state next-acts))
+  (out .say "~d ~d ~d\n" before (show-squares `(,h)) (show-squares R))
+  (out .say "~d ~w ~w\n" (" " .repeat before.count) state next-acts))
 
 (to (step {machine transit state (and tape {tape _ head _})})
   (for mayhap (((~ acts next-state) (transit .get (~ state head))))

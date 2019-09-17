@@ -26,12 +26,12 @@
           (battling t.+)
           t)))
   (let hp field.total-hit-points)
-  (format "Done after ~w rounds with ~w hit points left.\n"
-          n-rounds hp)
+  (out .say "Done after ~w rounds with ~w hit points left.\n"
+            n-rounds hp)
   (* n-rounds hp))
 
 (to (show t field)
-  (format "After ~w rounds:\n" t)
+  (out .say "After ~w rounds:\n" t)
   field.show
   (newline))
 
@@ -78,7 +78,7 @@
   (to (do-turn p)
     (let targets (find-targets (area p)))
     (unless (maybe-attack p)
-      ;;  (format "targets for ~w: ~w\n" p (sort targets))
+      ;;  (out .say "targets for ~w: ~w\n" p (sort targets))
       (let goals (set<-list (gather open-neighbors<- targets)))
       (may (find-shortest-paths p goals)
         (be '())
@@ -88,7 +88,7 @@
           (let spot chosen-path.first)
           (move! p spot)
           (unless (maybe-attack spot)
-;           (format "unit ~d did not attack\n" (coords<- spot))
+;           (out .say "unit ~d did not attack\n" (coords<- spot))
             'ok))))
     targets.some?)
 
@@ -105,7 +105,7 @@
         (let target
           ;; The least remaining hit points, then the first in reading order.
           (min-by (compound-key<- units itself) targets))
-        ;;     (format "target ~w\n" target)
+        ;;     (out .say "target ~w\n" target)
         (attack p target)
         #yes)))
 
@@ -114,7 +114,7 @@
                     (may (area p)
                       (be #\G 3)
                       (be #\E elf-attack-power))))                      
-;    (format "attack: from ~d@~d to ~d@~d leaving ~w hp\n"
+;    (out .say "attack: from ~d@~d to ~d@~d leaving ~w hp\n"
 ;            (area p) (coords<- p) (area target) (coords<- target) hp-left)
     (hm (when (<= hp-left 0)
           (units .delete! target)
@@ -164,7 +164,7 @@
     (for each! (((~ p ch) area.items))
       (may ch
         (be #\newline
-          (format "   ~d\n" (", " .join notes.values))
+          (out .say "   ~d\n" (", " .join notes.values))
           notes.clear!)
         (else
           (when (unit? ch)
@@ -181,7 +181,7 @@
 (let enemy<- (map<-lists '((#\G #\E)
                            (#\E #\G))))
 
-;(format "Part 1 answer: ~w\n" (part-1))
+;(out .say "Part 1 answer: ~w\n" (part-1))
 
 
 
@@ -190,7 +190,7 @@
 
   (begin trying ((power 4))
     (newline)
-    (format "Trying attack power ~w\n" power)
+    (out .say "Trying attack power ~w\n" power)
     (let field (field<- input power))
     (or (battle-sans-elf-casualties field power)
         (trying power.+))))
@@ -200,14 +200,14 @@
   (begin battling ((t 0))
     (show t field)
     (hm (unless (= n-elves (field.census #\E))
-          (format "Elf casualties, aborting the battle\n\n")
+          (out .say "Elf casualties, aborting the battle\n\n")
           #no)
         (when field.do-round!
           (battling t.+))
         (else
           (let hp field.total-hit-points)
-          (format "Done after ~w rounds with ~w hit points left.\n"
-                  t hp)
+          (out .say "Done after ~w rounds with ~w hit points left.\n"
+                    t hp)
           (* t hp)))))
 
-(format "~w\n" (part-2))
+(out .say "~w\n" (part-2))

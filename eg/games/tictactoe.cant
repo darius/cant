@@ -10,9 +10,9 @@
         (if (= args.count 2)
             (each parse-player args)) ;TODO catch errors
         (else
-          (format "Usage: ~d [X-player O-player]\n" me)
-          (format "Available players: ~d\n"
-                  (" " .join (sort player-registry.keys)))
+          (out .say "Usage: ~d [X-player O-player]\n" me)
+          (out .say "Available players: ~d\n"
+                    (" " .join (sort player-registry.keys)))
           (os-exit 1))))
   (tty-ttt @`(,@players ,empty-grid))) ;TODO allow @arguments in non-final position in expressions?
 
@@ -23,13 +23,13 @@
 ;; Text-stream interface
 
 (to (tic-tac-toe player opponent grid)
-  (format "~d\n\n" (show grid))
-  (hm (when (won? grid)   (format "~d wins.\n" (last-to-move grid)))
-      (when (drawn? grid) (format "A draw.\n"))
+  (out .say "~d\n\n" (show grid))
+  (hm (when (won? grid)   (out .say "~d wins.\n" (last-to-move grid)))
+      (when (drawn? grid) (out .say "A draw.\n"))
       (else
         (unless ([player opponent] .find? human-play)
-          (format "~d to move ~d. (Press a key.)\n"
-                  player.name (whose-move grid))
+          (out .say "~d to move ~d. (Press a key.)\n"
+                    player.name (whose-move grid))
 ;           (get-key)                    ;XXX
            )
         (tic-tac-toe opponent player (player grid)))))

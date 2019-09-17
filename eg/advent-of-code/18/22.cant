@@ -46,7 +46,7 @@
   (grid* (xl .to xh)
          (yl .to yh)))
 
-(format "~w\n" (part-1))
+(out .say "~w\n" (part-1))
 
 
 (display "\nPart 2\n")
@@ -107,11 +107,11 @@
     (let {at t state} effort)
     (let t0 (bests state))
     (if (< t0 t)
-        (do (format "at ~3w skip\n" t)
+        (do (out .say "at ~3w skip\n" t)
             (continue '()))
         (do (let {state p tool} state)
-            (format "at ~3w ~3w ~w size ~w\n"
-                    t (manhattan-distance p target) state bests.count)
+            (out .say "at ~3w ~3w ~w size ~w\n"
+                      t (manhattan-distance p target) state bests.count)
 ;;            (surely (usable? tool p) "Tool is still usable after move")
             (if (and (= p target) (= tool 'torch))
                 t ; Final result: time to reach the target with torch equipped.
@@ -141,6 +141,6 @@
   (+ (abs (- (p 0) (q 0)))
      (abs (- (p 1) (q 1)))))
 
-(format "~w\n" (part-2))
+(out .say "~w\n" (part-2))
 
 ;; Other answers: https://old.reddit.com/r/adventofcode/comments/a8i1cy/2018_day_22_solutions/

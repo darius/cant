@@ -27,7 +27,7 @@
 (to (patches)
   (grid* (1 .to 298) (1 .to 298)))
 
-(format "~w\n" (part1))
+(out .say "~w\n" (part1))
 
 
 (display "\nPart 2\n")
@@ -51,7 +51,7 @@
             (- (S (at x.- y))       ; strip to left
                (S (at x.- y.-)))
             (level<- x y)))))       ; this spot
-  (format "S initialized\n")
+  (out .say "S initialized\n")
 
   (to (power<- `(,x0 ,y0 ,d))
     (let x1 (+ x0 d))
@@ -87,4 +87,4 @@
   (cvt-coords triple))
 
 (let `(,x ,y ,s) (part2))
-(format "~w,~w,~w\n" x y s)
+(out .say "~w,~w,~w\n" x y s)

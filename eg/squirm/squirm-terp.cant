@@ -57,7 +57,7 @@
 (to (check-timeouts)
   (let now (nano-now))
   (for each! (((~ process time) waiting-timeouts.items))
-;;    (format "time ~w: checking ~w\n" (msecs now) (msecs time))
+;;    (out .say "time ~w: checking ~w\n" (msecs now) (msecs time))
     (when (<= time now)
       (waiting-timeouts .delete! process)
       ;; TODO: wake it specifically as hitting the timeout, instead of re-evaluating the receive?
@@ -85,7 +85,7 @@
   (make process
 
     (to (~ .selfie sink)
-      (format .to-sink sink "#<~w>" pid-num))
+      (sink .say "#<~w>" pid-num))
 
     (to (~ .subscribe watcher)
       (watchers .add! watcher))
@@ -129,7 +129,7 @@
             (hm (unless deadline
                   {blocked deadline after-e clauses r k})
                 (when (<= deadline (nano-now))
-;;                (format "time ~w: deadline ~w\n" (msecs (nano-now)) (msecs deadline))
+;;                (out .say "time ~w: deadline ~w\n" (msecs (nano-now)) (msecs deadline))
                   (waiting-timeouts .delete! process) ;TODO might not be needed?
                   (sev after-e r k))
                 (else

@@ -106,5 +106,5 @@
 (do
   (flood)
   (let bag (bag<- grid.values))
-  (format "Total water (part 1): ~w\n" (+ (bag #\~) (bag #\|)))
-  (format "Still water (part 2): ~w\n" (bag #\~)))
+  (out .say "Total water (part 1): ~w\n" (+ (bag #\~) (bag #\|)))
+  (out .say "Still water (part 2): ~w\n" (bag #\~)))

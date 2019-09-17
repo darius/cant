@@ -18,7 +18,7 @@ insn:    :nat ' ' :nat ' ' :nat ' ' :nat '\n' :hug.
 
 (let `(,observations ,program) (parse input))
 ;(each! print program)
-(format "#obs: ~w\n" observations.count)
+(out .say "#obs: ~w\n" observations.count)
 
 
 (display "\nPart 1\n")
@@ -80,14 +80,14 @@ insn:    :nat ' ' :nat ' ' :nat ' ' :nat '\n' :hug.
         (let vm (vm<- (array<-list regs-pre)))
         (vm .do op-name a b c)
         (<=> regs-post vm.get-regs)))
-;;    (format "~w: ~w\n" op (sort compatible-ops))
+;;    (out .say "~w: ~w\n" op (sort compatible-ops))
     `(,op ,compatible-ops)))
 
 (to (part-1)
   (for tally-by ((`(,_ ,compatible-ops) constraints))
     (<= 3 compatible-ops.count)))
 
-(format "~w\n" (part-1))
+(out .say "~w\n" (part-1))
 
 
 (display "\nPart 2\n")
@@ -129,4 +129,4 @@ insn:    :nat ' ' :nat ' ' :nat ' ' :nat '\n' :hug.
   (let post-regs (run program assignments))
   (post-regs 0))
 
-(format "~w\n" (part-2))
+(out .say "~w\n" (part-2))

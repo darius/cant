@@ -8,8 +8,8 @@
       (counting r.+ (+ i r))))
   (let widths (each ~.count rows.last))
   (for each! ((row rows))
-    (format "~d\n" (" " .join (for each (((~ col string) row.items))
-                                (string .right-justify (widths col)))))))
+    (out .say "~d\n" (" " .join (for each (((~ col string) row.items))
+                                  (string .right-justify (widths col)))))))
 
 (floyd-triangle 5)
 (floyd-triangle 14)

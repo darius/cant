@@ -13,15 +13,15 @@
   {elfcode ip-reg program})
 
 (to (itsy-dump {elfcode ip-reg program})
-  (format "enum { ip = ~w }\n" ip-reg)
-  (format "enum { program_length = ~w }\n" program.count)
-  (format "let program: [program_length] Insn = [\n")
+  (out .say "enum { ip = ~w }\n" ip-reg)
+  (out .say "enum { program_length = ~w }\n" program.count)
+  (out .say "let program: [program_length] Insn = [\n")
   (each! print-insn program)
-  (format "];\n")
+  (out .say "];\n")
   (newline))
 
 (to (print-insn (list<- op a b c))
-  (format "  [~w, ~w, ~w, ~w],\n" op a b c))
+  (out .say "  [~w, ~w, ~w, ~w],\n" op a b c))
 
 (to (disassemble {elfcode ip-reg program})
 
@@ -66,7 +66,7 @@
       (be 'eqri  (blah "==" {r a} {i b}))
       (be 'eqrr  (blah "==" {r a} {r b}))))
 
-  (format "#ip ~w\n\n" ip-reg)
+  (out .say "#ip ~w\n\n" ip-reg)
   (let stmts (each stmt<- program))
   (each! print stmts.items)
   'XXX)

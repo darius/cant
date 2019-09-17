@@ -20,7 +20,7 @@
                             (#\a .span centers.count))))
 
 (let `((,xl ,yl) (,xh ,yh)) (bounds<- centers))
-(format "bounds ~w\n" (bounds<- centers))
+(out .say "bounds ~w\n" (bounds<- centers))
 
 (to (show-map)
   (for each! ((y (yl .to yh)))
@@ -53,7 +53,7 @@
 
 (let centroid (each (compose integer<- average)
                     (transpose centers)))
-(format "centroid included?: ~w\n" (included? centroid))
+(out .say "centroid included?: ~w\n" (included? centroid))
 
 (let region (set<-))
 
@@ -64,9 +64,9 @@
       (be {empty})
       (be {nonempty p queue-1}
         (if (region .maps? p)
-            (format "dupe ~w\n" p)
+            (out .say "dupe ~w\n" p)
             (do (region .add! p)
-;;               (format "add ~w distance ~w count ~w\n" p (total-distance p) region.count)
+;;               (out .say "add ~w distance ~w count ~w\n" p (total-distance p) region.count)
                 ))
         (growing (extend queue-1 
                          (for those ((p1 (neighbors<- p)))
@@ -87,12 +87,12 @@
 ;; (let seed
 ;;   (begin seeking ((p centroid))
 ;;     (let d (total-distance p))
-;;     (format "seeking at ~w, distance ~w\n" p d)
+;;     (out .say "seeking at ~w, distance ~w\n" p d)
 ;;     (if (< d margin)
 ;;         p
 ;;         (seeking (min-by total-distance (neighbors-8<- p))))))
 
-;; (format "centroid ~w, seed ~w\n" centroid seed)
+;; (out .say "centroid ~w, seed ~w\n" centroid seed)
 
 ;; (grow-from seed)
 
@@ -103,10 +103,10 @@
 
 ;;(let area-2 (sum
 ;;             (for each ((y ((- (seed 1) margin) .to (+ (seed 1) margin))))
-;;               (format "y ~w of ~w\n" y (+ (seed 1) margin))
+;;               (out .say "y ~w of ~w\n" y (+ (seed 1) margin))
 ;;               (sum (for each ((x ((- (seed 0) margin) .to (+ (seed 0) margin))))
 ;;                      (~.count (included? `(,x ,y))))))))
 
-;(format "result 2 (slow): ~w\n" (area-1))
+;(out .say "result 2 (slow): ~w\n" (area-1))
 
-(format "result 2: ~w\n" region.count)
+(out .say "result 2: ~w\n" region.count)

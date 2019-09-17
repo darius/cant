@@ -86,7 +86,7 @@
 ;  (show world0)
   (begin ticking ((state world0) (t 0))
     (when (< t 20000)
-;      (format "time ~w\n" t)
+;      (out .say "time ~w\n" t)
       (let `(,state1 ,crashes) (tick state))
 ;      (show state1)
       (if crashes.some?
@@ -110,16 +110,16 @@
   (let {cart dir veer} (carts pos))
   (let new-pos (+ pos (step width dir)))
   (when (carts1 .maps? new-pos)
-;    (format "splat!\n")
+;    (out .say "splat!\n")
     (crashes .push! new-pos))
   (let new-cart (maybe-turn {cart dir veer} (tracks new-pos)))
   (let {cart new-dir _} new-cart)
-;  (format "pos: ~w dir: ~w to new pos: ~w dir: ~w\n"
+;  (out .say "pos: ~w dir: ~w to new pos: ~w dir: ~w\n"
 ;          pos dir new-pos new-dir)
   (carts1 .delete! pos)
   (carts1 .set! new-pos new-cart))
 
-(format "~w\n" (part1))
+(out .say "~w\n" (part1))
 
 
 (display "\nPart 2\n")
@@ -129,7 +129,7 @@
     (when (< t 200000000)
       (let {world _ _ pre-carts} state)
       (when (1000 .divides? t)
-        (format "time ~w pop ~w\n" t pre-carts.count))
+        (out .say "time ~w pop ~w\n" t pre-carts.count))
       (if (= pre-carts.count 1)
           (xy-coords state pre-carts.keys.first)
           (do (let `(,state1 ,crashes) (tick state))
@@ -138,4 +138,4 @@
                 (carts .delete! pos))
               (ticking state1 t.+))))))
 
-(format "~w\n" (part2))
+(out .say "~w\n" (part2))

@@ -11,7 +11,7 @@
 ;; nor the type is as simple...
 
 (to (trace @args)
-  (format @args))
+  (out .say @args))
 
 (let mask32 (- (expt 2 32) 1))
 
@@ -39,10 +39,10 @@
 
     '(hide
       (to (R i) (reg i))  ;; To print as unsigned like the reference output.
-      (format "~08x [~4x ~4x ~4x ~4x ~4x ~4x ~4x ~4x] ~08x "
-              pc
-              (R 0) (R 1) (R 2) (R 3) (R 4) (R 5) (R 6) (R 7)
-              inst))
+      (trace "~08x [~4x ~4x ~4x ~4x ~4x ~4x ~4x ~4x] ~08x "
+             pc
+             (R 0) (R 1) (R 2) (R 3) (R 4) (R 5) (R 6) (R 7)
+             inst))
 
     (may opcode
       (be 13 ;(trace "r~w = 0x~08x\n" (7 .and (inst .u>> 25)) (inst .and 0x1FFFFFF))

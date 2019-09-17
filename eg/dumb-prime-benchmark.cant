@@ -26,4 +26,4 @@
 
 (when #no
   (for each! (((~ i fi) f.items))
-    (format "~3w ~w\n" i fi)))
+    (out .say "~3w ~w\n" i fi)))

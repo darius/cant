@@ -52,10 +52,10 @@
 
   (to (assign arg)
     ;; TODO can be simpler for initial assignment
-;    (format "assign ~w\n" arg)
+;    (out .say "assign ~w\n" arg)
     (let {state workers jobs} arg)
     (begin assigning ((ws1 workers) (ws2 '()) (jobs jobs))
-;      (format "ws1 = ~w\n" ws1)
+;      (out .say "ws1 = ~w\n" ws1)
       (may ws1
         (be '()
           {state (reverse ws2) jobs})
@@ -73,7 +73,7 @@
     ;; Decrement one time tick on each worker,
     ;; and retire the nodes that reach 0.
     (begin working ((ws1 workers) (ws2 '()) (jobs jobs))
-;      (format "a: ws1 = ~w\n" ws1)
+;      (out .say "a: ws1 = ~w\n" ws1)
       (may ws1
         (be '()
 ;         (print 'b)
@@ -96,17 +96,17 @@
   (let first-steps (sort (for those ((node nodes))
                            (= 0 (pred-count node)))))
 
-  (format "Second Workers Pending Done\n")
+  (out .say "Second Workers Pending Done\n")
   (begin ticking ((t 0)
                   ({state workers jobs}
                    (assign {state ('(#no) .repeat n-workers)
                                   first-steps})))
-    (format "~6w ~7w ~7w ~w\n"
-            t
-            (for each ((w workers))
-              (if w (w 0) '-))
-            jobs
-            ("" .join outbox.values))
+    (out .say "~6w ~7w ~7w ~w\n"
+              t
+              (for each ((w workers))
+                (if w (w 0) '-))
+              jobs
+              ("" .join outbox.values))
     (if (some itself workers) ;clumsy, I guess
         (ticking t.+ (assign (work {state workers jobs})))
         t)))
@@ -115,4 +115,4 @@
 (display "Part 2\n")
 
 (let total-delay (schedule))
-(format "\nresult 2: ~w\n" total-delay)
+(out .say "\nresult 2: ~w\n" total-delay)

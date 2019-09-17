@@ -7,7 +7,7 @@
 
 (to (search filename)
   (when (find-it? (grab filename))
-    (format "~d\n" filename)))
+    (out .say "~d\n" filename)))
 
 ;; TODO fill in an actual pattern to search for
 (to (find-it? e)

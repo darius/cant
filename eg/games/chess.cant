@@ -90,19 +90,19 @@
       (let lines (each (~ .slice 1 9)
                        (squares .slice 1 9)))
       (for each! (((~ i line) lines.items))
-        (format .to-sink sink "~w|" (- 8 i))
+        (sink .say "~w|" (- 8 i))
         (for each! (((~ j piece) line.items))
-          (format .to-sink sink " ~d" (if (and (= piece #\space)
-                                               ((+ i j) .odd?))
-                                          #\. ; An empty black square.
-                                          piece)))
-        (format .to-sink sink "\n"))
-      (format .to-sink sink " +----------------\n")
-      (format .to-sink sink "   a b c d e f g h    ~d\n"
-              (may board.outcome
-                (be #no   ("~d to move" .format (side-name mover)))
-                (be 'draw "A draw.")
-                (be w     ("~d wins!" .format (side-name w))))))
+          (sink .say " ~d" (if (and (= piece #\space)
+                                    ((+ i j) .odd?))
+                               #\. ; An empty black square.
+                               piece)))
+        (sink .say "\n"))
+      (sink .say " +----------------\n")
+      (sink .say "   a b c d e f g h    ~d\n"
+            (may board.outcome
+              (be #no   ("~d to move" .format (side-name mover)))
+              (be 'draw "A draw.")
+              (be w     ("~d wins!" .format (side-name w))))))
 
     ;; Return #no, draw, black, or white (meaning the winner).
     (to ~.outcome
@@ -176,7 +176,7 @@
       (unless (possibles .find? move)
         (error "Bad move" move))
       (unless (= player human-player)
-        (format "~d plays ~d.\n\n" (side-name mover) (unparse-move move)))
+        (out .say "~d plays ~d.\n\n" (side-name mover) (unparse-move move)))
       (update move board))
 
     (to (~ .parse-move string)    ;N.B. #no if invalid, unlike in my Python

@@ -27,7 +27,7 @@
 
 (to (after-generations n state0)
   (for foldl ((state state0) (i (0 .to< n)))
-    (format "~w: sum ~w\n" i (sum state.keys))
+    (out .say "~w: sum ~w\n" i (sum state.keys))
     (generate state)))
 
 (to (generate state)
@@ -48,6 +48,6 @@
 (to (at state pot)
   (if (state pot) #\# #\.))
 
-(format "~w\n" (part1))
+(out .say "~w\n" (part1))
 
 ;; part2 done by leting part1 run longer, extrapolating the sums by inspection

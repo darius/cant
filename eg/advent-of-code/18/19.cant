@@ -21,9 +21,9 @@
       (begin running ()
         (when vm.step (running))))
 ;       (when (program .maps? (regs ip))
-;         (format "ip=~w ~w ~d " (regs ip) regs (show (program (regs ip))))
+;         (out .say "ip=~w ~w ~d " (regs ip) regs (show (program (regs ip))))
  ;        vm.step
- ;        (format " ~w\n" regs)
+ ;        (out .say " ~w\n" regs)
   ;       (running))))
 
     (to ~.step
@@ -32,7 +32,7 @@
         (vm .do op a b c)
         (regs .update ip ~.+)
         (when (= here 7)
-          (format "ip=~w ~w ~d " (regs ip) regs (show (program (regs ip)))))
+          (out .say "ip=~w ~w ~d " (regs ip) regs (show (program (regs ip)))))
         #yes))
 
     (to (~ .do op a b c)
@@ -79,7 +79,7 @@
   the-vm.run
   (the-regs 0))
 
-;(format "~w\n" (part-1))
+;(out .say "~w\n" (part-1))
 
 
 (display "\nPart 2\n")
@@ -89,4 +89,4 @@
   the-vm.run
   (the-regs 0))
 
-(format "~w\n" (part-2))
+(out .say "~w\n" (part-2))
