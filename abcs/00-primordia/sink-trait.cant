@@ -1,0 +1,13 @@
+(make-trait sink-trait sink
+  (to (~ .write a)
+    (a .selfie sink))
+  ;; TODO .say is a lousy name, but:
+  ;;  - needs to be distinct from string .format, and I haven't
+  ;;  thought of a good other name
+  ;;  - the whole format-string paradigm isn't quite in keeping with
+  ;;  the plain-language style I'm aiming for, so consider this
+  ;;  temporary
+  (to (~ .say format-string @arguments)
+    (format .to-sink sink format-string @arguments))
+  (to message
+    (miranda-trait sink message)))
