@@ -118,4 +118,5 @@
 
 (the-signal-handler .^= fallback-signal-handler)
 
+(computational-setting .resolve-each! primordial-setting computational-setting-library-imports)
 (full-powered-setting .resolve-each! primordial-setting computational-setting-library-imports)
