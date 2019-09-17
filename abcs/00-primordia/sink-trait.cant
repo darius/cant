@@ -15,5 +15,8 @@
     (format .to-sink sink format-string @arguments))
   (to (~ .newline)
     (sink .display #\newline))
+  (to (~ .displayln a)                  ;TODO ugh the name
+    (sink .display a)
+    sink.newline)
   (to message
     (miranda-trait sink message)))

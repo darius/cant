@@ -177,10 +177,6 @@
   (write x)
   out.newline)
 
-(to (displayln x)                  ;TODO uh really rename
-  (display x)
-  out.newline)
-
 (to (with-input-file fn filename)
   (let source (open-input-file filename))
   (let result (fn source))

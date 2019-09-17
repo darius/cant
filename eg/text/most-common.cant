@@ -8,7 +8,8 @@
   (let `(,filename) args.rest)
   (let words (bag<- (words<-string (with-input-file ~.read-all filename))))
   (let frequent (words .most-common N))
-  (each! displayln (format-table (each ~.parts frequent))))
+  (each! (-> (out .displayln it))
+         (format-table (each ~.parts frequent))))
 
 (to (words<-string string)
   ;;  (re:findall "[a-z]+" string.lowercase))  ;TODO
