@@ -163,7 +163,7 @@ Be in this directory (the one holding the file `incant`) and then:
 
 ```
 $ ./incant
--> (to (I-am name) (format "Hi, ~w!\n" name))
+-> (to (I-am name) (out .say "Hi, ~w!\n" name))
 #<I-am>
 -> (I-am 'Alice)
 Hi, Alice!

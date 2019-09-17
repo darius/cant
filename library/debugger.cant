@@ -4,8 +4,8 @@
 
 (to (help vocab)
   (for each! ((`(,short ,full ,text) vocab))
-    (format "~d ~-9w - ~d\n"
-            short full text)))
+    (out .say "~d ~-9w - ~d\n"
+              short full text)))
 
 (to (collect-abbrevs vocab)
   (map<-items (for each ((`(,short ,full ,_) vocab))
@@ -40,7 +40,7 @@
     (may (abbrevs .get input input)
       (be 'help
         (help vocab)
-        (format "<n>         - inspect the nth component of the focus\n")
+        (out .display "<n>         - inspect the nth component of the focus\n")
         (continue))
       (be 'quit
         'ok)

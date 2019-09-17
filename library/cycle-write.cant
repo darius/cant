@@ -74,7 +74,7 @@
                                ;;bookkeeping work on the second visit
                                (let id (tags thing))
                                (unless (= 0 id)
-                                 (format .to-sink sink "#~w=" id))))
+                                 (sink .say "#~w=" id))))
               (thing .selfie cycle-sink))
             (be tag
               (let id (may tag
@@ -84,7 +84,7 @@
                         (else   ;; Thereafter, just use that one:
                           tag)))
               (buffer .push! (on (sink)
-                               (format .to-sink sink "#~w" id)))))))
+                               (sink .say "#~w" id)))))))
   
     (to ~.close
       tags.clear!))

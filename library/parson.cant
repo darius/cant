@@ -228,7 +228,7 @@ t: .
 ")
   (let skeletons (parse-grammar text))
   (for each! ((`(,name ,{lifted refs _}) skeletons))
-    (format "~d: ~w\n" name refs)))
+    (out .say "~d: ~w\n" name refs)))
 
 
 (export grammar<- parse feed push)

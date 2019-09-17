@@ -15,7 +15,7 @@
 
 (to (print-traceback k)
   (for each! ((frame (reverse k)))
-    (format "  ~d\n" (write-to-bounded-string frame 77))))
+    (out .say "  ~d\n" (write-to-bounded-string frame 77))))
 
 (to (complain evil)
   (may evil

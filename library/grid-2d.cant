@@ -103,12 +103,12 @@
 ;; (* * *)
 ;; (a * *)
 ;; #no
-;; -> (g .show (on (row) (format "~d\n" ("" .join (each _.name row)))))
+;; -> (g .show (on (row) (out .say "~d\n" ("" .join (each _.name row)))))
 ;; ***
 ;; a**
 ;; #no
 ;; -> (g .set! (~ 3 1) 'b)
-;; -> (g .show (on (row) (format "~d\n" ("" .join (each _.name row)))))
+;; -> (g .show (on (row) (out .say "~d\n" ("" .join (each _.name row)))))
 ;; *b*
 ;; a**
 ;; #no

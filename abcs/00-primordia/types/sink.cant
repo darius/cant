@@ -3,6 +3,11 @@
   (to (~ .write-u8 u8) (__put-u8 me u8))
   (to (~ .write a)     (a .selfie me))
   (to ~.close          (__close-port me))
+  ;; TODO .say is a lousy name, but:
+  ;;  - needs to be distinct from string .format, and I haven't thought of a good other name
+  ;;  - the whole format-string paradigm isn't quite in keeping with the plain-language style I'm aiming for, so consider this temporary
+  (to (~ .say format-string @arguments) ;TODO extract to a sink-trait, along with some of the above
+    (format .to-sink me format-string @arguments))
   (to ~.output-string                 ;XXX for string-sink only
     (__get-output-string me))
   )

@@ -43,7 +43,7 @@
                               ,(text .slice far)))
     (to ~.display                         ;TODO change to .selfie
       (let `(,left / ,right) failure.postmortem)
-      (format "failed: ~w/~w" left right))))
+      (out .say "failed: ~w/~w" left right))))
 
 (to (empty text far i vals)
   (make success
@@ -57,7 +57,7 @@
     (to ~.results             vals)
     (to ~.result              vals.maybe)    ;TODO nicer error on wrong # of vals
     (to ~.display
-      (format "~w ~w" (text .slice i) vals))))
+      (out .say "~w ~w" (text .slice i) vals))))
 
 ;; (invert p): a parser that succeeds from a state just when p fails
 ;; from the same state. Any parsing by p becomes mere lookahead; it
