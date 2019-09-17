@@ -94,7 +94,7 @@
     (to (~)
       (the-signal-handler .^= listener-handler)
       (out .display "-> ")
-      (may (read)
+      (may (read stdin)
         (be (? eof?) out.newline)
         (be sexpr (print-result (cant .play sexpr setting)))))))
 

@@ -296,7 +296,6 @@
       (lambda (port c)
         (list '@ (must-read port))))    ;XXX for now
 
-    (lambda opt:in-port
-      (read (optional-arg opt:in-port (current-input-port))))))
+    read))
 
 )

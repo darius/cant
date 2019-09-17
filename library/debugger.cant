@@ -36,7 +36,7 @@
       (interacting new-focus (link focus trail)))
 
     (out .display "inspect-> ")
-    (let input (read))
+    (let input (read stdin))
     (may (abbrevs .get input input)
       (be 'help
         (help vocab)
@@ -59,7 +59,7 @@
       (be 'value
         (let setting (main-interactive-setting ;TODO parameterize
                       .extend '(*focus*) [focus]))
-        (out .print (cant .play (read) setting))
+        (out .print (cant .play (read stdin) setting))
         (continue))
       (be (? count?)
         (push (focus input))) ;TODO handle out-of-range
@@ -88,10 +88,10 @@
       (interacting frame callees))
 
     (to (read-eval)
-      (cant .play (read) frame.setting))
+      (cant .play (read stdin) frame.setting))
 
     (out .display "debug-> ")
-    (let input (read))  ; TODO read a line, then parse?
+    (let input (read stdin))  ; TODO read a line, then parse?
     (may (abbrevs .get input input)
       (be 'help
         (help vocab)
