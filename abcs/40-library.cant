@@ -23,20 +23,19 @@
 (to (load-module filename @(optional context))
   ;; TODO the 'let' is a hack
   (let exp `(hide (let use ',use) ,@(with-input-file read-all filename)))
-  ;;TODO reduce to computational-setting
   (let setting full-powered-setting)
+;;  (let setting computational-setting)  ;TODO
   (cant .play exp setting context))
 
 (let full-powered-setting-extra-names
   '(full-powered-setting
-    main-interactive-setting          ;XXX
     nano-now nanosleep out stdin read os-exit
     extract-datum extract-script
     newline write print displayln with-input-file with-output-file
     system/must-succeed
     the-modules unuse load load-module
     the-last-error push-signal-handler with-signal-handler the-signal-handler
-    unwind-protect                      ;XXX used?
+    unwind-protect ;;TODO I guess for computational-setting if we're to have it at all
     listener<- debug breakpoint
     display))
 (let full-powered-setting ;XXX
