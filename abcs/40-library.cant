@@ -48,3 +48,5 @@
 (let main-interactive-setting 
   ((full-powered-setting .extend '(load use) [load use])  ;XXX hacky
    .extend-mutable))
+(cant .play `(let main-interactive-setting ',main-interactive-setting)
+            main-interactive-setting)
