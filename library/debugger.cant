@@ -23,19 +23,19 @@
       (v value     "evaluate an expression in the focus's setting (+ *focus*)")))
   (let abbrevs (collect-abbrevs vocab))
 
-  (display "Enter ? for help.\n")
+  (out .display "Enter ? for help.\n")
   (begin interacting ((focus initial-focus)
                       (trail '()))
 
     (to (continue @messages)
-      (each! display messages)
+      (each! (-> (out .display it)) messages)
       (interacting focus trail))
 
     (to (push new-focus)
       (out .print new-focus)           ;XXX pretty-print? cycle-print? ...?
       (interacting new-focus (link focus trail)))
 
-    (display "inspect-> ")
+    (out .display "inspect-> ")
     (let input (read))
     (may (abbrevs .get input input)
       (be 'help
@@ -80,17 +80,17 @@
       (b backtrace "show all of the stack up from here")))
   (let abbrevs (collect-abbrevs vocab))
 
-  (display "Enter ? for help.\n")
+  (out .display "Enter ? for help.\n")
   (begin interacting ((frame k) (callees '()))
 
     (to (continue @messages)
-      (each! display messages)
+      (each! (-> (out .display it)) messages)
       (interacting frame callees))
 
     (to (read-eval)
       (cant .play (read) frame.setting))
 
-    (display "debug-> ")
+    (out .display "debug-> ")
     (let input (read))  ; TODO read a line, then parse?
     (may (abbrevs .get input input)
       (be 'help

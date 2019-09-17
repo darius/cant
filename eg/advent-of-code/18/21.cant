@@ -75,7 +75,7 @@
       regs)
     ))
 
-(display "\nPart 1\n")
+(out .display "\nPart 1\n")
 
 (let the-regs (array<-count 6 0))
 (let the-vm (vm<- the-regs the-ip the-program))
@@ -87,7 +87,7 @@
 (out .say "~w\n" (part-1))
 
 
-(display "\nPart 2\n")
+(out .display "\nPart 2\n")
 
 (to (part-2)
   'xxx)

@@ -21,8 +21,8 @@
       (let inputs (for each ((gen gens))
                     (gen g)))
       (may (property @inputs)
-        (be #yes    (display "."))
-        (be outcome (display "X")
+        (be #yes    (out .display "."))
+        (be outcome (out .display "X")
                     (failures .push! (~ outcome inputs)))))
     out.newline
     (when failures.some?

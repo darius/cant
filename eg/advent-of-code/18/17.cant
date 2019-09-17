@@ -41,11 +41,11 @@
   (for each! ((y (spring-y .to< yl)))
     (for each! ((x (xl .to xh)))
       (let p (~ x y))
-      (display (if (= spring p) #\+ #\.)))
+      (out .display (if (= spring p) #\+ #\.)))
     out.newline)
   (grid .show (on (chars)
                 (for each! ((ch chars))
-                  (display (or ch #\.)))
+                  (out .display (or ch #\.)))
                 out.newline))
   out.newline)
 

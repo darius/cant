@@ -8,7 +8,7 @@
 (let claims (each parse input))
 
 
-(display "Part 1\n")
+(out .display "Part 1\n")
 
 (to (area<- `(,_ ,x0 ,y0 ,w ,h))
   (grid* (x0 .span w) (y0 .span h)))
@@ -20,7 +20,7 @@
 (out .print `(the area is ,n-conflicts))
 
 
-(display "Part 2\n")
+(out .display "Part 2\n")
 
 (to (undisputed? claim)
   (for every ((point (area<- claim)))

@@ -15,14 +15,14 @@
                       "** "
                       " * "))
   (for cbreak-mode ()
-    (display cursor-hide)
+    (out .display cursor-hide)
     (begin running ((grid grid) (step 0))
-      (display clear-screen)
-      (display home)
+      (out .display clear-screen)
+      (out .display home)
       grid.show
       (when (< step n-steps)
         (running grid.next step.+)))
-    (display cursor-show)))
+    (out .display cursor-show)))
 
 (to (smoke-test)
   (let grid (grid<- 8 8))
@@ -99,8 +99,8 @@
     (to ~.show
       (for each! ((r (1 .to n-rows)))
         (for each! ((c (1 .to n-cols)))
-          (display (" O" (G (at r c))))
-          (display " "))
+          (out .display (" O" (G (at r c))))
+          (out .display " "))
         out.newline))
 
     (to ~.next

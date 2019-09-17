@@ -35,7 +35,7 @@ _:         :whitespace.
 ;; producing an overall map guard -> naps
 
 
-(display "Part 1\n")
+(out .display "Part 1\n")
 
 (to (tally-winks guard)
   (let bag (zzzs guard))
@@ -53,7 +53,7 @@ _:         :whitespace.
 (out .say "result code ~w\n" (* guard1 minute1))
 
 
-(display "\nPart 2\n")
+(out .display "\nPart 2\n")
 
 (to (winks-at-max guard)
   ((zzzs guard) (max-winks guard)))

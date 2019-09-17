@@ -52,22 +52,22 @@
     ;; XXX doesn't mean 'is centered' any more:
     (to ~.point-centered? (and point-y.^ (<= point-y.^ (rows .quotient 2))))
     (to ~.show
-      (display cursor-hide)
-      (display home)
+      (out .display cursor-hide)
+      (out .display home)
       (for each! (((~ i line) lines.items))
         (unless (= line (showing i))
-          (display (goto 0 i))
-          (display line)
-          (display clear-to-right)
+          (out .display (goto 0 i))
+          (out .display line)
+          (out .display clear-to-right)
           (showing .set! i line)))
       ;; TODO: styling for the logs
-      (display (goto 0 rows))
+      (out .display (goto 0 rows))
       (for each! ((message (logs.^ .slice 0 console-rows)))
-        (display (message .slice 0 cols))
-        (display clear-to-right)
-        (display "\r\n"))
-      (display (goto point-x.^ point-y.^))
-      (display cursor-show))))
+        (out .display (message .slice 0 cols))
+        (out .display clear-to-right)
+        (out .display "\r\n"))
+      (out .display (goto point-x.^ point-y.^))
+      (out .display cursor-show))))
 
 (export
   cols rows

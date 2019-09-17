@@ -13,7 +13,7 @@
     a))
 
  (import a-module f g)
- (display "f and g\n")
+ (out .display "f and g\n")
  (out .print f)
  (out .print g)
 )

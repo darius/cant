@@ -13,13 +13,13 @@
                  (be `(,_ ,n-str) (number<-string n-str))
                  (be `(,prog ,@_) (error ("Usage: ~d [#steps]" .format prog)))))
   (for cbreak-mode ()
-    (display cursor-hide)
+    (out .display cursor-hide)
     (run r-pentomino n-steps)
-    (display cursor-show)))
+    (out .display cursor-show)))
 
 (to (run grid n-steps)
   (for foldl ((grid grid) (_ (1 .to n-steps)))
-    (display clear-screen)
+    (out .display clear-screen)
     (show grid)
     (update grid)))
 
@@ -43,7 +43,7 @@
     (each bounds<- (transpose grid.keys)))
   (for each! ((y (y-lo .to y-hi)))
     (for each! ((x (x-lo .to x-hi)))
-      (display (if (grid .maps? `(,x ,y)) "O " "  ")))
+      (out .display (if (grid .maps? `(,x ,y)) "O " "  ")))
     out.newline))
 
 (to (bounds<- numbers)

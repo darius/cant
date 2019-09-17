@@ -10,7 +10,7 @@
 (let inputs (each parse input.rest.rest))
 
 
-(display "\nPart 1\n")
+(out .display "\nPart 1\n")
 
 (let rules
   (~.range (for where ((outcome (map<-lists inputs)))

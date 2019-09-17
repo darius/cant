@@ -2,9 +2,9 @@
 
 (to (loud-use filename)
   out.newline
-  (display "-------- ")
-  (display filename)
-  (display " --------")
+  (out .display "-------- ")
+  (out .display filename)
+  (out .display " --------")
   out.newline
   (use filename))
 

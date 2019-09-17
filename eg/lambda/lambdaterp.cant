@@ -148,7 +148,7 @@
 (let command-queue (box<- '()))
 
 (to (next-command)
-  (display "debug> ")
+  (out .display "debug> ")
   (may command-queue.^
     (be '()
       out.newline
@@ -176,7 +176,7 @@
 (to (value-step<- e r k)
   (make value-step
     (to ~.show
-      (display "ev-> ") (out .print e.source))
+      (out .display "ev-> ") (out .print e.source))
     (to ~.b
       (traceback k)
       (debugging value-step))
@@ -191,7 +191,7 @@
 (to (subeval-step<- e r k)
   (make subeval-step
     (to ~.show
-      (display "ev-> ") (out .print e.source))
+      (out .display "ev-> ") (out .print e.source))
     (to ~.b
       (traceback k)
       (debugging subeval-step))
@@ -206,7 +206,7 @@
 (to (out-step<- k value)
   (make out-step
     (to ~.show
-      (display "<-ret ") (out .print (survey value)))
+      (out .display "<-ret ") (out .print (survey value)))
     (to ~.b
       (traceback k)
       (debugging out-step))

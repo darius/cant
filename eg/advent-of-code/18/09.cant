@@ -8,7 +8,7 @@
 (let `(,n-players ,n-points) (parse input))
 
 
-(display "\nPart 1\n")
+(out .display "\nPart 1\n")
 
 (to (play n m)                         ; n: #players; m: last-marble points
   (let circle (circle<- m.+))
@@ -119,4 +119,4 @@
 (out .print (max @scores))
 
 
-;(display "\nPart 2\n")
+;(out .display "\nPart 2\n")

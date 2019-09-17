@@ -20,24 +20,24 @@
 
 (out .print (each valid? `(,lit0 ,lit1 ,x)))
 
-(display "\n0, 1:\n")
+(out .display "\n0, 1:\n")
 (show (satisfy lit0 0))
 (show (satisfy lit0 1))
 (show (satisfy (dd-not lit0) 0))
 (show (satisfy (dd-not lit0) 1))
 
-(display "\nx, ~x:\n")
+(out .display "\nx, ~x:\n")
 (show (satisfy x 1))
 (show (satisfy (dd-not x) 1))
 (show (satisfy (dd-and x x) 1))
 (show (satisfy (dd-and x (dd-not x)) 1))
 (show (satisfy (dd-and (dd-not x) (dd-not x)) 1))
 
-(display "\nx -> y...:\n")
+(out .display "\nx -> y...:\n")
 (out .print (valid? (implies (implies (implies x y) x) x)))
 (out .print (valid? (implies (implies (implies x y) x) y)))
 
-(display "\nMcCarthy identities:\n")
+(out .display "\nMcCarthy identities:\n")
 
 (let `(,a ,b ,c ,d ,p ,q ,r) (each claim<- (0 .to 6)))
 

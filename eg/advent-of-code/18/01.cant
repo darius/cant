@@ -3,12 +3,12 @@
 (let changes (with-input-file read-all data-file))
 
 
-(display "Part 1\n")
+(out .display "Part 1\n")
 
 (out .print (sum changes))
 
 
-(display "\nPart 2\n")
+(out .display "\nPart 2\n")
 
 (let freqs (scanl/lazy + 0 (cycle changes)))
 (out .print (~.first (duplicates<- freqs)))

@@ -169,7 +169,7 @@
         (else
           (when (unit? ch)
             (notes .push! ("~d(~w)" .format ch (units p))))
-          (display ch)))))
+          (out .display ch)))))
 
   (make field
     (to ~.do-round!        (do-round))
@@ -186,7 +186,7 @@
 
 
 (to (part-2)
-  (display "\nPart 2\n")
+  (out .display "\nPart 2\n")
 
   (begin trying ((power 4))
     out.newline

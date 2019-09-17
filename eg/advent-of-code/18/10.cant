@@ -8,7 +8,7 @@
 (let states (each parse input))
 
 
-(display "\nPart 1\n")
+(out .display "\nPart 1\n")
 
 ;; TODO just skip ahead using x = v*t
 
@@ -42,7 +42,7 @@
     (let set (set<-list points))
     (for each! ((y (yl .to yh)))
       (for each! ((x (xl .to xh)))
-        (display (if (set .maps? `(,x ,y)) #\# #\.)))
+        (out .display (if (set .maps? `(,x ,y)) #\# #\.)))
       out.newline)
     out.newline))
 

@@ -21,7 +21,7 @@ insn:    :nat ' ' :nat ' ' :nat ' ' :nat '\n' :hug.
 (out .say "#obs: ~w\n" observations.count)
 
 
-(display "\nPart 1\n")
+(out .display "\nPart 1\n")
 
 (to (run program assignments)
   (let regs (array<-count 4 0))
@@ -90,7 +90,7 @@ insn:    :nat ' ' :nat ' ' :nat ' ' :nat '\n' :hug.
 (out .say "~w\n" (part-1))
 
 
-(display "\nPart 2\n")
+(out .display "\nPart 2\n")
 
 (to (part-2)
   ;; TODO: map-reduce with intersection

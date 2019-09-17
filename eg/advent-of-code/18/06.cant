@@ -26,8 +26,8 @@
   (for each! ((y (yl .to yh)))
     (for each! ((x (xl .to xh)))
       (let p `(,x ,y))
-      (display (or (names .get p)
-                   (if (included? p) #\# #\.))))
+      (out .display (or (names .get p)
+                        (if (included? p) #\# #\.))))
     out.newline))
 
 (to (included? p)
@@ -38,7 +38,7 @@
     (manhattan-distance<- c p)))
 
 
-(display "\nPart 2\n")
+(out .display "\nPart 2\n")
 
 ;;(show-map)
 

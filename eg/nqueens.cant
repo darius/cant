@@ -11,7 +11,7 @@
 
 (to (queens n)
   (may (satisfy-first (queens-problem n) 1)
-    (be #no (display "none\n"))
+    (be #no (out .display "none\n"))
     (be env (print-board n env))))
 
 (to (print-board n env)

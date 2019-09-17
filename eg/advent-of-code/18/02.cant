@@ -3,7 +3,7 @@
 (let input (with-input-file ~.read-lines data-file))
 
 
-(display "Part 1\n")
+(out .display "Part 1\n")
 
 (to (checksum ids)
   (let bags (each bag<- ids))
@@ -15,6 +15,6 @@
 (out .print (checksum input))
 
 
-(display "Part 2\n")
+(out .display "Part 2\n")
 
 (out .print (chain @(~.first (duplicates<- (gather deletions<- input)))))

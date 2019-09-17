@@ -16,7 +16,7 @@ main: '#' :nat ' @ ' :nat ',' :nat ': ' :nat 'x' :nat :end.
 ;(out .print inputs)
 
 
-(display "\nPart 1\n")
+(out .display "\nPart 1\n")
 
 (to (part-1)
   'xxx)
@@ -24,7 +24,7 @@ main: '#' :nat ' @ ' :nat ',' :nat ': ' :nat 'x' :nat :end.
 (out .say "~w\n" (part-1))
 
 
-;(display "\nPart 2\n")
+;(out .display "\nPart 2\n")
 
 (to (part-2)
   'xxx)

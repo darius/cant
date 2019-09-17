@@ -77,9 +77,9 @@
 
 (to (show {world tracks w carts})
   (for each! (((~ i ch) tracks.items))
-    (display (may (carts .get i)
-               (be #no  ch)
-               (be cart (show-cart cart)))))
+    (out .display (may (carts .get i)
+                    (be #no  ch)
+                    (be cart (show-cart cart)))))
   out.newline)
 
 (to (part1)
@@ -122,7 +122,7 @@
 (out .say "~w\n" (part1))
 
 
-(display "\nPart 2\n")
+(out .display "\nPart 2\n")
 
 (to (part2)
   (begin ticking ((state world0) (t 0))

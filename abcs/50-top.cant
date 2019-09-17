@@ -40,7 +40,7 @@
   (the-signal-handler .^= panic)
 
   ;; N.B. we're trying to use only primitives here as far as possible:
-  (display "Error within error! Evils:\n")
+  (out .display "Error within error! Evils:\n")
   (begin printing ((xs evil))
     (when xs.none? (os-exit 1))
     (out .write xs.first)
@@ -79,7 +79,7 @@
 
   (to (listener-handler k evil)
     (signal-handler k evil)
-    (display "Enter (debug) for more.\n")
+    (out .display "Enter (debug) for more.\n")
     (listener))
 
   ;; A separate function just to make the top of tracebacks cleaner.
@@ -93,7 +93,7 @@
       listener-handler)
     (to (~)
       (the-signal-handler .^= listener-handler)
-      (display "-> ")
+      (out .display "-> ")
       (may (read)
         (be (? eof?) out.newline)
         (be sexpr (print-result (cant .play sexpr setting)))))))
@@ -104,7 +104,7 @@
     (be {error k evil}
       (inspect-continuation k))
     (else
-      (display "No error to debug.\n"))))
+      (out .display "No error to debug.\n"))))
 
 (to (breakpoint @values)
   ;; TODO automatically invoke the debugger

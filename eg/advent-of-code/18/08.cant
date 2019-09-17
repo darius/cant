@@ -25,7 +25,7 @@
 (out .say "result 1: ~w\n" (sum-metadata input))
 
 
-(display "\nPart 2\n")
+(out .display "\nPart 2\n")
 
 (to (value<- {node children metadata})
   (sum (if children.none?

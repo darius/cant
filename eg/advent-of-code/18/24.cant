@@ -137,7 +137,7 @@ separator: '\n'.
 (let matchup (parse input))
 
 
-(display "\nPart 1\n")
+(out .display "\nPart 1\n")
 
 (to (show-count armies)
   (for each! (((~ army groups) (sort armies.items)))
@@ -156,7 +156,7 @@ separator: '\n'.
 (out .say "Part 1: ~w\n" (part-1))
 
 
-(display "\nPart 2\n")
+(out .display "\nPart 2\n")
 
 (to (part-2)
   (begin bounding ((low 0))

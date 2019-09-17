@@ -4,8 +4,7 @@
   pretty-print <> text line nest group)
 
 (to (pp sexpr @(optional width))
-  (display (pretty-print (doc<-sx sexpr) (or width 72)))
-  out.newline)
+  (out .displayln (pretty-print (doc<-sx sexpr) (or width 72))))
 
 (let abbrevs (map<-lists '((quote      "'")
                            (quasiquote "`")

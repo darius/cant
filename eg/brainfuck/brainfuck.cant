@@ -23,7 +23,7 @@
                          (else (may ch
                                  (be #\- (data .set! d (- (data .get d 0) 1)))
                                  (be #\+ (data .set! d (+ (data .get d 0) 1)))
-                                 (be #\. (display (char<- (data .get d 0))))
+                                 (be #\. (out .display (char<- (data .get d 0))))
                                  (be #\, (data .set! d (read-1 stdin)))
                                  (else))
                                d)))))))
@@ -87,7 +87,7 @@
       (data .update d ~.+)
       d)
     (to (emit d)
-      (display (char<- (data d)))
+      (out .display (char<- (data d)))
       d)
     (to (absorb d)
       (data .set! d (read-1 stdin))

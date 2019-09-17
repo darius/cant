@@ -15,7 +15,7 @@
                             strongest-r)))
                         
 
-(display "\nPart 1\n")
+(out .display "\nPart 1\n")
 
 (to (part-1)
   n-near-strongest)
@@ -23,7 +23,7 @@
 (out .say "~w\n" (part-1))
 
 
-(display "\nPart 2\n")
+(out .display "\nPart 2\n")
 
 (to (part-2)
   'xxx)

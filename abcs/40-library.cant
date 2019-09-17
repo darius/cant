@@ -36,8 +36,7 @@
     the-modules unuse load load-module
     the-last-error push-signal-handler with-signal-handler the-signal-handler
     unwind-protect ;;TODO I guess for computational-setting if we're to have it at all
-    listener<- debug breakpoint
-    display))
+    listener<- debug breakpoint))
 (let full-powered-setting ;XXX
   (empty-setting .extend-promises
                  (chain full-powered-setting-extra-names

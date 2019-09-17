@@ -683,6 +683,9 @@
   (surely (symbol? sym))
   sym.name)
 
+(to (display x)
+  (out .display x))
+
 (to (write x)
   (out .write x))
 

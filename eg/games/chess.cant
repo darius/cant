@@ -1,7 +1,7 @@
 ;; Unfinished port of one-day-i-will-play-chess
 
 (to ((main<- strategy-names) args)
-  (display "(Moves look like 'e2e3')\n\n")
+  (out .display "(Moves look like 'e2e3')\n\n")
   (play-chess (strategy-names (args 1))
               (strategy-names (args 2))))
 
@@ -17,11 +17,11 @@
 
 (to (human-player board)
   (begin asking ()
-    (display ("~d, your move? " .format (side-name board.mover)))
+    (out .say "~d, your move? " (side-name board.mover))
     (may stdin.read-line  ;TODO extract the stdin cap
       (be (? eof?) {resign})
       (be answer (or (board .parse-move answer)
-                     (do (display "Illegal move\n")
+                     (do (out .display "Illegal move\n")
                          (asking)))))))
 
 (to (random-player<- rng)

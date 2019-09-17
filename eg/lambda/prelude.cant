@@ -35,7 +35,7 @@
                                        {primitive (-> (link h it))})})
             (~ 'make-church<-list {primitive make-church<-list})
 
-            (~ 'display {primitive display})
+            (~ 'display {primitive (-> (out .display it))})
             (~ 'error {primitive (to (lambda-error _)
                                    (error "Error in lambda-calculus program"))})
             )})

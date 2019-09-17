@@ -14,7 +14,7 @@
 
 (to (show grid)
   (grid .show (on (row)
-                (each! display row)
+                (each! (-> (out .display it)) row)
                 out.newline))
   out.newline)
 
@@ -22,7 +22,7 @@
 ;; open ground (.), trees (|), or a lumberyard (#)
 
 
-(display "\nPart 1\n")
+(out .display "\nPart 1\n")
 
 (to (part-1)
   (result-code (for foldl ((grid input-grid) (_ (1 .to 10)))
@@ -68,7 +68,7 @@
 (out .say "~w\n" (part-1))
 
 
-(display "\nPart 2\n")
+(out .display "\nPart 2\n")
 
 (to (part-2)
   (begin stepping ((t 0) (grid input-grid))

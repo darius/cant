@@ -34,7 +34,7 @@
  (type<- p))
 
 
-(display "\nPart 1\n")
+(out .display "\nPart 1\n")
 
 (to (part-1)
   (total-risk (rectangle<- '(0 0) target)))
@@ -49,7 +49,7 @@
 (out .say "~w\n" (part-1))
 
 
-(display "\nPart 2\n")
+(out .display "\nPart 2\n")
 
 (let usables (list<- (set<- 'climbing-gear 'torch)      ; rocky
                      (set<- 'climbing-gear 'neither)    ; wet

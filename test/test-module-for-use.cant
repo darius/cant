@@ -1,4 +1,4 @@
-(display "I am loading left-pad!")
+(out .display "I am loading left-pad!")
 out.newline
 
 (to (left-pad string)

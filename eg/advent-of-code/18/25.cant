@@ -54,7 +54,7 @@
                  (unordered-pairs<- ps.rest)))))
 
 
-(display "\nPart 1\n")
+(out .display "\nPart 1\n")
 
 (to (part-1)
   ((constellate inputs) .count))
@@ -62,7 +62,7 @@
 (out .say "~w\n" (part-1))
 
 
-(display "\nPart 2\n")
+(out .display "\nPart 2\n")
 
 (to (part-2)
   'xxx)
