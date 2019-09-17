@@ -151,7 +151,7 @@
   (display "debug> ")
   (may command-queue.^
     (be '()
-      (newline)
+      out.newline
       #no)
     (be `(,first ,@rest)
       (print first)
@@ -168,7 +168,7 @@
   (write plaint)
   (display ": ")
   (write irritant)
-  (newline))
+  out.newline)
 
 (to (traceback k)
   (each! print k))

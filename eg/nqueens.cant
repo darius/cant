@@ -18,7 +18,7 @@
   (for each! ((row (board<- n)))
     (for each! ((var row))
       (out .say "~d " (".Q" (env var))))
-    (newline)))
+    out.newline))
 
 (to (queens-problem n)
   (conjoin (for each ((r (0 .to< n)))

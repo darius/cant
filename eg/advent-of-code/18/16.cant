@@ -124,7 +124,7 @@ insn:    :nat ' ' :nat ' ' :nat ' ' :nat '\n' :hug.
   (surely candidates.none?)
 
   (each! print assignments.items)
-  (newline)
+  out.newline
 
   (let post-regs (run program assignments))
   (post-regs 0))

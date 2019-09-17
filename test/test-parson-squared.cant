@@ -7,7 +7,7 @@
   (for each! ((input inputs))
     (print input)
     (let outcome (parse start input))
-    outcome.display (newline) (newline)))
+    outcome.display out.newline out.newline))
 
 (let trivial "
 trivial  :  'x'.

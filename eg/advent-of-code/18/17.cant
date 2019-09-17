@@ -42,12 +42,12 @@
     (for each! ((x (xl .to xh)))
       (let p (~ x y))
       (display (if (= spring p) #\+ #\.)))
-    (newline))
+    out.newline)
   (grid .show (on (chars)
                 (for each! ((ch chars))
                   (display (or ch #\.)))
-                (newline)))
-  (newline))
+                out.newline))
+  out.newline)
 
 ;; (show-map)
 

@@ -170,7 +170,7 @@
 (let eg '(([x y] x) ([z] z)))
 (print eg)
 (print (run eg))
-(newline)
+out.newline
 
 (let eg2 '(([x] (add1 x)) 5))
 (print (run eg2))

@@ -28,7 +28,7 @@
       (let p `(,x ,y))
       (display (or (names .get p)
                    (if (included? p) #\# #\.))))
-    (newline)))
+    out.newline))
 
 (to (included? p)
   (< (total-distance p) margin))

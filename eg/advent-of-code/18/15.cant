@@ -33,7 +33,7 @@
 (to (show t field)
   (out .say "After ~w rounds:\n" t)
   field.show
-  (newline))
+  out.newline)
 
 (to (field<- field-string elf-attack-power)
 
@@ -189,7 +189,7 @@
   (display "\nPart 2\n")
 
   (begin trying ((power 4))
-    (newline)
+    out.newline
     (out .say "Trying attack power ~w\n" power)
     (let field (field<- input power))
     (or (battle-sans-elf-casualties field power)

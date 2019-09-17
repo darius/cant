@@ -6,7 +6,7 @@
   (write text)
   (display " --> ")
   ((p text 0 0 '()) .display)
-  (newline))
+  out.newline)
 
 ;(try skip-any-1 "a")
 (try any-1 "a")

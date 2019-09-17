@@ -16,7 +16,7 @@
   (begin running ((machine machine))
     (when (= option 'loudly)
       (show-config machine)
-      (newline))
+      out.newline)
     (may (step machine)
       (be #no     machine)
       (be updated (running updated)))))

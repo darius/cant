@@ -2,7 +2,7 @@
 
 (to (cp x)
   (cycle-write x)
-  (newline))
+  out.newline)
 
 (cp '(a b c))
 

@@ -38,7 +38,7 @@
                (if (= i (coord (elves 1))) "[~w]")
                (else                       " ~w ")))
     (display (f .format recipe)))
-  (newline))
+  out.newline)
 
 (out .say "~w\n" (part-1))
 

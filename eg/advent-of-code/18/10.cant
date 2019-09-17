@@ -43,7 +43,7 @@
     (for each! ((y (yl .to yh)))
       (for each! ((x (xl .to xh)))
         (display (if (set .maps? `(,x ,y)) #\# #\.)))
-      (newline))
-    (newline)))
+      out.newline)
+    out.newline))
 
 (out .say "~w\n" (part1))

@@ -44,7 +44,7 @@
   (for each! ((y (y-lo .to y-hi)))
     (for each! ((x (x-lo .to x-hi)))
       (display (if (grid .maps? `(,x ,y)) "O " "  ")))
-    (newline)))
+    out.newline))
 
 (to (bounds<- numbers)
   `(,(min @numbers)

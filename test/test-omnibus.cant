@@ -1,11 +1,11 @@
 ;; Another bunch of examples
 
 (to (loud-use filename)
-  (newline)
+  out.newline
   (display "-------- ")
   (display filename)
   (display " --------")
-  (newline)
+  out.newline
   (use filename))
 
 (loud-use "test/test-lambda")

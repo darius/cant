@@ -16,7 +16,7 @@
     (be top-level-bad-exprs
       (out .say "In ~d these top-level expressions harbor badness:\n" filename)
       (each! pp top-level-bad-exprs)
-      (newline))))
+      out.newline)))
 
 (to (bad-expr? expr)
   (bad-part? (expr-subparts expr)))

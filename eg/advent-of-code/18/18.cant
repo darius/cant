@@ -15,8 +15,8 @@
 (to (show grid)
   (grid .show (on (row)
                 (each! display row)
-                (newline)))
-  (newline))
+                out.newline))
+  out.newline)
 
 (show input-grid)
 ;; open ground (.), trees (|), or a lumberyard (#)

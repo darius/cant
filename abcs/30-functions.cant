@@ -44,10 +44,6 @@
   (to (~ x)      (out .display x))
   (to (~ x sink) (sink .display x)))
 
-(make newline
-  (to (~)      (out .display #\newline))
-  (to (~ sink) (sink .display #\newline)))
-
 ;; XXX float contagion
 (make min {extending left-folding-operation}
   (to (~ a b) (if (< a b) a b)))
@@ -179,11 +175,11 @@
 
 (to (print x)                      ;TODO rename
   (write x)
-  (newline))
+  out.newline)
 
 (to (displayln x)                  ;TODO uh really rename
   (display x)
-  (newline))
+  out.newline)
 
 (to (with-input-file fn filename)
   (let source (open-input-file filename))

@@ -10,7 +10,7 @@
      (buffer .visit ?filename))
    (for raw-mode ()
      (edit buffer))
-   (newline))
+   out.newline)
 
 (to (edit buffer)
   (begin editing ()

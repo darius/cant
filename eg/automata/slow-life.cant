@@ -101,7 +101,7 @@
         (for each! ((c (1 .to n-cols)))
           (display (" O" (G (at r c))))
           (display " "))
-        (newline)))
+        out.newline))
 
     (to ~.next
       (copy-edges)

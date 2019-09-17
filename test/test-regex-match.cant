@@ -7,7 +7,7 @@
     (test-1 r string #yes))
   (for each! ((string should-not))
     (test-1 r string #no))
-  (newline))
+  out.newline)
 
 (to (test-1 parsed string should?)
   (let match? (regex-match parsed string))

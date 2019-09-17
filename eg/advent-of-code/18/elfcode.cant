@@ -1,7 +1,7 @@
 (to (main `(,_ ,filename))
   (let elfcode (parse (with-input-file ~.read-lines filename)))
   (itsy-dump elfcode)
-  (newline)
+  out.newline
   (disassemble elfcode))
 
 (to (parse lines)
@@ -18,7 +18,7 @@
   (out .say "let program: [program_length] Insn = [\n")
   (each! print-insn program)
   (out .say "];\n")
-  (newline))
+  out.newline)
 
 (to (print-insn (list<- op a b c))
   (out .say "  [~w, ~w, ~w, ~w],\n" op a b c))

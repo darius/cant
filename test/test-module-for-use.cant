@@ -1,5 +1,5 @@
 (display "I am loading left-pad!")
-(newline)
+out.newline
 
 (to (left-pad string)
   (if (or string.none? (not= #\space string.first))

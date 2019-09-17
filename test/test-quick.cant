@@ -1,11 +1,11 @@
 ;; Run a whole lot of examples, none of which should take long.
 
 (to (loud-use filename)
-  (newline)
+  out.newline
   (display "-------- ")
   (display filename)
   (display " --------")
-  (newline)
+  out.newline
   (use filename))
 
 (loud-use "eg/squickcheck-examples")    ;TODO put in order below

@@ -24,7 +24,7 @@
         (be #yes    (display "."))
         (be outcome (display "X")
                     (failures .push! (~ outcome inputs)))))
-    (newline)
+    out.newline
     (when failures.some?
       (out .say "Failures for ~w:\n" property)
       (for each! (((~ outcome inputs) failures))

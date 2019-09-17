@@ -32,7 +32,7 @@ insn:    {'1'+} {'#' '#'? '#'? '#'? '#'?} :make_insn.
     (when (insns .maps? pc)
       (when loud?
         (show insns pc regs)
-        (newline))
+        out.newline)
       (let {insn fn n} (insns pc))
       (let d (fn n regs))
       (surely (not= d 0))
@@ -103,7 +103,7 @@ insn:    {'1'+} {'#' '#'? '#'? '#'? '#'?} :make_insn.
 ;; Smoke test
 (to (main _)
   (show (trm-parse "1#111##"))
-  (newline)
+  out.newline
 
   (let move-r2-r1 (trm-parse "11#####111111###111###1##1111####1#111111####"))
   (let regs (regs<- "" "1#1#11##"))

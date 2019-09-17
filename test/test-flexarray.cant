@@ -1,4 +1,4 @@
-(newline)
+out.newline
 (let v (flexarray<-))
 (print v)
 (print (list<- v.snapshot v.none? v.count))

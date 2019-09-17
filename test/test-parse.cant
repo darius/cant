@@ -44,7 +44,7 @@
  (to (try grammar sentence)
    (format "~w:\n" sentence)
    (each! print (grammar .parse sentence))
-   (newline))
+   out.newline)
 
  (try grammar3 '(the table))
  (try grammar3 '(the ball hit the table))

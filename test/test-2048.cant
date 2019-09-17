@@ -9,14 +9,14 @@
   (format " ------- ~w:\n" dir)
   (for each! ((moved (dir board)))
     (show moved)
-    (newline))
-  (newline))
+    out.newline)
+  out.newline)
 
 (to (show rows)
   (for each! ((row rows))
     (for each! ((v row))
       (format " ~d" (if (= v 0) "." v)))
-    (newline)))
+    out.newline))
 
 (exercise '((2 4 2 2)
             (2 2 2 2)

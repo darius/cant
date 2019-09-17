@@ -26,6 +26,6 @@
     (else
       (display "Nonstandard evil: ")
       (write evil)))
-  (newline))
+  out.newline)
 
 (export on-error-traceback on-error-complain complain print-traceback)

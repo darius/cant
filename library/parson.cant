@@ -199,7 +199,7 @@
   (let skeletons outcome.?results)
 
   (unless skeletons
-    outcome.display (newline)
+    outcome.display out.newline
     (error "Ungrammatical grammar"))
 
   (let lhses (bag<- (each ~.first skeletons)))

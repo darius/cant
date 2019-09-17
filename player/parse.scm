@@ -26,9 +26,9 @@
     ((and (pair? e) (look-up-macro (car e)))
      => (lambda (expand)
           (let ((new (expand e)))
-;            (write `(old ,e)) (newline)
-;            (write `(new ,new)) (newline)
-;            (newline)
+;            (write `(old ,e)) out.newline
+;            (write `(new ,new)) out.newline
+;            out.newline
             (parse-e new ctx))))
     (else
      (mcase e

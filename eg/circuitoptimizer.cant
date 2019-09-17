@@ -29,7 +29,7 @@
       (let L (v-name (L-input i)))
       (let R (v-name (R-input i)))
       (out .say "~d = ~d ~~& ~d; " g L R))
-    (newline))
+    out.newline)
 
   (to (find-for-n n-gates)
     (out .say "Trying ~w gates...\n" n-gates)

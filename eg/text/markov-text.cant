@@ -16,7 +16,7 @@
     (let text (spew (random-rng<-) model start))
     (display (fill (" " .join text) ;TODO fill sort of splits it back -- add a function to text-wrap that wouldn't need to?
                    72))
-    (newline)))
+    out.newline))
 
 (to (tokenize string)
   string.lowercase.split)               ;TODO better

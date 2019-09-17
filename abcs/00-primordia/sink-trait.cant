@@ -13,5 +13,7 @@
   ;;  temporary
   (to (~ .say format-string @arguments)
     (format .to-sink sink format-string @arguments))
+  (to (~ .newline)
+    (sink .display #\newline))
   (to message
     (miranda-trait sink message)))

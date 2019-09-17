@@ -80,7 +80,7 @@
     (display (may (carts .get i)
                (be #no  ch)
                (be cart (show-cart cart)))))
-  (newline))
+  out.newline)
 
 (to (part1)
 ;  (show world0)

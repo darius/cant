@@ -177,7 +177,7 @@ separator: '\n'.
   (out .say "Immune boost of ~w ~d\n" boost (if win? "WORKED!" "failed"))
   (when win?
     (out .say "leaving ~w units\n" (sum-by ~.count (armies "Immune System"))))
-  (newline)
+  out.newline
   win?)
 
 ;; Return the least number in (low..high] that's `ok?`.
