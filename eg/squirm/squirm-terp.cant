@@ -200,7 +200,7 @@
   (each def-parse module))
 
 (to (def-parse def)
-;;  (print `(def-parse ,def))
+;;  (out .print `(def-parse ,def))
   (may def
     (be `(to (,(? symbol? name) ,@params) ,@body)
       {to name (each pat-parse params) (seq-parse body)})
@@ -209,7 +209,7 @@
     ))
 
 (to (seq-parse exps)
-;;  (print `(seq-parse ,exps))
+;;  (out .print `(seq-parse ,exps))
   (may exps
 ;; Not sure we want this:
 ;;    ('()
@@ -399,7 +399,7 @@
 ;; r: environment
 ;; k: continuation
 (to (sev exp r k)
-;;  (print `(sev ,exp))
+;;  (out .print `(sev ,exp))
   (may exp
     (be {const value}
       {go k value})
@@ -430,7 +430,7 @@
     ))
 
 (to (go kk value)
-;;  (print `(go ,kk ,value))
+;;  (out .print `(go ,kk ,value))
   (may kk
     (be {ev-operands es r k}
       (ev-operands value '() es r k))
@@ -553,7 +553,7 @@
     (match-pat r !map p val)))
 
 (to (match-pat r !map p val)
-;;  (print `(match-pat ,!map ,p ,val))
+;;  (out .print `(match-pat ,!map ,p ,val))
   (may p
     (be {bind name}
       (surely (not (!map .maps? name)) "already set")
@@ -685,6 +685,10 @@
 
 (to (write x)
   (out .write x))
+
+(to (print x)
+  (out .write x)
+  out.newline)
 
 (let primitives-from-cant
   (export

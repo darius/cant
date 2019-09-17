@@ -33,5 +33,5 @@
 
 (let enc1 (encoder<- t1))
 (let hello (encode enc1 "hello"))
-(print hello)
-(print (string<-list (decode t1 hello)))
+(out .print hello)
+(out .print (string<-list (decode t1 hello)))

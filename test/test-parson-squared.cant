@@ -5,7 +5,7 @@
   (let start (parser start-symbol))
   (format "trying ~w: ~w\n" start-symbol start)
   (for each! ((input inputs))
-    (print input)
+    (out .print input)
     (let outcome (parse start input))
     outcome.display out.newline out.newline))
 

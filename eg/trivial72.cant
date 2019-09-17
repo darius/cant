@@ -19,25 +19,25 @@
 ;; Example programs in the language:
 
 (to (main _)
-  (print (a0))
-  (print (a1))
-  (print (a2))
+  (out .print (a0))
+  (out .print (a1))
+  (out .print (a2))
 
-  (print (b0))
-  (print (b1))
+  (out .print (b0))
+  (out .print (b1))
 
-  (print (c0))
-  (print (c1))
+  (out .print (c0))
+  (out .print (c1))
 
-  (print (d0))
-  (print (d1))
-  (print (d2))
+  (out .print (d0))
+  (out .print (d1))
+  (out .print (d2))
 
-  (print (t4))
+  (out .print (t4))
 
-  (print (e0))
-  (print (e1))
-  (print (e2))
+  (out .print (e0))
+  (out .print (e1))
+  (out .print (e2))
 )
 
 

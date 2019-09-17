@@ -1,68 +1,68 @@
 ;; Smoke test
 
-(print (set? '(a b c)))
-(print (set? '(a b c b)))
+(out .print (set? '(a b c)))
+(out .print (set? '(a b c b)))
 
-(print (append '(a b c) 'a))
-(print (append '(a b c) 'd))
+(out .print (append '(a b c) 'a))
+(out .print (append '(a b c) 'd))
 
-(print (bound? 'x '(a b c)))
-(print (bound? 'x '(a x y)))
-(print (bound? 'x 'any))
+(out .print (bound? 'x '(a b c)))
+(out .print (bound? 'x '(a x y)))
+(out .print (bound? 'x 'any))
 
-(print (expr? prelude 'any
-              (parse-e '(car (if (+ a 2) (cdr x) (cdr (car x)))))))
+(out .print (expr? prelude 'any
+                   (parse-e '(car (if (+ a 2) (cdr x) (cdr (car x)))))))
 
-(print (call-arity? prelude
-                    (parse-e '(+ 2 3 4))))
+(out .print (call-arity? prelude
+                         (parse-e '(+ 2 3 4))))
 
-(print (steps? prelude
-               (parse-steps '((XXX-path (+ a b))))))
-(print (steps? prelude
-               (parse-steps '((XXX-path (+ 1 2))))))
+(out .print (steps? prelude
+                    (parse-steps '((XXX-path (+ a b))))))
+(out .print (steps? prelude
+                    (parse-steps '((XXX-path (+ 1 2))))))
 
-(print (unparse-e (sub-e '(a)
-                         (each parse-e '((< 2 3)))
-                         (parse-e '(+ a 3)))))
+(out .print (unparse-e (sub-e '(a)
+                              (each parse-e '((< 2 3)))
+                              (parse-e '(+ a 3)))))
 
-(print (defs? prelude '()))
+(out .print (defs? prelude '()))
 
-(print (bob/step prelude 
-                 (parse-e '(car (cons 'ham '(eggs))))
-                 (parse-steps '())))
-(print (bob/step prelude 
-                 (parse-e '(car (cons 'ham '(eggs))))
-                 (parse-steps '(((1) (cons 'ham '(eggs)))
-                                (() (car '(ham eggs)))))))
+(out .print (bob/step prelude 
+                      (parse-e '(car (cons 'ham '(eggs))))
+                      (parse-steps '())))
+(out .print (bob/step prelude 
+                      (parse-e '(car (cons 'ham '(eggs))))
+                      (parse-steps '(((1) (cons 'ham '(eggs)))
+                                     (() (car '(ham eggs)))))))
 
 ;; ch1/ex8
-(print (bob/step prelude 
-                 (parse-e '(car (cons (= (cons x y) (cons x y))
-                                      '(and crumpets))))
-                 (parse-steps '(((1 1) (equal-same (cons x y)))
-                                ((1) (cons 't '(and crumpets)))
-                                (() (car '(#yes and crumpets)))))))
+(out .print (bob/step prelude 
+                      (parse-e '(car (cons (= (cons x y) (cons x y))
+                                           '(and crumpets))))
+                      (parse-steps '(((1 1) (equal-same (cons x y)))
+                                     ((1) (cons 't '(and crumpets)))
+                                     (() (car '(#yes and crumpets)))))))
 
 (let defun-pair
   (J-Bob/define prelude
                 '(((defun pair (x y)
                      (cons x (cons y '())))
                    #no))))
-(print `(defun-pair ,defun-pair))
+(out .print `(defun-pair ,defun-pair))
 
 (let defun-first-of
   (J-Bob/define defun-pair
                 '(((defun first-of (x)
                      (car x))
                    #no))))
-(print defun-first-of)
+(out .print defun-first-of)
 
 (let defun-second-of
   (J-Bob/define defun-first-of
                 '(((defun second-of (x)
                      (car (cdr x)))
                    #no))))
-(print defun-second-of)
+(out .print defun-second-of)
 
 (let dethm-first-of-pair
   (J-Bob/define defun-second-of

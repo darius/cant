@@ -35,5 +35,5 @@
     (be {branch _ thing}
       (weight thing))))
 
-(print (balanced? test-mobile))
-(print (balanced? test-balanced-mobile))
+(out .print (balanced? test-mobile))
+(out .print (balanced? test-balanced-mobile))

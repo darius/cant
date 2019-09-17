@@ -6,6 +6,6 @@
 (to (euler3 n)
   (max @(factor n)))
 
-;(print (euler3 13195))
-(print (euler3 131957))
-;(print (euler3 600851475143))
+;(out .print (euler3 13195))
+(out .print (euler3 131957))
+;(out .print (euler3 600851475143))

@@ -37,5 +37,5 @@
 (to (product<- ns) ;ugly: the asymmetry of this name and `sum`.
   (foldl * 1 ns))
 
-(print (euler8 4))
-;(print (euler8 13))
+(out .print (euler8 4))
+;(out .print (euler8 13))

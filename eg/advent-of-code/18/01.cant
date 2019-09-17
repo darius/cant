@@ -5,15 +5,15 @@
 
 (display "Part 1\n")
 
-(print (sum changes))
+(out .print (sum changes))
 
 
 (display "\nPart 2\n")
 
 (let freqs (scanl/lazy + 0 (cycle changes)))
-(print (~.first (duplicates<- freqs)))
+(out .print (~.first (duplicates<- freqs)))
 ;;(let seen (set<-))
-;;(print (for detect ((freq freqs))
-;;         (or (seen freq)
-;;             (do (seen .add! freq)
-;;                 #no))))
+;;(out .print (for detect ((freq freqs))
+;;              (or (seen freq)
+;;                  (do (seen .add! freq)
+;;                      #no))))

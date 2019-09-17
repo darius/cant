@@ -31,7 +31,7 @@
 (let csv (csv<-lines '("one,two"
                        "lion,tiger")))
 
-(print csv)
-(print csv.rows)
-(print csv.rows.first.two)
-(print csv.rows.first.one)
+(out .print csv)
+(out .print csv.rows)
+(out .print csv.rows.first.two)
+(out .print csv.rows.first.one)

@@ -12,7 +12,7 @@
 (to (constellate ps)
   (let sets (partitioning<- ps))
   (for each! ((`(,p ,q) (unordered-pairs<- ps)))
-;    (print `(,p ,q)))
+;    (out .print `(,p ,q)))
     (when (<= (manhattan-distance<- p q) 3)
       (sets .join! p q)))
   sets)

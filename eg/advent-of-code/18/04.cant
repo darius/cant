@@ -46,7 +46,7 @@ _:         :whitespace.
   (max-by bag bag.keys))
 
 (let guard1 (max-by tally-winks guards))
-(print `(the sleepiest is ,guard1 at ,(tally-winks guard1) minutes))
+(out .print `(the sleepiest is ,guard1 at ,(tally-winks guard1) minutes))
 
 (let minute1 (max-winks guard1))
 (out .say "their sleepiest minute is ~w\n" minute1)
@@ -61,5 +61,5 @@ _:         :whitespace.
 (let guard2 (max-by winks-at-max guards))
 (let minute2 (max-winks guard2))
 
-(print `(count ,(winks-at-max guard2) minute ,minute2 guard ,guard2))
-(print `(result code ,(* minute2 guard2)))
+(out .print `(count ,(winks-at-max guard2) minute ,minute2 guard ,guard2))
+(out .print `(result code ,(* minute2 guard2)))

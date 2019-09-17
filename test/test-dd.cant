@@ -16,9 +16,9 @@
 (to (xor e f)     (e f (dd-not f)))
 
 (to (show result)
-  (print (and result result.items)))
+  (out .print (and result result.items)))
 
-(print (each valid? `(,lit0 ,lit1 ,x)))
+(out .print (each valid? `(,lit0 ,lit1 ,x)))
 
 (display "\n0, 1:\n")
 (show (satisfy lit0 0))
@@ -34,33 +34,33 @@
 (show (satisfy (dd-and (dd-not x) (dd-not x)) 1))
 
 (display "\nx -> y...:\n")
-(print (valid? (implies (implies (implies x y) x) x)))
-(print (valid? (implies (implies (implies x y) x) y)))
+(out .print (valid? (implies (implies (implies x y) x) x)))
+(out .print (valid? (implies (implies (implies x y) x) y)))
 
 (display "\nMcCarthy identities:\n")
 
 (let `(,a ,b ,c ,d ,p ,q ,r) (each claim<- (0 .to 6)))
 
-(print (valid? (== a (lit0 a b))))
-(print (valid? (== b (lit1 a b))))
-(print (valid? (== p (p lit0 lit1))))
-(print (valid? (== a (p a a))))
+(out .print (valid? (== a (lit0 a b))))
+(out .print (valid? (== b (lit1 a b))))
+(out .print (valid? (== p (p lit0 lit1))))
+(out .print (valid? (== a (p a a))))
 
 ;; XXX the rest run really slow, so I'm going to skip them for these
 ;; 'quick' tests for now. But even with the current absurd
 ;; interpreter, this level of slow suggests something wrong with the
 ;; code we're testing.
 '(
-(print (valid? (== (p a c)
-                   (p a (p b c)))))
+(out .print (valid? (== (p a c)
+                        (p a (p b c)))))
 
-(print (valid? (== (p a c)
-                   (p (p a b) c))))
-(print (valid? (== ((q p r) a b)
-                   (q (p a b) (r a b)))))
-(print (valid? (== (q (p a b) (p c d))
-                   (p (q a c) (q b d)))))
-(print (valid? (dd-not
-                (xor (q (p a b) (p c d))
-                     (p (q a c) (q b d))))))
+(out .print (valid? (== (p a c)
+                        (p (p a b) c))))
+(out .print (valid? (== ((q p r) a b)
+                        (q (p a b) (r a b)))))
+(out .print (valid? (== (q (p a b) (p c d))
+                        (p (q a c) (q b d)))))
+(out .print (valid? (dd-not
+                     (xor (q (p a b) (p c d))
+                          (p (q a c) (q b d))))))
 )

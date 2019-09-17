@@ -16,7 +16,7 @@
   (let scores (array<-count n))
   (begin playing ((elf 0) (marble 1))
     (hm (when (23 .divides? marble)
-          (print marble)
+          (out .print marble)
           (scores .set! elf (+ (scores elf) marble))
           (let other ((- p.^ 7) .modulo circle.count))
           (let removed (circle .pop! other))
@@ -115,8 +115,8 @@
 ; (play 21 6111))
 ; (play 30 5807))
 
-;(print scores)
-(print (max @scores))
+;(out .print scores)
+(out .print (max @scores))
 
 
 ;(display "\nPart 2\n")

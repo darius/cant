@@ -6,12 +6,12 @@
  (let a '(yo there))
  (let b 'gee)
 
- (print `(ok {,b its cool ,@a b c} yay))
- (print `(ok {t its cool ,@a b c} yay))
- (print `(ok {t ,@a b c} yay))
- (print `(ok {t ,a b c} yay))
- (print `(ok {t a b c} yay))
- (print `(ok {t} yay))
+ (out .print `(ok {,b its cool ,@a b c} yay))
+ (out .print `(ok {t its cool ,@a b c} yay))
+ (out .print `(ok {t ,@a b c} yay))
+ (out .print `(ok {t ,a b c} yay))
+ (out .print `(ok {t a b c} yay))
+ (out .print `(ok {t} yay))
 
 )
 ;; TODO add hygiene test

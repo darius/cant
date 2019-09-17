@@ -17,7 +17,7 @@
                    (for those/lazy ((k ns.rest))
                      (not (p .divides? k)))))))
 
-;(print (euler7 5))
-(print (euler7 100))
-;(print (euler7 10000))
+;(out .print (euler7 5))
+(out .print (euler7 100))
+;(out .print (euler7 10000))
 ;; TODO implement the real sieve

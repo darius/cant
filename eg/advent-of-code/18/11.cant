@@ -12,8 +12,8 @@
   ((n .quotient 100) .modulo 10))
 
 (let grid-serial input)
-(print grid-serial)
-;(print (level<- 101 153))
+(out .print grid-serial)
+;(out .print (level<- 101 153))
 
 (display "\nPart 1\n")
 

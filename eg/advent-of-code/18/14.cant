@@ -44,7 +44,7 @@
 
 
 (display "\nPart 2\n")
-(print input)
+(out .print input)
 
 ;; takes over 2 hrs
 (to (part-2)
@@ -59,7 +59,7 @@
       (if (< (+ j pc) board.count)
           (do (when (for every (((~ k p) pattern.items))   ;(= pattern (board .slice j (+ j pc)))   ; ugh
                       (= p (board (+ j k))))
-                (print j)
+                (out .print j)
                 (os-exit 0))
               (checking j.+))
           (do (step!)

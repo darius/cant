@@ -109,7 +109,7 @@ insn:    {'1'+} {'#' '#'? '#'? '#'? '#'?} :make_insn.
   (let regs (regs<- "" "1#1#11##"))
   (show move-r2-r1 0 regs)
   (run move-r2-r1 regs)
-  (print regs.rest))
+  (out .print regs.rest))
 
 
 (export trm-parse regs<- run show main)

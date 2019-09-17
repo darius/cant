@@ -84,7 +84,7 @@
             (resize (* 2 (capacity)))))
 
         (to (resize new-capacity)
-;;         (print `(resize ,new-capacity places ,n-places.^ probes ,n-probes.^
+;;         (out .print `(resize ,new-capacity places ,n-places.^ probes ,n-probes.^
 ;;                         average ,(inexact<-exact (/ n-probes.^ (max 1 n-places.^)))))
 ;;         (n-places .^= 0)
 ;;         (n-probes .^= 0)

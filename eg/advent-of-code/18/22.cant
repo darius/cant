@@ -12,8 +12,8 @@
   (simple-parser<- "'depth: ' :nat '\ntarget: ' [:nat ',' :nat :hug] '\n'"))
 
 (let `(,depth ,target) (parse input))
-(print depth)
-(print target)
+(out .print depth)
+(out .print target)
 
 (let geologic-index<-
   (memoize (given

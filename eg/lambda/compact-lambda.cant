@@ -29,7 +29,7 @@
 
 ;; Smoke test
 
-(print (compile
+(out .print (compile
 ;  '(lambda (x) x)
 ;  '(lambda (x) y)
   '((lambda (x) (lambda (y) x)) (lambda (z) z))

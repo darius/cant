@@ -16,7 +16,8 @@
       (let best-to-root (+ value (max best-to-root-L best-to-root-R)))
       [(max best-L best-R best-through-root) (max 0 best-to-root)])))
 
-(print (max-path-sum
-        {branch -10
-                {branch 2 {branch 3 {leaf} {leaf}} {branch -1 {leaf} {leaf}}}
-                {branch 3 {leaf} {leaf}}}))
+(out .print
+     (max-path-sum
+      {branch -10
+              {branch 2 {branch 3 {leaf} {leaf}} {branch -1 {leaf} {leaf}}}
+              {branch 3 {leaf} {leaf}}}))

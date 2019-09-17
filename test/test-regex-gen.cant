@@ -8,7 +8,7 @@
     (format "~w\n" string))
   out.newline)
 
-(print (regex-parse "."))
+(out .print (regex-parse "."))
 
 (test "." 2)
 (test "X" 2)

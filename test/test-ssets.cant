@@ -8,9 +8,9 @@
 (let s1 (sset<- 1 7 5 3))
 (let s2 (sset<- 0 2 3 4 5 9))
 
-(print (sset<- 1 1 1 1))
-(print (sset-difference s1 s2))
-(print (sset-difference s2 s1))
+(out .print (sset<- 1 1 1 1))
+(out .print (sset-difference s1 s2))
+(out .print (sset-difference s2 s1))
 
 (for all ((x (a-list-of a-count)))
   (let sx (sset<-list x))

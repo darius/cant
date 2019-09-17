@@ -72,9 +72,9 @@
 
 (to (main _)
   (let {state s1 _} (run (compile eg1)))
-  (print s1)
+  (out .print s1)
   (let {state s2 _} (run (compile eg2)))
-  (print s2)
+  (out .print s2)
   )
 
 (export main)

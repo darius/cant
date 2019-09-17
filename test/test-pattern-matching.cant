@@ -1,7 +1,7 @@
 ;; Try some newer pattern-matching features.
 
 (may {whee 1 2 3}
-  (be {whee a b c} (print c)))
+  (be {whee a b c} (out .print c)))
 
 (may {whee 1 2 3}
-  (be {whee a @x} (print x)))
+  (be {whee a @x} (out .print x)))

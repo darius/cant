@@ -11,5 +11,5 @@
         (link a (fibbing b (+ a b)))
         '())))
 
-;(print (euler2 10))
-(print (euler2 4000000))
+;(out .print (euler2 10))
+(out .print (euler2 4000000))

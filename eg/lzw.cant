@@ -46,12 +46,12 @@
                           (chain chunk (string<- new-chunk.first)))
                   (decoding (chunks code) codes.rest)))))))
 
-(print (show-lzw "TOBEORNOTTOBEORTOBEORNOT"))
+(out .print (show-lzw "TOBEORNOTTOBEORTOBEORNOT"))
 
 (let m "XXXXXXXXXXXX")
-(print (show-lzw m))
+(out .print (show-lzw m))
 (let x (encode m))
-(print (chunked-decode x default-codebook))
+(out .print (chunked-decode x default-codebook))
 
 (surely (= m (decode x)))
 

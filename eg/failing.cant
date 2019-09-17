@@ -15,4 +15,4 @@
   (k .answer 10))
 
 (the-signal-handler .^= on-error-complain-and-continue)
-(print (factorial 5))
+(out .print (factorial 5))

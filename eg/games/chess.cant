@@ -10,9 +10,9 @@
 
 (to (play board players)
   (begin playing ((board board))
-    (print board)
+    (out .print board)
     (unless board.outcome
-      (display "\n\n")
+      (out .display "\n\n")
       (playing (board .play-turn players)))))
 
 (to (human-player board)

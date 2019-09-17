@@ -12,9 +12,9 @@
   (* (tally-by (having 2) bags)
      (tally-by (having 3) bags)))
 
-(print (checksum input))
+(out .print (checksum input))
 
 
 (display "Part 2\n")
 
-(print (chain @(~.first (duplicates<- (gather deletions<- input)))))
+(out .print (chain @(~.first (duplicates<- (gather deletions<- input)))))

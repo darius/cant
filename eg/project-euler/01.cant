@@ -7,6 +7,6 @@
                   (= 0 (i .remainder 5)))
               i))))
 
-;(print (euler1 10))
-(print (euler1 200))
-;(print (euler1 1000))
+;(out .print (euler1 10))
+(out .print (euler1 200))
+;(out .print (euler1 1000))

@@ -32,7 +32,7 @@
       (interacting focus trail))
 
     (to (push new-focus)
-      (print new-focus)           ;XXX pretty-print? cycle-print? ...?
+      (out .print new-focus)           ;XXX pretty-print? cycle-print? ...?
       (interacting new-focus (link focus trail)))
 
     (display "inspect-> ")
@@ -59,7 +59,7 @@
       (be 'value
         (let setting (main-interactive-setting ;TODO parameterize
                       .extend '(*focus*) [focus]))
-        (print (cant .play (read) setting))
+        (out .print (cant .play (read) setting))
         (continue))
       (be (? count?)
         (push (focus input))) ;TODO handle out-of-range
@@ -112,10 +112,10 @@
             (continue "At bottom.\n")
             (interacting callees.first callees.rest)))
       (be 'setting
-        (print frame.setting.variables) ;TODO more useful display: leave out globals, etc.
+        (out .print frame.setting.variables) ;TODO more useful display: leave out globals, etc.
         (continue))
       (be 'value
-        (print (read-eval))
+        (out .print (read-eval))
         (continue))
       (be 'backtrace
         (print-traceback frame)

@@ -4,4 +4,4 @@
   How to explain?  How to describe?  Even the omniscient viewpoint quails.
 ")
 
-(each! print (wrap text 30))
+(each! (-> (out .print it)) (wrap text 30))

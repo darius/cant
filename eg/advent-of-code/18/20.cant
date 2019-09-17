@@ -92,7 +92,7 @@ dir:  {'N' | 'S' | 'E' | 'W'} :Dir.
 (to (test str)
   (out .say "~w...: " (str .slice 0 40))
   (let exp (parse str))
-  (print (furthest-distance exp)))
+  (out .print (furthest-distance exp)))
 
 (let eg1 "^WNE$")
 (let eg2 "^ENWWW(NEEE|SSE(EE|N))$")

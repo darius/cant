@@ -168,12 +168,12 @@
 ;; Smoke test
 
 (let eg '(([x y] x) ([z] z)))
-(print eg)
-(print (run eg))
+(out .print eg)
+(out .print (run eg))
 out.newline
 
 (let eg2 '(([x] (add1 x)) 5))
-(print (run eg2))
+(out .print (run eg2))
 
 
 ;; Main
@@ -181,7 +181,7 @@ out.newline
 (to (main argv)
   (for each! ((filename argv.rest))
     (out .say "\n~d:\n" filename)
-    (print (run-file filename))))
+    (out .print (run-file filename))))
 
 (to (run-file filename)
   (let es (with-input-file read-all filename))

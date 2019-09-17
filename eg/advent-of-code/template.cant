@@ -13,7 +13,7 @@ main: '#' :nat ' @ ' :nat ',' :nat ': ' :nat 'x' :nat :end.
   (~.results (parson-parse parse-main string)))
 
 (let inputs (each parse input))
-;(print inputs)
+;(out .print inputs)
 
 
 (display "\nPart 1\n")

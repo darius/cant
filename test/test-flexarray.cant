@@ -1,11 +1,11 @@
 out.newline
 (let v (flexarray<-))
-(print v)
-(print (list<- v.snapshot v.none? v.count))
-(print (v .push! 42))
-(print (v 0))
-(print (list<- v.snapshot v.none? v.count))
-(print v.pop!)
-(print (list<- v.snapshot v.none? v.count))
+(out .print v)
+(out .print (list<- v.snapshot v.none? v.count))
+(out .print (v .push! 42))
+(out .print (v 0))
+(out .print (list<- v.snapshot v.none? v.count))
+(out .print v.pop!)
+(out .print (list<- v.snapshot v.none? v.count))
 
 ;; TODO more tests

@@ -31,5 +31,5 @@
             (branch<- 1 (mobile<- (branch<- 3 40)
                                   (branch<- 4 30)))))
 
-(print test-mobile.balanced?)
-(print test-balanced-mobile.balanced?)
+(out .print test-mobile.balanced?)
+(out .print test-balanced-mobile.balanced?)

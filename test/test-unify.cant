@@ -4,8 +4,8 @@
 (let b (variable<- "b" 0))
 
 (let s (unify empty-subst `(,a ,b) `(,b 2)))
-(print s)
-(print (s .subst a))
-(print (reify s a))
-(print (reify s '()))
-(print (reify s `(0 ,a 1 ,b)))
+(out .print s)
+(out .print (s .subst a))
+(out .print (reify s a))
+(out .print (reify s '()))
+(out .print (reify s `(0 ,a 1 ,b)))

@@ -16,7 +16,7 @@
           (if match? "y" "n")
           string))
 
-(print (regex-parse "."))
+(out .print (regex-parse "."))
 
 (test "."        '("a")         '("" "ab"))
 (test "X"        '("X")         '("hey"))

@@ -40,8 +40,8 @@
 
 (to (main args)
   (for each! ((filename args.rest))
-    (format "\n~d:\n" filename)
-    (print (run filename))))
+    (out .say "\n~d:\n" filename)
+    (out .print (run filename))))
 
 (to (run filename)
   (let es (with-input-file read-all filename))

@@ -85,7 +85,7 @@
   ;; A separate function just to make the top of tracebacks cleaner.
   (to (print-result value)
     (unless (= value void)
-      (print value))
+      (out .print value))
     (listener))
 
   (make listener

@@ -1,23 +1,23 @@
 ;; TODO this is a dupe of test-hashmap, c'mon
 
 (let a (bag<-))
-(print a)
-(print (a .get 42))
+(out .print a)
+(out .print (a .get 42))
 (a .add! 'x)
-(print a)
-(print (a .get 'x))
+(out .print a)
+(out .print (a .get 'x))
 (a .add! 'x)
-(print a)
-(print (a .get 'x))
-(print (a .get 'y 'nope))
+(out .print a)
+(out .print (a .get 'x))
+(out .print (a .get 'y 'nope))
 
 (a .add! 'z)
-(print a)
-(print (a .get 'x))
-(print (a .get 'y))
-(print (a .get 'z))
-(print (list<- a.keys a.values a.items a.none? a.count))
-(print (a 'z))
+(out .print a)
+(out .print (a .get 'x))
+(out .print (a .get 'y))
+(out .print (a .get 'z))
+(out .print (list<- a.keys a.values a.items a.none? a.count))
+(out .print (a 'z))
 
 ;; TODO more tests
 

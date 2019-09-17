@@ -100,7 +100,7 @@
   (let text (with-input-file ~.read-all "eg/brainfuck/hello.bf"))
   (bf-interpret text)
   (let code (bf-compile text))
-;;  (print code)
+;;  (out .print code)
   ;; TODO unpowered setting, and pass in our read-1 function.
   ((cant .play code full-powered-setting))
   )

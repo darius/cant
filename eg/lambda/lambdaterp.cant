@@ -154,7 +154,7 @@
       out.newline
       #no)
     (be `(,first ,@rest)
-      (print first)
+      (out .print first)
       (command-queue .^= rest)
       first)))
 
@@ -167,7 +167,7 @@
   (out .say "Lambdaterp error: ~w: ~w\n" plaint irritant))
 
 (to (traceback k)
-  (each! print k))
+  (each! (-> (out .print it)) k))
 
 (to (debugging state)
   (let cmd (next-command))
@@ -176,7 +176,7 @@
 (to (value-step<- e r k)
   (make value-step
     (to ~.show
-      (display "ev-> ") (print e.source))
+      (display "ev-> ") (out .print e.source))
     (to ~.b
       (traceback k)
       (debugging value-step))
@@ -191,7 +191,7 @@
 (to (subeval-step<- e r k)
   (make subeval-step
     (to ~.show
-      (display "ev-> ") (print e.source))
+      (display "ev-> ") (out .print e.source))
     (to ~.b
       (traceback k)
       (debugging subeval-step))
@@ -206,7 +206,7 @@
 (to (out-step<- k value)
   (make out-step
     (to ~.show
-      (display "<-ret ") (print (survey value)))
+      (display "<-ret ") (out .print (survey value)))
     (to ~.b
       (traceback k)
       (debugging out-step))
@@ -236,7 +236,7 @@
  (to (try lexp @commands)
    (command-queue .^= commands)
    (let result (interpret lexp))
-   (if result (print (survey result)) 'failed))
+   (if result (out .print (survey result)) 'failed))
 
  (try '(lambda (x) x))
  (try '((lambda (x) ((+ x) 2)) 1))

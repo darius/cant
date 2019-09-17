@@ -17,7 +17,7 @@
 
 (let n-conflicts (for tally-by ((n covered-area.values))
                    (< 1 n)))
-(print `(the area is ,n-conflicts))
+(out .print `(the area is ,n-conflicts))
 
 
 (display "Part 2\n")
@@ -26,4 +26,4 @@
   (for every ((point (area<- claim)))
     (= 1 (covered-area point))))
 
-(print `(the undisputed claims are ,(those undisputed? claims)))
+(out .print `(the undisputed claims are ,(those undisputed? claims)))

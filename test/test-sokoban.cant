@@ -20,4 +20,4 @@
     (hey (g .move dir)
          (-> (format "~d\n" it.unparse)))))
 
-(print afterward.won?)
+(out .print afterward.won?)
