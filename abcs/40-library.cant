@@ -4,19 +4,10 @@
 ;; TODO the fully-qualified names get absurdly long, what to do?
 ;; TODO set library-path at install time
 
-(to (path-for-use base-path file-stem)
-  (if (symbol? file-stem)
-      (chain library-path file-stem.name)
-      (normalize-path base-path file-stem)))
-
 (to (normalize-path base-path file-stem)
   (if (path-absolute? file-stem)
       file-stem
-      (do (let foo (path-join base-path file-stem))
-;          (unless (= foo file-stem)
-;            (out .say "was ~w, gonna be ~w\n" file-stem foo))
-          foo)))
-;          file-stem)))
+      (path-join base-path file-stem)))
 
 (to (path-join base-path file-stem)
   (chain base-path "/" file-stem))      ;TODO not normalized
