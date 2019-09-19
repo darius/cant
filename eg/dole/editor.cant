@@ -1,8 +1,8 @@
 ;; The top-level text editor
 
-(import (use 'sturm)                     raw-mode)
-(import (use "eg/dole/keyboard")         read-key)
-(import (use "eg/dole/fundamental-mode") fundamental-mode<-)
+(import (use 'sturm)             raw-mode)
+(import (use "keyboard")         read-key)
+(import (use "fundamental-mode") fundamental-mode<-)
 
 (to (dole ?filename)
    (let buffer (fundamental-mode<-))

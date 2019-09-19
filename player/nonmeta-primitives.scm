@@ -90,6 +90,9 @@
     (__get-u8 ,get-u8)
     (__put-u8 ,put-u8)
 ;;    (__set-dbg! ,set-dbg!)
+    (current-directory ,current-directory)
+    (path-absolute? ,path-absolute?)
+    (path-parent ,path-parent)
 
     ;; These will get high-level definitions later TODO
     (void ,(void))

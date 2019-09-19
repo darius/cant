@@ -1,4 +1,4 @@
-(import (use "eg/games/sokoban") read-collection)
+(import (use "../eg/games/sokoban") read-collection)
 
 (let (~ grids name) (read-collection (string-source<-
 "Microban, by David Skinner (just #2)

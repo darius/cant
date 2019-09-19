@@ -1,5 +1,5 @@
-(import (use "eg/lambda/parser") exp-parse)
-(import (use "eg/lambda/prelude") build-prelude)
+(import (use "parser") exp-parse)
+(import (use "prelude") build-prelude)
 
 
 ;; Interpreter

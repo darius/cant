@@ -2,7 +2,7 @@
 
 (import (use 'ansi-term) 
   cursor-hide cursor-show home clear-to-right goto)
-(import (use "eg/dole/console")
+(import (use "console")
   logs)
 
 ;; The screen size.

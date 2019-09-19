@@ -1,7 +1,7 @@
 ;; Hi, I'd like a buffer with all the usuals, please.
 
-(import (use "eg/dole/buffer")  buffer<-)
-(import (use "eg/dole/key-map") ctrl)
+(import (use "buffer")  buffer<-)
+(import (use "key-map") ctrl)
 
 (let C ctrl)
 

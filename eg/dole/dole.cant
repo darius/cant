@@ -1,6 +1,6 @@
 ;; Main program
 
-(import (use "eg/dole/editor") dole)
+(import (use "editor") dole)
 
 (to (main args)
   (dole args.rest.maybe)) ;TODO this is a cheap hack since you don't

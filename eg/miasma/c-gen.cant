@@ -1,6 +1,6 @@
-(import (use "eg/miasma/registers") register-number)
-(import (use "eg/miasma/parse") the-specs setup-spec-table)
-(import (use "eg/miasma/walk") walk-code walk-exp unit bind swapping eating)
+(import (use "registers") register-number)
+(import (use "parse") the-specs setup-spec-table)
+(import (use "walk") walk-code walk-exp unit bind swapping eating)
 
 (to (main _)
   (setup-spec-table)

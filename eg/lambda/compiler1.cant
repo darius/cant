@@ -3,8 +3,8 @@
 (import (use 'ssets)  
   sset<- sset<-list sset-elements sset-remove sset-union sset-difference)
 
-(import (use "eg/lambda/parser") exp-parse)
-(import (use "eg/lambda/prelude") build-prelude)
+(import (use "parser") exp-parse)
+(import (use "prelude") build-prelude)
 
 (to (run lexp)
   (compile-and-run (exp-parse lexp)))

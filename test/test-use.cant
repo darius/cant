@@ -1,8 +1,8 @@
-(let left-pad-module (use "test/test-module-for-use"))
+(let left-pad-module (use "test-module-for-use"))
 (import left-pad-module 
         left-pad)
 
 (out .print (left-pad "  I am pretty padded.   "))
 
-(let again (use "test/test-module-for-use")) ; Shouldn't print that it's loading again.
+(let again (use "test-module-for-use")) ; Shouldn't print that it's loading again.
 (surely (= again left-pad-module))

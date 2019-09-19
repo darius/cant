@@ -1,4 +1,4 @@
-(import (use "eg/huffman") build-tree show-tree encoder<- encode decode)
+(import (use "../eg/huffman") build-tree show-tree encoder<- encode decode)
 
 (let eg1
   '((9 #\z)
