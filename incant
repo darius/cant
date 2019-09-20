@@ -1,1 +1,6 @@
-./cant.scm "$@"
+#!/bin/bash
+
+# https://stackoverflow.com/a/11114547
+export CANT_DIR=$(dirname "$(realpath "${BASH_SOURCE[0]}")")
+
+scheme --libdirs "${CANT_DIR}:" --program ${CANT_DIR}/cant.scm "$@"

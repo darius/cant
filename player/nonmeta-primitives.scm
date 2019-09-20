@@ -93,6 +93,7 @@
     (current-directory ,current-directory)
     (path-absolute? ,path-absolute?)
     (path-parent ,path-parent)
+    (getenv ,getenv)
 
     ;; These will get high-level definitions later TODO
     (void ,(void))

@@ -1,4 +1,3 @@
-#! /usr/bin/scheme --program
 #!chezscheme
 (import (chezscheme)
   (player abcs)

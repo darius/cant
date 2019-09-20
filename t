@@ -8,5 +8,5 @@ set -euo pipefail; shopt -s failglob  # 'Bash strict mode'
 # time ./cant-binary test/test-$1.cant >$1.out
 # Exception: compiled program requires different compilation instance of (terp terp) from one found in terp/terp.scm
 
-time ./cant.scm test/test-$1.cant >$1.out
+time ./incant test/test-$1.cant >$1.out
 diff -u $1.expected $1.out

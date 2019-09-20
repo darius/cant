@@ -1,9 +1,5 @@
 ;; Using modules and loading source files
 
-(let library-path "/home/parallels/g/cant/library/")
-;; TODO the fully-qualified names get absurdly long, what to do?
-;; TODO set library-path at install time
-
 (to (normalize-path base-path file-stem)
   (if (path-absolute? file-stem)
       file-stem
@@ -11,6 +7,9 @@
 
 (to (path-join base-path file-stem)
   (chain base-path "/" file-stem))      ;TODO not normalized
+
+(let library-path (path-join (getenv "CANT_DIR") "library"))
+;; TODO the fully-qualified names get absurdly long, what to do?
 
 (let the-modules (!map<-))
 (let use-base-path (box<- (current-directory)))

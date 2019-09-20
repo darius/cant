@@ -9,8 +9,12 @@
   (player primordia)
   (player player))
 
+(define base-path (getenv "CANT_DIR"))
+
 (define (run-load filename)
-  (let ((forms (snarf filename cant-read)))
+  (unless base-path
+    (error 'run-load "CANT_DIR not set"))
+  (let ((forms (snarf (string-append base-path "/" filename) cant-read)))
     (cant-interpret `(do ,@forms))))
 
 ;; TODO add setting & optional context

@@ -44,9 +44,11 @@
                      term
                      void))
 
+(define base-path (getenv "CANT_DIR"))       ;TODO duplicated in abcs.scm
+
 (define (read-source parts)
   (let ((filename (string-append
-                   (string-join "/" (list* "abcs" "00-primordia" parts))
+                   (string-join "/" (list* base-path "abcs" "00-primordia" parts))
                    ".cant")))
     (parse-exp `(do ,@(snarf filename cant-read)))))
 
