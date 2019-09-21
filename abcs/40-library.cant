@@ -38,7 +38,11 @@
 ;; TODO relative loading like (use filename), I guess
 (to (load filename @(optional context))
   (let exp `(do ,@(with-input-file read-all filename)))
-  (with-use-path (path-parent filename)
+  (with-use-path (path-parent
+                  ;; A hack to make sure filename *has* a path-parent:
+                  (if (path-absolute? filename)
+                      filename
+                      (path-join "." filename)))
                  (: (cant .play exp main-interactive-setting context))))
 
 (to (load-module filename @(optional context))
