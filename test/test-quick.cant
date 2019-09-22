@@ -38,7 +38,7 @@
 (loud-use "test-ratio")
 (loud-use "test-regex-gen")
 (loud-use "test-regex-match")
-(((loud-use 'roman) 'main) '(ignore "mcmlxix" "1969" "i" "0"))
+(loud-use "test-roman")
 (loud-use "test-sort")
 (loud-use "test-ssets")
 (loud-use "test-text")

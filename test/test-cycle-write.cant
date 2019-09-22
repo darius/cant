@@ -1,7 +1,7 @@
 (import (use 'cycle-write) cycle-write)
 
 (to (cp x)
-  (cycle-write x)
+  (cycle-write x out)
   out.newline)
 
 (cp '(a b c))

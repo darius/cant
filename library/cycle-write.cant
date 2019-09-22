@@ -21,10 +21,10 @@
 
 ;; TODO better names?
 
-(to (cycle-write thing @(optional sink-arg))
+(to (cycle-write thing sink-arg)
   (let (~ cycle-sink flush-to) (cycle-sink<-))
-  (cycle-sink .write thing)             ;TODO name it .write
-  (flush-to (or sink-arg out))
+  (cycle-sink .write thing)
+  (flush-to sink-arg)
   flush-to.close)
 
 (to (cycle-sink<-)

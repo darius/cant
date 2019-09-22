@@ -26,11 +26,4 @@
   (string<-list (each places numeral)))
 
 
-(to (main args)
-  (for each! ((x args.rest))
-    (let converted (may (number<-string x)
-                     (be #no (int<-roman x))
-                     (be n   (roman<-int n))))
-    (out .say "~d: ~d\n" x converted)))
-
-(export int<-roman roman<-int main)
+(export int<-roman roman<-int)

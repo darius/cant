@@ -25,8 +25,26 @@
                 (normalize-path use-base-path.^ file-stem)))
   (or (the-modules .get stem)
       (with-use-path (path-parent stem)
-                     (: (hey (load-module (chain stem ".cant") `(,stem))
+                     (: (hey (do (let loader (if (known-limited-list .find? file-stem)
+                                                 new-load-module
+                                                 load-module))
+                                 ;; XXX the above is scaffolding until we can
+                                 ;; ditch load-module for new-load-module
+                                 (loader (chain stem ".cant") `(,stem)))
                              (-> (the-modules .set! stem it)))))))
+
+(let known-limited-list
+  '(bag
+    bdd bounded-write cant-source-walker complex cycle-write dd factor flexarray
+    format-tables grid-2d memoize minikanren pairing-heap parse pretty-layout
+    queue ratio regex-gen regex-match regex-parse roman sort ssets string-search
+    text unify
+    ))
+(let to-convert-list
+  '(
+    debugger mostly-linear parson parson-core pretty-print random
+    squickcheck sturm text-wrap traceback
+    ))
 
 (to (with-use-path path thunk)
   (let old-base-path use-base-path.^)
@@ -51,8 +69,13 @@
 ;;  (let setting computational-setting)  ;TODO
   (cant .play exp setting context))
 
+(to (new-load-module filename @(optional context))
+  (let exp `(hide ,@(with-input-file read-all filename)))
+  (let setting computational-setting)  ;TODO
+  (cant .play exp setting context))
+
 (let full-powered-setting-extra-names
-  '(full-powered-setting use
+  '(full-powered-setting main-interactive-setting
     nano-now nanosleep out stdin os-exit
     extract-datum extract-script
     open-input-file open-output-file with-input-file with-output-file
@@ -70,4 +93,4 @@
 
 (let main-interactive-setting full-powered-setting.extend-mutable)
 (cant .play `(let main-interactive-setting ',main-interactive-setting)
-            main-interactive-setting)
+            full-powered-setting)
