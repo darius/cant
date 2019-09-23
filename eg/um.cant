@@ -147,16 +147,10 @@
 
 ;; XXX put something like this in stdlib
 (to (with-binary-input-file fn filename)
-  (let source (open-binary-file-source filename))
-  (let result (fn source))
-  source.close                       ;TODO unwind-protect
-  result)
+  (with-closing fn (open-binary-file-source filename)))
 
 (to (with-binary-output-file fn filename)
-  (let source (open-binary-file-sink filename))
-  (let result (fn source))
-  source.close                       ;TODO unwind-protect
-  result)
+  (with-closing fn (open-binary-file-sink filename)))
 
 (to (main `(,_ ,filename))
   (let program (with-binary-input-file read-program filename))

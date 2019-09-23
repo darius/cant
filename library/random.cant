@@ -37,7 +37,7 @@
   (rng<- (random-seed<-)))
 
 (to (random-seed<-)
-  (for with-input-file ((source "/dev/urandom"))
+  (for with-closing ((source (system-randomness-source<-)))
     (begin trying ()
       (let seed (read-u32 source))
       (if (< 0 seed D)

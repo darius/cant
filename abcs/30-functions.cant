@@ -167,15 +167,14 @@
         (scanning (link xs.first r-head) xs.rest))))
 
 (to (with-input-file fn filename)
-  (let source (open-input-file filename))
-  (let result (fn source))
-  source.close                       ;TODO unwind-protect
-  result)
+  (with-closing fn (open-input-file filename)))
 
 (to (with-output-file fn filename)
-  (let sink (open-output-file filename 'replace)) ;TODO the 'replace is for Chez
-  (let result (fn sink))
-  sink.close                       ;TODO unwind-protect
+  (with-closing fn (open-output-file filename 'replace))) ;TODO the 'replace is for Chez
+
+(to (with-closing fn closable)
+  (let result (fn closable))
+  closable.close                       ;TODO unwind-protect
   result)
 
 (to (read-all source) ;XXX confusing name, since source.read-all returns a string
@@ -190,6 +189,9 @@
 
 (to (setting<-map map)
   (__setting<- map.keys (array<-list map.values) #no))
+
+(to (system-randomness-source<-)
+  (open-input-file "/dev/urandom"))
 
 
 ;; Experiments
@@ -233,7 +235,7 @@
     list<-string string-source<- string-sink<- self-evaluating?
     maybe-macroexpand-expr maybe-macroexpand-patt
     setting? immutable-map? map<-items empty-setting
-    error with-ejector ejector-protect
+    error with-ejector ejector-protect with-closing
     miranda-trait array-trait list-trait map-trait sink-trait
     as-list array<-list array<- map<- map<-lists tuple<-list yeah?
     list<- !map<- !map<-items !map<-lists set<- set<-list hash-set<-

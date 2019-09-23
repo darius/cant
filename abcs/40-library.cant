@@ -78,7 +78,7 @@
 
 (let full-powered-setting-extra-names
   '(full-powered-setting main-interactive-setting
-    nano-now nanosleep out stdin os-exit
+    nano-now nanosleep out stdin os-exit system-randomness-source<-
     extract-datum extract-script
     open-input-file open-output-file with-input-file with-output-file
     system/must-succeed
