@@ -5,7 +5,8 @@
 ;;   - Prove theorems about straight-line code using operators and defuns.
 ;;   [we are here]
 
-(import (use 'pretty-print) pp)    ;XXX for debugging
+(import (use 'pretty-print) pp<-)       ;XXX for debugging
+(let pp (pp<- (export out)))
 
 ;; N.B. specialized to args and result all being expressions
 (to (trace fn @args)

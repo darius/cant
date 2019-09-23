@@ -1,4 +1,5 @@
-(import (use 'pretty-print) pp)
+(import (use 'pretty-print) pp<-)
+(let pp (pp<- (export out)))
 
 (let eg1
   '(to (fact n)

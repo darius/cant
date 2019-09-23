@@ -3,8 +3,10 @@
 (import (use 'pretty-layout)
   pretty-print <> text line nest group)
 
-(to (pp sexpr @(optional width))
-  (out .displayln (pretty-print (doc<-sx sexpr) (or width 72))))
+(to (pp<- imports)
+  (import imports out)
+  (to (pp sexpr @(optional width))
+    (out .displayln (pretty-print (doc<-sx sexpr) (or width 72)))))
 
 (let abbrevs (map<-lists '((quote      "'")
                            (quasiquote "`")
@@ -42,4 +44,4 @@
   (<> @(intercalate line (each doc<-sx sexprs))))
 
 (export
-  pp doc<-sx)
+  pp<- doc<-sx)
