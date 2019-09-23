@@ -37,14 +37,14 @@
   '(bag
     bdd bounded-write cant-source-walker complex cycle-write dd factor
     flexarray format-tables grid-2d memoize minikanren mostly-linear
-    pairing-heap parse parson-core pretty-layout pretty-print queue ratio
+    pairing-heap parse parson parson-core pretty-layout pretty-print queue ratio
     regex-gen regex-match regex-parse
     roman sort ssets string-search text text-wrap unify
     ))
 
 (let to-convert-list
   '(
-    ansi-term debugger parson random
+    ansi-term debugger random
     squickcheck sturm traceback
     ))
 

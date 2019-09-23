@@ -199,8 +199,7 @@
   (let skeletons outcome.?results)
 
   (unless skeletons
-    (out .displayln outcome.display)
-    (error "Ungrammatical grammar"))
+    (error "Ungrammatical grammar" outcome.display))
 
   (let lhses (bag<- (each ~.first skeletons)))
   (let duplicates (for where ((count lhses)) (< 1 count)))
@@ -214,21 +213,5 @@
     (error "Undefined rules" (sort undefined.keys)))
 
   skeletons)
-
-
-;; TODO move to actual tests
-
-(when #no
-  (let text "
-r: 'yo' z.
-r: 'dude'.
-s: .
-s: r.
-t: .
-")
-  (let skeletons (parse-grammar text))
-  (for each! ((`(,name ,{lifted refs _}) skeletons))
-    (out .say "~d: ~w\n" name refs)))
-
 
 (export grammar<- parse feed push)

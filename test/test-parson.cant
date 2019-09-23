@@ -45,3 +45,17 @@
 (try sexpr "(oops (unbalanced parens -- before unknown chars))")
 (try sexpr "(ok ; I am comment-goat.
 hi)")
+
+
+;; TODO make this into a real test, not commented out, catching the exception
+'(when #no
+  (let text "
+r: 'yo' z.
+r: 'dude'.
+s: .
+s: r.
+t: .
+")
+  (let skeletons (parse-grammar text))
+  (for each! ((`(,name ,{lifted refs _}) skeletons))
+    (out .say "~d: ~w\n" name refs)))
