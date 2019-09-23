@@ -48,7 +48,8 @@
     (printing xs.rest)))
 
 (to (start-playing @(optional command-line-args))
-  (import (use 'traceback) on-error-traceback)
+  (import ((use 'traceback) (export out))
+    on-error-traceback)
 
   (let parent-handler the-signal-handler.^)
 
@@ -99,7 +100,8 @@
         (be sexpr (print-result (cant .play sexpr setting)))))))
 
 (to (debug)
-  (import (use 'debugger) inspect-continuation)
+  (import ((use 'debugger) (export out))
+    inspect-continuation)
   (may the-last-error.^
     (be {error k evil}
       (inspect-continuation k))

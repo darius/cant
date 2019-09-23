@@ -1,126 +1,129 @@
 ;; Interactively explore the call stack or an arbitrary object.
 
-(import (use 'traceback) print-traceback)
+(to (module imports)
+  (import imports out)
+  (import ((use 'traceback) (export out))
+    print-traceback)
 
-(to (help vocab)
-  (for each! ((`(,short ,full ,text) vocab))
-    (out .say "~d ~-9w - ~d\n"
-              short full text)))
+  (to (help vocab)
+    (for each! ((`(,short ,full ,text) vocab))
+      (out .say "~d ~-9w - ~d\n"
+           short full text)))
 
-(to (collect-abbrevs vocab)
-  (map<-items (for each ((`(,short ,full ,_) vocab))
-                (~ short full))))
+  (to (collect-abbrevs vocab)
+    (map<-items (for each ((`(,short ,full ,_) vocab))
+                  (~ short full))))
 
-;; TODO unify with inspect-continuation
-(to (inspect initial-focus)
-  (let vocab
-    '((? help      "this message")
-      (q quit      "quit the inspector")
-      (u up        "up to parent")
-      (t top       "up all the way to the original focus")
-      (s script    "inspect the script of the focus")
-      (d datum     "inspect the datum of the focus")
-      (v value     "evaluate an expression in the focus's setting (+ *focus*)")))
-  (let abbrevs (collect-abbrevs vocab))
+  ;; TODO unify with inspect-continuation
+  (to (inspect initial-focus)
+    (let vocab
+      '((? help      "this message")
+        (q quit      "quit the inspector")
+        (u up        "up to parent")
+        (t top       "up all the way to the original focus")
+        (s script    "inspect the script of the focus")
+        (d datum     "inspect the datum of the focus")
+        (v value     "evaluate an expression in the focus's setting (+ *focus*)")))
+    (let abbrevs (collect-abbrevs vocab))
 
-  (out .display "Enter ? for help.\n")
-  (begin interacting ((focus initial-focus)
-                      (trail '()))
+    (out .display "Enter ? for help.\n")
+    (begin interacting ((focus initial-focus)
+                        (trail '()))
 
-    (to (continue @messages)
-      (each! (-> (out .display it)) messages)
-      (interacting focus trail))
+      (to (continue @messages)
+        (each! (-> (out .display it)) messages)
+        (interacting focus trail))
 
-    (to (push new-focus)
-      (out .print new-focus)           ;XXX pretty-print? cycle-print? ...?
-      (interacting new-focus (link focus trail)))
+      (to (push new-focus)
+        (out .print new-focus)           ;XXX pretty-print? cycle-print? ...?
+        (interacting new-focus (link focus trail)))
 
-    (out .display "inspect-> ")
-    (let input (read stdin))
-    (may (abbrevs .get input input)
-      (be 'help
-        (help vocab)
-        (out .display "<n>         - inspect the nth component of the focus\n")
-        (continue))
-      (be 'quit
-        'ok)
-      (be (? eof?)
-       'ok)
-      (be 'up
-        (if trail.none?
-            (continue "At top.\n")
-            (interacting trail.first trail.rest)))
-      (be 'top
-        (interacting initial-focus '()))
-      (be 'script
-        (push (extract-script focus)))
-      (be 'datum
-        (push (extract-datum focus)))
-      (be 'value
-        (let setting (main-interactive-setting ;TODO parameterize
-                      .extend '(*focus*) [focus]))
-        (out .print (cant .play (read stdin) setting))
-        (continue))
-      (be (? count?)
-        (push (focus input))) ;TODO handle out-of-range
-      (else
-        (continue "Huh? Enter 'help' for help.")))))
+      (out .display "inspect-> ")
+      (let input (read stdin))
+      (may (abbrevs .get input input)
+        (be 'help
+          (help vocab)
+          (out .display "<n>         - inspect the nth component of the focus\n")
+          (continue))
+        (be 'quit
+          'ok)
+        (be (? eof?)
+          'ok)
+        (be 'up
+          (if trail.none?
+              (continue "At top.\n")
+              (interacting trail.first trail.rest)))
+        (be 'top
+          (interacting initial-focus '()))
+        (be 'script
+          (push (extract-script focus)))
+        (be 'datum
+          (push (extract-datum focus)))
+        (be 'value
+          (let setting (main-interactive-setting ;TODO parameterize
+                        .extend '(*focus*) [focus]))
+          (out .print (cant .play (read stdin) setting))
+          (continue))
+        (be (? count?)
+          (push (focus input))) ;TODO handle out-of-range
+        (else
+          (continue "Huh? Enter 'help' for help.")))))
 
-(to (inspect-continuation k)
-  (surely k.some?)               ;XXX require
+  (to (inspect-continuation k)
+    (surely k.some?)               ;XXX require
 
-  (let vocab
-    '((? help      "this message")
-      (q quit      "quit the debugger")
-      (r resume    "continue from here, with the value of an expression")
-      (u up        "up to caller")
-      (d down      "down to callee")
-      (s setting   "enumerate the variables in the current setting")
-      (v value     "evaluate an expression in the current setting")
-      (b backtrace "show all of the stack up from here")))
-  (let abbrevs (collect-abbrevs vocab))
+    (let vocab
+      '((? help      "this message")
+        (q quit      "quit the debugger")
+        (r resume    "continue from here, with the value of an expression")
+        (u up        "up to caller")
+        (d down      "down to callee")
+        (s setting   "enumerate the variables in the current setting")
+        (v value     "evaluate an expression in the current setting")
+        (b backtrace "show all of the stack up from here")))
+    (let abbrevs (collect-abbrevs vocab))
 
-  (out .display "Enter ? for help.\n")
-  (begin interacting ((frame k) (callees '()))
+    (out .display "Enter ? for help.\n")
+    (begin interacting ((frame k) (callees '()))
 
-    (to (continue @messages)
-      (each! (-> (out .display it)) messages)
-      (interacting frame callees))
+      (to (continue @messages)
+        (each! (-> (out .display it)) messages)
+        (interacting frame callees))
 
-    (to (read-eval)
-      (cant .play (read stdin) frame.setting))
+      (to (read-eval)
+        (cant .play (read stdin) frame.setting))
 
-    (out .display "debug-> ")
-    (let input (read stdin))  ; TODO read a line, then parse?
-    (may (abbrevs .get input input)
-      (be 'help
-        (help vocab)
-        (continue))
-      (be 'quit
-        'ok)
-      (be (? eof?)
-        'ok)
-      (be 'resume
-        (frame .answer (read-eval)))
-      (be 'up
-        (let caller frame.rest)
-        (if caller.none?
-            (continue "At top.\n")
-            (interacting caller (link frame callees)))) ;TODO show the new current frame
-      (be 'down
-        (if callees.none?
-            (continue "At bottom.\n")
-            (interacting callees.first callees.rest)))
-      (be 'setting
-        (out .print frame.setting.variables) ;TODO more useful display: leave out globals, etc.
-        (continue))
-      (be 'value
-        (out .print (read-eval))
-        (continue))
-      (be 'backtrace
-        (print-traceback frame)
-        (continue))
-      (else
-        (continue "Huh? Enter 'help' for help.\n")))))
+      (out .display "debug-> ")
+      (let input (read stdin))  ; TODO read a line, then parse?
+      (may (abbrevs .get input input)
+        (be 'help
+          (help vocab)
+          (continue))
+        (be 'quit
+          'ok)
+        (be (? eof?)
+          'ok)
+        (be 'resume
+          (frame .answer (read-eval)))
+        (be 'up
+          (let caller frame.rest)
+          (if caller.none?
+              (continue "At top.\n")
+              (interacting caller (link frame callees)))) ;TODO show the new current frame
+        (be 'down
+          (if callees.none?
+              (continue "At bottom.\n")
+              (interacting callees.first callees.rest)))
+        (be 'setting
+          (out .print frame.setting.variables) ;TODO more useful display: leave out globals, etc.
+          (continue))
+        (be 'value
+          (out .print (read-eval))
+          (continue))
+        (be 'backtrace
+          (print-traceback frame)
+          (continue))
+        (else
+          (continue "Huh? Enter 'help' for help.\n")))))
 
-(export inspect inspect-continuation)
+  (export inspect inspect-continuation))

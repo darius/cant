@@ -1,6 +1,7 @@
 ;; Get a continuation from an error signal, and invoke it.
 
-(import (use 'traceback) on-error-traceback)
+(import ((use 'traceback) (export out))
+  on-error-traceback)
 
 (with-signal-handler
  (on (k evil)

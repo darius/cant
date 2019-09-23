@@ -4,28 +4,31 @@
 ;; when the system is borked.
 (import (use 'bounded-write) write-to-bounded-string)
 
-(to (on-error-traceback k evil)
-  (out .display "Error! Traceback:\n")
-  (print-traceback k)
-  (complain evil))
+(to (module imports)
+  (import imports out)
 
-(to (on-error-complain k evil)
-  (out .display "Error!\n")
-  (complain @evil))
+  (to (on-error-traceback k evil)
+    (out .display "Error! Traceback:\n")
+    (print-traceback k)
+    (complain evil))
 
-(to (print-traceback k)
-  (for each! ((frame (reverse k)))
-    (out .say "  ~d\n" (write-to-bounded-string frame 77))))
+  (to (on-error-complain k evil)
+    (out .display "Error!\n")
+    (complain @evil))
 
-(to (complain evil)
-  (may evil
-    (be `(,(? string? plaint) ,@values)
-      (out .display plaint)
-      (out .display ": ")
-      (out .display (write-to-bounded-string values (* 80 20))))
-    (else
-      (out .display "Nonstandard evil: ")
-      (out .write evil)))
-  out.newline)
+  (to (print-traceback k)
+    (for each! ((frame (reverse k)))
+      (out .say "  ~d\n" (write-to-bounded-string frame 77))))
 
-(export on-error-traceback on-error-complain complain print-traceback)
+  (to (complain evil)
+    (may evil
+      (be `(,(? string? plaint) ,@values)
+        (out .display plaint)
+        (out .display ": ")
+        (out .display (write-to-bounded-string values (* 80 20))))
+      (else
+        (out .display "Nonstandard evil: ")
+        (out .write evil)))
+    out.newline)
+
+  (export on-error-traceback on-error-complain complain print-traceback))
