@@ -35,15 +35,16 @@
 
 (let known-limited-list
   '(bag
-    bdd bounded-write cant-source-walker complex cycle-write dd factor flexarray
-    format-tables grid-2d memoize minikanren pairing-heap parse pretty-layout
-    queue ratio regex-gen regex-match regex-parse roman sort ssets string-search
-    text unify
+    bdd bounded-write cant-source-walker complex cycle-write dd factor
+    flexarray format-tables grid-2d memoize minikanren mostly-linear
+    pairing-heap parse parson-core pretty-layout queue ratio regex-gen regex-match
+    regex-parse roman sort ssets string-search text text-wrap unify
     ))
+
 (let to-convert-list
   '(
-    debugger mostly-linear parson parson-core pretty-print random
-    squickcheck sturm text-wrap traceback
+    debugger pretty-print parson random
+    squickcheck sturm traceback
     ))
 
 (to (with-use-path path thunk)

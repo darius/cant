@@ -57,7 +57,8 @@
                       ;; uninformative 0=0: drop it.
                       (solving inconsistent? #yes pending))
                     (else
-                      (out .say "Inconsistent: ~w\n" combo)
+                      ;; TODO return a result like {inconsistent list-of-combos}
+;;                      (out .say "Inconsistent: ~w\n" combo)
                       (solving #yes progress? pending)))))))))))
 
 (to (e+ e1 e2) {combine e1 one e2})

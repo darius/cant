@@ -1,5 +1,11 @@
 (import (use 'text-wrap) wrap)
 
+;; TODO move this (main) somewhere meaningful, or rm it.
+(to (main `(,_ ,width-str ,@words))
+  (let lines (wrap (" " .join words)
+                   (number<-string width-str)))
+  (each! (-> (out .print it)) lines))
+
 (let text "
   How to explain?  How to describe?  Even the omniscient viewpoint quails.
 ")
