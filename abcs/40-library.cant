@@ -37,14 +37,13 @@
   '(ansi-term bag
     bdd bounded-write cant-source-walker complex cycle-write dd debugger factor
     flexarray format-tables grid-2d memoize minikanren mostly-linear
-    pairing-heap parse parson parson-core pretty-layout pretty-print queue ratio
-    regex-gen regex-match regex-parse
+    pairing-heap parse parson parson-core pretty-layout pretty-print queue random
+    ratio regex-gen regex-match regex-parse
     roman sort ssets string-search text text-wrap traceback unify
     ))
 
 (let to-convert-list
   '(
-    random
     squickcheck sturm
     ))
 
@@ -78,7 +77,7 @@
 
 (let full-powered-setting-extra-names
   '(full-powered-setting main-interactive-setting
-    nano-now nanosleep out stdin os-exit system-randomness-source<-
+    nano-now nanosleep out stdin os-exit open-subprocess system-randomness-source<-
     extract-datum extract-script
     open-input-file open-output-file with-input-file with-output-file
     system/must-succeed

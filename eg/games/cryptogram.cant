@@ -11,7 +11,8 @@
 (to (main args)
   (let cryptogram
     (may args.rest
-      (be '()     (random-encrypt (random-rng<-) (run-fortune)))
+      (be '()     (random-encrypt (random-rng<- system-randomness-source<-)
+                                  (run-fortune)))
       (be `(,str) str)
       (else       (error ("Usage: ~d [cryptogram]" .format (args 0))))))
   (for cbreak-mode ()

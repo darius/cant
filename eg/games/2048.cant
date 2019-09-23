@@ -10,7 +10,7 @@
   on-black on-red on-green on-yellow on-blue on-magenta on-cyan on-white)
 
 (to (main _)
-  (let rng (rng<- (random-seed<-)))
+  (let rng (rng<- (random-seed<- system-randomness-source<-)))
   (for cbreak-mode ()
     (play (starting-board<- rng) rng)))
 

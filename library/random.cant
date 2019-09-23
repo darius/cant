@@ -33,11 +33,11 @@
 (let rng<- park-miller-rng<-)
 (let rng (rng<- 1234567))
 
-(to (random-rng<-)
-  (rng<- (random-seed<-)))
+(to (random-rng<- randomness-source<-)
+  (rng<- (random-seed<- randomness-source<-)))
 
-(to (random-seed<-)
-  (for with-closing ((source (system-randomness-source<-)))
+(to (random-seed<- randomness-source<-)
+  (for with-closing ((source (randomness-source<-)))
     (begin trying ()
       (let seed (read-u32 source))
       (if (< 0 seed D)
