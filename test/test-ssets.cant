@@ -1,7 +1,7 @@
 (import (use 'ssets)
   sset<- sset<-list sset-elements sset-insert sset-remove sset-union sset-difference)
 
-(import (use 'squickcheck)
+(import ((use 'squickcheck) (export out))
   a-count a-list-of
   all should)
 

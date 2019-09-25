@@ -8,103 +8,109 @@
 (import (use 'random) rng<-)
 (let default-rng (rng<- 1234567))    ;TODO don't use this all the time
 
-;; TODO report which property failed
-;; TODO make and report deterministic seeds
-;; TODO catch errors
-;; TODO better names
-(make all
-  (to (~ property @gens)
-    (all .run (context<- default-rng) 40 property gens))
-  (to (~ .run g n-times property gens)
-    (let failures (flexarray<-))
-    (for each! ((_ (0 .to< n-times)))
-      (let inputs (for each ((gen gens))
-                    (gen g)))
-      (may (property @inputs)
-        (be #yes    (out .display "."))
-        (be outcome (out .display "X")
-                    (failures .push! (~ outcome inputs)))))
-    out.newline
-    (when failures.some?
-      (out .say "Failures for ~w:\n" property)
-      (for each! (((~ outcome inputs) failures))
-        (out .say "~w: ~w\n" outcome inputs)))
-    failures.none?))
+;; TODO an API separating defining a test from the rest of the stuff,
+;;  where only running a test needs to import 'out'
 
-(to (should be-ok? @arguments)
-  (be-ok? @arguments))
+(to (module imports)
+  (import imports out)
 
+  ;; TODO report which property failed
+  ;; TODO make and report deterministic seeds
+  ;; TODO catch errors
+  ;; TODO better names
+  (make all
+    (to (~ property @gens)
+      (all .run (context<- default-rng) 40 property gens))
+    (to (~ .run g n-times property gens)
+      (let failures (flexarray<-))
+      (for each! ((_ (0 .to< n-times)))
+        (let inputs (for each ((gen gens))
+                      (gen g)))
+        (may (property @inputs)
+          (be #yes    (out .display "."))
+          (be outcome (out .display "X")
+              (failures .push! (~ outcome inputs)))))
+      out.newline
+      (when failures.some?
+        (out .say "Failures for ~w:\n" property)
+        (for each! (((~ outcome inputs) failures))
+          (out .say "~w: ~w\n" outcome inputs)))
+      failures.none?))
 
-;; Generator context
-
-(make context<-
-  (to (~ rng)
-    (context<- rng 20)) ; TODO we'll want a bigger number when we're no longer super-slow
-  (to (~ rng size)
-    ;; TODO better method names
-    (make gen
-      (to ~.size           size)
-      (to (~ .natural n)   (rng .random-integer n))
-      (to (~ .range lo hi) (rng .random-range lo hi)) ;TODO rename, .interval ?
-      (to ~.a-size         (rng .random-integer size))
-      (to (~ .choose xs)   (rng .pick xs)))))
+  (to (should be-ok? @arguments)
+    (be-ok? @arguments))
 
 
-;; Basic gens
-;; TODO maybe name like <claim> etc.
+  ;; Generator context
 
-(to (a-claim g)
-  (may (g .natural 2)
-    (be 0 #no)
-    (be 1 #yes)))
-
-(to (a-count g)
-  (g .natural g.size))
-
-(to (an-int g)
-  (g .range (- g.size) g.size))
-
-(to (a-char g)
-  (char<- (g .natural 256)))
-
-(to (a-printable-char g)
-  (char<- (g .natural 32 126)))
-
-(to ((a-list-of gen) g)
-  (for each ((_ (0 .to< g.a-size)))
-    (gen g)))
-
-(to (a-string g)
-  (string<-list ((a-list-of a-char) g)))
-
-(to (a-printable-string g)
-  (string<-list ((a-list-of a-printable-char) g)))
-
-;; TODO find a new name for this after the retupling
-(to ((a-tuple @gens) g)
-  (for each ((gen gens))
-    (gen g)))
-
-(to ((a-choice @gens) g)
-  ((g .choose gens) g))
+  (make context<-
+    (to (~ rng)
+      (context<- rng 20)) ; TODO we'll want a bigger number when we're no longer super-slow
+    (to (~ rng size)
+      ;; TODO better method names
+      (make gen
+        (to ~.size           size)
+        (to (~ .natural n)   (rng .random-integer n))
+        (to (~ .range lo hi) (rng .random-range lo hi)) ;TODO rename, .interval ?
+        (to ~.a-size         (rng .random-integer size))
+        (to (~ .choose xs)   (rng .pick xs)))))
 
 
-;; Helpers for gens
+  ;; Basic gens
+  ;; TODO maybe name like <claim> etc.
 
-;; TODO extract something like this to random.cant
-(to (weighted-choice choices)
-  (let total (sum-by ~.first choices))
-  (on (g)
-    (begin scanning ((i (g .natural total))
-                     (`((,weight ,choice) ,@rest) choices))
-      (if (< i weight)
-          choice
-          (scanning (- i weight) rest)))))
+  (to (a-claim g)
+    (may (g .natural 2)
+      (be 0 #no)
+      (be 1 #yes)))
+
+  (to (a-count g)
+    (g .natural g.size))
+
+  (to (an-int g)
+    (g .range (- g.size) g.size))
+
+  (to (a-char g)
+    (char<- (g .natural 256)))
+
+  (to (a-printable-char g)
+    (char<- (g .natural 32 126)))
+
+  (to ((a-list-of gen) g)
+    (for each ((_ (0 .to< g.a-size)))
+      (gen g)))
+
+  (to (a-string g)
+    (string<-list ((a-list-of a-char) g)))
+
+  (to (a-printable-string g)
+    (string<-list ((a-list-of a-printable-char) g)))
+
+  ;; TODO find a new name for this after the retupling
+  (to ((a-tuple @gens) g)
+    (for each ((gen gens))
+      (gen g)))
+
+  (to ((a-choice @gens) g)
+    ((g .choose gens) g))
 
 
-(export
-  a-claim a-count an-int a-char a-printable-char a-printable-string a-list-of a-tuple a-choice
-  weighted-choice
-  all should
-  context<-
-  )
+  ;; Helpers for gens
+
+  ;; TODO extract something like this to random.cant
+  (to (weighted-choice choices)
+    (let total (sum-by ~.first choices))
+    (on (g)
+      (begin scanning ((i (g .natural total))
+                       (`((,weight ,choice) ,@rest) choices))
+        (if (< i weight)
+            choice
+            (scanning (- i weight) rest)))))
+
+
+  (export
+    a-claim a-count an-int a-char a-printable-char a-printable-string a-list-of a-tuple a-choice
+    weighted-choice
+    all should
+    context<-
+    ))

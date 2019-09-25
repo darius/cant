@@ -39,12 +39,12 @@
     flexarray format-tables grid-2d memoize minikanren mostly-linear
     pairing-heap parse parson parson-core pretty-layout pretty-print queue random
     ratio regex-gen regex-match regex-parse
-    roman sort ssets string-search text text-wrap traceback unify
+    roman sort squickcheck ssets string-search text text-wrap traceback unify
     ))
 
 (let to-convert-list
   '(
-    squickcheck sturm
+    sturm
     ))
 
 (to (with-use-path path thunk)
