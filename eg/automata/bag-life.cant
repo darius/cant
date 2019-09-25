@@ -2,7 +2,7 @@
 ;; Represent a grid as a set of populated locations.
 ;; A location is an `(,x ,y) coordinate pair.
 
-(import (use 'sturm)
+(import ((use 'sturm) (export out stdin system/must-succeed))
   cbreak-mode)
 (import (use 'ansi-term)
   clear-screen cursor-show cursor-hide)

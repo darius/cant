@@ -25,27 +25,13 @@
                 (normalize-path use-base-path.^ file-stem)))
   (or (the-modules .get stem)
       (with-use-path (path-parent stem)
-                     (: (hey (do (let loader (if (known-limited-list .find? file-stem)
+                     (: (hey (do (let loader (if (symbol? file-stem)
                                                  new-load-module
                                                  load-module))
                                  ;; XXX the above is scaffolding until we can
-                                 ;; ditch load-module for new-load-module
+                                 ;; fully ditch load-module for new-load-module
                                  (loader (chain stem ".cant") `(,stem)))
                              (-> (the-modules .set! stem it)))))))
-
-(let known-limited-list
-  '(ansi-term bag
-    bdd bounded-write cant-source-walker complex cycle-write dd debugger factor
-    flexarray format-tables grid-2d memoize minikanren mostly-linear
-    pairing-heap parse parson parson-core pretty-layout pretty-print queue random
-    ratio regex-gen regex-match regex-parse
-    roman sort squickcheck ssets string-search text text-wrap traceback unify
-    ))
-
-(let to-convert-list
-  '(
-    sturm
-    ))
 
 (to (with-use-path path thunk)
   (let old-base-path use-base-path.^)
@@ -83,7 +69,6 @@
     system/must-succeed
     the-modules unuse load load-module
     the-last-error push-signal-handler with-signal-handler the-signal-handler
-    unwind-protect ;;TODO I guess for computational-setting if we're to have it at all
     listener<- debug breakpoint))
 (let full-powered-setting ;XXX
   (empty-setting .extend-promises

@@ -2,7 +2,7 @@
 ;; Ported from github.com/darius/sturm.
 ;; (Hit control-X to quit.)
 
-(import (use 'sturm)
+(import ((use 'sturm) (export out stdin system/must-succeed))
   cbreak-mode get-key render
   cursor green red unstyled)
 (import (use 'random)

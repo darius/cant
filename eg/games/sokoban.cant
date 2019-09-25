@@ -23,7 +23,7 @@
 ;; http://code.google.com/p/cleese/source/browse/trunk/experimental/necco/kernel/soko.py
 ;; (runs without a regular OS, by Dave Long)
 
-(import (use 'sturm)
+(import ((use 'sturm) (export out stdin system/must-succeed))
   cbreak-mode
   get-key render
   green bold)

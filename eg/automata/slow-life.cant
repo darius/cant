@@ -1,6 +1,6 @@
 ;; Game of Life
 
-(import (use 'sturm)
+(import ((use 'sturm) (export out stdin system/must-succeed))
   cbreak-mode)
 (import (use 'ansi-term)
   home clear-screen cursor-show cursor-hide)

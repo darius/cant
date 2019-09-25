@@ -249,7 +249,9 @@
     __vector-move! ;; TODO is this safe for computational-setting?
     ))
 (let computational-setting-library-imports
-  '(use sort-by sort flexarray<- flexarray<-list bag<-))
+  '(use
+    unwind-protect ;;TODO not exactly safe as currently defined
+    sort-by sort flexarray<- flexarray<-list bag<-))
 (let computational-setting
   (empty-setting .extend-promises
                  (chain computational-setting-library-imports
