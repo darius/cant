@@ -1,3 +1,15 @@
+;; More random crap
+
+(make console
+  (to ~.in stdin)
+  (to ~.out out)
+  (to (~ .mode name fn)
+    (system/must-succeed ("stty ~d -echo" .format name))
+    (unwind-protect
+     fn
+     (: (system/must-succeed "stty sane")))))    ;TODO save & restore instead
+
+
 ;; Top level: listener and command line
 
 (let the-last-error (box<- #no))

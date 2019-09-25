@@ -1,6 +1,6 @@
 ;; The top-level text editor
 
-(import ((use 'sturm) (export out stdin system/must-succeed))
+(import ((use 'sturm) (export console))
   raw-mode)
 (import (use "keyboard")         read-key)
 (import (use "fundamental-mode") fundamental-mode<-)

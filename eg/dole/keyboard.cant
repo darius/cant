@@ -1,6 +1,6 @@
 ;; Read the keyboard
 
-(import ((use 'sturm) (export out stdin system/must-succeed))
+(import ((use 'sturm) (export console))
   get-key)
 
 (let read-key get-key)

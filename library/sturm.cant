@@ -1,11 +1,9 @@
 ;;; ANSI terminal control
 
 (to (module imports)
-  (import imports
-    ;; TODO pass in some kind of tty object instead, which would have
-    ;;  some kind of 'stty' method along with .source and .sink
-    out stdin system/must-succeed)
-
+  (import imports console)
+  (let stdin console.in)
+  (let out console.out)
 
   ;; I/O modes -- Unix specific, not ANSI
 
@@ -13,16 +11,12 @@
   (to (cbreak-mode fn) (mode "cbreak" fn))
 
   (to (mode name fn)
-    (system/must-succeed ("stty ~d -echo" .format name))
-    (unwind-protect
-     (:
-       (out .display home)
-       (out .display clear-to-bottom)
-       (fn)
-       (out .display cursor-show)
-       (out .display #\newline))
-     (:
-       (system/must-succeed "stty sane"))))    ;TODO save & restore instead
+    (console .mode name
+             (: (out .display home)
+                (out .display clear-to-bottom)
+                (fn)
+                (out .display cursor-show)
+                (out .display #\newline))))
 
 
   ;; ANSI terminal escape codes

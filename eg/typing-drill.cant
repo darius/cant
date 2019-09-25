@@ -1,6 +1,6 @@
 ;; How fast do you type?
 
-(import ((use 'sturm) (export out stdin system/must-succeed))
+(import ((use 'sturm) (export console))
   cbreak-mode render cursor get-key)
 
 (to (main _)

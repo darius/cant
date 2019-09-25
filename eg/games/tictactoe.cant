@@ -1,7 +1,7 @@
 ;; Tic-tac-toe game
 
 (import (use 'memoize) memoize)
-(import ((use 'sturm) (export out stdin system/must-succeed))
+(import ((use 'sturm) (export console))
   cbreak-mode render get-key cursor green)
 
 (to (main `(,me ,@args))

@@ -2,7 +2,7 @@
 ;; We quit on Q instead of the escape key because there are still
 ;; unmapped keys with escape sequences.
 
-(import ((use 'sturm) (export out stdin system/must-succeed))
+(import ((use 'sturm) (export console))
   cbreak-mode get-key render cursor screen-width)
 (import (use 'text-wrap)
   fill)

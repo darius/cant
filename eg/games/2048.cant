@@ -2,7 +2,7 @@
 
 (import (use 'random)
   rng<- random-seed<-)
-(import ((use 'sturm) (export out stdin system/must-succeed))
+(import ((use 'sturm) (export console))
   cbreak-mode get-key render
   ;;XXX import is finally a pain:
   bold underlined blinking inverted unstyled
