@@ -11,8 +11,8 @@
 ;; TODO an API separating defining a test from the rest of the stuff,
 ;;  where only running a test needs to import 'out'
 
-(to (module imports)
-  (import imports out)
+(to (module powers)
+  (import powers out)
 
   ;; TODO report which property failed
   ;; TODO make and report deterministic seeds

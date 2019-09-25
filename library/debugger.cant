@@ -1,7 +1,7 @@
 ;; Interactively explore the call stack or an arbitrary object.
 
-(to (module imports)
-  (import imports out)
+(to (module powers)
+  (import powers out)
   (import ((use 'traceback) (export out))
     print-traceback)
 

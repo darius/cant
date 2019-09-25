@@ -1,7 +1,7 @@
 ;;; ANSI terminal control
 
-(to (module imports)
-  (import imports console)
+(to (module powers)
+  (import powers console)
   (let stdin console.in)
   (let out console.out)
 

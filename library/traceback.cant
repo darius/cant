@@ -4,8 +4,8 @@
 ;; when the system is borked.
 (import (use 'bounded-write) write-to-bounded-string)
 
-(to (module imports)
-  (import imports out)
+(to (module powers)
+  (import powers out)
 
   (to (on-error-traceback k evil)
     (out .display "Error! Traceback:\n")
