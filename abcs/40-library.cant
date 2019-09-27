@@ -25,13 +25,16 @@
                 (normalize-path use-base-path.^ file-stem)))
   (or (the-modules .get stem)
       (with-use-path (path-parent stem)
-                     (: (hey (do (let loader (if (symbol? file-stem)
+                     (: (hey (do (let loader (if (or (symbol? file-stem)
+                                                     (sandboxed-files .find? file-stem))
                                                  new-load-module
                                                  load-module))
                                  ;; XXX the above is scaffolding until we can
                                  ;; fully ditch load-module for new-load-module
                                  (loader (chain stem ".cant") `(,stem)))
                              (-> (the-modules .set! stem it)))))))
+
+(let sandboxed-files '("chess"))
 
 (to (with-use-path path thunk)
   (let old-base-path use-base-path.^)
