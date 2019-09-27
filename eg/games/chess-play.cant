@@ -1,5 +1,5 @@
-(import (use "chess") main<-rng)
+(import (use "chess") chess-main)
 (import (use 'random) rng)         ;for now
 
 (to (main args)
-  ((main<-rng rng) args))
+  (chess-main (export console rng) args))

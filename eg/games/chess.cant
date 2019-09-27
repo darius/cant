@@ -1,41 +1,45 @@
 ;; Unfinished port of one-day-i-will-play-chess
 
-(to ((main<- strategy-names) args)
-  (out .display "(Moves look like 'e2e3')\n\n")
-  (play-chess (strategy-names (args 1))
-              (strategy-names (args 2))))
+(to (play-chess out white-strategy black-strategy)
+  (play out (initial-chess-board<-) `(,white-strategy ,black-strategy)))
 
-(to (play-chess white-strategy black-strategy)
-  (play (initial-chess-board<-) `(,white-strategy ,black-strategy)))
-
-(to (play board players)
+(to (play out board players)
   (begin playing ((board board))
     (out .print board)
     (unless board.outcome
       (out .display "\n\n")
-      (playing (board .play-turn players)))))
+      (playing (board .play-turn out players)))))
 
-(to (human-player board)
-  (begin asking ()
-    (out .say "~d, your move? " (side-name board.mover))
-    (may stdin.read-line  ;TODO extract the stdin cap
-      (be (? eof?) {resign})
-      (be answer (or (board .parse-move answer)
-                     (do (out .display "Illegal move\n")
-                         (asking)))))))
+(to (human-player<- console)
+  (make human-player
+    (to ~.interactive? #yes)
+    (to (~ .pick-move board)
+      (begin asking ()
+        (out .say "~d, your move? " (side-name board.mover))
+        (may console.in.read-line
+          (be (? eof?) {resign})
+          (be answer (or (board .parse-move answer)
+                         (do (console.out .display "Illegal move\n")
+                             (asking)))))))))
 
 (to (random-player<- rng)
-  (to (random-player board)
-    (rng .pick (as-list board.gen-legal-moves))))
+  (make random-player
+    (to ~.interactive? #no)
+    (to (~ .pick-move board)
+      (rng .pick (as-list board.gen-legal-moves)))))
 
-(to (greedy-player board)
-  (for min-by ((move board.gen-legal-moves))
-    (greedy-evaluate (update move board))))
+(make greedy-player
+  (to ~.interactive? #no)
+  (to (~ .pick-move board)
+    (for min-by ((move board.gen-legal-moves))
+      (greedy-evaluate (update move board)))))
 
 (to (minimax-player<- depth)
-  (to (player board)
-    (for min-by ((move board.gen-legal-moves))
-      (minimax-evaluate (update move board) depth))))
+  (make minimax-player
+    (to ~.interactive? #no)
+    (to (~ .pick-move board)
+      (for min-by ((move board.gen-legal-moves))
+        (minimax-evaluate (update move board) depth)))))
 
 ;; Return the mover's weighted piece advantage.
 (to (greedy-evaluate board)
@@ -167,15 +171,15 @@
     (to ~.castle
       XXX)
 
-    (to (~ .play-turn `(,white-player ,black-player))
+    (to (~ .play-turn out `(,white-player ,black-player))
       (let player (may mover
                     (be 'white white-player)
                     (be 'black black-player)))
-      (let move (player board))
+      (let move (player .pick-move board))
       (let possibles (link {resign} board.gen-legal-moves))  ;; isn't this poor factoring?
       (unless (possibles .find? move)
         (error "Bad move" move))
-      (unless (= player human-player)
+      (unless player.interactive?
         (out .say "~d plays ~d.\n\n" (side-name mover) (unparse-move move)))
       (update move board))
 
@@ -321,12 +325,19 @@
 (to (unparse-pos `(,r ,c))
   ("~d~w" .format ("abcdefgh" c.-) (- 9 r)))
 
-(to (main<-rng rng)
+(to (chess-main powers args)
+  (import powers console rng)
+  (let out console.out)
   (let strategy-names
-    (map<- (~ "human"   human-player)
+    (map<- (~ "human"   (human-player<- console))
            (~ "greedy"  greedy-player)
            (~ "random"  (random-player<- rng))
            (~ "minimax" (minimax-player<- 2))))
-  (main<- strategy-names))
-  
-(export main<-rng)
+  (out .display "(Moves look like 'e2e3')\n\n")
+  (unless (= args.count 3)
+    (error ("usage: ~d white-player black-player" .format (args 0))))
+  (play-chess out
+              (strategy-names (args 1))
+              (strategy-names (args 2))))
+
+(export chess-main)
