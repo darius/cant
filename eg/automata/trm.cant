@@ -84,7 +84,7 @@ insn:    {'1'+} {'#' '#'? '#'? '#'? '#'?} :make_insn.
   (let right (for each (((~ i str) regs.items.rest))
                ("\tr~w: ~d" .format i str)))
   (for each! ((line (abut left right)))
-    (out .say "~d\n" line)))
+    (out .displayln line)))
 
 (to (abut lines1 lines2)
   (flip (chain (flip lines1)

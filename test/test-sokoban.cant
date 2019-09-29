@@ -18,6 +18,6 @@
 (let afterward
   (for foldl ((g g) (dir '(down down right)))
     (hey (g .move dir)
-         (-> (out .say "~d\n" it.unparse)))))
+         (-> (out .displayln it.unparse)))))
 
 (out .print afterward.won?)

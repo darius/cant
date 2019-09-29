@@ -15,7 +15,7 @@
 
 (to (show bits)
   (let line (string<-list (each "-*" bits)))
-  (out .say "~d\n" (line .center 80)))
+  (out .displayln (line .center 80)))
 
 (to (rule<-index n)
   (on ((~ left center right))

@@ -15,7 +15,7 @@ out.newline
   (let t (text<-))
   (t .replace 0 0 "aXbXc")
   (let X (set<- #\X))
-  (out .say "~d\n" (t .get 0 t.count))
+  (out .displayln (t .get 0 t.count))
   (each! (-> (out .display it)) t.keys)
   out.newline
   (for each! ((i (0 .to t.count)))
