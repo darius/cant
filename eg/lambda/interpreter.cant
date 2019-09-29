@@ -4,7 +4,7 @@
 
 ;; Interpreter
 
-(to (terp e @(optional r))
+(to (interpret e @(optional r))
   (ev (exp-parse e) (or r prelude-env)))
 
 (to (ev e r)
@@ -33,7 +33,7 @@
     (be {module map}
       (map v))))
 
-(let prelude-env (build-prelude (export out) terp apply))
+(let prelude-env (build-prelude (export out) interpret apply))
 
 
 ;; Main
@@ -45,7 +45,7 @@
 
 (to (run filename)
   (let es (with-input-file read-all filename))
-  (terp `(do ,@es)))
+  (interpret `(do ,@es)))
 
 
-(export run terp prelude-env)
+(export run interpret prelude-env)
