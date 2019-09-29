@@ -1,4 +1,9 @@
-(import (use "squirm-interpreter")
+(import ((use "squirm-interpreter")
+         (export nano-now
+                 nanosleep
+                 out
+                 with-input-file
+                 with-signal-handler))
   run-file)
 
 (to (main argv)

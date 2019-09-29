@@ -1,4 +1,9 @@
-(import (use "../eg/squirm/squirm-interpreter")
+(import ((use "../eg/squirm/squirm-interpreter")
+         (export nano-now
+                 nanosleep
+                 out
+                 with-input-file
+                 with-signal-handler))
   run-file)
 
 (let test-names '("test/smoke-test.squirm"
