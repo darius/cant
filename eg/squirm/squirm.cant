@@ -1,4 +1,4 @@
-(import (use "squirm-terp")
+(import (use "squirm-interpreter")
   run-file)
 
 (to (main argv)
