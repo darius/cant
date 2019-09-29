@@ -73,7 +73,7 @@
         (invoke fn arg k))
       ))
 
-  (let assembly (build-prelude compile apply))
+  (let assembly (build-prelude (export out) compile apply))
 ;;  (show assembly)
 
   (let code (array<-list (reverse assembly.insns)))  ; reverse so that labels index from the start

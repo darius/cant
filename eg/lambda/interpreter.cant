@@ -33,7 +33,7 @@
     (be {module map}
       (map v))))
 
-(let prelude-env (build-prelude terp apply))
+(let prelude-env (build-prelude (export out) terp apply))
 
 
 ;; Main

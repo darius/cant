@@ -1,6 +1,7 @@
 ;; Prelude, built-ins
 
-(to (build-prelude interpret apply)
+(to (build-prelude powers interpret apply)
+  (import powers out)
 
   (to (make-church<-claim lc-no)
     {primitive (on (lc-yes)
