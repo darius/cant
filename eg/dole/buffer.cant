@@ -4,7 +4,8 @@
 
 (import (use 'text)      text<- backward forward)
 (import (use "char-set") char-set<-)
-(import (use "display")  render rows cols)   ; XXX rename to num-rows or something
+(import ((use "display") (export out))
+                         render rows cols)   ; XXX rename to num-rows or something
 (import (use "key-map")  key-map<-)
 (import (use "console")  log)
 

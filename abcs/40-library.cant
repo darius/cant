@@ -35,7 +35,8 @@
                              (-> (the-modules .set! stem it)))))))
 
 (let sandboxed-files
-  '("chess" "parser" "prelude" "squirm-interpreter"))
+  '("char-set" "chess" "console" "display" "key-map"
+    "parser" "prelude" "squirm-interpreter"))
 
 (to (with-use-path path thunk)
   (let old-base-path use-base-path.^)
