@@ -1,3 +1,11 @@
+/* Highlighting for Enscript.
+   Copy this file to your Enscript hl directory (such as /usr/share/enscript/hl/)
+   and also add this line to namerules in enscript.st:
+
+  /\.cant$/					cant;
+
+ */
+
 /**
  * Name: Cant
  * Description: Cant programming language. Derived from scheme.st which is by Markku Rossi <mtr@iki.fi>
