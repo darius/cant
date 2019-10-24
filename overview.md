@@ -458,8 +458,8 @@ The `make` special form creates and returns a new object:
 This definition had a name and a list of clauses. At creation time,
 the name was bound to the new object. At call time, the message gets
 matched against the pattern of each clause in turn until a match
-succeeds. A match may bind variables (such as `someone`). Then the
-corresponding body is evaluated in the environment created by the
+succeeds. A match may bind variables (such as `someone`, above). Then
+the corresponding body is evaluated in the environment created by the
 match.
 
 You can use terms and patterns in non-OO code as well. For instance,
