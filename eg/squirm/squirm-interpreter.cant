@@ -148,12 +148,13 @@
                (case ,@clauses)))))
     (be 'for
       ;;(for f ((x a) (y b)) e) => (f (on (a b) e) x y)
+      ;; TODO code duplication with 'begin case
       (may operands
         (be `(,f ,pairs ,@body)
           (for each! ((pair pairs))
             (surely (and (list? pair) (= pair.count 2))))
-          `(,f (on ,(each ~.first pairs) ,@body)
-               ,@(for each ((pair pairs)) (pair 1))))))
+          `(,f (on ,(each (~ 0) pairs) ,@body)
+               ,@(each (~ 1) pairs)))))
     (be 'or
       (may operands
         (be '() #yes)
