@@ -434,10 +434,13 @@ the receiver, evaluates the message, and sends the latter to the
 former.
 
 When parsing an implicit call (that is, where the first element of a
-compound expression is not the name of a special form or macro), if
-there's a dotted symbol as the second element, it's parsed as a call
-with a term as the message, as in the first two lines above; else the
-message is a list, as in the third line.
+compound expression is not the name of a special form or macro), it's
+sugar for an explicit call with a term as the message expression. If
+there's a dotted symbol as the second element, that symbol will be the
+term's tag, as in the first two lines above; else the tag is `~`, the
+convention for a tuple, as in the third line.
+
+(TODO explain `(f @args)` too)
 
 The `make` special form creates and returns a new object:
 
