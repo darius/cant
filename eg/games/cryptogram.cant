@@ -21,9 +21,9 @@
 (let alphabet (#\a .to #\z))
 
 (to (random-encrypt rng text)
-  (let values (hey (array<-list alphabet)
-                   (-> (rng .shuffle! it))))
-  (let code (map<-items (zip alphabet values)))
+  (let shuffled (hey (array<-list alphabet)
+                     (-> (rng .shuffle! it))))
+  (let code (map<-items (zip alphabet shuffled)))
   (string<-list (for each ((ch text.lowercase))
                   (code .get ch ch))))
 

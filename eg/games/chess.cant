@@ -63,7 +63,7 @@
 
 (let piece-values
   (!map<- (~ #\space 0)                 ;TODO immutable after init
-         (~ #\-     0)))
+          (~ #\-     0)))
 (for each! ((p "pnbrqk")
             (v '(10 31 33 50 90 10000)))
   (piece-values .set! p.lowercase v)
