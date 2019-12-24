@@ -42,13 +42,13 @@ work the same at top level as in nested scopes. The scope of a binding
 is the whole sub-block it's in -- recursion and forward references
 aren't special. (A use-before-define error can happen at runtime.)
 Variables are immutable. (There's a 'box' type for when you need a
-mutable variable; also, by special dispensation, definitions at the
-listener can update a binding.)
+mutable variable; also, for development/debugging, you can update
+definitions in an 'interactive setting' such as the usual listener.)
 
 Lists and strings are immutable too. Currently the built-in hashmaps,
 arrays, etc. are mutable, though I think now they shouldn't be. (As a
 placeholder towards that future, there's an immutable map type, though
-it's essentially an association list.)
+it's an association list under the hood.)
 
 Scheme has lots of undefined behavior; in Cant the ideal is for any
 nondeterminism to be explicit. Since there's no spec, this is
@@ -64,6 +64,31 @@ to it or even fully designed it. (Probably that'll follow E's example
 again.)
 
 TODO also mention hashing and ordered comparison
+
+A procedure call is a special case of sending a message: `(foo bar
+baz)`, when `foo` is not defined as syntax (a special form or macro),
+is sugar for `(call foo {~ bar baz})`. In turn, `(call receiver
+message)` is a special form meaning to evaluate `receiver` and
+`message` and send `message` to `receiver`. The form `{~ bar baz}`
+evaluates `bar` and `baz` and creates a 2-tuple of the values of `bar`
+and `baz`: a kind of 'term' as mentioned above. Tuples and other terms
+are distinct from lists.
+
+Other terms are distinguished from tuples by a tag different from `~`.
+For example,
+[eg/intset2.cant](https://github.com/darius/cant/blob/master/eg/intset2.cant)
+has terms like `{empty}` and `{extension n s}`. This example shows
+pattern-matching on terms, in a style like ML or Haskell code.
+
+The variation `(foo .bar baz)`, with a `.` starting the first
+argument, means `(call foo {.bar baz})`: that is, with `.bar` as the
+*term tag* instead of as an argument to a tuple. Think of `{.bar baz}`
+as a message to an object, in OO style. Compare
+[eg/intset1.cant](https://github.com/darius/cant/blob/master/eg/intset1.cant),
+an OO verson of `intset2`.
+
+There's one more bit of sugar for calls: `foo.bar` is shorthand for
+`(foo .bar)` (meaning, again, `(call foo {.bar})`).
 
 The remaining differences are a whole lot of bikeshedding. For
 instance, I'm trying to use only ordinary English words, preferably
@@ -334,7 +359,7 @@ like bags/sets/sequences also understand the same messages.
 | `m.none?`                    | Does `m` have any keys? `#yes` or `#no`. |
 | `m.keys`                      | A sequence of the keys, in some defined order. If `m` is mutable, the result should present a snapshot of the state as of this call. (For a hashmap, currently, the order is arbitrary, but I intend to make it insertion order when I get around to it.) |
 | `m.values`                    | A sequence of the values corresponding to the keys, in the same order. |
-| `m.items`                     | A sequence of key-value pairs. (The name `items` is from Python; any ideas for a better name? `mappings`?) |
+| `m.items`                     | A sequence of key-value tuples. (The name `items` is from Python; any ideas for a better name? `mappings`?) |
 | `(m .maps? key)`              | Is `key` one of `m`'s keys? |
 | `(m .find? value)`            | Is `value` one of `m`'s values? |
 | `(m .find value)`             | A key corresponding to `value`, if any; else an error. If `m` is a sequence, then the result should be the *first* corresponding key in `m.items`. I haven't thought about whether that should be expected in general or if it may be any corresponding key at m's discretion. |
