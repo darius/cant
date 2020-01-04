@@ -7,7 +7,7 @@ EcmaScript](https://github.com/Agoric/SES) and
 [Monte](https://monte.readthedocs.io/en/latest/). Those are
 incomparably more useful.
 
-So why make this? I've long wanted a computing system that's
+Why make this, then? I've long wanted a computing system that's
 completely explained, simple enough to grasp in full detail without
 getting bored or overwhelmed, and powerful enough that I'd actually
 use it. Wirth's Oberon is one inspiring example of such a system. I'm
@@ -16,7 +16,7 @@ it a learning project, or outsider art.
 
 ### So the message is "buzz off"?
 
-Just don't expect any stability, at least for a long while.
+Just don't expect any stability, at least anytime soon.
 
 ## What's done so far?
 
@@ -43,7 +43,10 @@ Hey, world.
 
 Dunno, but you can browse
 [eg/](https://github.com/darius/cant/tree/master/eg) and
-[library/](https://github.com/darius/cant/tree/master/library). Run a file from the shell like so:
+[library/](https://github.com/darius/cant/tree/master/library). See
+[eg/games](https://github.com/darius/cant/tree/master/eg/games) and
+[eg/automata](https://github.com/darius/cant/tree/master/eg/automata)
+for maybe-fun starting points. Run a file from the shell like so:
 
 ```
 $ ./incant eg/fizzbuzz.cant
@@ -60,8 +63,6 @@ Fizz
 ...
 
 ```
-
-
 
 ### Documentation?
 
