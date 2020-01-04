@@ -4,35 +4,27 @@ This is a hobby project: a programming language descended mainly from
 [E](http://erights.org/) and Scheme. Nowadays there are at least two
 more direct and more interesting and useful E descendants: [Secure
 EcmaScript](https://github.com/Agoric/SES) and
-[Monte](https://monte.readthedocs.io/en/latest/). You probably want to
-look at those instead.
+[Monte](https://monte.readthedocs.io/en/latest/). Those are
+incomparably more useful.
+
+So why make this? I've long wanted a computing system that's
+completely explained, simple enough to grasp in full detail without
+getting bored or overwhelmed, and powerful enough that I'd actually
+use it. Wirth's Oberon is one inspiring example of such a system. I'm
+aiming at another according to my own taste and idiosyncrasies. Call
+it a learning project, or outsider art.
 
 ### So the message is "buzz off"?
 
-Well, no, but I'm changing my mind all the time; even given a usable
-implementation (it's totally not), your own code could rot in
-days. You might at most perhaps enjoy playing around.
+Just don't expect any stability, at least for a long while.
 
-### What's so great about this, at least in aspiration?
+## What's done so far?
 
-Re-working the Actors roots of Scheme *could* be neat. 
-
-In the short term, I wanted a Scheme that didn't often make me miss
-Python. (I was a Schemer before, and it never sat with me right that
-Python had not only more libraries but often greater concision.) This
-much is kind of done, I'd say, except for imperative-style code.
-
-In the longer term I'd like to support a Smalltalky programming
-environment. This goal motivated the incredibly slow initial
-implementation strategy, where the interpreter internals always appear
-as meta-objects with no optimization, and even primitive objects
-execute via high-level scripts. This same general goal also suggests
-work on metaprogramming, reflection, and such, but I've barely started
-thinking about it.
-
-Another feature which I'm not claiming is great is the bikeshedding of
-the names of everything without regard to familiarity. I think the
-language name gives fair enough warning.
+A new Lisp dialect with a molasses-slow interpreter and an
+almost-useless debugger. On the bright side, it's pretty close now to
+offering capability security, and I'm sometimes pleased with the
+syntax and the library. I think it's more concise than Scheme without
+becoming more cryptic, once you get past some unfamiliar choices.
 
 ### Example code?
 
@@ -49,7 +41,7 @@ Hey, world.
 
 ### Any *interesting* example code?
 
-Dunno, but there are
+Dunno, but you can browse
 [eg/](https://github.com/darius/cant/tree/master/eg) and
 [library/](https://github.com/darius/cant/tree/master/library). You
 can run a file from the shell like
@@ -69,6 +61,8 @@ Fizz
 ...
 
 ```
+
+
 
 ### Documentation?
 

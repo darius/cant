@@ -87,8 +87,8 @@ as a message to an object, in OO style. Compare
 [eg/intset1.cant](https://github.com/darius/cant/blob/master/eg/intset1.cant),
 an OO verson of `intset2`.
 
-There's one more bit of sugar for calls: `foo.bar` is shorthand for
-`(foo .bar)` (meaning, again, `(call foo {.bar})`).
+One more bit of sugar for calls: `foo.bar` is shorthand for `(foo
+.bar)` (meaning, again, `(call foo {.bar})`).
 
 The remaining differences are a whole lot of bikeshedding. For
 instance, I'm trying to use only ordinary English words, preferably
