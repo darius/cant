@@ -43,8 +43,7 @@ Hey, world.
 
 Dunno, but you can browse
 [eg/](https://github.com/darius/cant/tree/master/eg) and
-[library/](https://github.com/darius/cant/tree/master/library). You
-can run a file from the shell like
+[library/](https://github.com/darius/cant/tree/master/library). Run a file from the shell like so:
 
 ```
 $ ./incant eg/fizzbuzz.cant
