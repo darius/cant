@@ -39,12 +39,13 @@
                     (not= d '(0 0))))
 
 (to (show grid)
-  (let `((,x-lo ,x-hi) (,y-lo ,y-hi))
-    (each bounds<- (transpose grid.keys)))
-  (for each! ((y (y-lo .to y-hi)))
-    (for each! ((x (x-lo .to x-hi)))
-      (out .display (if (grid .maps? `(,x ,y)) "O " "  ")))
-    out.newline))
+  (when grid.some?
+    (let `((,x-lo ,x-hi) (,y-lo ,y-hi))
+      (each bounds<- (transpose grid.keys)))
+    (for each! ((y (y-lo .to y-hi)))
+      (for each! ((x (x-lo .to x-hi)))
+        (out .display (if (grid .maps? `(,x ,y)) "O " "  ")))
+      out.newline)))
 
 (to (bounds<- numbers)
   `(,(min @numbers)
