@@ -22,9 +22,11 @@ Just don't expect any stability, at least anytime soon.
 
 A new Lisp dialect with a molasses-slow interpreter and an
 almost-useless debugger. On the bright side, it's pretty close now to
-offering capability security, and I'm sometimes pleased with the
-syntax and the library. I think it's more concise than Scheme without
-becoming more cryptic, once you get familiar.
+enforcing [capability
+security](http://habitatchronicles.com/2017/05/what-are-capabilities/),
+and I'm sometimes pleased with the syntax and the library. I think
+it's more concise than Scheme without becoming more cryptic, once you
+get familiar.
 
 ### Example code?
 
