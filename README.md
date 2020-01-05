@@ -46,7 +46,9 @@ Dunno, but you can browse
 [library/](https://github.com/darius/cant/tree/master/library). See
 [eg/games](https://github.com/darius/cant/tree/master/eg/games) and
 [eg/automata](https://github.com/darius/cant/tree/master/eg/automata)
-for maybe-fun starting points.
+for maybe-fun starting points. (To read with syntax-coloring in Emacs,
+first load
+[cant-mode.el](https://github.com/darius/cant/blob/master/plug-ins/cant-mode.el).)
 
 The self-interpreter
 [eg/kernel.cant](https://github.com/darius/cant/blob/master/eg/kernel.cant)
