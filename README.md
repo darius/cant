@@ -46,10 +46,19 @@ Dunno, but you can browse
 [library/](https://github.com/darius/cant/tree/master/library). See
 [eg/games](https://github.com/darius/cant/tree/master/eg/games) and
 [eg/automata](https://github.com/darius/cant/tree/master/eg/automata)
-for maybe-fun starting points. The self-interpreter
+for maybe-fun starting points.
+
+The self-interpreter
 [eg/kernel.cant](https://github.com/darius/cant/blob/master/eg/kernel.cant)
-could help explain the core language. To run a source file from the
-shell:
+could help explain the core language. The primitive data types and
+core library are defined in
+[abcs/](https://github.com/darius/cant/tree/master/abcs). (The base
+implementation in Scheme is in
+[player/](https://github.com/darius/cant/blob/master/player); notably,
+Cant's syntactic sugar is defined by
+[parse.scm](https://github.com/darius/cant/blob/master/player/parse.scm).)
+
+To run a source file from the shell:
 
 ```
 $ ./incant eg/fizzbuzz.cant
