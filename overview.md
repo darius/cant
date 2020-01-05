@@ -22,7 +22,7 @@ message, the receiver decides what to do with it, and you're mostly
 free to substitute your own objects that interpret the message their
 own way.
 
-The environment should make sense in its own terms: the
+This environment should make sense in its own terms: the
 implementation's internal state should be viewable and to some extent
 manipulable from Cant itself, as Cant objects.
 
