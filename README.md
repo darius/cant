@@ -50,16 +50,6 @@ for maybe-fun starting points. (To read with syntax-coloring in Emacs,
 first load
 [plug-ins/cant-mode.el](https://github.com/darius/cant/blob/master/plug-ins/cant-mode.el).)
 
-The self-interpreter
-[eg/kernel.cant](https://github.com/darius/cant/blob/master/eg/kernel.cant)
-could help explain the core language. The primitive data types and
-core library are defined in
-[abcs/](https://github.com/darius/cant/tree/master/abcs). (The base
-implementation in Scheme is in
-[player/](https://github.com/darius/cant/blob/master/player); notably,
-Cant's syntactic sugar is defined by
-[parse.scm](https://github.com/darius/cant/blob/master/player/parse.scm).)
-
 To run a source file from the shell:
 
 ```
@@ -82,6 +72,18 @@ Fizz
 
 There's an abortive start at
 [overview.md](https://github.com/darius/cant/blob/master/overview.md).
+
+The self-interpreter
+[eg/kernel.cant](https://github.com/darius/cant/blob/master/eg/kernel.cant)
+could also help explain the core language. The primitive data types
+and core library are defined in
+[abcs/](https://github.com/darius/cant/tree/master/abcs). The base
+implementation in Scheme is in
+[player/](https://github.com/darius/cant/blob/master/player); notably,
+Cant's syntactic sugar is defined by
+[parse.scm](https://github.com/darius/cant/blob/master/player/parse.scm). But
+you'd probably prefer to start with the documentation linked above
+even though it's not done.
 
 ### Thanks
 
