@@ -1,21 +1,18 @@
-## What's this for?
+## Design goals
 
-Call it outsider art. I've long wanted a computing system that's
-completely explained, simple enough to grasp in full detail without
-getting bored or overwhelmed, and powerful enough that I actually want
-to use it. Others have done this well enough now -- particularly
-Wirth's Oberon system -- that making another from scratch becomes hard
-to justify as a project offering reasonable reward to effort. But I
-still want one.
+As the README says, I want a self-explaining computing system. Such a
+system needs a high-level programming language. Cant is meant to be
+both the main language you use in this fantasized environment and the
+language it's written in (except at its lowest level). For the whole
+system to be simple enough to learn completely, Cant must be, too --
+much simpler than, say, Python, which is easy to start learning but
+rather complex in sum. Most Python programmers don't know all of
+Python.
 
-Such a system needs a high-level programming language. I'm trying to
-work one out to fit in this fantasized Robinson Crusoe environment.
-Scheme is another inspiring model; you could definitely use it as is. 
-But, you get the drift: I started over anyway.
-
-This FantasyOS ought to support capability security, so this language
-should too (though it doesn't quite yet). My previous go at a
-capability-secure Scheme dialect, consp, persuaded me it's important
+Since this FantasyOS ought to support capability security, so should
+this language (though it doesn't quite yet). My first try at a
+capability-secure Scheme dialect,
+[consp](https://github.com/darius/consp), persuaded me it's important
 that "all you can do is send a message" (or almost all). That is,
 Scheme has plenty of data types, plus different operations on each
 type, and the operations insist you pass them an object of just the
@@ -23,6 +20,18 @@ type they want, never some wrapper you just made up. In Cant, most
 operations are like function calls instead; you send the object a
 message, it decides what to do with it, and you're mostly free to
 substitute your own objects that interpret the message their own way.
+
+The environment should make sense in its own terms: the
+implementation's internal state should be viewable and to some extent
+manipulable from Cant itself, as Cant objects.
+
+I have prejudices about what makes code readable, and I've indulged
+them. This indulgence goes to a frankly silly degree of abandoning
+familiar Scheme names and syntax which were not really a problem, such
+as `lambda`, `car`, `cdr`, and way beyond that. I felt a need to
+bikeshed long-settled conventions just to open up a space where
+more-significant new ideas might come in -- which I guess mostly
+haven't, though maybe they will to you.
 
 
 ## What else changed from Scheme?
@@ -89,15 +98,6 @@ an OO verson of `intset2`.
 
 One more bit of sugar for calls: `foo.bar` is shorthand for `(foo
 .bar)` (meaning, again, `(call foo {.bar})`).
-
-The remaining differences are a whole lot of bikeshedding. For
-instance, I'm trying to use only ordinary English words, preferably
-short, and never abbrevs like `cons`, jargon like `lambda`, or names
-like `Boolean`. I could offer the excuse that this standard jibes with
-the goal of an explainable system -- but I went way overboard in
-changing familiar names. The only real justification for weighing
-familiarity to *programmers* at *zero* is that it pleases me and I
-want to see where it goes.
 
 
 ## OK, but can't you list some vague aspirations and utopian priorities?
