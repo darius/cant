@@ -103,8 +103,8 @@ One more bit of sugar for calls: `foo.bar` is shorthand for `(foo
 
 ## OK, but can't you list some vague aspirations and utopian priorities?
 
-I want hacking in it to make me happy, so that I'm itching to get back
-to the computer. What makes me happy?
+I want hacking in this system to make me happy, so that I'm itching to
+get back to the computer. What makes me happy?
 
 * Clear understanding.
 
