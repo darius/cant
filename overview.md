@@ -17,9 +17,10 @@ that "all you can do is send a message" (or almost all). That is,
 Scheme has plenty of data types, plus different operations on each
 type, and the operations insist you pass them an object of just the
 type they want, never some wrapper you just made up. In Cant, most
-operations are like function calls instead; you send the object a
-message, it decides what to do with it, and you're mostly free to
-substitute your own objects that interpret the message their own way.
+operations are like function calls instead: you send an object a
+message, the receiver decides what to do with it, and you're mostly
+free to substitute your own objects that interpret the message their
+own way.
 
 The environment should make sense in its own terms: the
 implementation's internal state should be viewable and to some extent
