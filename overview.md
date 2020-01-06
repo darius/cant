@@ -585,6 +585,40 @@ of the first subexpression, `(m .get key)` here.
 TODO more about patterns
 
 
+## More idioms
+
+Consider `(each ~.count rows)`. It calls `~.count` on each row of
+`rows` (like Scheme `map`). But what does it mean to call `(~.count
+row)`?  That is sugar for `(call {.count} {~ row})`. The [behavior of
+a
+term](https://github.com/darius/cant/blob/master/abcs/00-primordia/types/term.cant),
+like `{.count}`, on receiving a message like `{~ row}`, is to call
+`row` with the term as the message, as if you'd written `row.count`.
+
+So, [for example](https://github.com/darius/cant/blob/master/library/regex-gen.cant),
+```
+(let r-lengths (~.keys (~.range (each ~.count r-matches))))
+```
+could have been written
+```
+(let r-lengths (((each ~.count r-matches) .keys) .range))
+```
+but I'd find that center-embedding harder to follow, and rather un-Lispy.
+(So why wasn't Cant syntax designed with the selector in 'car'
+position all the time? It actually was at the very beginning, but
+after trying that for a good while it just felt more right to keep the
+message part of the call expression in one piece.)
+
+The same works for [more complex
+messages](https://github.com/darius/cant/blob/master/eg/automata/trm.cant):
+`(each (~ .get 0 padding) lists)` for each list gets the first
+element, or `padding` if empty. But in general you still may have to
+[fall back to function
+syntax](https://github.com/darius/cant/blob/master/eg/automata/turing.cant):
+``` (each (-> ("~w" .format it)) squares) ```
+
+
+
 ## Miscellany
 
 ```
