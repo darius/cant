@@ -331,7 +331,7 @@ besides `if`: (from
           (me .slice 0 i))
         (else (scanning i.-)))))
 ```
-equivalent to Scheme
+corresponding to Scheme
 ```
 (define (trim-right string)
   (let scanning ((i (string-length string)))
