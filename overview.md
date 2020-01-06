@@ -636,8 +636,9 @@ create a new object (the focus) and initialize it (the actions).
 
 The
 [function](https://github.com/darius/cant/blob/master/abcs/30-functions.cant#L201)
-`(take input f g h)` is like `(h (g (f input)))`. It's occasionally
-handy in place of things like Clojure's threading macros.
+`(take input f g h)` is like `(h (g (f input)))`. It's [occasionally
+handy](https://github.com/darius/cant/blob/master/library/bag.cant#L25-L27),
+in place of things like Clojure's threading macros.
 
 
 ## Miscellany
