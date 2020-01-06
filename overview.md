@@ -585,7 +585,7 @@ of the first subexpression, `(m .get key)` here.
 TODO more about patterns
 
 
-## More idioms
+## The callable-message idiom
 
 Consider `(each ~.count rows)`. It calls `~.count` on each row of
 `rows` (like Scheme `map`). But what does it mean to call `(~.count
@@ -617,6 +617,27 @@ element, or `padding` if empty. But in general you still may have to
 syntax](https://github.com/darius/cant/blob/master/eg/automata/turing.cant#L26):
 ``` (each (-> ("~w" .format it)) squares) ```
 
+
+## More idioms
+
+The
+[function](https://github.com/darius/cant/blob/master/abcs/30-functions.cant#L205)
+`(hey focus action1 action2 ...)` returns its first argument, `focus`,
+after sending it to each of the actions. [For
+example](https://github.com/darius/cant/blob/master/library/sturm.cant#L192-L193),
+```
+(hey stdin.read-char
+     (-> (surely (not (eof? it)))))
+```
+returns the next character from standard input, but raises an
+assertion error if it's the end-of-file. (I know, using an assertion
+here was lazy and sinful.) Perhaps more commonly you'd use `hey` to
+create a new object (the focus) and initialize it (the actions).
+
+The
+[function](https://github.com/darius/cant/blob/master/abcs/30-functions.cant#L201)
+`(take input f g h)` is like `(h (g (f input)))`. It's occasionally
+handy in place of things like Clojure's threading macros.
 
 
 ## Miscellany
