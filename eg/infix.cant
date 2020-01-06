@@ -16,6 +16,7 @@
         (be {unary prefix postfix}
           (hm (if prefix  (enclose prefix p ("~w~d" .format op (fmt x prefix))))
               (if postfix (enclose prefix p ("~d~w" .format (fmt x prefix) op)))))))
+        ;XXX should the above line not be (enclose postfix p ...) and (fmt x postfix) ?
     (be `(,op ,x ,y)
       (may (binaries .get op)
         (be #no

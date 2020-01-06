@@ -163,8 +163,8 @@ which I'm not sure have ever run a program for actual use.
 
 It's sort of Smalltalky, where for now the interpreter internals
 always appear as meta-objects with no optimization, and even primitive
-objects execute via high-level scripts (in `abcs/runtime.cant`). This is
-motivated by the goal of a self-sustaining whole system eventually
+objects execute via high-level scripts (in `abcs/00-primordia/`). This
+is motivated by the goal of a self-sustaining whole system eventually
 supporting powerful debugging. To not be incredibly slow, the design
 will need to get fancier.
 
@@ -275,7 +275,7 @@ Let's start with the equivalents of familiar Scheme syntax:
 | `(define x 42)`                 | `(let x 42)`       |  Returns 42 as the value. Definitions are expressions.  |
 | `(define (f x) e)`              | `(to (f x) e)`     |   |
 | `(define (f x) (lambda (y) x))` | `(to ((f x) y) x)` |   |
-| `(lambda (x y) e)`              | `(on (x y) e)`     | plus `(: e)` and `(-> it)` TODO  |
+| `(lambda (x y) e)`              | `(on (x y) e)`     |   |
 | `(begin a b c)`                 | `(do a b c)`       |   |
 | `(let () a b c)`                | `(hide a b c)`     |   |
 | `(if t p q)`                    | `(if t p q)`       | `p` and `q` are in nested scopes, as if in `hide` blocks. |
@@ -283,12 +283,83 @@ Let's start with the equivalents of familiar Scheme syntax:
 | `(or x y)`                      | `(or x y)`         | Ditto. |
 | `(if p (begin a b))`            | `(when p a b)`     | `a` and `b` are in their own common nested scope.  |
 | `(if (not p) (begin a b))`      | `(unless p a b)`   |   |
-| `(cond (p a) (else b))`         | `(hm (when p a) (else b))`  |  TODO explain `hm`; it supports more clauses like `unless` |
+| `(cond (p a) (else b))`         | `(hm (when p a) (else b))`  |  Explained below. |
 | `#t`                            | `#yes`  |   |
 | `#f`                            | `#no`  |   |
 | `(let looping ((v init)) body)` | `(begin looping ((v init)) body)` |  The 'ing' is a convention. |
+| `(lambda () e)`                 | `(: e)`     |   |
+| `(lambda (it) (turn it 90))`    | `(-> (turn it 90))`     |   |
 
-Scheme functions on lists:
+The `hm` form, like Scheme's `cond`, is complex enough to need
+explanation. It typically goes like (from
+[eg/games/2048.cant](https://github.com/darius/cant/blob/master/eg/games/2048.cant))
+```
+(let score (hm (if (lost? board) "You lose!")
+               (if forfeit?      "You forfeit.")
+               (if (won? board)  "You win!")
+               (else             "")))
+```
+the equivalent to Scheme's
+```
+(define score (cond ((lost? board) "You lose!")
+                    (forfeit?      "You forfeit.")
+                    ((won? board)  "You win!")
+                    (else          "")))
+```
+
+I dropped `cond` for clashing with Cant's style in two ways: the name
+is an abbrev instead of an English word, and it lacks syntactic
+guideposts to its subparts, making code harder to read when there are
+many clauses. (Yes, few clauses are nicer than many clauses, but
+sometimes a chain of if-then-elses is just the most direct expression
+of the logic.)
+
+You could replace `cond` with just a chain of `if` expressions, but
+those would nest and indent progressively to the right. With `hm` you
+write the parts linearly instead of nested: `(hm (if a b) c ...)` is
+sugar for `(if a b (hm c ...))`. Other kinds of clauses are supported
+besides `if`: (from
+[abcs/00-primordia/types/string.cant](https://github.com/darius/cant/blob/master/abcs/00-primordia/types/string.cant))
+
+```
+(to ~.trim-right
+  (begin scanning ((i me.count))
+    (hm (when (= i 0)
+          "")
+        (do (let c (me i.-)))
+        (unless c.whitespace?
+          (me .slice 0 i))
+        (else (scanning i.-)))))
+```
+equivalent to Scheme
+```
+(define (trim-right string)
+  (let scanning ((i (string-length string)))
+    (if (= i 0)
+        ""
+        (let ((c (string-ref string (- i 1))))
+          (if (char-whitespace? c)
+              (substring string 0 i)
+              (scanning (- i 1)))))))
+```
+
+I considered making `hm` a naively structural macro which would unnest
+any kind of form of its arguments. But that would be more
+error-prone. Instead it complains if any of the subforms is not syntax
+it knows about: `if`, `when`, `unless`, `else`, `do`, `and`, `or`. If
+there's no `else` clause, then running off the end will cause a
+runtime error: so you'll occasionally see code like (from
+[eg/circuitoptimizer.cant](https://github.com/darius/cant/blob/master/eg/circuitoptimizer.cant))
+```
+(hm (when (< gate.+ n-gates)
+      (sweeping gate.+))
+    (when (= wanted (mask .and value))
+      (found? .^= #yes)
+      (print-formula L-input R-input))
+    (else)))))
+```
+
+OK, moving on. Scheme functions on lists:
 
 | Scheme                        | Cant        | Note          |
 | ----------------------------- | ------------- | ------------- |
