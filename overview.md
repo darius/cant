@@ -338,7 +338,7 @@ corresponding to Scheme
     (if (= i 0)
         ""
         (let ((c (string-ref string (- i 1))))
-          (if (char-whitespace? c)
+          (if (not (char-whitespace? c))
               (substring string 0 i)
               (scanning (- i 1)))))))
 ```
