@@ -588,8 +588,8 @@ TODO more about patterns
 ## The callable-message idiom
 
 Consider `(each ~.count rows)`. It calls `~.count` on each row of
-`rows` (like Scheme `map`). But what does it mean to call `(~.count
-row)`?  That is sugar for `(call {.count} {~ row})`. The [behavior of
+`rows` (like Scheme `map`). But then what do we mean by `(~.count
+row)`? It's sugar for `(call {.count} {~ row})`. The [behavior of
 a
 term](https://github.com/darius/cant/blob/master/abcs/00-primordia/types/term.cant#L2),
 like `{.count}`, on receiving a message like `{~ row}`, is to call
