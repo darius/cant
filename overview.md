@@ -610,7 +610,7 @@ after trying that for a good while it just felt more right to keep the
 message part of the call expression in one piece.)
 
 The same works for [more complex
-messages](https://github.com/darius/cant/blob/master/eg/automata/trm.cant#L100):
+messages](https://github.com/darius/cant/blob/master/eg/automata/trm.cant#L100-L101):
 `(each (~ .get 0 padding) lists)` for each list gets the first
 element, or `padding` if empty. But in general you still may have to
 [fall back to function
