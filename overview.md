@@ -591,11 +591,11 @@ Consider `(each ~.count rows)`. It calls `~.count` on each row of
 `rows` (like Scheme `map`). But what does it mean to call `(~.count
 row)`?  That is sugar for `(call {.count} {~ row})`. The [behavior of
 a
-term](https://github.com/darius/cant/blob/master/abcs/00-primordia/types/term.cant),
+term](https://github.com/darius/cant/blob/master/abcs/00-primordia/types/term.cant#L2),
 like `{.count}`, on receiving a message like `{~ row}`, is to call
 `row` with the term as the message, as if you'd written `row.count`.
 
-So, [for example](https://github.com/darius/cant/blob/master/library/regex-gen.cant),
+So, [for example](https://github.com/darius/cant/blob/master/library/regex-gen.cant#L42),
 ```
 (let r-lengths (~.keys (~.range (each ~.count r-matches))))
 ```
@@ -610,11 +610,11 @@ after trying that for a good while it just felt more right to keep the
 message part of the call expression in one piece.)
 
 The same works for [more complex
-messages](https://github.com/darius/cant/blob/master/eg/automata/trm.cant):
+messages](https://github.com/darius/cant/blob/master/eg/automata/trm.cant#L100):
 `(each (~ .get 0 padding) lists)` for each list gets the first
 element, or `padding` if empty. But in general you still may have to
 [fall back to function
-syntax](https://github.com/darius/cant/blob/master/eg/automata/turing.cant):
+syntax](https://github.com/darius/cant/blob/master/eg/automata/turing.cant#L26):
 ``` (each (-> ("~w" .format it)) squares) ```
 
 
