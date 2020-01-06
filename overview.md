@@ -314,7 +314,7 @@ many clauses. (Yes, few clauses are nicer than many clauses, but
 sometimes a chain of if-then-elses is just the most direct expression
 of the logic.)
 
-You could replace `cond` with just a chain of `if` expressions, but
+You could replace any `cond` with a chain of `if` expressions, but
 those would nest and indent progressively to the right. With `hm` you
 write the parts linearly instead of nested: `(hm (if a b) c ...)` is
 sugar for `(if a b (hm c ...))`. Other kinds of clauses are supported
