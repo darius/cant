@@ -21,13 +21,13 @@
   {queue h (reverse elements t)})
 
 (to (peek {queue h t})
-  (hm (when (and h.none? t.none?)
+  (hm (if h.some?
+        {nonempty h.first {queue h.rest t}})
+      (if t.none?
         {empty})
-      (when h.none?
-        (let seq (reverse t))
-        {nonempty seq.first {queue seq.rest '()}})
       (else
-        {nonempty h.first {queue h.rest t}})))
+        (let seq (reverse t))
+        {nonempty seq.first {queue seq.rest '()}})))
 
 (to (list<-queue {queue h t})
   (chain h (reverse t)))
