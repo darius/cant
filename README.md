@@ -72,7 +72,7 @@ Fizz
 
 ### Documentation?
 
-There's an abortive start at
+There's a start at
 [overview.md](https://github.com/darius/cant/blob/master/overview.md).
 
 The self-interpreter
