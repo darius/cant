@@ -730,8 +730,6 @@ more std types
 traits
 miranda methods
 
-evaluate, call
-
 more naming conventions:
 foo<-
 dest<-src
@@ -742,10 +740,10 @@ arg conventions to work nicely with `for`
 stdlib:
 surely 
 parson, simple-parser (need to extract it)
-format
+string .format
 squickcheck
 
-load, repl, debug stuff, command line, `use`
+load, repl, debug stuff, command line
 
 read syntax: [] {} @ ...?
 no (a . b)
