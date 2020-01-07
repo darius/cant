@@ -618,6 +618,80 @@ syntax](https://github.com/darius/cant/blob/master/eg/automata/turing.cant#L26):
 ``` (each (-> ("~w" .format it)) squares) ```
 
 
+## Input and output
+
+As we saw at the start, there's an object `out` which can write to
+standard output:
+```
+(to (I-am name) (out .say "Hi, ~w!\n" name))
+```
+It's an instance of the 'sink' type. You can see its protocol in
+[sink.cant](https://github.com/darius/cant/blob/master/abcs/00-primordia/types/sink.cant)
+(defining primitive sinks) and
+[sink-trait.cant](https://github.com/darius/cant/blob/master/abcs/00-primordia/sink-trait.cant)
+(a trait to help you define new sink types).
+
+Conversely, a primitive 'source' reads from an input file. (See
+[source.cant](https://github.com/darius/cant/blob/master/abcs/00-primordia/types/source.cant).
+There's no trait yet because I haven't had occasion to define new
+source types.) When a source reaches end-of-file, it returns an object
+for which `(eof? x)` is true.
+
+Standard input is named `stdin`, and yes, that's an uncanty name and
+that sucks and I don't know what to call it. I'm sort of balking at
+putting 'in' in the namespace.
+
+You connect sources and sinks to named files using `open-input-file`
+and `open-output-file`. Normally you use the convenience functions
+`with-input-file` and `with-output-file` which close the files once
+you're done -- just grep for examples in the codebase.
+
+Input and output are our first examples of powers that require
+*capabilities*. Code in a module does *not* have capabilities by
+default.
+
+(It's planned that modules will be provided something like
+Javascript's 'console.log', which in strict terms is a power, but
+should 'not matter' insofar as you don't delegate these debug
+capabilities, because no ordinary code will have read access to the
+logs.)
+
+'String sinks' implement the sink protocol but just produce a string
+out of the characters they are given. The constructor `string-sink<-`
+is in the computational setting, not a capability, because creating a
+string is not an effect. (Consuming time, space, energy are not
+considered to be 'effects'.) You'd typically use the convenience
+function `string<-writer` which creates a string sink, calls your
+writer with it, and then returns the string:
+```
+-> (string<-writer (on (sink) (sink .say "hel") (sink .say "lo")))
+"hello"
+```
+
+There ought to be corresponding string sources, but I haven't got
+around to them.
+
+
+## Capabilities
+
+`computational-setting` in a module vs. full powers in `incant` or the listener
+
+`(cant .play expression setting)`
+
+introspection & debugging
+
+
+## Modules
+
+`(use 'library-name)`
+
+`(use "filename")`
+
+relative `use`
+
+import, export
+
+
 ## More idioms
 
 The
@@ -645,14 +719,11 @@ in place of things like Clojure's threading macros.
 
 ```
 more std types
-  source, sink, string-sink, eof
   box
   term
   void
   meta-stuff
 ```
-
-import export
 
 =, not=, compare
 
