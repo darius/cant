@@ -605,9 +605,9 @@ could have been written
 ```
 but I'd find that center-embedding harder to follow, and rather un-Lispy.
 (So why wasn't Cant syntax designed with the selector in 'car'
-position all the time? It actually was at the very beginning, but
-after trying that for a good while it just felt more right to keep the
-message part of the call expression in one piece.)
+position all the time? It was at the very beginning, but in time it
+just felt more right to keep the message part of the call expression
+in one piece.)
 
 The same works for [more complex
 messages](https://github.com/darius/cant/blob/master/eg/automata/trm.cant#L100-L101):
@@ -634,8 +634,8 @@ It's an instance of the 'sink' type. You can see its protocol in
 Conversely, a primitive 'source' reads from an input file. (See
 [source.cant](https://github.com/darius/cant/blob/master/abcs/00-primordia/types/source.cant).
 There's no trait yet because I haven't had occasion to define new
-source types.) When a source reaches end-of-file, it returns an object
-for which `(eof? x)` is true.
+source types.) When a source reaches end-of-file, it returns a special
+object for which `(eof? x)` is true.
 
 Standard input is named `stdin`, and yes, that's an uncanty name and
 that sucks and I don't know what to call it. I'm sort of balking at
