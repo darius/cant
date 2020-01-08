@@ -627,7 +627,7 @@ above:
   matching.
 
 - `(? expression)` evaluates `expression`, then calls the value with
-  the subject, then succeeds iff the result is `#yes`. (Perhaps it
+  the subject, then succeeds iff the result is `#yes`. (I suppose it
   should be an error if the result is not `#yes` or `#no`. Currently
   it can be anything.)
 
