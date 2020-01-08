@@ -582,7 +582,62 @@ sequence of clauses and then evaluates the body of that clause:
 The difference is that the subject being matched against is the value
 of the first subexpression, `(m .get key)` here.
 
-TODO more about patterns
+
+## Kinds of patterns
+
+The basic patterns are
+- Just `_` matches anything.
+
+- Any other symbol like `variable` also matches anything, and binds
+  `variable` to the subject in this scope. It's a syntax error to have
+  two binding instances of the same variable.
+
+- A constant like `42` -- any constant that may also be written as an
+  unquoted expression.
+
+- A quoted constant `'whatever`.
+
+- A term `{tag pattern1 pattern2 ...}` matches the tag literally and
+  the subpatterns recursively. Similarly the array literal `[pattern1
+  pattern2 ...]` matches an array subject when the subpatterns match
+  the array's elements.
+
+- `(list<- pattern1 pattern2 ...)` matches a list in the same way the
+  array literal above matches an array. In general, a pattern that is
+  a Lisp list like `(foo x y z ...)` is interpreted specially
+  according to `foo`: other special foo's follow below.
+
+- `(and pattern1 pattern2 ...)` matches when the subject matches all
+  of the subpatterns, trying them each in left-to-right order.
+
+- `(view expression subpattern)` does this: evaluate `expression`,
+  then call the value with the subject as argument, then take the
+  result as the new subject to match against `subpattern`.
+
+The remaining kinds of pattern are syntactic sugar implemented on the
+above:
+
+- `{tag pattern1 ... @rest-pattern}` and similar for `[]` and
+  `(list<-)`: matches when the subpatterns match corresponding
+  subparts, but with `rest-pattern` matching zero or more remaining
+  subparts. `rest-pattern` will be bound to a list, even if the
+  subject is a term or an array.
+
+- A quasiquote pattern works like a quasiquote expression, but for
+  matching.
+
+- `(? expression)` evaluates `expression`, then calls the value with
+  the subject, then succeeds iff the result is `#yes`. (Perhaps it
+  should be an error if the result is not `#yes` or `#no`. Currently
+  it can be anything.)
+
+- `(? expression pattern)` is sugar for `(and (? expression) pattern)`.
+
+- `(= expression)` evaluates `expression` and succeeds if the value
+  equals the subject.
+
+- `(optional pattern1 ... pattern_n)` matches a list of length 0 to n,
+  where any elements that do exist match the corresponding subpattern.
 
 
 ## The callable-message idiom
@@ -680,12 +735,22 @@ around to them.
 
 introspection & debugging
 
+The runtime in `abcs/` is loaded in a primordial setting which binds a
+bunch of implementation primitives (to names like `__vector-set!`)
+some of which could corrupt the system if misused. These primitives
+are not directly accessible to other code, but you can get to them
+through the debugger (or, at the moment, just intercepting an error).
+I'm not currently aspiring to finer-grained debug capabilities,
+e.g. so you could give a debug capability to an execution of some of
+your code to another user without exposing the whole system. Of course
+that goal is a reasonable wish, and doable.
+
 
 ## Modules
 
-`(use 'library-name)`
+`(use 'library-name)` -- sandboxed
 
-`(use "filename")`
+`(use "filename")` -- currently not sandboxed, until I finish converting the codebase
 
 relative `use`
 
