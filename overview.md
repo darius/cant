@@ -585,7 +585,9 @@ of the first subexpression, `(m .get key)` here.
 
 ## Kinds of patterns
 
-The basic patterns are
+The pattern syntax is hopefully obvious enough to pick up everything
+common by example, but here it all is for reference:
+
 - Just `_` matches anything.
 
 - Any other symbol like `variable` also matches anything, and binds
