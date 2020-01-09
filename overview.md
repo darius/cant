@@ -796,10 +796,52 @@ parts in the same way that Scheme's `let` rearranges `(let ((x e) ...)
 body ...)`, but with `fn` stuck in front.
 
 Some functions useful with `for`:
-```
-each each! those gather yeahs every some zip foldr foldl where tally 
-```
-TODO explain 'em
+
+`(each f '(a b c))` = `(list<- (f 'a) (f 'b) (f 'c))`
+
+`(each! f xs)` calls `(f x)` for each `x` in `xs`, in order, for the
+sake of any side effects.
+
+`(some pass? xs)` = does `pass?` approve any `x` in `xs`?
+More precisely, the first non-`#no` result of `(pass? x)` for `x` in `xs`,
+or else `#no`. Check the xs in order, short-circuited.
+
+`(every pass? xs)` = does `pass?` approve each `x` in `xs`?
+More precisely, if `xs` empty then `#yes`, else `#no` if for some `x` in `xs`
+`(pass? x) is `#no`, else `(pass? xs.last)`. In order, short-circuited.
+
+`(gather f '(a b c))` = `(chain (f 'a) (f 'b) (f 'c))`
+
+`(those ~.even? '(3 1 4 1 5 9 2 6))` = `'(4 2 6)`
+
+`(yeahs maybe xs)` = a list of the non-`#no` results of `(maybe x) for `x` in `xs`,
+in order.
+
+`(foldl f z '(a b c))` = `(f (f (f z 'a) 'b) 'c)`
+
+`(foldr f '(a b c) z)` = `(f 'a (f 'b (f 'c z)))`
+
+Like `foldr` but requiring `xs` to be nonempty.
+`(foldr1 f '(a b c))` = `(f 'a (f 'b 'c))`
+
+`(where ok? map)` = a list of those keys `k` of `map` for which `(ok? k)`.
+
+`(sum-by f '(a b))` = `(+ (f 'a) (f 'b))`
+
+`(tally-by f '(a b))` = `(+ (~.count (f 'a)) (~.count (f 'b)))`
+
+A few functions related to the above are worth mentioning, although
+these have nothing to do with `for`:
+
+`(sum xs)` just adds up `xs`.
+
+`(tally xs)` sums `x.count` for each `x`.
+
+`(zip xs ys zs ...)` = a list of `(~ x y z ...)` for each `x` in `xs`
+and positionally-corresponding `y` in `ys`, etc. The inputs must all
+have the same length.
+
+TODO explain when to call `xs.values`
 
 
 ## More syntax: `given`
