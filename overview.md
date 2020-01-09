@@ -177,8 +177,7 @@ ok
 There are example programs in
 [eg/](https://github.com/darius/cant/tree/master/eg) and
 [library/](https://github.com/darius/cant/tree/master/library). To run an
-example (
-[FizzBuzz](https://github.com/darius/cant/blob/master/eg/fizzbuzz.cant)
+example ([FizzBuzz](https://github.com/darius/cant/blob/master/eg/fizzbuzz.cant)
 here):
 
 ```
