@@ -435,20 +435,19 @@ I should change the name or the behavior.)
 Lists are immutable, arrays are mutable. A flexarray can grow and
 shrink, a plain array has fixed length.
 
-The `for` form is syntactic sugar primarily for iterating over
-sequences, though it has other uses as well. For instance, `(for each
-((x xs)) (foo x))` is equivalent to `(each (on (x) (foo x)) xs)`
-which is mostly equivalent to `(each foo xs)`, which is Cant's name
-for Scheme's `(map foo xs)`.
+Iterating through collections will be explained below, under the `for`
+form.
 
-The `for` form, `(for fn ((x e) ...) body ...)`, just rearranges its
-parts in the same way that Scheme's `let` rearranges `(let ((x e) ...)
-body ...)`, but with `fn` stuck in front.
-
-Some functions useful with `for`:
-```
-each each! those gather yeahs every some zip foldr foldl where tally 
-```
+Cant doesn't intend to support improper lists -- that is, anything
+like classical Lisp's `(cons 'thing 'not-a-list)` producing `(thing
+. not-a-list)`. At the moment you can get away with `(link 'thing
+'not-a-list)` in Cant until you call a sequence method, such as
+`.count`, on it. I think I want to make it an error to construct the
+improper list in the first place; it's allowed for now because it can
+be useful when you replace this `not-a-list` with an object that acts
+like a list. That's how `link/lazy` above is implemented, in fact. For
+`link` to complain about non-lists at construction time, we'll need a
+way to certify new objects as legitimate lists.
 
 
 ## Terms, patterns, and objects
@@ -783,7 +782,26 @@ primitives:
 that example does, but that's how it worked out.)
 
 
-## More syntax
+## More syntax: `for`
+
+The `for` form is syntactic sugar primarily for iterating over
+sequences, though it has other uses as well. For instance, `(for each
+((x xs)) (foo x))` is equivalent to `(each (on (x) (foo x)) xs)`
+which is mostly equivalent to `(each foo xs)`, which is Cant's name
+for Scheme's `(map foo xs)`.
+
+The `for` form, `(for fn ((x e) ...) body ...)`, just rearranges its
+parts in the same way that Scheme's `let` rearranges `(let ((x e) ...)
+body ...)`, but with `fn` stuck in front.
+
+Some functions useful with `for`:
+```
+each each! those gather yeahs every some zip foldr foldl where tally 
+```
+TODO explain 'em
+
+
+## More syntax: `given`
 
 To create an anonymous function with multiple pattern-action clauses:
 ```
@@ -880,4 +898,3 @@ request for ideas:
 - collections read syntax
 - module refs without listing them all at import
 - better support for mutables?
-
