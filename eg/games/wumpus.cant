@@ -1,0 +1,155 @@
+;; A simplified version of Gregory Yob's "Hunt The Wumpus".
+;; TODO the full cave network; superbats?
+;; XXX there's something wrong that only comes up if you have some other load-time bug;
+;;    then you get evil-within-evil replacing the traceback
+
+(import (use 'random) random-rng<-)
+
+(let rng (random-rng<- system-randomness-source<-))
+
+
+;; Start and end the game
+
+(to (main _)
+  (play))
+
+(to (play)
+  (let (list<- A B C D) (each cave<- '("A" "B" "C" "D")))
+  (A .connect [B C D])
+  (B .connect [C D A])
+  (C .connect [D A B])
+  (D .connect [A B C])
+  (hunter .go A)
+  (wumpus .go C)
+  ((pit<-) .go D)
+  (with-ejector
+   (on (ejector)
+     (quitter .^= ejector)
+     (begin playing ()
+       (play-turn)
+       (playing)))))
+
+(let quitter (box<- #no))
+(to (quit) (quitter.^ .eject 'quit))
+
+(to (bye message)
+  (out .say "\n~d\n" message)
+  (quit))
+
+(to (die reason)
+  (out .displayln reason)
+  (bye "Ha ha ha - you lose!"))
+
+
+;; Play a turn
+
+(to (play-turn)
+  (describe)
+  (begin asking ()
+    (may (ask "Shoot, Move, or Quit (S-M-Q)?")
+      (be "S" (shoot))
+      (be "M" (move))
+      (be "Q" (quit))
+      (else   (asking)))))
+
+(to (describe)
+  (let here hunter.where)
+  (each! (-> (out .displayln it)) here.beware)
+  (out .say "You are in room ~d\n" here.name)
+  (out .say "Tunnels lead to ~d\n" (" " .join (each ~.name here.neighbors))))
+
+(to (move)
+  (hunter .go (ask-where "Where to?")))
+
+(to (shoot)
+  (arrow .go (ask-where "Shoot down which tunnel?"))
+  ;; If we reach here, the arrow missed. (We quit when it hits.)
+  (arrow .go limbo)
+  wumpus.wander)  ; An arrow that misses wakes up the wumpus.
+
+;; Return an adjacent cave named by the user.
+(to (ask-where prompt)
+  (let candidates (map<-values ~.name hunter.where.neighbors))
+  (or (candidates .get (ask prompt))
+      (do (out .say "Not possible - ")
+          (ask-where prompt))))
+
+(to (ask question)
+  (out .say "~d " question)
+  (may stdin.read-line
+    (be (? eof?) (quit))
+    (be answer   answer.uppercase)))
+
+
+;; Places
+
+(to (cave<- name)
+  (let neighbors (flexarray<-))
+  (let contents (set<-))
+  (make cave
+    (to ~.name             name)
+
+    (to ~.neighbors        neighbors.values)
+    (to (~ .connect caves) (neighbors .extend! caves))
+
+    (to ~.beware           (standardize (gather ~.warnings neighbors.values)))
+    (to ~.warnings         (each ~.describe contents.keys))
+
+    (to (~ .release thing)
+      (contents .delete! thing))
+    (to (~ .hold thing)
+      (let others contents.keys)
+      (contents .add! thing)
+      (each! (~ .welcome thing) others))))
+
+(to (standardize warnings)
+  (sort warnings.range.keys))
+
+(make limbo
+  (to (~ .release thing))
+  (to (~ .hold thing)))
+
+
+;; Things
+
+(to (thing-trait<-)
+  (let where (box<- limbo))
+  (make-trait thing-trait me
+    (to ~.where where.^)
+    (to (~ .go there)
+      (where.^ .release me)
+      (where .^= there)
+      (there .hold me))
+    (to (~ .welcome thing))  ; React to thing entering my cave.
+    (to message
+      (miranda-trait me message))))
+
+(make wumpus {extending (thing-trait<-)}
+  (to ~.describe "I smell a wumpus!")
+  (to (~ .welcome thing)
+    (may thing
+      (be (= arrow)
+        (out .say "AHA! You got the wumpus!\n") 
+        (bye "Hee hee hee - the wumpus'll get you next time!!"))
+      (be (= hunter)
+        (out .say "... Oops! Bumped a wumpus!\n")
+        wumpus.wander)
+      (else)))
+  (to ~.wander
+    ;; Move to a random neighbor, or stay put.
+    (let here wumpus.where)
+    (wumpus .go (rng .pick (link here here.neighbors)))))
+
+(to (pit<-)
+  (make pit {extending (thing-trait<-)}
+    (to ~.describe "I feel a draft")
+    (to (~ .welcome thing)
+      (when (= thing hunter)
+        (die "YYYYIIIIEEEE . . . Fell in pit")))))
+
+(make hunter {extending (thing-trait<-)}
+  (to (~ .welcome thing)
+    (when (= thing wumpus)
+      (die "Tsk tsk tsk - wumpus got you!"))))
+
+(make arrow {extending (thing-trait<-)})
