@@ -765,7 +765,7 @@ There's some moderately helpful syntax we could've used to define
   (to ~.thump "Ka-THUMP"))
 ```
 
-This seems the most simpleminded way to provide open recursion where
+This seems the most simpleminded way to provide open recursion, where
 wanted, without making it ubiquitous where not. The syntactic sugar
 for it has not been considered much so far, either. We might change
 all this to a 'real' trait system in the future, perhaps like the
