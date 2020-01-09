@@ -7,12 +7,13 @@ EcmaScript](https://github.com/Agoric/SES) and
 [Monte](https://monte.readthedocs.io/en/latest/). Those are
 incomparably more useful.
 
-Why make this, then? I've long wanted a computing system that's
-completely explained, simple enough to grasp in full detail without
-getting bored or overwhelmed, and powerful enough that I'd actually
-use it. Wirth's Oberon is one inspiring example of such a system. I'm
-aiming at another according to my own taste and idiosyncrasies. Call
-it a learning project, or outsider art.
+Why make this, then? I've long wanted a [computing
+system](https://github.com/darius/cant/blob/master/system-goals.md)
+that's completely explained, simple enough to grasp in full detail
+without getting bored or overwhelmed, and powerful enough that I'd
+actually use it. Wirth's Oberon is one inspiring example of such a
+system. I'm aiming at another according to my own taste and
+idiosyncrasies. Call it a learning project, or outsider art.
 
 ### So the message is "buzz off"?
 
