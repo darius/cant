@@ -783,6 +783,29 @@ primitives:
 that example does, but that's how it worked out.)
 
 
+## More syntax
+
+To create an anonymous function with multiple pattern-action clauses:
+```
+(given
+  (be pattern1 action1)
+  (be pattern2 action2)
+  (else action3))
+```
+
+The use for it doesn't seem to come up often. Here's one good example:
+the [counting function in
+eg/lambda/prelude.cant](https://github.com/darius/cant/blob/master/eg/lambda/prelude.cant#L15-L18). Without
+`given` the most obvious way to write it would be the stuttery:
+```
+{primitive (on (n)
+             (begin counting ((n n))
+               (may n
+                 (be 0          lc-zero)
+                 (be (? count?) (apply lc-succ (counting n.-))))))}
+```
+
+
 ## More idioms
 
 The
