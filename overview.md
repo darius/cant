@@ -828,7 +828,7 @@ eg/lambda/prelude.cant](https://github.com/darius/cant/blob/master/eg/lambda/pre
 ## More idioms
 
 The
-[function](https://github.com/darius/cant/blob/master/abcs/30-functions.cant#L205)
+[function](https://github.com/darius/cant/blob/master/abcs/30-functions.cant#L226)
 `(hey focus action1 action2 ...)` returns its first argument, `focus`,
 after sending it to each of the actions. [For
 example](https://github.com/darius/cant/blob/master/library/sturm.cant#L192-L193),
@@ -842,7 +842,7 @@ here was lazy and sinful.) Perhaps more commonly you'd use `hey` to
 create a new object (the focus) and initialize it (the actions).
 
 The
-[function](https://github.com/darius/cant/blob/master/abcs/30-functions.cant#L201)
+[function](https://github.com/darius/cant/blob/master/abcs/30-functions.cant#L220)
 `(take input f g h)` is like `(h (g (f input)))`. It's [occasionally
 handy](https://github.com/darius/cant/blob/master/library/bag.cant#L25-L27)
 in place of things like Clojure's threading macros.
