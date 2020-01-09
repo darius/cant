@@ -601,7 +601,7 @@ So, [for example](https://github.com/darius/cant/blob/master/library/regex-gen.c
 ```
 could have been written
 ```
-(let r-lengths (((each ~.count r-matches) .keys) .range))
+(let r-lengths (((each ~.count r-matches) .range) .keys))
 ```
 but I'd find that center-embedding harder to follow, and rather un-Lispy.
 (So why wasn't Cant syntax designed with the selector in 'car'
