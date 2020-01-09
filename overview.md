@@ -788,10 +788,58 @@ original receiving object along with the message. You could make this
 happen by hand like
 
 ```
-TODO
+(to (delegatee receiver message)
+  (may message
+    (be ~.bump receiver.thump)
+    (else (miranda-trait receiver message))))   ; Explained below.
 
+(make delegator
+  (to ~.thump "Ka-THUMP")
+  (to message (delegatee delegator message)))
+
+delegator.bump  ;; => "Ka-THUMP"
 ```
 
+The `miranda-trait` is a presupplied delegatee-of-last-resort which
+implements default responses to standard messages -- it's how, for
+instance, you get a default visible representation for an object like
+this:
+```
+-> (make example)
+#<example>
+```
+Here `example` implicitly ends with a `to` clause like `(to message
+(miranda-trait example message))`. When the listener tries to print
+this example object, it sends the message `(example .selfie out)`
+which ends up handled by a primitive method in `miranda-trait`.
+
+There's some moderately helpful syntax we could've used to define
+`delegatee` and `delegator` above:
+```
+(make-trait delegatee receiver
+  (to ~.bump receiver.thump)
+  (to message (miranda-trait receiver message)))
+
+(make delegator {extending delegatee}
+  (to ~.thump "Ka-THUMP"))
+```
+
+This seems the most simpleminded way to provide open recursion where
+wanted, without making it ubiquitous where not. The syntactic sugar
+for it has not been considered much so far, either. We might change
+all this to a 'real' trait system in the future, perhaps like the
+traits of newer Smalltalks.
+
+Traits are used in the codebase primarily for the collections
+hierarchy, in
+[abcs/00-primordia/](https://github.com/darius/cant/blob/master/abcs/00-primordia/).
+They come up too in factoring common behavior out of variable-arity
+primitives:
+[runtime.cant](https://github.com/darius/cant/blob/master/abcs/00-primordia/runtime.cant#L269-L302)
+(and elsewhere). There's also a small example of a game in OO style,
+[eg/games/wumpus.cant](https://github.com/darius/cant/blob/master/eg/games/wumpus.cant).
+(I wouldn't recommend making a habit of creating stateful traits as
+that example does, but that's how it worked out.)
 
 
 ## More idioms
@@ -827,9 +875,6 @@ more std types
 ```
 
 =, not=, compare
-
-traits
-miranda methods
 
 more naming conventions:
 foo<-
