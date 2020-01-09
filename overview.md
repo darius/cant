@@ -814,7 +814,7 @@ More precisely, if `xs` empty then `#yes`, else `#no` if for some `x` in `xs`
 
 `(those ~.even? '(3 1 4 1 5 9 2 6))` = `'(4 2 6)`
 
-`(yeahs maybe xs)` = a list of the non-`#no` results of `(maybe x) for `x` in `xs`,
+`(yeahs maybe xs)` = a list of the non-`#no` results of `(maybe x)` for `x` in `xs`,
 in order.
 
 `(foldl f z '(a b c))` = `(f (f (f z 'a) 'b) 'c)`
