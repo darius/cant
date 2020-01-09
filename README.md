@@ -2,10 +2,9 @@
 
 This is a hobby project: a programming language descended mainly from
 [E](http://erights.org/) and Scheme. Nowadays there are at least two
-more direct and more interesting and useful E descendants: [Secure
+more-direct E descendants, in a much more useful state: [Secure
 EcmaScript](https://github.com/Agoric/SES) and
-[Monte](https://monte.readthedocs.io/en/latest/). Those are
-incomparably more useful.
+[Monte](https://monte.readthedocs.io/en/latest/).
 
 Why make this, then? I've long wanted a [computing
 system](https://github.com/darius/cant/blob/master/system-goals.md)
