@@ -356,6 +356,7 @@ Collections fit in this hierarchy:
       list    -- special in being a 'value' type already. N.B. immutable.
       string  -- ditto
       array, flexarray
+      interval, lazy list, enumeration
     grid-2d   -- Just because this came up a lot in Advent of Code;
               -- we don't have general multidimensional arrays as yet.
 ```

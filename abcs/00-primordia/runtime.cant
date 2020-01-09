@@ -323,22 +323,28 @@
               (x xs))
     (link x result)))
 
+;; (foldl f z '(a b c)) = (f (f (f z 'a) 'b) 'c)
 (to (foldl f z xs)           ; 'z' connoting zero from f's perspective
   (if xs.none?
       z
       (foldl f (f z xs.first) xs.rest)))
 
+;; (foldr f '(a b c) z) = (f 'a (f 'b (f 'c z)))
 (to (foldr f xs z) ;N.B. some other languages have a different argument order
   (if xs.none?
       z
       (f xs.first (foldr f xs.rest z))))
 
+;; Like foldr but requiring xs to be nonempty.
+;; (foldr1 f '(a b c)) = (f 'a (f 'b 'c))
 (to (foldr1 f xs)
   (let tail xs.rest)
   (if tail.none?
       xs.first
       (f xs.first (foldr1 f tail))))
 
+;; (transpose '((a c e) (b d f)))   = '((a b) (c d) (e f)))
+;; (transpose '((a b) (c d) (e f))) = '((a c e) (b d f))
 ;; TODO: name it (zip @rows) instead, like Python?
 (to (transpose rows)
   (if (every ~.none? rows)   ; and make it (some _.none? rows)?
@@ -353,29 +359,40 @@
   (to message
     (miranda-trait transducer message)))
 
+;; (each f '(a b c)) = (list<- (f 'a) (f 'b) (f 'c))
+;; and similar for (each f xs ys zs) and so on
 (make each {extending zipped-list-transducer}
   (to (~ f xs)
     (for foldr ((x xs) (results '()))
       (link (f x) results))))
 
+;; Call (f x) for each x in xs, in order, for the sake of any side effects.
 (make each! {extending zipped-list-transducer}
   (to (~ f xs)
     (unless xs.none?
       (f xs.first)
       (each! f xs.rest))))
 
+;; (some pass? xs) = does pass? approve any x in xs?
+;; More precisely, the first non-#no result of (pass? x) for x in xs,
+;; or else #no. Check the xs in order, short-circuited.
 (make some {extending zipped-list-transducer}
   (to (~ pass? xs)
     (and xs.some?
          (or (pass? xs.first)
              (some pass? xs.rest)))))
 
+;; (every pass? xs) = does pass? approve each x in xs?
+;; More precisely, if no xs then #yes, else #no if for some x in xs
+;; (pass? x) is #no, else (pass? xs.last). In order, short-circuited.
 (make every {extending zipped-list-transducer}
   (to (~ pass? xs)
     (or xs.none?
         (and (pass? xs.first)
              (every pass? xs.rest)))))
 
+;; An interval represents a progression from a `first`, short of a
+;; `limit`, successively by a `stride`.
 (make interval<-
   (to (~ first limit)
     (if (<= limit first)
@@ -429,6 +446,7 @@
         (else
           (error "Zero stride" first limit stride)))))
 
+;; A lazy sequence of key-value pairs.
 (make enumerate
   (to (~ xs)
     (enumerate xs 0))

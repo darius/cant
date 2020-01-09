@@ -2,11 +2,13 @@
 ;; Some such functions are defined at an earlier stage in abcs/ because they're
 ;; used by other earlier-stage code.
 
+;; (gather f '(a b c)) = (chain (f 'a) (f 'b) (f 'c))
 (make gather {extending zipped-list-transducer}
   (to (~ f xs)
     (for foldr ((x xs) (gathered '()))
       (chain (f x) gathered))))
 
+;; (those ~.even? '(3 1 4 1 5 9 2 6)) = '(4 2 6)
 ;; No {extending zipped-list-transducer} for this one, because the
 ;; one-arg case is not substitutable for the n-arg: the n-arg version
 ;; would return a list of n-tuples, but a 1-tuple of x is not equal to
@@ -16,6 +18,8 @@
   (for foldr ((x xs) (kept '()))
     (if (keep? x) (link x kept) kept)))
 
+;; (yeahs maybe xs) = a list of the non-#no results of (maybe x) for x in xs,
+;; in order.
 ;;TODO is this worth defining? good name?
 (make yeahs {extending zipped-list-transducer}
   (to (~ maybe xs)
@@ -25,9 +29,13 @@
         (be #no  kept)
         (be yeah (link yeah kept))))))
 
+;; The identity function.
 (to (itself x)
   x)
 
+;; (zip xs ys zs ...) = a list of (~ x y z ...) for x in xs and
+;; corresponding y in ys, etc. The inputs must all have the same
+;; length.
 (make zip
   (to (~ xs ys)                           ;specialized for speed
     (to (mismatch)
@@ -51,18 +59,21 @@
 (to (max-by key<- xs) (foldr1 (on (x y) (if (> (key<- x) (key<- y)) x y))
                               xs))
 
+;; ((compound-key<- f g h) x) = (list<- (f x) (g x) (h x))
 (to ((compound-key<- @key-fns) x)   ;; TODO shorter name? combo-key? call-each?
   (for each ((f key-fns))
     (f x)))
 
+;; (where ok? xs) = a list of those keys k of map for which (ok? k).
 ;; Not sure this is the most useful design:
-;;  - Most often we want result.range
+;;  - Most often we want a set, not a list (i.e. we want result.range)
 ;;  - Sometimes it's *almost* applicable, but ok? needs to take `(,i ,x) as the argument.
-;;    But if we made it like that, then it's barely different from yeahs.
+;;    But if we make that change, then it's barely different from yeahs.
 (to (where ok? map)
   (for yeahs (((~ i x) map.items))
     (and (ok? x) i)))
 
+;; Make a map from k to (f k) for k in keys.
 (to (map-by f keys) ;TODO maybe name it map<-keys ? along with a map<-values ?
   (map<-items (for each ((key keys))
                 (~ key (f key)))))
@@ -71,16 +82,20 @@
   (!map<-items (for each ((key keys))
                  (~ key (f key)))))
 
+;; Make a map from (f v) to v for v in values.
 (to (map<-values f values)
   (map<-items (for each ((value values))
                 (~ (f value) value))))
 
+;; Pair every x in xs with every y in ys.
 ;; What's a good name for this? I like 'cartesian*' even less.
 (to (grid* xs ys)                     ;TODO generalize
   (for gather ((x xs))
     (for each ((y ys))
       `(,x ,y))))
 
+;; (intercalate T '(as bs cs)) = `(,@as ,T ,@bs ,T ,@cs)
+;; TODO almost never used
 (to (intercalate between elements)      ;TODO unify with .join
   (if elements.none?
       elements
@@ -122,6 +137,7 @@
       (f xs.first
          (: (foldr/lazy f xs.rest z-thunk)))))
 
+;; ((compose f g) x) = (f (g x)), etc.
 (make compose {extending right-folding-operation}
   (to (~ f g)                   ;TODO support (to ((~ f g) @arguments)
     (on (@arguments)
@@ -132,6 +148,7 @@
 (to (sum ns)
   (foldl + 0 ns))
 
+;; (sum-by f '(a b)) = (+ (f 'a) (f 'b))
 ;; TODO zipped-list-transducer?
 (to (sum-by f xs) ;TODO overload 'sum' instead? (viz. other use of name below)
   (for foldl ((total 0) (x xs))
@@ -140,6 +157,7 @@
 (to (tally xs)
   (sum-by ~.count xs))
 
+;; (tally-by f '(a b)) = (+ (~.count (f 'a)) (~.count (f 'b)))
 ;; TODO zipped-list-transducer?
 (to (tally-by f xs)
   (sum-by (compose ~.count f) xs))
@@ -196,12 +214,15 @@
 
 ;; Experiments
 
+;; (take input f g h) = (h (g (f input)))
 ;: TODO better name 'with'?
 ;; Hm, (take x) is just x, so this could also replace 'itself'...
 (make take {extending left-folding-operation}
   (to (~ input f)
     (f input)))
 
+;; Return focus after sending it to each of the actions.
+;; Helpful for concisely creating-and-initializing an object, and such.
 (to (hey focus @actions)                ;TODO better name 'also'?
   (each! (-> (it focus)) actions)
   focus)
