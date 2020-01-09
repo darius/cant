@@ -653,8 +653,8 @@ default.
 (It's planned that modules will be provided something like
 Javascript's 'console.log', which in strict terms is a power, but
 should 'not matter' insofar as you don't delegate these debug
-capabilities, because no ordinary code will have read access to the
-logs.)
+capabilities, because no ordinary code, including the modules
+themselves, will have read access to the logs.)
 
 'String sinks' implement the sink protocol but just produce a string
 out of the characters they are given. The constructor `string-sink<-`
