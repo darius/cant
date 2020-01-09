@@ -582,6 +582,8 @@ sequence of clauses and then evaluates the body of that clause:
 The difference is that the subject being matched against is the value
 of the first subexpression, `(m .get key)` here.
 
+If in the `may` every match fails, a match error is raised.
+
 
 ## Kinds of patterns
 
@@ -759,6 +761,39 @@ relative `use`
 import, export
 
 
+## Boxes and assignment
+
+There's a fairly awkward substitute for mutable variables, the box type:
+
+```
+-> (let c (box<- 0))
+<box 0>
+-> c.^
+0
+-> (c .^= (+ c.^ 1))
+-> c.^
+1
+-> (c .update ~.+)    ;; ~.+ is an increment method on numbers
+2
+-> c.^
+2
+```
+
+## Traits
+
+We've seen how to define objects, but nothing like inheritance. In
+place of inheritance, Cant objects can delegate messages to other
+objects. If you want open recursion, the delegatee must receive the
+original receiving object along with the message. You could make this
+happen by hand like
+
+```
+TODO
+
+```
+
+
+
 ## More idioms
 
 The
@@ -786,7 +821,6 @@ in place of things like Clojure's threading macros.
 
 ```
 more std types
-  box
   term
   void
   meta-stuff
