@@ -810,7 +810,7 @@ this:
 ```
 Here `example` implicitly ends with a `to` clause like `(to message
 (miranda-trait example message))`. When the listener tries to print
-this example object, it sends the message `(example .selfie out)`
+this example object, it does a call like `(example .selfie out)`
 which ends up handled by a primitive method in `miranda-trait`.
 
 There's some moderately helpful syntax we could've used to define
