@@ -806,9 +806,11 @@ sake of any side effects.
 More precisely, the first non-`#no` result of `(pass? x)` for `x` in `xs`,
 or else `#no`. Check the xs in order, short-circuited.
 
-`(every pass? xs)` = does `pass?` approve each `x` in `xs`?
-More precisely, if `xs` empty then `#yes`, else `#no` if for some `x` in `xs`
-`(pass? x) is `#no`, else `(pass? xs.last)`. In order, short-circuited.
+`(every pass? xs)` = does `pass?` approve every `x` in `xs`?
+More precisely, if `xs` is empty then `#yes`, else `#no` if for some
+`x` in `xs` `(pass? x) is `#no`, else `#yes`. (Perhaps we should
+define that last case as `(pass? xs.last)` instead.) In order,
+short-circuited.
 
 `(gather f '(a b c))` = `(chain (f 'a) (f 'b) (f 'c))`
 
@@ -817,22 +819,30 @@ More precisely, if `xs` empty then `#yes`, else `#no` if for some `x` in `xs`
 `(yeahs maybe xs)` = a list of the non-`#no` results of `(maybe x)` for `x` in `xs`,
 in order.
 
+`(where pass? map)` = a list of the keys of `map` whose corresponding
+values are approved by `pass?`.
+
 `(foldl f z '(a b c))` = `(f (f (f z 'a) 'b) 'c)`
 
 `(foldr f '(a b c) z)` = `(f 'a (f 'b (f 'c z)))`
 
-Like `foldr` but requiring `xs` to be nonempty.
+Like `foldr` but requiring `xs` to be nonempty:
 `(foldr1 f '(a b c))` = `(f 'a (f 'b 'c))`
-
-`(where pass? map)` = a list of the keys of `map` whose corresponding
-values are approved by `pass?`.
 
 `(sum-by f '(a b))` = `(+ (f 'a) (f 'b))`
 
 `(tally-by f '(a b))` = `(+ (~.count (f 'a)) (~.count (f 'b)))`
 
-A few functions related to the above are worth mentioning, although
-these have nothing to do with `for`:
+`(mayhap f ?thing)` is the 'bind' operation on the maybe monad. That
+is, it's `(f ?thing)` unless `?thing` is `#no`, preserving no-ness.
+
+There are lazy-list versions of many of these, with names like
+`each/lazy`.
+
+TODO explain when to call `xs.values`
+
+
+## More list functions
 
 `(sum xs)` just adds up `xs`.
 
@@ -842,7 +852,9 @@ these have nothing to do with `for`:
 and positionally-corresponding `y` in `ys`, etc. The inputs must all
 have the same length.
 
-TODO explain when to call `xs.values`
+`(grid* xs ys)` = a list of lists, pairing each x in xs with every y
+in ys. (It's concerning that Cant has multiple reasonable ways to
+represent a pair: tuples, lists, arrays...)
 
 
 ## More syntax: `given`
