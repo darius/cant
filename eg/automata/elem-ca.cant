@@ -1,4 +1,6 @@
-;; Elementary cellular automata
+;; 1-d cellular automata, 'elementary' in Wolfram's sense.
+;; (That is, with 1-bit states and a neighborhood of three cells
+;; including the middle one.)
 
 (to (run rule start-bits n-steps)
   (to (step bits)
@@ -17,6 +19,8 @@
   (let line (string<-list (each "-*" bits)))
   (out .displayln (line .center 80)))
 
+;; There are 2**8 possible elementary CA's. Return the update rule
+;; for the given-numbered one.
 (to (rule<-index n)
   (on ((~ left center right))
     (let i (+ (* left 4) (* center 2) right))
