@@ -61,8 +61,8 @@
                   (~ `(,col ,(- row)) ; minus so y-coordinates increase upwards
                      ch)))))
 
-(let r-pentomino (paint '(" **"
-                          "** "
-                          " * ")))
+(let r-pentomino (paint [" **"
+                         "** "
+                         " * "]))
 
 (export update show paint r-pentomino)
