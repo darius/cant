@@ -876,7 +876,7 @@ To create an anonymous function with multiple pattern-action clauses:
 
 The use for it doesn't seem to come up often. Here's one good example:
 the [counting function in
-eg/lambda/prelude.cant](https://github.com/darius/cant/blob/master/eg/lambda/prelude.cant#L15-L18). Without
+eg/lambda-calculus/prelude.cant](https://github.com/darius/cant/blob/master/eg/lambda-calculus/prelude.cant#L15-L18). Without
 `given` the most obvious way to write it would be the stuttery:
 ```
 {primitive (on (n)
