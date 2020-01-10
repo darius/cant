@@ -849,13 +849,61 @@ Like `foldr` but requiring `xs` to be nonempty:
 
 `(min-by f xs)` = similar
 
-`(mayhap f ?thing)` is the 'bind' operation on the maybe monad. That
-is, it's `(f ?thing)` unless `?thing` is `#no`, preserving no-ness.
+`(mayhap f ?thing)` is `(f ?thing)` unless `?thing` is `#no`,
+preserving no-ness.
 
 There are lazy-list versions of many of these, with names like
 `each/lazy`.
 
-TODO explain when to call `xs.values`
+
+## Efficiency of sequences
+
+The previous section described many functions on lists. Those actually
+all work on generic sequences: most or all of them (TODO any
+exceptions?) traverse their sequence arguments using the
+`.first`/`.rest`/`.none?`/`.some?` methods. These methods are presumed
+to be an efficient-enough way to walk the sequence, which assumption
+can be wrong: for instance, for an array or a string, `.rest` returns
+another array or string, implying a quadratic cost of traversal.
+
+Wouldn't it be better to just change the performance profile of these
+`.rest` methods? There are a couple ways that could go: a rope-style
+representation (at least for the *immutable* sequences), or a
+reference-into-a-shared-array one. The former is clean and
+robustly-performing but with greater complexity and overhead; the
+latter has a harder-to-think-about performance profile (a small peek
+into a big array shielding it from GC, with this phenomenon then
+tempting us towards fancier tricks in the core implementation to make
+the problem come up less). I think in Cant we want the core to be able
+to be implemented in a simple pretty-efficient way, letting you get
+fancier in your own code where you need it -- granted that the current
+implementation is not at all efficient.
+
+Instead, we follow a convention: a collection's `.values` should be
+*efficient to walk through* using `.first`/`.rest`. So when you're
+invoking the above traversals, it's sensible to either yourself call
+`.values` on the sequence argument, or know that it's short enough
+that you don't care. (For collections in general, the `.values` method
+returns a sequence of the values from its key/value pairs. When the
+collection is a sequence, `.values` should represent the same
+sequence.)
+
+This business of calling `.values` yourself is definitely a wart. I
+can see two ways to improve on it: make the language or the library
+call `.values` for you implicitly, or change the common traversals
+from being defined as functions on sequences to being methods on
+collections, defined in the collections traits, with potentially
+specialized implementations.
+
+I suppose we'll end up doing something like one of those, but the
+current simpleminded design has been holding up well up to go on
+with. I'm unhappy with the idea of making `.values` implicit because I
+don't like too much going on under the hood for very-common
+operations. The functions-to-methods change would need some kind of
+syntax change to take the place of the current trivially-simple `for`
+macro, and would mean relying even more on traits, which are OO in
+principle but stand in some tension with the principle of least
+authority.
 
 
 ## More list functions
