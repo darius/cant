@@ -822,10 +822,17 @@ in order.
 `(where pass? map)` = a list of the keys of `map` whose corresponding
 values are approved by `pass?`.
 
-`(foldl f z '(a b c))` = `(f (f (f z 'a) 'b) 'c)`
-
 `(foldr f '(a b c) z)` = `(f 'a (f 'b (f 'c z)))`
 
+`(foldl f z '(a b c))` = `(f (f (f z 'a) 'b) 'c)`
+
+The meaning of `for` with the fold functions is initially less
+obvious, but soon becomes familiar, e.g.
+```
+(for foldl ((state initial-state) (input inputs))
+  <compute the next state from the current state and input>)
+;; => final state
+```
 Like `foldr` but requiring `xs` to be nonempty:
 `(foldr1 f '(a b c))` = `(f 'a (f 'b 'c))`
 
