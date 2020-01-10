@@ -806,6 +806,10 @@ below also work in this variable-arity way.
 `(each! f xs)` calls `(f x)` for each `x` in `xs`, in order, for the
 sake of any side effects.
 
+`(gather f '(a b c))` = `(chain (f 'a) (f 'b) (f 'c))`
+
+`(those ~.even? '(3 1 4 1 5 9 2 6))` = `'(4 2 6)`
+
 `(some pass? xs)` = does `pass?` approve any `x` in `xs`?
 More precisely, the first non-`#no` result of `(pass? x)` for `x` in `xs`,
 or else `#no`. Check the xs in order, short-circuited.
@@ -815,10 +819,6 @@ More precisely, if `xs` is empty then `#yes`, else `#no` if for some
 `x` in `xs` `(pass? x) is `#no`, else `#yes`. (Perhaps we should
 define that last case as `(pass? xs.last)` instead.) In order,
 short-circuited.
-
-`(gather f '(a b c))` = `(chain (f 'a) (f 'b) (f 'c))`
-
-`(those ~.even? '(3 1 4 1 5 9 2 6))` = `'(4 2 6)`
 
 `(yeahs maybe xs)` = a list of the non-`#no` results of `(maybe x)` for `x` in `xs`,
 in order.
@@ -837,6 +837,7 @@ obvious, but soon becomes familiar, e.g.
   <compute the next state from the current state and input>)
 ;; => final state
 ```
+
 Like `foldr` but requiring `xs` to be nonempty:
 `(foldr1 f '(a b c))` = `(f 'a (f 'b 'c))`
 
