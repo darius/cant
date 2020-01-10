@@ -905,6 +905,23 @@ macro, and would mean relying even more on traits, which are OO in
 principle but stand in some tension with the principle of least
 authority.
 
+Another weakness of the design of traversals is the tendency to
+eagerness. The sequence you pass in needn't be materialized: it can be
+a lazy list, or another incrementally-produced representation such as
+an interval. So in principle there may be no need for iterators, a
+whole separate kind of thing in the ontology of many other
+languages. However, Cant doesn't make it as convenient to create a
+lazy sequence as an eager one, or as natural to remember that you may
+be consuming a lazy sequence which may have side effects. With
+iterators, these issues would be abated. (I was aware of this design
+problem when I chose to make sequence traversals just work directly on
+sequences. This sort of pattern has been common in this project: "Ugh,
+I know this has problems, but so far as it goes it seems simpler than
+the alternatives; maybe living with it for a while will make it clear
+what to do" -- trying to learn from the simplest thing that could
+possibly work, acknowledging that often it won't. A better designer
+could work out a lot more issues more in advance.)
+
 
 ## More list functions
 
