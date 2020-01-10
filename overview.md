@@ -896,7 +896,7 @@ collections, defined in the collections traits, with potentially
 specialized implementations.
 
 I suppose we'll end up doing something like one of those, but the
-current simpleminded design has been holding up well up to go on
+current simpleminded design has been holding up well enough to go on
 with. I'm unhappy with the idea of making `.values` implicit because I
 don't like too much going on under the hood for very-common
 operations. The functions-to-methods change would need some kind of
