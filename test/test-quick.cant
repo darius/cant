@@ -45,7 +45,7 @@
 (loud-use "test-text-wrap")
 (loud-use "test-unify")
 
-(loud-use "../eg/automata/elem-ca")
+(loud-use "../eg/automata/elementary-ca")
 (((loud-use "../eg/automata/slow-life") 'smoke-test))
 (((loud-use "../eg/automata/trm") 'main) '(ignore))
 (((loud-use "../eg/automata/turing") 'smoke-test))
