@@ -824,7 +824,8 @@ in order.
 Like `foldr` but requiring `xs` to be nonempty.
 `(foldr1 f '(a b c))` = `(f 'a (f 'b 'c))`
 
-`(where ok? map)` = a list of those keys `k` of `map` for which `(ok? k)`.
+`(where pass? map)` = a list of those keys `k` of `map` for which
+`(pass? (map k))`, i.e. the keys corresponding to the accepted values.
 
 `(sum-by f '(a b))` = `(+ (f 'a) (f 'b))`
 
