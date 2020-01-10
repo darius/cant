@@ -1,4 +1,4 @@
-(import ((use "../eg/squirm/squirm-interpreter")
+(import ((use "../examples/squirm/squirm-interpreter")
          (export nano-now
                  nanosleep
                  out
@@ -8,8 +8,8 @@
 
 (let test-names '("test/smoke-test.squirm"
 
-                  "eg/hello.squirm"
-                  "eg/universal_server.squirm"
+                  "examples/hello.squirm"
+                  "examples/universal_server.squirm"
 
                   "test/error-test.squirm"
                   "test/mod-test.squirm"
@@ -23,4 +23,4 @@
 
 (for each! ((test test-names))
   (out .say "\nTesting ~d\n" test)
-  (run-file (chain "eg/squirm/" test)))
+  (run-file (chain "examples/squirm/" test)))

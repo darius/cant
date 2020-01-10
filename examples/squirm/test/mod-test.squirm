@@ -1,0 +1,5 @@
+;; -*- cant -*-
+
+(to (main)
+  (module-load 'silly "examples/squirm/test/silly.squirm")
+  (silly:billy 137))

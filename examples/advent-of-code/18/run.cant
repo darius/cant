@@ -1,10 +1,10 @@
 ;; TODO load into a module instead of main-interactive-setting
 
-(load "eg/advent-of-code/utils.cant")
+(load "examples/advent-of-code/utils.cant")
 
 (to (main args)
 
-  (let stem "eg/advent-of-code/18")
+  (let stem "examples/advent-of-code/18")
   (to (run code-name data-name)
     (cant .play `(do (let data-name ',data-name)
                      (let data-file ',("~d/data/~d" .format stem data-name)))

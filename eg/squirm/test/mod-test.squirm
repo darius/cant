@@ -1,5 +1,0 @@
-;; -*- cant -*-
-
-(to (main)
-  (module-load 'silly "eg/squirm/test/silly.squirm")
-  (silly:billy 137))

@@ -1,4 +1,4 @@
-(import (use "../eg/lambda-calculus/interpreter")
+(import (use "../examples/lambda-calculus/interpreter")
   run)
 
 (let test-names '("trivial1.lambda"
@@ -11,4 +11,4 @@
 
 (for each! ((test test-names))
   (out .say "\nTesting ~d\n" test)
-  (out .print (run (chain "eg/lambda-calculus/eg/" test))))
+  (out .print (run (chain "examples/lambda-calculus/examples/" test))))

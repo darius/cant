@@ -45,7 +45,7 @@
 ;; Load the specs from the i386 instruction table.
 (to (setup-spec-table)
   the-specs.clear!
-  (load-table (with-input-file read-all "eg/miasma/tables/i386.scm")))
+  (load-table (with-input-file read-all "examples/miasma/tables/i386.scm")))
 
 (to (load-table sexprs)
   (for each! ((sexpr sexprs))

@@ -44,10 +44,10 @@ Hey, world.
 ### Any *interesting* example code?
 
 Dunno, but you can browse
-[eg/](https://github.com/darius/cant/tree/master/eg) and
+[examples/](https://github.com/darius/cant/tree/master/eg) and
 [library/](https://github.com/darius/cant/tree/master/library). See
-[eg/games](https://github.com/darius/cant/tree/master/eg/games) and
-[eg/automata](https://github.com/darius/cant/tree/master/eg/automata)
+[examples/games](https://github.com/darius/cant/tree/master/examples/games) and
+[examples/automata](https://github.com/darius/cant/tree/master/examples/automata)
 for maybe-fun starting points. (To read with syntax-coloring in Emacs,
 first load
 [plug-ins/cant-mode.el](https://github.com/darius/cant/blob/master/plug-ins/cant-mode.el).)
@@ -55,14 +55,14 @@ first load
 To run a source file from the shell:
 
 ```
-$ ./incant eg/fizzbuzz.cant
+$ ./incant examples/fizzbuzz.cant
 ```
 
 Or from the listener:
 
 ```
 $ ./incant
--> (load "eg/fizzbuzz.cant")
+-> (load "examples/fizzbuzz.cant")
 1
 2
 Fizz
@@ -76,7 +76,7 @@ There's a start at
 [overview.md](https://github.com/darius/cant/blob/master/overview.md).
 
 The self-interpreter
-[eg/kernel.cant](https://github.com/darius/cant/blob/master/eg/kernel.cant)
+[examples/kernel.cant](https://github.com/darius/cant/blob/master/examples/kernel.cant)
 could also help explain the core language. The primitive data types
 and core library are defined in
 [abcs/](https://github.com/darius/cant/tree/master/abcs). The base

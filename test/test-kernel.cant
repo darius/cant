@@ -1,4 +1,4 @@
-(import (use "../eg/kernel") play)  ; global-setting)
+(import (use "../examples/kernel") play)  ; global-setting)
 
 
 (to (run e)

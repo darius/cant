@@ -86,7 +86,7 @@ are distinct from lists.
 
 Other terms are distinguished from tuples by a tag different from `~`.
 For example,
-[eg/intset2.cant](https://github.com/darius/cant/blob/master/eg/intset2.cant)
+[examples/intset2.cant](https://github.com/darius/cant/blob/master/examples/intset2.cant)
 has terms like `{empty}` and `{extension n s}`. This example shows
 pattern-matching on terms, in a style like ML or Haskell code.
 
@@ -94,7 +94,7 @@ The variation `(foo .bar baz)`, with a `.` starting the first
 argument, means `(call foo {.bar baz})`: that is, with `.bar` as the
 *term tag* instead of as an argument to a tuple. Think of `{.bar baz}`
 as a message to an object, in OO style. Compare
-[eg/intset1.cant](https://github.com/darius/cant/blob/master/eg/intset1.cant),
+[examples/intset1.cant](https://github.com/darius/cant/blob/master/examples/intset1.cant),
 an OO verson of `intset2`.
 
 One more bit of sugar for calls: `foo.bar` is shorthand for `(foo
@@ -175,20 +175,20 @@ ok
 ## What to read once you get bored with the following wall of text
 
 There are example programs in
-[eg/](https://github.com/darius/cant/tree/master/eg) and
+[examples/](https://github.com/darius/cant/tree/master/eg) and
 [library/](https://github.com/darius/cant/tree/master/library). To run an
-example ([FizzBuzz](https://github.com/darius/cant/blob/master/eg/fizzbuzz.cant)
+example ([FizzBuzz](https://github.com/darius/cant/blob/master/examples/fizzbuzz.cant)
 here):
 
 ```
-$ ./incant eg/fizzbuzz.cant
+$ ./incant examples/fizzbuzz.cant
 ```
 
 Or load it in the listener:
 
 ```
 $ ./incant
--> (load "eg/fizzbuzz.cant")
+-> (load "examples/fizzbuzz.cant")
 1
 2
 Fizz
@@ -233,7 +233,7 @@ Let's start with the equivalents of familiar Scheme syntax:
 
 The `hm` form, like Scheme's `cond`, is complex enough to need
 explanation. It typically goes like (from
-[eg/games/2048.cant](https://github.com/darius/cant/blob/master/eg/games/2048.cant))
+[examples/games/2048.cant](https://github.com/darius/cant/blob/master/examples/games/2048.cant))
 ```
 (let score (hm (if (lost? board) "You lose!")
                (if forfeit?      "You forfeit.")
@@ -290,7 +290,7 @@ error-prone. Instead it complains if any of the subforms is not syntax
 it knows about: `if`, `when`, `unless`, `do`, `and`, `or`, or `else`. If
 there's no `else` clause, then running off the end will cause a
 runtime error: so you'll occasionally see code like (from
-[eg/circuitoptimizer.cant](https://github.com/darius/cant/blob/master/eg/circuitoptimizer.cant))
+[examples/circuitoptimizer.cant](https://github.com/darius/cant/blob/master/examples/circuitoptimizer.cant))
 ```
 (hm (when (< gate.+ n-gates)
       (sweeping gate.+))
@@ -610,11 +610,11 @@ just felt more right to keep the message part of the call expression
 in one piece.)
 
 The same works for [more complex
-messages](https://github.com/darius/cant/blob/master/eg/automata/text-register-machine.cant#L100-L101):
+messages](https://github.com/darius/cant/blob/master/examples/automata/text-register-machine.cant#L100-L101):
 `(each (~ .get 0 padding) lists)` for each list gets the first
 element, or `padding` if empty. But in general you still may have to
 [fall back to function
-syntax](https://github.com/darius/cant/blob/master/eg/automata/turing.cant#L26):
+syntax](https://github.com/darius/cant/blob/master/examples/automata/turing.cant#L26):
 ``` (each (-> ("~w" .format it)) squares) ```
 
 
@@ -778,7 +778,7 @@ They come up too in factoring common behavior out of variable-arity
 primitives:
 [runtime.cant](https://github.com/darius/cant/blob/master/abcs/00-primordia/runtime.cant#L269-L302)
 (and elsewhere). There's also a small example of a game in OO style,
-[eg/games/wumpus.cant](https://github.com/darius/cant/blob/master/eg/games/wumpus.cant).
+[examples/games/wumpus.cant](https://github.com/darius/cant/blob/master/examples/games/wumpus.cant).
 (I wouldn't recommend making a habit of creating stateful traits as
 that example does, but that's how it worked out.)
 
@@ -876,7 +876,7 @@ To create an anonymous function with multiple pattern-action clauses:
 
 The use for it doesn't seem to come up often. Here's one good example:
 the [counting function in
-eg/lambda-calculus/prelude.cant](https://github.com/darius/cant/blob/master/eg/lambda-calculus/prelude.cant#L15-L18). Without
+examples/lambda-calculus/prelude.cant](https://github.com/darius/cant/blob/master/examples/lambda-calculus/prelude.cant#L15-L18). Without
 `given` the most obvious way to write it would be the stuttery:
 ```
 {primitive (on (n)
@@ -914,7 +914,7 @@ in place of things like Clojure's threading macros.
 
 Now that we've glanced over the greater part of the core, you might
 find it worthwhile to review [the metacircular
-interpreter](https://github.com/darius/cant/blob/master/eg/kernel.cant)
+interpreter](https://github.com/darius/cant/blob/master/examples/kernel.cant)
 to see if it makes sense. You can see it getting the smoke test in
 [test/test-kernel.cant](https://github.com/darius/cant/blob/master/test/test-kernel.cant).
 

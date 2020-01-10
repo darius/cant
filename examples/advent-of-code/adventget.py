@@ -16,7 +16,7 @@ default_year = 2015
 def download(day, year=default_year):
     year = year % 100
     text = fetch(day)
-    with open('eg/advent-of-code/%d/data/%02d.in' % (year, day), 'w') as f:
+    with open('examples/advent-of-code/%d/data/%02d.in' % (year, day), 'w') as f:
          f.write(text)
 
 def fetch(day, year=default_year):

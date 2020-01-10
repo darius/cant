@@ -442,7 +442,7 @@
 
   (let modules (!map<-))
 
-  (let autoload-base "eg/squirm/library/")
+  (let autoload-base "examples/squirm/library/")
 
   (to (module-ref mod-name var-name)
     (let mod-env
@@ -746,7 +746,7 @@
 
   ;; Add the prelude to the global environment.
   (let global-env
-    (module-read "eg/squirm/prelude.squirm" builtins-env))
+    (module-read "examples/squirm/prelude.squirm" builtins-env))
 
 
   (export
