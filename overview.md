@@ -406,11 +406,17 @@ association-list)`, or `(export name1 name2 ...)` which is like
 consistently with the equality test, in general. You're safe using
 keys that are purely data (such as a link-list all of whose elements
 are pure data as well, and so on recursively). A mutable object or
-e.g. a list of mutable objects is not guaranteed in this interim
-implementation to work. This is because Chez Scheme doesn't offer a
-way to make a hashtable keying on a mix of identity (`eq?`) hashing
-and a user-defined equality predicate. A mythical future production
-Cant system needs to define its hashmaps primitively.)
+e.g. a list of mutable objects is not expected in this interim
+implementation to work, unless you happen not to mutate it. This is
+because Chez Scheme doesn't offer a way to make a hashtable keying on
+a mix of identity (`eq?`) hashing and a user-defined equality
+predicate; it has to be one or the other, and then what do you do with
+a key that's a combination? We could've still dealt with this by *not*
+representing primitive Cant objects by the same primitive Scheme type,
+but that would've created other hassle and expense, which I considered
+not worth the cost. The goal of this Cant implementation is to work
+out the design, not to be useful. A mythical future real Cant system
+needs to define its hashmaps primitively.)
 
 A bag is a kind of mutable map whose values are all counts. (Maybe we
 should support negative values too, like Python's `Counter`?) For a
@@ -720,6 +726,43 @@ There's a fairly awkward substitute for mutable variables, the box type:
 2
 ```
 
+
+## Comparison
+
+We've defined how objects are the same or not, as reported by
+`=`. Some objects can be ordered, with `<`, `>`, `<=`, `>=`. Also
+there's `<=>` meaning both `<=` and `>=`. These functions work by
+calling the `.compare` method: `(< a b)` means that `(a .compare b)`
+is `-1`. An error is raised if the result is not that or `0` or `1`.
+
+Primitive data like numbers, lists, and terms define `.compare` in the
+usual way, requiring compatibly-typed arguments. They complain if
+asked to compare, e.g., `1` to `x`.
+
+
+## Numbers
+
+Non-integer number types aren't really supported, except by accident
+insofar as Chez Scheme primitives make them work. The reader doesn't
+know about floats, for instance. This needs filling in relatively
+early, compared to other features still on the wishlist.
+
+
+## Abstract data types, synergy, trademarks
+
+Don't exist yet. Only the vaguest notions. This needs to be addressed
+for users to be able to define new types of *data* -- as we've seen,
+an object you can make with `make` differs in an essential way from a
+datum like a term, behaving differently under `=`. Lists are data, but
+object-like too, and so they had to be primitive. We might like to be
+able to define new kinds of numbers as well, interoperating with the
+primitive ones.
+
+(I guess you can fake it well enough already for some purposes using
+`=` on capabilities, but we'll need language support to make the above
+wishlist practical.)
+
+
 ## Traits
 
 We've seen how to define objects, but nothing like inheritance. In
@@ -999,8 +1042,6 @@ more std types
   meta-stuff
 ```
 
-=, not=, compare
-
 more naming conventions:
 foo<-
 dest<-src
@@ -1017,7 +1058,6 @@ squickcheck
 load, repl, debug stuff, command line
 
 read syntax: [] {} @ ...?
-no (a . b)
 
 exceptions, ejectors
 
