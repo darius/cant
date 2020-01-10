@@ -800,7 +800,7 @@ Some functions useful with `for`:
 `(each f '(a b c))` = `(list<- (f 'a) (f 'b) (f 'c))`. You can also do
 `(each f xs ys)` which works similarly but calling `(f x y)` for each
 corresponding `x` and `y`. (It's an error if the lists are different
-lengths.) And so on for any number of lists. Most of the functions
+lengths.) And so on for any number of lists. Many of the functions
 below also work in this variable-arity way.
 
 `(each! f xs)` calls `(f x)` for each `x` in `xs`, in order, for the
