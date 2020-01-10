@@ -43,7 +43,7 @@ Hey, world.
 
 ### Any *interesting* example code?
 
-Dunno, but you can browse
+You can try browsing
 [examples/](https://github.com/darius/cant/tree/master/eg) and
 [library/](https://github.com/darius/cant/tree/master/library). See
 [examples/games](https://github.com/darius/cant/tree/master/examples/games) and
