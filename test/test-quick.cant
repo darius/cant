@@ -47,7 +47,7 @@
 
 (loud-use "../eg/automata/elementary-ca")
 (((loud-use "../eg/automata/slow-life") 'smoke-test))
-(((loud-use "../eg/automata/trm") 'main) '(ignore))
+(((loud-use "../eg/automata/text-register-machine") 'main) '(ignore))
 (((loud-use "../eg/automata/turing") 'smoke-test))
 (loud-use "../eg/circuitoptimizer")
 (loud-use "../eg/csv")
