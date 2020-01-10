@@ -54,6 +54,7 @@
 (make max {extending left-folding-operation}
   (to (~ a b) (if (< a b) b a)))
 
+;; `(min-by f xs)` = an `x` in `xs` giving the minimum value of `(f x)`.
 (to (min-by key<- xs) (foldr1 (on (x y) (if (< (key<- x) (key<- y)) x y))
                               xs))
 (to (max-by key<- xs) (foldr1 (on (x y) (if (> (key<- x) (key<- y)) x y))

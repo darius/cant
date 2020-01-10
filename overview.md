@@ -840,6 +840,10 @@ Like `foldr` but requiring `xs` to be nonempty:
 
 `(tally-by f '(a b))` = `(+ (~.count (f 'a)) (~.count (f 'b)))`
 
+`(max-by f xs)` = an `x` in `xs` giving the maximum value of `(f x)`.
+
+`(min-by f xs)` = similar
+
 `(mayhap f ?thing)` is the 'bind' operation on the maybe monad. That
 is, it's `(f ?thing)` unless `?thing` is `#no`, preserving no-ness.
 
