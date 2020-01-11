@@ -1026,8 +1026,10 @@ example](https://github.com/darius/cant/blob/master/library/sturm.cant#L192-L193
 ```
 returns the next character from standard input, but raises an
 assertion error if it's the end-of-file. (I know, using an assertion
-here was lazy and sinful.) Perhaps more commonly you'd use `hey` to
-create a new object (the focus) and initialize it (the actions).
+here was lazy and sinful.) Perhaps more commonly [you'd
+use](https://github.com/darius/cant/blob/master/examples/games/cryptogram.cant#L113-L114)
+`hey` to create a new object (the focus) and initialize it (the
+actions).
 
 The
 [function](https://github.com/darius/cant/blob/master/abcs/30-functions.cant#L220)
