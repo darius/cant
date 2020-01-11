@@ -1,5 +1,5 @@
 ;; Write `thing` into a string, but give up and truncate if the length
-;; overflows `bound`.
+;; overflows `bound`. (Mark overflow by ".." at the end.)
 (to (write-to-bounded-string thing bound)
   (string<-writer (for bounded-writer<- ((sink bound))
                     (sink .write thing))))
@@ -17,6 +17,7 @@
      (let budget (box<- (- bound 2))) ; The length remaining
      (let ss (string-sink<-))
 
+     ;; Send ss's latest chunk to `sink`, ejecting on hitting the bound.
      (to (cut-off)
        (let chunk ss.output-string)
        (let length chunk.count)
