@@ -1,5 +1,5 @@
 ;; XXX unfinished untested
-;; See examples/lambda/compiler1.scm for essentially the same with a running VM interpreter.
+;; See compiler1.scm for essentially the same with a running VM interpreter.
 ;; TODO just delete this now?
 
 ;; Compile call-by-value lambda calculus to a machine with flat closures.

@@ -6,6 +6,7 @@
                   "church.lambda"
                   "factorial.lambda"
                   "reverse.lambda"
+                  "elementary-ca.lambda"
                   "turing-scott.lambda"
                   ))
 
