@@ -1,6 +1,7 @@
 ;; Universal Machine from http://www.boundvariable.org/task.shtml
 ;; Ported from https://github.com/darius/superbench
 ;; ~/git/superbench/um/um.lua
+;; TODO get running
 
 ;;XXX .u<op> means small, unsigned op
 ;; and I'm gonna assume 32-bit here
