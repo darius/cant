@@ -4,6 +4,7 @@
 ;; truncate if the output length overflows `bound`. (Mark overflow by
 ;; ".." at the end.)
 (to ((bounded-writer<- writer bound) sink)
+  (surely (<= 2 bound))
   (with-ejector
    (on (ejector)
      ;; TODO (- bound 2) leaves space for the possible overflow mark
