@@ -113,8 +113,8 @@
     (head .^= p)
 
     ;; Delete the next `span` characters.
-    (gap .^= (+ gap.^ span))
-    (size .^= (- size.^ span))
+    (gap .+= span)
+    (size .-= span)
 
     ;; Grow the array so `replacement` fits in the gap.
     (let r-size replacement.count)
@@ -129,9 +129,9 @@
     ;; Insert `replacement`.
     (t .move! head.^ replacement 0 r-size)
 
-    (head .^= (+ head.^ r-size))
-    (gap  .^= (- gap.^ r-size))
-    (size .^= (+ size.^ r-size)))
+    (head .+= r-size)
+    (gap  .-= r-size)
+    (size .+= r-size))
 
   (make text
     (to ~.clear!

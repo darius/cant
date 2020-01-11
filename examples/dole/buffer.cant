@@ -50,7 +50,7 @@
 
   (to (insert str)
     (text .insert point.^ str)
-    (point .^= (+ point.^ str.count)))
+    (point .+= str.count))
 
   (to (find-line p dir)
     (text .clip (text .find-char-set p dir newline)))

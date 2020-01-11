@@ -8,6 +8,10 @@
     value)                              ;TODO return void instead?
   (to ~.+! (me .update ~.+)) ;; (questionably worth it; name inconsistent with the above note)
   (to ~.-! (me .update ~.-))
+  (to (~ .+= n)   ;; XXX inconsistent in return value wrt ~.+!
+    (me .^= (+ me.^ n)))
+  (to (~ .-= n)
+    (me .^= (- me.^ n)))
   (to (~ .selfie sink)
     (sink .display "<box ")
     (sink .write me.^)
