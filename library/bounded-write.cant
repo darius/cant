@@ -1,6 +1,6 @@
 ;; (A writer is a function taking a sink, expected to write on it.)
 
-;; Return a writer of a selfie of `thing`, but bounded in output length.
+;; Return a bounded-writer of a selfie of `thing`.
 (to (bounded-selfie<- thing bound)
   (for bounded-writer<- ((sink bound))
     (sink .write thing)))
