@@ -16,6 +16,6 @@
           (let prime (+ i i 3))
           (for each! ((k (interval<- (+ i prime) SIZE.+ prime)))
             (flags .set! k #no))
-          (count .update ~.+)))
+          count.+!))
       count.^))
   (out .say "~w primes\n" result))

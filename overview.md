@@ -719,7 +719,7 @@ There's a fairly awkward substitute for mutable variables, the box type:
 -> (c .^= (+ c.^ 1))
 -> c.^
 1
--> (c .update ~.+)    ;; ~.+ is an increment method on numbers
+-> c.+!     ;; just a convenience
 2
 -> c.^
 2

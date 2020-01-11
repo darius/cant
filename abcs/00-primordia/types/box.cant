@@ -6,6 +6,8 @@
     (let value (f me.^))
     (me .^= value)
     value)                              ;TODO return void instead?
+  (to ~.+! (me .update ~.+)) ;; (questionably worth it; name inconsistent with the above note)
+  (to ~.-! (me .update ~.-))
   (to (~ .selfie sink)
     (sink .display "<box ")
     (sink .write me.^)
