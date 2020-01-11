@@ -1,9 +1,5 @@
 ;; (A writer is a function taking a sink, expected to write on it.)
 
-;; Return a bounded-writer of a selfie of `thing`.
-(to (bounded-selfie<- thing bound)
-  (bounded-writer<- (~ .write thing) bound))
-
 ;; Given a writer, return a wrapped writer that will give up and
 ;; truncate if the output length overflows `bound`. (Mark overflow by
 ;; ".." at the end.)
@@ -38,4 +34,4 @@
                (to (~ .write-u8 u8) (ss .write-u8 u8) (cut-off))
                (to ~.close          ss.close))))))
 
-(export bounded-writer<- bounded-selfie<-)
+(export bounded-writer<-)
