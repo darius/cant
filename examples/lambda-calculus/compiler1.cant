@@ -109,6 +109,8 @@
 
 
 ;; Expression objects cache the free-variable sets, again to avoid algorithmic blow-up.
+;; exp.fvs:         Free variables of exp
+;; exp .gen s then: Compiled code for exp in scope s, followed by code `then`
 
 (to (const<- c)
   (make constant
