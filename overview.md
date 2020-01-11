@@ -1061,7 +1061,7 @@ an ejector becomes 'disabled' once we've returned from the
 an ejection.
 
 For an example of real use there's
-[library/bounded-write.cant](https://github.com/darius/cant/blob/master/library/bounded-write.cant).
+[library/bounded-writer.cant](https://github.com/darius/cant/blob/master/library/bounded-writer.cant).
 
 When an ejector bails, there may be unwinding actions to perform,
 installed by `ejector-protect` (like Common Lisp `unwind-protect`).

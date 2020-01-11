@@ -2,7 +2,7 @@
 
 ;; We try to call on less of the library than usual, to work better
 ;; when the system is borked.
-(import (use 'bounded-write) bounded-writer<-)
+(import (use 'bounded-writer) bounded-writer<-)
 
 (to (module powers)
   (import powers out)
