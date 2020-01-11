@@ -64,6 +64,7 @@
                            (cv .shift-by 1))))
         (playing)))))
 
+;; The puzzle state.
 (to (cryptoview<- cryptogram)
 
   (let code (those ~.letter? cryptogram.uppercase))
@@ -109,15 +110,16 @@
       (when (code .find? letter)
         (shift-till offset (: (= letter (code point.^))))))
 
+    ;; Return a Sturm view of the decoding-in-progress.
     (to (~ .view show-cursor?)
-      (let counts (hey (bag<- decoder.values)
+      (let counts (hey (bag<- decoder.values) ; bag of decoded plaintext letters
                        (~ .delete! #\space)))
-      (let clashes (~.range (for where ((n counts))
+      (let clashes (~.range (for where ((n counts)) ; set of letters with >1 preimage
                               (< 1 n))))
-      (let letters-left (for each ((ch alphabet))
+      (let letters-left (for each ((ch alphabet)) ; display of letters available to try
                           (if (counts .maps? ch) #\space ch)))
 
-      (let pos (box<- 0))
+      (let pos (box<- 0)) ; current index into `code`
 
       (let view (flexarray<-))
       (to (emit x) (view .push! x))
@@ -125,6 +127,7 @@
       (emit (green ["Free: " letters-left "\n"]))
       (for each! ((line lines))
         (emit #\newline)
+        ;; a line of the tentative plaintext:
         (for each! ((ch line))
           (when (and show-cursor? ch.letter?)
             (when (= pos.^ point.^)
@@ -132,9 +135,11 @@
             pos.+!)
           (emit (decoder .get ch ch)))
         (emit #\newline)
+        ;; separator line:
         (for each! ((ch line))
           (emit (if ch.letter? #\- #\space)))
         (emit #\newline)
+        ;; line of ciphertext:
         (for each! ((ch line))
           (let color (hm (if (clashes .maps? (decoder .get ch)) red)
                          (if (= ch (code point.^))              green)
