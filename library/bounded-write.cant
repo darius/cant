@@ -3,12 +3,7 @@
 (to (write-to-bounded-string thing bound)
   (let buffer (flexarray<-))  ;; The output in string chunks.
   (let length (box<- 0)) ;; Kept equal to (tally buffer.values), i.e. sum of lengths
-  (to (output)
-    (let s ("" .join buffer.values))
-    ;; TODO make it unambiguous whether it's truncated, somehow
-    (if (< length.^ bound)
-        s
-        (chain (s .slice 0 (- bound 2)) ".."))) ; N.B. 0 bound doesn't imply 0 output-length
+
   (with-ejector
    (on (ejector)
      (let ss (string-sink<-))
@@ -16,12 +11,17 @@
        (buffer .push! ss.output-string) ;TODO worth checking to skip if output-string empty?
        (length .+= buffer.last.count)
        (when (<= bound length.^)
-         (ejector .eject (output))))
+         (ejector .eject void)))
      (make bounded-sink {extending sink-trait}
        (to (~ .display a)   (ss .display a)   (cut-off))
        (to (~ .write-u8 u8) (ss .write-u8 u8) (cut-off))
        (to ~.close          ss.close))
-     (bounded-sink .write thing)
-     (output))))
-       
+     (bounded-sink .write thing)))
+
+  (let s ("" .join buffer.values))
+  ;; TODO make it unambiguous whether it's truncated, somehow
+  (if (< length.^ bound)
+      s
+      (chain (s .slice 0 (- bound 2)) ".."))) ; N.B. 0 bound doesn't imply "" output
+
 (export write-to-bounded-string)

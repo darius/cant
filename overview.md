@@ -1060,7 +1060,7 @@ an ejector becomes 'disabled' once we've returned from the
 `with-ejector` call that created it -- whether by a normal return or
 an ejection.
 
-For an example of real use, there's
+For an example of real use there's
 [library/bounded-write.cant](https://github.com/darius/cant/blob/master/library/bounded-write.cant).
 
 When an ejector bails, there may be unwinding actions to perform,
