@@ -53,7 +53,8 @@ is the whole sub-block it's in -- recursion and forward references
 aren't special. (A use-before-define error can happen at runtime.)
 Variables are immutable. (There's a 'box' type for when you need a
 mutable variable; also, for development/debugging, you can update
-definitions in an 'interactive setting' such as the usual listener.)
+definitions in an 'interactive setting' such as the usual listener.
+XXX redefinitions are broken again)
 
 Lists and strings are immutable too. Currently the built-in hashmaps,
 arrays, etc. are mutable, though I think now they shouldn't be. (As a
@@ -72,8 +73,6 @@ and compound data called 'terms', equality is structural. I want to
 support creating new kinds of pure-data objects, but haven't yet got
 to it or even fully designed it. (Probably that'll follow E's example
 again.)
-
-TODO also mention hashing and ordered comparison
 
 A procedure call is a special case of sending a message: `(foo bar
 baz)`, when `foo` is not defined as syntax (a special form or macro),
@@ -1027,6 +1026,16 @@ handy](https://github.com/darius/cant/blob/master/library/bag.cant#L25-L27)
 in place of things like Clojure's threading macros.
 
 
+## Exceptions, ejectors
+
+XXX
+
+
+## Introspection
+
+XXX
+
+
 ## Miscellany
 
 Now that we've glanced over the greater part of the core, you might
@@ -1058,8 +1067,6 @@ squickcheck
 load, repl, debug stuff, command line
 
 read syntax: [] {} @ ...?
-
-exceptions, ejectors
 
 cheat sheet, like https://github.com/jeapostrophe/racket-cheat/blob/master/racket-cheat.scrbl
 cant-mode.el
