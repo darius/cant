@@ -21,10 +21,13 @@
 
 ;; TODO better names?
 
-(to (cycle-write thing sink-arg)
+(to (cycle-write thing sink)
+  (take sink (cycle-writer<- (~ .write thing))))
+
+(to ((cycle-writer<- writer) sink)
   (let (~ cycle-sink flush-to) (cycle-sink<-))
-  (cycle-sink .write thing)
-  (flush-to sink-arg)
+  (writer cycle-sink)
+  (flush-to sink)
   flush-to.close)
 
 (to (cycle-sink<-)
@@ -91,4 +94,4 @@
 
   (~ cycle-sink flush-to))
 
-(export cycle-write)
+(export cycle-write cycle-writer<-)
