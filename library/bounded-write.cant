@@ -1,9 +1,13 @@
-;; Write `thing` into a string, but give up and truncate if the length
-;; overflows `bound`. (Mark overflow by ".." at the end.)
-(to (write-to-bounded-string thing bound)
-  (string<-writer (for bounded-writer<- ((sink bound))
-                    (sink .write thing))))
+;; (A writer is a function taking a sink, expected to write on it.)
 
+;; Return a writer of a selfie of `thing`, but bounded in output length.
+(to (bounded-selfie<- thing bound)
+  (for bounded-writer<- ((sink bound))
+    (sink .write thing)))
+
+;; Given a writer, return a wrapped writer that will give up and
+;; truncate if the output length overflows `bound`. (Mark overflow by
+;; ".." at the end.)
 (to ((bounded-writer<- writer bound) sink)
   (with-ejector
    (on (ejector)
@@ -35,4 +39,4 @@
                (to (~ .write-u8 u8) (ss .write-u8 u8) (cut-off))
                (to ~.close          ss.close))))))
 
-(export write-to-bounded-string bounded-writer<-)
+(export bounded-writer<- bounded-selfie<-)

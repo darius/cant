@@ -2,7 +2,7 @@
 
 ;; We try to call on less of the library than usual, to work better
 ;; when the system is borked.
-(import (use 'bounded-write) write-to-bounded-string)
+(import (use 'bounded-write) bounded-selfie<-)
 
 (to (module powers)
   (import powers out)
@@ -18,14 +18,16 @@
 
   (to (print-traceback k)
     (for each! ((frame (reverse k)))
-      (out .say "  ~d\n" (write-to-bounded-string frame 77))))
+      (out .display "  ")
+      (take out (bounded-selfie<- frame 77))
+      (out .display "\n")))
 
   (to (complain evil)
     (may evil
       (be `(,(? string? plaint) ,@values)
         (out .display plaint)
         (out .display ": ")
-        (out .display (write-to-bounded-string values (* 80 20))))
+        (take out (bounded-selfie<- values (* 80 20))))
       (else
         (out .display "Nonstandard evil: ")
         (out .write evil)))
