@@ -725,6 +725,16 @@ There's a fairly awkward substitute for mutable variables, the box type:
 2
 ```
 
+Notice that the listener didn't show any value for `(c .^= (+ c.^
+1))`. The value of that expression was a special object named `void`,
+which is the conventional result of an operation done for its
+effect. The listener omits printing `void`.
+
+(On the other hand, the `.+!` method did return a meaningful
+value. What gives? I guess I haven't settled on a coherent design. The
+principle of least authority justifies returning `void` from `.^=`,
+while `.+!` is unlikely to hurt.)
+
 
 ## Comparison
 
@@ -1026,7 +1036,38 @@ handy](https://github.com/darius/cant/blob/master/library/bag.cant#L25-L27)
 in place of things like Clojure's threading macros.
 
 
-## Exceptions, ejectors
+## Ejectors
+
+Sometimes you want to nonlocally bail from a computation. In Scheme
+you use `call/cc`. Cant has a more limited feature, ejectors.
+```
+-> (+ 1 (with-ejector (on (ejector) (+ 2 (ejector .eject 3)))))
+4
+-> (let the-ejector (with-ejector itself))  ; (itself is the identity function)
+#<ejector>
+-> (the-ejector .eject 'hey)
+Error! Traceback:
+  (call '#<print-result:listener<-> ^)
+  {~ ^^^}
+  (^)
+Tried to eject to a disabled ejector: (#<ejector>)
+Enter (debug) for more.
+-> 
+```
+
+The first interaction worked like `call/cc`. The next two showed that
+an ejector becomes 'disabled' once we've returned from the
+`with-ejector` call that created it -- whether by a normal return or
+an ejection.
+
+For an example of real use, there's
+[library/bounded-write.cant](https://github.com/darius/cant/blob/master/library/bounded-write.cant).
+
+When an ejector bails, there may be unwinding actions to perform,
+installed by `ejector-protect` (like Common Lisp `unwind-protect`).
+
+
+## Errors
 
 XXX
 
