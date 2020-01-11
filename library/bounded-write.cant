@@ -1,27 +1,37 @@
 ;; Write `thing` into a string, but give up and truncate if the length
 ;; overflows `bound`.
 (to (write-to-bounded-string thing bound)
-  (let buffer (flexarray<-))  ;; The output in string chunks.
-  (let length (box<- 0)) ;; Kept equal to (tally buffer.values), i.e. sum of lengths
+  (string<-writer (for bounded-writer<- ((sink bound))
+                    (sink .write thing))))
 
+(to ((bounded-writer<- writer bound) sink)
   (with-ejector
    (on (ejector)
+     ;; TODO (- bound 2) leaves space for the possible overflow mark
+     ;; ".." -- but it'd be nice to omit the ".." in the case where
+     ;; the output just fits. It's sort of annoying to get ".."
+     ;; scribbled over a perfectly good end-of-string. We could fix
+     ;; this by an extra warning-track state.
+     ;; TODO if you do that, consider somehow disambiguating whether
+     ;; the output legitimately ends in ".." or whatever
+     (let budget (box<- (- bound 2))) ; The length remaining
      (let ss (string-sink<-))
+
      (to (cut-off)
-       (buffer .push! ss.output-string) ;TODO worth checking to skip if output-string empty?
-       (length .+= buffer.last.count)
-       (when (<= bound length.^)
-         (ejector .eject void)))
-     (make bounded-sink {extending sink-trait}
-       (to (~ .display a)   (ss .display a)   (cut-off))
-       (to (~ .write-u8 u8) (ss .write-u8 u8) (cut-off))
-       (to ~.close          ss.close))
-     (bounded-sink .write thing)))
+       (let chunk ss.output-string)
+       (let length chunk.count)
+       (hm (when (<= length budget.^)
+             (sink .display chunk)
+             (budget .-= length))
+           (else
+             (sink .display (chunk .slice 0 budget.^))
+             (sink .display "..")
+             ss.close
+             (ejector .eject void))))
 
-  (let s ("" .join buffer.values))
-  ;; TODO make it unambiguous whether it's truncated, somehow
-  (if (< length.^ bound)
-      s
-      (chain (s .slice 0 (- bound 2)) ".."))) ; N.B. 0 bound doesn't imply "" output
+     (writer (make bounded-sink {extending sink-trait}
+               (to (~ .display a)   (ss .display a)   (cut-off))
+               (to (~ .write-u8 u8) (ss .write-u8 u8) (cut-off))
+               (to ~.close          ss.close))))))
 
-(export write-to-bounded-string)
+(export write-to-bounded-string bounded-writer<-)
