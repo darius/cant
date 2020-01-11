@@ -2,8 +2,7 @@
 
 ;; Return a bounded-writer of a selfie of `thing`.
 (to (bounded-selfie<- thing bound)
-  (for bounded-writer<- ((sink bound))
-    (sink .write thing)))
+  (bounded-writer<- (~ .write thing) bound))
 
 ;; Given a writer, return a wrapped writer that will give up and
 ;; truncate if the output length overflows `bound`. (Mark overflow by
