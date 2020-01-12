@@ -1,15 +1,16 @@
 ;; Turing machine interpreter
 
+;; Glossary:
 ;; mark = value that can appear in a tape square.
 ;; transit = map from (~ state mark) to (~ acts state).
 ;; act = '< | '> | mark
 ;;   (< = step left, > = right)
 
-;; {tape ls head rs} where:
-;; ls   = reverse of the list of tape squares to the left of the tape head.
+;; Tape representation: {tape L head R} where:
+;; L    = reverse of the list of squares to the left of the tape head.
 ;; head = the value of the square under the tape head.
-;; rs   = the squares to the right of the tape head.
-;; The lists ls and rs only extend so far as has been visited up to now.
+;; R    = the squares to the right of the tape head.
+;; The lists L and R only extend so far as has been visited up to now.
 ;; Visited blank squares are symbolized as '-'.
 
 (to (run machine @(optional option))
@@ -22,15 +23,15 @@
       (be updated (running updated)))))
 
 (to (show-config {machine transit state {tape L h R}})
-  (to (show-squares squares)
-    (" " .join (each (-> ("~w" .format it)) squares)))
   (let next-acts (may (transit .get (~ state h))
                    (be #no        '())
                    (be (~ acts _) acts)))
-
   (let before (show-squares (reverse L)))
   (out .say "~d ~d ~d\n" before (show-squares `(,h)) (show-squares R))
   (out .say "~d ~w ~w\n" (" " .repeat before.count) state next-acts))
+
+(to (show-squares squares)
+  (" " .join (each (-> ("~w" .format it)) squares)))
 
 (to (step {machine transit state (and tape {tape _ head _})})
   (for mayhap (((~ acts next-state) (transit .get (~ state head))))

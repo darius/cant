@@ -72,20 +72,22 @@ insn:    {'1'+} {'#' '#'? '#'? '#'? '#'?} :make_insn.
 ;; (import (use 'pretty-layout) ...)
 ;;XXX use me
 
+;; Output an 'assembly listing' with optional machine state.
 (to (show insns @(optional ?pc ?regs))
   (let pc   (or ?pc   0))
   (let regs (or ?regs (regs<-)))
-  (let left
-    (for each (((~ addr {insn fn n}) insns.items))
-      (let show-addr (if (= addr pc)
-                         "   "
-                         ("~3w" .format (abs (- pc addr)))))
-      ("~d ~d ~w" .format show-addr fn.name n)))
+  (let left (for each (((~ addr {insn fn n}) insns.items))
+              (let show-addr (if (= addr pc)
+                                 "   "
+                                 ("~3w" .format (abs (- pc addr)))))
+              ("~d ~d ~w" .format show-addr fn.name n)))
   (let right (for each (((~ i str) regs.items.rest))
                ("\tr~w: ~d" .format i str)))
   (for each! ((line (abut left right)))
     (out .displayln line)))
 
+;; Combine two lists of lines into one, combined horizontally
+;; so that lines1 goes to the left of lines2, not above it.
 (to (abut lines1 lines2)
   (flip (chain (flip lines1)
                (flip lines2))))
@@ -93,6 +95,7 @@ insn:    {'1'+} {'#' '#'? '#'? '#'? '#'?} :make_insn.
 (to (flip strings)
   (each string<-list (transpose-padded strings #\space)))
 
+;; Like `transpose` but handling different-length rows.
 (to (transpose-padded lists padding)
   (begin zipping ((lists lists))
     (if (every ~.none? lists)
