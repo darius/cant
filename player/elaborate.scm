@@ -1,9 +1,9 @@
+;; Analyze and transform a parsed AST.
+
 (library (player elaborate)
 (export elaborate elaborate-setting)
 (import (chezscheme)
   (player util) (player macros) (player ast) (player setting))
-
-;; Analyze and transform a parsed AST.
 
 (define (elaborate-setting e setting)
   (setting-ensure-bound setting (exp-vars-defined e)))
@@ -18,7 +18,9 @@
 (define (elaborate-es es s)
   (map (lambda (e) (elaborate-e e s)) es))
 
-;; TODO none of this rewriting actually changes anything right now
+;; Little of this rewriting actually changes anything right now; we do
+;; annotate variables with their lexical addresses, and emit
+;; unbound-variable warnings.
 
 (define methods/elaborate-e
   (vector

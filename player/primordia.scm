@@ -1,4 +1,11 @@
 #!chezscheme
+
+;; A special interpreter just for bootstrapping the abcs/00-primordia/
+;; code, since player.scm relies on that code being already installed.
+;; (We used to use player.scm for bootstrapping too, but that sometimes
+;; made debugging very painful when the bootstrap failed. Chez Scheme 
+;; really doesn't like that kind of circularity, which is fair enough.)
+
 (library (player primordia)
 (export primordial-setting
         miranda-trait script/cps script/procedure script/ejector

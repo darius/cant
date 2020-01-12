@@ -1,6 +1,13 @@
+;; Utility macros
+;; Mostly, a dumb little pattern-matcher so we can write parse.scm in
+;; Cant style instead of SICP-Scheme style.
+
 (library (player macros)
 (export unpack define-enum mcase mlambda)
 (import (chezscheme))
+
+
+;; Structures as simple vectors with small-integer tags
 
 (define-syntax unpack
   (syntax-rules ()
@@ -27,6 +34,9 @@
      (begin))
     ((_ k var var1 ...)
      (begin (define var k) (define-enum-from (+ k 1) var1 ...)))))
+
+
+;; Pattern matching
 
 (define-syntax mcase
   (syntax-rules ()

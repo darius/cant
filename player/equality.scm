@@ -1,10 +1,7 @@
-(library (player equality)
-(export hash cant=?
-        mapi? mapi-items prim-mapi<-items prim-mapi-get
-        )
-(import (chezscheme) (player util) (player parse))
+;; Equality and hashing
 
-;; Hashing and equality
+;; XXX comment below is irrelevant since switch from Gambit to Chez.
+;; Needs a radical overhaul to use Chez's eq? hashtables
 
 ;; For now, I'm gonna assume Cant-defined objects are equal iff
 ;; eq?. This means you can't reconstitute an object from its script
@@ -12,8 +9,11 @@
 ;; operation for which cant=? would check if script and datum are
 ;; eq?, and hashing would also have to look at both.
 
-;; XXX above comments irrelevant since switch from Gambit to Chez.
-;; needs a radical overhaul to use Chez's eq? hashtables
+(library (player equality)
+(export hash cant=?
+        mapi? mapi-items prim-mapi<-items prim-mapi-get
+        )
+(import (chezscheme) (player util) (player parse))
 
 (define (hash x)
   (nat-hash    ;The Chez equal-hash doesn't mix up ints well

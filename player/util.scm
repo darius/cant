@@ -1,3 +1,5 @@
+;; Misc helpers
+
 (library (player util)
 (export report starts-with? cue<- cue? boolean<- insist should= foldl
         foldr all any flatmap last butlast remove-nth snarf string-join

@@ -1,3 +1,5 @@
+;; Interpreter of ASTs, in continuation-passing style.
+
 #!chezscheme
 (library (player player)
 (export evaluate)

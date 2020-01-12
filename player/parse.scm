@@ -1,3 +1,12 @@
+;; Parse s-expression-syntax Cant expressions and patterns. This
+;; desugars them and converts to AST structures. Desugaring includes
+;; both expanding built-in macros and desugaring special forms to
+;; their core forms. (E.g. `make` is a special form, not a macro, but
+;; instances of `make` in Cant source code use more sugar than the
+;; `e-make` AST structure does.)
+
+;; We're currently a bit cavalier about hygiene.
+
 #!chezscheme
 (library (player parse)
 (export parse-e parse-p

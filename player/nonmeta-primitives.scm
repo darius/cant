@@ -1,3 +1,5 @@
+;; Most of the primitive functions meant for primordial-setting
+
 (library (player nonmeta-primitives)
 (export nonmeta-a-list)
 (import (chezscheme)

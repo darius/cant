@@ -1,11 +1,12 @@
+;; Basic data model
+;; TODO explain more
+
 (library (player thing)
 (export object? object<- object-script object-datum
         script? script<- script-name script-trait script-clauses
         uninitialized
         )
 (import (chezscheme) (player util))
-
-;; Basic data model
 
 (define-record-type object (fields script datum))   ; Nonprimitive objects, that is.
 (define object<- make-object)

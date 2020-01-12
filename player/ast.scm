@@ -1,4 +1,9 @@
 #!chezscheme
+
+;; The internal representation of Cant abstract syntax trees. The
+;; player sees them as vectors with small-integer tags; the Cant user
+;; will see them as wrapper objects, as implemented elsewhere.
+
 (library (player ast)
 (export pack<- pack-tag 
         e-constant

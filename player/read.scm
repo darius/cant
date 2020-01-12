@@ -1,4 +1,8 @@
 #!chezscheme
+
+;; Read Cant's variety of s-expressions. Different from Scheme's in
+;; some ways, e.g. {tag x y}.
+
 (library (player read)
 (export cant-read)
 (import (chezscheme) (player util))

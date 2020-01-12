@@ -1,3 +1,6 @@
+;; More primitive functions. I forget just why these aren't grouped
+;; with nonmeta-primitives.scm -- maybe they should be?
+
 (library (player primitives)
 (export char-compare number-compare string-compare hashmap-place
         as-link box<- vector-append subvector copy-range! vector-move!

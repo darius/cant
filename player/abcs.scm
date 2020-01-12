@@ -1,4 +1,8 @@
 #!chezscheme
+
+;; Bring up the system with the part of the runtime written in Cant,
+;; loading it into primordial-setting.
+
 (library (player abcs)
 (export load-abcs cant-interpret)
 (import (chezscheme)
