@@ -17,9 +17,15 @@
   (begin editing ()
     (buffer .redisplay)
     (let key (read-key))
-    (let command (buffer.key-map key))
-    (unless (= command 'exit)
-      (command key)
-      (editing))))
+    (may (buffer.key-map key)
+      (be 'exit)
+      (be (? term? message)
+        ;; As a convenience, a command may be a message like
+        ;; ~.next-line in place of a function.
+        (message buffer)
+        (editing))
+      (be action
+        (action key)
+        (editing)))))
    
 (export dole edit)

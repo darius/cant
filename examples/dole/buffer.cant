@@ -105,6 +105,10 @@
     (to ~.key-map
       key-map)
 
+    (to (~ .add-bindings! bindings)
+      (for each! ((`(,key ,binding) bindings)) ;TODO better choice of structure?
+        (key-map .set! key binding)))
+
     (to (~ .move-char offset)
       (point .^= (text .clip (+ point.^ offset))))
 
