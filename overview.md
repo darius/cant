@@ -1,22 +1,21 @@
 ## Design goals
 
-As the README says, I want a self-explaining computing system. Such a
-system needs a high-level programming language. Cant is meant to be
-both the main language you use in this fantasized environment and the
-language it's written in (except at its lowest level). For the whole
-system to be simple enough to learn completely, Cant must be, too --
-much simpler than, say, Python, which is easy to start learning but
-rather complex in sum. Most Python programmers don't know all of
-Python.
+A self-explaining computing system would need a high-level programming
+language. Cant is meant to be both the main language you use in this
+fantasized environment and the language it's mainly written in. For
+the whole system to be simple enough to learn completely, Cant must
+be, too -- much simpler than, say, Python, which is easy to start
+learning but rather complex in sum. Most Python programmers don't know
+all of Python.
 
-Since this FantasyOS ought to support capability security, so should
+Since the FantasyOS ought to support capability security, so should
 this language (though it doesn't quite yet). My first try at a
 capability-secure Scheme dialect,
 [consp](https://github.com/darius/consp), persuaded me it's important
 that "all you can do is send a message" (or almost all). That is,
-Scheme has plenty of data types, plus different operations on each
-type, and the operations insist you pass them an object of just the
-type they want, never some wrapper you just made up. In Cant, most
+Scheme has many data types, plus different operations on each type,
+and the operations insist you pass them an object of just the type
+they want, never some wrapper you just made up. In Cant most
 operations are like function calls instead: you send an object a
 message, the receiver decides what to do with it, and you're mostly
 free to substitute your own objects that interpret the message their
@@ -26,11 +25,11 @@ This environment should make sense in its own terms: the
 implementation's internal state should be viewable and to some extent
 manipulable from Cant itself, as Cant objects.
 
-I have prejudices about what makes code readable, and I've indulged
-them. This indulgence goes to a frankly silly degree of abandoning
-familiar Scheme names and syntax which were not really a problem, such
-as `lambda`, `car`, `cdr`, and way beyond that. I felt a need to
-bikeshed long-settled conventions just to open up a space where
+I have prejudices about what makes code readable, which I've
+indulged. This indulgence goes to a frankly silly degree of abandoning
+familiar Scheme names and syntax that were not really a problem, such
+as `lambda`, `car`, `cdr`, and way beyond that. I bikeshedded
+long-settled conventions just to open up a space where
 more-significant new ideas might come in -- which I guess mostly
 haven't, though maybe they will to you.
 
@@ -1112,11 +1111,11 @@ Either way, Cant gets its current 'signal handler' and calls it with
 two arguments: the 'sequel' and the 'evil'. In the transcript above,
 the default signal handler responded by printing the traceback of the
 sequel, followed by the evil, then stashed them where `(debug)` can
-retrieve them, then finally went back into a listener loop. This
-listener loop is an ordinary top-level one.
+retrieve them, then finally went back into a listener loop -- an
+ordinary top-level one.
 
-The debugger can grovel around in the sequel and the evil, and let you
-resume the computation if you wish.
+The debugger can inspect the sequel and the evil, and resume the
+computation if you wish.
 
 In a full-powered setting like the listener, you can manage the signal
 handler yourself:
