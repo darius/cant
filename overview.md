@@ -35,17 +35,38 @@ more-significant new ideas might come in -- which I guess mostly
 haven't, though maybe they will to you.
 
 
-## What else changed from Scheme?
+## This guide's goals
 
-Collections follow a common protocol. Every collection is a kind of
-map. (Lists are sequences, which are maps from a natural-number index
-to a value (plus some extra methods).)
+Many hobby-language intros go like a reference manual: here are the
+lexical forms, and now for the basic kinds of expressions, next the
+compound ones... It makes sense for an author to lay it out this way,
+but it tests my patience as a mildly curious reader trying to skim for
+the beef. What are your neat new ideas? What does it feel like to read
+a real program in this?
 
-But Cant is not class-based or prototype-based; the expression to
-make an object is more like a Scheme lambda-expression. It's sort of
-like the message-passing objects in SICP chapter 3, but streamlined,
-with pattern-matching. (See the E programming language for the actual
-inspiration.) Instead of inheritance there are 'traits'.
+Cant is not really about new ideas -- the ideas new to some are from
+E, so [start there](https://erights.org) if you wish to learn
+them. Cant is about finding a smallest combination of old ideas
+supporting a programming style I can enjoy working in a lot.
+
+So, why not address the second question by jumping right into the
+[examples](https://github.com/darius/cant/blob/master/examples/)? That
+would work if Cant were designed to look familiar to existing
+programmers, of Scheme especially. This doc aims to cover for the
+missing surface familiarity; I think you'll get the most out by
+reading on from here until the first twinge of impatience, then
+switching to browsing the examples in another window, searching the
+guide in this window when you hit anything puzzling.
+
+
+## What changed from Scheme, basically?
+
+Cant supports OO in a way that's not classy or prototypey; the
+expression to make an object is more like a Scheme
+lambda-expression. It's sort of like the message-passing objects in
+SICP chapter 3, but streamlined, with pattern-matching. (See the E
+programming language for the actual inspiration.) Instead of
+inheritance there are 'traits'.
 
 Patterns are supported everywhere you can bind a variable. Definitions
 work the same at top level as in nested scopes. The scope of a binding
@@ -56,7 +77,11 @@ mutable variable; also, for development/debugging, you can update
 definitions in an 'interactive setting' such as the usual listener.
 XXX redefinitions are broken again)
 
-Lists and strings are immutable too. Currently the built-in hashmaps,
+Collections follow a common protocol. Every collection is a kind of
+map. (Lists are sequences, which are maps from a natural-number index
+to a value (plus some extra methods).)
+
+Lists and strings are immutable. Currently the built-in hashmaps,
 arrays, etc. are mutable, though I think now they shouldn't be. (As a
 placeholder towards that future, there's an immutable map type, though
 it's an association list under the hood.)
@@ -171,10 +196,10 @@ debug-> q
 ok
 ```
 
-## What to read once you get bored with the following wall of text
+## Getting into the example code
 
 There are example programs in
-[examples/](https://github.com/darius/cant/tree/master/eg) and
+[examples/](https://github.com/darius/cant/tree/master/examples) and
 [library/](https://github.com/darius/cant/tree/master/library). To run an
 example ([FizzBuzz](https://github.com/darius/cant/blob/master/examples/fizzbuzz.cant)
 here):
