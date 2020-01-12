@@ -58,6 +58,13 @@ switching to browsing the examples in another window, searching the
 guide in this window when you hit anything puzzling.
 
 
+## Why read this at all?
+
+If something about the above goals resonates with you. If you think
+you may see better ways to reach them -- then it'd be nice if you
+opened an issue to tell me.
+
+
 ## What changed from Scheme, basically?
 
 Cant supports OO in a way that's not classy or prototypey; the
