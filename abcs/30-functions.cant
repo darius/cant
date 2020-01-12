@@ -218,6 +218,7 @@
 ;; (take input f g h) = (h (g (f input)))
 ;: TODO better name 'with'?
 ;; Hm, (take x) is just x, so this could also replace 'itself'...
+;; is there a name suggestive of both functions?
 (make take {extending left-folding-operation}
   (to (~ input f)
     (f input)))
