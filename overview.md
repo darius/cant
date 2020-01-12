@@ -37,11 +37,11 @@ haven't, though maybe they will to you.
 ## This guide's goals
 
 Many hobby-language intros go like a reference manual: here are the
-lexical forms, and now for the basic kinds of expressions, next the
-compound ones... It makes sense for an author to lay it out this way,
-but it tests my patience as a mildly curious reader trying to skim for
-the beef. What are your neat new ideas? What does it feel like to read
-a real program in this?
+lexical forms, here the basic kinds of expressions, next the compound
+ones... It makes sense for an author to lay it out this way, but tests
+my patience as a mildly curious reader trying to skim for the
+beef. What are the neat new ideas? What does it feel like to read a
+real program in this?
 
 Cant is not really about new ideas -- the ideas new to some are from
 E, so [start there](https://erights.org) if you wish to learn

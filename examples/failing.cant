@@ -9,11 +9,11 @@
       (error "I don't know 0!")
       (* n (factorial (- n 1)))))
 
-(to (on-error-complain-and-continue k evil) ;TODO 'k' is too abbreviated
-  (on-error-traceback k evil)
+(to (on-error-complain-and-continue sequel evil)
+  (on-error-traceback sequel evil)
   (out .display "About to continue with 10\n")
   (the-signal-handler .^= on-error-traceback) ;; Restore the usual handler.
-  (k .answer 10))
+  (sequel .answer 10))
 
 (the-signal-handler .^= on-error-complain-and-continue)
 (out .print (factorial 5))
