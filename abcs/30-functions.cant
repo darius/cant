@@ -225,7 +225,7 @@
 ;; Return focus after sending it to each of the actions.
 ;; Helpful for concisely creating-and-initializing an object, and such.
 (to (hey focus @actions)                ;TODO better name 'also'?
-  (each! (-> (it focus)) actions)
+  (each! (~ focus) actions)
   focus)
 
 ;; 'bind' on the maybe monad
