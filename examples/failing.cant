@@ -11,7 +11,7 @@
 
 (to (on-error-complain-and-continue sequel evil)
   (on-error-traceback sequel evil)
-  (out .display "About to continue with 10\n")
+  (out .say "About to continue with 10\n")
   (the-signal-handler .^= on-error-traceback) ;; Restore the usual handler.
   (sequel .answer 10))
 
