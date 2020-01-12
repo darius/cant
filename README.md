@@ -73,7 +73,7 @@ Fizz
 ### Documentation?
 
 There's a start at
-[overview.md](https://github.com/darius/cant/blob/master/overview.md).
+[guide.md](https://github.com/darius/cant/blob/master/guide.md).
 
 The self-interpreter
 [examples/kernel.cant](https://github.com/darius/cant/blob/master/examples/kernel.cant)
