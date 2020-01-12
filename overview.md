@@ -1071,6 +1071,35 @@ installed by `ejector-protect` (like Common Lisp `unwind-protect`).
 
 ## Errors
 
+Sometimes the system signals an error, or you signal one in your code:
+```
+-> (error "This is bad" 'bad 'hombre)
+Error! Traceback:
+  (call '#<print-result:listener<-> ^)
+  {~ ^^^}
+  (^)
+This is bad: (bad hombre)
+Enter (debug) for more.
+-> 
+```
+
+Either way, Cant gets its current 'signal handler' and calls it with
+two arguments: the 'sequel' and the 'evil'. In the transcript above,
+the default signal handler responded by printing the traceback of the
+sequel, followed by the evil, then stashed them where `(debug)` can
+retrieve them, then finally went back into a listener loop. This
+listener loop is an ordinary top-level one.
+
+The debugger can grovel around in the sequel and the evil, and let you
+resume the computation if you wish.
+
+In a full-powered setting like the listener, you can manage the signal
+handler yourself:
+```
+-> the-signal-handler
+<box #<listener-handler:listener<->>
+```
+
 XXX
 
 
