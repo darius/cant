@@ -51,7 +51,7 @@
   `(,(min @numbers)
     ,(max @numbers)))
 
-(to (paint lines)
+(to (grid<-picture lines)
   (~.range (for where ((ch (map<-lines lines)))
              (not ch.whitespace?))))
 
@@ -61,8 +61,8 @@
                   (~ `(,col ,(- row)) ; minus so y-coordinates increase upwards
                      ch)))))
 
-(let r-pentomino (paint [" **"
-                         "** "
-                         " * "]))
+(let r-pentomino (grid<-picture [" **"
+                                 "** "
+                                 " * "]))
 
-(export update show paint r-pentomino)
+(export update show grid<-picture r-pentomino)
