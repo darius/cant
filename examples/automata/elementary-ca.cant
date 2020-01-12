@@ -4,16 +4,14 @@
 
 (to (run rule start-bits n-steps)
   (to (step bits)
-    (each rule (neighborhoods bits)))
+    (each rule
+          `(0 0 ,@bits)
+          `(0 ,@bits 0)
+          `(,@bits 0 0)))
   (show
    (for foldl ((state start-bits) (_ (1 .to n-steps)))
      (show state)
      (step state))))
-
-(to (neighborhoods bits)
-  (zip `(0 0 ,@bits)
-       `(0 ,@bits 0)
-       `(,@bits 0 0)))
 
 (to (show bits)
   (let line (string<-list (each "-*" bits)))
@@ -22,7 +20,7 @@
 ;; There are 2**8 possible elementary CA's. Return the update rule
 ;; for the given-numbered one.
 (to (rule<-index n)
-  (on ((~ left center right))
+  (on (left center right)
     (let i (+ (* left 4) (* center 2) right))
     ((n .>> i) .and 1)))
 
