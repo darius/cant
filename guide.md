@@ -1123,6 +1123,8 @@ handler yourself:
 -> the-signal-handler
 <box #<listener-handler:listener<->>
 ```
+This is done within a program in
+[examples/failing.cant](https://github.com/darius/cant/blob/master/examples/failing.cant).
 
 XXX
 
