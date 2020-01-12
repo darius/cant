@@ -86,8 +86,7 @@
                                (-> (tags .set! thing it))))
                         (else   ;; Thereafter, just use that one:
                           tag)))
-              (buffer .push! (on (sink)
-                               (sink .say "#~w" id)))))))
+              (buffer .push! (~ .say "#~w" id))))))
   
     (to ~.close
       tags.clear!))
