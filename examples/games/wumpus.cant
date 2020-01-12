@@ -1,7 +1,8 @@
 ;; A simplified version of Gregory Yob's "Hunt The Wumpus".
 ;; TODO the full cave network; superbats?
-;; XXX there's something wrong that only comes up if you have some other load-time bug;
-;;    then you get evil-within-evil replacing the traceback
+;; XXX there's something wrong that only comes up if you have some
+;;   other load-time bug; then you get evil-within-evil replacing the
+;;   traceback
 
 (import (use 'random) random-rng<-)
 
@@ -63,7 +64,7 @@
 
 (to (shoot)
   (arrow .go (ask-where "Shoot down which tunnel?"))
-  ;; If we reach here, the arrow missed. (We quit when it hits.)
+  ;; If control returns here, the arrow missed. (We quit when it hits.)
   (arrow .go limbo)
   wumpus.wander)  ; An arrow that misses wakes up the wumpus.
 
@@ -136,7 +137,7 @@
         wumpus.wander)
       (else)))
   (to ~.wander
-    ;; Move to a random neighbor, or stay put.
+    ;; Move to a random neighbor, or just circle back.
     (let here wumpus.where)
     (wumpus .go (rng .pick (link here here.neighbors)))))
 
