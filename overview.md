@@ -46,7 +46,7 @@ a real program in this?
 
 Cant is not really about new ideas -- the ideas new to some are from
 E, so [start there](https://erights.org) if you wish to learn
-them. Cant is about finding a smallest combination of old ideas
+them. Cant is about finding a smallest arrangement of old ideas
 supporting a programming style I can enjoy working in a lot.
 
 So, why not address the second question by jumping right into the
@@ -149,7 +149,7 @@ already-complex systems.)
 There's plenty of unfinished crap in this repo, not clearly marked.
 
 
-## Quick start for Schemers
+## Interacting with the listener
 
 Be in this directory (the one holding the file `incant`) and then:
 
