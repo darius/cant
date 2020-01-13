@@ -1134,6 +1134,11 @@ ordinary top-level one.
 The debugger can inspect the sequel and the evil, and 'resume the
 sequel' (continue the computation) if you wish.
 
+'Sequel' is Cant jargon for the current continuation. If the signal
+handler ever returns, that will terminate the whole Cant session:
+i.e., the extra, *implicit* sequel to the signal handler is a
+top-level quit, like the implicit sequel to the listener at startup.
+
 In a full-powered setting like the listener, you can manage the signal
 handler yourself:
 ```
@@ -1155,8 +1160,6 @@ artifact of the implementation.
 This error-handling scheme isn't the product of much consideration. It
 gets you back into the listener or the debugger, and that's almost all
 I've wanted so far.
-
-XXX more doc & more design needed
 
 
 ## Introspection
@@ -1181,7 +1184,6 @@ more std types
   term
   void
   meta-stuff
-```
 
 more naming conventions:
 foo<-
@@ -1202,6 +1204,7 @@ read syntax: [] {} @ ...?
 
 cheat sheet, like https://github.com/jeapostrophe/racket-cheat/blob/master/racket-cheat.scrbl
 cant-mode.el
+```
 
 
 ## Infelicities
