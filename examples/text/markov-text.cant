@@ -21,6 +21,9 @@
 (to (tokenize string)
   string.lowercase.split)               ;TODO better
 
+;; A model is a map from a context to a bag of possible next tokens.
+;; A context is a token-list of length `order`.
+
 (to (train model input)
   (let data (chain start input '("END"))) ;TODO as array?
   (for each! ((datum (k-slices<- data order.+)))
@@ -40,6 +43,7 @@
         (let next-state `(,@(state .slice 1) ,choice))
         (link choice (spewing next-state))))))
 
+;; Pick a random element from a bag, weighted by frequency.
 (to (sample-from-bag rng bag)           ;TODO dedupe: similar in squickcheck.scm
   (let n bag.total)  ;; Pre: n > 0
   (begin counting ((k (rng .random-integer n))

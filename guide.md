@@ -1130,8 +1130,8 @@ sequel, followed by the evil, then stashed them where `(debug)` can
 retrieve them, then finally went back into a listener loop -- an
 ordinary top-level one.
 
-The debugger can inspect the sequel and the evil, and resume the
-computation if you wish.
+The debugger can inspect the sequel and the evil, and 'resume the
+sequel' (continue the computation) if you wish.
 
 In a full-powered setting like the listener, you can manage the signal
 handler yourself:
