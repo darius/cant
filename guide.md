@@ -214,7 +214,8 @@ here):
 $ ./incant examples/fizzbuzz.cant
 ```
 
-Or load it in the listener:
+You can also say `incant -i filename.cant` to load the file and then
+start the listener. If you're already in the listener, use `load`:
 
 ```
 $ ./incant
