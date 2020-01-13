@@ -7,13 +7,7 @@
   (surely (<= 2 bound))
   (with-ejector
    (on (ejector)
-     ;; TODO (- bound 2) leaves space for the possible overflow mark
-     ;; ".." -- but it'd be nice to omit the ".." in the case where
-     ;; the output just fits. It's sort of annoying to get ".."
-     ;; scribbled over a perfectly good end-of-string. We could fix
-     ;; this by an extra warning-track state.
-     ;; TODO if you do that, consider somehow disambiguating whether
-     ;; the output legitimately ends in ".." or whatever
+     ;; (- bound 2) leaves space for the possible overflow mark.
      (let budget (box<- (- bound 2))) ; The length remaining
      (let ss (string-sink<-))
 
@@ -36,3 +30,11 @@
                (to ~.close          ss.close))))))
 
 (export bounded-writer<-)
+
+;; TODO it'd be nice to omit the ".." in the case where
+;; the output just fits. It's sort of annoying to get ".."
+;; scribbled over a perfectly good end-of-string. We could fix
+;; this by an extra warning-track state.
+
+;; TODO if you do that, consider somehow disambiguating whether
+;; the output legitimately ends in ".." or whatever
