@@ -1,4 +1,5 @@
 ;; https://rosettacode.org/wiki/LZW_compression
+;; "The Lempel-Ziv-Welch (LZW) algorithm provides loss-less data compression."
 
 (to (show-lzw string)
   (for each ((code (encode string)))

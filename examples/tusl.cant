@@ -1,20 +1,21 @@
-;; A bit of Forth with local variables
-
-(to (stack-op-2-1<- op)
-  (to (stack-op-2-1 {state (link z y s) r})
-    {state (link (op y z) s)
-           r}))
+;; A bit of Forth with local variables.
+;; An op transforms a state.
+;; A state is {state data-stack return-stack}.
+;; A stack is a list, from topmost to bottom-most.
+;; The return stack also holds local variables.
 
 (to (push<- literal)
   (to (push {state s r})
     {state (link literal s)
            r}))
 
+;; Pop `count` values from the data stack into fresh local variables.
 (to (grab<- count)
   (to (grab {state s r})
     {state (s .slice count)
            (chain (s .slice 0 count) r)}))
 
+;; Push the kth local variable.
 (to (local<- k)
   (to (local {state s r})
     {state (link (r k) s)
@@ -24,6 +25,11 @@
   (to (ungrab {state s r})
     {state s
            (r .slice count)}))
+
+(to (stack-op-2-1<- op)
+  (to (stack-op-2-1 {state (link z y s) r})
+    {state (link (op y z) s)
+           r}))
 
 (let dictionary
   (map<- (~ '+ (stack-op-2-1<- +))
@@ -62,7 +68,7 @@
   (let locals (chain @frames))      ;I think
   (mayhap local<- (locals .find word #no)))
 
-(to (run xts)
+(to (run xts)                 ; xt = 'execution token' in Forth jargon
   (for foldl ((state {state '() '()})
               (xt xts))
     (xt state)))

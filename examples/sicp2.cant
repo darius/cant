@@ -14,7 +14,7 @@
   (let structure (if (number? submobile) (weight<- submobile) submobile))
   (make _
     (to ~.torque    (* length structure.weight))
-    (to msg         (call structure msg))))
+    (to message     (call structure message))))  ;XXX keep miranda methods
 
 (to (weight<- value)
   (make _

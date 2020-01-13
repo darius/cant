@@ -14,9 +14,8 @@
         (be #no
           ("~w(~d)" .format op (fmt x 0)))
         (be {unary prefix postfix}
-          (hm (if prefix  (enclose prefix p ("~w~d" .format op (fmt x prefix))))
-              (if postfix (enclose prefix p ("~d~w" .format (fmt x prefix) op)))))))
-        ;XXX should the above line not be (enclose postfix p ...) and (fmt x postfix) ?
+          (hm (if prefix  (enclose prefix  p ("~w~d" .format op (fmt x prefix))))
+              (if postfix (enclose postfix p ("~d~w" .format (fmt x postfix) op)))))))
     (be `(,op ,x ,y)
       (may (binaries .get op)
         (be #no
@@ -38,7 +37,8 @@
 
 (to (def-infix name p)   (binaries .set! name {binary p p.+}))
 
-(def-prefix '- 100)                     ;XXX dunno
+(def-prefix '- 10)                      ;XXX get the right precedences
+(def-postfix '! 100)
 
 (def-infix '+ 10)
 (def-infix '- 10)
@@ -48,4 +48,4 @@
 
 ;; smoke test
 
-(out .print (format-infix '(* (+ 1 2) (+ 3 (* 4 5)))))
+(out .print (format-infix '(* (+ 1 2) (+ (* 3 4) (* 5 6)))))

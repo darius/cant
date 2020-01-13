@@ -1,5 +1,6 @@
 ;; An example from William Cook's essay on OOP vs. ADTs
 ;; http://www.cs.utexas.edu/~wcook/Drafts/2009/essay.pdf
+;; Sets of integers, in an OO style.
 
 (make empty-set
   (to ~.empty?      #yes)

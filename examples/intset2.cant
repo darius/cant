@@ -1,5 +1,6 @@
 ;; An example from William Cook's essay on OOP vs. ADTs
 ;; http://www.cs.utexas.edu/~wcook/Drafts/2009/essay.pdf
+;; Sets of integers, represented by an algebraic datatype.
 ;; We don't yet support abstract datatypes (need 'synergy') --
 ;; we could actually hack that up in terms of =, but it'd be
 ;; nicer with a primitive.
