@@ -241,6 +241,10 @@ There's a [metacircular version of the core
 interpreter](https://github.com/darius/cant/blob/master/examples/kernel.cant)
 which is much shorter, though less clarifying as explanation.
 
+Don't forget
+[plug-ins/cant-mode.el](https://github.com/darius/cant/blob/master/plug-ins/cant-mode.el)
+if you use Emacs.
+
 
 ## The bikeshedding
 
