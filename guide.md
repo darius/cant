@@ -195,8 +195,8 @@ q quit      - quit the debugger
 r resume    - continue from here, with the value of an expression
 u up        - up to caller
 d down      - down to callee
-e env       - enumerate the variables in the current environment
-v value     - evaluate an expression in the current environment
+e env       - enumerate the variables in the current setting
+v value     - evaluate an expression in the current setting
 b backtrace - show all of the stack up from here
 debug-> q
 ok
@@ -227,7 +227,7 @@ Fizz
 
 ```
 
-The global environment at startup is populated from
+The primitive functions and types are defined by
 [abcs/](https://github.com/darius/cant/tree/master/abcs) (plus a
 handful of modules from
 [library/](https://github.com/darius/cant/tree/master/library)). Not
@@ -543,7 +543,7 @@ This definition had a name and a list of clauses. At creation time,
 the name was bound to the new object. At call time, the message gets
 matched against the pattern of each clause in turn until a match
 succeeds. A match may bind variables (such as `someone`, above). Then
-the corresponding body is evaluated in the environment created by the
+the corresponding body is evaluated in the setting created by the
 match.
 
 You can use terms and patterns in non-OO code as well. For instance,
