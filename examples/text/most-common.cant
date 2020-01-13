@@ -1,5 +1,5 @@
 ;; Print the N most frequent words from stdin, in descending order,
-;; with their frequencies.
+;; with their frequencies. N may be set from the command line.
 
 (import (use 'format-tables) format-table)
 
