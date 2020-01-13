@@ -1,4 +1,4 @@
-;; An example failing computation, to exercise the debugger.
+;; An example failing computation, to exercise debugging introspection.
 ;; This turned into essentially a repeat of test-continuations.scm.
 
 (import ((use 'traceback) (export out))
@@ -9,11 +9,10 @@
       (error "I don't know 0!")
       (* n (factorial (- n 1)))))
 
-(to (on-error-complain-and-continue sequel evil)
+(to (complain-and-resume sequel evil)
   (on-error-traceback sequel evil)
-  (out .say "About to continue with 10\n")
-  (the-signal-handler .^= on-error-traceback) ;; Restore the usual handler.
+  (out .say "About to resume, pretending 0! = 10\n")
   (sequel .answer 10))
 
-(the-signal-handler .^= on-error-complain-and-continue)
-(out .print (factorial 5))
+(with-signal-handler complain-and-resume
+                     (: (out .print (factorial 5))))

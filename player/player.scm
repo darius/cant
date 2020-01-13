@@ -1,4 +1,4 @@
-;; Interpreter of ASTs, in continuation-passing style.
+;; Interpreter of ASTs, in defunctionalized continuation-passing style.
 
 #!chezscheme
 (library (player player)

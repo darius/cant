@@ -1130,13 +1130,30 @@ handler yourself:
 -> the-signal-handler
 <box #<listener-handler:listener<->>
 ```
-This is done within a program in
+There's an example of programmatically recovering from an error at
 [examples/failing.cant](https://github.com/darius/cant/blob/master/examples/failing.cant).
+The signal-handler management is done in
+[abcs/50-top.cant](https://github.com/darius/cant/blob/master/abcs/50-top.cant).
 
-XXX
+Ejectors and ejector protection are not unwound before the signal
+handler gets called. If you resume the error's sequel, then the
+unwinding happens in the ordinary course of that
+computation. Currently it happens to be possible to resume the sequel
+more than once, like a Scheme continuation, but that ability is an
+artifact of the implementation.
+
+This error-handling scheme isn't the product of much consideration. It
+gets you back into the listener or the debugger, and that's almost all
+I've wanted so far.
+
+XXX more doc & more design needed
 
 
 ## Introspection
+
+The error handlers above printed out a traceback of the sequel. They
+were able to because a sequel is a metaobject with methods besides
+just resuming.
 
 XXX
 
