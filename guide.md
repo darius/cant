@@ -234,7 +234,12 @@ that these make great example code necessarily, but they're the first
 places to look to clear up questions you may have.
 
 The underlying interpreter in Scheme lives in
-[player/](https://github.com/darius/cant/tree/master/player).
+[player/](https://github.com/darius/cant/tree/master/player); notably,
+Cant's syntactic sugar is defined by
+[parse.scm](https://github.com/darius/cant/blob/master/player/parse.scm).
+There's a [metacircular version of the core
+interpreter](https://github.com/darius/cant/blob/master/examples/kernel.cant)
+which is much shorter, though less clarifying as explanation.
 
 
 ## The bikeshedding
