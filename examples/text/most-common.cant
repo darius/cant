@@ -3,12 +3,10 @@
 
 (import (use 'format-tables) format-table)
 
-(let default-N 10)
-
 (to (main args)
   (let N (may args.rest
            (be '()
-             default-N)
+             10)    ; default
            (be `(,(view number<-string (? yeah? number)))
              number)
            (else (out .say "usage: ~d [number]\n" (args 0)) ;TODO stderr
