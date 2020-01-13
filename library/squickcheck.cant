@@ -24,12 +24,10 @@
     (to (~ .run g n-times property gens)
       (let failures (flexarray<-))
       (for each! ((_ (0 .to< n-times)))
-        (let inputs (for each ((gen gens))
-                      (gen g)))
+        (let inputs (each (~ g) gens))
         (may (property @inputs)
           (be #yes    (out .display "."))
-          (be outcome (out .display "X")
-              (failures .push! (~ outcome inputs)))))
+          (be outcome (out .display "X") (failures .push! (~ outcome inputs)))))
       out.newline
       (when failures.some?
         (out .say "Failures for ~w:\n" property)
@@ -88,8 +86,7 @@
 
   ;; TODO find a new name for this after the retupling
   (to ((a-tuple @gens) g)
-    (for each ((gen gens))
-      (gen g)))
+    (each (~ g) gens))
 
   (to ((a-choice @gens) g)
     ((g .choose gens) g))

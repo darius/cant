@@ -13,6 +13,7 @@
 ;; the *same* flushed chunk of output. Perhaps not a big deal, but
 ;; this wrinkle and the faceting below are why I'm not bothering to
 ;; engineer a general cycle-sink object. TODO revisit this
+;; (cycle-writer<- partly solves this problem.)
 
 ;; There's also a matter of POLA-separating the flushing from the
 ;; writing. I bothered to do that here, but maybe that's kind of

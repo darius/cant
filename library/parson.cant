@@ -1,4 +1,4 @@
-;; Parson's concrete language-independent syntax
+;; Create Parson parsers from their concrete language-independent syntax.
 ;; XXX leaving out regexes, fnord, anonymous start
 
 (import (use 'parson-core)

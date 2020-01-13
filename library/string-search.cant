@@ -1,13 +1,12 @@
-;; Based on my old scheme-data-structures code
+;; String matching
+;; Return index of first substring in DAT equal to PAT, or #no.
+;; Note that (string-match "" "") = 0.
+
+;; Based on my old scheme-data-structures code.
 ;; XXX testme
 
 ;; XXX this should be in runtime.cant somewhere
 (let alphabet-size 256)
-
-
-;;; String matching
-;;; Return index of first substring in DAT equal to PAT, or #no.
-;;; Note that (string-match "" "") = 0.
 
 ;; Brute force algorithm
 ;; XXX make this a built-in string method

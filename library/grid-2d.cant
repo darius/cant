@@ -14,7 +14,6 @@
 
 ;; TODO APL/numpy-style ops
 
-;; TODO are inclusive bounds really how you want to express it?
 (to (grid-2d<- (~ xl yl) (~ xh yh) initializer)
   (let x-extent (+ (- xh xl) 1))
   (let y-extent (+ (- yh yl) 1))

@@ -1,4 +1,4 @@
-;;; ANSI terminal control
+;;; ANSI terminal input, output, and mode-setting.
 
 (to (module powers)
   (import powers console)
@@ -143,7 +143,12 @@
   (to (unstyled scene) scene)
   
 
-  ;; Keyboard input
+  ;; Keyboard input.
+  ;; Dear users, don't try to read a bare escape-key press, because this
+  ;; code can't tell the difference from a key that sends a longer escape
+  ;; sequence. I once had logic for that, which always broke in one OS or
+  ;; another.
+  ;; We pretend control-X is the escape key, sheesh.
   ;; TODO optional timeout
 
   (to (ctrl ch)

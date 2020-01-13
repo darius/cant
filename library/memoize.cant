@@ -10,9 +10,8 @@
     ;; except of course .get-set! isn't quite the thing.
     (let recalled (memos .get arguments not-yet))
     (if (= recalled not-yet)
-        (do (let computed (f @arguments))
-            (memos .set! arguments computed)
-            computed)
+        (hey (f @arguments)
+             (-> (memos .set! arguments it)))
         recalled)))
 
 (export memoize)

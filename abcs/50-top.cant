@@ -113,10 +113,10 @@
 
 (to (debug)
   (import ((use 'debugger) (export out))
-    inspect-continuation)
+    inspect-sequel)
   (may the-last-error.^
     (be {error k evil}
-      (inspect-continuation k))
+      (inspect-sequel k))
     (else
       (out .display "No error to debug.\n"))))
 

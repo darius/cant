@@ -33,7 +33,7 @@
       ))
 
   (to (~ vals)
-    (let bag (bag<-))     ;; TODO I couldn't use 'hey' here -- just a bootstrap problem?
+    (let bag (bag<-))
     (bag .add-all! vals)
     bag))
 

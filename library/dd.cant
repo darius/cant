@@ -1,4 +1,4 @@
-;; Decision diagrams
+;; Decision diagrams, generalizing bdd.cant to multiway branches.
 ;; Choice nodes select a branch by the value of a variable, from 0 to
 ;; #branches-1. Each variable is also represented by a number, its 'rank'
 ;; -- lower rank numbers are placed nearer the root of the tree.

@@ -14,7 +14,7 @@
     (map<-items (for each ((`(,short ,full ,_) vocab))
                   (~ short full))))
 
-  ;; TODO unify with inspect-continuation
+  ;; TODO unify with inspect-sequel
   (to (inspect initial-focus)
     (let vocab
       '((? help      "this message")
@@ -69,7 +69,7 @@
         (else
           (continue "Huh? Enter 'help' for help.")))))
 
-  (to (inspect-continuation k)
+  (to (inspect-sequel k)
     (surely k.some?)               ;XXX require
 
     (let vocab
@@ -126,4 +126,4 @@
         (else
           (continue "Huh? Enter 'help' for help.\n")))))
 
-  (export inspect inspect-continuation))
+  (export inspect inspect-sequel))

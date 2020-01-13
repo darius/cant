@@ -1,4 +1,5 @@
 ;; Solve mostly-linear systems of equations, a la Van Wyk's IDEAL.
+;; XXX unfinished
 
 ;; Constraints are equations between expressions. We represent one as
 ;; an expression, with '=0' implicit. We try to reduce each expression

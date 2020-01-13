@@ -21,8 +21,8 @@
          (string<-number y.+) ";"
          (string<-number x.+) "H"))
 
-(let `(,black ,red ,green ,yellow ,blue ,magenta ,cyan ,white)
-  (as-list (0 .to 7)))              ;TODO ugly
+(let [black red green yellow blue magenta cyan white]
+  (array<-list (0 .to 7)))        ;TODO wish we didn't have to convert
 
 (to (bright color)
   (+ 60 color))
