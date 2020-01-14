@@ -1211,7 +1211,24 @@ smoke test in
 
 ## What's missing?
 
-XXX
+At this writing, both debugging and performance really suck. They need
+to be the next priority.
+
+The biggest practical hole in the language and library is probably
+floating point.
+
+The lack that most affects library and program design, I think, is
+listed above under "Abstract data types, synergy, trademarks".
+
+I need to finish converting all code loaded by `use` into the
+computational setting, or maybe deciding on some other course.
+
+While an in-process debugger would be a great improvement over what we
+have now, ultimately we want a fault-tolerant system, which needs
+communicating processes. The model I have in mind is E's yet again.
+
+There's an infinity of smaller issues. This Robinson-Crusoe business
+might've been a dumb idea.
 
 
 ## Miscellany
