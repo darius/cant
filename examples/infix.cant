@@ -9,10 +9,9 @@
 
 (to (fmt p e)
   (may e
-    (be (? number?)  (string<-number e))
-    (be (? symbol?)  e.name)
     (be `(,op ,x)    (fmt-unary p op x))
-    (be `(,op ,x ,y) (fmt-binary p op x y))))
+    (be `(,op ,x ,y) (fmt-binary p op x y))
+    (else            ("~w" .format e))))
 
 (to (fmt-unary p op x)
   (may (unaries .get op)
@@ -53,4 +52,4 @@
 
 ;; smoke test
 
-(out .print (format-infix '(* (+ 1 2) (+ (* 3 4) (* 5 6)))))
+(out .displayln (format-infix '(* (+ 1 2) (+ (* 3 4) (* 5 6)))))

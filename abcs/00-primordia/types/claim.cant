@@ -1,5 +1,5 @@
 (make-trait claim-primitive me
-  (to ~.count       (if me 1 0))
+  (to ~.count          (if me 1 0))
   (to (~ .selfie sink) (sink .display (if me "#yes" "#no")))
   (to (~ .compare a)
     (may a

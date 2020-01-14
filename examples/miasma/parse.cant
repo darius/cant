@@ -65,7 +65,7 @@
                (<= 3 sexpr.count)
                (symbol? sexpr.first))
           "Spec has the basics")
-  (let stem sexpr.first.name)
+  (let stem sexpr.first.string)
   ;; We copy sexpr.rest until we hit the doc-string.
   ;; Preceding were our params, and the reg/flag list optionally follows.
   (let `(,params (,doc-string ,@(optional uses)))

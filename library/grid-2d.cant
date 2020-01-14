@@ -103,12 +103,12 @@
 ;; (* * *)
 ;; (a * *)
 ;; #no
-;; -> (g .show (on (row) (out .displayln ("" .join (each ~.name row)))))
+;; -> (g .show (on (row) (out .displayln ("" .join (each ~.string row)))))
 ;; ***
 ;; a**
 ;; #no
 ;; -> (g .set! (~ 3 1) 'b)
-;; -> (g .show (on (row) (out .displayln ("" .join (each ~.name row)))))
+;; -> (g .show (on (row) (out .displayln ("" .join (each ~.string row)))))
 ;; *b*
 ;; a**
 ;; #no

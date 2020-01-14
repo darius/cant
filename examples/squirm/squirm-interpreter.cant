@@ -41,7 +41,7 @@
 
 (to (string<-symbol sym)
   (surely (symbol? sym))
-  sym.name)
+  sym.string)
 
 
 ;; Language syntax
@@ -203,10 +203,10 @@
 ;; Transform foo:bar to {module-ref foo bar}
 ;; (TODO better to do this in the reader in the real system.)
 (to (module-ref? symbol)
-  (symbol.name .find? #\:))
+  (symbol.string .find? #\:))
 
 (to (module-ref-parse symbol)
-  (let `(,mod ,var) (symbol.name .split ":"))
+  (let `(,mod ,var) (symbol.string .split ":"))
   {module-ref (symbol<- mod) (symbol<- var)})
 
 (to (clause-parse `(,pattern ,@seq))
@@ -220,7 +220,7 @@
   (may pattern
     (be (? symbol?)
       (surely (not (module-ref? pattern)))
-      (if (pattern.name .prefix? "_")
+      (if (pattern.string .prefix? "_")
           {ignore}
           {bind pattern}))
     (be (? self-evaluating?)
@@ -446,7 +446,7 @@
   (to (module-ref mod-name var-name)
     (let mod-env
       (or (modules .get mod-name)
-          (do (let filename (chain autoload-base mod-name.name ".cant"))
+          (do (let filename (chain autoload-base mod-name.string ".cant"))
               (module-load mod-name filename)
               (modules mod-name))))
     (env-get mod-env var-name))

@@ -77,7 +77,7 @@
     (be {op operator e1 e2}
       (for bind ((cv1 e1))
         (for bind ((cv2 e2))
-          (unit (c-binop operator.name cv1 cv2)))))
+          (unit (c-binop operator.string cv1 cv2)))))
     (be {hereafter}
       (unit "hereafter"))
     (be {arg @_}
@@ -122,7 +122,7 @@
   ("" .join `("enum {\n"
               ,@(for each (((~ sym val) items))
                   ("  ~d = ~d,\n"
-                   .format (as-legal-c-identifier sym.name) (c-int-literal val)))
+                   .format (as-legal-c-identifier sym.string) (c-int-literal val)))
               "};")))
 
 (to (c-int-literal n)
@@ -154,7 +154,7 @@
   ("#define ~d(~d)" .format name (", " .join vars)))
 
 (to (c-insn-name mnemonic)
-  (chain "x86_" (as-legal-c-identifier mnemonic.name)))
+  (chain "x86_" (as-legal-c-identifier mnemonic.string)))
 
 ;; Return `str`, but munging out any characters that are used in our 
 ;; mnemonics but aren't legal in C identifiers.

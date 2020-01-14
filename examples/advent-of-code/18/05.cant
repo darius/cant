@@ -1,7 +1,7 @@
 ;; (Use run.cant to run this.)
 
 (let input (take (with-input-file read data-file)
-                 (-> it.name.values)))
+                 (-> it.string.values)))
 
 (to (reacts? c d)
   (and (= c.uppercase d.uppercase)

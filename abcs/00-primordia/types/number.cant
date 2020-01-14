@@ -24,6 +24,7 @@
   (to ~.-              (__- me 1))      ;experiment
   (to ~.sqrt           (sqrt me))
   (to ~.floor          (floor me))
+  (to ~.string         (string<-number me))
   ;; XXX sketchy support for 32-bit word ops:
   (to (~ .u+ a)        (__u+ me a))
   (to (~ .u- a)        (__u- me a))

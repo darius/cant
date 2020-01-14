@@ -296,7 +296,7 @@
                     (-2  1) (-2 -1) (-1  2) (-1 -2)))
 
 (to (side-name side)
-  side.name.capitalize)
+  side.string.capitalize)
 
 (let opponent
   (given
