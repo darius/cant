@@ -1,4 +1,4 @@
-;; Format an infix expression into a string with minimal parens.
+;; Format an infix expression into a string with minimal parentheses.
 
 (to (format-infix e)
   (fmt e 0))
