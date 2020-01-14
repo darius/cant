@@ -1174,8 +1174,29 @@ wanted so far.
 ## Introspection
 
 The error handlers above printed out a traceback of the sequel. They
-were able to because a sequel is an object with methods besides just
-resuming.
+could because a sequel is an object with methods besides just
+resuming: it can present itself as a list of stack frames, deepest first.
+
+A stack frame usually represents a moment in the evaluation of a Cant
+AST in a particular setting. You can ask for the setting or for the
+frame to `.selfie` itself (producing the tracebacks we've seen).
+
+I expect the eventual 'real' debugger to be centered around ASTs. You
+can see examples of the current ASTs outside of the debugger:
+```
+-> (cant .parse-expression '42)
+#<expr {constant 42}>
+-> (~.unparse (cant .parse-expression '(+ 2 3)))
+(call + {~ 2 3})
+```
+
+The selfie of a stack frame generally looks like the `.unparse` of an
+AST with one part replaced by a `^` signifying the 'hole' where the
+frame is waiting for a result to resume with. (The future real
+debugger ought to be more readable, showing actual source code.)
+
+The ASTs and sequels are objects rather than terms to allow for very
+different representations later.
 
 XXX
 
