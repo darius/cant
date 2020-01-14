@@ -1202,16 +1202,14 @@ debugger ought to be more readable, showing actual source code.)
 The ASTs and sequels are objects rather than terms to allow for very
 different representations later.
 
-XXX
+By now [the metacircular
+interpreter](https://github.com/darius/cant/blob/master/examples/kernel.cant),
+operating on ASTs, hopefully makes sense. You can see it getting the
+smoke test in
+[test/test-kernel.cant](https://github.com/darius/cant/blob/master/test/test-kernel.cant).
 
 
 ## Miscellany
-
-Now that we've glanced over the greater part of the core, you might
-find it worthwhile to review [the metacircular
-interpreter](https://github.com/darius/cant/blob/master/examples/kernel.cant)
-to see if it makes sense. You can see it getting the smoke test in
-[test/test-kernel.cant](https://github.com/darius/cant/blob/master/test/test-kernel.cant).
 
 ```
 more std types
