@@ -2,6 +2,34 @@
 ;; (I renamed 'total-weight' to just 'weight'.)
 
 ;; Algebraic-data version
+;; tree ::= number | {mobile branch branch}
+;; branch ::= {branch length tree}
+;; length ::= number
+
+(to (balanced? tree)
+  (may tree
+    (be (? number?)
+      #yes)
+    (be {mobile left right}
+      (and (branch-balanced? left)
+           (branch-balanced? right)
+           (= (torque left) (torque right))))))
+
+(to (branch-balanced? {branch _ tree})
+  (balanced? tree))
+
+(to (torque {branch length tree})
+  (* length (weight tree)))
+
+(to (weight tree)
+  (may tree
+    (be (? number?)
+      tree)
+    (be {mobile left right}
+      (+ (branch-weight left) (branch-weight right)))))
+
+(to (branch-weight {branch _ thing})
+  (weight thing))
 
 (let test-mobile
   {mobile {branch 1 10}
@@ -12,28 +40,6 @@
   {mobile {branch 7 10}
           {branch 1 {mobile {branch 3 40}
                             {branch 4 30}}}})
-
-(to (balanced? tree)
-  (may tree
-    (be {mobile left right}
-      (and (balanced? left)
-           (balanced? right)
-           (= (torque left) (torque right))))
-    (else
-      #yes)))                       ;XXX don't we care about deep balance?
-
-(to (torque {branch length structure})
-  (* length (weight structure)))
-
-(to (weight tree)
-  (may tree
-    (be {mobile left right}
-      (+ (weight left) (weight right)))
-    (be (? number?)
-      tree)
-;; XXX this was missing -- go look up the problem again:
-    (be {branch _ thing}
-      (weight thing))))
 
 (out .print (balanced? test-mobile))
 (out .print (balanced? test-balanced-mobile))
