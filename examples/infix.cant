@@ -1,30 +1,35 @@
 ;; Format an infix expression into a string with minimal parentheses.
 
+;; Glossary:
+;; p: Precedence level. Higher-precedence operators bind more tightly.
+;; e: Expression in s-expr form.
+
 (to (format-infix e)
-  (fmt e 0))
+  (fmt 0 e))
 
-(to (fmt e p)
+(to (fmt p e)
   (may e
-    (be (? number?)
-      (string<-number e))
-    (be (? symbol?)
-      e.name)
-    (be `(,op ,x)
-      (may (unaries .get op)
-        (be #no
-          ("~w(~d)" .format op (fmt x 0)))
-        (be {unary prefix postfix}
-          (hm (if prefix  (enclose prefix  p ("~w~d" .format op (fmt x prefix))))
-              (if postfix (enclose postfix p ("~d~w" .format (fmt x postfix) op)))))))
-    (be `(,op ,x ,y)
-      (may (binaries .get op)
-        (be #no
-          ("~w(~d, ~d)" .format op (fmt x 0) (fmt y 0)))
-        (be {binary left right}
-          (enclose left p
-                   ("~d ~w ~d" .format (fmt x left) op (fmt y right))))))))
+    (be (? number?)  (string<-number e))
+    (be (? symbol?)  e.name)
+    (be `(,op ,x)    (fmt-unary p op x))
+    (be `(,op ,x ,y) (fmt-binary p op x y))))
 
-(to (enclose inner outer string)
+(to (fmt-unary p op x)
+  (may (unaries .get op)
+    (be #no
+      ("~w(~d)" .format op (fmt 0 x)))
+    (be {unary prefix postfix}
+      (hm (if prefix  (enclose p prefix  ("~w~d" .format op (fmt prefix x))))
+          (if postfix (enclose p postfix ("~d~w" .format (fmt postfix x) op)))))))
+
+(to (fmt-binary p op x y)
+  (may (binaries .get op)
+    (be #no
+      ("~w(~d, ~d)" .format op (fmt 0 x) (fmt 0 y)))
+    (be {binary left right}
+      (enclose p left ("~d ~w ~d" .format (fmt left x) op (fmt right y))))))
+
+(to (enclose outer inner string)
    (if (< inner outer)
        ("(~d)" .format string)
        string))
