@@ -345,7 +345,7 @@ OK, moving on. Scheme functions on lists:
 
 | Scheme                        | Cant        | Note          |
 | ----------------------------- | ------------- | ------------- |
-| `(cons x xs)`                 | `(link x xs)`       |  |
+| `(cons x xs)`                 | `(link x xs)`       | Or `(link x1 x2 xs)`, etc. |
 | `(append xs ys)`              | `(chain xs ys)`     |  |
 | `(list x y z)`                | `(list<- x y z)`    | Though it's more common to use quasiquoting. |
 | `(null? xs)`                  | `(null? xs)`, `xs.none?`, or `(xs .none?)`     | `xs.none?` is reader sugar for the last expression. All collections answer this message, though not all objects. `null?` would be useful when you don't know if the argument is a collection. |
@@ -411,7 +411,8 @@ like bags/sets/sequences also understand the same messages.
 | `(m key)`                     | The value for this particular key, or raise an error if it's absent. The primitive `=` function defines sameness between the map's key and the value `key` provided in the message. |
 | `(m .get key)`                | Ditto, except the result is `#no` if the key is absent. |
 | `(m .get key default)`        | Ditto, except `default` instead of `#no`. |
-| `m.none?`                    | Does `m` have any keys? `#yes` or `#no`. |
+| `m.none?`                     | Does `m` have any keys? `#yes` or `#no`. |
+| `m.some?`                     | Complement of `.none?`. |
 | `m.keys`                      | A sequence of the keys, in some defined order. If `m` is mutable, the result should present a snapshot of the state as of this call. (For a hashmap, currently, the order is arbitrary, but I intend to make it insertion order when I get around to it.) |
 | `m.values`                    | A sequence of the values corresponding to the keys, in the same order. |
 | `m.items`                     | A sequence of key-value tuples. (The name `items` is from Python; any ideas for a better name? `mappings`?) |
@@ -1055,7 +1056,7 @@ examples/lambda-calculus/prelude.cant](https://github.com/darius/cant/blob/maste
 ```
 
 I'm thinking of dropping this. While there are more places it could be
-used, you'd lose the documentation value of naming the argument.
+used, when you do you lose the documentation value of naming the argument.
 
 More syntax that'd occasionally be nice if it existed: a `(matcher
 pattern)` creating a single-argument function that returns `#yes` if
@@ -1236,11 +1237,6 @@ might've been a dumb idea.
 ## Miscellany
 
 ```
-more std types
-  term
-  void
-  meta-stuff
-
 more naming conventions:
 foo<-
 dest<-src
