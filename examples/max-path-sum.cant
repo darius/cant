@@ -7,8 +7,8 @@
 
 ;; Return (~ max-sum-of-any-path
 ;;           max-sum-of-any-path-ending-at-root).
-(to (solve tree)
-  (may tree
+(let solve
+  (given
     (be {leaf}
       (~ 0 0))
     (be {branch value L R}

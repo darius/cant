@@ -1033,7 +1033,7 @@ represent a pair: tuples, lists, arrays...)
 
 ## More syntax: `given`
 
-To create an anonymous function with multiple pattern-action clauses:
+To create an anonymous single-argument function with multiple pattern-action clauses:
 ```
 (given
   (be pattern1 action1)
@@ -1052,6 +1052,15 @@ examples/lambda-calculus/prelude.cant](https://github.com/darius/cant/blob/maste
                  (be 0          lc-zero)
                  (be (? count?) (apply lc-succ (counting n.-))))))}
 ```
+
+I'm thinking of dropping this. While there are more places it could be
+used, you'd lose the documentation value of naming the argument.
+
+More syntax that'd occasionally be nice if it existed: a `(matcher
+pattern)` creating a single-argument function that returns `#yes` if
+the argument matches the pattern. Maybe better to name this `(?
+pattern)`, an expression dual in a way to the *pattern* `(?
+expression)` -- though I guess that'd be too terse.
 
 
 ## More idioms
@@ -1157,16 +1166,16 @@ computation. Currently it happens to be possible to resume the sequel
 more than once, like a Scheme continuation, but that ability is an
 artifact of the implementation.
 
-This error-handling scheme isn't the product of much consideration. It
-gets you back into the listener or the debugger, and that's almost all
-I've wanted so far.
+This error-handling scheme isn't the product of much thought. It gets
+you back into the listener or the debugger, and that's almost all I've
+wanted so far.
 
 
 ## Introspection
 
 The error handlers above printed out a traceback of the sequel. They
-were able to because a sequel is a metaobject with methods besides
-just resuming.
+were able to because a sequel is an object with methods besides just
+resuming.
 
 XXX
 

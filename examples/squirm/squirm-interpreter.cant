@@ -209,8 +209,7 @@
   (let `(,mod ,var) (symbol.name .split ":"))
   {module-ref (symbol<- mod) (symbol<- var)})
 
-(to (clause-parse clause)
-  (let `(,pattern ,@seq) clause)
+(to (clause-parse `(,pattern ,@seq))
   (may pattern
     (be `(after ,e)
       {after (exp-parse e) (seq-parse seq)})
