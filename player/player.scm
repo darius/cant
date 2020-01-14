@@ -178,13 +178,13 @@
 ;; Ejectors
 
 ;; An ejector has two facets:
-;;   An facade of 'ejector' type, exposed to ordinary Cant code.
+;;   A facade of 'ejector' type, exposed to ordinary Cant code.
 ;;     - This has a datum, a box holding either #f or a reference to the
 ;;       other facet. This tells either that this ejector is disabled (#f),
 ;;       or where to unwind to, when ejecting.
 ;;   A raw continuation vector of type k-disable-ejector, with one data slot:
 ;;     - The same box described above.
-;;     The action on either replying or unwinding is to set the box to #f.
+;; The action on either replying or unwinding is to set the box to #f.
 ;; (This could've had a more straightforward representation, but that
 ;; would've held on to more garbage after the disabling.)
 
