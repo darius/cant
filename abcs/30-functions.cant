@@ -62,8 +62,7 @@
 
 ;; ((compound-key<- f g h) x) = (list<- (f x) (g x) (h x))
 (to ((compound-key<- @key-fns) x)   ;; TODO shorter name? combo-key? call-each?
-  (for each ((f key-fns))
-    (f x)))
+  (each (~ x) key-fns))
 
 ;; (where ok? map) = a list of those keys k of map for which (ok? (map k)).
 ;; Not sure this is the most useful design:
