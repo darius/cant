@@ -173,15 +173,16 @@ The less-happy path:
 ```
 -> (I-am 'but 'human)
 Error! Traceback:
-  (call '#<print-result:repl> ^)
+  (call '#<print-result:listener<-> ^)
+  {~ ^^^}
   (^)
-Match failure: (#<I-am> (but human))
+Match failure: (#<I-am> {~ but human})
 Enter (debug) for more.
 ```
 
-That is, `I-am` was called with the message `(but human)` but it
-expected a length-1 message like `(Alice)`. (The traceback doesn't
-show actual source code, it's barely-readable reconstituted AST data
+That is, `I-am` was called with the message `{~ but human}` but it
+expected a length-1 message like `{~ Alice}`. (The traceback shows not
+actual source code, but barely-readable reconstituted AST data
 structures.)
 
 This debugger is almost useless, but it's there as a last resort:
@@ -1196,7 +1197,8 @@ can see examples of the current ASTs outside of the debugger:
 
 The selfie of a stack frame generally looks like the `.unparse` of an
 AST with one part replaced by a `^` signifying the 'hole' where the
-frame is waiting for a result to resume with. (The future real
+frame is waiting for a result to resume with. Already-evaluated parts
+are replaced by a pseudo-expression like `'value`. (The future real
 debugger ought to be more readable, showing actual source code.)
 
 The ASTs and sequels are objects rather than terms to allow for very
