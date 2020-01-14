@@ -1083,8 +1083,9 @@ actions).
 
 The
 [function](https://github.com/darius/cant/blob/master/abcs/30-functions.cant#L220)
-`(take input f g h)` is like `(h (g (f input)))`. It's [occasionally
-handy](https://github.com/darius/cant/blob/master/library/bag.cant#L25-L27)
+`(take input f g h)` is like `(h (g (f input)))`. It's
+[occasionally](https://github.com/darius/cant/blob/master/library/bag.cant#L25-L27)
+[handy](https://github.com/darius/cant/blob/master/examples/text/most-common.cant#L15-L20)
 in place of things like Clojure's threading macros.
 
 
