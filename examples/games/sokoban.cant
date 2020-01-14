@@ -90,13 +90,13 @@ Level ~w ~d Move ~w")
             (trail .push! after)))
         (playing level)))))
 
-;; We represent a grid as an array or string of characters, including
-;; the newlines, with every line the same length (which we call the
-;; width of the grid).
+;; We represent a grid as an array of characters, including the
+;; newlines, with every line the same length (which we call the width
+;; of the grid).
 (to (parse floor-plan)
   (do (let line-lengths (each ~.count floor-plan.split-lines))
       (surely (= 1 line-lengths.range.count))) ;XXX require
-  floor-plan)
+  (array<-list floor-plan))
 
 (to (sokoban-grid<- spots)
   ;; Since the width is constant, moving up or down from some square
@@ -117,8 +117,8 @@ Level ~w ~d Move ~w")
     ;; Try to move the player in the direction.
     (to (~ .move dir)
 
-      ;; The spots-to-be after the move, starting as a copy of spots.
-      (let new (array<-list spots.values))
+      ;; The spots-to-be after the move. We'll mutate it.
+      (let new spots.copy)
 
       ;; Move thing from here to there if possible.
       (to (move! thing here there)
