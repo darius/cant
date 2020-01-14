@@ -78,8 +78,9 @@
       (for each! ((y (yl .to yh)))
         (print-line! (for each ((x (xl .to xh)))
                        (A (at x y))))))
-    (to ~.show
-      (grid-2d .show print))
+    ;; TODO ~.show used to print to stdout. Change to print onto arg or return a string.
+;;    (to ~.show
+;;      (grid-2d .show print))
     (to (~ .selfie sink)
       (sink .display ("#<grid-2d (~w,~w)..(~w,~w)>"
                       .format xl yl xh yh)))
