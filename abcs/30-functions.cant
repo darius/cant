@@ -149,18 +149,19 @@
   (foldl + 0 ns))
 
 ;; (sum-by f '(a b)) = (+ (f 'a) (f 'b))
-;; TODO zipped-list-transducer?
-(to (sum-by f xs) ;TODO overload 'sum' instead? (viz. other use of name below)
-  (for foldl ((total 0) (x xs))
-    (+ total (f x))))
+;;TODO overload 'sum' instead? (viz. other use of name below)
+(make sum-by {extending zipped-list-transducer}
+  (to (~ f xs)
+    (for foldl ((total 0) (x xs))
+      (+ total (f x)))))
 
 (to (tally xs)
   (sum-by ~.count xs))
 
 ;; (tally-by f '(a b)) = (+ (~.count (f 'a)) (~.count (f 'b)))
-;; TODO zipped-list-transducer?
-(to (tally-by f xs)
-  (sum-by (compose ~.count f) xs))
+(make tally-by {extending zipped-list-transducer}
+  (to (~ f xs)
+    (sum-by (compose ~.count f) xs)))
 ;; TODO hm, I was thinking of f as returning a claim, but as written,
 ;; it could be any function that returns a countable thing, such as a
 ;; collection. What's a good name for this from that point of view?

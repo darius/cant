@@ -101,11 +101,10 @@
 ;; Hm, no, I guess the slowdown was from using the more generic manhattan-distance<-.
 ;; Change one thing at a time.
 
-;;(let area-2 (sum
-;;             (for each ((y ((- (seed 1) margin) .to (+ (seed 1) margin))))
-;;               (out .say "y ~w of ~w\n" y (+ (seed 1) margin))
-;;               (sum (for each ((x ((- (seed 0) margin) .to (+ (seed 0) margin))))
-;;                      (~.count (included? `(,x ,y))))))))
+;;(let area-2 (for sum-by ((y ((- (seed 1) margin) .to (+ (seed 1) margin))))
+;;              (out .say "y ~w of ~w\n" y (+ (seed 1) margin))
+;;              (for tally-by ((x ((- (seed 0) margin) .to (+ (seed 0) margin))))
+;;                (included? `(,x ,y)))))
 
 ;(out .say "result 2 (slow): ~w\n" (area-1))
 
