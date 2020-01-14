@@ -1209,6 +1209,11 @@ smoke test in
 [test/test-kernel.cant](https://github.com/darius/cant/blob/master/test/test-kernel.cant).
 
 
+## What's missing?
+
+XXX
+
+
 ## Miscellany
 
 ```

@@ -5,23 +5,6 @@
 ;;   p pattern
 ;;   r setting (environment)
 
-(to (actor<- script r)
-  (make actor
-    (to message
-      (script .receive message actor r))))
-
-(to (script<- trait clauses)
-  (to (script .receive message actor parent-r)
-    (begin matching ((clauses clauses))
-      (may clauses
-        (be '()
-          (trait actor message))
-        (be `((,pattern ,pat-vars ,body-vars ,body) ,@rest)
-          (let pat-r (parent-r .extend-promises pat-vars))
-          (if (match message pattern pat-r)
-              (play body (pat-r .extend-promises body-vars))
-              (matching rest)))))))
-
 (to (play e r)
   (may e.term
     (be {constant value}
@@ -48,6 +31,23 @@
     (be {list es}
       (for each ((e1 es))
         (play e1 r)))))
+
+(to (actor<- script r)
+  (make actor
+    (to message
+      (script .receive message actor r))))
+
+(to (script<- trait clauses)
+  (to (script .receive message actor parent-r)
+    (begin matching ((clauses clauses))
+      (may clauses
+        (be '()
+          (trait actor message))
+        (be `((,pattern ,pat-vars ,body-vars ,body) ,@rest)
+          (let pat-r (parent-r .extend-promises pat-vars))
+          (if (match message pattern pat-r)
+              (play body (pat-r .extend-promises body-vars))
+              (matching rest)))))))
 
 (to (match subject p r)
   (may p.term
