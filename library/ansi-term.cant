@@ -17,9 +17,7 @@
 (let cursor-hide        (seq "?25l"))
 
 (to (goto x y)
-  (chain prefix
-         (string<-number y.+) ";"
-         (string<-number x.+) "H"))
+  (chain prefix y.+.string ";" x.+.string "H"))
 
 (let [black red green yellow blue magenta cyan white]
   (array<-list (0 .to 7)))        ;TODO wish we didn't have to convert
@@ -28,7 +26,7 @@
   (+ 60 color))
 
 (to (sgr num)
-  (seq (string<-number num) "m")) ;TODO format to string
+  (seq num.string "m"))
 
 (to (set-foreground color) (sgr (+ 30 color)))
 (to (set-background color) (sgr (+ 40 color)))

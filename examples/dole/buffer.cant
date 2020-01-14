@@ -75,7 +75,7 @@
    
   (let key-map (key-map<- (on (ch)
                             (if (char? ch)
-                                (insert (string<- ch))
+                                (insert ch.string)
                                 (log "Not a char: ~w" ch)))))
 
   (make buffer

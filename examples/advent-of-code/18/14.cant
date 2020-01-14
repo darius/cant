@@ -20,7 +20,8 @@
   (elf .modulo board.count))
 
 (to (digits<- n)
-  (each (compose number<-string string<-) (string<-number n)))  ; a little clumsy
+  (for each ((ch n.string.values))
+    (number<-string ch.string)))
 
 (to (part-1)
   (let limit (+ input 10))
@@ -30,7 +31,7 @@
       (step!)
       (working)))
   (let digits (board .slice input))
-  ("" .join (each string<-number digits)))
+  ("" .join (each ~.string digits)))
 
 (to (show)
   (for each! (((~ i recipe) board.items))

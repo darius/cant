@@ -16,7 +16,7 @@
 ;; Return a string of glyphs representing character ch at column x.
 (to (render-char ch x)
   (if ch.printable?
-      (string<- ch)
+      ch.string
       ("\\x~02x" .format ch.code)))
 
 (to (module powers)
@@ -46,7 +46,7 @@
                               (y y))
               (hm (if glyphs.none? (rendering pp x y))
                   (do (lines .set! y
-                             (chain (lines y) (string<- glyphs.first)))) ;XXX quadratic
+                             (chain (lines y) glyphs.first.string))) ;XXX quadratic
                   (if (< x.+ cols) (appending glyphs.rest x.+ y))
                   (if (< y.+ rows) (appending glyphs.rest 0 y.+))
                   (else            'done))))))

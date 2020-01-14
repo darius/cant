@@ -9,7 +9,7 @@
   (let rows (flexarray<-))
   (begin counting ((r 1) (i 1))
     (when (<= r n-rows)
-      (rows .push! (each string<-number (i .span r)))
+      (rows .push! (each ~.string (i .span r)))
       (counting r.+ (+ i r))))
   (let widths (each ~.count rows.last))
   (for each! ((row rows))

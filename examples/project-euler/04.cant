@@ -8,7 +8,7 @@
             (and (palindrome? p) p)))))
 
 (to (palindrome? n)
-  (let s (string<-number n))      ;TODO use a string port instead
+  (let s n.string)
   (<=> s (reverse s)))
 
 (out .print (euler4 10 30))

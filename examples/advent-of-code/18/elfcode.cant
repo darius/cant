@@ -45,7 +45,7 @@
     (to (arg<- x)
       (may x
         (be {r i} (if (= i ip-reg) "IP" ("r~w" .format i)))
-        (be {i n} (string<-number n))
+        (be {i n} n.string)
         (be #no   "")))
 
     (may op
