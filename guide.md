@@ -1169,7 +1169,10 @@ artifact of the implementation.
 
 This error-handling scheme isn't the product of much thought. It gets
 you back into the listener or the debugger, and that's almost all I've
-wanted so far.
+wanted so far. Even if we keep this design, we'll at least need a
+less-powerful wrapper around it, in the computational setting which
+must not offer raw access to the sequel. As we'll see next, the sequel
+has dangerous powers.
 
 
 ## Introspection
