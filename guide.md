@@ -1265,8 +1265,6 @@ cant-mode.el
 
 problems about the syntax
 
-list of biggest lacunae
-
 request for ideas:
 - collections read syntax
 - module refs without listing them all at import
