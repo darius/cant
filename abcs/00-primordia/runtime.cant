@@ -347,10 +347,10 @@
 ;; (transpose '((a b) (c d) (e f))) = '((a c e) (b d f))
 ;; TODO: name it (zip @rows) instead, like Python?
 (to (transpose rows)
-  (if (every ~.none? rows)   ; and make it (some _.none? rows)?
+  (if (every ~.none? rows)   ; and make it (some ~.none? rows)?
       '()
-      `(,(each ~.first rows)
-        ,@(transpose (each ~.rest rows)))))
+      (link (each ~.first rows)
+            (transpose (each ~.rest rows)))))
 
 (make-trait zipped-list-transducer transducer
   (to (~ f @lists)

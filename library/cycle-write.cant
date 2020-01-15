@@ -18,7 +18,7 @@
 ;; There's also a matter of POLA-separating the flushing from the
 ;; writing. I bothered to do that here, but maybe that's kind of
 ;; gilding the lily, when string-sinks aren't faceted in the same way,
-;; and neither is _.close.
+;; and neither is ~.close.
 
 ;; TODO better names?
 

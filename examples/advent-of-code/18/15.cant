@@ -7,14 +7,14 @@
   push extend
   peek)
 
-;(let input (with-input-file _.read-all "advent15.test"))
-;(let input (with-input-file _.read-all "advent15.movement"))
-;(let input (with-input-file _.read-all "advent15.movement2"))
-;(let input (with-input-file _.read-all "advent15.combat1"))
-;(let input (with-input-file _.read-all "advent15.combat2"))
-;(let input (with-input-file _.read-all "advent15.combat3"))
-;(let input (with-input-file _.read-all "advent15.combat4"))
-;(let input (with-input-file _.read-all "advent15.combat5"))
+;(let input (with-input-file ~.read-all "advent15.test"))
+;(let input (with-input-file ~.read-all "advent15.movement"))
+;(let input (with-input-file ~.read-all "advent15.movement2"))
+;(let input (with-input-file ~.read-all "advent15.combat1"))
+;(let input (with-input-file ~.read-all "advent15.combat2"))
+;(let input (with-input-file ~.read-all "advent15.combat3"))
+;(let input (with-input-file ~.read-all "advent15.combat4"))
+;(let input (with-input-file ~.read-all "advent15.combat5"))
 (let input (with-input-file ~.read-all data-file))
 
 (to (part-1)

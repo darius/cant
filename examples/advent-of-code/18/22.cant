@@ -125,7 +125,7 @@
 (to (swap-tool q tool)
   (let candidates ((usables (type<- q)) .keys))
   ;; TODO try this rephrase:
-;;  (let candidates (take (type<- q) usables _.keys))
+;;  (let candidates (take (type<- q) usables ~.keys))
   (if (= tool candidates.first)         ;TODO clumsy
       candidates.rest.first
       candidates.first))

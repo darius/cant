@@ -13,7 +13,7 @@
     (out .say "Round: ~w vs. ~w\n" 
               (each ~.count infection)
               (each ~.count immune-system))
-;    (when (= (each _.count infection) '(1273))
+;    (when (= (each ~.count infection) '(1273))
 ;      (error "break"))
     (let a1 (select-targets "Infection"     infection immune-system))
     (let a2 (select-targets "Immune System" immune-system infection))
