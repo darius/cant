@@ -158,7 +158,7 @@
 ;;   (unparse-e (equality/path e path thm)) => (if bar '2 (if foo '1 banana))
 
 (to (equality/path e path thm)
-  (if (focus-is-at-path? e path)
+  (if (has-path? e path)
       (set-at-path e path
                    (trace equality/equation (get-at-path e path)
                                             (snip-premises e path thm)))
@@ -351,14 +351,13 @@
 
 ;; Check okayness of a path.
 
-(to (focus-is-at-path? e path)
+(to (has-path? e path)
   (or path.none?
-      (and (focus-is-at-direction? e path.first)
-           (focus-is-at-path? (get-at-direction e path.first)
-                              path.rest))))
-                              
-  
-(to (focus-is-at-direction? e dir)
+      (and (has-direction? e path.first)
+           (has-path? (get-at-direction e path.first)
+                      path.rest))))
+
+(to (has-direction? e dir)
   (may dir
     (be 'Q       (may e (be {if _ _ _} #yes) (else #no)))
     (be 'A       (may e (be {if _ _ _} #yes) (else #no)))
