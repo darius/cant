@@ -1,9 +1,13 @@
+;; WARNING! This overwrites some scheme-mode settings: font lock
+;; keywords and indent functions. Sorry. Someday I'll learn to do
+;; this right if there are ever other users.
+
+;; Installation:
+;;   (load-library "/path/to/cant/cant-mode.el")
 ;; You'll probably want to run this too:
-;; (add-to-list 'auto-mode-alist '(".*\\.cant\\'" . cant-mode))
+;;   (add-to-list 'auto-mode-alist '(".*\\.cant\\'" . cant-mode))
 ;; (I forget why it has that ' at the of the string.)
-;; and of course
-;; (load-library "/path/to/cant/cant-mode.el")
-;; Yeah, I'll learn to make an Emacs package sometime.
+;; Yeah, this should just be an Emacs package, however that works.
 
 (defvar cant-mode-map
   (let ((map (make-sparse-keymap)))

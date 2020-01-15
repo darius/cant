@@ -15,11 +15,9 @@
 
 (to (fmt-unary p op x)
   (may (unaries .get op)
-    (be #no
-      ("~w(~d)" .format op (fmt 0 x)))
-    (be {unary prefix postfix}
-      (hm (if prefix  (enclose p prefix  ("~w~d" .format op (fmt prefix x))))
-          (if postfix (enclose p postfix ("~d~w" .format (fmt postfix x) op)))))))
+    (be #no          ("~w(~d)" .format op (fmt 0 x)))
+    (be {prefix pp}  (enclose p pp ("~w~d" .format op (fmt pp x))))
+    (be {postfix pp} (enclose p pp ("~d~w" .format (fmt pp x) op)))))
 
 (to (fmt-binary p op x y)
   (may (binaries .get op)
@@ -29,15 +27,15 @@
       (enclose p left ("~d ~w ~d" .format (fmt left x) op (fmt right y))))))
 
 (to (enclose outer inner string)
-   (if (< inner outer)
-       ("(~d)" .format string)
-       string))
+   (if (<= outer inner)
+       string
+       ("(~d)" .format string)))
 
 (let unaries (!map<-))
 (let binaries (!map<-))
 
-(to (def-prefix name p)  (unaries .set! name {unary p #no}))
-(to (def-postfix name p) (unaries .set! name {unary #no p}))
+(to (def-prefix name p)  (unaries .set! name {prefix p}))
+(to (def-postfix name p) (unaries .set! name {postfix p}))
 
 (to (def-infix name p)   (binaries .set! name {binary p p.+}))
 

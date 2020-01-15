@@ -1230,6 +1230,13 @@ While an in-process debugger would be a great improvement over what we
 have now, ultimately we want a fault-tolerant system, which needs
 communicating processes. The model I have in mind is E's yet again.
 
+To keep evolving the design without being held back by too much
+example code, good refactoring tools would help. (There's a bare
+beginning illustrated by
+[examples/search-for-list-pats.cant](https://github.com/darius/cant/blob/master/examples/search-for-list-pats.cant),
+but I had to manually edit the parts of the codebase that it found for
+me.)
+
 There's an infinity of smaller issues. This Robinson-Crusoe business
 might've been a dumb idea.
 
