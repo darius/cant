@@ -53,7 +53,7 @@
 (loud-use "../examples/csv")
 (loud-use "../examples/failing")   ;; tests library/traceback
 (loud-use "../examples/fizzbuzz")
-(loud-use "../examples/floyd-triangle")
+(loud-use "../examples/rosetta-code/floyd-triangle")
 (loud-use "test-2048")
 (loud-use "test-sokoban")
 (((loud-use "../examples/games/tictactoe") 'quick-test))
@@ -64,7 +64,7 @@
 (loud-use "../examples/lambda-calculus/compact-lambda")
 (loud-use "../examples/lambda-calculus/lambdacompiler")
 (loud-use "../examples/lambda-calculus/lambdaterp")
-(loud-use "../examples/lzw")
+(loud-use "../examples/rosetta-code/lzw")
 (loud-use "../examples/max-path-sum")
 (((loud-use "../examples/text/oodles") 'main) '(ignore "garlic"))
 (loud-use "../examples/sicp1")
