@@ -51,9 +51,9 @@
 
 (out .display "\nPart 2\n")
 
-(let usables (list<- (set<- 'climbing-gear 'torch)      ; rocky
-                     (set<- 'climbing-gear 'neither)    ; wet
-                     (set<- 'torch         'neither)))  ; narrow
+(let usables [(set<- 'climbing-gear 'torch)      ; rocky
+              (set<- 'climbing-gear 'neither)    ; wet
+              (set<- 'torch         'neither)])  ; narrow
 
 (to (usable? tool p)
 ;;  (surely (symbol? tool) "tools are symbols")
@@ -123,9 +123,7 @@
                     (continue `(,swap ,@moves))))))))
 
 (to (swap-tool q tool)
-  (let candidates ((usables (type<- q)) .keys))
-  ;; TODO try this rephrase:
-;;  (let candidates (take (type<- q) usables ~.keys))
+  (let candidates (take (type<- q) usables ~.keys))
   (if (= tool candidates.first)         ;TODO clumsy
       candidates.rest.first
       candidates.first))
