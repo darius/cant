@@ -49,7 +49,7 @@
 ;; TODO a canonicalizer that rewrites to an equiv turing machine
 ;; that steps one square at a time.
 
-;; Make a transit function from a list of (state mark actions next-state)
+;; Make a transit map from a list of (state mark actions next-state)
 (to (transit<- entries)
   (map<-items (for each ((`(,state ,mark ,acts ,next-state) entries))
                 (~ (~ state mark) (~ acts next-state)))))
