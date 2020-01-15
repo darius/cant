@@ -350,7 +350,7 @@ OK, moving on. Scheme functions on lists:
 | `(list x y z)`                | `(list<- x y z)`    | Though it's more common to use quasiquoting. |
 | `(null? xs)`                  | `(null? xs)`, `xs.none?`, or `(xs .none?)`     | `xs.none?` is reader sugar for the last expression. All collections answer this message, though not all objects. `null?` would be useful when you don't know if the argument is a collection. |
 | `(pair? x)`                   | `(link? x)`      |  |
-| `(list? x)`                   | `(list? x)`     |  Cant doesn't plan to support improper lists, though I haven't got around to making them an error. |
+| `(or (null? x) (pair? x))`    | `(list? x)`     |  Cant doesn't plan to support improper lists, though I haven't got around to making them an error. Cyclic lists are not constructible. |
 | `(car xs)`                    | `xs.first` or etc.     |  |
 | `(cdr xs)`                    | `xs.rest`     |  |
 | `(length xs)`                 | `xs.count`     |  |
