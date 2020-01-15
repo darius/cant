@@ -269,7 +269,6 @@
     read
     assoc  ;; TODO remove
     __as-link __array<-list ;; used implicitly by parse expansion
-    __vector-move! ;; TODO is this safe for computational-setting?
     ))
 (let computational-setting-library-imports
   '(use

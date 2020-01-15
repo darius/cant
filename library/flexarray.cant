@@ -50,8 +50,7 @@
         (error "Out of range" flexarray))
       (count-check i)
       (let popped (vec.^ i))
-;     (vec.^ .move! i (+ i 1) (- count.^ (+ i 1)))
-      (__vector-move! vec.^ i vec.^ i.+ count.^)
+      (vec.^ .move! i vec.^ i.+ count.^)
       count.-!
       popped)
     (to (~ .insert! i value)                 ;TODO code duplication .push!
@@ -59,8 +58,7 @@
       (unless (<= i c)
         (error "Bad index" flexarray i))
       (when (= c vec.^.count) (grow))
-      (__vector-move! vec.^ i.+ vec.^ i c)
-;     (vec.^ .move! (+ i 1) i (- c i))
+      (vec.^ .move! i.+ vec.^ i c)
       (vec.^ .set! i value)
       (count .^= c.+)
       i)                                 ;TODO what's a good return value?
