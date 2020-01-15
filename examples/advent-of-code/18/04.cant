@@ -5,14 +5,14 @@
 (let grammar (grammar<- "
 shifts:    shift* :end.
 shift:     start [nap* :hug] :hug.
-start:     timestamp :drop 'Guard #' :nat ' begins shift\n'.
+start:     timestamp :drop 'Guard #' :count ' begins shift\n'.
 
 nap:       timestamp 'falls asleep\n'
            timestamp 'wakes up\n'    :hug.
 
 timestamp: '[' date _ time ']' _.
 date:      (!_ :skip)+.
-time:      :nat :drop ':' :nat.
+time:      :count :drop ':' :count.
 
 _:         :whitespace.
 "))

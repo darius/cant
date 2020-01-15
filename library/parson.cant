@@ -63,14 +63,14 @@
 
 (let word-boundary (invert (skip-1 word-char?)))
 
-(let eat-line
+(let skip-line
   (delay (: (either (lit-1 #\newline)
-                    (then skip-any-1 eat-line)
+                    (then skip-any-1 skip-line)
                     empty))))
 
 (let whitespace
   (at-least-1 (either (skip-1 ~.whitespace?)
-                      (then (lit-1 #\#) eat-line))))
+                      (then (lit-1 #\#) skip-line))))
 
 (let __ (maybe whitespace))
 
@@ -178,13 +178,13 @@
          (~ 'join (feed chain))
          (~ 'drop drop)
          (~ 'whitespace (skip-1 ~.whitespace?))
-         (~ 'nat (seclude                                        ;TODO rename
-                  (then (capture (at-least-1 (skip-1 ~.digit?))) ;; TODO no leading 0s
-                        (feed number<-string))))
-         (~ 'int (seclude
-                  (then (capture (then (maybe (lit-1 #\-))
-                                       (at-least-1 (skip-1 ~.digit?))));; TODO no leading 0s
-                        (feed number<-string))))
+         (~ 'count (seclude
+                    (then (capture (at-least-1 (skip-1 ~.digit?))) ;; TODO no leading 0s
+                          (feed number<-string))))
+         (~ 'integer (seclude
+                      (then (capture (then (maybe (lit-1 #\-))
+                                           (at-least-1 (skip-1 ~.digit?))));; TODO no leading 0s
+                            (feed number<-string))))
          ;; TODO: more
          ))
 

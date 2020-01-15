@@ -120,9 +120,9 @@
 main: army**separator :end.
 army: army_name ':\n' [group* :hug] :hug.
 army_name: { (!':' :skip)* }.
-group: :nat ' units each with ' :nat ' hit points ' opt_qualities 
-       'with an attack that does ' :nat ' ' word 
-       ' damage at initiative ' :nat '\n' :Group.
+group: :count ' units each with ' :count ' hit points ' opt_qualities 
+       'with an attack that does ' :count ' ' word 
+       ' damage at initiative ' :count '\n' :Group.
 opt_qualities: '(' qualities ') ' | :hug.
 qualities: quality_list++'; ' :hug.
 quality_list: {'weak'|'immune'} ' to ' [word++', ' :hug] :hug.

@@ -4,12 +4,12 @@
 
 (let grammar (grammar<- "
 main: clause* :hug '\n\n' program.  # N.B. no :end
-clause: 'Before: [' [:nat ', ' :nat ', ' :nat ', ' :nat :hug] ']\n'
-        [:nat ' ' :nat ' ' :nat ' ' :nat :hug] '\n'
-        'After:  [' [:nat ', ' :nat ', ' :nat ', ' :nat :hug] ']\n\n' :hug.
+clause: 'Before: [' [:count ', ' :count ', ' :count ', ' :count :hug] ']\n'
+        [:count ' ' :count ' ' :count ' ' :count :hug] '\n'
+        'After:  [' [:count ', ' :count ', ' :count ', ' :count :hug] ']\n\n' :hug.
 
 program: insn* :hug.
-insn:    :nat ' ' :nat ' ' :nat ' ' :nat '\n' :hug.
+insn:    :count ' ' :count ' ' :count ' ' :count '\n' :hug.
 "))
 (let semantics (grammar (map<-)))
 (let parse-main (semantics 'main))
