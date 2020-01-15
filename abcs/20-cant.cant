@@ -11,7 +11,6 @@
   )
 
 ;; Turn the Scheme-level parse into an object.
-;; TODO name them __ast-exp<- etc.
 
 (to (ast-exp<- raw)
   (make expr

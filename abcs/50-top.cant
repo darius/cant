@@ -50,14 +50,25 @@
   ;; XXX for some reason, the panic handler doesn't seem to be set
   ;; when we're in here. So, for now let's just set it:
   (the-signal-handler .^= panic)
-
-  ;; N.B. we're trying to use only primitives here as far as possible:
+  ;; TODO set up one last fallback signal handler to progress from
+  ;; trying to print the evil to trying to print the traceback, before
+  ;; finally panicking.
+  ;; N.B. cruder code and cruder output because we're trying to use
+  ;; only primitives as far as possible:
   (out .display "Error within error! Evils:\n")
   (begin printing ((xs evil))
-    (when xs.none? (os-exit 1))
-    (out .write xs.first)
-    (out .display #\newline)
-    (printing xs.rest)))
+    (unless xs.none?
+      (out .write xs.first)
+      (out .display #\newline)
+      (printing xs.rest)))
+  (out .display "\nTraceback in reverse (deepest frame first):\n")
+  (begin printing ((frames k))
+    (unless frames.none?
+      (out .display "  ")
+      (out .write frames.first)
+      (out .display "\n")
+      (printing frames.rest)))
+  (os-exit 1))
 
 (to (start-playing @(optional command-line-args))
   (import ((use 'traceback) (export out))

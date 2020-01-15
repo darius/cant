@@ -41,9 +41,8 @@
 (to (with-use-path path thunk)
   (let old-base-path use-base-path.^)
   (use-base-path .^= path)
-  (ejector-protect
-   thunk
-   (: (use-base-path .^= old-base-path))))
+  (ejector-protect thunk
+                   (: (use-base-path .^= old-base-path))))
 
 ;; TODO relative loading like (use filename), I guess
 (to (load filename @(optional context))
@@ -63,7 +62,7 @@
 
 (to (new-load-module filename @(optional context))
   (let exp `(hide ,@(with-input-file read-all filename)))
-  (let setting computational-setting)  ;TODO
+  (let setting computational-setting)
   (cant .play exp setting context))
 
 (let full-powered-setting-extra-names
@@ -76,7 +75,7 @@
     the-modules unuse load load-module
     the-last-error push-signal-handler with-signal-handler the-signal-handler
     listener<- debug breakpoint))
-(let full-powered-setting ;XXX
+(let full-powered-setting
   (empty-setting .extend-promises
                  (chain full-powered-setting-extra-names
                         computational-setting-library-imports
