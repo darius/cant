@@ -123,7 +123,8 @@
         (be sexpr (print-result (cant .play sexpr setting)))))))
 
 (to (debug)
-  (import ((use 'debugger) (export out))
+  (import ((use 'debugger)
+           (export out stdin extract-datum extract-script main-interactive-setting))
     inspect-sequel)
   (may the-last-error.^
     (be {error k evil}

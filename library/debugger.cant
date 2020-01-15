@@ -1,7 +1,8 @@
 ;; Interactively explore the call stack or an arbitrary object.
 
 (to (module powers)
-  (import powers out)
+  (import powers
+    out stdin extract-datum extract-script main-interactive-setting)
   (import ((use 'traceback) (export out))
     print-traceback)
 
