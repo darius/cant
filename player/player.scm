@@ -14,7 +14,6 @@
   (player thing)
   (player elaborate)
   (player primordia)
-  (player primitives)
   (player nonmeta-primitives)
   )
 
