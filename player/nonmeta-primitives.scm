@@ -1,7 +1,7 @@
 ;; Primitive definitions meant for primordial-setting.
 ;; The ones here are ordinary Scheme procedures or values; the
-;; remaining ones added in primordia.scm will have to do with player
-;; internals.
+;; remaining ones added in primordia.scm/player.scm will have to do
+;; with player internals.
 
 (library (player nonmeta-primitives)
 (export nonmeta-a-list)
