@@ -1224,18 +1224,21 @@ The lack that most affects library and program design, I think, is
 listed above under "Abstract data types, synergy, trademarks".
 
 I need to finish converting all code loaded by `use` into the
-computational setting, or maybe deciding on some other course.
+computational setting, or maybe decide on some other course.
 
 While an in-process debugger would be a great improvement over what we
 have now, ultimately we want a fault-tolerant system, which needs
 communicating processes. The model I have in mind is E's yet again.
 
 To keep evolving the design without being held back by too much
-example code, good refactoring tools would help. (There's a bare
+example code, better refactoring tools would help. (There's a
 beginning illustrated by
 [examples/search-for-list-pats.cant](https://github.com/darius/cant/blob/master/examples/search-for-list-pats.cant),
 but I had to manually edit the parts of the codebase that it found for
 me.)
+
+This needs to work with some kind of external libraries someday, if I
+want to keep using it.
 
 There's an infinity of smaller issues. This Robinson-Crusoe business
 might've been a dumb idea.
