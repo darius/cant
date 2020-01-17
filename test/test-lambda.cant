@@ -1,15 +1,21 @@
-(import (use "../examples/lambda-calculus/interpreter")
-  run-file)
+(to (test-lambda filename test-names)
+  (import (use (chain "../examples/lambda-calculus/" filename))
+    run-file)
+  (for each! ((test test-names))
+    (out .say "\nTesting ~d (w/ ~d)\n" test filename)
+    (out .print (run-file (chain "examples/lambda-calculus/examples/" test)))))
 
-(let test-names '("trivial1.lambda"
-                  "trivial2.lambda"
-                  "church.lambda"
-                  "factorial.lambda"
-                  "reverse.lambda"
-                  "elementary-ca.lambda"
-                  "turing-scott.lambda"
-                  ))
+(let full-test-names '("trivial1.lambda"
+                       "trivial2.lambda"
+                       "church.lambda"
+                       "factorial.lambda"
+                       "reverse.lambda"
+                       "elementary-ca.lambda"
+                       "turing-scott.lambda"
+                       ))
 
-(for each! ((test test-names))
-  (out .say "\nTesting ~d\n" test)
-  (out .print (run-file (chain "examples/lambda-calculus/examples/" test))))
+(test-lambda "interpreter" full-test-names)
+(test-lambda "compiler1" '("factorial.lambda"))
+
+;; TODO send full-test-names to compiler1 too.
+;; Right now it's really slow!
