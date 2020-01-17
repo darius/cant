@@ -49,6 +49,7 @@
 (((loud-use "../examples/automata/slow-life") 'smoke-test))
 (((loud-use "../examples/automata/text-register-machine") 'main) '(ignore))
 (((loud-use "../examples/automata/turing") 'smoke-test))
+(((loud-use "../examples/brainfuck/brainfuck") 'main) '(ignore))
 (loud-use "../examples/circuitoptimizer")
 (loud-use "../examples/csv")
 (loud-use "../examples/failing")   ;; tests library/traceback

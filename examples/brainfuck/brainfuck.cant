@@ -91,7 +91,11 @@
       d)
     (to (absorb d)
       (data .set! d (read-1 stdin))
-      d)))
+      d)
+    (to (read-1 source)
+      (may source.read-char
+        (be (? eof?) -1)
+        (be ch ch.code)))))
 
 
 ;; Smoke test
@@ -106,4 +110,4 @@
   )
 
 
-(export bf-interpret bf-compile)
+(export bf-interpret bf-compile main)
