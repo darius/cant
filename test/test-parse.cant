@@ -50,6 +50,6 @@
  (try grammar3 '(the ball hit the table))
  (try grammar3 '(the noun took the verb))
 
-;(try grammar4 '(the man hit the table with the ball))
-;(try grammar4 '(the orange saw))
+ (try grammar4 '(the man hit the table with the ball))
+ (try grammar4 '(the orange saw))
 )

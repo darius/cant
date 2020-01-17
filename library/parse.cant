@@ -1,16 +1,18 @@
 ;; Parse with a context-free grammar and a chart.
 ;; Ported from PAIP chapter 9
 
+(import (use 'memoize) memoize)
+
 (to (grammar<-rules rules)
 
   ;; Return a list of those rules with word on the rhs.
-  (to (lexical-rules word)
-    (for those ((rule rules))
-      (= rule.rhs word)))
+  (let lexical-rules
+    (memoize (on (word) (for those ((rule rules))
+                          (= rule.rhs word)))))
 
   ;; Return a list of those rules where cat starts the rhs.
-  (to (rules-starting-with cat)
-    (those (~ .starts-with? cat) rules))
+  (let rules-starting-with
+    (memoize (on (cat) (those (~ .starts-with? cat) rules))))
 
   ;; Look for the categories needed to complete the parse.
   (to (extend-parse lhs rhs rest needed)
