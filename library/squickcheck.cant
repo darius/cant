@@ -36,7 +36,7 @@
       failures.none?))
 
   (to (should be-ok? @arguments)
-    (be-ok? @arguments))
+    (be-ok? @arguments))       ;TODO communicate failure more usefully
 
 
   ;; Generator context

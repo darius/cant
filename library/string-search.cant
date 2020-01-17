@@ -3,13 +3,12 @@
 ;; Note that (string-match "" "") = 0.
 
 ;; Based on my old scheme-data-structures code.
-;; XXX testme
 
-;; XXX this should be in runtime.cant somewhere
+;; TODO this should be in runtime.cant somewhere
 (let alphabet-size 256)
 
 ;; Brute force algorithm
-;; XXX make this a built-in string method
+;; TODO make this a built-in string method
 (to (string-match/brute pat dat)
   (let P pat.count)
   (let j-limit (+ (- dat.count P) 1))
@@ -23,19 +22,22 @@
                (else
                    (sliding j.+)))))))
 
-;; XXX better name?
+;; TODO better name?
 ;; Boyer-Moore-Horspool algorithm
 (to (string-matcher<- pat)
   (let m pat.count.-)
   (if (< m 0)
       (on (dat) 0)
       (do (let skip (array<-count alphabet-size pat.count))
-          (for each! (((~ i ch) pat.items))
-            (skip .set! ch.code (- m i)))
+          (for each! ((i (0 .to< pat.count.-)))
+            (skip .set! ((pat i) .code) (- m i)))
           ;; On a mismatch whose last char of dat == (pat i), we'll
           ;; slide right by 1 + (|pat| - i). Then that last char will
-          ;; align with (pat new-i). It'll be the rightmost (pat i)
-          ;; with that char, because the above loop is ascending.
+          ;; align with (pat new-i). It'll be the rightmost i in the
+          ;; range with that char, because the above loop overwrites
+          ;; preceding instances of the same char. We always make
+          ;; progress because i's range excludes the last position of
+          ;; pat.
 
           ;; Search
           (on (dat)
@@ -50,4 +52,4 @@
                          (else
                            (checking k.- j.-))))))))))
 
-(export string-matcher<-)
+(export string-matcher<- string-match/brute)

@@ -143,6 +143,7 @@
                        ;; XXX escape the control chars
                        (else c))))
     (sink .display #\"))
-  (to ~.string me)
+  (to ~.string
+    me)
   (to message
     (list-trait me message))) ;XXX use trait syntax instead
