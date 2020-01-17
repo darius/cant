@@ -24,6 +24,9 @@
 
 ;; TODO better name?
 ;; Boyer-Moore-Horspool algorithm
+;; TODO looks different from
+;; https://en.wikipedia.org/wiki/Boyer%E2%80%93Moore%E2%80%93Horspool_algorithm
+;; -- is it worse?
 (to (string-matcher<- pat)
   (let m pat.count.-)
   (if (< m 0)
