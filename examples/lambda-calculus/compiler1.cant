@@ -15,7 +15,7 @@
     (let expanded (fill (exp-parse prelude)))
     (let scope (module-scope<- (map<-items (for each (((~ k v) builtins.items))
                                              (~ k {const v})))))
-    (expanded .gen scope (prepend {return} nil-seq)))
+    (expanded .gen scope (prepend {reply} nil-seq)))
 
   (to (fill e)
     (may e
@@ -25,20 +25,21 @@
       (be {app f a src}    (app<- (fill f) (fill a) src)) ;ditto
       (be {the-env}        (fill exp))))  ; TODO this is pretty janky
 
-  (to (apply fn arg)
-    (invoke fn arg {halt}))
-
   (to (invoke fn arg k)
     (may fn
       (be {compiled-closure entry _}
         (running entry {env fn arg} '() k))
       (be {primitive p}
-        (return (p arg) k))))
+        (reply k (p arg)))
+      (be {cps-function f}
+        (f arg k))))
 
-  (to (return result k)
-    (may k
+  (to (reply k0 result)
+    (may k0
       (be {frame pc r st ret-k}
         (running pc r (link result st) ret-k))
+      (be {cps-sequel f}
+        (f result))
       (be {halt}
         result)))
 
@@ -55,7 +56,7 @@
         (be 'local     argument)
         (be (? count?) (vals f))))
 
-    ;;    (out .say "at ~w: ~w\n" pc (code pc.-))
+;;        (out .say "at ~w: ~w\n" pc (code pc.-))
     (may (code pc.-)
       (be {const c}
         (running pc.- r (link c st) k))
@@ -66,14 +67,14 @@
         (running addr r (link closure st) k))
       (be {push-cont addr}
         (running pc.- r st {frame addr r st k}))
-      (be {return}
-        (return st.first k))
+      (be {reply}
+        (reply k st.first))
       (be {invoke _}
         (let `(,fn ,arg ,@_) st)
         (invoke fn arg k))
       ))
 
-  (let assembly (build-prelude (export out) compile apply))
+  (let assembly (build-prelude (export out) compile invoke reply))
 ;;  (show assembly)
 
   (let code (array<-list (reverse assembly.insns)))  ; reverse so that labels index from the start
@@ -98,7 +99,7 @@
   (let insns (link insn rest.insns))
   (make link-seq
     (to ~.label label)
-    (to ~.tail? (= insn {return}))
+    (to ~.tail? (= insn {reply}))
     (to ~.insns insns)
     (to ~.rest  rest)))                   ;kinda funky
 
@@ -108,9 +109,10 @@
 ;;    (out .say "~2w ~w\n" insn.label insn)))
 
 
-;; Expression objects cache the free-variable sets, again to avoid algorithmic blow-up.
+;; Expression objects cache the free-variable sets, again to avoid
+;; algorithmic blow-up.
 ;; exp.fvs:         Free variables of exp
-;; exp .gen s then: Compiled code for exp in scope s, followed by code `then`
+;; exp .gen s then: Compiled code for exp in scope s, followed by `then` code
 
 (to (const<- c)
   (make constant
@@ -135,7 +137,7 @@
      (prepend {enclose then.label fetches src}
               (body .gen
                     (scope<- v cvs.inverse s.known)
-                    (prepend {return} then))))))
+                    (prepend {reply} then))))))
 
 (to (app<- f a src)
   (make application
@@ -169,13 +171,14 @@
 
 ;; Smoke test
 
-(let eg '(([x y] x) ([z] z)))
-(out .print eg)
-(out .print (run eg))
-out.newline
+(to (smoke)
+  (let eg '(([x y] x) ([z] z)))
+  (out .print eg)
+  (out .print (run eg))
+  out.newline
 
-(let eg2 '(([x] (add1 x)) 5))
-(out .print (run eg2))
+  (let eg2 '(([x] (add1 x)) 5))
+  (out .print (run eg2)))
 
 
 ;; Main

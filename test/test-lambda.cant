@@ -1,5 +1,5 @@
 (import (use "../examples/lambda-calculus/interpreter")
-  run)
+  run-file)
 
 (let test-names '("trivial1.lambda"
                   "trivial2.lambda"
@@ -12,4 +12,4 @@
 
 (for each! ((test test-names))
   (out .say "\nTesting ~d\n" test)
-  (out .print (run (chain "examples/lambda-calculus/examples/" test))))
+  (out .print (run-file (chain "examples/lambda-calculus/examples/" test))))

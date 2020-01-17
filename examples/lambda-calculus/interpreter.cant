@@ -2,24 +2,31 @@
 (import (use "prelude") build-prelude)
 
 
-;; Interpreter
+;; Interpreter, explicit-control style
 
 (to (interpret e @(optional r))
-  (ev (exp-parse e) (or r prelude-env)))
+  (ev (exp-parse e) (or r prelude-env) {halt}))
 
-(to (ev e r)
+(to (ev e r k)
   (may e
-    (be {const c}   c)
-    (be {var v}     (lookup r v))
-    (be {lam _ _ _} {closure e r})
-    (be {app f a _} (apply (ev f r) (ev a r)))
-    (be {the-env}   r)))
+    (be {const c}   (reply k c))
+    (be {var v}     (reply k (lookup r v)))
+    (be {lam _ _ _} (reply k {closure e r}))
+    (be {app f a _} (ev f r {ev-arg a r k}))
+    (be {the-env}   (reply k r))))
 
-(to (apply fn val)
+(to (reply k0 val)
+  (may k0
+    (be {ev-arg a r k} (ev a r {call val k}))
+    (be {call fv k}    (invoke fv val k))
+    (be {cps-sequel f} (f val))
+    (be {halt}         val)))
+
+(to (invoke fn arg k)
   (may fn
-    (be {closure {lam v e _} r} (ev e {extend v val r}))
-    (be {primitive p}           (p val))))
-
+    (be {closure {lam v e _} r} (ev e {extend v arg r} k))
+    (be {primitive p}           (reply k (p arg)))
+    (be {cps-function f}        (f arg k))))
 
 ;; Environments
 ;; TODO use Cant settings instead?
@@ -33,7 +40,7 @@
     (be {module map}
       (map v))))
 
-(let prelude-env (build-prelude (export out) interpret apply))
+(let prelude-env (build-prelude (export out) interpret invoke reply))
 
 
 ;; Main
@@ -41,11 +48,11 @@
 (to (main args)
   (for each! ((filename args.rest))
     (out .say "\n~d:\n" filename)
-    (out .print (run filename))))
+    (out .print (run-file filename))))
 
-(to (run filename)
+(to (run-file filename)
   (let es (with-input-file read-all filename))
   (interpret `(do ,@es)))
 
 
-(export run interpret prelude-env)
+(export run-file interpret prelude-env)

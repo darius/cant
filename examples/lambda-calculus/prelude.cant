@@ -1,6 +1,6 @@
 ;; Prelude, built-ins
 
-(to (build-prelude powers interpret apply)
+(to (build-prelude powers interpret invoke reply)
   (import powers out)
 
   (to (make-church<-claim lc-no)
@@ -12,18 +12,35 @@
   (to (make-church<-count lc-zero)
     {primitive
      (on (lc-succ)
-       {primitive (let counting
-                    (given
-                      (be 0            lc-zero)
-                      (be (? count? n) (apply lc-succ (counting n.-)))))})})
+       (let counting
+         {cps-function
+          (on (n sequel)
+            (may n
+              (be 0
+                (reply sequel lc-zero))
+              (be (? count? n)
+                (invoke counting n.-
+                        {cps-sequel
+                         (on (ch-n-)
+                           (invoke lc-succ ch-n- sequel))}))))}))})
 
   (to (make-church<-list lc-nil)
     {primitive
      (on (lc-link)
-       {primitive (let linking
-                    (given
-                      (be '()       lc-nil)
-                      (be `(,h ,@t) (apply (apply lc-link h) (linking t)))))})})
+       (let linking
+         {cps-function
+          (on (xs sequel)
+            (may xs
+              (be '()
+                (reply sequel lc-nil))
+              (be (link h t)
+                (invoke lc-link h
+                        {cps-sequel
+                         (on (ch-link-h)
+                           (invoke linking t
+                                   {cps-sequel
+                                    (on (ch-t)
+                                      (invoke ch-link-h ch-t sequel))}))}))))}))})
 
   (let builtins-env
     {module
