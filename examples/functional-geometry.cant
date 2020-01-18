@@ -1,0 +1,109 @@
+;; Henderson, "Functional geometry"
+;; XXX untested
+
+;; see also https://sarabander.github.io/sicp/html/2_002e2.xhtml#g_t2_002e2_002e4
+;; see also http://fssnip.net/aj
+;; and http://planet.racket-lang.org/package-source/soegaard/sicp.plt/2/1/planet-docs/sicp-manual/index.html
+;; and https://sicp.comp.nus.edu.sg/chapters/33
+
+
+;; 2-d vectors {v x y}
+
+(to (v* c {v x y})
+  {v (* c x) (* c y)})
+
+(to (v/ {v x y} c)
+  {v (/ x c) (/ y c)})
+
+(make v+ {extending left-folding-operation}
+  (to (~ {v x0 y0} {v x1 y1})
+    {v (+ x0 x1)
+       (+ y0 y1)})
+  (to (~)
+    {v 0 0}))
+
+(make v- {extending left-folding-operation} ; (fancier than we really need)
+  (to (~ {v x0 y0} {v x1 y1})
+    {v (- x0 x1)
+       (- y0 y1)})
+  (to (~ {v x y})
+    {v (- x) (- y)})
+  (to (~)
+    {v 0 0}))
+
+
+;; Affine transform {frame origin right up}
+;; origin: Where (0,0) in the source ends up in the image.
+;; right, up: Where the x and y unit vectors in the source end up in
+;;   the image, *relative to origin*.
+
+(let standard-frame {frame {v 0 0} {v 1 0} {v 0 1}})
+
+(to (map-vector {frame origin right up} {v x y})
+  (v+ origin (v* x right) (v* y up)))
+
+(to (map-segment frame {segment p0 p1})
+  {segment (map-vector frame p0)
+           (map-vector frame p1)})
+
+
+;; Picture constructors
+;; picture :: frame -> list of segments
+;; Glossary: p, q, r, s: pictures
+
+(to (blank frame)
+  '())
+
+(to ((segments<- segments) frame)       ;XXX confusing name
+  (for each ((s segments))
+    (map-segment frame s)))
+
+(to (grid<- m n segments)
+  (segments<- (for each (({segment {v x0 y0} {v x1 y1}} segments))
+                {segment {v (/ x0 m) (/ y0 n)}
+                         {v (/ x1 m) (/ y1 n)}})))
+
+;; Show both p and q.
+(to ((superpose<- p q) frame)
+  (chain (p frame) (q frame)))
+
+;; Squish p left of q.
+(to ((beside<- p q) {frame origin right up})
+  (let right/2 (v/ right 2))
+  (superpose<- (p {frame origin              right/2 up})
+               (q {frame (v+ origin right/2) right/2 up})))
+
+;; Squish p above q.  TODO make it below instead?
+(to ((stack<- p q) {frame origin right up})
+  (let up/2 (v/ up 2))
+  (superpose<- (q {frame origin           right up/2})
+               (p {frame (v+ origin up/2) right up/2})))
+
+;; A quarter-turn counterclockwise.
+(to ((turn<- p) {frame origin right up})
+  (p {frame (v+ origin right) up (v- right)}))
+
+(to (quartet<- p q r s)
+  (stack<- (beside<- p q) (beside<- r s)))
+
+(to (cycle<- p)
+  (let p1 (turn<- p))
+  (let p2 (turn<- p1))
+  (let p3 (turn<- p2))
+  (quartet<- p p3 p1 p2))
+
+
+;; Output
+
+(to (postscript<- p)
+  (string<-writer (-> (write-postscript it p))))
+
+(to (write-postscript out p)
+  (out .displayln "500 500 scale  .1 .1 translate  0 setlinewidth")
+  (out .displayln "0 0 moveto  1 0 lineto  1 1 lineto  0 1 lineto  0 0 lineto")
+  (for each! (({segment {v x0 y0} {v x1 y1}} (p standard-frame)))
+    (out .say "~d ~d moveto ~d ~d lineto\n"
+         (float x0) (float y0) (float x1) (float y1)))
+  (out .displayln "stroke showpage"))
+
+(let float inexact<-exact)
