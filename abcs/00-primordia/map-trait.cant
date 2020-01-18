@@ -6,6 +6,7 @@
 
 ;; TODO untested, unused yet
 ;; TODO mutable-map trait?
+;;   that'd need: .clear! ...
 
 ;(make missing)
 ;; Problem: (map .get key missing) might save `missing` for later.

@@ -1,4 +1,4 @@
-(import (use 'ssets)
+(import (use 'sset)
   sset<- sset<-list sset-elements sset-insert sset-remove sset-union sset-difference)
 
 (import ((use 'squickcheck) (export out))
