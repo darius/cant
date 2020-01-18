@@ -98,12 +98,12 @@
 (to (postscript<- p)
   (string<-writer (-> (write-postscript it p))))
 
-(to (write-postscript out p)
-  (out .displayln "500 500 scale  .1 .1 translate  0 setlinewidth")
-  (out .displayln "0 0 moveto  1 0 lineto  1 1 lineto  0 1 lineto  0 0 lineto")
+(to (write-postscript sink p)
+  (sink .displayln "500 500 scale  .1 .1 translate  0 setlinewidth")
+  (sink .displayln "0 0 moveto  1 0 lineto  1 1 lineto  0 1 lineto  0 0 lineto")
   (for each! (({segment {v x0 y0} {v x1 y1}} (p standard-frame)))
-    (out .say "~d ~d moveto ~d ~d lineto\n"
+    (sink .say "~d ~d moveto ~d ~d lineto\n"
          (float x0) (float y0) (float x1) (float y1)))
-  (out .displayln "stroke showpage"))
+  (sink .displayln "stroke showpage"))
 
 (let float inexact<-exact)
