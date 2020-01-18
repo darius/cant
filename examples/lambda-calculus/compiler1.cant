@@ -1,6 +1,6 @@
 ;; Yet another compiler: lambda to VM.
 
-(import (use 'sset)  
+(import (use 'sset)
   sset<- sset<-list sset-elements sset-remove sset-union sset-difference)
 
 (import (use "parser") exp-parse)
