@@ -3,6 +3,30 @@
 ;; The input programs must have balanced brackets.
 ;; See also http://rosettacode.org/wiki/Execute_Brain****
 
+(to (main args)
+  (may args.rest
+    (be '() (test-file "examples/brainfuck/hello.bf"))
+    (be fns (each! test-file fns))))
+
+(to (test-file filename)
+  (let text (with-input-file ~.read-all filename))
+  (bf-interpret text)
+  (bf-compile-and-run text))
+
+(to (bf-compile-and-run text)
+  (let code (bf-compile text))
+;;  (out .print code)
+  ((cant .play code full-powered-setting) out-byte in-byte))
+
+
+;; I/O for either version
+
+(to (out-byte byte) (out .display (char<- byte)))
+(to (in-byte)       (may stdin.read-char
+                      (be (? eof?) -1)
+                      (be ch ch.code)))
+
+
 ;; Interpreter
 
 (to (bf-interpret program)
@@ -23,8 +47,8 @@
                          (else (may ch
                                  (be #\- (data .set! d (- (data .get d 0) 1)))
                                  (be #\+ (data .set! d (+ (data .get d 0) 1)))
-                                 (be #\. (out .display (char<- (data .get d 0))))
-                                 (be #\, (data .set! d (read-1 stdin)))
+                                 (be #\. (out-byte (data .get d 0)))
+                                 (be #\, (data .set! d (in-byte)))
                                  (else))
                                d)))))))
 
@@ -39,11 +63,6 @@
               stack.rest)
       (else   stack)))
   jump)
-
-(to (read-1 source)
-  (may source.read-char
-    (be (? eof?) -1)
-    (be ch ch.code)))
 
 
 ;; Compiler
@@ -76,38 +95,14 @@
                       (be #\, `(absorb ,top)))
                     rest)))))
   (surely (= 1 expr-stack.count))
-  `(on () ,@bf-prelude ,@expr-stack))
+  `(on (out-byte in-byte) ,@bf-prelude ,@expr-stack))
 
 (let bf-prelude
   '((let data (array<-count 30000 0))
-    (to (decr d)
-      (data .update d ~.-)
-      d)
-    (to (incr d)
-      (data .update d ~.+)
-      d)
-    (to (emit d)
-      (out .display (char<- (data d)))
-      d)
-    (to (absorb d)
-      (data .set! d (read-1 stdin))
-      d)
-    (to (read-1 source)
-      (may source.read-char
-        (be (? eof?) -1)
-        (be ch ch.code)))))
+    (to (decr d)   (data .update d ~.-)     d)
+    (to (incr d)   (data .update d ~.+)     d)
+    (to (emit d)   (out-byte (data d))      d)
+    (to (absorb d) (data .set! d (in-byte)) d)))
 
 
-;; Smoke test
-
-(to (main _)
-  (let text (with-input-file ~.read-all "examples/brainfuck/hello.bf"))
-  (bf-interpret text)
-  (let code (bf-compile text))
-;;  (out .print code)
-  ;; TODO unpowered setting, and pass in our read-1 function.
-  ((cant .play code full-powered-setting))
-  )
-
-
-(export bf-interpret bf-compile main)
+(export bf-interpret bf-compile bf-compile-and-run main)
