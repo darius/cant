@@ -84,8 +84,8 @@
                       rest))
         (else (let (link top rest) stack)
               (link (may ch
-                      (be #\< `(- ,top 1))
-                      (be #\> `(+ ,top 1))
+                      (be #\< `(~.- ,top))
+                      (be #\> `(~.+ ,top))
                       (be #\- `(decr ,top))
                       (be #\+ `(incr ,top))
                       (be #\. `(emit ,top))
