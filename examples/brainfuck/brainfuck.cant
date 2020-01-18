@@ -6,7 +6,7 @@
 (to (main args)
   (may args.rest
     (be '() (test-file "examples/brainfuck/hello.bf"))
-    (be fns (each! test-file fns))))
+    (be files (each! test-file files))))
 
 (to (test-file filename)
   (let text (with-input-file ~.read-all filename))
