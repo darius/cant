@@ -72,11 +72,8 @@
 ;; there's not much point to the former's existence...
 
 (to (bf-compile program)
-  (let meaningful (set<-list "<>-+.,[]"))
-  (let real-program (for those ((ch program.values))
-                      (meaningful .maps? ch)))
   (let expr-stack
-    (for foldl ((stack '(0)) (ch real-program))
+    (for foldl ((stack '(0)) (ch program.values))
       (may ch
         (be #\[ (link 'd stack))
         (be #\] (let (link top next rest) stack)
@@ -92,7 +89,8 @@
                       (be #\- `(decr ,top))
                       (be #\+ `(incr ,top))
                       (be #\. `(emit ,top))
-                      (be #\, `(absorb ,top)))
+                      (be #\, `(absorb ,top))
+                      (else   top))
                     rest)))))
   (surely (= 1 expr-stack.count))
   `(on (out-byte in-byte) ,@bf-prelude ,@expr-stack))
