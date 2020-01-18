@@ -5,26 +5,26 @@
 ;; Interpreter, explicit-control style
 
 (to (interpret e @(optional r))
-  (ev (exp-parse e) (or r prelude-env) {halt}))
+  (eval (exp-parse e) (or r prelude-env) {halt}))
 
-(to (ev e r k)
+(to (eval e r k)
   (may e
     (be {const c}   (reply k c))
     (be {var v}     (reply k (lookup r v)))
     (be {lam _ _ _} (reply k {closure e r}))
-    (be {app f a _} (ev f r {ev-arg a r k}))
+    (be {app f a _} (eval f r {ev-arg a r k}))
     (be {the-env}   (reply k r))))
 
 (to (reply k0 val)
   (may k0
-    (be {ev-arg a r k} (ev a r {call val k}))
+    (be {ev-arg a r k} (eval a r {call val k}))
     (be {call fv k}    (invoke fv val k))
     (be {cps-sequel f} (f val))
     (be {halt}         val)))
 
 (to (invoke fn arg k)
   (may fn
-    (be {closure {lam v e _} r} (ev e {extend v arg r} k))
+    (be {closure {lam v e _} r} (eval e {extend v arg r} k))
     (be {primitive p}           (reply k (p arg)))
     (be {cps-function f}        (f arg k))))
 
