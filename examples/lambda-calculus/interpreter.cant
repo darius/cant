@@ -56,6 +56,7 @@
 (to (step-in e r k)
   (may e
     (be {app f a src} (eval {app {break f} a src} r k))
+    (be {break e1}    (step-in e1 r k))
     (else             (hop-in e r k))))
 
 (to (hop-in e r k)
@@ -78,6 +79,7 @@
     (be {ev-arg a r k} (step-in a r {call val k}))
     (be {call fv k}    (invoke-in fv val k))
     (be {cps-sequel f} (f val))         ;XXX needs fancier interface
+    (be {trap k}       (step-out k val))
     (be {halt}         val)))
 
 (to (invoke-in fn arg k)
@@ -91,6 +93,7 @@
     (be {ev-arg a r k} (hop-in a r {call val k}))
     (be {call fv k}    (invoke fv val {trap k}))
     (be {cps-sequel f} (f val))         ;XXX needs fancier interface
+    (be {trap k}       (hop-out k val))
     (be {halt}         val)))
 
 (to (unparse-val val)
