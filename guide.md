@@ -1044,7 +1044,7 @@ To create an anonymous single-argument function with multiple pattern-action cla
 ```
 
 The use for it doesn't seem to come up often. Here's one good example:
-the [counting function in
+the (XXX outdated) [counting function in
 examples/lambda-calculus/prelude.cant](https://github.com/darius/cant/blob/master/examples/lambda-calculus/prelude.cant#L15-L18). Without
 `given` the most obvious way to write it would be the stuttery:
 ```
