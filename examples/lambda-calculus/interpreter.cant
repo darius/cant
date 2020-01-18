@@ -2,7 +2,8 @@
 (import (use "prelude") build-prelude)
 
 
-;; Interpreter, explicit-control style
+;; Interpreter, explicit-control style.
+;; With stepper hooks: {break e} for expressions, {trap k} for sequels.
 
 (to (interpret e @(optional r))
   (eval (exp-parse e) (or r prelude-env) {halt}))
@@ -13,6 +14,7 @@
     (be {var v}     (reply k (lookup r v)))
     (be {lam _ _ _} (reply k {closure e r}))
     (be {app f a _} (eval f r {ev-arg a r k}))
+    (be {break e1}  (break e1 r k))
     (be {the-env}   (reply k r))))
 
 (to (reply k0 val)
@@ -20,6 +22,7 @@
     (be {ev-arg a r k} (eval a r {call val k}))
     (be {call fv k}    (invoke fv val k))
     (be {cps-sequel f} (f val))
+    (be {trap k}       (trap k val))
     (be {halt}         val)))
 
 (to (invoke fn arg k)
@@ -27,6 +30,82 @@
     (be {closure {lam v e _} r} (eval e {extend v arg r} k))
     (be {primitive p}           (reply k (p arg)))
     (be {cps-function f}        (f arg k))))
+
+
+;; Stepper
+;; TODO almost untested
+;; s step
+;; h hop
+;; r run
+;; q quit
+
+(to (break e r k)
+  (out .say "At ~w\n" (unparse-e e))
+  (out .say "\\> ") 
+  (begin listening ()
+    (may (read stdin)
+      (be 's (step-in e r k))
+      (be 'h (hop-in e r k))
+      (be 'r (eval e r k))
+      (be 'q)
+      (else (out .say "Huh?\n") (listening)))))
+
+(to (unparse-e e)
+  e)  ; stub
+
+(to (step-in e r k)
+  (may e
+    (be {app f a src} (eval {app {break f} a src} r k))
+    (else             (hop-in e r k))))
+
+(to (hop-in e r k)
+  (eval e r {trap k}))
+
+(to (trap k val)
+  (out .say "Result ~w\n" (unparse-val val))
+  (out .say "At ~w\n" (unparse-k k))
+  (out .say "\\> ") 
+  (begin listening ()
+    (may (read stdin)
+      (be 's (step-out k val))
+      (be 'h (hop-out k val))
+      (be 'r (reply k val))
+      (be 'q)
+      (else (out .say "Huh?\n") (listening)))))
+
+(to (step-out k0 val)
+  (may k0
+    (be {ev-arg a r k} (step-in a r {call val k}))
+    (be {call fv k}    (invoke-in fv val k))
+    (be {cps-sequel f} (f val))         ;XXX needs fancier interface
+    (be {halt}         val)))
+
+(to (invoke-in fn arg k)
+  (may fn
+    (be {closure {lam v e _} r} (step-in e {extend v arg r} k))
+    (be {primitive p}           (step-out k (p arg)))
+    (be {cps-function f}        (f arg k)))) ;XXX needs fancier interface
+
+(to (hop-out k0 val)
+  (may k0
+    (be {ev-arg a r k} (hop-in a r {call val k}))
+    (be {call fv k}    (invoke fv val {trap k}))
+    (be {cps-sequel f} (f val))         ;XXX needs fancier interface
+    (be {halt}         val)))
+
+(to (unparse-val val)
+  val)                                  ;XXX gonna be verbose
+
+(to (unparse-k k0)
+  (may k0
+    (be {ev-arg a r k}  ("<argument ~w>" .format (unparse-e a)))
+    (be {call fv k}     ("<call ~d>" .format (unparse-function fv)))
+    (be {cps-sequel f}  "<sequel>")
+    (else k0)))
+
+(to (unparse-function fv)
+  fv)                                   ;XXX gonna be verbose
+
 
 ;; Environments
 ;; TODO use Cant settings instead?

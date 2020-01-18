@@ -29,6 +29,7 @@
     (be `',c                  {const c})
     (be `(do ,@es)            (seq-parsing es (src-do-parts src)))
     (be `(,(? array?) ,@_)    (lambda-parsing lexp src))
+    (be `(break ,e)           {break (exp-parse e)})
     (be `(,operator ,e)       {app (exp-parse operator) ;TODO try to pass along (src 0) pre-expansion 
                                    (exp-parse e)
                                    src})
