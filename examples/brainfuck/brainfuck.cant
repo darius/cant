@@ -16,7 +16,7 @@
 (to (bf-compile-and-run text)
   (let code (bf-compile text))
 ;;  (out .print code)
-  ((cant .play code full-powered-setting) out-byte in-byte))
+  ((cant .play code computational-setting) out-byte in-byte))
 
 
 ;; I/O for either version
