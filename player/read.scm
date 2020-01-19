@@ -150,8 +150,10 @@
 
     ;; TODO remove this (and term<-list) if we switch to the new term syntax
     (define (read-term port c)
-      (term<-list (read-seq #\} port c)))
-
+      (let ((enclosed (read-seq #\} port c)))
+        (if (null? enclosed)
+            (read-error port "Missing tag in {} term")
+            (term<-list enclosed))))
 
     ;; White space
     (let initializing ((i 33))
