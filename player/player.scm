@@ -328,7 +328,9 @@
            (let ((value (setting-address-fetch r depth offset)))
              (insist (not (eq? value setting/missing))
                      "Missing value shouldn't be possible anymore" (vector-ref e 3))
-             (answer k value)))))
+             (if (eq? value uninitialized)
+                 (signal k "Uninitialized variable" (vector-ref e 3))
+                 (answer k value))))))
    (lambda (e r k)                          ;e-term
      (unpack e (tag es)
        (ev-args es r '()
