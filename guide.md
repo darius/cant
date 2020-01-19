@@ -80,8 +80,7 @@ is the whole sub-block it's in -- recursion and forward references
 aren't special. (A use-before-define error can happen at runtime.)
 Variables are immutable. (There's a 'box' type for when you need a
 mutable variable; also, for development/debugging, you can update
-definitions in an 'interactive setting' such as the usual listener.
-XXX redefinitions are broken again)
+definitions in an 'interactive setting' such as the usual listener.)
 
 Collections follow a common protocol. Every collection is a kind of
 map. (Lists are sequences, which are maps from a natural-number index

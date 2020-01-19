@@ -107,16 +107,21 @@
                 (setting-address-fetch setting depth offset))))
         (else setting/missing)))
 
+;; Return a setting with bindings for `variables`.
+;; If `setting` is mutable, then just add to that setting.
+;; If `setting` is immutable, then return an extension of it.
 (define (setting-ensure-bound setting variables)
   (cond ((mutable-setting? setting)
          (let ((table (setting-table setting)))
            (for-each (lambda (v)
                        ;; TODO un-quadratify
-                       (cond ((eq-hashtable-ref table v #f)
-                              => (lambda (i)
-                                   (insist (eq? (vector-ref (setting-values setting) i)
-                                                uninitialized)
-                                           "Already bound" v)))
+                       (cond ((eq-hashtable-ref table v #f))
+;; XXX Why did I have this insist? I'm disabling it now to allow interactive redefinition.
+;; Was that supposed to work some other way?
+;;                              => (lambda (i)
+;;                                   (insist (eq? (vector-ref (setting-values setting) i)
+;;                                                uninitialized)
+;;                                           "Already bound" v)))
                              ((setting-binds? (setting-parent setting) v)
                               (error 'setting-ensure-bound
                                      "An interactive setting may not shadow its parent"
