@@ -103,7 +103,5 @@
   (sink .displayln "0 0 moveto  1 0 lineto  1 1 lineto  0 1 lineto  0 0 lineto")
   (for each! (({segment {v x0 y0} {v x1 y1}} (p standard-frame)))
     (sink .say "~d ~d moveto ~d ~d lineto\n"
-         (float x0) (float y0) (float x1) (float y1)))
+          x0.inexact y0.inexact x1.inexact y1.inexact))
   (sink .displayln "stroke showpage"))
-
-(let float inexact<-exact)

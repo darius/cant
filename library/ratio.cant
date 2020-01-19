@@ -54,7 +54,7 @@
   ((* n1 d2) .compare (* n2 d1)))
 
 (to (as-float {ratio n d})
-  (/ (inexact<-exact n) d))
+  (/ n.inexact d))
 
 ((export ratio? ratio<- compare as-float)
  .override (map<-

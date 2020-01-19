@@ -49,7 +49,7 @@
                              ((- yl margin) .to (+ yh margin)))))
 
 (to (integer<- n)
-  (exact<-inexact (floor n)))
+  n.floor.exact)
 
 (let centroid (each (compose integer<- average)
                     (transpose centers)))
