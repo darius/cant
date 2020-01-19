@@ -73,11 +73,6 @@
 
 ;; Objects, calling, and answering
 
-(define-record-type cps-script (fields name procedure))
-
-(define (cps-prim<- datum name procedure)
-  (object<- (make-cps-script name procedure) datum))
-
 ;; Helper for coding a cps-prim. Check the arguments' arity and unpack them.
 (define (cps-unpack arguments k arity name ok-fn)
   (if (= (length arguments) arity)
@@ -95,6 +90,8 @@
 ;  (dbg `(answer))
   ((vector-ref methods/cont (vector-ref k 0)) value k))
 
+(define cps-script-trait (script-trait script/cps))
+
 (define (call object message k)
 ;  (dbg `(call))
   (cond
@@ -106,7 +103,7 @@
             ((cps-script? script)
              (if (tuple? message)
                  ((cps-script-procedure script) datum (list<-tuple message) k)
-                 (delegate script/cps object message k)))
+                 (delegate cps-script-trait object message k)))
             (else
              (error 'call "Not a script" script datum)))))
    ((procedure? object)

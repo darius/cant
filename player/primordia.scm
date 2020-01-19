@@ -206,13 +206,31 @@
    ((script? object)      script/script)
    ((procedure? object)   script/procedure)
    ((setting? object)     script/setting)
-   ((object? object)      (object-script object))
-   (else (error 'call "Non-object" object))))
+   ((object? object)
+    ;; Being tricky here. There are two users of extract-script.
+    ;; One is player.scm's call procedure, and it always handles the 
+    ;; (object? object) case itself, in its own way.
+    ;; The other user is Cant's debugger. We don't want to give it a 
+    ;; cps-script Scheme object, because that's not a Cant object.
+    ;; Here we give it script/cps, instead.
+    ;; TODO be not-tricky
+    (let ((script (object-script object)))
+      (if (cps-script? script)
+          script/cps
+          script)))
+   (else (error 'extract-script "Non-object" object))))
 
+;; The only user of extract-datum is Cant's debugger. We special-case
+;; cps-primitives as above for extract-script.
 (define (extract-datum object)
   (cond
-   ((object? object)      (object-datum object))
-   ;; XXX: script too?
-   (else                  object)))
+   ((object? object)
+    (if (cps-script? (object-script object))
+        ;; Since there's nothing useful in a cps-primitive's datum:
+        ;;   (TODO maybe that's where we should stash the name?)
+        (cps-script-name (object-script object))  
+        (object-datum object)))
+   (else object)))
+
 
 )

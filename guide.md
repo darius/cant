@@ -853,8 +853,7 @@ There's some moderately helpful syntax we could've used to define
 `delegatee` and `delegator` above:
 ```
 (make-trait delegatee receiver
-  (to ~.bump receiver.thump)
-  (to message (miranda-trait receiver message)))
+  (to ~.bump receiver.thump))
 
 (make delegator {extending delegatee}
   (to ~.thump "Ka-THUMP"))

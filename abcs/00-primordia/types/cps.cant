@@ -1,3 +1,12 @@
+;; A cps-primitive is like a procedure-primitive, but following a
+;; different internal calling convention than the usual Scheme
+;; procedures like __+ and so on.
+
+;; There's a magical behavior internal to the player, not expressed in
+;; this script: if the message is a tuple, then handle it with the
+;; Scheme code of this cps-primitive. For all other message types,
+;; use the script below.
+
 (make-trait cps-primitive me
   (to (~ .selfie sink)
     (sink .display "#<primitive ")
