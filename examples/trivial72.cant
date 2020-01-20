@@ -115,7 +115,7 @@
 (to (make-message e r k)
   ;; XXX null message probably should be kept instead
   ;; e.g. so you'd get an error on too many $'s
-  (if (null? e) k `(message ,e ,r ,k)))
+  (if (= '() e) k `(message ,e ,r ,k)))
 
 (to (return k value)
   (may k

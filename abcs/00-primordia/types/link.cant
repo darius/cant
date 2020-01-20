@@ -18,7 +18,7 @@
                (sink .display " ")
                (sink .write r.first)
                (printing r.rest))
-             (when (null? r) 'ok)
+             (when (null? r))
              (else
                (sink .display " . ")       ;XXX we're not supporting this in read, iirc
                (sink .write r))))

@@ -1,7 +1,7 @@
 ;; Definitions used by desugared code
 
 (to (as-list seq)            ;XXX naming convention for coercions?
-  (if (list? seq)
+  (if (list? seq)            ;XXX doesn't check the whole list, only the first link
       seq
       (begin copying ((seq seq))
         (if seq.none?

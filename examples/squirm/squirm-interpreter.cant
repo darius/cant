@@ -8,7 +8,7 @@
 
 (to (first x) x.first)
 (to (rest x) x.rest)
-(let nil? null?)
+(to (nil? x) (= x '()))
 (to (list @xs) xs)
 (to (length x) x.count)
 (to (nth x n)                           ;TODO better name?

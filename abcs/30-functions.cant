@@ -251,7 +251,7 @@
     take foldr/lazy gather chain/lazy sum-by tally-by zip setting<-map
     gather/lazy method<- link/lazy map-by
     hey max-by tally min union-over each/lazy map<-values mayhap
-    grid* sum = link link? null? list? number? integer? symbol? cue?
+    grid* sum = link link? list? number? integer? symbol? cue?
     claim? char? string? array? box? term? source? sink? eof? box<-
     symbol<- term<- char<- array<-count inexact<-exact exact<-inexact
     floor not sqrt void / expt abs gcd number<-string string<-number

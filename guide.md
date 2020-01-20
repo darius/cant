@@ -342,15 +342,15 @@ runtime error: so you'll occasionally see code like (from
 
 OK, moving on. Scheme functions on lists:
 
-| Scheme                        | Cant        | Note          |
+| Scheme                        | Cant          | Note          |
 | ----------------------------- | ------------- | ------------- |
 | `(cons x xs)`                 | `(link x xs)`       | Or `(link x1 x2 xs)`, etc. |
 | `(append xs ys)`              | `(chain xs ys)`     |  |
 | `(list x y z)`                | `(list<- x y z)`    | Though it's more common to use quasiquoting. |
-| `(null? xs)`                  | `(null? xs)`, `xs.none?`, or `(xs .none?)`     | `xs.none?` is reader sugar for the last expression. All collections answer this message, though not all objects. `null?` would be useful when you don't know if the argument is a collection. |
+| `(null? xs)`                  | `xs.none?` or `(= '() xs)`     | All collections answer `.none?`, though not all objects. The `=` test is for when you don't know if the argument is a collection. |
 | `(pair? x)`                   | `(link? x)`      |  |
 | `(or (null? x) (pair? x))`    | `(list? x)`     |  Cant doesn't plan to support improper lists, though I haven't got around to making them an error. Cyclic lists are not constructible. |
-| `(car xs)`                    | `xs.first` or etc.     |  |
+| `(car xs)`                    | `xs.first`     |  |
 | `(cdr xs)`                    | `xs.rest`     |  |
 | `(length xs)`                 | `xs.count`     |  |
 | `(list-ref xs n)`             | `(xs n)`     |  |
