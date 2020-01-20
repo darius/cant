@@ -397,7 +397,8 @@
               ((__ ('or . es) . clauses)  `(or ,@es (hm ,@clauses)))
               ((__ ('if e e1) . clauses)  `(if ,e ,e1 (hm ,@clauses)))
               ((__ ('when e . es) . clauses)   `(if ,e (do ,@es) (hm ,@clauses)))
-              ((__ ('unless e . es) . clauses) `(if ,e (hm ,@clauses) (do ,@es)))))
+              ((__ ('unless e . es) . clauses) `(if ,e (hm ,@clauses) (do ,@es)))
+              ((__ ('may e . bes) . clauses)   `(may ,e ,@bes (else (hm ,@clauses))))))
     ('and    (mlambda
               ((__) #t)
               ((__ e) e)
