@@ -323,14 +323,15 @@
        (answer k value)))
    (lambda (e r k)                          ;e-variable
      (unpack e (depth offset)
-       (if (not depth)
-           (signal k "Unbound variable" (vector-ref e 3))  ; e[3]: variable name
-           (let ((value (setting-address-fetch r depth offset)))
-             (insist (not (eq? value setting/missing))
-                     "Missing value shouldn't be possible anymore" (vector-ref e 3))
-             (if (eq? value uninitialized)
-                 (signal k "Uninitialized variable" (vector-ref e 3))
-                 (answer k value))))))
+       (let ((value (if depth
+                        (setting-address-fetch r depth offset)
+                        (setting-lookup r (vector-ref e 3)))))  ; e[3]: variable name
+         (cond ((eq? value setting/missing) ; This can happen because interactive settings allow not-yet-defined variables.
+                (signal k "Unbound variable" (vector-ref e 3)))
+               ((eq? value uninitialized)
+                (signal k "Uninitialized variable" (vector-ref e 3)))
+               (else
+                (answer k value))))))
    (lambda (e r k)                          ;e-term
      (unpack e (tag es)
        (ev-args es r '()
