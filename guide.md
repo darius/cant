@@ -459,6 +459,11 @@ not worth the cost. The goal of this Cant implementation is to work
 out the design, not to be useful. A mythical future real Cant system
 needs to define its hashmaps primitively.)
 
+(Related bug: `(= [] [])` is supposed to be yes, but is no in this
+implementation. To fix this I'd have to represent `[]` as something
+other than an empty Scheme vector. That's more doable but still
+doesn't seem worth the trouble yet.)
+
 A bag is a kind of mutable map whose values are all counts. (Maybe we
 should support negative values too, like Python's `Counter`?) For a
 key that's absent from the bag's explicit set of keys, `(bag key)` is
