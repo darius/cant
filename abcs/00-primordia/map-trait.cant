@@ -27,6 +27,7 @@
     (not= (map .get key missing) missing))
   (to ~.none?  (= map.count 0))  ; or map.items.none? - is that better? depends.
   (to ~.some?  (not map.none?))
+  (to ~.count  map.items.count)
   (to ~.keys   (each (~ .part 0) map.items))
   (to ~.values (each (~ .part 1) map.items))
   (to (~ .find? value)
