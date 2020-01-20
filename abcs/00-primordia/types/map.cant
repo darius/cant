@@ -18,6 +18,8 @@
     (null? (__mapi-items map)))
   (to ~.items
     (__mapi-items map))
+  (to (~ .bind key value)
+    (map<-items (link (~ key value) map.items)))
   (to (~ .override other-map) ;TODO name; TODO efficient impl; TODO find where it's used
     (map<-items (chain map.items other-map.items)))
   (to (~ .selfie sink)
