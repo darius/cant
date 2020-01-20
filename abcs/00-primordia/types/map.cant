@@ -24,9 +24,9 @@
     (map<-items (chain map.items other-map.items)))
   (to (~ .selfie sink)
     (sink .display "#<map")
-    (for each! ((key map.keys))
+    (for each! ((item map.items))
       (sink .display #\space)
-      (sink .write key))
+      (sink .write item))
     (sink .display ">"))
   (to message
     (map-trait map message)))
