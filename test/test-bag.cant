@@ -21,14 +21,14 @@
 
 ;; TODO more tests
 
-(import (use 'random) rng<-)
+(import (use 'chaos) chaos<-)
 
-(let rng (rng<- 1234567))
+(let chaos (chaos<- 1234567))
 
 (to (random-tests n-trials)            ;TODO use squickcheck
   (for each! ((_ n-trials.till))
     (exercise-em (for each ((value (50 .till))) ;TODO did I mean to use the value?
-                   (rng .random-integer 5)))))
+                   (chaos .random-integer 5)))))
 
 (to (exercise-em keys)
   (let m (bag<-))     ;; The bag under test.

@@ -1,7 +1,7 @@
 ;; Ported from github.com/darius/sturm
 
-(import (use 'random)
-  rng<- random-seed<-)
+(import (use 'chaos)
+  chaos<- random-seed<-)
 (import ((use 'sturm) (export console))
   cbreak-mode get-key render
   ;;XXX import is finally a pain:
@@ -10,11 +10,11 @@
   on-black on-red on-green on-yellow on-blue on-magenta on-cyan on-white)
 
 (to (main _)
-  (let rng (rng<- (random-seed<- system-randomness-source<-)))
+  (let chaos (chaos<- (random-seed<- system-randomness-source<-)))
   (for cbreak-mode ()
-    (play (starting-board<- rng) rng)))
+    (play (starting-board<- chaos) chaos)))
 
-(to (play board rng)
+(to (play board chaos)
   (let history (flexarray<-))
   (begin playing ((board board)
                   (forfeit? #no))
@@ -38,8 +38,8 @@
                     (be sliding
                       (history .push! board)
                       (animate sliding score)
-                      (let small? (< (rng .random-integer 10) 9))
-                      (let next-board (plop rng sliding.last (if small? 2 4)))
+                      (let small? (< (chaos .random-integer 10) 9))
+                      (let next-board (plop chaos sliding.last (if small? 2 4)))
                       (playing next-board forfeit?)))))))))
 
 (let heading "Use the arrow keys, U to undo (and forfeit), or Q to quit.\n\n")
@@ -52,11 +52,11 @@
     (frame board score)
     (nanosleep 40000000)))
 
-(to (starting-board<- rng)
-  (plop rng (plop rng empty-board 2) 2))
+(to (starting-board<- chaos)
+  (plop chaos (plop chaos empty-board 2) 2))
 
-(to (plop rng board value)
-  (update board (random-empty-square rng board) value))
+(to (plop chaos board value)
+  (update board (random-empty-square chaos board) value))
 
 (to (view rows)
   (for each ((row rows))
@@ -88,10 +88,10 @@
   (for every ((move arrows.values))
     ((move rows) .none?)))
 
-(to (random-empty-square rng rows)
-  (rng .pick (for gather (((~ r row) rows.items))
-               (for yeahs (((~ c v) row.items))
-                 (and (= v 0) (~ r c))))))
+(to (random-empty-square chaos rows)
+  (chaos .pick (for gather (((~ r row) rows.items))
+                 (for yeahs (((~ c v) row.items))
+                   (and (= v 0) (~ r c))))))
 
 (to (update rows at new-value)
   (for each (((~ r row) rows.items))

@@ -2,7 +2,7 @@
 ;; TODO:
 ;; - separate a module from the main program
 
-(import (use 'random) random-rng<-)
+(import (use 'chaos) random-chaos<-)
 (import (use 'text-wrap) fill)
 
 (let order 2) ; Length of the context. TODO parameterize at command line
@@ -13,7 +13,7 @@
   (for each! ((filename argv.rest))
     (train model (tokenize (with-input-file ~.read-all filename))))
   (unless model.none?
-    (let tokens (spew (random-rng<- system-randomness-source<-) model start))
+    (let tokens (spew (random-chaos<- system-randomness-source<-) model start))
     (out .display (fill (" " .join tokens) ;TODO fill sort of splits it back -- add a function to text-wrap that wouldn't need to?
                         72))
     out.newline))
@@ -34,9 +34,9 @@
   (for each ((i (0 .thru (- xs.count k))))
     (xs .slice i (+ i k))))
 
-(to (spew rng model state)
+(to (spew chaos model state)
   (begin spewing ((state state))
-    (may (sample-from-bag rng (model state))
+    (may (sample-from-bag chaos (model state))
       (be "END"
         '())
       (be choice
@@ -44,9 +44,9 @@
         (link choice (spewing next-state))))))
 
 ;; Pick a random element from a bag, weighted by frequency.
-(to (sample-from-bag rng bag)           ;TODO dedupe: similar in squickcheck.scm
+(to (sample-from-bag chaos bag)           ;TODO dedupe: similar in squickcheck.scm
   (let n bag.total)  ;; Pre: n > 0
-  (begin counting ((k (rng .random-integer n))
+  (begin counting ((k (chaos .random-integer n))
                    (items bag.items))
     (let (~ key count) items.first)
     (if (< k count)

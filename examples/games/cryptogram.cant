@@ -5,13 +5,13 @@
 (import ((use 'sturm) (export console))
   cbreak-mode get-key render
   cursor green red unstyled)
-(import (use 'random)
-  random-rng<-)
+(import (use 'chaos)
+  random-chaos<-)
 
 (to (main args)
   (let cryptogram
     (may args.rest
-      (be '()      (random-encrypt (random-rng<- system-randomness-source<-)
+      (be '()      (random-encrypt (random-chaos<- system-randomness-source<-)
                                    (run-fortune)))
       (be `(,text) text)
       (else        (error ("Usage: ~d [cryptogram]" .format (args 0))))))
@@ -20,9 +20,9 @@
 
 (let alphabet (#\a .thru #\z))
 
-(to (random-encrypt rng text)
+(to (random-encrypt chaos text)
   (let shuffled (hey (array<-list alphabet)
-                     (-> (rng .shuffle! it))))
+                     (-> (chaos .shuffle! it))))
   (let code (map<-items (zip alphabet shuffled)))
   (text<-list (for each ((ch text.lowercase))
                 (code .get ch ch))))

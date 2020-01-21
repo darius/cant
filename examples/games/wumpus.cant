@@ -4,9 +4,9 @@
 ;;   other load-time bug; then you get evil-within-evil replacing the
 ;;   traceback
 
-(import (use 'random) random-rng<-)
+(import (use 'chaos) random-chaos<-)
 
-(let rng (random-rng<- system-randomness-source<-))
+(let chaos (random-chaos<- system-randomness-source<-))
 
 
 ;; Start and end the game
@@ -139,7 +139,7 @@
   (to ~.wander
     ;; Move to a random neighbor, or just circle back.
     (let here wumpus.where)
-    (wumpus .go (rng .pick (link here here.neighbors)))))
+    (wumpus .go (chaos .pick (link here here.neighbors)))))
 
 (to (pit<-)
   (make pit {extending (thing-trait<-)}

@@ -2,11 +2,11 @@
 ;; Based on clickcheck/peckcheck.
 
 ;; Glossary:
-;;    g    generator context: includes an RNG and a size
+;;    g    generator context: includes a chaos and a size
 ;;    gen  generates a value of a type, given a g
 
-(import (use 'random) rng<-)
-(let default-rng (rng<- 1234567))    ;TODO don't use this all the time
+(import (use 'chaos) chaos<-)
+(let default-chaos (chaos<- 1234567))    ;TODO don't use this all the time
 
 ;; TODO an API separating defining a test from the rest of the stuff,
 ;;  where only running a test needs to import 'out'
@@ -20,7 +20,7 @@
   ;; TODO better names
   (make all
     (to (~ property @gens)
-      (all .run (context<- default-rng) 40 property gens))
+      (all .run (context<- default-chaos) 40 property gens))
     (to (~ .run g n-times property gens)
       (let failures (flexarray<-))
       (for each! ((_ n-times.till))
@@ -42,16 +42,16 @@
   ;; Generator context
 
   (make context<-
-    (to (~ rng)
-      (context<- rng 20)) ; TODO we'll want a bigger number when we're no longer super-slow
-    (to (~ rng size)
+    (to (~ chaos)
+      (context<- chaos 20)) ; TODO we'll want a bigger number when we're no longer super-slow
+    (to (~ chaos size)
       ;; TODO better method names
       (make gen
         (to ~.size           size)
-        (to (~ .natural n)   (rng .random-integer n))
-        (to (~ .range lo hi) (rng .random-range lo hi)) ;TODO rename, .interval ?
-        (to ~.a-size         (rng .random-integer size))
-        (to (~ .choose xs)   (rng .pick xs)))))
+        (to (~ .natural n)   (chaos .random-integer n))
+        (to (~ .range lo hi) (chaos .random-range lo hi)) ;TODO rename, .interval ?
+        (to ~.a-size         (chaos .random-integer size))
+        (to (~ .choose xs)   (chaos .pick xs)))))
 
 
   ;; Basic gens

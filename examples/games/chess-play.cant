@@ -1,5 +1,5 @@
 (import (use "chess") chess-main)
-(import (use 'random) rng)         ;for now
+(import (use 'chaos) chaos)         ;for now
 
 (to (main args)
-  (chess-main (export console rng) args))
+  (chess-main (export console chaos) args))

@@ -2,13 +2,13 @@
 ;; TODO: port a better one
 
 ;; (random-seed<-) -> seed (From system randomness.)
-;; (rng<- seed) -> rng
-;; (rng .random-integer n) -> int
+;; (chaos<- seed) -> chaos
+;; (chaos .random-integer n) -> int
 
 (let D 2147483647)
 
 ;; Multiplicative congruential
-(to (park-miller-rng<- seed)
+(to (park-miller-chaos<- seed)
   (surely (< 0 seed))
   (let state (box<- seed))
 
@@ -17,24 +17,24 @@
     (state .^= r)
     r)
 
-  (make rng
+  (make chaos
     (to (~ .random-integer n)                ;TODO rename .random-count or something
       ((next) .modulo n))                ;XXX could be better
     (to (~ .random-range lo hi)
-      (+ lo (rng .random-integer (- hi lo))))
+      (+ lo (chaos .random-integer (- hi lo))))
     (to (~ .pick xs)
-      (xs (rng .random-integer xs.count)))
+      (xs (chaos .random-integer xs.count)))
     (to (~ .shuffle! vec)
       (let n vec.count)
       (for each! ((i n.till))
-        (vec .swap! i (+ i (rng .random-integer (- n i))))))
+        (vec .swap! i (+ i (chaos .random-integer (- n i))))))
     ))
 
-(let rng<- park-miller-rng<-)
-(let rng (rng<- 1234567))
+(let chaos<- park-miller-chaos<-)
+(let chaos (chaos<- 1234567))
 
-(to (random-rng<- randomness-source<-)
-  (rng<- (random-seed<- randomness-source<-)))
+(to (random-chaos<- randomness-source<-)
+  (chaos<- (random-seed<- randomness-source<-)))
 
 (to (random-seed<- randomness-source<-)
   (for with-closing ((source (randomness-source<-)))
@@ -50,4 +50,4 @@
     (+ (n .<< 8)
        source.read-char.code)))
 
-(export rng<- rng random-rng<- random-seed<-)
+(export chaos<- chaos random-chaos<- random-seed<-)

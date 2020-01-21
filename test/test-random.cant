@@ -1,10 +1,10 @@
-(import (use 'random) rng<-)
+(import (use 'chaos) chaos<-)
 
-(let rng (rng<- 1234567))
+(let chaos (chaos<- 1234567))
 
 ; (out .say "seed: ~w\n" (random-seed<-))
 (for each! ((_ (10 .till)))
-  (out .say "~w " (rng .random-integer 4)))
+  (out .say "~w " (chaos .random-integer 4)))
 out.newline
 
         

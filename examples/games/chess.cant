@@ -22,11 +22,11 @@
                          (do (console.out .display "Illegal move\n")
                              (asking)))))))))
 
-(to (random-player<- rng)
+(to (random-player<- chaos)
   (make random-player
     (to ~.interactive? #no)
     (to (~ .pick-move board)
-      (rng .pick (as-list board.gen-legal-moves)))))
+      (chaos .pick (as-list board.gen-legal-moves)))))
 
 (make greedy-player
   (to ~.interactive? #no)
@@ -45,7 +45,7 @@
 (to (greedy-evaluate board)
   (let total (sum-by piece-values board.squares))
   ;; Just a little randomness makes play less boring:
-  ;;XXX need to set up with an rng
+  ;;XXX need to set up with a chaos
   ;; total += random.uniform(0, 0.001)
   (may board.mover
     (be 'white (- total))
@@ -326,12 +326,12 @@
   ("~d~w" .format ("abcdefgh" c.-) (- 9 r)))
 
 (to (chess-main powers args)
-  (import powers console rng)
+  (import powers console chaos)
   (let out console.out)
   (let strategy-names
     (map<- (~ "human"   (human-player<- console))
            (~ "greedy"  greedy-player)
-           (~ "random"  (random-player<- rng))
+           (~ "random"  (random-player<- chaos))
            (~ "minimax" (minimax-player<- 2))))
   (out .display "(Moves look like 'e2e3')\n\n")
   (unless (= args.count 3)

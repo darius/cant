@@ -19,13 +19,13 @@
 
 ;; TODO more tests
 
-(import (use 'random) rng)
+(import (use 'chaos) chaos)
 
 (to (random-tests n-trials)            ;TODO use squickcheck
   (for each! ((_ n-trials.till))
     (exercise-em (for each ((value (50 .till)))
-                   (let key (rng .random-integer 16))
-                   (let op (may (rng .random-integer 10)
+                   (let key (chaos .random-integer 16))
+                   (let op (may (chaos .random-integer 10)
                              (be 0 'delete)
                              (be 1 'fetch)
                              (be 2 'fetch)
