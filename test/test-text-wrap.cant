@@ -1,9 +1,9 @@
 (import (use 'text-wrap) wrap)
 
 ;; TODO move this (main) somewhere meaningful, or rm it.
-(to (main `(,_ ,width-str ,@words))
+(to (main `(,_ ,width-text ,@words))
   (let lines (wrap (" " .join words)
-                   (number<-text width-str)))
+                   (number<-text width-text)))
   (each! (-> (out .print it)) lines))
 
 (let text "

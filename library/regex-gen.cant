@@ -12,10 +12,10 @@
 
 (let none   (set<-))
 
-(to (literal str)
-  (let just-str (set<- str))
+(to (literal text)
+  (let just-text (set<- text))
   (on (Ns)
-    (if (Ns .maps? str.count) just-str none)))
+    (if (Ns .maps? text.count) just-text none)))
 
 (to (star r)
   (let r1 (nonempty r))

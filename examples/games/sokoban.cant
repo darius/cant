@@ -38,8 +38,8 @@
 
 (to (read-collection source)
   (let name source.read-line)
-  (let levels-str source.read-all)
-  (let grids (for each ((floor-plan (levels-str .split "\n\n")))
+  (let levels-text source.read-all)
+  (let grids (for each ((floor-plan (levels-text .split "\n\n")))
                (sokoban-grid<- (parse floor-plan))))
   (~ grids name))
 

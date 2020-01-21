@@ -48,9 +48,9 @@
             (origin .^= 0)) ; Couldn't center it.
           (render ft origin.^ point.^))))
 
-  (to (insert str)
-    (ft .insert point.^ str)
-    (point .+= str.count))
+  (to (insert text)
+    (ft .insert point.^ text)
+    (point .+= text.count))
 
   (to (find-line p dir)
     (ft .clip (ft .find-char-set p dir newline)))
@@ -98,9 +98,9 @@
     (to ~.end-of-line
       (point .^= (ft .clip (- (find-line point.^ forward) 1))))
 
-    (to (~ .insert str)
-      (surely (text? str))
-      (insert str))
+    (to (~ .insert text)
+      (surely (text? text))
+      (insert text))
 
     (to ~.key-map
       key-map)

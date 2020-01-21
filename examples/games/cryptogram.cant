@@ -11,10 +11,10 @@
 (to (main args)
   (let cryptogram
     (may args.rest
-      (be '()     (random-encrypt (random-rng<- system-randomness-source<-)
-                                  (run-fortune)))
-      (be `(,str) str)
-      (else       (error ("Usage: ~d [cryptogram]" .format (args 0))))))
+      (be '()      (random-encrypt (random-rng<- system-randomness-source<-)
+                                   (run-fortune)))
+      (be `(,text) text)
+      (else        (error ("Usage: ~d [cryptogram]" .format (args 0))))))
   (for cbreak-mode ()
     (puzzle cryptogram)))
 
@@ -150,9 +150,9 @@
       view.values)))
 
 ;; Expand tabs; blank out other control characters.
-(to (clean str)
+(to (clean text)
   (let r (flexarray<-))
-  (for each! ((ch str))
+  (for each! ((ch text))
     (hm (when (= ch #\tab)
           (begin padding ()
             (r .push! #\space)

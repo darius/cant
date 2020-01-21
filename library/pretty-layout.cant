@@ -14,7 +14,7 @@
 ;; basic doc type in place of {union x y}.
 
 (let nil       '())
-(to (text str) {text str})
+(to (text str) {text str})              ;XXX change name, to what?
 (let line      {line 0})
 (make <>
   (to (~ doc) doc)

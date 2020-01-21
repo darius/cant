@@ -63,9 +63,9 @@ insn:    {'1'+} {'#' '#'? '#'? '#'? '#'?} :make_insn.
      (to (~ n regs)
        (may (regs .get n "")           ;TODO how about just (regs n)?
          (be "" 1)
-         (be str
-           (regs .set! n str.rest)
-           (may str.first
+         (be text
+           (regs .set! n text.rest)
+           (may text.first
              (be #\1 2)
              (be #\# 3))))))))
 
@@ -81,8 +81,8 @@ insn:    {'1'+} {'#' '#'? '#'? '#'? '#'?} :make_insn.
                                  "   "
                                  ("~3w" .format (abs (- pc addr)))))
               ("~d ~d ~w" .format show-addr fn.name n)))
-  (let right (for each (((~ i str) regs.items.rest))
-               ("\tr~w: ~d" .format i str)))
+  (let right (for each (((~ i text) regs.items.rest))
+               ("\tr~w: ~d" .format i text)))
   (for each! ((line (abut left right)))
     (out .displayln line)))
 
