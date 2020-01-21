@@ -14,7 +14,7 @@
   (and (lexicon .maps? best) best))
 
 (to (edits1 word)
-  (let splits     (for each ((i (0 .to word.count)))
+  (let splits     (for each ((i (0 .thru word.count)))
                     (~ (word .slice 0 i)
                        (word .slice i))))
   (let inserts    (for gather (((~ a b) splits))
@@ -35,7 +35,7 @@
 (to (uniquify xs)
   xs.range.keys)
 
-(let alphabet (each string<- (#\a .to #\z)))
+(let alphabet (each string<- (#\a .thru #\z)))
 
 (to (words<-string string)
   ;;  (re:findall "[a-z]+" string.lowercase))  ;TODO

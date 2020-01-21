@@ -120,13 +120,13 @@
     (to ~.previous-page
       ;; (update-origin)
       ;; point .^= origin
-      (for each! ((_ (1 .to rows)))
+      (for each! ((_ rows.till))
         (previous-line)))
 
     (to ~.next-page
       ;; (update-origin)
       ;; point .^= origin
-      (for each! ((_ (1 .to rows)))
+      (for each! ((_ rows.till))
         (next-line)))
 
     (to ~.redisplay

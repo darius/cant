@@ -18,7 +18,7 @@
     (out .display cursor-show)))
 
 (to (run grid n-steps)
-  (for foldl ((grid grid) (_ (1 .to n-steps)))
+  (for foldl ((grid grid) (_ n-steps.till))
     (out .display clear-screen)
     (show grid)
     (update grid)))
@@ -42,8 +42,8 @@
   (when grid.some?
     (let `((,x-lo ,x-hi) (,y-lo ,y-hi))
       (each bounds<- (transpose grid.keys)))
-    (for each! ((y (y-lo .to y-hi)))
-      (for each! ((x (x-lo .to x-hi)))
+    (for each! ((y (y-lo .thru y-hi)))
+      (for each! ((x (x-lo .thru x-hi)))
         (out .display (if (grid .maps? `(,x ,y)) "O " "  ")))
       out.newline)))
 

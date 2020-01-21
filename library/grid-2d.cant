@@ -39,8 +39,8 @@
   (may initializer
     (be {constant _})
     (be {map f}
-      (for each! ((y (yl .to yh)))
-        (for each! ((x (xl .to xh)))
+      (for each! ((y (yl .thru yh)))
+        (for each! ((x (xl .thru xh)))
           (A .set! (at x y) (f (~ x y)))))))
 
   (make grid-2d {extending map-trait}
@@ -66,17 +66,17 @@
     (to ~.items
       (zip grid-2d.keys A.values))
     (to ~.keys
-      ;; Could be a one-liner: (grid* (xl .to xh) (yl .to yh))
+      ;; Could be a one-liner: (grid* (xl .thru xh) (yl .thru yh))
       ;; except that'd be column-major order. Hm, hm.
-      (for gather ((y (yl .to yh)))
-        (for each ((x (xl .to xh)))
+      (for gather ((y (yl .thru yh)))
+        (for each ((x (xl .thru xh)))
           (~ x y))))
     (to ~.values
       A.values)
 
     (to (~ .show print-line!)
-      (for each! ((y (yl .to yh)))
-        (print-line! (for each ((x (xl .to xh)))
+      (for each! ((y (yl .thru yh)))
+        (print-line! (for each ((x (xl .thru xh)))
                        (A (at x y))))))
     ;; TODO ~.show used to print to stdout. Change to print onto arg or return a string.
 ;;    (to ~.show

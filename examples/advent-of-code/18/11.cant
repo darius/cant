@@ -25,7 +25,7 @@
     (level<- x y)))
 
 (to (patches)
-  (grid* (1 .to 298) (1 .to 298)))
+  (grid* (1 .thru 298) (1 .thru 298)))
 
 (out .say "~w\n" (part1))
 
@@ -44,8 +44,8 @@
   (let S (array<-count (* N1 N1) 0))
   ;; (S (at x y)) = sum of (A i j) for i,j above and left of x,y.
 
-  (for each! ((y (1 .to N)))
-    (for each! ((x (1 .to N)))
+  (for each! ((y (1 .thru N)))
+    (for each! ((x (1 .thru N)))
       (S .set! (at x y)
          (+ (S (at x y.-))          ; rect above
             (- (S (at x.- y))       ; strip to left
@@ -66,7 +66,7 @@
   (to (subsquares)
     (for gather ((i side))
       (for gather ((j side))
-        (for each ((d (1 .to (min (- N i) (- N j)))))
+        (for each ((d (1 .thru (min (- N i) (- N j)))))
           `(,i ,j ,d)))))
 
   (to (cvt-coords `(,x ,y ,d))
@@ -80,7 +80,7 @@
 
   (let `(,power ,triple)
     (max @(for each ((`(,x ,y) (corners)))
-            (max @(for each ((d (1 .to (min (- N x) (- N y)))))
+            (max @(for each ((d (1 .thru (min (- N x) (- N y)))))
                     (let triple `(,x ,y ,d))
                     `(,(power<- triple) ,triple))))))
 

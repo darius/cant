@@ -18,7 +18,7 @@
   (for cbreak-mode ()
     (puzzle cryptogram)))
 
-(let alphabet (#\a .to #\z))
+(let alphabet (#\a .thru #\z))
 
 (to (random-encrypt rng text)
   (let shuffled (hey (array<-list alphabet)

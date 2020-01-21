@@ -31,7 +31,7 @@
     ((model .get-set! context bag<-) .add! (datum order))))
 
 (to (k-slices<- xs k)                   ;ugly: better name?
-  (for each ((i (0 .to (- xs.count k))))
+  (for each ((i (0 .thru (- xs.count k))))
     (xs .slice i (+ i k))))
 
 (to (spew rng model state)

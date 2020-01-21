@@ -43,8 +43,8 @@
   (sum-by risk<- area))
 
 (to (rectangle<- `(,xl ,yl) `(,xh ,yh))
-  (grid* (xl .to xh)
-         (yl .to yh)))
+  (grid* (xl .thru xh)
+         (yl .thru yh)))
 
 (out .say "~w\n" (part-1))
 

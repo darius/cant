@@ -18,7 +18,7 @@ out.newline
   (out .displayln (t .get 0 t.count))
   (each! (-> (out .display it)) t.keys)
   out.newline
-  (for each! ((i (0 .to t.count)))
+  (for each! ((i (0 .thru t.count)))
     (out .say "back from ~w: ~w\n"
               i (t .find-char-set i backward X)))
   )

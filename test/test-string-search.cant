@@ -39,7 +39,7 @@
   (should = 0 ((string-matcher<- pat) pat)))
 
 (to (no-match-through? pat dat k)
-  (not (for some ((i (0 .to k)))
+  (not (for some ((i (0 .thru k)))
          (= pat (dat .slice 0 i)))))
 
 (for all ((pat a-babble) (dat a-babble))

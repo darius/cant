@@ -39,7 +39,7 @@
 
 (out .display "\nMcCarthy identities:\n")
 
-(let `(,a ,b ,c ,d ,p ,q ,r) (each claim<- (0 .to 6)))
+(let `(,a ,b ,c ,d ,p ,q ,r) (each claim<- (0 .thru 6)))
 
 (out .print (valid? (== a (lit0 a b))))
 (out .print (valid? (== b (lit1 a b))))

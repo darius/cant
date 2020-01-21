@@ -38,7 +38,7 @@
   (hm (if Ns.none? none)
       (else
        ;; TODO still pretty ugly
-       (let r-matches (~.keys (r (~.range (0 .to (max @Ns.keys))))))
+       (let r-matches (~.keys (r (~.range (0 .thru (max @Ns.keys))))))
        (let r-lengths (~.keys (~.range (each ~.count r-matches))))
        (let Ns-s (~.range (for gather ((n Ns.keys))
                             (for yeahs ((m r-lengths))

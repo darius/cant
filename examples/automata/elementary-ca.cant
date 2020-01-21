@@ -9,7 +9,7 @@
           `(0 ,@bits 0)
           `(,@bits 0 0)))
   (show
-   (for foldl ((state start-bits) (_ (1 .to n-steps)))
+   (for foldl ((state start-bits) (_ n-steps.till))
      (show state)
      (step state))))
 

@@ -18,8 +18,8 @@
 (let clay-spots
   (for gather ((input inputs))
     (may input
-      (be `("x" ,x "y" ,lo ,hi) (grid* `(,x) (lo .to hi)))
-      (be `("y" ,y "x" ,lo ,hi) (grid* (lo .to hi) `(,y))))))
+      (be `("x" ,x "y" ,lo ,hi) (grid* `(,x) (lo .thru hi)))
+      (be `("y" ,y "x" ,lo ,hi) (grid* (lo .thru hi) `(,y))))))
 
 (let `((,xl0 ,yl) (,xh0 ,yh)) (bounds<- clay-spots))
 
@@ -39,7 +39,7 @@
 
 (to (show-map)
   (for each! ((y (spring-y .till yl)))
-    (for each! ((x (xl .to xh))) ;XXX exclusive range on ys and inclusive on xs? Is that right?
+    (for each! ((x (xl .thru xh))) ;XXX exclusive range on ys and inclusive on xs? Is that right?
       (let p (~ x y))
       (out .display (if (= spring p) #\+ #\.)))
     out.newline)
@@ -93,7 +93,7 @@
           (else   (surely #no "Even less happenable"))))
       (let x-min (spilling x0 -1))
       (let x-max (spilling x0 1))
-      (let span (for each ((x (x-min .to x-max)))
+      (let span (for each ((x (x-min .thru x-max)))
                   (~ x y0)))
       (when (and (every (compose blocked? under) span)  ;; TODO I think this logic is now performed above
                  (blocked? (~ x-min.- y0))

@@ -130,10 +130,10 @@
         (paint cursor-seen? (wanted-state .add-style mask) subscene))))
 
   (let `(,black ,red ,green ,yellow ,blue ,magenta ,cyan ,white)
-    (each foreground-color<- (30 .to 37)))
+    (each foreground-color<- (30 .thru 37)))
 
   (let `(,on-black ,on-red ,on-green ,on-yellow ,on-blue ,on-magenta ,on-cyan ,on-white)
-    (each background-color<- (40 .to 47)))
+    (each background-color<- (40 .thru 47)))
 
   (let bold       (style<- 1))
   (let underlined (style<- 4))

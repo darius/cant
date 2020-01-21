@@ -3,7 +3,7 @@
 (to (test regex n)
   (let r (regex-parse regex))
   (out .say "~d (~w)\n~d\n" regex n ("-" .repeat regex.count))
-  (let Ns ((0 .to n) .range))
+  (let Ns ((0 .thru n) .range))
   (for each! ((string (regex-generate r Ns)))
     (out .say "~w\n" string))
   out.newline)
