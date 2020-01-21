@@ -42,7 +42,7 @@
 (loud-use "test-sort")
 (loud-use "test-sset")
 (loud-use "test-string-search")
-(loud-use "test-text")
+(loud-use "test-flextext")
 (loud-use "test-text-wrap")
 (loud-use "test-unify")
 
