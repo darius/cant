@@ -25,10 +25,10 @@
   ;; Track what's on the screen, to avoid redundant writes.
   (let showing (display-buffer<-))
 
-  ;; Compute how to show `text` from coordinate `start` with cursor at
+  ;; Compute how to show `flextext` from coordinate `start` with cursor at
   ;; `point`. Return an object that can say whether the cursor is visible
   ;; and can show the rendering.
-  (to (render text start point)
+  (to (render flextext start point)
     (let lines (display-buffer<-))
     (let point-x (box<- #no))
     (let point-y (box<- #no))
@@ -37,7 +37,7 @@
         (when (= p point)
           (point-x .^= x)
           (point-y .^= y))
-        (let ch (text .get p 1))
+        (let ch (flextext .get p 1))
         (let pp p.+)
         (if (or (= ch "") (= ch "\n"))
             (rendering pp 0 y.+)  ;; TODO flexarray to string, i guess
