@@ -1,7 +1,7 @@
 (make-trait text-primitive me
   (to ~.none?        (= 0 me.count))
   (to ~.first        (me 0))
-  (to ~.rest         (me .slice 1))
+  (to ~.rest         me.values.rest)
   (to ~.count        (__string-length me))
   (to (~ i)          (__string-ref me i))
   (to (~ .maps? i)   (__string-maps? me i))

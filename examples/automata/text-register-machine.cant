@@ -64,8 +64,8 @@ insn:    {'1'+} {'#' '#'? '#'? '#'? '#'?} :make_insn.
        (may (regs .get n "")           ;TODO how about just (regs n)?
          (be "" 1)
          (be text
-           (regs .set! n text.rest)
-           (may text.first
+           (regs .set! n (text .slice 1))
+           (may (text 0)
              (be #\1 2)
              (be #\# 3))))))))
 

@@ -2,8 +2,8 @@
 out.newline
 
 (to (left-pad text)
-  (if (or text.none? (not= #\space text.first))
-      text
-      (left-pad text.rest)))
+  (if (mayhap ~.whitespace? (text .get 0))
+      (left-pad (text .slice 1))
+      text))
 
 (export left-pad)

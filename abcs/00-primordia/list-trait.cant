@@ -5,8 +5,8 @@
       (else (list.rest i.-))))
   (to ~.none?
     (= 0 list.count)) ;N.B. these default implementations are circular
-  (to ~.first
-    (list 0))
+;  (to ~.first
+;    (list 0))
   (to ~.rest
     (list .slice 1))
   (to ~.count
