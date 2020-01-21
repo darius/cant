@@ -239,7 +239,7 @@ The underlying interpreter in Scheme lives in
 Cant's syntactic sugar is defined by
 [parse.scm](https://github.com/darius/cant/blob/master/player/parse.scm).
 There's a [metacircular version of the core
-interpreter](https://github.com/darius/cant/blob/master/examples/kernel.cant)
+interpreter](https://github.com/darius/cant/blob/master/examples/cant.cant)
 which is much shorter, though less clarifying as explanation.
 
 Don't forget
@@ -1209,10 +1209,10 @@ The ASTs and sequels are objects rather than terms to allow for very
 different representations later.
 
 By now [the metacircular
-interpreter](https://github.com/darius/cant/blob/master/examples/kernel.cant),
+interpreter](https://github.com/darius/cant/blob/master/examples/cant.cant),
 operating on ASTs, hopefully makes sense. You can see it getting the
 smoke test in
-[test/test-kernel.cant](https://github.com/darius/cant/blob/master/test/test-kernel.cant).
+[test/test-metacircular.cant](https://github.com/darius/cant/blob/master/test/test-metacircular.cant).
 
 
 ## What's missing?

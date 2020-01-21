@@ -90,6 +90,8 @@
     ;; inefficient:
     (to (~ .chain v)        (flexarray.snapshot .chain v))
     (to (~ .slice lo bound) (flexarray.snapshot .slice lo bound))
+
+;;    (to ~.rest          (error "no .rest on flexarray" flexarray))
     ))
 
 (export

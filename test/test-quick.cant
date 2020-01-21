@@ -62,7 +62,7 @@
 (loud-use "test-huffman")
 (loud-use "../examples/intset1")
 (loud-use "../examples/intset2")
-(loud-use "test-kernel")
+(loud-use "test-metacircular")
 (loud-use "../examples/lambda-calculus/compact-lambda")
 (loud-use "../examples/lambda-calculus/lambdacompiler")
 (loud-use "../examples/lambda-calculus/lambdaterp")

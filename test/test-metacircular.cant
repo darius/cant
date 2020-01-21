@@ -1,4 +1,4 @@
-(import (use "../examples/kernel") play)  ; global-setting)
+(import (use "../examples/cant") play)  ; global-setting)
 
 
 (to (run e)

@@ -1,8 +1,9 @@
 (make-trait array-primitive me
   (to ~.none?         (= 0 me.count))   ;redundant definition(s) for speed
   (to ~.first         (me 0))
-;; XXX rm .rest
-  (to ~.rest          (me .slice 1))
+;; XXX rm .first, .rest
+  (to ~.rest          (me.values .slice 1))
+;;  (to ~.rest          (error "no .rest on array" me))
   (to (~ .set! i val) (__vector-set! me i val))
   (to ~.count         (__vector-length me))
   (to (~ i)           (__vector-ref me i))
