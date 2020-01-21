@@ -15,15 +15,15 @@
 
 (let nil  '())
 (let line {line 0})
-(to (literal str)
-  {text str})
+(to (literal text)
+  {text text})
 (make <>
   (to (~ doc) doc)
   (to (~ @docs) docs))
 
 (to (nest i doc)
   (may doc
-    (be {text s}    doc)
+    (be {text t}    doc)
     (be {line j}    {line (+ i j)})
     (be {union x y} {union (nest i x) (nest i y)})
     (be `(,@docs)   (for each ((d docs))
@@ -35,7 +35,7 @@
 
 (to (flatten doc)
   (may doc
-    (be {text s}    doc)
+    (be {text t}    doc)
     (be {line i}    {text " "})
     (be {union x y} (flatten x))
     (be `(,@docs)   (each flatten docs))))
@@ -53,7 +53,7 @@
     (be '()              doc)
     (be `((,@x) ,@y)     (best w c (chain x y))) ;TODO chain in <> instead?
     (be `({line ,_} ,@_) doc)
-    (be `({text ,s} ,@x) `({text ,s} ,@(best w (+ c s.count) x)))
+    (be `({text ,t} ,@x) `({text ,t} ,@(best w (+ c t.count) x)))
     (be `({union ,x ,y} ,@z)
       (best w c {union `(,x ,@z) `(,y ,@z)}))
     (be {union x y}
@@ -64,8 +64,8 @@
 
 (to (fits? w semidetermined-doc)
   (and (<= 0 w) (may semidetermined-doc
-                  (be `({text ,s} ,@x)
-                    (fits? (- w s.count) x))
+                  (be `({text ,t} ,@x)
+                    (fits? (- w t.count) x))
                   (else
                     #yes))))
 
@@ -76,8 +76,8 @@
       (chain "\n"
              (" " .repeat i)
              (lay-out w (best w i x))))
-    (be `({text ,s} ,@x)
-      (chain s (lay-out w x)))))
+    (be `({text ,t} ,@x)
+      (chain t (lay-out w x)))))
 
 
 (export
