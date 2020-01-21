@@ -11,21 +11,26 @@
 (to (main args)
   (let cryptogram
     (may args.rest
-      (be '()      (random-encrypt (random-chaos<- system-randomness-source<-)
-                                   (run-fortune)))
-      (be `(,text) text)
-      (else        (error ("Usage: ~d [cryptogram]" .format (args 0))))))
+      (be '()
+        (encrypt (random-code<- (random-chaos<- system-randomness-source<-))
+                 (run-fortune)))
+      (be `(,text)
+        text)
+      (else
+        (error ("Usage: ~d [cryptogram]" .format (args 0))))))
   (for cbreak-mode ()
     (puzzle cryptogram)))
 
-(let alphabet (#\a .thru #\z))
-
-(to (random-encrypt chaos text)
-  (let shuffled (hey (array<-list alphabet)
-                     (-> (chaos .shuffle! it))))
-  (let code (map<-items (zip alphabet shuffled)))
+(to (encrypt code text)
   (text<-list (for each ((ch text.lowercase))
                 (code .get ch ch))))
+
+(to (random-code<- chaos)
+  (let shuffled (hey (array<-list alphabet)
+                     (-> (chaos .shuffle! it))))
+  (map<-items (zip alphabet shuffled)))
+
+(let alphabet (#\a .thru #\z))
 
 (to (run-fortune)
   ;; TODO ensure fits in sturm's width
