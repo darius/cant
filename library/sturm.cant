@@ -207,7 +207,7 @@
               (keys .push! (get-key-unmapped))
               (matching))
             (else
-              (key-stack .extend! (reverse keys)) ;TODO use a FIFO instead of this reversed LIFO
+              (key-stack .extend! (reverse keys.values)) ;TODO use a FIFO instead of this reversed LIFO
               key-stack.pop!))))
     ;; Silly conveniences:
     (to ~.uppercase ((get-key) .uppercase))

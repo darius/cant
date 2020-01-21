@@ -13,7 +13,7 @@
   (let codes ((or codebook default-codebook) .inverse))
   (let result (flexarray<-))
   (let chunk
-    (for foldl ((chunk "") (c text.values))
+    (for foldl ((chunk "") (c text))
       (let t1 (text<- c))
       (let chunk-1 (chain chunk t1))
       (if (codes .maps? chunk-1)

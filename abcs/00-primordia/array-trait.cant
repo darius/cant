@@ -18,7 +18,7 @@
       (me .set! (+ i lo->dst)
           (source i))))
   (to ~.values
-    (each me (interval<- 0 me.count)))   ;TODO cheaper to represent by self -- when can we get away with that?
+    (each me (interval<- 0 me.count)))
   (to ~.items
     (for each ((i (interval<- 0 me.count)))
       (~ i (me i))))

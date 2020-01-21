@@ -1,7 +1,6 @@
 ;; (Use run.cant to run this.)
 
-(let input (take (with-input-file read data-file)
-                 (-> it.text.values)))
+(let input (~.text (with-input-file read data-file)))
 
 (to (reacts? c d)
   (and (= c.uppercase d.uppercase)
@@ -11,7 +10,7 @@
   (for foldr ((c polymer) (r '()))
     (if (and r.some? (reacts? c r.first))
         r.rest
-        `(,c ,@r))))
+        (link c r))))
 
 (let reduced (reduce input))
 (out .say "part 1 ~w\n" reduced.count)

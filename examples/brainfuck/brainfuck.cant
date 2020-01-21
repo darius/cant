@@ -73,7 +73,7 @@
 
 (to (bf-compile program)
   (let expr-stack
-    (for foldl ((stack '(0)) (ch program.values))
+    (for foldl ((stack '(0)) (ch program))
       (may ch
         (be #\[ (link 'd stack))
         (be #\] (let (link top next rest) stack)

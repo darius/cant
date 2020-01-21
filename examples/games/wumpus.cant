@@ -91,7 +91,7 @@
     (to ~.name             name)
 
     (to ~.neighbors        neighbors.values)
-    (to (~ .connect caves) (neighbors .extend! caves))
+    (to (~ .connect caves) (neighbors .extend! caves.values))
 
     (to ~.beware           (standardize (gather ~.warnings neighbors.values)))
     (to ~.warnings         (each ~.describe contents.keys))

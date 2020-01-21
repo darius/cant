@@ -146,8 +146,6 @@
                 (count .^= count.^.-)
                 #no)
               (else #no)))   ;XXX error instead? It is in Python.
-          (to (~ .find? value)
-            (!map.values .find? value))
           (to (~ .find value default)
             (let vs vals.^)
             (begin searching ((js (occupants)))  ;XXX should be lazy
@@ -473,7 +471,7 @@
 
     (make format
       (to (~ .to-sink sink format-text @arguments)
-        (scanning sink format-text.values arguments)))
+        (scanning sink format-text arguments)))
 
     ;;TODO actually design the format language
 

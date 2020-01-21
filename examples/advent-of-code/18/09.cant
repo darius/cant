@@ -99,7 +99,7 @@
               (H .^= k)
               )))
 
-    (to ~.values
+    (to ~.array                        ;XXX unused?
       (chain (V .slice 0 L.^)
              (V .slice H.^)))
     ))
