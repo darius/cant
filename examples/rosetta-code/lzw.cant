@@ -14,13 +14,13 @@
   (let result (flexarray<-))
   (let chunk
     (for foldl ((chunk "") (c text.values))
-      (let s1 (text<- c))
-      (let chunk-1 (chain chunk s1))
+      (let t1 (text<- c))
+      (let chunk-1 (chain chunk t1))
       (if (codes .maps? chunk-1)
           chunk-1
           (do (result .push! (codes chunk))
               (codes .set! chunk-1 codes.count)
-              s1))))
+              t1))))
   (unless chunk.none?
     (result .push! (codes chunk)))
   result.values)

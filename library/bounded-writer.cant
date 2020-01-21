@@ -9,11 +9,11 @@
    (on (ejector)
      ;; (- bound 2) leaves space for the possible overflow mark.
      (let budget (box<- (- bound 2))) ; The length remaining
-     (let ss (text-sink<-))
+     (let ts (text-sink<-))
 
-     ;; Send ss's latest chunk to `sink`, ejecting on hitting the bound.
+     ;; Send ts's latest chunk to `sink`, ejecting on hitting the bound.
      (to (cut-off)
-       (let chunk ss.output-text)
+       (let chunk ts.output-text)
        (let length chunk.count)
        (hm (when (<= length budget.^)
              (sink .display chunk)
@@ -21,13 +21,13 @@
            (else
              (sink .display (chunk .slice 0 budget.^))
              (sink .display "..")
-             ss.close
+             ts.close
              (ejector .eject void))))
 
      (writer (make bounded-sink {extending sink-trait}
-               (to (~ .display a)   (ss .display a)   (cut-off))
-               (to (~ .write-u8 u8) (ss .write-u8 u8) (cut-off))
-               (to ~.close          ss.close))))))
+               (to (~ .display a)   (ts .display a)   (cut-off))
+               (to (~ .write-u8 u8) (ts .write-u8 u8) (cut-off))
+               (to ~.close          ts.close))))))
 
 (export bounded-writer<-)
 

@@ -4,7 +4,7 @@
 ;; Document datatypes:
 
 ;; (@docs)       Concatenation of docs
-;; {text s}      Literal text
+;; {text t}      Literal text
 ;; {line i}      (Newline, then i spaces) or 1 space if flattened
 ;; {union x y}   Any layout described by either of docs x or y.
 ;;               Invariant: (x, y) are equal after flattening,

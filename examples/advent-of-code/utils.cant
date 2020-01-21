@@ -67,9 +67,9 @@
                 (do (seen .add! x)
                     (looking xs.rest)))))))
 
-(to (deletions<- s)
-  (for each ((i s.count.-.till))
-    `(,(s .slice 0 i) ,(s .slice i.+))))
+(to (deletions<- t)
+  (for each ((i t.count.-.till))
+    `(,(t .slice 0 i) ,(t .slice i.+))))
 
 (to (chain-lines lines)
   (chain @(for each ((line lines))
