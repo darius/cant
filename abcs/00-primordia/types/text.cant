@@ -5,21 +5,21 @@
   (to ~.count        (__string-length me))
   (to (~ i)          (__string-ref me i))
   (to (~ .maps? i)   (__string-maps? me i))
-  (to (~ .chain s)   (__string-append me s))
+  (to (~ .chain t)   (__string-append me t))
   (to (~ .slice i)   (__substring me i me.count))
   (to (~ .slice i j) (__substring me i j))
-  (to (~ .compare s)
-    (if (text? s)
-        (__string-compare me s)          ; just a speedup
-        (list-trait me (~ .compare s))))   ; but is this what we really want? (<=> "a" '(#\a))
-  (to (~ .join ss)   ;should this be a function, not a method?
-    (if ss.none?
+  (to (and (~ .compare t) message)
+    (if (text? t)
+        (__string-compare me t)    ; just a speedup
+        (list-trait me message)))   ; TODO but is this what we really want? (<=> "a" '(#\a))
+  (to (~ .join texts)   ;should this be a function, not a method?
+    (if texts.none?
         ""
-        ;; De-quadratified (foldr1 (on (x y) (chain x me y)) ss)
+        ;; De-quadratified (foldr1 (on (x y) (chain x me y)) texts)
         (do (let mine me.values)
             (text<-list (foldr1 (on (s chars)
-                                    (s.values .chain (mine .chain chars.values)))
-                                  ss)))))
+                                  (s.values .chain (mine .chain chars.values)))
+                                texts)))))
   (to ~.values       (list<-text me))
   (to (~ .get key)   (me .get key #no)) ;TODO duplicated because delegation is slow
   (to (~ .get key default)      ;TODO could be shared with array-trait
@@ -47,30 +47,30 @@
     me.trim-left.trim-right)
   (to ~.split
     ;; TODO dequadratify
-    (begin splitting ((s me.trim-left))
-      (if s.none?
+    (begin splitting ((t me.trim-left))
+      (if t.none?
           '()
-          (do (let limit s.count)
+          (do (let limit t.count)
               (begin scanning ((i 1))
-                (hm (if (= i limit) `(,s))
-                    (if ((s i) .whitespace?)
-                        (link (s .slice 0 i)
-                              (splitting ((s .slice i.+) .trim-left))))
+                (hm (if (= i limit) `(,t))
+                    (if ((t i) .whitespace?)
+                        (link (t .slice 0 i)
+                              (splitting ((t .slice i.+) .trim-left))))
                     (else (scanning i.+))))))))
   (to (~ .split delimiter)
     ;; TODO deduplicate code
     ;; TODO define a strstr and use that
     (if me.none?
         '()
-        (begin splitting ((s me))
-          (if s.none?
+        (begin splitting ((t me))
+          (if t.none?
               '("")
-              (do (let limit s.count)
+              (do (let limit t.count)
                   (begin scanning ((i 0))
-                    (hm (if (= i limit) `(,s))
-                        (if (= delimiter (s .slice i (+ i delimiter.count)))
-                            (link (s .slice 0 i)
-                                  (splitting (s .slice (+ i delimiter.count)))))
+                    (hm (if (= i limit) `(,t))
+                        (if (= delimiter (t .slice i (+ i delimiter.count)))
+                            (link (t .slice 0 i)
+                                  (splitting (t .slice (+ i delimiter.count)))))
                         (else (scanning i.+)))))))))
   (to ~.lowercase (text<-list (each ~.lowercase me)))
   (to ~.uppercase (text<-list (each ~.uppercase me)))
