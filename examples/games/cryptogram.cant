@@ -38,39 +38,39 @@
   from-stdout.read-all)
 
 (to (puzzle cryptogram)
-  (let cv (cryptoview<- cryptogram))
+  (let pad (crypto-scratchpad<- cryptogram))
   (begin playing ()
-    (render (cv .view #yes))
+    (render (pad .view #yes))
     (may (get-key)
-      (be 'esc (render (cv .view #no)))
+      (be 'esc (render (pad .view #no)))
       (be key
         (may key
-          (be 'home      cv.go-to-start)
-          (be 'end       cv.go-to-end)
-          (be 'left      (cv .shift-by -1))
-          (be 'right     (cv .shift-by  1))
-          (be 'up        (cv .shift-line -1))
-          (be 'down      (cv .shift-line  1))
-          (be 'shift-tab (cv .shift-to-space -1))
-          (be #\tab      (cv .shift-to-space  1))
-          (be 'backspace (cv .shift-by -1)
-                         (cv .jot #\space))
-          (be 'del       (cv .jot #\space)
-                         (cv .shift-by 1))
+          (be 'home      pad.go-to-start)
+          (be 'end       pad.go-to-end)
+          (be 'left      (pad .shift-by -1))
+          (be 'right     (pad .shift-by  1))
+          (be 'up        (pad .shift-line -1))
+          (be 'down      (pad .shift-line  1))
+          (be 'shift-tab (pad .shift-to-space -1))
+          (be #\tab      (pad .shift-to-space  1))
+          (be 'backspace (pad .shift-by -1)
+                         (pad .jot #\space))
+          (be 'del       (pad .jot #\space)
+                         (pad .shift-by 1))
           (be (and (? char?) (? ~.uppercase?))
-                         (cv .shift-to-code 1 key))
+                         (pad .shift-to-code 1 key))
           (else          (when (or (= key #\space) (alphabet .find? key))
-                           (cv .jot key)
-                           (cv .shift-by 1))))
+                           (pad .jot key)
+                           (pad .shift-by 1))))
         (playing)))))
 
 ;; The puzzle state.
-(to (cryptoview<- cryptogram)
+(to (crypto-scratchpad<- cryptogram)
 
   (let code (those ~.letter? cryptogram.uppercase))
-  (surely code.some?)            ;XXX 'require' or something
+  (surely code.some?)
   (let decoder (!map-by (-> #\space) code.range.keys))
-  (let point (box<- 0))                ; Index in `code` of the cursor
+  (let point (box<- 0))           ; Index in `code` of the cursor
 
   (let lines (each clean cryptogram.uppercase.split-lines))
   (let line-starts                ; Set of positions that start a line
