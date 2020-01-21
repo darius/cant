@@ -1,20 +1,20 @@
 ;; https://rosettacode.org/wiki/LZW_compression
 ;; "The Lempel-Ziv-Welch (LZW) algorithm provides loss-less data compression."
 
-(to (show-lzw string)
-  (for each ((code (encode string)))
+(to (show-lzw text)
+  (for each ((code (encode text)))
     (if (<= code 255)
-        (string<- (char<- code))
+        (text<- (char<- code))
         code)))
 
-(let default-codebook (each string<- ((char<- 0) .span 256)))
+(let default-codebook (each text<- ((char<- 0) .span 256)))
 
-(to (encode string @(optional codebook))
+(to (encode text @(optional codebook))
   (let codes ((or codebook default-codebook) .inverse))
   (let result (flexarray<-))
   (let chunk
-    (for foldl ((chunk "") (c string.values))
-      (let s1 (string<- c))
+    (for foldl ((chunk "") (c text.values))
+      (let s1 (text<- c))
       (let chunk-1 (chain chunk s1))
       (if (codes .maps? chunk-1)
           chunk-1
@@ -44,7 +44,7 @@
                   (chunks .push! chunk)
                   (let new-chunk (chunks code))
                   (chunks .set! chunks.count.-
-                          (chain chunk (string<- new-chunk.first)))
+                          (chain chunk (text<- new-chunk.first)))
                   (decoding (chunks code) codes.rest)))))))
 
 (out .print (show-lzw "TOBEORNOTTOBEORTOBEORNOT"))

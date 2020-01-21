@@ -1,4 +1,4 @@
-;; Format an infix expression into a string with minimal parentheses.
+;; Format an infix expression into a text with minimal parentheses.
 
 ;; Glossary:
 ;; p: Precedence level. Higher-precedence operators bind more tightly.
@@ -26,10 +26,10 @@
     (be {binary left right}
       (enclose p left ("~d ~w ~d" .format (fmt left x) op (fmt right y))))))
 
-(to (enclose outer inner string)
+(to (enclose outer inner text)
    (if (<= outer inner)
-       string
-       ("(~d)" .format string)))
+       text
+       ("(~d)" .format text)))
 
 (let unaries (!map<-))
 (let binaries (!map<-))

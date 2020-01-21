@@ -5,7 +5,7 @@
 
 (to (superopt truth-table max-gates)
   (let n-inputs (int-log2 truth-table.count))
-  (find-circuits (number<-string truth-table 2) n-inputs max-gates))
+  (find-circuits (number<-text truth-table 2) n-inputs max-gates))
 
 (to (int-log2 n)
   (begin searching ((p 0) (two**p 1))

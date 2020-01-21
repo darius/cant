@@ -1,6 +1,6 @@
-;; String matching
-;; Return index of first substring in DAT equal to PAT, or #no.
-;; Note that (string-match "" "") = 0.
+;; Text search:
+;; Return index of first subtext in DAT equal to PAT, or #no.
+;; Note that (text-match "" "") = 0.
 
 ;; Based on my old scheme-data-structures code.
 
@@ -8,8 +8,8 @@
 (let alphabet-size 256)
 
 ;; Brute force algorithm
-;; TODO make this a built-in string method
-(to (string-match/brute pat dat)
+;; TODO make this a built-in text method
+(to (text-match/brute pat dat)
   (let P pat.count)
   (let j-limit (+ (- dat.count P) 1))
   (begin sliding ((j 0))
@@ -27,7 +27,7 @@
 ;; TODO looks different from
 ;; https://en.wikipedia.org/wiki/Boyer%E2%80%93Moore%E2%80%93Horspool_algorithm
 ;; -- is it worse?
-(to (string-matcher<- pat)
+(to (text-matcher<- pat)
   (let m pat.count.-)
   (if (< m 0)
       (on (dat) 0)
@@ -55,4 +55,4 @@
                          (else
                            (checking k.- j.-))))))))))
 
-(export string-matcher<- string-match/brute)
+(export text-matcher<- text-match/brute)

@@ -20,8 +20,8 @@ dir:  {'N' | 'S' | 'E' | 'W'} :Dir.
                                (~ 'Seq (feed seq<-))
                                (~ 'Dir (feed dir<-)))))
 (let parse-main (semantics 'main))
-(to (parse string)
-  (~.result (parson-parse parse-main string)))
+(to (parse text)
+  (~.result (parson-parse parse-main text)))
 
 
 (let infinity 999999)

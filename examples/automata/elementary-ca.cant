@@ -14,7 +14,7 @@
      (step state))))
 
 (to (show bits)
-  (let line (string<-list (each "-*" bits)))
+  (let line (text<-list (each "-*" bits)))
   (out .displayln (line .center 80)))
 
 ;; There are 2**8 possible elementary CA's. Return the update rule

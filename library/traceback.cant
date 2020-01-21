@@ -24,7 +24,7 @@
 
   (to (complain evil)
     (may evil
-      (be `(,(? string? plaint) ,@values)
+      (be `(,(? text? plaint) ,@values)
         (out .display plaint)
         (out .display ": ")
         (take out (bounded-writer<- (~ .write values) (* 80 20))))

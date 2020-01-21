@@ -3,18 +3,18 @@
 (to (test regex should-match should-not)
   (let r (regex-parse regex))
   (out .say "~d\n~d\n" regex ("-" .repeat regex.count))
-  (for each! ((string should-match))
-    (test-1 r string #yes))
-  (for each! ((string should-not))
-    (test-1 r string #no))
+  (for each! ((text should-match))
+    (test-1 r text #yes))
+  (for each! ((text should-not))
+    (test-1 r text #no))
   out.newline)
 
-(to (test-1 parsed string should?)
-  (let match? (regex-match parsed string))
+(to (test-1 parsed text should?)
+  (let match? (regex-match parsed text))
   (out .say "~4d ~d ~w\n"
             (if (= match? should?) "" "FAIL")
             (if match? "y" "n")
-            string))
+            text))
 
 (out .print (regex-parse "."))
 

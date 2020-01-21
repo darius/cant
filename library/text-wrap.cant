@@ -12,7 +12,7 @@
   (wrap-into (flexarray<-) (parse-tokens text.values) width))
 
 (to (flush buffer)
-  (string<-list buffer.values))
+  (text<-list buffer.values))
 
 (to (parse-tokens text)
   (if text.none?

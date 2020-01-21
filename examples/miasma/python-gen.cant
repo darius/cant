@@ -77,7 +77,7 @@
     (be {op operator e1 e2}
       (for bind ((cv1 e1))
         (for bind ((cv2 e2))
-          (unit (py-binop operator.string cv1 cv2)))))
+          (unit (py-binop operator.text cv1 cv2)))))
     (be {hereafter}
       (unit "hereafter"))
     (be {arg @_}
@@ -120,14 +120,14 @@
 
 (to (py-enum items)
   ("\n" .join (for each (((~ sym val) items))
-                (chain (as-legal-py-identifier sym.string)
+                (chain (as-legal-py-identifier sym.text)
                        " = "
                        (py-int-literal val)))))
 
 (to (py-int-literal n)
   (if (count? n)
-      ("0x~d" .format (string<-number n 16)) ;TODO ~h format or something
-      (string<-number n)))
+      ("0x~d" .format (text<-number n 16)) ;TODO ~h format or something
+      (text<-number n)))
 
 (to (py-binop operator cv1 cv2)
   ("(~d ~d ~d)" .format cv1 operator cv2))
@@ -152,13 +152,13 @@
   ("def ~d(~d):" .format name (", " .join vars)))
 
 (to (py-insn-name mnemonic)
-  (as-legal-py-identifier mnemonic.string))
+  (as-legal-py-identifier mnemonic.text))
 
 ;; Return `str`, but munging out any characters that are used in our 
 ;; mnemonics but aren't legal in Python identifiers.
 (to (as-legal-py-identifier str)
-  (string<-list (for yeahs ((ch str))
-                  (and (not (":%" .find? ch))
-                       (hm (if ("-." .find? ch) #\_)
-                           (if (= #\? ch) #\c)
-                           (else ch))))))
+  (text<-list (for yeahs ((ch str))
+                (and (not (":%" .find? ch))
+                     (hm (if ("-." .find? ch) #\_)
+                         (if (= #\? ch) #\c)
+                         (else ch))))))

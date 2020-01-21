@@ -78,7 +78,7 @@
       (for each! ((y (yl .thru yh)))
         (print-line! (for each ((x (xl .thru xh)))
                        (A (at x y))))))
-    ;; TODO ~.show used to print to stdout. Change to print onto arg or return a string.
+    ;; TODO ~.show used to print to stdout. Change to print onto arg or return a text.
 ;;    (to ~.show
 ;;      (grid-2d .show print))
     (to (~ .selfie sink)
@@ -103,12 +103,12 @@
 ;; (* * *)
 ;; (a * *)
 ;; #no
-;; -> (g .show (on (row) (out .displayln ("" .join (each ~.string row)))))
+;; -> (g .show (on (row) (out .displayln ("" .join (each ~.text row)))))
 ;; ***
 ;; a**
 ;; #no
 ;; -> (g .set! (~ 3 1) 'b)
-;; -> (g .show (on (row) (out .displayln ("" .join (each ~.string row)))))
+;; -> (g .show (on (row) (out .displayln ("" .join (each ~.text row)))))
 ;; *b*
 ;; a**
 ;; #no

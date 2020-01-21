@@ -18,8 +18,8 @@
                         72))
     out.newline))
 
-(to (tokenize string)
-  string.lowercase.split)               ;TODO better
+(to (tokenize text)
+  text.lowercase.split)               ;TODO better
 
 ;; A model is a map from a context to a bag of possible next tokens.
 ;; A context is a token-list of length `order`.

@@ -1,9 +1,9 @@
 (out .display "I am loading left-pad!")
 out.newline
 
-(to (left-pad string)
-  (if (or string.none? (not= #\space string.first))
-      string
-      (left-pad string.rest)))
+(to (left-pad text)
+  (if (or text.none? (not= #\space text.first))
+      text
+      (left-pad text.rest)))
 
 (export left-pad)

@@ -18,7 +18,7 @@
       (be #\v (add-cart! i S))
       (be #\^ (add-cart! i N))
       (else   (tracks .push! ch))))
-  {world (string<-list tracks.values) width carts})
+  {world (text<-list tracks.values) width carts})
 
 
 ;; Directions

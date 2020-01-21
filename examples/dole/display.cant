@@ -9,14 +9,14 @@
 (let (~ rows cols) (~ 18 80))          ;TODO query for it or something
 (let console-rows 5) ; #rows extra, reserved for the debugging console
 
-;; An array of strings, one per screen row.
+;; An array of texts, one per screen row.
 (to (display-buffer<-)
   (array<-list ('("") .repeat rows)))
 
-;; Return a string of glyphs representing character ch at column x.
+;; Return a text of glyphs representing character ch at column x.
 (to (render-char ch x)
   (if ch.printable?
-      ch.string
+      ch.text
       ("\\x~02x" .format ch.code)))
 
 (to (module powers)
@@ -40,13 +40,13 @@
         (let ch (flextext .get p 1))
         (let pp p.+)
         (if (or (= ch "") (= ch "\n"))
-            (rendering pp 0 y.+)  ;; TODO flexarray to string, i guess
+            (rendering pp 0 y.+)  ;; TODO flexarray to text, i guess
             (begin appending ((glyphs (render-char ch.first x))
                               (x x)
                               (y y))
               (hm (if glyphs.none? (rendering pp x y))
                   (do (lines .set! y
-                             (chain (lines y) glyphs.first.string))) ;XXX quadratic
+                             (chain (lines y) glyphs.first.text))) ;XXX quadratic
                   (if (< x.+ cols) (appending glyphs.rest x.+ y))
                   (if (< y.+ rows) (appending glyphs.rest 0 y.+))
                   (else            'done))))))

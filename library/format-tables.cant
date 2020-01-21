@@ -1,12 +1,12 @@
-;; Format a sequence of strings in columns.
+;; Format a sequence of texts in columns.
 ;; Based on github.com/darius/columnize
 
 ;; Given a list of rows, each a list of things, return a list of lines.
-;; Each line is the corresponding row displayed as strings joined by
+;; Each line is the corresponding row displayed as texts joined by
 ;; `spacer`, with each column padded to its max width.
 ;; TODO right-justify numeric columns, or parameterize justification by column
 (to (format-table rows-of-things @(optional ?spacer ?justify))
-  (let rows (each (-> (each string-display it)) rows-of-things))
+  (let rows (each (-> (each text-display it)) rows-of-things))
   (let spacer  (or ?spacer  " "))
   (let justify (or ?justify ('.left-justify .method)))
   (surely (hide (let lengths (each ~.count rows))
@@ -17,19 +17,19 @@
   (for each ((row rows))
     (spacer .join (each justify row widths))))
 
-(to (string-display thing)
-  (string<-writer {.display thing}))
+(to (text-display thing)
+  (text<-writer {.display thing}))
 
-;; Given a sequence of strings, return a matrix of the same strings in
+;; Given a sequence of texts, return a matrix of the same texts in
 ;; column order, trying to fit them in the given width.
-(to (tabulate strings @(optional ?width))
+(to (tabulate texts @(optional ?width))
   (let width (or ?width 79))
-  (let max-width (+ 2 (max 0 @(each ~.count strings))))
-  (let n-cols (max 1 (min strings.count (width .quotient max-width))))
-  (let n-rows (max 1 ((+ strings.count n-cols -1) .quotient n-cols)))
-  (let padded (chain strings
-                     ('("") .repeat (- (* n-rows n-cols) strings.count))))
-  (transpose (for each ((i (interval<- 0 strings.count n-rows))) ;TODO `chunk` function?
+  (let max-width (+ 2 (max 0 @(each ~.count texts))))
+  (let n-cols (max 1 (min texts.count (width .quotient max-width))))
+  (let n-rows (max 1 ((+ texts.count n-cols -1) .quotient n-cols)))
+  (let padded (chain texts
+                     ('("") .repeat (- (* n-rows n-cols) texts.count))))
+  (transpose (for each ((i (interval<- 0 texts.count n-rows))) ;TODO `chunk` function?
                (padded .slice i (+ i n-rows)))))
 
 (export format-table tabulate)

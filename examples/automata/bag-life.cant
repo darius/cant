@@ -10,7 +10,7 @@
 (to (main args)
   (let n-steps (may args
                  (be `(,_)        20)
-                 (be `(,_ ,n-str) (number<-string n-str))
+                 (be `(,_ ,n-str) (number<-text n-str))
                  (be `(,prog ,@_) (error ("Usage: ~d [#steps]" .format prog)))))
   (for cbreak-mode ()
     (out .display cursor-hide)

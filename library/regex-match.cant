@@ -37,16 +37,16 @@
 ;; Extras
 
 (to (anyone succs) (set<- (shift succs)))
-(to (one-of string)
-  (let char-set string.range)
+(to (one-of text)
+  (let char-set text.range)
   (on (succs)
     (set<- (expect-any-of char-set succs))))
 
 (to (maybe r) (either empty r))
 (to (plus r)  (then r (star r)))
 
-(to (literal string)
-  (foldr then (each lit-char string) empty))
+(to (literal text)
+  (foldr then (each lit-char text) empty))
 
 ;; Concrete syntax
 

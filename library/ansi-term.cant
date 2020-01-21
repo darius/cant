@@ -1,9 +1,9 @@
 ;; ANSI terminal control
 ;; TODO factor wrt sturm
 
-(let prefix (string<- (char<- 27) #\[)) ;TODO more string escapes
+(let prefix (text<- (char<- 27) #\[)) ;TODO more string escapes
 
-(to (seq string) (chain prefix string))
+(to (seq text) (chain prefix text))
 
 (let home               (seq "H"))
 (let clear-to-bottom    (seq "J"))
@@ -17,7 +17,7 @@
 (let cursor-hide        (seq "?25l"))
 
 (to (goto x y)
-  (chain prefix y.+.string ";" x.+.string "H"))
+  (chain prefix y.+.text ";" x.+.text "H"))
 
 (let [black red green yellow blue magenta cyan white]
   (array<-list (0 .thru 7)))        ;TODO wish we didn't have to convert
@@ -26,7 +26,7 @@
   (+ 60 color))
 
 (to (sgr num)
-  (seq num.string "m"))
+  (seq num.text "m"))
 
 (to (set-foreground color) (sgr (+ 30 color)))
 (to (set-background color) (sgr (+ 40 color)))

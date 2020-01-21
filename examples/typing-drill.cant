@@ -12,7 +12,7 @@
   (let start (nano-now))
   (begin typing ()
     (show (/ (- (nano-now) start) 1000000000)
-          (string<-list strokes))
+          (text<-list strokes))
     (hm (unless stdin.ready?
           ;; XXX This polling/sleeping approach sucks, but it's
           ;; supported by the underlying Scheme.

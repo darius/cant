@@ -2,18 +2,18 @@
 
 ;; Instruction specs
 
-(to (spec<- mnemonic stem params+ doc-string uses)
+(to (spec<- mnemonic stem params+ doc-text uses)
   (let params (for those ((p params+))
                 (not= p '{bytes u 0 0})))
   (make spec                            ;TODO struct maker?
-    (to ~.mnemonic   mnemonic)
-    (to ~.stem       stem)
-    (to ~.params     params)
-    (to ~.doc-string doc-string)
-    (to ~.uses       uses)
-    (to ~.unparse    `(,mnemonic
-                       ,@(each unparse-param params)
-                       ,doc-string))))
+    (to ~.mnemonic mnemonic)
+    (to ~.stem     stem)
+    (to ~.params   params)
+    (to ~.doc-text doc-text)
+    (to ~.uses     uses)
+    (to ~.unparse  `(,mnemonic
+                     ,@(each unparse-param params)
+                     ,doc-text))))
 
 (to (unparse-param param)
   param)                      ;TODO did I never write this originally?
@@ -21,10 +21,10 @@
 ;; Return an unambiguous mnemonic, given the name of an overloaded one
 ;; and the params that resolve the overloading.
 (to (mnemonic<- stem params)
-  (combined-mnemonic<- stem (each coerce-string (suffixes params))))
+  (combined-mnemonic<- stem (each coerce-text (suffixes params))))
 
-;; Return a string that looks like X, an atom.
-(to (coerce-string x)
+;; Return a text that looks like X, an atom.
+(to (coerce-text x)
   ("~d" .format x))
 
 ;; Return an instruction mnemonic formed out of STEM and SPECS.
@@ -65,15 +65,15 @@
                (<= 3 sexpr.count)
                (symbol? sexpr.first))
           "Spec has the basics")
-  (let stem sexpr.first.string)
-  ;; We copy sexpr.rest until we hit the doc-string.
+  (let stem sexpr.first.text)
+  ;; We copy sexpr.rest until we hit the doc-text.
   ;; Preceding were our params, and the reg/flag list optionally follows.
-  (let `(,params (,doc-string ,@(optional uses)))
-    (split-on string? sexpr.rest))
+  (let `(,params (,doc-text ,@(optional uses)))
+    (split-on text? sexpr.rest))
   (spec<- (mnemonic<- stem params)
           stem
           (each parse-param params)
-          doc-string
+          doc-text
           uses))
 
 ;; Is x an unsigned byte?
@@ -112,7 +112,7 @@
 
 ;; Return a symbol whose name is the concatenation of ATOMS.
 (to (concat-symbol @atoms)
-  (symbol<- ("" .join (each coerce-string atoms))))
+  (symbol<- ("" .join (each coerce-text atoms))))
 
 ;;XXX finish porting
 (let abbrevs

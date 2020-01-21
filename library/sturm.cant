@@ -21,11 +21,11 @@
 
   ;; ANSI terminal escape codes
 
-  (let esc (string<- (char<- 27))) ;TODO support more escapes in string literals
+  (let esc (text<- (char<- 27))) ;TODO support more escapes in text literals
 
   (let prefix (chain esc "["))
 
-  (to (seq string) (chain prefix string))
+  (to (seq text) (chain prefix text))
 
   (let home               (seq "H"))
   (let clear-to-bottom    (seq "J"))
@@ -94,9 +94,9 @@
   (let screen-state (screen-state<-))
 
   (to (paint cursor-seen? wanted-state scene)
-    ;; TODO: skip any terminal codes in the scene's strings/chars
+    ;; TODO: skip any terminal codes in the scene's texts/chars
     (may scene
-      (be (? string?)
+      (be (? text?)
         (screen-state .establish! wanted-state)
         (for each! ((ch scene))
           (out .display (if (= ch #\newline) cr-lf ch))))
@@ -155,8 +155,8 @@
     (- ch.uppercase 64))
 
   (let key-map
-    (map<- (~ (string<- (ctrl #\X))   'esc) ;XXX a hack until the timeout works
-           (~ (string<- (char<- 127)) 'backspace)
+    (map<- (~ (text<- (ctrl #\X))   'esc) ;XXX a hack until the timeout works
+           (~ (text<- (char<- 127)) 'backspace)
 
            (~ (chain esc "[1~")  'home)   (~ (chain esc "[H") 'home)
            (~ (chain esc "[2~")  'ins)
@@ -201,7 +201,7 @@
     (to (~)
       (let keys (flexarray<- (get-key-unmapped)))
       (begin matching ()
-        (let s (string<-list keys))
+        (let s (text<-list keys))
         (hm (or (key-map .get s))
             (when (key-map-prefixes .maps? s)
               (keys .push! (get-key-unmapped))

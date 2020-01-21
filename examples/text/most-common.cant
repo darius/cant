@@ -7,18 +7,18 @@
   (let N (may args.rest
            (be '()
              10)    ; default
-           (be `(,(view number<-string (? yeah? number)))
+           (be `(,(view number<-text (? yeah? number)))
              number)
            (else (out .say "usage: ~d [number]\n" (args 0)) ;TODO stderr
                  (os-exit 1))))
 
   (take stdin.read-all
-        words<-string
+        words<-text
         bag<-
         (~ .most-common N)
         (-> (format-table (each ~.parts it)))
         (-> (out .displayln ("\n" .join it)))))
 
-(to (words<-string string)
-  ;;  (re:findall "[a-z]+" string.lowercase))  ;TODO
-  string.lowercase.split)
+(to (words<-text text)
+  ;;  (re:findall "[a-z]+" text.lowercase))  ;TODO
+  text.lowercase.split)

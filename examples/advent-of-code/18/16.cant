@@ -13,8 +13,8 @@ insn:    :count ' ' :count ' ' :count ' ' :count '\n' :hug.
 "))
 (let semantics (grammar (map<-)))
 (let parse-main (semantics 'main))
-(to (parse string)
-  (~.results (parson-parse parse-main string)))
+(to (parse text)
+  (~.results (parson-parse parse-main text)))
 
 (let `(,observations ,program) (parse input))
 ;(each! print program)

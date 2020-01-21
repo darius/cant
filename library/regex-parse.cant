@@ -36,7 +36,7 @@ char     :  '\\\\' :anyone
            (~ 'oneof   (feed (builder 'one-of)))
            (~ 'dot     (push (builder 'anyone)))))
   (let parser ((grammar semantics) 'regex))
-  (to (parse-regex string)
-    ((parse parser string) .result)))
+  (to (parse-regex text)
+    ((parse parser text) .result)))
 
 (export regex-parser<-)

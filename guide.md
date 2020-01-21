@@ -300,7 +300,7 @@ those would nest and indent progressively to the right. With `hm` you
 write the parts linearly instead of nested: `(hm (if a b) c ...)` is
 sugar for `(if a b (hm c ...))`. Other kinds of clauses are supported
 besides `if`: (from
-[abcs/00-primordia/types/string.cant](https://github.com/darius/cant/blob/master/abcs/00-primordia/types/string.cant))
+[abcs/00-primordia/types/text.cant](https://github.com/darius/cant/blob/master/abcs/00-primordia/types/text.cant))
 
 ```
 (to ~.trim-right
@@ -358,13 +358,13 @@ OK, moving on. Scheme functions on lists:
 | `(member x xs)`               | `(xs .slice (xs .find x))`     |  (Provided `x` is in `xs`. More on `.find` below.) |
 | `(cadr (assoc 'x '((a b) (x y))))`   | `((map<-lists '((a b) (x y))) 'x)`     |  More on `map<-` below. |
 
-The accessors on lists above are all generic. They apply to strings too, for a start:
+The accessors on lists above are all generic. They apply to texts (strings) too, for a start:
 
 | Scheme                        | Cant        | Note          |
 | ----------------------------- | ------------- | ------------- |
-| `(string? x)`                 | `(string? x)`       |  |
-| `(string a b c)`              | `(string<- a b c)`       |  |
-| `(list->string chars)`        | `(string<-list chars)`       |  `chars` may be any sequence. I guess the function's misnamed. Or, really, we should call the concrete type 'link-list' and the abstract one 'list' instead of 'sequence'. TODO? |
+| `(string? x)`                 | `(text? x)`       |  |
+| `(string a b c)`              | `(text<- a b c)`       |  |
+| `(list->string chars)`        | `(text<-list chars)`       |  `chars` may be any sequence. I guess the function's misnamed. Or, really, we should call the concrete type 'link-list' and the abstract one 'list' instead of 'sequence'. TODO? |
 | `(string->list s)`            | `s.values`       | `.values` in general returns a sequence which needn't be a link-list: but it should be efficient to walk through with `.first`/`.rest`. |
 | `(string-length s)`           | `s.count`     | Just like `.count` on lists. |
 | `(string-ref s n)`            | `(s n)`       | Likewise. |
@@ -394,7 +394,7 @@ Collections fit in this taxonomy:
       set
     sequence
       list    -- special in being a 'value' type already. N.B. immutable.
-      string  -- ditto
+      text    -- ditto
       array, flexarray
       interval, lazy list, enumeration
     grid-2d   -- Just because this came up a lot in Advent of Code;
@@ -662,11 +662,11 @@ just felt more right to keep the message part of the call expression
 in one piece.)
 
 The same works for [more complex
-messages](https://github.com/darius/cant/blob/master/examples/automata/text-register-machine.cant#L100-L101):
+messages](https://github.com/darius/cant/blob/master/examples/automata/text-register-machine.cant#L103-L104):
 `(each (~ .get 0 padding) lists)` for each list gets the first
 element, or `padding` if empty. But in general you still may have to
 [fall back to function
-syntax](https://github.com/darius/cant/blob/master/examples/automata/turing.cant#L26):
+syntax](https://github.com/darius/cant/blob/master/examples/automata/turing.cant#L34):
 ``` (each (-> ("~w" .format it)) squares) ```
 
 
@@ -708,19 +708,19 @@ should 'not matter' insofar as you don't delegate these debug
 capabilities, because no ordinary code, including the modules
 themselves, will have read access to the logs.)
 
-'String sinks' implement the sink protocol but just produce a string
-out of the characters they are given. The constructor `string-sink<-`
+'Text sinks' implement the sink protocol but just produce a text
+out of the characters they are given. The constructor `text-sink<-`
 is in the computational setting, not a capability, because creating a
-string is not an effect. (Consuming time, space, energy are not
+text is not an effect. (Consuming time, space, energy are not
 considered to be 'effects'.) You'd typically use the convenience
-function `string<-writer` which creates a string sink, calls your
-writer with it, and then returns the string:
+function `text<-writer` which creates a text sink, calls your
+writer with it, and then returns the text:
 ```
--> (string<-writer (on (sink) (sink .say "hel") (sink .say "lo")))
+-> (text<-writer (on (sink) (sink .say "hel") (sink .say "lo")))
 "hello"
 ```
 
-There ought to be corresponding string sources, but I haven't got
+There ought to be corresponding text sources, but I haven't got
 around to them.
 
 
@@ -961,8 +961,8 @@ all work on generic sequences: most or all of them (TODO any
 exceptions?) traverse their sequence arguments using the
 `.first`/`.rest`/`.none?`/`.some?` methods. These methods are presumed
 to be an efficient-enough way to walk the sequence, which assumption
-can be wrong: for instance, for an array or a string, `.rest` returns
-another array or string, implying a quadratic cost of traversal.
+can be wrong: for instance, for an array or a text, `.rest` returns
+another array or text, implying a quadratic cost of traversal.
 
 Wouldn't it be better to just change the performance profile of these
 `.rest` methods? There are a couple ways that could go: a rope-style
@@ -1071,10 +1071,10 @@ expression)` -- though I guess that'd be too terse.
 ## More idioms
 
 The
-[function](https://github.com/darius/cant/blob/master/abcs/30-functions.cant#L226)
+[function](https://github.com/darius/cant/blob/master/abcs/30-functions.cant#L228)
 `(hey focus action1 action2 ...)` returns its first argument, `focus`,
 after sending it to each of the actions. [For
-example](https://github.com/darius/cant/blob/master/library/sturm.cant#L192-L193),
+example](https://github.com/darius/cant/blob/master/library/sturm.cant#L197-L198),
 ```
 (hey stdin.read-char
      (-> (surely (not (eof? it)))))
@@ -1087,7 +1087,7 @@ use](https://github.com/darius/cant/blob/master/examples/games/cryptogram.cant#L
 actions).
 
 The
-[function](https://github.com/darius/cant/blob/master/abcs/30-functions.cant#L220)
+[function](https://github.com/darius/cant/blob/master/abcs/30-functions.cant#L222)
 `(take input f g h)` is like `(h (g (f input)))`. It's
 [occasionally](https://github.com/darius/cant/blob/master/library/bag.cant#L25-L27)
 [handy](https://github.com/darius/cant/blob/master/examples/text/most-common.cant#L15-L20)
@@ -1260,7 +1260,7 @@ arg conventions to work nicely with `for`
 stdlib:
 surely 
 parson, simple-parser (need to extract it)
-string .format
+text .format
 squickcheck
 
 load, repl, debug stuff, command line

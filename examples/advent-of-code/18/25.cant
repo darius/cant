@@ -3,8 +3,8 @@
 (let input (with-input-file ~.read-lines data-file))
 
 (to (parse line)
-  (each number<-string (line.trim .split ","))) ;TODO I thought it was #\,
-;; TODO number<-string should probably allow spaces
+  (each number<-text (line.trim .split ","))) ;TODO I thought it was #\,
+;; TODO number<-text should probably allow spaces
 
 (let inputs (each parse input))
 ;;(each! print inputs)

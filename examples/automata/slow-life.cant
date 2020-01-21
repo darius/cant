@@ -8,7 +8,7 @@
 (to (main args)
   (let n-steps (may args.rest
                  (be '()       20)
-                 (be `(,n-str) (number<-string n-str))
+                 (be `(,n-str) (number<-text n-str))
                  (else (error ("Usage: ~d [#steps]" .format (args 0))))))
   (let grid (grid<- 24 39))
   (paint grid 10 18 '(" **"             ;TODO: read in a pattern

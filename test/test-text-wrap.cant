@@ -3,7 +3,7 @@
 ;; TODO move this (main) somewhere meaningful, or rm it.
 (to (main `(,_ ,width-str ,@words))
   (let lines (wrap (" " .join words)
-                   (number<-string width-str)))
+                   (number<-text width-str)))
   (each! (-> (out .print it)) lines))
 
 (let text "

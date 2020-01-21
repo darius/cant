@@ -5,10 +5,10 @@
   (max @(for gather ((i (lo .till bound))) ;TODO use pairs<-
           (for yeahs ((j (i .till bound)))
             (let p (* i j))
-            (and (palindrome? p.string) p)))))
+            (and (palindrome? p.text) p)))))
 
-(to (palindrome? s)
-  (<=> s (reverse s)))
+(to (palindrome? text)
+  (<=> text (reverse text)))
 
 (out .print (euler4 10 30))
 ;(out .print (euler4 10 100))

@@ -310,7 +310,7 @@
 
 ;;XXX so should some of these be in list-trait?
 
-(to (string<-list chars) (__string<-list (as-list chars)))
+(to (text<-list chars) (__string<-list (as-list chars)))
 
 
 (make chain {extending right-folding-operation}
@@ -458,13 +458,13 @@
           (to ~.first (~ i xs.first))
           (to ~.rest  (enumerate xs.rest i.+))))))
 
-(to (string<- @chars)
-  (string<-list chars))
+(to (text<- @chars)
+  (text<-list chars))
 
-(to (string<-writer take-sink)
-  (let sink (string-sink<-))
+(to (text<-writer take-sink)
+  (let sink (text-sink<-))
   (take-sink sink)
-  sink.output-string)
+  sink.output-text)
 
 
 ;; printf-ish thing. TODO do something completely different?
@@ -472,8 +472,8 @@
   (hide
 
     (make format
-      (to (~ .to-sink sink format-string @arguments)
-        (scanning sink format-string.values arguments)))
+      (to (~ .to-sink sink format-text @arguments)
+        (scanning sink format-text.values arguments)))
 
     ;;TODO actually design the format language
 
@@ -499,7 +499,7 @@
 
     (to (parsing sink s pad sign width args)
       (when s.none?
-        (error "Incomplete format")) ;TODO report the format-string
+        (error "Incomplete format")) ;TODO report the format-text
       (may s.first
         (be #\w
           (maybe-pad sink pad sign width (~ .write args.first))
@@ -516,18 +516,18 @@
           (parsing sink s.rest pad sign new-width args))
         (be #\x  ; hex number, XXX works wrong on negative numbers
           (maybe-pad sink pad sign width
-                     (~ .display ((string<-number args.first 16) .lowercase)))
+                     (~ .display ((text<-number args.first 16) .lowercase)))
           (scanning sink s.rest args.rest))
         (else
-          (error "Bad format string" (string<-list s)))))
+          (error "Bad format text" (text<-list s)))))
 
     (to (maybe-pad sink pad sign width message)
       (hm (when width
             ;; TODO fix: we're currently justifying to width, but not truncating
             (let w (if sign (* sign width) width))
-            (sink .display ((string<-writer message) .justify w pad)))
+            (sink .display ((text<-writer message) .justify w pad)))
           (when sign
-            (error "Missing width in format string"))
+            (error "Missing width in format text"))
           (else
             (call sink message))))
 

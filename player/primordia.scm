@@ -46,9 +46,9 @@
                      setting
                      sink
                      source
-                     string
                      symbol
                      term
+                     text
                      void))
 
 (define base-path (getenv "CANT_DIR"))       ;TODO duplicated in abcs.scm
@@ -181,9 +181,9 @@
 (define script/setting   (script-for 'setting))
 (define script/sink      (script-for 'sink))
 (define script/source    (script-for 'source))
-(define script/string    (script-for 'string))
 (define script/symbol    (script-for 'symbol))
 (define script/term      (script-for 'term))
+(define script/text      (script-for 'text))
 (define script/void      (script-for 'void))
 
 (define (extract-script object)
@@ -192,7 +192,7 @@
    ((vector? object)      script/array)
    ((pair? object)        script/link)
    ((box? object)         script/box)
-   ((string? object)      script/string)
+   ((string? object)      script/text)
    ((null? object)        script/nil)
    ((symbol? object)      script/symbol)
    ((output-port? object) script/sink)

@@ -26,7 +26,12 @@
     (surely (count? n))
     (x .slice m n)))
 
-(to (sequence? x) (or (array? x) (string? x) (list? x)))
+(to (sequence? x) (or (array? x) (text? x) (list? x)))
+(let string? text?)
+(let number<-string number<-text)
+(let string<-number text<-number)
+(let list<-string list<-text)
+(let string<-list text<-list)
 
 ;; N.B. different from what Cant is now calling 'tuple'. Could get awkward.
 (let tuple? array?)
@@ -41,7 +46,7 @@
 
 (to (string<-symbol sym)
   (surely (symbol? sym))
-  sym.string)
+  sym.text)
 
 
 ;; Language syntax
@@ -203,10 +208,10 @@
 ;; Transform foo:bar to {module-ref foo bar}
 ;; (TODO better to do this in the reader in the real system.)
 (to (module-ref? symbol)
-  (symbol.string .find? #\:))
+  (symbol.text .find? #\:))
 
 (to (module-ref-parse symbol)
-  (let `(,mod ,var) (symbol.string .split ":"))
+  (let `(,mod ,var) (symbol.text .split ":"))
   {module-ref (symbol<- mod) (symbol<- var)})
 
 (to (clause-parse `(,pattern ,@seq))
@@ -220,7 +225,7 @@
   (may pattern
     (be (? symbol?)
       (surely (not (module-ref? pattern)))
-      (if (pattern.string .prefix? "_")
+      (if (pattern.text .prefix? "_")
           {ignore}
           {bind pattern}))
     (be (? self-evaluating?)
@@ -446,7 +451,7 @@
   (to (module-ref mod-name var-name)
     (let mod-env
       (or (modules .get mod-name)
-          (do (let filename (chain autoload-base mod-name.string ".cant"))
+          (do (let filename (chain autoload-base mod-name.text ".cant"))
               (module-load mod-name filename)
               (modules mod-name))))
     (env-get mod-env var-name))
@@ -704,8 +709,8 @@
     (out .write x)
     out.newline)
 
-  (to (format string @arguments)
-    (out .say string @arguments))
+  (to (format text @arguments)
+    (out .say text @arguments))
 
   (let primitives-from-cant
     (export

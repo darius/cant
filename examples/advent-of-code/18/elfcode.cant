@@ -5,11 +5,11 @@
   (disassemble elfcode))
 
 (to (parse lines)
-  (let ip-reg (number<-string (lines.first.split 1)))
+  (let ip-reg (number<-text (lines.first.split 1)))
   (let program (array<-list
                 (for each ((line lines.rest))
                   (let v line.split)
-                  `(,(symbol<- v.first) ,@(each number<-string v.rest)))))
+                  `(,(symbol<- v.first) ,@(each number<-text v.rest)))))
   {elfcode ip-reg program})
 
 (to (itsy-dump {elfcode ip-reg program})
@@ -45,7 +45,7 @@
     (to (arg<- x)
       (may x
         (be {r i} (if (= i ip-reg) "IP" ("r~w" .format i)))
-        (be {i n} n.string)
+        (be {i n} n.text)
         (be #no   "")))
 
     (may op

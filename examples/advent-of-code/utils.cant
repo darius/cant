@@ -81,8 +81,8 @@
                                  "_ = :whitespace*.")))
   (let peg ((grammar (map<-)) 'start))
   (make parser
-    (to (~ string)        ((parson-parse peg string) .results))
-    (to (~ .parse string) (parson-parse peg string))))
+    (to (~ text)        ((parson-parse peg text) .results))
+    (to (~ .parse text) (parson-parse peg text))))
 
 ;; TODO how much slower is this? Doesn't matter since it's no longer used!
 ;; (to (neighbors<- p)

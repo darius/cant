@@ -159,7 +159,7 @@
       ;; Update castling status if necessary
       (let new-castling castling)        ;XXX TODO
 
-      (board<- (opponent mover) (each string<-list rows.values)
+      (board<- (opponent mover) (each text<-list rows.values)
                new-castling ?en-passant-target #no))
 
     (to (~ .move-en-passant place0 place1)
@@ -183,8 +183,8 @@
         (out .say "~d plays ~d.\n\n" (side-name mover) (unparse-move move)))
       (update move board))
 
-    (to (~ .parse-move string)    ;N.B. #no if invalid, unlike in my Python
-      ((map<-values unparse-move board.get-moves) .get string))
+    (to (~ .parse-move text)    ;N.B. #no if invalid, unlike in my Python
+      ((map<-values unparse-move board.get-moves) .get text))
 
     (to ~.gen-legal-moves
       (for those ((move board.gen-piece-moves))
@@ -296,7 +296,7 @@
                     (-2  1) (-2 -1) (-1  2) (-1 -2)))
 
 (to (side-name side)
-  side.string.capitalize)
+  side.text.capitalize)
 
 (let opponent
   (given

@@ -4,7 +4,7 @@
   (- ch.uppercase 64))
 
 (to (meta ch)
-  (string<- esc ch))
+  (text<- esc ch))
 
 (let esc (char<- 27))
 

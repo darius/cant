@@ -14,7 +14,7 @@
     (be (? term? t)                    `(,t.parts ()))
     (be `(let ,p ,e)                   `((,e) (,p)))
     (be `(make ,(? symbol?) ,@clauses) (make-subparts clauses))
-    (be `(make ,(? string?) ,@clauses) (make-subparts clauses))
+    (be `(make ,(? text?) ,@clauses)   (make-subparts clauses))
     (be `(make ,@clauses)              (make-subparts clauses))
     (be `(do ,@es)                     `(,es ()))
     (be `(call ,e1 ,e2)                `((,e1 ,e2) ()))

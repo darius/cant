@@ -10,7 +10,7 @@
   (to ~.uppercase     (__char-uppercase me))
   (to ~.printable?    (<= 32 (__char->integer me) 126))  ; TODO better name?
   (to (~ .compare c)  (__char-compare me c))
-  (to ~.string        (string<- me))
+  (to ~.text          (text<- me))
   (to (~ .+ n)   ;; Is this a good idea?
     (surely (integer? n) "Bad arg type" n)
     (char<- (+ me.code n)))

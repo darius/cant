@@ -24,8 +24,8 @@ insn:    {'1'+} {'#' '#'? '#'? '#'? '#'?} :make_insn.
   ((grammar (map<- (~ 'make_insn (feed insn<-))))
    'program))
 
-(to (regs<- @strings)
-  (array<- #no @strings))
+(to (regs<- @texts)
+  (array<- #no @texts))
 
 (to (run insns regs @(optional loud?))
   (begin stepping ((pc 0))
@@ -92,8 +92,8 @@ insn:    {'1'+} {'#' '#'? '#'? '#'? '#'?} :make_insn.
   (flip (chain (flip lines1)
                (flip lines2))))
 
-(to (flip strings)
-  (each string<-list (transpose-padded strings #\space)))
+(to (flip texts)
+  (each text<-list (transpose-padded texts #\space)))
 
 ;; Like `transpose` but handling different-length rows.
 (to (transpose-padded lists padding)

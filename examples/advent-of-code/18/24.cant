@@ -64,11 +64,11 @@
 (to (cook-group n-units hit-points qualities attack-damage attack-type initiative)
   (let immunities (set<-))
   (let weaknesses (set<-))
-  (for each! ((`(,type ,attack-strings) qualities)) ;TODO could use a group-by or map-reduce again
+  (for each! ((`(,type ,attack-texts) qualities)) ;TODO could use a group-by or map-reduce again
     (let set (may type
                (be "immune" immunities)
                (be "weak"   weaknesses)))
-    (set .add-all! (each symbol<- attack-strings)))
+    (set .add-all! (each symbol<- attack-texts)))
   (on (army-boost)
     (group<- n-units hit-points immunities weaknesses
              (+ army-boost attack-damage) (symbol<- attack-type) initiative)))
@@ -131,8 +131,8 @@ separator: '\n'.
 "))
 (let semantics (grammar (map<- (~ 'Group (feed cook-group)))))
 (let parse-main (semantics 'main))
-(to (parse string)
-  (~.results (parson-parse parse-main string)))
+(to (parse text)
+  (~.results (parson-parse parse-main text)))
 
 (let matchup (parse input))
 

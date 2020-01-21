@@ -51,10 +51,10 @@
   (to (get-char-after p)
     (t (if (< p head.^) p (+ p gap.^))))
 
-  ;; Return the `span` characters after `p0` as a string.
+  ;; Return the `span` characters after `p0` as a text.
   (to (get p0 span0)
     (let {range p span} (clip-range p0 span0))
-    (string<-list (each get-char-after (p .span span))))
+    (text<-list (each get-char-after (p .span span))))
 
   ;; Return the position after the character in the text that is in
   ;; char-set and that comes up first in searching from p in
@@ -147,7 +147,7 @@
     (to ~.count                 size.^)
     (to (~ .find-char-set p dir char-set)
       (find-char-set p dir char-set))
-    ;; TODO: delegate to a string trait? but strings are immutable...
+    ;; TODO: delegate to a text trait? but texts are immutable...
     (to ~.keys
       size.^.till)
     ))

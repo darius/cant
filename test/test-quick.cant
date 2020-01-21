@@ -12,7 +12,7 @@
 
 (loud-use "test-export-import")
 (loud-use "test-quasiquote")
-(loud-use "test-strings")
+(loud-use "test-texts")
 (loud-use "test-continuations")
 (loud-use "test-pattern-matching")
 (loud-use "test-use")
@@ -41,7 +41,7 @@
 (loud-use "test-roman")
 (loud-use "test-sort")
 (loud-use "test-sset")
-(loud-use "test-string-search")
+(loud-use "test-text-search")
 (loud-use "test-flextext")
 (loud-use "test-text-wrap")
 (loud-use "test-unify")

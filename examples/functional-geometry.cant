@@ -96,7 +96,7 @@
 ;; Output
 
 (to (postscript<- p)
-  (string<-writer (-> (write-postscript it p))))
+  (text<-writer (-> (write-postscript it p))))
 
 (to (write-postscript sink p)
   (sink .displayln "500 500 scale  .1 .1 translate  0 setlinewidth")

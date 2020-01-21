@@ -27,7 +27,7 @@
   (to ~.floor          (floor me))
   (to ~.exact          (exact<-inexact me))
   (to ~.inexact        (inexact<-exact me))
-  (to ~.string         (string<-number me))
+  (to ~.text           (text<-number me))
   ;; XXX sketchy support for 32-bit word ops:
   (to (~ .u+ a)        (__u+ me a))
   (to (~ .u- a)        (__u- me a))

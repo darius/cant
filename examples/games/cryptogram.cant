@@ -24,8 +24,8 @@
   (let shuffled (hey (array<-list alphabet)
                      (-> (rng .shuffle! it))))
   (let code (map<-items (zip alphabet shuffled)))
-  (string<-list (for each ((ch text.lowercase))
-                  (code .get ch ch))))
+  (text<-list (for each ((ch text.lowercase))
+                (code .get ch ch))))
 
 (to (run-fortune)
   ;; TODO ensure fits in sturm's width

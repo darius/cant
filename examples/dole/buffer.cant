@@ -75,7 +75,7 @@
    
   (let key-map (key-map<- (on (ch)
                             (if (char? ch)
-                                (insert ch.string)
+                                (insert ch.text)
                                 (log "Not a char: ~w" ch)))))
 
   (make buffer
@@ -99,7 +99,7 @@
       (point .^= (ft .clip (- (find-line point.^ forward) 1))))
 
     (to (~ .insert str)
-      (surely (string? str))
+      (surely (text? str))
       (insert str))
 
     (to ~.key-map

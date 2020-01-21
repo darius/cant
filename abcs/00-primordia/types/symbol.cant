@@ -1,14 +1,14 @@
 (make-trait symbol-primitive me
-  (to ~.string         (__symbol->string me))
+  (to ~.text           (__symbol->string me))
   (to (~ .compare a)   (and (symbol? a)
-                            (me.string .compare a.string)))
-  (to (~ .selfie sink) (sink .display me.string))
+                            (me.text .compare a.text)))
+  (to (~ .selfie sink) (sink .display me.text))
   ;; TODO experiment:
   (to ~.term<-         (on (@arguments) (term<- me arguments)))
   (to ~.term           (term<- me '()))
   (to ~.method         (on (actor @arguments) ;TODO experiment; vs. method<- in stdlib
                          (call actor (term<- me arguments))))
   ;; Some silly conveniences for sturm:
-  (to ~.lowercase      (symbol<- me.string.lowercase))
-  (to ~.uppercase      (symbol<- me.string.uppercase))
+  (to ~.lowercase      (symbol<- me.text.lowercase))
+  (to ~.uppercase      (symbol<- me.text.uppercase))
   )

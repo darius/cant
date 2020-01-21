@@ -1,10 +1,10 @@
-;; Generate strings that match a regex.
+;; Generate texts that match a regex.
 ;; From Udacity CS212 Python code by Peter Norvig.
 ;; Glossary:
 ;;    r, s   regex (i.e. a thing built by the constructors below)
 ;;    Ns     set of nonnegative integers (i.e. lengths)
 
-;; Return the strings matching r whose length is in Ns.
+;; Return the texts matching r whose length is in Ns.
 (to (regex-generate r Ns)
   (sort-by (compound-key<- ~.count itself)
            ((r Ns) .keys)))
@@ -27,7 +27,7 @@
 (to ((either r s) Ns) ((r Ns) .union (s Ns)))
 
 (to (one-of chars)
-  (let set (~.range (each string<- chars)))
+  (let set (~.range (each text<- chars)))
   (on (Ns)
     (if (Ns .maps? 1) set none)))
 

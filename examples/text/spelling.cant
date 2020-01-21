@@ -29,20 +29,21 @@
                       (chain a c (b .slice 1)))))
   (let swaps      (for yeahs (((~ a b) del-splits))
                     (and (< 1 b.count)
-                         (chain a (string<- (b 1) (b 0)) (b .slice 2)))))
+                         (chain a (text<- (b 1) (b 0)) (b .slice 2)))))
   (uniquify (chain inserts deletes replaces swaps)))
 
 (to (uniquify xs)
   xs.range.keys)
 
-(let alphabet (each string<- (#\a .thru #\z)))
+(let alphabet (each text<- (#\a .thru #\z)))
 
-(to (words<-string string)
-  ;;  (re:findall "[a-z]+" string.lowercase))  ;TODO
-  string.lowercase.split)
+(to (words<-text text)
+  ;;  (re:findall "[a-z]+" text.lowercase))  ;TODO
+  text.lowercase.split)
 
 (let lexicon
-  (bag<- (words<-string (with-input-file ~.read-all "examples/text/spelling.train.text"))))
+  (bag<- (words<-text (with-input-file ~.read-all "examples/text/spelling.train.text"))))
 
 (to (main _)
-  (each! (compose print correct) (words<-string "a lowsy spelur zzz")))
+  (for each! ((word (words<-text "a lowsy spelur zzz")))
+    (out .print (correct word))))

@@ -8,7 +8,7 @@
     (let ch me.read-char)
     (if (eof? ch)
         ch
-        (string<-list
+        (text<-list
          (begin reading ((ch ch))
            (if (or (eof? ch) (= ch #\newline))
                '()

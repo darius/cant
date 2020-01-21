@@ -156,7 +156,7 @@
 ;; Derived combinators
 
 ;; Like (skip-1 ok?), but appending the one-element sequence (one-char
-;; substring) to the vals.
+;; subtext) to the vals.
 (to (take-1 ok?)
   (capture (skip-1 ok?)))
 
@@ -174,8 +174,8 @@
   (skip-1 (-> (= my-char it)))) ;TODO I think <=> in place of = would catch some bugs in client code
 
 ;; E.g. (lit "hello") advances past exactly "hello", or fails.
-(to (lit string)
-  (foldr then (each lit-1 string) empty))
+(to (lit text)
+  (foldr then (each lit-1 text) empty))
 
 ;; Always succeed, but preferably after p.
 (to (maybe p)

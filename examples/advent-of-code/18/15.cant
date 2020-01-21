@@ -35,13 +35,13 @@
   field.show
   out.newline)
 
-(to (field<- field-string elf-attack-power)
+(to (field<- field-text elf-attack-power)
 
-  (let width field-string.split-lines.first.count.+)
-  (surely (for every ((line field-string.split-lines))
+  (let width field-text.split-lines.first.count.+)
+  (surely (for every ((line field-text.split-lines))
             (= width line.count.+)))
 
-  (let area (array<-list field-string))
+  (let area (array<-list field-text))
 
   (to (coords<- p)
     ("~w,~w" .format (p .quotient width) (p .modulo width)))

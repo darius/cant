@@ -31,7 +31,7 @@
              (text close))))
 
 (to (call-like open symbol elements close)
-  (hug (chain open symbol.string " ") elements close))
+  (hug (chain open symbol.text " ") elements close))
 
 (to (maybe-call-like open elements close)
   (may elements

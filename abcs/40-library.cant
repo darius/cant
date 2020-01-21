@@ -21,7 +21,7 @@
 
 (to (use file-stem)                  ;TODO a realer module system
   (let stem (if (symbol? file-stem)
-                (path-join library-path file-stem.string)
+                (path-join library-path file-stem.text)
                 (normalize-path use-base-path.^ file-stem)))
   (or (the-modules .get stem)
       (with-use-path (path-parent stem)

@@ -1,8 +1,8 @@
 (out .say "Dear ~w,\n\nI wish to ~d to ~~100% of your ~w.\n"
           "Archimedes" "subscribe" 'codices)
 
-(let p (string-sink<-))
+(let p (text-sink<-))
 (p .say "hey ~d how r ya" 42)
-(out .print `(string-sink: ,p.output-string))
+(out .print `(text-sink: ,p.output-text))
 
 (out .print ("hey ~w yay" .format '(+ 2 3)))

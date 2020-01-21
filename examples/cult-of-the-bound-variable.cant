@@ -113,7 +113,7 @@
           (be 11 ;(trace "r~w = input\n" c)  ;; N.B. C version has fflush (stdout); first
             (let s source.read-char)
             (reg .set! c
-                 (if (eof? s) mask32 s.string)) ;XXX shouldn't this be an array of bytes?
+                 (if (eof? s) mask32 s.text)) ;XXX shouldn't this be an array of bytes?
             (next))
 
           (be 12 ;(trace "dup r~w; finger r~w\n" b c)

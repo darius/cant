@@ -23,7 +23,7 @@
          (digits ones)))
 
 (to (times-X numeral)
-  (string<-list (each places numeral)))
+  (text<-list (each places numeral)))
 
 
 (export int<-roman roman<-int)

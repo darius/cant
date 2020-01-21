@@ -38,13 +38,13 @@
                (peg-op @(for each (({lifted _ f} lifted))
                           (f builder rules subs))))})))
 
-(to (literal<- string)
+(to (literal<- text)
   {lifted (set<-)
-          (on (builder _ _) (builder .literal string))})
+          (on (builder _ _) (builder .literal text))})
 
-(to (keyword<- string)
+(to (keyword<- text)
   {lifted (set<-)
-          (on (builder _ _) (builder .keyword string))})
+          (on (builder _ _) (builder .keyword text))})
 
 (to (unquote<- name)
   {lifted (set<-)
@@ -55,8 +55,8 @@
 
 (let hug (feed-list itself))
 
-(to (push-lit<- string)
-  (constant<- (push string)))
+(to (push-lit<- text)
+  (constant<- (push text)))
 
 (to (name-char? ch) (or ch.letter?       (= ch #\_)))
 (to (word-char? ch) (or ch.alphanumeric? (= ch #\_)))
@@ -87,7 +87,7 @@
          (feed symbol<-)
          __)))
 
-(to (string-quoted-by q-char)
+(to (text-quoted-by q-char)
   (let q (lit-1 q-char))
   (let quoted-char
     (then (either (lit-1 #\\) (invert q))
@@ -96,8 +96,8 @@
    (then q (many quoted-char) q __
          (feed-list (-> ("" .join it))))))
 
-(let qstring  (string-quoted-by #\'))
-(let dqstring (string-quoted-by #\"))
+(let qtext  (text-quoted-by #\'))
+(let dqtext (text-quoted-by #\"))
 
 (let pe
   (delay (: (seclude
@@ -124,10 +124,10 @@
    (either (then (lit "(") __ pe (lit ")") __)
            (then (lit "[") __ pe (lit "]") __   (lift seclude))
            (then (lit "{") __ pe (lit "}") __   (lift capture))
-           (then qstring (feed literal<-))
-           (then dqstring (feed keyword<-))
-           (then (lit ":") (either (then word    (feed unquote<-))
-                                   (then qstring (feed push-lit<-))))
+           (then qtext (feed literal<-))
+           (then dqtext (feed keyword<-))
+           (then (lit ":") (either (then word  (feed unquote<-))
+                                   (then qtext (feed push-lit<-))))
            (then name (feed rule-ref<-)))))
 
 (let rule
@@ -180,18 +180,18 @@
          (~ 'whitespace (skip-1 ~.whitespace?))
          (~ 'count (seclude
                     (then (capture (at-least-1 (skip-1 ~.digit?))) ;; TODO no leading 0s
-                          (feed number<-string))))
+                          (feed number<-text))))
          (~ 'integer (seclude
                       (then (capture (then (maybe (lit-1 #\-))
                                            (at-least-1 (skip-1 ~.digit?))));; TODO no leading 0s
-                            (feed number<-string))))
+                            (feed number<-text))))
          ;; TODO: more
          ))
 
 (make default-builder
-  (to (~ .literal string) (lit string))
-  (to (~ .keyword string) (then (lit string) word-boundary))
-  (to (~ .match regex-string) (surely #no))  ;TODO
+  (to (~ .literal text) (lit text))
+  (to (~ .keyword text) (then (lit text) word-boundary))
+  (to (~ .match regex-text) (surely #no))  ;TODO
   )
 
 (to (parse-grammar text)
