@@ -22,8 +22,8 @@
 (import (use 'random) rng)
 
 (to (random-tests n-trials)            ;TODO use squickcheck
-  (for each! ((_ (0 .to< n-trials)))
-    (exercise-em (for each ((value (0 .to< 50)))
+  (for each! ((_ n-trials.till))
+    (exercise-em (for each ((value (50 .till)))
                    (let key (rng .random-integer 16))
                    (let op (may (rng .random-integer 10)
                              (be 0 'delete)

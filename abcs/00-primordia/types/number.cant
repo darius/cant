@@ -16,6 +16,7 @@
   (to (~ .xor b)       (__bit-xor me b))
   (to (~ .to< b)       (interval<- me b))
   (to (~ .to b)        (interval<- me b.+))
+  (to ~.till           (interval<- 0 me))
   (to (~ .span n)      (interval<- me (+ me n)))
   (to ~.even?          (surely (integer? me)) (= 0 (me .modulo 2)))
   (to ~.odd?           (surely (integer? me)) (not= 0 (me .modulo 2)))

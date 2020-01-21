@@ -23,7 +23,7 @@
       (all .run (context<- default-rng) 40 property gens))
     (to (~ .run g n-times property gens)
       (let failures (flexarray<-))
-      (for each! ((_ (0 .to< n-times)))
+      (for each! ((_ n-times.till))
         (let inputs (each (~ g) gens))
         (may (property @inputs)
           (be #yes    (out .display "."))
@@ -75,7 +75,7 @@
     (char<- (g .natural 32 126)))
 
   (to ((a-list-of gen) g)
-    (for each ((_ (0 .to< g.a-size)))
+    (for each ((_ g.a-size.till))
       (gen g)))
 
   (to (a-string g)

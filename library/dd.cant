@@ -43,7 +43,7 @@
 (let memo-node (memoize choice<-))
 
 (to (variable<- rank arity)
-  (memo-node rank (each constant<- (0 .to< arity))))
+  (memo-node rank (each constant<- arity.till)))
 
 (let memo-choice
   (memoize

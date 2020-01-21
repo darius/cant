@@ -61,7 +61,7 @@
        (- (S (at x1 y0)))
        (S (at x0 y0))))
 
-  (let side (0 .to< N))
+  (let side N.till)
 
   (to (subsquares)
     (for gather ((i side))

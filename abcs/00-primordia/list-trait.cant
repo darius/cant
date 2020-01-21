@@ -78,7 +78,7 @@
     ;;TODO a method to get an empty seq of my type; and then factor out duplicate code
     (may n
       (be 0 '())             
-      (else (chain @(for each ((_ (0 .to< n)))
+      (else (chain @(for each ((_ n.till))
                       list)))))
   (to ~.maybe  ;; TODO an experiment TODO could be defined on maps in general too
     (if list.none?

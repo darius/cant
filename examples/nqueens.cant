@@ -21,8 +21,8 @@
     out.newline))
 
 (to (queens-problem n)
-  (conjoin (for each ((r (0 .to< n)))
-             (disjoin (for each ((c (0 .to< n)))
+  (conjoin (for each ((r n.till))
+             (disjoin (for each ((c n.till))
                         (place-queen n r c))))))
 
 (to (conjoin nodes) (foldr1 bdd-and nodes))
@@ -37,10 +37,10 @@
                (<= 0 cc) (< cc n))
       (env .set! (queen n rr cc) #no)))
   
-  (for each! ((cc (0 .to< n)))
+  (for each! ((cc n.till))
     (exclude r cc))
 
-  (for each! ((rr (0 .to< n)))
+  (for each! ((rr n.till))
     (exclude rr c))
 
   (for each! ((dd ((- n.-) .to< n))) ; diagonals
@@ -69,7 +69,7 @@
 ;; Return a 2-d array of distinct variables: each means there's a
 ;; queen at its position. Row/column numbers start from 0.
 (to (board<- n)
-  (for each ((r (0 .to< n)))
+  (for each ((r n.till))
     (interval<- (+ 2 (* n r))
                 (+ 2 (* n r.+)))))
 

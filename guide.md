@@ -387,7 +387,7 @@ Same drill with vectors:
 So you access a collection by sending a message. What kinds of
 collections does the library offer, and what's their protocol?
 
-Collections fit in this hierarchy:
+Collections fit in this taxonomy:
 ```
   map
     bag
