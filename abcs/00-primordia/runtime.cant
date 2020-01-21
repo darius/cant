@@ -477,49 +477,49 @@
 
     ;;TODO actually design the format language
 
-    (to (scanning sink s args)
-      (if s.none? 
+    (to (scanning sink t args)
+      (if t.none? 
           (when args.some?
             (error "Leftover arguments to .format" args))
-          (may s.first
+          (may t.first
             (be #\~
-              (parse sink s.rest args))
+              (parse sink t.rest args))
             (be ch
               (sink .display ch)
-              (scanning sink s.rest args)))))
+              (scanning sink t.rest args)))))
 
-    ;; Parse a ~ field, then go back to scanning the rest of s.
-    (to (parse sink s args)
-      (let {pair sign s1} (if (s .prefix? '(#\-))
-                              {pair -1 s.rest}
-                              {pair #no s}))
-      (if (s1 .prefix? '(#\0))
-          (parsing sink s1.rest #\0     sign 0   args)
-          (parsing sink s1      #\space sign #no args)))
+    ;; Parse a ~ field, then go back to scanning the rest of t.
+    (to (parse sink t args)
+      (let {pair sign t1} (if (t .prefix? '(#\-))
+                              {pair -1 t.rest}
+                              {pair #no t}))
+      (if (t1 .prefix? '(#\0))
+          (parsing sink t1.rest #\0     sign 0   args)
+          (parsing sink t1      #\space sign #no args)))
 
-    (to (parsing sink s pad sign width args)
-      (when s.none?
+    (to (parsing sink t pad sign width args)
+      (when t.none?
         (error "Incomplete format")) ;TODO report the format-text
-      (may s.first
+      (may t.first
         (be #\w
           (maybe-pad sink pad sign width (~ .write args.first))
-          (scanning sink s.rest args.rest))
+          (scanning sink t.rest args.rest))
         (be #\d
           (maybe-pad sink pad sign width (~ .display args.first))
-          (scanning sink s.rest args.rest))
+          (scanning sink t.rest args.rest))
         (be #\~
           (sink .display "~") ;TODO: complain if there were formatting directives before "~"?
-          (scanning sink s.rest args))
+          (scanning sink t.rest args))
         (be (? ~.digit? ch)
           (let new-width (+ (- ch #\0)
                             (if width (* 10 width) 0)))
-          (parsing sink s.rest pad sign new-width args))
+          (parsing sink t.rest pad sign new-width args))
         (be #\x  ; hex number, XXX works wrong on negative numbers
           (maybe-pad sink pad sign width
                      (~ .display ((text<-number args.first 16) .lowercase)))
-          (scanning sink s.rest args.rest))
+          (scanning sink t.rest args.rest))
         (else
-          (error "Bad format text" (text<-list s)))))
+          (error "Bad format text" (text<-list t)))))
 
     (to (maybe-pad sink pad sign width message)
       (hm (when width
