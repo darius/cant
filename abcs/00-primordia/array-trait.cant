@@ -30,5 +30,8 @@
     (let t (me i))
     (me .set! i (me j))
     (me .set! j t))
+;TODO
+;  (to ~.first (error "Mutable arrays don't do .first" me))
+;  (to ~.rest  (error "Mutable arrays don't do .rest" me))
   (to message
     (list-trait me message))) ;XXX use trait syntax instead

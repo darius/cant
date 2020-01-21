@@ -31,7 +31,7 @@
       out.newline
       (when failures.some?
         (out .say "Failures for ~w:\n" property)
-        (for each! (((~ outcome inputs) failures))
+        (for each! (((~ outcome inputs) failures.values))
           (out .say "~w: ~w\n" outcome inputs)))
       failures.none?))
 

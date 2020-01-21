@@ -1,6 +1,7 @@
 (make-trait array-primitive me
   (to ~.none?         (= 0 me.count))   ;redundant definition(s) for speed
   (to ~.first         (me 0))
+;; XXX rm .rest
   (to ~.rest          (me .slice 1))
   (to (~ .set! i val) (__vector-set! me i val))
   (to ~.count         (__vector-length me))
@@ -29,6 +30,5 @@
         (sink .display #\space)
         (sink .write x)))
     (sink .display "]"))
-;   (sink .write (__vector->list me)))
   (to message
     (array-trait me message))) ;XXX use trait syntax instead

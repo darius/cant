@@ -35,7 +35,7 @@
   (max @(each product<- (k-slices<- digits n))))
 
 (to (product<- ns) ;ugly: the asymmetry of this name and `sum`.
-  (foldl * 1 ns))
+  (foldl * 1 ns.values))
 
 (out .print (euler8 4))
 ;(out .print (euler8 13))

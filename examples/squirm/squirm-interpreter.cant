@@ -91,7 +91,7 @@
     (be `',value
       {const value})
     (be (? array?)
-      {call {const prim-tuple<-} (each exp-parse e)})
+      {call {const prim-tuple<-} (each exp-parse e.values)})
     (be `(on ,ps ,@body)
       {on (each pat-parse ps) (seq-parse body)})
     (be `(if ,t ,y ,n)
@@ -201,7 +201,7 @@
              ,(qq-expand rest)))
     (be (? array?)
       ;; TODO quote if all parts are constant
-      (array<-list (each qq-expand sexpr)))
+      (array<-list (each qq-expand sexpr.values)))
     (else
       `',sexpr)))
 

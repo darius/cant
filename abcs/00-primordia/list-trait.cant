@@ -56,8 +56,8 @@
          (or (= 0 key)
              (and (< 0 key)
                   (list.rest .maps? key.-)))))
-  (to (~ .find value default)    ;; XXX update the other collections to have this too
-    (begin looking ((i 0) (values list))
+  (to (~ .find value default)
+    (begin looking ((i 0) (values list.values)) ;XXX .values called because list-trait is illegitimately used by arrays
       (hm (if values.none? default)
           (if (= value values.first) i)
           (else (looking i.+ values.rest)))))

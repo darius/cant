@@ -21,7 +21,7 @@
         (be abbrev (group (<> (literal abbrev) (nest abbrev.count (doc<-sx operand)))))))
     (be (? list?)  (maybe-call-like "(" x ")"))
     (be (? term?)  (maybe-call-like "{" `(,x.tag ,@x.parts) "}"))
-    (be (? array?) (hug "[" x "]"))
+    (be (? array?) (hug "[" x.values "]"))
     (be (? box?)   (call-like "#<" 'box `(,x.^) ">"))
     (else          (literal ("~w" .format x)))))
 
