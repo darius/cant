@@ -2,7 +2,7 @@
 ;; A buffer is a text with a current point of editing, a display, and
 ;; a key-map.
 
-(import (use 'text)      text<- backward forward)
+(import (use 'flextext)  flextext<- backward forward)
 (import (use "char-set") char-set<-)
 (import ((use "display") (export out))
                          render rows cols)   ; XXX rename to num-rows or something
@@ -29,31 +29,31 @@
 ;; Return a new buffer.
 (to (buffer<-)
 
-  (let text (text<-))
+  (let ft (flextext<-))
   (let point (box<- 0))              ; TODO: make this a mark
   (let origin (box<- 0))     ; display origin. XXX keep in a window object?
 
   (to (update-origin)
-    (let rendering (render text origin.^ point.^))
+    (let rendering (render ft origin.^ point.^))
     (hm (if rendering.point-visible?
             rendering)
         (else
           (to (has-point? o)
-            ((render text o point.^) .point-centered?))
+            ((render ft o point.^) .point-centered?))
           (let screen-size (* rows cols))
-          (origin .^= (search (text .clip (- point.^ screen-size))
+          (origin .^= (search (ft .clip (- point.^ screen-size))
                               point.^
                               has-point?))
           (when (= origin.^ point.^)
             (origin .^= 0)) ; Couldn't center it.
-          (render text origin.^ point.^))))
+          (render ft origin.^ point.^))))
 
   (to (insert str)
-    (text .insert point.^ str)
+    (ft .insert point.^ str)
     (point .+= str.count))
 
   (to (find-line p dir)
-    (text .clip (text .find-char-set p dir newline)))
+    (ft .clip (ft .find-char-set p dir newline)))
 
   ;; TODO: preserve goal column; respect formatting, such as tabs;
   ;; treat long lines as defined by display
@@ -62,7 +62,7 @@
     (let offset     (- point.^ start))
     (let prev-start (find-line start.- backward))
     (point .^= (min (+ prev-start offset)
-                    (text .clip start.-))))
+                    (ft .clip start.-))))
 
   (to (next-line)
     (let start      (find-line point.^ backward))
@@ -70,8 +70,8 @@
     (let next-start (find-line start forward)) ;XXX why not start from point?
     (let next-end   (find-line next-start forward))
     (point .^= (min (+ next-start offset)
-                    (text .clip next-end.-))))
-  ;; XXX this can wrap around since text .clip moves `nowhere` to 0.
+                    (ft .clip next-end.-))))
+  ;; XXX this can wrap around since ft .clip moves `nowhere` to 0.
    
   (let key-map (key-map<- (on (ch)
                             (if (char? ch)
@@ -81,22 +81,22 @@
   (make buffer
 
     (to ~.clear!
-      text.clear!
+      ft.clear!
       (point .^= 0)
       (origin .^= 0))
 
     (to ~.backward-delete-char
-      (text .delete point.^.- 1)
+      (ft .delete point.^.- 1)
       (buffer .move-char backward))
 
     (to ~.forward-delete-char
-      (text .delete point.^ 1))
+      (ft .delete point.^ 1))
 
     (to ~.beginning-of-line
       (point .^= (find-line point.^ backward)))
 
     (to ~.end-of-line
-      (point .^= (text .clip (- (find-line point.^ forward) 1))))
+      (point .^= (ft .clip (- (find-line point.^ forward) 1))))
 
     (to (~ .insert str)
       (surely (string? str))
@@ -110,7 +110,7 @@
         (key-map .set! key binding)))
 
     (to (~ .move-char offset)
-      (point .^= (text .clip (+ point.^ offset))))
+      (point .^= (ft .clip (+ point.^ offset))))
 
     (to ~.previous-line (previous-line))
     (to ~.next-line     (next-line))
@@ -136,7 +136,7 @@
 
     (to (~ .visit filename)
       buffer.clear!
-      (text .insert 0 (with-input-file ~.read-all filename)))))
+      (ft .insert 0 (with-input-file ~.read-all filename)))))
 
 (export
   buffer<-)

@@ -5,11 +5,12 @@
 ;;   dir direction
 ;;   cs  charset
 
-;; A text is a sequence of characters. Coordinates denote the spaces
-;; *between* character positions (or before or after them, at the
-;; ends), in [0..size]. The coordinate before the first character is
-;; 0, then after the first character and before the second is 1, and
-;; so on, until the coordinate after the last character is `size`.
+;; A flextext is a mutable, growable/shrinkable sequence of characters.
+;; Coordinates denote the spaces *between* character positions (or
+;; before or after them, at the ends), in [0..size]. The coordinate
+;; before the first character is 0, then after the first character and
+;; before the second is 1, and so on, until the coordinate after the
+;; last character is `size`.
 ;; 
 ;; We store the characters at integer indices in a flexarray
 ;; (starting at index 0) in two chunks which we call the head and the
@@ -30,7 +31,7 @@
 (let backward -1)
 (let forward   1)
 
-(to (text<-)
+(to (flextext<-)
 
   (let t    (flexarray<-))
   (let head (box<- 0))
@@ -133,7 +134,7 @@
     (gap  .-= r-size)
     (size .+= r-size))
 
-  (make text
+  (make flextext
     (to ~.clear!
       (head .^= 0)
       (gap  .^= 0)
@@ -155,4 +156,4 @@
   backward
   forward
   nowhere
-  text<-)
+  flextext<-)

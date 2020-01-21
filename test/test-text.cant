@@ -1,7 +1,7 @@
-(import (use 'text) text<- backward)
+(import (use 'flextext) flextext<- backward)
 
 (hide
-  (let t (text<-))
+  (let t (flextext<-))
   (out .print (t .get 0 10))
   (t .replace 0 0 "hello")
   (out .print (t .get 0 10))
@@ -12,7 +12,7 @@
 
 out.newline
 (hide
-  (let t (text<-))
+  (let t (flextext<-))
   (t .replace 0 0 "aXbXc")
   (let X (set<- #\X))
   (out .displayln (t .get 0 t.count))
