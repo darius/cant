@@ -13,9 +13,10 @@
 ;; TODO really because of strictness we should make {group x} a
 ;; basic doc type in place of {union x y}.
 
-(let nil       '())
-(to (text str) {text str})              ;XXX change name, to what?
-(let line      {line 0})
+(let nil  '())
+(let line {line 0})
+(to (literal str)
+  {text str})
 (make <>
   (to (~ doc) doc)
   (to (~ @docs) docs))
@@ -81,4 +82,4 @@
 
 (export
   pretty-print lay-out best
-  nil <> text line nest group)
+  nil <> literal line nest group)

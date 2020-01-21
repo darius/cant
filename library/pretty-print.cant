@@ -1,7 +1,7 @@
 ;; Pretty printing s-expressions
 
 (import (use 'pretty-layout)
-  pretty-print <> text line nest group)
+  pretty-print <> literal line nest group)
 
 (to (pp<- powers)
   (import powers out)
@@ -18,17 +18,17 @@
     (be `(,(? symbol? sym) ,operand)
       (may (abbrevs .get sym)
         (be #no    (call-like "(" sym x.rest ")"))
-        (be abbrev (group (<> (text abbrev) (nest abbrev.count (doc<-sx operand)))))))
+        (be abbrev (group (<> (literal abbrev) (nest abbrev.count (doc<-sx operand)))))))
     (be (? list?)  (maybe-call-like "(" x ")"))
     (be (? term?)  (maybe-call-like "{" `(,x.tag ,@x.parts) "}"))
     (be (? array?) (hug "[" x "]"))
     (be (? box?)   (call-like "#<" 'box `(,x.^) ">"))
-    (else          (text ("~w" .format x)))))
+    (else          (literal ("~w" .format x)))))
 
 (to (hug open elements close)
-  (group (<> (text open)
+  (group (<> (literal open)
              (nest open.count (docs<- elements))
-             (text close))))
+             (literal close))))
 
 (to (call-like open symbol elements close)
   (hug (chain open symbol.text " ") elements close))
