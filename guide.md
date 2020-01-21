@@ -1082,7 +1082,7 @@ example](https://github.com/darius/cant/blob/master/library/sturm.cant#L197-L198
 returns the next character from standard input, but raises an
 assertion error if it's the end-of-file. (I know, using an assertion
 here was lazy and sinful.) Perhaps more commonly [you'd
-use](https://github.com/darius/cant/blob/master/examples/games/cryptogram.cant#L115-L116)
+use](https://github.com/darius/cant/blob/master/examples/games/cryptogram.cant#L120-L121)
 `hey` to create a new object (the focus) and initialize it (the
 actions).
 
