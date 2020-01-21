@@ -39,7 +39,7 @@
                 (be d d)))))
   ;; A sequence is a kind of collection. Start implementing that:
   (to ~.keys
-    (0 .to< list.count)) ;TODO move this impl to array-trait; here, enum lazily.
+    (0 .till list.count)) ;TODO move this impl to array-trait; here, enum lazily.
   (to ~.values
     list)
   (to ~.items

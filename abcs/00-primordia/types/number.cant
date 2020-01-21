@@ -14,15 +14,15 @@
   (to (~ .and b)       (__bit-and me b))
   (to (~ .or b)        (__bit-or  me b))
   (to (~ .xor b)       (__bit-xor me b))
-  (to (~ .to< b)       (interval<- me b))
+  (to (~ .till b)      (interval<- me b))
   (to (~ .to b)        (interval<- me b.+))
   (to ~.till           (interval<- 0 me))
   (to (~ .span n)      (interval<- me (+ me n)))
   (to ~.even?          (surely (integer? me)) (= 0 (me .modulo 2)))
   (to ~.odd?           (surely (integer? me)) (not= 0 (me .modulo 2)))
   (to (~ .divides? b)  (surely (integer? me)) (= 0 (b .modulo me)))
-  (to ~.+              (__+ me 1))      ;experiment
-  (to ~.-              (__- me 1))      ;experiment
+  (to ~.+              (__+ me 1))
+  (to ~.-              (__- me 1))
   (to ~.sqrt           (sqrt me))
   (to ~.floor          (floor me))
   (to ~.exact          (exact<-inexact me))

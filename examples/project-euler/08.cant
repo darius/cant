@@ -25,7 +25,7 @@
 71636269561882670428252483600823257530420752963450" .replace "\n" ""))
 
 (to (k-slices<- xs k)                   ;ugly: better name?
-  (for each ((i (0 .to< (- xs.count k))))
+  (for each ((i (0 .till (- xs.count k))))
     (xs .slice i (+ i k))))
 
 (let digits

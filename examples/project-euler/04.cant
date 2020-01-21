@@ -2,8 +2,8 @@
 ;; The largest palindrome that's the product of two 3-digit numbers.
 
 (to (euler4 lo bound)
-  (max @(for gather ((i (lo .to< bound))) ;TODO use pairs<-
-          (for yeahs ((j (i .to< bound)))
+  (max @(for gather ((i (lo .till bound))) ;TODO use pairs<-
+          (for yeahs ((j (i .till bound)))
             (let p (* i j))
             (and (palindrome? p.string) p)))))
 

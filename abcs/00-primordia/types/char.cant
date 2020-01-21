@@ -19,9 +19,9 @@
       (be (? integer?) (char<- (- me.code b)))
       (be (? char?)    (- me.code b.code))
       (else (error "Bad arg type" b))))
-  (to (~ .to< b)      (interval<- me b))       ;These methods should be in a trait
+  (to (~ .till b)     (interval<- me b))      ;These methods should be in a trait
   (to (~ .to b)       (interval<- me b.+))    ;if they're a good idea at all...
   (to (~ .span n)     (interval<- me (+ me n)))
-  (to ~.+             (me .+ 1))      ;experiment
-  (to ~.-             (me .- 1))      ;experiment
+  (to ~.+             (me .+ 1))
+  (to ~.-             (me .- 1))
   )

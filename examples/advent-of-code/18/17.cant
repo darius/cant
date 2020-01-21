@@ -38,8 +38,8 @@
   (= (grid .get p) #\#))
 
 (to (show-map)
-  (for each! ((y (spring-y .to< yl)))
-    (for each! ((x (xl .to xh)))
+  (for each! ((y (spring-y .till yl)))
+    (for each! ((x (xl .to xh))) ;XXX exclusive range on ys and inclusive on xs? Is that right?
       (let p (~ x y))
       (out .display (if (= spring p) #\+ #\.)))
     out.newline)

@@ -43,7 +43,7 @@
   (for each! ((rr n.till))
     (exclude rr c))
 
-  (for each! ((dd ((- n.-) .to< n))) ; diagonals
+  (for each! ((dd ((- n.-) .till n))) ; diagonals
     (exclude (+ r dd) (+ c dd))
     (exclude (+ r dd) (- c dd))
     (exclude (- r dd) (+ c dd))

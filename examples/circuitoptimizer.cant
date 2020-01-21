@@ -39,7 +39,7 @@
     (let found?  (box<- #no))
     (let wire    (chain inputs L-input))
     (begin sweeping ((gate 0))
-      (for each! ((L (0 .to< (+ n-inputs gate))))
+      (for each! ((L (0 .till (+ n-inputs gate))))
         (let L-wire (wire L))
         (L-input .set! gate L)          ;XXX how about .:= or .<- or something?
         (for each! ((R (0 .to L)))
