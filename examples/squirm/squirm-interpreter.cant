@@ -231,7 +231,7 @@
     (be (? self-evaluating?)
       {expect pattern})
     (be (? array?)
-      {tuple-pat (each pat-parse pattern)})
+      {tuple-pat (each pat-parse pattern.values)})
     (be `',value
       {expect value})
     (be `(link ,pf ,pr)
@@ -643,7 +643,7 @@
       (be {tuple-pat ps}
         (and (array? val)
              (= ps.count val.count)
-             (match-pats r !map ps val)))
+             (match-pats r !map ps val.values)))
       (be {expect-var name}
         (= (env-get r name) val))
       ))
