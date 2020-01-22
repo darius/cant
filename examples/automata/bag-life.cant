@@ -9,9 +9,9 @@
 
 (to (main args)
   (let n-steps (may args
-                 (be `(,_)        20)
-                 (be `(,_ ,n-str) (number<-text n-str))
-                 (be `(,prog ,@_) (error ("Usage: ~d [#steps]" .format prog)))))
+                 (be `(,_)         20)
+                 (be `(,_ ,n-text) n-text.number)
+                 (be `(,prog ,@_)  (error ("Usage: ~d [#steps]" .format prog)))))
   (for cbreak-mode ()
     (out .display cursor-hide)
     (run r-pentomino n-steps)

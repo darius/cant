@@ -6,7 +6,7 @@
 
 (to (main args)
   (may args.rest
-    (be `(,n) (queens (number<-text n)))
+    (be `(,n) (queens n.number))
     (else     (out .say "Usage: ~d board-size\n" (args 0)))))
 
 (to (queens n)

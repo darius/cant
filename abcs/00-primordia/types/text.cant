@@ -143,6 +143,12 @@
                        ;; XXX escape the control chars
                        (else c))))
     (sink .display #\"))
+  (to ~.?number
+    (number<-text me))
+  (to ~.number
+    (may (number<-text me)
+      (be #no (error "Not numeric" me))
+      (be number number)))
   (to ~.text
     me)
   (to message

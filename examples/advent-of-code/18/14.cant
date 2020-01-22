@@ -21,7 +21,7 @@
 
 (to (digits<- n)
   (for each ((ch n.text))
-    (number<-text ch.text)))
+    ch.text.number))
 
 (to (part-1)
   (let limit (+ input 10))

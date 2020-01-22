@@ -2,8 +2,7 @@
 
 ;; TODO move this (main) somewhere meaningful, or rm it.
 (to (main `(,_ ,width-text ,@words))
-  (let lines (wrap (" " .join words)
-                   (number<-text width-text)))
+  (let lines (wrap (" " .join words) width-text.number))
   (each! (-> (out .print it)) lines))
 
 (let text "

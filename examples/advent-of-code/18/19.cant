@@ -2,13 +2,13 @@
 
 (let input (with-input-file ~.read-lines data-file))
 
-(let the-ip (number<-text (input.first.split 1)))
+(let the-ip (~.number (input.first.split 1)))
 (out .print the-ip)
 
 (let the-program (array<-list
                   (for each ((line input.rest))
                     (let v line.split)
-                    `(,(symbol<- v.first) ,@(each number<-text v.rest)))))
+                    `(,(symbol<- v.first) ,@(each ~.number v.rest)))))
 (each! (-> (out .print it)) the-program.values)
 
 (to (show insn)

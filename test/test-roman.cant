@@ -2,7 +2,7 @@
 
 (to (main args)
   (for each! ((x args.rest))
-    (let converted (may (number<-text x)
+    (let converted (may x.?number
                      (be #no (int<-roman x))
                      (be n   (roman<-int n))))
     (out .say "~d: ~d\n" x converted)))

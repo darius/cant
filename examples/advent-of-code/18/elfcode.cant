@@ -5,11 +5,11 @@
   (disassemble elfcode))
 
 (to (parse lines)
-  (let ip-reg (number<-text (lines.first.split 1)))
+  (let ip-reg (~.number (lines.first.split 1)))
   (let program (array<-list
                 (for each ((line lines.rest))
                   (let v line.split)
-                  `(,(symbol<- v.first) ,@(each number<-text v.rest)))))
+                  `(,(symbol<- v.first) ,@(each ~.number v.rest)))))
   {elfcode ip-reg program})
 
 (to (itsy-dump {elfcode ip-reg program})
