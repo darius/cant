@@ -13,8 +13,8 @@
   (let codes ((or codebook default-codebook) .inverse))
   (let result (flexarray<-))
   (let chunk
-    (for foldl ((chunk "") (c text))
-      (let t1 (text<- c))
+    (for foldl ((chunk "") (char text))
+      (let t1 char.text)
       (let chunk-1 (chain chunk t1))
       (if (codes .maps? chunk-1)
           chunk-1
@@ -44,7 +44,7 @@
                   (chunks .push! chunk)
                   (let new-chunk (chunks code))
                   (chunks .set! chunks.count.-
-                          (chain chunk (text<- new-chunk.first)))
+                          (chain chunk (new-chunk .slice 0 1)))
                   (decoding (chunks code) codes.rest)))))))
 
 (out .print (show-lzw "TOBEORNOTTOBEORTOBEORNOT"))
