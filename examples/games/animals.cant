@@ -1,3 +1,4 @@
+;; Computer plays 20 questions, an old minicomputer game.
 ;; Adapted from http://www.ulisp.com/list?1LQH
 
 (to (main _)
