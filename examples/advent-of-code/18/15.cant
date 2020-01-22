@@ -153,7 +153,7 @@
           (let spot trail.first)
           (if (goals .maps? spot)
               (if (and successes.some?
-                       (< successes.first.count trail.count))
+                       (< ((successes 0) .count) trail.count))
                   (each reverse successes.values)
                   (do (successes .push! trail)
                       (exploring (extend queue-1 (expand trail)))))

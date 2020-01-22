@@ -9,7 +9,7 @@
                   (for each ((line input.rest))
                     (let v line.split)
                     `(,(symbol<- v.first) ,@(each number<-text v.rest)))))
-(each! print the-program)
+(each! (-> (out .print it)) the-program.values)
 
 (to (show insn)
   ("~d ~w ~w ~w" .format @insn))

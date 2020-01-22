@@ -79,7 +79,7 @@ insn:    :count ' ' :count ' ' :count ' ' :count '\n' :hug.
       (for those ((op-name all-op-names))
         (let vm (vm<- (array<-list regs-pre)))
         (vm .do op-name a b c)
-        (<=> regs-post vm.get-regs)))
+        (<=> regs-post vm.get-regs.values)))
 ;;    (out .say "~w: ~w\n" op (sort compatible-ops))
     `(,op ,compatible-ops)))
 
@@ -123,7 +123,7 @@ insn:    :count ' ' :count ' ' :count ' ' :count '\n' :hug.
         (pruning))))
   (surely candidates.none?)
 
-  (each! print assignments.items)
+  (each! (-> (out .print it)) assignments.items)
   out.newline
 
   (let post-regs (run program assignments))
