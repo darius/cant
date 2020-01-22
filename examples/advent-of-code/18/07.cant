@@ -1,6 +1,8 @@
 ;; (Use run.cant to run this.)
 ;; TODO: keep cleaning this up
 
+(import (use 'sort) merge)
+
 (let `(,n-workers ,min-delay)
 ;  '(2 1))
 ;  '(2 61))
@@ -22,17 +24,6 @@
 
 (let succs (for map-by ((node nodes))
              (sort (~.keys (succs-set node)))))
-
-(to (merge xs ys)                       ;TODO should be in a sort module or something
-  (foldr insert ys xs))
-
-(to (insert x xs)                       ;TODO should be in a heapq or sort module or something
-  (hm (if (or xs.none? (< x xs.first))
-          `(,x ,@xs))
-      (if (= x xs.first)
-          xs)
-      (else
-         `(,xs.first ,@(insert x xs.rest)))))
 
 (to (delay<- node)                ;maybe go back to calling them steps
   (let letter (node 0))            ;symbols aren't looking so great now
