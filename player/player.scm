@@ -269,6 +269,8 @@
            (let ((unwind-thunk (vector-ref k 2)))
              (call unwind-thunk '()
                    (cont<- k-keep-unwinding parent-k ejector-k result))))
+          ((= (vector-ref parent-k 0) k-halt)
+           (signal k "Ejected from a different sequel than the ejector's. XXX This couldn't happen in a decent design."))
           (else
            (ejector-unwinding parent-k ejector-k result)))))
 
