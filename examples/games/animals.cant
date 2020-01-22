@@ -39,7 +39,7 @@
     (else (say "Please answer y or n (or q to quit).") (yes/no? @prompt))))
 
 (to (ask @prompt)
-  (say @(chain prompt '(" "))) stdin.read-line) ;TODO ugh
+  (say (chain @prompt) " ") stdin.read-line) ;TODO oughta be (say @prompt " ")
 
 (to (say @texts)
   out.newline
