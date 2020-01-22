@@ -10,8 +10,8 @@
   (unless (= new-data data)
     (with-output-file (~ .write new-data) filename)))
 
-(to (playing tree)
-  (may tree
+(to (playing choice-tree)
+  (may choice-tree
     (be {choose question y n}
       (if (yes/no? question)
           {choose question (playing y) n}
