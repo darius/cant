@@ -29,7 +29,7 @@
 
 ;; Return an instruction mnemonic formed out of STEM and SPECS.
 (to (combined-mnemonic<- stem specs)
-  (symbol<- ("-" .join `(,stem ,@specs)))) ;TODO join with some other separator? "/"?
+  (~.symbol ("-" .join `(,stem ,@specs)))) ;TODO join with some other separator? "/"?
 
 (to (suffixes x)
   (may x
@@ -112,7 +112,7 @@
 
 ;; Return a symbol whose name is the concatenation of ATOMS.
 (to (concat-symbol @atoms)
-  (symbol<- ("" .join (each coerce-text atoms))))
+  (~.symbol ("" .join (each coerce-text atoms))))
 
 ;;XXX finish porting
 (let abbrevs

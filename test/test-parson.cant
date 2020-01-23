@@ -36,7 +36,7 @@
           (either (then (lit-1 #\() __ (many subexpr) (lit-1 #\)) __
                         hug)
                   (then (take-1 ~.letter?) (many (take-1 ~.alphanumeric?)) __
-                        (feed (compose symbol<- chain))))))))
+                        (feed (compose ~.symbol chain))))))))
 
 (try sexpr "")
 (try sexpr "yo")

@@ -13,7 +13,7 @@
 
 (to (table<- header rows)
   (let columns (~.inverse (for each ((column header))
-                            (symbol<- (chain "." column)))))
+                            (~.symbol (chain "." column)))))
   (to (column? x) (columns .maps? x))
   (to (row<- entries)
     (make row

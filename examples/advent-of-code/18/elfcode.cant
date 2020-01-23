@@ -9,7 +9,7 @@
   (let program (array<-list
                 (for each ((line lines.rest))
                   (let v line.split)
-                  `(,(symbol<- v.first) ,@(each ~.number v.rest)))))
+                  `(,v.first.symbol ,@(each ~.number v.rest)))))
   {elfcode ip-reg program})
 
 (to (itsy-dump {elfcode ip-reg program})

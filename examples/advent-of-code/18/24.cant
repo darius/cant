@@ -68,10 +68,10 @@
     (let set (may type
                (be "immune" immunities)
                (be "weak"   weaknesses)))
-    (set .add-all! (each symbol<- attack-texts)))
+    (set .add-all! (each ~.symbol attack-texts)))
   (on (army-boost)
     (group<- n-units hit-points immunities weaknesses
-             (+ army-boost attack-damage) (symbol<- attack-type) initiative)))
+             (+ army-boost attack-damage) attack-type.symbol initiative)))
 
 (to (group<- initial-n-units hit-points immunities weaknesses
              attack-damage attack-type initiative)

@@ -78,13 +78,13 @@
   (seclude
    (then (capture (then (skip-1 name-rune?)
                         (many (skip-1 word-rune?))))
-         (feed symbol<-)
+         (feed ~.symbol)
          __)))
 
 (let word
   (seclude
    (then (capture (many (skip-1 word-rune?)))
-         (feed symbol<-)
+         (feed ~.symbol)
          __)))
 
 (to (text-quoted-by q-rune)

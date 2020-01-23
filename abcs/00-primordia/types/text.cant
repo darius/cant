@@ -151,5 +151,7 @@
       (be number number)))
   (to ~.text
     me)
+  (to ~.symbol
+    (symbol<- me))
   (to message
     (list-trait me message))) ;XXX use trait syntax instead

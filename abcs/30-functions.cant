@@ -256,7 +256,7 @@
     text? number<-text text<-number
     list<-text text-source<- text-sink<-
     text<-list text<- text<-writer
-    symbol<- term<- rune<- array<-count inexact<-exact exact<-inexact
+    term<- rune<- array<-count inexact<-exact exact<-inexact
     floor not void /
     self-evaluating?
     maybe-macroexpand-expr maybe-macroexpand-patt

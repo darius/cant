@@ -8,7 +8,7 @@
 (let the-program (array<-list
                   (for each ((line input.rest))
                     (let v line.split)
-                    `(,(symbol<- v.first) ,@(each ~.number v.rest)))))
+                    `(,v.first.symbol ,@(each ~.number v.rest)))))
 (to (print-insn (list<- op a b c))
   (out .say "[~w,~w,~w,~w],\n" op a b c))
 
