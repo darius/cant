@@ -30,7 +30,7 @@
        (play-turn)
        (playing)))))
 
-(let quitter (box<- #no))
+(let quitter (box<-))
 (to (quit) (quitter.^ .eject 'quit))
 
 (to (bye message)

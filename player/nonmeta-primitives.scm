@@ -218,7 +218,9 @@
     (source? ,input-port?) ;TODO these only know about primitive sources/sinks
     (sink? ,output-port?)
     (zilch? ,eof-object?)
-    (box<- ,box<-)
+    (box<- ,(case-lambda
+              [() (box<- (void))]
+              [(init) (box<- init)]))
     (symbol<- ,string->symbol)
     (term<- ,make-term)       ;TODO check that arguments arg is a list
     (rune<- ,integer->char)
