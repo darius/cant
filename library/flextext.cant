@@ -24,7 +24,7 @@
 
 ;; A coordinate that's never an actual text position. We'll use
 ;; -nowhere for "off the left end" and +nowhere for the right.
-(let nowhere (expt 2 40))               ;XXX a dangerous pretense
+(let nowhere (2 .** 40))               ;XXX a dangerous pretense
 
 ;; Directions from a coordinate.
 (let backward -1)

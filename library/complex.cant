@@ -9,7 +9,7 @@
   (+ (* x x) (* y y)))
 
 (to (c-abs c)
-  (sqrt (c-abs^2 c)))
+  (~.sqrt (c-abs^2 c)))
 
 (to (r*c scale {complex x y})
   {complex (* scale x)

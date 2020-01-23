@@ -79,7 +79,7 @@ insn:    {'1'+} {'#' '#'? '#'? '#'? '#'?} :make_insn.
   (let left (for each (((~ addr {insn fn n}) insns.items))
               (let show-addr (if (= addr pc)
                                  "   "
-                                 ("~3w" .format (abs (- pc addr)))))
+                                 ("~3w" .format (~.magnitude (- pc addr)))))
               ("~d ~d ~w" .format show-addr fn.name n)))
   (let right (for each (((~ i text) regs.items.rest))
                ("\tr~w: ~d" .format i text)))

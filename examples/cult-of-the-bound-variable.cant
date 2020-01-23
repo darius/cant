@@ -14,7 +14,7 @@
 (to (trace @args)
   (out .say @args))
 
-(let mask32 (- (expt 2 32) 1))
+(let mask32 (- (2 .** 32) 1))
 
 (to (run program sink source)
   (let mem (flexarray<- program))

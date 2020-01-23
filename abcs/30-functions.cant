@@ -257,7 +257,7 @@
     list<-text text-source<- text-sink<-
     text<-list text<- text<-writer
     symbol<- term<- rune<- array<-count inexact<-exact exact<-inexact
-    floor not sqrt void / expt abs gcd
+    floor not void /
     self-evaluating?
     maybe-macroexpand-expr maybe-macroexpand-patt
     setting? immutable-map? map<-items empty-setting
