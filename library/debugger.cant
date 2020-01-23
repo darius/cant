@@ -2,7 +2,7 @@
 
 (to (module powers)
   (import powers
-    out stdin extract-datum extract-script main-interactive-setting)
+    out in extract-datum extract-script main-interactive-setting)
   (import ((use 'traceback) (export out))
     print-traceback)
 
@@ -40,7 +40,7 @@
         (interacting new-focus (link focus trail)))
 
       (out .display "inspect-> ")
-      (let input (read stdin))
+      (let input (read in))
       (may (abbrevs .get input input)
         (be 'help
           (help vocab)
@@ -63,7 +63,7 @@
         (be 'value
           (let setting (main-interactive-setting ;TODO parameterize
                         .extend '(*focus*) [focus]))
-          (out .print (cant .play (read stdin) setting))
+          (out .print (cant .play (read in) setting))
           (continue))
         (be (? count?)
           (push (focus input))) ;TODO handle out-of-range
@@ -92,10 +92,10 @@
         (interacting frame callees))
 
       (to (read-eval)
-        (cant .play (read stdin) frame.setting))
+        (cant .play (read in) frame.setting))
 
       (out .display "debug-> ")
-      (let input (read stdin))  ; TODO read a line, then parse?
+      (let input (read in))  ; TODO read a line, then parse?
       (may (abbrevs .get input input)
         (be 'help
           (help vocab)

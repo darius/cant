@@ -1,7 +1,7 @@
 ;; More random crap
 
 (make console
-  (to ~.in stdin)
+  (to ~.in in)
   (to ~.out out)
   (to (~ .mode name fn)
     (system/must-succeed ("stty ~d -echo" .format name))
@@ -118,13 +118,13 @@
     (to (~)
       (the-signal-handler .^= listener-handler)
       (out .display "-> ")
-      (may (read stdin)
+      (may (read in)
         (be (? zilch?) out.newline)
         (be sexpr (print-result (cant .play sexpr setting)))))))
 
 (to (debug)
   (import ((use 'debugger)
-           (export out stdin extract-datum extract-script main-interactive-setting))
+           (export out in extract-datum extract-script main-interactive-setting))
     inspect-sequel)
   (may the-last-error.^
     (be {error k evil}

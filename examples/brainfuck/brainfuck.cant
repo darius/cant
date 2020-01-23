@@ -22,7 +22,7 @@
 ;; I/O for either version
 
 (to (out-byte byte) (out .display (rune<- byte)))
-(to (in-byte)       (may stdin.read-rune
+(to (in-byte)       (may in.read-rune
                       (be (? zilch?) -1)
                       (be ch ch.code)))
 

@@ -197,8 +197,9 @@
 (define nonmeta-a-list
   `((__as-link ,as-link)
     (= ,cant=?)
+    (in ,(current-input-port))
     (out ,(current-output-port))
-    (stdin ,(current-input-port))       ;XXX inconsistent
+    (err ,(current-error-port))
 
     (link ,list*) ;;TODO insist that last argument = nil or pair? TODO is this n-arg form useful? 
     (link? ,pair?)

@@ -67,7 +67,7 @@
 
 (let full-powered-setting-extra-names
   '(full-powered-setting main-interactive-setting
-    nano-now nanosleep out stdin os-exit open-subprocess system-randomness-source<-
+    nano-now nanosleep in out err os-exit open-subprocess system-randomness-source<-
     console
     extract-datum extract-script
     open-input-file open-output-file with-input-file with-output-file

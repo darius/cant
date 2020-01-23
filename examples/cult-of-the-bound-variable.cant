@@ -155,4 +155,4 @@
 
 (to (main `(,_ ,filename))
   (let program (with-binary-input-file read-program filename))
-  (run program out stdin))
+  (run program out in))

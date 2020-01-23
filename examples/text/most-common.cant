@@ -1,5 +1,5 @@
-;; Print the N most frequent words from stdin, in descending order,
-;; with their frequencies. N may be set from the command line.
+;; Print the N most frequent words from standard input, in descending
+;; order, with their frequencies. N may be set from the command line.
 
 (import (use 'format-tables) format-table)
 
@@ -12,7 +12,7 @@
            (else (out .say "usage: ~d [number]\n" (args 0)) ;TODO stderr
                  (os-exit 1))))
 
-  (take stdin.read-all
+  (take in.read-all
         words<-text
         bag<-
         (~ .most-common N)

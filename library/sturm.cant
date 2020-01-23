@@ -2,7 +2,7 @@
 
 (to (module powers)
   (import powers console)
-  (let stdin console.in)
+  (let in console.in)
   (let out console.out)
 
   ;; I/O modes -- Unix specific, not ANSI
@@ -194,7 +194,7 @@
   (to (get-key-unmapped)
     (if key-stack.some?
         key-stack.pop!
-        (hey stdin.read-rune
+        (hey in.read-rune
              (-> (surely (not (zilch? it))))))) ;shouldn't ever happen in raw/cbreak modes
 
   (make get-key

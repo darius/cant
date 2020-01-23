@@ -689,9 +689,11 @@ There's no trait yet because I haven't had occasion to define new
 source types.) When a source reaches end-of-file, it returns a special
 object for which `(zilch? x)` is true.
 
-Standard input is named `stdin`, and yes, that's an uncanty name and
-that sucks and I don't know what to call it. I'm sort of balking at
-putting 'in' in the namespace.
+Standard input is named `in`. Yes, I feel greedy for snatching such a
+short name out of your namespace -- but keep in mind that you
+shouldn't need to write most of your code in the full-powered setting
+where `in` is defined. In other modules the name will be free. (I need
+to make sure this style is convenient.)
 
 You connect sources and sinks to named files using `open-input-file`
 and `open-output-file`. Normally you use the convenience functions
@@ -1076,7 +1078,7 @@ The
 after sending it to each of the actions. [For
 example](https://github.com/darius/cant/blob/master/library/sturm.cant#L197-L198),
 ```
-(hey stdin.read-rune
+(hey in.read-rune
      (-> (surely (not (zilch? it)))))
 ```
 returns the next rune from standard input, but raises an
