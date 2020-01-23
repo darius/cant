@@ -20,8 +20,8 @@
   (elf .modulo board.count))
 
 (to (digits<- n)
-  (for each ((ch n.text))
-    ch.text.number))
+  (for each ((rune n.text))
+    rune.text.number))
 
 (to (part-1)
   (let limit (+ input 10))

@@ -5,14 +5,14 @@
   (to ~.close       (__close-port me))
   (to ~.ready?      (__char-ready? me))
   (to ~.read-line
-    (let ch me.read-rune)
-    (if (eof? ch)
-        ch
+    (let rune me.read-rune)
+    (if (eof? rune)
+        rune
         (text<-list
-         (begin reading ((ch ch))
-           (if (or (eof? ch) (= ch #\newline))
+         (begin reading ((rune rune))
+           (if (or (eof? rune) (= rune #\newline))
                '()
-               (link ch (reading me.read-rune)))))))
+               (link rune (reading me.read-rune)))))))
   (to ~.read-lines
     me.read-all.split-lines)  ;; TODO inefficient. also, maybe include the newlines?
   )

@@ -22,8 +22,8 @@
     (puzzle cryptogram)))
 
 (to (encrypt code text)
-  (text<-list (for each ((ch text.lowercase))
-                (code .get ch ch))))
+  (text<-list (for each ((rune text.lowercase))
+                (code .get rune rune))))
 
 (to (random-code<- chaos)
   (let shuffled (hey (array<-list alphabet)
@@ -118,8 +118,8 @@
                        (~ .delete! #\space)))
       (let clashes (~.range (for where ((n counts)) ; set of letters with >1 preimage
                               (< 1 n))))
-      (let letters-left (for each ((ch alphabet)) ; display of letters available to try
-                          (if (counts .maps? ch) #\space ch)))
+      (let letters-left (for each ((rune alphabet)) ; display of letters available to try
+                          (if (counts .maps? rune) #\space rune)))
 
       (let pos (box<- 0)) ; current index into `code`
 
@@ -130,23 +130,23 @@
       (for each! ((line lines))
         (emit #\newline)
         ;; a line of the tentative plaintext:
-        (for each! ((ch line))
-          (when (and show-cursor? ch.letter?)
+        (for each! ((rune line))
+          (when (and show-cursor? rune.letter?)
             (when (= pos.^ point.^)
               (emit cursor))
             pos.+!)
-          (emit (decoder .get ch ch)))
+          (emit (decoder .get rune rune)))
         (emit #\newline)
         ;; separator line:
-        (for each! ((ch line))
-          (emit (if ch.letter? #\- #\space)))
+        (for each! ((rune line))
+          (emit (if rune.letter? #\- #\space)))
         (emit #\newline)
         ;; line of ciphertext:
-        (for each! ((ch line))
-          (let color (hm (if (clashes .maps? (decoder .get ch)) red)
-                         (if (= ch (code point.^))              green)
-                         (else                                  unstyled)))
-          (emit (color ch)))
+        (for each! ((rune line))
+          (let color (hm (if (clashes .maps? (decoder .get rune)) red)
+                         (if (= rune (code point.^))              green)
+                         (else                                    unstyled)))
+          (emit (color rune)))
         (emit #\newline))
 
       view.values)))

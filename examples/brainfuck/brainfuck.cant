@@ -73,8 +73,8 @@
 
 (to (bf-compile program)
   (let expr-stack
-    (for foldl ((stack '(0)) (ch program))
-      (may ch
+    (for foldl ((stack '(0)) (rune program))
+      (may rune
         (be #\[ (link 'd stack))
         (be #\] (let (link top next rest) stack)
                 (link `(begin looping ((d ,next))
@@ -83,7 +83,7 @@
                              (looping ,top)))
                       rest))
         (else (let (link top rest) stack)
-              (link (may ch
+              (link (may rune
                       (be #\< `(~.- ,top))
                       (be #\> `(~.+ ,top))
                       (be #\- `(decr ,top))

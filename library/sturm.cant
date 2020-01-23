@@ -98,8 +98,8 @@
     (may scene
       (be (? text?)
         (screen-state .establish! wanted-state)
-        (for each! ((ch scene))
-          (out .display (if (= ch #\newline) cr-lf ch))))
+        (for each! ((rune scene))
+          (out .display (if (= rune #\newline) cr-lf rune))))
       (be (? rune?)
         (screen-state .establish! wanted-state)
         (out .display (if (= scene #\newline) cr-lf scene)))

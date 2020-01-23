@@ -17,8 +17,8 @@
              (= outcome "#"))))
 
 (to (state<-lineup lineup)
-  (~.range (for where ((ch lineup))
-             (= ch #\#))))
+  (~.range (for where ((rune lineup))
+             (= rune #\#))))
 
 (to (part1)
   (let state0 (state<-lineup initial-lineup))

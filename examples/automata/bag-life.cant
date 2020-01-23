@@ -52,14 +52,14 @@
     ,(max @numbers)))
 
 (to (grid<-picture lines)
-  (~.range (for where ((ch (map<-lines lines)))
-             (not ch.whitespace?))))
+  (~.range (for where ((rune (map<-lines lines)))
+             (not rune.whitespace?))))
 
 (to (map<-lines lines)
   (map<-items (for gather (((~ row line) lines.items))
-                (for each (((~ col ch) line.items))
+                (for each (((~ col rune) line.items))
                   (~ `(,col ,(- row)) ; minus so y-coordinates increase upwards
-                     ch)))))
+                     rune)))))
 
 (let r-pentomino (grid<-picture [" **"
                                  "** "

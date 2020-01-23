@@ -78,8 +78,8 @@
   (to (~ .replace pattern replacement) ;TODO more efficient
     ;; TODO unify the cases?
     (hm (if pattern.none?
-            (for foldr ((ch me) (rest replacement))
-              (chain replacement (text<- ch) rest)))
+            (for foldr ((rune me) (rest replacement))
+              (chain replacement (text<- rune) rest)))
         (else
          (let limit me.count)
          (text<-list
@@ -133,15 +133,15 @@
     (tweaked .split "\n"))
   (to (~ .selfie sink)
     (sink .display #\")
-    (for each! ((c me))
-      (sink .display (may c            ;XXX super slow. We might prefer to use the Scheme built-in.
+    (for each! ((rune me))
+      (sink .display (may rune    ;XXX super slow. We might prefer to use the Scheme built-in.
                        (be #\\ "\\\\")
                        (be #\" "\\\"")
                        (be #\newline "\\n")
                        (be #\tab     "\\t")
                        (be #\return  "\\r")
                        ;; XXX escape the control runes
-                       (else c))))
+                       (else rune))))
     (sink .display #\"))
   (to ~.?number
     (number<-text me))
