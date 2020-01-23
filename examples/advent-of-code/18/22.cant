@@ -136,8 +136,8 @@
 
 ;; (specialized from utils for speed)
 (to (manhattan-distance p q)
-  (+ (abs (- (p 0) (q 0)))
-     (abs (- (p 1) (q 1)))))
+  (+ (~.magnitude (- (p 0) (q 0)))
+     (~.magnitude (- (p 1) (q 1)))))
 
 (out .say "~w\n" (part-2))
 
