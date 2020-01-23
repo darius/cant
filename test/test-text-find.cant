@@ -1,9 +1,9 @@
-(import (use 'text-search)
-  text-matcher<- text-match/brute)
+(import (use 'text-find)
+  text-finder<- text-find/brute)
 
 (to (check-both pat cases)
-  (check (-> (text-match/brute pat it)) cases)
-  (check (text-matcher<- pat) cases))
+  (check (-> (text-find/brute pat it)) cases)
+  (check (text-finder<- pat) cases))
   
 (to (check match cases)
 ;;  (out .say "checking ~w\n" match)
@@ -36,14 +36,14 @@
   (g .range #\a #\c))
 
 (for all ((pat a-babble))
-  (should = 0 ((text-matcher<- pat) pat)))
+  (should = 0 ((text-finder<- pat) pat)))
 
 (to (no-match-through? pat dat k)
   (not (for some ((i (0 .thru k)))
          (= pat (dat .slice 0 i)))))
 
 (for all ((pat a-babble) (dat a-babble))
-  (may (text-match/brute pat dat)
+  (may (text-find/brute pat dat)
     (be #no (should no-match-through? pat dat (- dat.count pat.count)))
     (be i (and (should no-match-through? pat dat i.-) ;TODO rethink this `should` function
                (should = pat (dat .slice i (+ i pat.count)))))))
@@ -51,5 +51,5 @@
 ;; TODO some text method for (= pat (dat .slice i (+ i pat.count)))
 
 (for all ((pat a-babble) (dat a-babble))
-  (let i (text-match/brute pat dat))
-  (should = i ((text-matcher<- pat) dat)))
+  (let i (text-find/brute pat dat))
+  (should = i ((text-finder<- pat) dat)))

@@ -41,7 +41,7 @@
 (loud-use "test-roman")
 (loud-use "test-sort")
 (loud-use "test-sset")
-(loud-use "test-text-search")
+(loud-use "test-text-find")
 (loud-use "test-flextext")
 (loud-use "test-text-wrap")
 (loud-use "test-unify")

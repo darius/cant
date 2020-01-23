@@ -1,15 +1,13 @@
 ;; Text search:
-;; Return index of first subtext in DAT equal to PAT, or #no.
-;; Note that (text-match "" "") = 0.
-
-;; Based on my old scheme-data-structures code.
+;; Return the index of the first slice in DAT equal to PAT, or #no.
+;; Note that (text-find "" "") = 0.
 
 ;; TODO this should be in runtime.cant somewhere
 (let alphabet-size 256)
 
 ;; Brute force algorithm
 ;; TODO make this a built-in text method
-(to (text-match/brute pat dat)
+(to (text-find/brute pat dat)
   (let P pat.count)
   (let j-limit (+ (- dat.count P) 1))
   (begin sliding ((j 0))
@@ -27,7 +25,7 @@
 ;; TODO looks different from
 ;; https://en.wikipedia.org/wiki/Boyer%E2%80%93Moore%E2%80%93Horspool_algorithm
 ;; -- is it worse?
-(to (text-matcher<- pat)
+(to (text-finder<- pat)
   (let m pat.count.-)
   (if (< m 0)
       (on (dat) 0)
@@ -55,4 +53,4 @@
                          (else
                            (checking k.- j.-))))))))))
 
-(export text-matcher<- text-match/brute)
+(export text-finder<- text-find/brute)
