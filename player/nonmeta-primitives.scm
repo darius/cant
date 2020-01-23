@@ -216,7 +216,8 @@
     (term? ,term?)
     (source? ,input-port?) ;TODO these only know about primitive sources/sinks
     (sink? ,output-port?)
-    (eof? ,eof-object?)
+    (eof? ,eof-object?)                 ;XXX rm
+    (zilch? ,eof-object?)
     (box<- ,box<-)
     (symbol<- ,string->symbol)
     (term<- ,make-term)       ;TODO check that arguments arg is a list

@@ -48,7 +48,7 @@
           (continue))
         (be 'quit
           'ok)
-        (be (? eof?)
+        (be (? zilch?)
           'ok)
         (be 'up
           (if trail.none?
@@ -102,7 +102,7 @@
           (continue))
         (be 'quit
           'ok)
-        (be (? eof?)
+        (be (? zilch?)
           'ok)
         (be 'resume
           (frame .answer (read-eval)))

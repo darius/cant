@@ -6,11 +6,11 @@
   (to ~.ready?      (__char-ready? me))
   (to ~.read-line
     (let rune me.read-rune)
-    (if (eof? rune)
+    (if (zilch? rune)
         rune
         (text<-list
          (begin reading ((rune rune))
-           (if (or (eof? rune) (= rune #\newline))
+           (if (or (zilch? rune) (= rune #\newline))
                '()
                (link rune (reading me.read-rune)))))))
   (to ~.read-lines

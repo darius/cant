@@ -35,7 +35,6 @@
                      claim
                      cps
                      ejector
-                     eof
                      link
                      map
                      nil
@@ -49,7 +48,8 @@
                      symbol
                      term
                      text
-                     void))
+                     void
+                     zilch))
 
 (define base-path (getenv "CANT_DIR"))       ;TODO duplicated in abcs.scm
 
@@ -170,7 +170,6 @@
 (define script/claim     (script-for 'claim))
 (define script/cps       (script-for 'cps))
 (define script/ejector   (script-for 'ejector))
-(define script/eof       (script-for 'eof))
 (define script/link      (script-for 'link))
 (define script/map       (script-for 'map))
 (define script/nil       (script-for 'nil))
@@ -185,6 +184,7 @@
 (define script/term      (script-for 'term))
 (define script/text      (script-for 'text))
 (define script/void      (script-for 'void))
+(define script/zilch     (script-for 'zilch))
 
 (define (extract-script object)
   (cond
@@ -202,7 +202,7 @@
    ((term? object)        script/term)
    ((mapi? object)        script/map)
    ((eq? object (void))   script/void)
-   ((eof-object? object)  script/eof)
+   ((eof-object? object)  script/zilch)
    ((script? object)      script/script)
    ((procedure? object)   script/procedure)
    ((setting? object)     script/setting)

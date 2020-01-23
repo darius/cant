@@ -119,7 +119,7 @@
       (the-signal-handler .^= listener-handler)
       (out .display "-> ")
       (may (read stdin)
-        (be (? eof?) out.newline)
+        (be (? zilch?) out.newline)
         (be sexpr (print-result (cant .play sexpr setting)))))))
 
 (to (debug)

@@ -195,7 +195,7 @@
     (if key-stack.some?
         key-stack.pop!
         (hey stdin.read-rune
-             (-> (surely (not (eof? it))))))) ;shouldn't ever happen in raw/cbreak modes
+             (-> (surely (not (zilch? it))))))) ;shouldn't ever happen in raw/cbreak modes
 
   (make get-key
     (to (~)

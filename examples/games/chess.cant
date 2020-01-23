@@ -17,7 +17,7 @@
       (begin asking ()
         (console.out .say "~d, your move? " (side-name board.mover))
         (may console.in.read-line
-          (be (? eof?) {resign})
+          (be (? zilch?) {resign})
           (be answer (or (board .parse-move answer)
                          (do (console.out .display "Illegal move\n")
                              (asking)))))))))

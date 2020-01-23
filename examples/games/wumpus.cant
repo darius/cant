@@ -78,7 +78,7 @@
 (to (ask question)
   (out .say "~d " question)
   (may stdin.read-line
-    (be (? eof?) (quit))
+    (be (? zilch?) (quit))
     (be answer   answer.uppercase)))
 
 

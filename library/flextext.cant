@@ -3,7 +3,6 @@
 ;; Glossary:
 ;;   p   coordinate (position between runes in text, or `nowhere`)
 ;;   dir direction
-;;   cs  rune-set
 
 ;; A flextext is a mutable, growable/shrinkable sequence of runes.
 ;; Coordinates denote the spaces *between* rune positions (or

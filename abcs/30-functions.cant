@@ -198,7 +198,7 @@
 
 (to (read-all source) ;XXX confusing name, since source.read-all returns a text
   (let thing (read source))
-  (if (eof? thing)
+  (if (zilch? thing)
       '()
       (link thing (read-all source))))
 
@@ -252,7 +252,7 @@
     gather/lazy method<- link/lazy map-by
     hey max-by tally min union-over each/lazy map<-values mayhap
     grid* sum = link link? list? number? integer? symbol? cue? ;TODO rename cue? or rm it
-    claim? rune? array? box? term? source? sink? eof? box<-
+    claim? rune? array? box? term? source? sink? zilch? box<-
     text? number<-text text<-number
     list<-text text-source<- text-sink<-
     text<-list text<- text<-writer

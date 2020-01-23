@@ -14,7 +14,7 @@
     (to (~ .set! key command)
       (bindings .set! key command))
     (to (~ key)
-      (if (eof? key)
+      (if (zilch? key)
           'exit
           (bindings .get key default-command)))
     ))

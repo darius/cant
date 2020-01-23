@@ -1,3 +1,0 @@
-(make-trait eof-primitive me
-  ;; The eof object.
-  )

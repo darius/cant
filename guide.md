@@ -687,7 +687,7 @@ Conversely, a primitive 'source' reads from an input file. (See
 [source.cant](https://github.com/darius/cant/blob/master/abcs/00-primordia/types/source.cant).
 There's no trait yet because I haven't had occasion to define new
 source types.) When a source reaches end-of-file, it returns a special
-object for which `(eof? x)` is true.
+object for which `(zilch? x)` is true.
 
 Standard input is named `stdin`, and yes, that's an uncanty name and
 that sucks and I don't know what to call it. I'm sort of balking at
@@ -1077,7 +1077,7 @@ after sending it to each of the actions. [For
 example](https://github.com/darius/cant/blob/master/library/sturm.cant#L197-L198),
 ```
 (hey stdin.read-rune
-     (-> (surely (not (eof? it)))))
+     (-> (surely (not (zilch? it)))))
 ```
 returns the next rune from standard input, but raises an
 assertion error if it's the end-of-file. (I know, using an assertion

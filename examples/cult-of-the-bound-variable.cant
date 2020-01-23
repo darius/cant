@@ -113,7 +113,7 @@
           (be 11 ;(trace "r~w = input\n" c)  ;; N.B. C version has fflush (stdout); first
             (let s source.read-rune)
             (reg .set! c
-                 (if (eof? s) mask32 s.text)) ;XXX shouldn't this be an array of bytes?
+                 (if (zilch? s) mask32 s.text)) ;XXX shouldn't this be an array of bytes?
             (next))
 
           (be 12 ;(trace "dup r~w; finger r~w\n" b c)
@@ -130,7 +130,7 @@
   (let program (flexarray<-))
   (begin reading ()
     (let b3 source.read-u8)
-    (unless (eof? b3)
+    (unless (zilch? b3)
       (let b2 source.read-u8)
       (let b1 source.read-u8)
       (let b0 source.read-u8)

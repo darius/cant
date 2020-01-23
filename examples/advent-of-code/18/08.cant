@@ -3,8 +3,8 @@
 ;; TODO: use parson instead? semantic feedback is awkward
 (to (read-tree source)
   (begin parsing ()
-    (let nc (read source)) (surely (not (eof? nc)))
-    (let nm (read source)) (surely (not (eof? nm)))
+    (let nc (read source)) (surely (not (zilch? nc)))
+    (let nm (read source)) (surely (not (zilch? nm)))
     {node (for each/seq ((_ nc.till))
             (parsing))
           (for each/seq ((_ nm.till))
