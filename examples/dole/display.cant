@@ -13,7 +13,7 @@
 (to (display-buffer<-)
   (array<-list ('("") .repeat rows)))
 
-;; Return a text of glyphs representing rune at column x.
+;; Return text representing rune at column x.
 (to (render-rune rune x)
   (if rune.printable?
       rune.text
