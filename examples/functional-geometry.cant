@@ -69,15 +69,15 @@
 
 ;; Squish p left of q.
 (to ((beside<- p q) {frame origin right up})
-  (let right/2 (v/ right 2))
-  (superpose<- (p {frame origin              right/2 up})
-               (q {frame (v+ origin right/2) right/2 up})))
+  (let half-right (v/ right 2))
+  (superpose<- (p {frame origin                 half-right up})
+               (q {frame (v+ origin half-right) half-right up})))
 
 ;; Squish p above q.  TODO make it below instead?
 (to ((stack<- p q) {frame origin right up})
-  (let up/2 (v/ up 2))
-  (superpose<- (q {frame origin           right up/2})
-               (p {frame (v+ origin up/2) right up/2})))
+  (let half-up (v/ up 2))
+  (superpose<- (q {frame origin              right half-up})
+               (p {frame (v+ origin half-up) right half-up})))
 
 ;; A quarter-turn counterclockwise.
 (to ((turn<- p) {frame origin right up})

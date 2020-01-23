@@ -26,10 +26,7 @@
 
   (begin running ((program program) (pc 0))
     
-;    (insn-count .update ~.+)
-;    (insn-count .^= 0)
-;    (tick-count .update ~.+)
-;    (when (= tick-count.^ 30000)
+;    (when (= tick-count.+! 30000)
 ;      (os-exit 1))
 
     (to (next)
