@@ -1051,7 +1051,7 @@ To create an anonymous single-argument function with multiple pattern-action cla
 This feature will probably be dropped; it doesn't come up often, and
 doing without is never much worse. (I'm keeping it for now since it's
 used in the desugaring of `may`, plus it feels like there may be some
-worthwhile idea somewhere in this neighborhood.)
+worthwhile idea somewhere in the neighborhood.)
 
 More syntax that'd occasionally be nice if it existed: a `(matcher
 pattern)` creating a single-argument function that returns `#yes` if
