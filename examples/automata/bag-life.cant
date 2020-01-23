@@ -4,7 +4,7 @@
 
 (import ((use 'sturm) (export console))
   cbreak-mode)
-(import (use 'ansi-term)
+(import (use 'ansi-terminal)
   clear-screen cursor-show cursor-hide)
 
 (to (main args)
