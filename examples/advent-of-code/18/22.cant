@@ -16,13 +16,14 @@
 (out .print target)
 
 (let geologic-index<-
-  (memoize (given
-             (be (= target) 0)
-             (be '(0 0)     0)
-             (be `(,x 0)    (* x 16807))
-             (be `(0 ,y)    (* y 48271))
-             (be `(,x ,y)   (* (erosion-level<- `(,x.- ,y))
-                               (erosion-level<- `(,x ,y.-)))))))
+  (memoize (on (p)
+             (may p
+               (be (= target) 0)
+               (be '(0 0)     0)
+               (be `(,x 0)    (* x 16807))
+               (be `(0 ,y)    (* y 48271))
+               (be `(,x ,y)   (* (erosion-level<- `(,x.- ,y))
+                                 (erosion-level<- `(,x ,y.-))))))))
 
 (to (erosion-level<- p)
   ((+ (geologic-index<- p) depth) .modulo 20183))

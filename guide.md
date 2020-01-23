@@ -1048,20 +1048,10 @@ To create an anonymous single-argument function with multiple pattern-action cla
   (else action3))
 ```
 
-The use for it doesn't seem to come up often. Here's one good example:
-the (XXX outdated) [counting function in
-examples/lambda-calculus/prelude.cant](https://github.com/darius/cant/blob/master/examples/lambda-calculus/prelude.cant#L15-L18). Without
-`given` the most obvious way to write it would be the stuttery:
-```
-{primitive (on (n)
-             (begin counting ((n n))
-               (may n
-                 (be 0          lc-zero)
-                 (be (? count?) (apply lc-succ (counting n.-))))))}
-```
-
-I'm thinking of dropping this. While there are more places it could be
-used, when you do you lose the documentation value of naming the argument.
+This feature will probably be dropped; it doesn't come up often, and
+doing without is never much worse. (I'm keeping it for now since it's
+used in the desugaring of `may`, plus it feels like there may be some
+worthwhile idea somewhere in this neighborhood.)
 
 More syntax that'd occasionally be nice if it existed: a `(matcher
 pattern)` creating a single-argument function that returns `#yes` if

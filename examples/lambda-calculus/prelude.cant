@@ -5,9 +5,10 @@
 
   (to (make-church<-claim lc-no)
     {primitive (on (lc-yes)
-                 {primitive (given
-                              (be #no  lc-no)
-                              (be #yes lc-yes))})})
+                 {primitive (on (x)
+                              (may x
+                                (be #no  lc-no)
+                                (be #yes lc-yes)))})})
 
   (to (make-church<-count lc-zero)
     {primitive

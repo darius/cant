@@ -299,8 +299,8 @@
 (to (side-name side)
   side.text.capitalize)
 
-(let opponent
-  (given
+(to (opponent mover)
+  (may mover
     (be 'white 'black)
     (be 'black 'white)))
 
