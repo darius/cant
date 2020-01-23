@@ -4,17 +4,17 @@
 (to (show-lzw text)
   (for each ((code (encode text)))
     (if (<= code 255)
-        (text<- (char<- code))
+        (text<- (rune<- code))
         code)))
 
-(let default-codebook (each text<- ((char<- 0) .span 256)))
+(let default-codebook (each text<- ((rune<- 0) .span 256)))
 
 (to (encode text @(optional codebook))
   (let codes ((or codebook default-codebook) .inverse))
   (let result (flexarray<-))
   (let chunk
-    (for foldl ((chunk "") (char text))
-      (let t1 char.text)
+    (for foldl ((chunk "") (rune text))
+      (let t1 rune.text)
       (let chunk-1 (chain chunk t1))
       (if (codes .maps? chunk-1)
           chunk-1

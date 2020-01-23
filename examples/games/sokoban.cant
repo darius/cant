@@ -90,9 +90,9 @@ Level ~w ~d Move ~w")
             (trail .push! after)))
         (playing level)))))
 
-;; We represent a grid as an array of characters, including the
-;; newlines, with every line the same length (which we call the width
-;; of the grid).
+;; We represent a grid as an array of runes, including the newlines,
+;; with every line the same length (which we call the width of the
+;; grid).
 (to (parse floor-plan)
   (do (let line-lengths (each ~.count floor-plan.split-lines))
       (surely (= 1 line-lengths.range.count))) ;XXX require

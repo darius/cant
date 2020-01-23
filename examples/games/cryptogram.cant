@@ -59,7 +59,7 @@
           (be #\tab      (pad .shift-to-space  1))
           (be 'backspace (pad .shift-by -1) (pad .jot #\space))
           (be 'del       (pad .jot #\space) (pad .shift-by 1))
-          (be (and (? char?) (? ~.uppercase?))
+          (be (and (? rune?) (? ~.uppercase?))
                          (pad .shift-to-code 1 key))
           (else          (when (or (= key #\space) (alphabet .find? key))
                            (pad .jot key)
@@ -151,19 +151,19 @@
 
       view.values)))
 
-;; Expand tabs; blank out other control characters.
+;; Expand tabs; blank out other control runes.
 (to (clean text)
   (let r (flexarray<-))
-  (for each! ((ch text))
-    (hm (when (= ch #\tab)
+  (for each! ((rune text))
+    (hm (when (= rune #\tab)
           (begin padding ()
             (r .push! #\space)
             (unless (8 .divides? r.count)
               (padding))))
-        (when (< ch #\space)
+        (when (< rune #\space)
           (r .push! #\space))
         (else
-          (r .push! ch))))
+          (r .push! rune))))
   r.values)
 
 (to (running-sum numbers)

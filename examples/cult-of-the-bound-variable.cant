@@ -107,11 +107,11 @@
             (next))
 
           (be 10 ;(trace "output r~w\n" c)
-            (sink .display (char<- (reg c)))
+            (sink .display (rune<- (reg c)))
             (next))
 
           (be 11 ;(trace "r~w = input\n" c)  ;; N.B. C version has fflush (stdout); first
-            (let s source.read-char)
+            (let s source.read-rune)
             (reg .set! c
                  (if (eof? s) mask32 s.text)) ;XXX shouldn't this be an array of bytes?
             (next))

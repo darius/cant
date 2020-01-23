@@ -364,7 +364,7 @@ The accessors on lists above are all generic. They apply to texts (strings) too,
 | ----------------------------- | ------------- | ------------- |
 | `(string? x)`                 | `(text? x)`       |  |
 | `(string a b c)`              | `(text<- a b c)`       |  |
-| `(list->string chars)`        | `(text<-list chars)`       |  `chars` may be any sequence. I guess the function's misnamed. Or, really, we should call the concrete type 'link-list' and the abstract one 'list' instead of 'sequence'. TODO? |
+| `(list->string chars)`        | `(text<-list runes)`       |  `runes` may be any sequence with `.first` and `.rest` methods. I guess the function's misnamed. Or, really, we should call the concrete type 'link-list' and the abstract one 'list' instead of 'sequence'. TODO? |
 | `(string->list s)`            | `s.values`       | `.values` in general returns a sequence which needn't be a link-list: but it should be efficient to walk through with `.first`/`.rest`. |
 | `(string-length s)`           | `s.count`     | Just like `.count` on lists. |
 | `(string-ref s n)`            | `(s n)`       | Likewise. |
@@ -709,7 +709,7 @@ capabilities, because no ordinary code, including the modules
 themselves, will have read access to the logs.)
 
 'Text sinks' implement the sink protocol but just produce a text
-out of the characters they are given. The constructor `text-sink<-`
+out of the runes (characters) they are given. The constructor `text-sink<-`
 is in the computational setting, not a capability, because creating a
 text is not an effect. (Consuming time, space, energy are not
 considered to be 'effects'.) You'd typically use the convenience
@@ -1076,10 +1076,10 @@ The
 after sending it to each of the actions. [For
 example](https://github.com/darius/cant/blob/master/library/sturm.cant#L197-L198),
 ```
-(hey stdin.read-char
+(hey stdin.read-rune
      (-> (surely (not (eof? it)))))
 ```
-returns the next character from standard input, but raises an
+returns the next rune from standard input, but raises an
 assertion error if it's the end-of-file. (I know, using an assertion
 here was lazy and sinful.) Perhaps more commonly [you'd
 use](https://github.com/darius/cant/blob/master/examples/games/cryptogram.cant#L120-L121)

@@ -43,9 +43,9 @@
       (let p (~ x y))
       (out .display (if (= spring p) #\+ #\.)))
     out.newline)
-  (grid .show (on (chars)
-                (for each! ((ch chars))
-                  (out .display (or ch #\.)))
+  (grid .show (on (runes)
+                (for each! ((rune runes))
+                  (out .display (or rune #\.)))
                 out.newline))
   out.newline)
 

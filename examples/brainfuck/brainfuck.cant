@@ -21,8 +21,8 @@
 
 ;; I/O for either version
 
-(to (out-byte byte) (out .display (char<- byte)))
-(to (in-byte)       (may stdin.read-char
+(to (out-byte byte) (out .display (rune<- byte)))
+(to (in-byte)       (may stdin.read-rune
                       (be (? eof?) -1)
                       (be ch ch.code)))
 

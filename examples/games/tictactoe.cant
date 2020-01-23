@@ -81,7 +81,7 @@
                   plaint)
       (may get-key.uppercase
         (be #\Q #no)
-        (be key (or (and (char? key)
+        (be key (or (and (rune? key)
                          (<= #\1 key #\9)
                          (update grid (move<-key key)))
                     (asking "Hey, that's not a move. Give me one of the digits below.")))))))
@@ -92,8 +92,8 @@
 (to ((highlight-if special?) x)
   (if (special? x) (green x) x))
 
-(to (move<-key digit-char)
-  (- #\9 digit-char))
+(to (move<-key digit-rune)
+  (- #\9 digit-rune))
 
 
 ;; 'AI' players

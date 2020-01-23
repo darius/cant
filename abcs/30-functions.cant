@@ -252,11 +252,11 @@
     gather/lazy method<- link/lazy map-by
     hey max-by tally min union-over each/lazy map<-values mayhap
     grid* sum = link link? list? number? integer? symbol? cue? ;TODO rename cue? or rm it
-    claim? char? array? box? term? source? sink? eof? box<-
+    claim? rune? array? box? term? source? sink? eof? box<-
     text? number<-text text<-number
     list<-text text-source<- text-sink<-
     text<-list text<- text<-writer
-    symbol<- term<- char<- array<-count inexact<-exact exact<-inexact
+    symbol<- term<- rune<- array<-count inexact<-exact exact<-inexact
     floor not sqrt void / expt abs gcd
     self-evaluating?
     maybe-macroexpand-expr maybe-macroexpand-patt

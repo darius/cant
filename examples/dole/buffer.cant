@@ -3,7 +3,7 @@
 ;; a key-map.
 
 (import (use 'flextext)  flextext<- backward forward)
-(import (use "char-set") char-set<-)
+(import (use "rune-set") rune-set<-)
 (import ((use "display") (export out))
                          render rows cols)   ; XXX rename to num-rows or something
 (import (use "key-map")  key-map<-)
@@ -24,7 +24,7 @@
                     (searching L mid)
                     (searching mid H)))))))
 
-(let newline (char-set<- #\newline))
+(let newline (rune-set<- #\newline))
 
 ;; Return a new buffer.
 (to (buffer<-)
@@ -53,7 +53,7 @@
     (point .+= text.count))
 
   (to (find-line p dir)
-    (ft .clip (ft .find-char-set p dir newline)))
+    (ft .clip (ft .find-rune-set p dir newline)))
 
   ;; TODO: preserve goal column; respect formatting, such as tabs;
   ;; treat long lines as defined by display
@@ -73,10 +73,10 @@
                     (ft .clip next-end.-))))
   ;; XXX this can wrap around since ft .clip moves `nowhere` to 0.
    
-  (let key-map (key-map<- (on (ch)
-                            (if (char? ch)
-                                (insert ch.text)
-                                (log "Not a char: ~w" ch)))))
+  (let key-map (key-map<- (on (key)
+                            (if (rune? key)
+                                (insert key.text)
+                                (log "Not a rune: ~w" key)))))
 
   (make buffer
 
@@ -85,11 +85,11 @@
       (point .^= 0)
       (origin .^= 0))
 
-    (to ~.backward-delete-char
+    (to ~.backward-delete-rune
       (ft .delete point.^.- 1)
-      (buffer .move-char backward))
+      (buffer .move-rune backward))
 
-    (to ~.forward-delete-char
+    (to ~.forward-delete-rune
       (ft .delete point.^ 1))
 
     (to ~.beginning-of-line
@@ -109,7 +109,7 @@
       (for each! ((`(,key ,binding) bindings)) ;TODO better choice of structure?
         (key-map .set! key binding)))
 
-    (to (~ .move-char offset)
+    (to (~ .move-rune offset)
       (point .^= (ft .clip (+ point.^ offset))))
 
     (to ~.previous-line (previous-line))

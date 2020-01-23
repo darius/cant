@@ -1,12 +1,12 @@
 ;; Binding keys to commands
 
-(to (ctrl ch)                           ;XXX duplicate code
-  (- ch.uppercase 64))
+(to (ctrl rune)                           ;XXX duplicate code
+  (- rune.uppercase 64))
 
-(to (meta ch)
-  (text<- esc ch))
+(to (meta rune)
+  (text<- esc rune))
 
-(let esc (char<- 27))
+(let esc (rune<- 27))
 
 (to (key-map<- default-command)
   (let bindings (!map<-))

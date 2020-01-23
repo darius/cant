@@ -33,6 +33,9 @@
 (let list<-string list<-text)
 (let string<-list text<-list)
 
+(let char? rune?)
+(let char<- rune<-)
+
 ;; N.B. different from what Cant is now calling 'tuple'. Could get awkward.
 (let tuple? array?)
 (let tuple<- array<-)

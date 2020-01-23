@@ -17,8 +17,8 @@
         ""
         ;; De-quadratified (foldr1 (on (x y) (chain x me y)) texts)
         (do (let mine me.values)
-            (text<-list (foldr1 (on (s chars)
-                                  (s.values .chain (mine .chain chars.values)))
+            (text<-list (foldr1 (on (s runes)
+                                  (s.values .chain (mine .chain runes.values)))
                                 texts)))))
   (to ~.values       (list<-text me))
   (to (~ .get key)   (me .get key #no)) ;TODO duplicated because delegation is slow
@@ -98,18 +98,18 @@
         (me .right-justify n    pad)))
   (to (~ .left-justify n)
     (me .left-justify n #\space))
-  (to (~ .left-justify n pad-char)
+  (to (~ .left-justify n pad-rune)
     (let pad (- n me.count))
     (if (<= pad 0)
         me
-        (chain me (pad-char.text .repeat pad))))
+        (chain me (pad-rune.text .repeat pad))))
   (to (~ .right-justify n)
     (me .right-justify n #\space))
-  (to (~ .right-justify n pad-char)
+  (to (~ .right-justify n pad-rune)
     (let pad (- n me.count))
     (if (<= pad 0)
         me
-        (chain (pad-char.text .repeat pad) me)))
+        (chain (pad-rune.text .repeat pad) me)))
   (to (~ .center n)
     (let pad (- n me.count))
     (if (<= pad 0)
@@ -140,7 +140,7 @@
                        (be #\newline "\\n")
                        (be #\tab     "\\t")
                        (be #\return  "\\r")
-                       ;; XXX escape the control chars
+                       ;; XXX escape the control runes
                        (else c))))
     (sink .display #\"))
   (to ~.?number

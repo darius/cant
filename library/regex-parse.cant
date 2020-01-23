@@ -13,14 +13,14 @@ factor   :  primary (  '*'    :star
                      | '?'    :maybe
                     )?.
 primary  :  '(' exp ')'
-         |  '[' char* ']'     :join :oneof
+         |  '[' rune* ']'     :join :oneof
          |  '.'               :dot
          |  '\\\\' :anyone    :literal
          |  !( '.' | '(' | ')'
              | '*' | '+' | '?'
              | '|' | '[' | ']')
             :anyone           :literal.
-char     :  '\\\\' :anyone
+rune     :  '\\\\' :anyone
          |  !']' :anyone.
 "))
 

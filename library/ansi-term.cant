@@ -1,7 +1,7 @@
 ;; ANSI terminal control
 ;; TODO factor wrt sturm
 
-(let prefix (text<- (char<- 27) #\[)) ;TODO more string escapes
+(let prefix (text<- (rune<- 27) #\[)) ;TODO more text escape sequences
 
 (to (seq text) (chain prefix text))
 

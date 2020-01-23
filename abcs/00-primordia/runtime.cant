@@ -308,7 +308,7 @@
 
 ;;XXX so should some of these be in list-trait?
 
-(to (text<-list chars) (__string<-list (as-list chars)))
+(to (text<-list runes) (__string<-list (as-list runes)))
 
 
 (make chain {extending right-folding-operation}
@@ -456,8 +456,8 @@
           (to ~.first (~ i xs.first))
           (to ~.rest  (enumerate xs.rest i.+))))))
 
-(to (text<- @chars)
-  (text<-list chars))
+(to (text<- @runes)
+  (text<-list runes))
 
 (to (text<-writer take-sink)
   (let sink (text-sink<-))

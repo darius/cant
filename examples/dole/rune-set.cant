@@ -1,0 +1,10 @@
+;; Sets of runes
+
+(to (rune-set<- @runes)
+  (let set runes.range)
+  (make rune-set
+    (to (~ .maps? ch) (set .maps? ch))
+    ))
+    
+(export
+  rune-set<-)

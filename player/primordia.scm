@@ -32,7 +32,6 @@
 
 (define type-names '(array
                      box
-                     char
                      claim
                      cps
                      ejector
@@ -42,6 +41,7 @@
                      nil
                      number
                      procedure
+                     rune
                      script
                      setting
                      sink
@@ -167,7 +167,6 @@
 
 (define script/array     (script-for 'array))
 (define script/box       (script-for 'box))
-(define script/char      (script-for 'char))
 (define script/claim     (script-for 'claim))
 (define script/cps       (script-for 'cps))
 (define script/ejector   (script-for 'ejector))
@@ -177,6 +176,7 @@
 (define script/nil       (script-for 'nil))
 (define script/number    (script-for 'number))
 (define script/procedure (script-for 'procedure))
+(define script/rune      (script-for 'rune))
 (define script/script    (script-for 'script))
 (define script/setting   (script-for 'setting))
 (define script/sink      (script-for 'sink))
@@ -197,7 +197,7 @@
    ((symbol? object)      script/symbol)
    ((output-port? object) script/sink)
    ((input-port? object)  script/source)
-   ((char? object)        script/char)
+   ((char? object)        script/rune)
    ((boolean? object)     script/claim)
    ((term? object)        script/term)
    ((mapi? object)        script/map)

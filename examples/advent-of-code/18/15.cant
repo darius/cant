@@ -58,8 +58,8 @@
       (= (area q) #\.)))
 
   ;; A unit is a goblin or elf.
-  (to (unit? char)
-    ("GE" .find? char))
+  (to (unit? rune)
+    ("GE" .find? rune))
 
   ;; Map from each remaining unit's position to its hit points,
   ;; initially 200. (A unit's species is known by its G or E on the

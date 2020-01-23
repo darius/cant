@@ -58,10 +58,10 @@
 (to (push-lit<- text)
   (constant<- (push text)))
 
-(to (name-char? ch) (or ch.letter?       (= ch #\_)))
-(to (word-char? ch) (or ch.alphanumeric? (= ch #\_)))
+(to (name-rune? ch) (or ch.letter?       (= ch #\_)))
+(to (word-rune? ch) (or ch.alphanumeric? (= ch #\_)))
 
-(let word-boundary (invert (skip-1 word-char?)))
+(let word-boundary (invert (skip-1 word-rune?)))
 
 (let skip-line
   (delay (: (either (lit-1 #\newline)
@@ -76,24 +76,24 @@
 
 (let name 
   (seclude
-   (then (capture (then (skip-1 name-char?)
-                        (many (skip-1 word-char?))))
+   (then (capture (then (skip-1 name-rune?)
+                        (many (skip-1 word-rune?))))
          (feed symbol<-)
          __)))
 
 (let word
   (seclude
-   (then (capture (many (skip-1 word-char?)))
+   (then (capture (many (skip-1 word-rune?)))
          (feed symbol<-)
          __)))
 
-(to (text-quoted-by q-char)
-  (let q (lit-1 q-char))
-  (let quoted-char
+(to (text-quoted-by q-rune)
+  (let q (lit-1 q-rune))
+  (let quoted-rune
     (then (either (lit-1 #\\) (invert q))
           any-1))
   (seclude
-   (then q (many quoted-char) q __
+   (then q (many quoted-rune) q __
          (feed-list (-> ("" .join it))))))
 
 (let qtext  (text-quoted-by #\'))

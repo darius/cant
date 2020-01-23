@@ -68,21 +68,21 @@
   (to (an-int g)
     (g .range (- g.size) g.size))
 
-  (to (a-char g)
-    (char<- (g .natural 256)))
+  (to (a-rune g)
+    (rune<- (g .natural 256)))
 
-  (to (a-printable-char g)
-    (char<- (g .natural 32 126)))
+  (to (a-printable-rune g)
+    (rune<- (g .natural 32 126)))
 
   (to ((a-list-of gen) g)
     (for each ((_ g.a-size.till))
       (gen g)))
 
   (to (a-text g)
-    (text<-list ((a-list-of a-char) g)))
+    (text<-list ((a-list-of a-rune) g)))
 
   (to (a-printable-text g)
-    (text<-list ((a-list-of a-printable-char) g)))
+    (text<-list ((a-list-of a-printable-rune) g)))
 
   ;; TODO find a new name for this after the retupling
   (to ((a-tuple @gens) g)
@@ -106,7 +106,7 @@
 
 
   (export
-    a-claim a-count an-int a-char a-printable-char a-text a-printable-text
+    a-claim a-count an-int a-rune a-printable-rune a-text a-printable-text
     a-list-of a-tuple a-choice
     weighted-choice
     all should

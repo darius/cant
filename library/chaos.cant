@@ -48,6 +48,6 @@
 (to (read-u32 source)
   (for foldl ((n 0) (_ (4 .till)))
     (+ (n .<< 8)
-       source.read-char.code)))
+       source.read-rune.code)))
 
 (export chaos<- chaos random-chaos<- random-seed<-)

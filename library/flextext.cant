@@ -1,18 +1,18 @@
 ;; Ported from github.com/darius/dole
 
 ;; Glossary:
-;;   p   coordinate (position between characters in text, or `nowhere`)
+;;   p   coordinate (position between runes in text, or `nowhere`)
 ;;   dir direction
-;;   cs  charset
+;;   cs  rune-set
 
-;; A flextext is a mutable, growable/shrinkable sequence of characters.
-;; Coordinates denote the spaces *between* character positions (or
+;; A flextext is a mutable, growable/shrinkable sequence of runes.
+;; Coordinates denote the spaces *between* rune positions (or
 ;; before or after them, at the ends), in [0..size]. The coordinate
-;; before the first character is 0, then after the first character and
+;; before the first rune is 0, then after the first rune and
 ;; before the second is 1, and so on, until the coordinate after the
-;; last character is `size`.
+;; last rune is `size`.
 ;; 
-;; We store the characters at integer indices in a flexarray
+;; We store the runes at integer indices in a flexarray
 ;; (starting at index 0) in two chunks which we call the head and the
 ;; tail, separated by the gap. The fields `head` and `gap` (and `tail`
 ;; if it weren't implicit) denote the lengths of these spans. `size`
@@ -48,30 +48,30 @@
     {range q (- h q)})
 
   ;; Pre: p is in [0..size).
-  (to (get-char-after p)
+  (to (get-rune-after p)
     (t (if (< p head.^) p (+ p gap.^))))
 
-  ;; Return the `span` characters after `p0` as a text.
+  ;; Return the `span` runes after `p0` as a text.
   (to (get p0 span0)
     (let {range p span} (clip-range p0 span0))
-    (text<-list (each get-char-after (p .span span))))
+    (text<-list (each get-rune-after (p .span span))))
 
-  ;; Return the position after the character in the text that is in
-  ;; char-set and that comes up first in searching from p in
+  ;; Return the position after the rune in the text that is in
+  ;; rune-set and that comes up first in searching from p in
   ;; direction dir. If none, return nowhere or -nowhere.
   ;; XXX untested, probably broken
-  (to (find-char-set p dir char-set)
+  (to (find-rune-set p dir rune-set)
     ((if (= dir forward)
-         find-char-set-forward
-         find-char-set-backward)
+         find-rune-set-forward
+         find-rune-set-backward)
      (clip p)
-     char-set))
+     rune-set))
 
-  (to (find-char-set-forward p char-set)
+  (to (find-rune-set-forward p rune-set)
     (let H head.^)
     (begin searching ((p p))
       (if (< p H)
-          (if (char-set .maps? (t p))
+          (if (rune-set .maps? (t p))
               p.+
               (searching p.+))
           (do
@@ -79,22 +79,22 @@
             (let S size.^)
             (begin persevering ((p p))
               (if (< p S)
-                  (if (char-set .maps? (t (+ G p)))
+                  (if (rune-set .maps? (t (+ G p)))
                       p.+
                       (persevering p.+))
                   nowhere))))))
 
-  (to (find-char-set-backward p char-set)
+  (to (find-rune-set-backward p rune-set)
     (let H head.^)
     (let G gap.^)
     (begin searching ((p p))
       (if (< H p)
-          (if (char-set .maps? (t (+ G p.-)))
+          (if (rune-set .maps? (t (+ G p.-)))
               p
               (searching p.-))
           (begin persevering ((p p))
             (if (< 0 p)
-                (if (char-set .maps? (t p.-))
+                (if (rune-set .maps? (t p.-))
                     p
                     (persevering p.-))
                 (- nowhere))))))
@@ -102,7 +102,7 @@
   (to (grow n)
     (+ n (n .quotient 2)))
 
-  ;; Replace the `span` characters after `p` by `replacement`.
+  ;; Replace the `span` runes after `p` by `replacement`.
   ;; TODO this code is hard to follow
   (to (replace p0 span0 replacement)
     (let {range p span} (clip-range p0 span0))
@@ -113,7 +113,7 @@
         (t .move! head.^       t (+ gap.^ head.^) (+ gap.^ p)))
     (head .^= p)
 
-    ;; Delete the next `span` characters.
+    ;; Delete the next `span` runes.
     (gap .+= span)
     (size .-= span)
 
@@ -145,8 +145,8 @@
     (to (~ .insert p text)       (replace p 0 text))
     (to (~ .replace p span text) (replace p span text))
     (to ~.count                  size.^)
-    (to (~ .find-char-set p dir char-set)
-      (find-char-set p dir char-set))
+    (to (~ .find-rune-set p dir rune-set)
+      (find-rune-set p dir rune-set))
     ;; TODO: delegate to a text trait? but texts are immutable...
     (to ~.keys
       size.^.till)

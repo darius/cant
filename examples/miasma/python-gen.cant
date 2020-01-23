@@ -154,11 +154,11 @@
 (to (py-insn-name mnemonic)
   (as-legal-py-identifier mnemonic.text))
 
-;; Return `text`, but munging out any characters that are used in our 
+;; Return `text`, but munging out any runes that are used in our 
 ;; mnemonics but aren't legal in Python identifiers.
 (to (as-legal-py-identifier text)
-  (text<-list (for yeahs ((ch text))
-                (and (not (":%" .find? ch))
-                     (hm (if ("-." .find? ch) #\_)
-                         (if (= #\? ch) #\c)
-                         (else ch))))))
+  (text<-list (for yeahs ((rune text))
+                (and (not (":%" .find? rune))
+                     (hm (if ("-." .find? rune) #\_)
+                         (if (= #\? rune) #\c)
+                         (else rune))))))

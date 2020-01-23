@@ -1,18 +1,18 @@
 (make-trait source-primitive me
-  (to ~.read-char   (__read-char me))
+  (to ~.read-rune   (__read-char me))
   (to ~.read-u8     (__get-u8 me))
   (to ~.read-all    (__read-all me))
   (to ~.close       (__close-port me))
   (to ~.ready?      (__char-ready? me))
   (to ~.read-line
-    (let ch me.read-char)
+    (let ch me.read-rune)
     (if (eof? ch)
         ch
         (text<-list
          (begin reading ((ch ch))
            (if (or (eof? ch) (= ch #\newline))
                '()
-               (link ch (reading me.read-char)))))))
+               (link ch (reading me.read-rune)))))))
   (to ~.read-lines
     me.read-all.split-lines)  ;; TODO inefficient. also, maybe include the newlines?
   )

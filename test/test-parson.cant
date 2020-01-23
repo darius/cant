@@ -42,7 +42,7 @@
 (try sexpr "yo")
 (try sexpr "(lisp)")
 (try sexpr "(lisp (the  GREATEST  ) hurrah)")
-(try sexpr "(oops (unbalanced parens -- before unknown chars))")
+(try sexpr "(oops (unbalanced parens -- before unknown runes))")
 (try sexpr "(ok ; I am comment-goat.
 hi)")
 

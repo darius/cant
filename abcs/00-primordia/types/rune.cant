@@ -1,4 +1,4 @@
-(make-trait char-primitive me
+(make-trait rune-primitive me
   (to ~.code          (__char->integer me))
   (to ~.letter?       (__char-letter? me))
   (to ~.digit?        (__char-digit? me))
@@ -13,11 +13,11 @@
   (to ~.text          (text<- me))
   (to (~ .+ n)   ;; Is this a good idea?
     (surely (integer? n) "Bad arg type" n)
-    (char<- (+ me.code n)))
+    (rune<- (+ me.code n)))
   (to (~ .- b)
     (may b
-      (be (? integer?) (char<- (- me.code b)))
-      (be (? char?)    (- me.code b.code))
+      (be (? integer?) (rune<- (- me.code b)))
+      (be (? rune?)    (- me.code b.code))
       (else (error "Bad arg type" b))))
   (to (~ .till b)     (interval<- me b))      ;These methods should be in a trait
   (to (~ .thru b)     (interval<- me b.+))    ;if they're a good idea at all...

@@ -34,11 +34,11 @@
       (do (let skip (array<-count alphabet-size pat.count))
           (for each! ((i m.till))
             (skip .set! ((pat i) .code) (- m i)))
-          ;; On a mismatch whose last char of dat == (pat i), we'll
-          ;; slide right by 1 + (|pat| - i). Then that last char will
+          ;; On a mismatch whose last rune of dat == (pat i), we'll
+          ;; slide right by 1 + (|pat| - i). Then that last rune will
           ;; align with (pat new-i). It'll be the rightmost i in the
-          ;; range with that char, because the above loop overwrites
-          ;; preceding instances of the same char. We always make
+          ;; range with that rune, because the above loop overwrites
+          ;; preceding instances of the same rune. We always make
           ;; progress because i's range excludes the last position of
           ;; pat.
 

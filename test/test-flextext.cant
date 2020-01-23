@@ -20,5 +20,5 @@ out.newline
   out.newline
   (for each! ((i (0 .thru t.count)))
     (out .say "back from ~w: ~w\n"
-              i (t .find-char-set i backward X)))
+              i (t .find-rune-set i backward X)))
   )

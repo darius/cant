@@ -21,7 +21,7 @@
 
   ;; ANSI terminal escape codes
 
-  (let esc (text<- (char<- 27))) ;TODO support more escapes in text literals
+  (let esc (text<- (rune<- 27))) ;TODO support more escapes in text literals
 
   (let prefix (chain esc "["))
 
@@ -94,13 +94,13 @@
   (let screen-state (screen-state<-))
 
   (to (paint cursor-seen? wanted-state scene)
-    ;; TODO: skip any terminal codes in the scene's texts/chars
+    ;; TODO: skip any terminal codes in the scene's texts/runes
     (may scene
       (be (? text?)
         (screen-state .establish! wanted-state)
         (for each! ((ch scene))
           (out .display (if (= ch #\newline) cr-lf ch))))
-      (be (? char?)
+      (be (? rune?)
         (screen-state .establish! wanted-state)
         (out .display (if (= scene #\newline) cr-lf scene)))
       (be (? (-> (or (list? it) (array? it))))
@@ -156,7 +156,7 @@
 
   (let key-map
     (map<- (~ (text<- (ctrl #\X))   'esc) ;XXX a hack until the timeout works
-           (~ (text<- (char<- 127)) 'backspace)
+           (~ (text<- (rune<- 127)) 'backspace)
 
            (~ (chain esc "[1~")  'home)   (~ (chain esc "[H") 'home)
            (~ (chain esc "[2~")  'ins)
@@ -194,7 +194,7 @@
   (to (get-key-unmapped)
     (if key-stack.some?
         key-stack.pop!
-        (hey stdin.read-char
+        (hey stdin.read-rune
              (-> (surely (not (eof? it))))))) ;shouldn't ever happen in raw/cbreak modes
 
   (make get-key

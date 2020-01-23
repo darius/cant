@@ -26,8 +26,8 @@
 (to ((nonempty r) Ns) (r (Ns .except 0)))
 (to ((either r s) Ns) ((r Ns) .union (s Ns)))
 
-(to (one-of chars)
-  (let set (~.range (each text<- chars)))
+(to (one-of runes)
+  (let set (~.range (each text<- runes)))
   (on (Ns)
     (if (Ns .maps? 1) set none)))
 

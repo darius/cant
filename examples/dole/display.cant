@@ -13,11 +13,11 @@
 (to (display-buffer<-)
   (array<-list ('("") .repeat rows)))
 
-;; Return a text of glyphs representing character ch at column x.
-(to (render-char ch x)
-  (if ch.printable?
-      ch.text
-      ("\\x~02x" .format ch.code)))
+;; Return a text of glyphs representing rune at column x.
+(to (render-rune rune x)
+  (if rune.printable?
+      rune.text
+      ("\\x~02x" .format rune.code)))
 
 (to (module powers)
   (import powers out)
@@ -37,11 +37,11 @@
         (when (= p point)
           (point-x .^= x)
           (point-y .^= y))
-        (let ch (flextext .get p 1))
+        (let text (flextext .get p 1))
         (let pp p.+)
-        (if (or (= ch "") (= ch "\n"))
+        (if (or (= text "") (= text "\n"))
             (rendering pp 0 y.+)  ;; TODO flexarray to text, i guess
-            (begin appending ((glyphs (render-char ch.first x))
+            (begin appending ((glyphs (render-rune text.first x))
                               (x x)
                               (y y))
               (hm (if glyphs.none? (rendering pp x y))

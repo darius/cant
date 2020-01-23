@@ -145,8 +145,8 @@
     (p.^ text far i vals)))
 
 ;; Advance one place if possible -- i.e. we're short of the end, and
-;; ok? is true of the element at the current place (normally, the
-;; character we're looking at).
+;; ok? is true of the element at the current place (normally, the rune
+;; we're looking at).
 (to ((skip-1 ok?) text far i vals)
   (if (and (text .maps? i) (ok? (text i)))
       (empty text (max far i.+) i.+ vals)
@@ -155,7 +155,7 @@
 
 ;; Derived combinators
 
-;; Like (skip-1 ok?), but appending the one-element sequence (one-char
+;; Like (skip-1 ok?), but appending the one-element sequence (one-rune
 ;; subtext) to the vals.
 (to (take-1 ok?)
   (capture (skip-1 ok?)))
@@ -170,8 +170,8 @@
 (let end (invert skip-any-1))
 
 ;; E.g. (lit-1 #\x) advances past exactly "x", or fails.
-(to (lit-1 my-char)
-  (skip-1 (-> (= my-char it)))) ;TODO I think <=> in place of = would catch some bugs in client code
+(to (lit-1 my-rune)
+  (skip-1 (-> (= my-rune it)))) ;TODO I think <=> in place of = would catch some bugs in client code
 
 ;; E.g. (lit "hello") advances past exactly "hello", or fails.
 (to (lit text)

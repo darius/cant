@@ -209,7 +209,7 @@
     (symbol? ,symbol?)
     (cue? ,cue?)
     (claim? ,boolean?)
-    (char? ,char?)
+    (rune? ,char?)
     (text? ,string?)
     (array? ,vector?)
     (box? ,box?)
@@ -220,7 +220,7 @@
     (box<- ,box<-)
     (symbol<- ,string->symbol)
     (term<- ,make-term)       ;TODO check that arguments arg is a list
-    (char<- ,integer->char)
+    (rune<- ,integer->char)
     (__string<-list ,list->string)
     (array<-count ,make-vector)
     (inexact<-exact ,exact->inexact)  ;XXX rename or something
