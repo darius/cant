@@ -36,7 +36,7 @@
   (to (update-origin)
     (let rendering (render ft origin.^ point.^))
     (hm (if rendering.point-visible?
-            rendering)
+          rendering)
         (else
           (to (has-point? o)
             ((render ft o point.^) .point-centered?))
