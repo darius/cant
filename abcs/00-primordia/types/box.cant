@@ -1,7 +1,7 @@
 ;; TODO: should a box be a collection?
 (make-trait box-primitive me
   (to ~.^             (__box-value me))
-  (to (~ .^= val)     (__box-value-set! me val))
+  (to (~ .^= value)   (__box-value-set! me value))
   (to (~ .update f) ;TODO better name? I left out the '!' to emphasize it returns the value
     (let value (f me.^))
     (me .^= value)
