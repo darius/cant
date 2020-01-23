@@ -9,7 +9,7 @@
              10)    ; default
            (be `(,(view ~.?number (? yeah? number)))
              number)
-           (else (out .say "usage: ~d [number]\n" (args 0)) ;TODO stderr
+           (else (err .say "usage: ~d [number]\n" (args 0))
                  (os-exit 1))))
 
   (take in.read-all

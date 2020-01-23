@@ -17,6 +17,6 @@
     (be `(,_ ,filename "-data" ,data-name)
       (run filename data-name))
     (be `(,me ,@_)
-      (out .say "Usage: cant ~d day [-data data]\n" me)
-      (out .say "e.g.:  cant ~d 06 -data 06.test\n" me)
+      (err .say "Usage: cant ~d day [-data data]\n" me)
+      (err .say "e.g.:  cant ~d 06 -data 06.test\n" me)
       (os-exit 1))))

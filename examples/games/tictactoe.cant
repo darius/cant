@@ -7,12 +7,12 @@
 (to (main `(,me ,@args))
   (let players
     (hm (if args.none?
-            (list<- human-play spock-play))
+          (list<- human-play spock-play))
         (if (= args.count 2)
-            (each parse-player args)) ;TODO catch errors
+          (each parse-player args)) ;TODO catch errors
         (else
-          (out .say "Usage: ~d [X-player O-player]\n" me)
-          (out .say "Available players: ~d\n"
+          (err .say "Usage: ~d [X-player O-player]\n" me)
+          (err .say "Available players: ~d\n"
                     (" " .join (sort player-registry.keys)))
           (os-exit 1))))
   (tty-ttt @`(,@players ,empty-grid))) ;TODO allow @arguments in non-final position in expressions?
