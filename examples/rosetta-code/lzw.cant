@@ -28,24 +28,21 @@
 (to (decode codes @(optional codebook))
   ("" .join (chunked-decode codes (or codebook default-codebook))))
 
-;; TODO ugly!
 (to (chunked-decode codes codebook)
-  (if codes.none?
-      '()
-      (do
-        (let chunks (flexarray<-list codebook))
-        (let output (flexarray<-))
-        (begin decoding ((chunk (chunks codes.first))
-                         (codes codes.rest)) ;TODO not a great idea, reusing the name
-          (output .push! chunk)
-          (if codes.none?
-              output.values
-              (do (let code codes.first)
-                  (chunks .push! chunk)
-                  (let new-chunk (chunks code))
-                  (chunks .set! chunks.count.-
-                          (chain chunk (new-chunk .slice 0 1)))
-                  (decoding (chunks code) codes.rest)))))))
+  (hm (if codes.none? '())
+      (else (let chunks (flexarray<-list codebook))
+            (let output (flexarray<-))
+            (begin decoding ((chunk (chunks codes.first))
+                             (codes codes.rest))
+              (output .push! chunk)
+              (when codes.some?
+                (let code codes.first)
+                (chunks .push! chunk)
+                (let new-chunk (chunks code))
+                (chunks .set! chunks.count.-
+                        (chain chunk (new-chunk .slice 0 1)))
+                (decoding (chunks code) codes.rest)))
+            output.values)))
 
 (out .print (show-lzw "TOBEORNOTTOBEORTOBEORNOT"))
 
