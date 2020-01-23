@@ -508,8 +508,8 @@
         (be #\~
           (sink .display "~") ;TODO: complain if there were formatting directives before "~"?
           (scanning sink t.rest args))
-        (be (? ~.digit? ch)
-          (let new-width (+ (- ch #\0)
+        (be (? ~.digit? rune)
+          (let new-width (+ (- rune #\0)
                             (if width (* 10 width) 0)))
           (parsing sink t.rest pad sign new-width args))
         (be #\x  ; hex number, XXX works wrong on negative numbers

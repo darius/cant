@@ -10,7 +10,7 @@
                     (state c)))))
   (ending-states .maps? accept))
 
-;; A state is a function from rune to set of successor states.
+;; A state is a function from rune c to set of successor states.
 (to (accept c)                    empty-set)
 (to ((shift succs) c)             succs)
 (to ((expect ch succs) c)         (if (= ch c)       succs empty-set))

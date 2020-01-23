@@ -58,8 +58,8 @@
 (to (push-lit<- text)
   (constant<- (push text)))
 
-(to (name-rune? ch) (or ch.letter?       (= ch #\_)))
-(to (word-rune? ch) (or ch.alphanumeric? (= ch #\_)))
+(to (name-rune? rune) (or rune.letter?       (= rune #\_)))
+(to (word-rune? rune) (or rune.alphanumeric? (= rune #\_)))
 
 (let word-boundary (invert (skip-1 word-rune?)))
 

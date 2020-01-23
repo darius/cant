@@ -24,7 +24,7 @@
 (to (out-byte byte) (out .display (rune<- byte)))
 (to (in-byte)       (may in.read-rune
                       (be (? zilch?) -1)
-                      (be ch ch.code)))
+                      (be rune rune.code)))
 
 
 ;; Interpreter
@@ -40,23 +40,23 @@
       (be #\] (running (if (= 0 (data .get d 0)) i.+ (jump i))
                        d))
       (be #no 'done)
-      (be ch  (running i.+
-                       (may ch
-                         (be #\< d.-)
-                         (be #\> d.+)
-                         (else (may ch
-                                 (be #\- (data .set! d (- (data .get d 0) 1)))
-                                 (be #\+ (data .set! d (+ (data .get d 0) 1)))
-                                 (be #\. (out-byte (data .get d 0)))
-                                 (be #\, (data .set! d (in-byte)))
-                                 (else))
-                               d)))))))
+      (be rune (running i.+
+                        (may rune
+                          (be #\< d.-)
+                          (be #\> d.+)
+                          (else (may rune
+                                  (be #\- (data .set! d (- (data .get d 0) 1)))
+                                  (be #\+ (data .set! d (+ (data .get d 0) 1)))
+                                  (be #\. (out-byte (data .get d 0)))
+                                  (be #\, (data .set! d (in-byte)))
+                                  (else))
+                                d)))))))
 
 (to (match-brackets program)
   (let jump (!map<-))
   (for foldl ((stack '())
-              ((~ i ch) program.items))
-    (may ch
+              ((~ i rune) program.items))
+    (may rune
       (be #\[ (link i stack))
       (be #\] (jump .set! stack.first i.+)
               (jump .set! i stack.first.+)

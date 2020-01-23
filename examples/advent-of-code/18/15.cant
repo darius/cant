@@ -161,15 +161,15 @@
 
   (to (show)
     (let notes (flexarray<-))
-    (for each! (((~ p ch) area.items))
-      (may ch
+    (for each! (((~ p rune) area.items))
+      (may rune
         (be #\newline
           (out .say "   ~d\n" (", " .join notes.values))
           notes.clear!)
         (else
-          (when (unit? ch)
-            (notes .push! ("~d(~w)" .format ch (units p))))
-          (out .display ch)))))
+          (when (unit? rune)
+            (notes .push! ("~d(~w)" .format rune (units p))))
+          (out .display rune)))))
 
   (make field
     (to ~.do-round!        (do-round))
