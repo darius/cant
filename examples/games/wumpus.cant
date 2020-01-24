@@ -26,9 +26,9 @@
   (with-ejector
    (on (ejector)
      (quitter .^= ejector)
-     (begin playing ()
+     (begin ()
        (play-turn)
-       (playing)))))
+       (again)))))
 
 (let quitter (box<-))
 (to (quit) (quitter.^ .eject 'quit))
@@ -51,7 +51,7 @@
       (be "S" (shoot))
       (be "M" (move))
       (be "Q" (quit))
-      (else   (asking)))))
+      (else (asking)))))
 
 (to (describe)
   (let here hunter.where)

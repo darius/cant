@@ -376,7 +376,9 @@
                (parse-bindings bindings
                  (lambda (ps es)
                    `((hide (make ,proc (to (~ ,@ps) ,@body)))
-                     ,@es))))))
+                     ,@es))))
+              ((__ (: bindings list?) . body)
+               `(begin again ,bindings ,@body))))
     ('if     (mlambda
               ((__ test if-so if-not)
                `(may ,test

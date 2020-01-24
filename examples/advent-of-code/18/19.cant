@@ -18,8 +18,8 @@
   (make vm
 
     (to ~.run
-      (begin running ()
-        (when vm.step (running))))
+      (begin ()
+        (when vm.step (again))))
 ;       (when (program .maps? (regs ip))
 ;         (out .say "ip=~w ~w ~d " (regs ip) regs (show (program (regs ip))))
  ;        vm.step

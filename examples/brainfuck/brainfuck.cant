@@ -77,10 +77,10 @@
       (may rune
         (be #\[ (link 'd stack))
         (be #\] (let (link top next rest) stack)
-                (link `(begin looping ((d ,next))
+                (link `(begin ((d ,next))
                          (if (= 0 (data d))
                              d
-                             (looping ,top)))
+                             (again ,top)))
                       rest))
         (else (let (link top rest) stack)
               (link (may rune
