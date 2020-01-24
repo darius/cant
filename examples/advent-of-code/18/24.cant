@@ -76,9 +76,9 @@
   (let n-units (box<- initial-n-units))
   (to (effective-power) (* n-units.^ attack-damage))
   (surely (not (immunities .intersects? weaknesses)))  ; TODO method .disjoint?
-  (let qualities                                       ;TODO immutable?
-    (!map<-items (chain (for each ((immune immunities.keys)) (~ immune 'immunity))
-                        (for each ((weak   weaknesses.keys)) (~ weak 'weakness)))))
+  (let qualities
+    (map<-items (chain (for each ((key immunities.keys)) (~ key 'immunity))
+                       (for each ((key weaknesses.keys)) (~ key 'weakness)))))
   (make group
     (to ~.count
       n-units.^)
@@ -87,7 +87,7 @@
     (to ~.initiative
       initiative)
     (to ~.target-selection-key
-      (list<- (- (effective-power)) (- initiative)))
+      (~ (- (effective-power)) (- initiative)))
     (to (~ .would-damage target)
       (target .damage-from attack-type (effective-power)))
     (to (~ .attack! target)
