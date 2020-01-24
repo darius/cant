@@ -45,9 +45,7 @@
 ;;                my-name (+ i 1) (enemy-nums j) damage))
       (let j (for max-by ((j enemies.keys))
                (let enemy (enemies j))
-               (list<- (damages j)   ;; or just compute it here
-                       enemy.effective-power
-                       enemy.initiative)))
+               (~ (damages j) enemy.effective-power enemy.initiative)))
       (when (< 0 (damages j))
         (result .push! (~ group (enemies j)))
         (enemies .pop! j)
