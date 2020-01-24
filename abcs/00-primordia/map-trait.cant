@@ -34,11 +34,10 @@
     (map.values .find? value))
   (to (~ .find value default)
     (begin searching ((items map.items))
-      (if items.none?
-          default
+      (hm (if items.none? default)
           (may items.first
-            (be (~ k v) (if (= v value) k (searching items.rest)))
-            (else (searching items.rest))))))
+            (be (~ k (= value)) k))
+          (else (searching items.rest)))))
   (to (~ .find value)
     (make missing)
     (let key (map .find value missing))
