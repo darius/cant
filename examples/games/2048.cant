@@ -26,7 +26,7 @@
                    (else             "")))
     (frame board score)
     (may get-key.lowercase
-      (be #\q 'quitting)
+      (be #\q)
       (be #\u (if history.none?
                   (continue)
                   (playing history.pop! #yes)))

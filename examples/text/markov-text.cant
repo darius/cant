@@ -43,12 +43,12 @@
         (let next-state `(,@(state .slice 1) ,choice))
         (link choice (spewing next-state))))))
 
-;; Pick a random element from a bag, weighted by frequency.
+;; Pick a random key from a nonempty bag, weighted by frequency.
 (to (sample-from-bag chaos bag)           ;TODO dedupe: similar in squickcheck.scm
-  (let n bag.total)  ;; Pre: n > 0
-  (begin counting ((k (chaos .random-integer n))
-                   (items bag.items))
+  (begin ((n     (chaos .random-integer bag.total))
+          (items bag.items))
     (let (~ key count) items.first)
-    (if (< k count)
+    (if (< n count)
         key
-        (counting (- k count) items.rest))))
+        (again (- n count)
+               items.rest))))
