@@ -32,14 +32,18 @@
       {choose question mistake new}))
 
 (to (yes-answer? @prompt)
-  (may (take (ask @prompt) ~.trim (~ .get 0))
-    (be #\y #yes)
-    (be #\n #no)
-    (be #\q (os-exit 0))
-    (else (say "Please answer y or n (or q to quit).\n") (yes-answer? @prompt))))
+  (begin ()
+    (may (take (ask @prompt) ~.trim (~ .get 0))
+      (be #\y #yes)
+      (be #\n #no)
+      (be #\q (os-exit 0))
+      (else (say "Please answer y or n (or q to quit).\n") (again)))))
 
 (to (ask @prompt)
-  (say (chain @prompt) " ") in.read-line) ;TODO oughta be (say @prompt " ")
+  (say (chain @prompt) " ") ;TODO oughta be (say @prompt " ")
+  (may in.read-line
+    (be (? zilch?) (os-exit 0))
+    (be line line)))
 
 (to (say @texts)
   (each! (-> (out .display it)) texts))
