@@ -33,7 +33,7 @@
 
 (to (yes-answer? @prompt)
   (begin ()
-    (may (take (ask @prompt) ~.trim (~ .get 0))
+    (may ((ask @prompt) .get 0)
       (be #\y #yes)
       (be #\n #no)
       (be #\q (os-exit 0))
@@ -43,7 +43,7 @@
   (say (chain @prompt) " ") ;TODO oughta be (say @prompt " ")
   (may in.read-line
     (be (? zilch?) (os-exit 0))
-    (be line line)))
+    (be line line.trim)))
 
 (to (say @texts)
   (each! (-> (out .display it)) texts))
