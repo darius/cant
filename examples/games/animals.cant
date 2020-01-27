@@ -13,11 +13,11 @@
 (to (playing choice-tree)
   (may choice-tree
     (be {choose question y n}
-      (if (yes/no? question)
+      (if (yes-answer? question)
           {choose question (playing y) n}
           {choose question y (playing n)}))
     (be (? text? animal)
-      (hm (when (yes/no? "Is it " animal "?")
+      (hm (when (yes-answer? "Is it " animal "?")
             (say "Ho ho!\n")
             animal)
           (else
@@ -27,20 +27,19 @@
   (let new (ask "What were you thinking of?"))
   (let question
     (ask "Give me a yes/no question to distinguish " new " from " mistake ":"))
-  (if (yes/no? "What would the answer be for " new "?")
+  (if (yes-answer? "What would the answer be for " new "?")
       {choose question new mistake}
       {choose question mistake new}))
 
-(to (yes/no? @prompt)
-  (may ((ask @prompt) .trim)
-    (be (? (~ .prefix? "y")) #yes)
-    (be (? (~ .prefix? "n")) #no)
-    (be (? (~ .prefix? "q")) (os-exit 0))
-    (else (say "Please answer y or n (or q to quit).") (yes/no? @prompt))))
+(to (yes-answer? @prompt)
+  (may (take (ask @prompt) ~.trim (~ .get 0))
+    (be #\y #yes)
+    (be #\n #no)
+    (be #\q (os-exit 0))
+    (else (say "Please answer y or n (or q to quit).\n") (yes-answer? @prompt))))
 
 (to (ask @prompt)
   (say (chain @prompt) " ") in.read-line) ;TODO oughta be (say @prompt " ")
 
 (to (say @texts)
-  out.newline
   (each! (-> (out .display it)) texts))
