@@ -356,7 +356,7 @@ OK, moving on. Scheme functions on lists:
 | `(list-ref xs n)`             | `(xs n)`     |  |
 | `(list-tail xs n)`            | `(xs .slice n)`     |  There's also `(xs .slice start-index after-index)` |
 | `(member x xs)`               | `(xs .slice (xs .find x))`     |  (Provided `x` is in `xs`. More on `.find` below.) |
-| `(cadr (assoc 'x '((a b) (x y))))`   | `((map<-lists '((a b) (x y))) 'x)`     |  More on `map<-` below. |
+| `(cadr (assoc 'x '((a b) (x y))))`   | `((map<-lists '((a b) (x y))) 'x)`     |  More on maps below. |
 
 The accessors on lists above are all generic. They apply to texts (strings) too, for a start:
 
@@ -402,8 +402,8 @@ Collections fit in this taxonomy:
 ```
 
 The most general kind of collection, a map `m` from keys to values,
-can take the following messages. More-specialized collection types
-like bags/sets/sequences also understand the same messages.
+can take the following messages. So can more specialized collection
+types like bags/sets/sequences.
 
 | Expression                    | Result          |
 | ----------------------------- | ------------- |
@@ -437,11 +437,11 @@ In mutable maps:
 Equality of mutable maps, as for any object that's not pure data, is
 by identity.
 
-You can create a mutable hash-map with `(!map<-)` (initially empty),
-
-XXX `(map<-
-association-list)`, or `(export name1 name2 ...)` which is like
-```(map<- `((name1 ,name1) (name2 ,name2) ...))```.
+You can create a mutable map with `(!map<-)` (initially empty), or
+immutable with `(map<-)`. These constructors can take arguments, like
+`(map<- (~ 'first-name 'kermit) (~ 'last-name 'frog))`. There's
+shorthand `(export x y z)` for `(map<- (~ 'x x) (~ 'y y) (~ 'z z))`;
+dually `(import m x y)` is like `(do (let x (m 'x)) (let y (m 'y)))`.
 
 (Warning: the current implementation in Chez Scheme can't hash
 consistently with the equality test, in general. You're safe using
@@ -726,13 +726,23 @@ There ought to be corresponding text sources, but I haven't got
 around to them.
 
 
-## Capabilities
+## Settings for interpretation
 
-`computational-setting` in a module vs. full powers in `incant` or the listener
+Lisp is known for `eval`; Cant's equivalent needs an explicit argument for the
+'setting' for evaluation: `(cant .play expression setting)`.
 
-`(cant .play expression setting)`
+You can create one with e.g. `(empty-setting .extend '(x y) [42
+137])`. There are others presupplied: 
 
-introspection & debugging
+`computational-setting` defines most names from this guide, but
+leaving out any capabilities.
+
+`full-powered-setting` adds the capabilities, like `in` and `out`.
+
+`main-interactive-setting` is the mutable setting of the listener,
+extending `full-powered-setting`.
+
+TODO introspection & debugging
 
 The runtime in `abcs/` is loaded in a primordial setting which binds a
 bunch of implementation primitives (to names like `__vector-set!`)
@@ -747,13 +757,24 @@ that goal is a reasonable wish, and doable.
 
 ## Modules
 
-`(use 'library-name)` -- sandboxed
+`(use 'library-name)` interprets the Cant source code from
+`<this-Cant-directory>/library/<library-name>.cant` in a new extension
+of `computational-setting`. The result is the value of the whole file,
+as if wrapped in `(do ...)`. (The result is then globally cached for
+subsequent calls of the same `(use 'library-name)`.).
 
-`(use "filename")` -- currently not sandboxed, until I finish converting the codebase
+`(use "filename")` -- similar but getting the source code from the
+named file, with the `.cant` filename extension added. (Currently not
+sandboxed, until I finish converting the codebase.)
 
-relative `use`
+If the filename is given as a relative path, it's to be relative to
+the directory of the code that this appearance of `use` was loaded
+from. (Well, that was how I wanted to define it, but currently as a
+hack this base directory is a dynamic variable rather than a lexical
+one.)
 
-import, export
+Normally modules `export` their definitions for the user to `import`,
+though that's up to you.
 
 
 ## Boxes and assignment
