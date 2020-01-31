@@ -10,5 +10,5 @@
 
 (loud-use "test-lambda")
 (loud-use "test-euler")
-(loud-use "test-nqueens")
+(loud-use "test-n-queens")
 (loud-use "test-squirm")
