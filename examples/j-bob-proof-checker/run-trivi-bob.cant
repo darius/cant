@@ -1,0 +1,4 @@
+(load "examples/j-bob-proof-checker/runtime.cant")
+(load "examples/j-bob-proof-checker/trivi-bob.cant")
+(load "examples/j-bob-proof-checker/prelude.cant")
+(load "examples/j-bob-proof-checker/smoketest.cant")

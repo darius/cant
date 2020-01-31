@@ -1,4 +1,0 @@
-(load "examples/j-bob/runtime.cant")
-(load "examples/j-bob/trivi-bob.cant")
-(load "examples/j-bob/prelude.cant")
-(load "examples/j-bob/smoketest.cant")
