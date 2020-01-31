@@ -67,10 +67,10 @@
 (loud-use "../examples/lambda-calculus/lambdacompiler")
 (loud-use "../examples/lambda-calculus/lambdaterp")
 (loud-use "../examples/rosetta-code/lzw-compression")
-(loud-use "../examples/max-path-sum")
+(loud-use "../examples/exercises-and-puzzles/max-path-sum")
 (((loud-use "../examples/text/oodles") 'main) '(ignore "garlic"))
-(loud-use "../examples/sicp1")
-(loud-use "../examples/sicp2")
+(loud-use "../examples/exercises-and-puzzles/sicp1")
+(loud-use "../examples/exercises-and-puzzles/sicp2")
 (((loud-use "../examples/smalltalk72ish-sort-of") 'main) '(ignore))
 (((loud-use "../examples/forthish-sort-of") 'main) '(ignore))
 

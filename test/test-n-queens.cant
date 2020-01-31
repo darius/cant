@@ -1,3 +1,3 @@
-(import (use "../examples/n-queens") queens)
+(import (use "../examples/exercises-and-puzzles/n-queens") queens)
 
 (queens 4)
