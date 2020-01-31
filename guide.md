@@ -740,8 +740,6 @@ leaving out any capabilities.
  * `main-interactive-setting` is the mutable setting of the listener,
 extending `full-powered-setting`.
 
-TODO introspection & debugging
-
 The runtime in `abcs/` is loaded in a primordial setting which binds a
 bunch of implementation primitives (to names like `__vector-set!`)
 some of which could corrupt the system if misused. These primitives
