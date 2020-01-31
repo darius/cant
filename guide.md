@@ -1245,7 +1245,7 @@ have now, ultimately we want a fault-tolerant system, which needs
 communicating processes. The model I have in mind is E's yet again.
 
 To keep evolving the design without being held back by too much
-example code, better refactoring tools would help. (There's a
+example code, it'd help to have better refactoring tools. (There's a
 beginning illustrated by
 [examples/search-for-list-pats.cant](https://github.com/darius/cant/blob/master/examples/search-for-list-pats.cant),
 but I had to manually edit the parts of the codebase that it found for
