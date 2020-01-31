@@ -134,7 +134,8 @@ One more bit of sugar for calls: `foo.bar` is shorthand for `(foo
 
 It's sort of Smalltalky, where for now the interpreter internals
 always appear as meta-objects with no optimization, and even primitive
-objects execute via high-level scripts (in `abcs/00-primordia/`). This
+objects execute via high-level scripts (in
+[`abcs/00-primordia/`](https://github.com/darius/cant/blob/master/abcs/00-primordia/)). This
 is motivated by the goal of a self-sustaining whole system eventually
 supporting powerful debugging. To not be incredibly slow, the design
 will need to get fancier.
