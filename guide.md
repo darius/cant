@@ -1022,6 +1022,10 @@ of `.rest` need not be the same concrete type as the sequence itself:
 for the text type, it's currently a list, avoiding the
 quadratic-copying blowup.
 
+When you have an array and actually want its first or rest, those are
+still doable with `(array 0)` or `(array .slice 1)`. The first/rest
+methods are meant for traversal.
+
 This business of calling `.values` yourself is definitely a wart. I
 can see two ways to improve on it: make the language or the library
 call `.values` for you implicitly (for example, if we specialized the
