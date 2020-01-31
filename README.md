@@ -55,19 +55,21 @@ first load
 To run a source file from the shell:
 
 ```
-$ ./incant examples/fizzbuzz.cant
+$ ./incant examples/automata/game-of-life.cant
 ```
 
 Or from the listener:
 
 ```
 $ ./incant
--> (load "examples/fizzbuzz.cant")
-1
-2
-Fizz
-...
-
+-> (load "examples/automata/game-of-life.cant")
+#<map {~ update #<update>} {~ show #<show>} {~ grid<-picture #<grid<-picture>} {~ r-pentomino #<set((1 -2) (1 -1) (1 0) (2 0) (0 -1))>}>
+-> (run r-pentomino 1)
+  O   
+O O   
+  O O 
+#<set((1 -2) (1 0) (0 -1) (0 0) (0 -2) (2 0))>
+-> 
 ```
 
 ### Documentation?
