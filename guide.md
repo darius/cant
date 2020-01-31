@@ -343,7 +343,7 @@ error-prone. Instead it complains if any of the subforms is not syntax
 it knows about: `if`, `when`, `unless`, `do`, `may`, `and`, `or`, or `else`. If
 there's no `else` clause, then running off the end will cause a
 runtime error: so you'll occasionally see code like (from
-[examples/circuitoptimizer.cant](https://github.com/darius/cant/blob/master/examples/circuitoptimizer.cant))
+[examples/nand-circuit-optimizer.cant](https://github.com/darius/cant/blob/master/examples/nand-circuit-optimizer.cant))
 ```
 (hm (when (< gate.+ n-gates)
       (sweeping gate.+))

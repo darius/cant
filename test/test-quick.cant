@@ -51,7 +51,7 @@
 (((loud-use "../examples/automata/text-register-machine") 'main) '(ignore))
 (((loud-use "../examples/automata/turing-machine") 'smoke-test))
 (((loud-use "../examples/brainfuck/brainfuck") 'main) '(ignore))
-(loud-use "../examples/circuitoptimizer")
+(loud-use "../examples/nand-circuit-optimizer")
 (loud-use "../examples/csv")
 (loud-use "../examples/failing")   ;; tests library/traceback
 (loud-use "../examples/fizzbuzz")
