@@ -8,22 +8,30 @@ be, too -- much simpler than, say, Python, which is easy to start
 learning but rather complex in sum. Most Python programmers don't know
 all of Python.
 
-Since the FantasyOS ought to support capability security, so should
-this language (though it doesn't quite yet). My first try at a
-capability-secure Scheme dialect,
-[consp](https://github.com/darius/consp), persuaded me it's important
-that "all you can do is send a message" (or almost all). That is,
-Scheme has many data types, plus different operations on each type,
-and the operations insist you pass them an object of just the type
-they want, never some wrapper you just made up. In Cant most
-operations are like function calls instead: you send an object a
-message, the receiver decides what to do with it, and you're mostly
-free to substitute your own objects that interpret the message their
-own way.
+Since the FantasyOS ought to offer capability security, so should this
+language (though it doesn't quite yet). Ordinary Scheme almost does,
+as explained by Jonathan Rees's ["A Security Kernel Based on the
+Lambda
+Calculus"](http://mumble.net/~jar/pubs/secureos/secureos.html). But I
+think, from trying it in [consp](https://github.com/darius/consp),
+that Scheme doesn't make the capability style *comfortable*. Cant aims
+to help by approximating the slogan "all you can do is send a
+message". That is, where Scheme has a variety of data types and
+procedures that expect to be given data of just the right type --
+signaling an error if given an impostor -- in Cant most operations are
+like function calls instead. So Scheme has output ports and procedures
+taking them (`write`, `display`, `newline`, and the rest) and you
+can't in standard Scheme call `write` with a whole new kind of object
+you made up as the output port to write to. (XXX still true in latest
+Scheme standards?) Cant's equivalent of an output port is just another
+object responding to the kind of messages output ports receive; and
+restricting the capability for output doesn't require interposing the
+imports of all of `write`, `display`, and so on, but only of the
+output ports themselves.
 
-This environment should make sense in its own terms: the
-implementation's internal state should be viewable and to some extent
-manipulable from Cant itself, as Cant objects.
+This new programming environment should make sense in its own terms:
+the implementation's internal state should be viewable and to some
+extent manipulable from Cant itself, as Cant objects.
 
 I have prejudices about what makes code readable, which I've
 indulged. This indulgence goes to a frankly silly degree of abandoning
