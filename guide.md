@@ -679,7 +679,7 @@ messages](https://github.com/darius/cant/blob/master/examples/automata/text-regi
 `(each (~ .get 0 padding) lists)` for each list gets the first
 element, or `padding` if empty. But in general you still may have to
 [fall back to function
-syntax](https://github.com/darius/cant/blob/master/examples/automata/turing.cant#L34):
+syntax](https://github.com/darius/cant/blob/master/examples/automata/turing-machine.cant#L34):
 ``` (each (-> ("~w" .format it)) squares) ```
 
 
@@ -908,7 +908,7 @@ They come up too in factoring common behavior out of variable-arity
 primitives:
 [runtime.cant](https://github.com/darius/cant/blob/master/abcs/00-primordia/runtime.cant#L269-L302)
 (and elsewhere). There's also a small example of a game in OO style,
-[examples/games/wumpus.cant](https://github.com/darius/cant/blob/master/examples/games/wumpus.cant).
+[examples/games/hunt-the-wumpus.cant](https://github.com/darius/cant/blob/master/examples/games/hunt-the-wumpus.cant).
 (I wouldn't recommend making a habit of creating stateful traits as
 that example does, but that's how it worked out.)
 

@@ -1,7 +1,7 @@
 ;; -*- cant -*-
 
 ;; Simulate Turing machines
-;; Based on ../../automata/turing.cant
+;; Based on ../../automata/turing-machine.cant
 
 
 ;; Scott lists
