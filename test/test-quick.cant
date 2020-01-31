@@ -59,7 +59,7 @@
 (loud-use "test-2048")
 (loud-use "test-sokoban")
 (((loud-use "../examples/games/tictactoe") 'quick-test))
-(loud-use "test-huffman-compression")
+(loud-use "test-huffman-coding")
 (loud-use "../examples/intset1")
 (loud-use "../examples/intset2")
 (loud-use "test-metacircular")

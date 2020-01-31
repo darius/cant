@@ -1,4 +1,4 @@
-(import (use "../examples/huffman-compression") build-tree show-tree encoder<- encode decode)
+(import (use "../examples/huffman-coding") build-tree show-tree encoder<- encode decode)
 
 (let eg1
   '((9 #\z)
