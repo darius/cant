@@ -18,16 +18,18 @@ that Scheme doesn't make the capability style *comfortable*. Cant aims
 to help by approximating the slogan "all you can do is send a
 message". That is, where Scheme has a variety of data types and
 procedures that expect to be given data of just the right type --
-signaling an error if given an impostor -- in Cant most operations are
-like function calls instead. So Scheme has output ports and procedures
-taking them (`write`, `display`, `newline`, and the rest) and you
-can't in standard Scheme call `write` with a whole new kind of object
-you made up as the output port to write to. (XXX still true in latest
-Scheme standards?) Cant's equivalent of an output port is just another
-object responding to the kind of messages output ports receive; and
-restricting the capability for output doesn't require interposing the
-imports of all of `write`, `display`, and so on, but only of the
-output ports themselves.
+signaling an error if given an impostor -- in Cant most operations
+instead amount to sending a message. So Scheme has output ports and
+procedures taking them (`write`, `display`, `newline`, and the rest)
+and you can't in standard Scheme call `write` with a whole new kind of
+object you made up as the output port to write to. (XXX still true in
+latest Scheme standards?) Cant's equivalent of an output port is just
+another object responding to the kind of messages output ports
+receive; and restricting the capability for output doesn't require
+interposing the imports of all of `write`, `display`, and so on, but
+only of the output ports themselves. (For more on these distinct
+styles, see William Cook's ["On Understanding Data Abstraction,
+Revisited"](https://www.cs.utexas.edu/~wcook/Drafts/2009/essay.pdf).)
 
 This new programming environment should make sense in its own terms:
 the implementation's internal state should be viewable and to some
