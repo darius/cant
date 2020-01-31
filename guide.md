@@ -800,7 +800,8 @@ effect. The listener omits printing `void`.
 (On the other hand, the `.+!` method did return a meaningful
 value. What gives? I guess I haven't settled on a coherent design. The
 principle of least authority justifies returning `void` from `.^=`,
-while `.+!` is unlikely to hurt.)
+while `.+!` is unlikely to hurt, since a number is just data, not a
+capability.)
 
 
 ## Comparison
