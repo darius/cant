@@ -165,10 +165,11 @@ already-complex systems.)
 There's plenty of unfinished crap in this repo, not clearly marked.
 
 
-## Interacting with the listener
+## To start the listener
 
-Run [`incant`](https://github.com/darius/cant/blob/master/incant)
-(it's in the same directory as this guide):
+Run [`incant`](https://github.com/darius/cant/blob/master/incant).
+(It's in the same directory as this guide.) In this example session
+your input is right of the prompts `->`.
 
 ```
 $ ./incant
