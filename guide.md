@@ -193,7 +193,7 @@ Enter (debug) for more.
 ```
 
 That is, `I-am` was called with the message `{~ but human}` but it
-expected a length-1 message like `{~ Alice}`. (The traceback shows not
+expected an arity-1 message like `{~ Alice}`. (The traceback shows not
 actual source code, but barely-readable reconstituted AST data
 structures.)
 
@@ -986,15 +986,18 @@ There are lazy-list versions of many of these, with names like
 `each/lazy`.
 
 
-## Efficiency of sequences
+## Traversing sequences
 
 The previous section described many functions on lists. Those actually
 all work on generic sequences: most or all of them (TODO any
 exceptions?) traverse their sequence arguments using the
 `.first`/`.rest`/`.none?`/`.some?` methods. These methods are presumed
 to be an efficient-enough way to walk the sequence, which assumption
-can be wrong: for instance, for an array or a text, `.rest` returns
-another array or text, implying a quadratic cost of traversal.
+could go wrong: for instance, for an array, you might expect `.rest`
+to return the suffix as another, copied array, implying a quadratic
+cost of traversal. This traversal would not represent a snapshot of
+the array's contents, either, since arrays are mutable; but nor would
+it represent the latest contents.
 
 Wouldn't it be better to just change the performance profile of these
 `.rest` methods? There are a couple ways that could go: a rope-style
@@ -1009,23 +1012,25 @@ to be implemented in a simple pretty-efficient way, letting you get
 fancier in your own code where you need it -- granted that the current
 implementation is not at all efficient.
 
-Instead, we follow a convention: a collection's `.values` should be
-*efficient to walk through* using `.first`/`.rest`. So when you're
-invoking the above traversals, it's sensible to either yourself call
-`.values` on the sequence argument, or know that it's short enough
-that you don't care. (For collections in general, the `.values` method
-returns a sequence of the values from its key/value pairs. When the
-collection is a sequence, `.values` should represent the same
-sequence.)
+So we follow a convention: `.first`/`.rest` are defined only for
+immutable sequences, and should be efficient to walk through. (For a
+mutable array, you can still call `.values` to get an immutable,
+traversable snapshot. On an already immutable sequence, `.values` is
+effectively the identity. For collections in general, `.values`
+returns a sequence of the values from its key/value pairs.) The result
+of `.rest` need not be the same concrete type as the sequence itself:
+for the text type, it's currently a list, avoiding the
+quadratic-copying blowup.
 
 This business of calling `.values` yourself is definitely a wart. I
 can see two ways to improve on it: make the language or the library
-call `.values` for you implicitly, or change the common traversals
-from being defined as functions on sequences to being methods on
-collections, defined in the collections traits, with potentially
-specialized implementations.
+call `.values` for you implicitly (for example, if we specialized the
+`for` syntax to be just for traversals), or change the common
+traversals from being defined as functions on sequences to being
+methods on collections, defined in the collections traits, with
+potentially specialized implementations.
 
-I suppose we'll end up doing something like one of those, but the
+We may end up doing something like one of those, but the
 current simpleminded design has been holding up well enough to go on
 with. I'm unhappy with the idea of making `.values` implicit because I
 don't like too much going on under the hood for very-common
