@@ -13,7 +13,7 @@
 (to (say-to sink @arguments)
   (for each! ((x arguments))
     (sink .display x))
-  (sink .display "\n"))
+  sink.newline)
 
 (to (copy-file source sink)
   (sink .display source.read-all))
@@ -160,7 +160,7 @@
 ;; mnemonics but aren't legal in C identifiers.
 (to (as-legal-c-identifier text)
   (text<-list (for yeahs ((rune text))
-                (and (not (":%" .find? rune))
-                     (hm (if ("-." .find? rune) #\_)
-                         (if (= #\? rune) #\c)
-                         (else rune))))))
+                (hm (if (":%" .find? rune) #no)
+                    (if ("-." .find? rune) #\_)
+                    (if (= #\? rune)       #\c)
+                    (else                  rune)))))
