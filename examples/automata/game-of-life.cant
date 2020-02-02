@@ -2,8 +2,6 @@
 ;; Represent a grid as a set of populated locations.
 ;; A location is an `(,x ,y) coordinate pair.
 
-(import ((use 'sturm) (export console))
-  cbreak-mode)
 (import (use 'ansi-terminal)
   clear-screen cursor-show cursor-hide)
 
@@ -12,10 +10,9 @@
                  (be `(,_)         20)
                  (be `(,_ ,n-text) n-text.number)
                  (be `(,prog ,@_)  (error ("Usage: ~d [#steps]" .format prog)))))
-  (for cbreak-mode ()
-    (out .display cursor-hide)
-    (run r-pentomino n-steps)
-    (out .display cursor-show)))
+  (out .display cursor-hide)
+  (run r-pentomino n-steps)
+  (out .display cursor-show))
 
 (to (run grid n-steps)
   (for foldl ((grid grid) (_ n-steps.till))
