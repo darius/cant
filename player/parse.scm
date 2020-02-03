@@ -166,7 +166,6 @@
        ((: __ list?)
         (error 'parse "Old-style list pattern" p)))))) ;TODO better plaint
 
-;; TODO experiment: syntax for messages
 (define (parse-message-pat ps ctx)
   (mcase ps
     (((: cue cue?) . operands)
@@ -206,7 +205,7 @@
                `(view ,e #t)) ;TODO check result with yeah? instead of = #yes
               ((__ e p1)
                `(and (view ,e #t) ,p1))))
-    ('=      (mlambda                   ;TODO experiment
+    ('=      (mlambda
               ((__ e)
                (let ((param (gensym)))
                  `(view (on (,param) (= ,param ,e)) ;XXX hygiene
@@ -352,13 +351,13 @@
                  (if (symbol? head)
                      `(make ,head (to ,pattern ,@body))
                      `(to ,head (make _ (to ,pattern ,@body))))))))
-    ('on     (mlambda  ; TODO do I like this better than 'given'?
+    ('on     (mlambda
               ((__ dp . body)
                `(to (_ ,@dp) ,@body))))
-    (':      (mlambda  ; TODO experiment
+    (':      (mlambda
               ((__ . body)
                `(to (_) ,@body))))
-    ('->     (mlambda  ; TODO experiment
+    ('->     (mlambda
               ((__ e)
                `(on (it) ,e))))
     ('for    (mlambda
@@ -390,7 +389,7 @@
     ('unless (mlambda
               ((__ test . body)
                `(if ,test ',(void) (do ,@body)))))
-    ('hm     (mlambda                   ;TODO yet another experiment to toss or keep, replacing 'case'
+    ('hm     (mlambda
               ((__)
                '(error "Fell off the end of 'hm'")) ;XXX hygiene
               ((__ ('else . es))          `(do ,@es))
