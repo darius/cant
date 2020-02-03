@@ -70,20 +70,23 @@
 (to ((capture p) text far i vals)
   ((p text far i vals) .capture-from i))
 
-(to ((folded<- combine) @arguments)     ;TODO support the no-arguments case
-  (foldr1 combine arguments))
-
 ;; (either p1 ... pn): a parser that succeeds just when one of its
 ;; arguments does, trying them in order.
-(let either
-  (folded<- (to ((<either> p q) text far i vals)
-              ((p text far i vals) .else q i vals))))
+(make either {extending right-folding-operation}
+  (to (~ p q)
+    (on (text far i vals)
+      ((p text far i vals) .else q i vals)))
+  (to (~)
+    fail))
 
 ;; (then p1 ... pn): a parser that succeeds just when all of p1..pn
 ;; do, each one starting where the last left off.
-(let then
-  (folded<- (to ((<then> p q) text far i vals)
-              ((p text far i vals) .continue q))))
+(make then {extending right-folding-operation}
+  (to (~ p q)
+    (on (text far i vals)
+      ((p text far i vals) .continue q)))
+  (to (~)
+    empty))
 
 ;; (feed-list f): a parser that replaces the vals with a singleton, (f vals).
 (to ((feed-list f) text far i vals)
@@ -175,7 +178,7 @@
 
 ;; E.g. (lit "hello") advances past exactly "hello", or fails.
 (to (lit text)
-  (foldr then (each lit-1 text) empty))
+  (then @(each lit-1 text)))
 
 ;; Always succeed, but preferably after p.
 (to (maybe p)
