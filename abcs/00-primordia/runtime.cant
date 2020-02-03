@@ -459,9 +459,9 @@
 (to (text<- @runes)
   (text<-list runes))
 
-(to (text<-writer take-sink)
+(to (text<-writer writer)
   (let sink (text-sink<-))
-  (take-sink sink)
+  (writer sink)
   sink.output-text)
 
 
