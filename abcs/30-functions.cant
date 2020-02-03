@@ -197,10 +197,9 @@
   result)
 
 (to (read-all source) ;XXX confusing name, since source.read-all returns a text
-  (let thing (read source))
-  (if (zilch? thing)
-      '()
-      (link thing (read-all source))))
+  (may (read source)
+    (be (? zilch?) '())
+    (be thing      (link thing (read-all source)))))
 
 (to (system/must-succeed command)
   (unless (= 0 (system command))
