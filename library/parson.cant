@@ -180,11 +180,11 @@
          (~ 'whitespace (skip-1 ~.whitespace?))
          (~ 'count (seclude
                     (then (capture (at-least-1 (skip-1 ~.digit?))) ;; TODO no leading 0s
-                          (feed number<-text))))
+                          (feed ~.number))))
          (~ 'integer (seclude
                       (then (capture (then (maybe (lit-1 #\-))
                                            (at-least-1 (skip-1 ~.digit?))));; TODO no leading 0s
-                            (feed number<-text))))
+                            (feed ~.number))))
          ;; TODO: more
          ))
 
