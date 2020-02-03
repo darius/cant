@@ -30,6 +30,7 @@
   (to ~.inexact        (inexact<-exact me))
   (to ~.magnitude      (abs me))
   (to ~.text           (text<-number me))
+  (to ~.number         me)
   (to (~ .gcd b)       (gcd me b))
   ;; XXX sketchy support for 32-bit word ops:
   (to (~ .u+ a)        (__u+ me a))
