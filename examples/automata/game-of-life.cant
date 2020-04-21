@@ -22,10 +22,10 @@
 
 (to (update grid)
   (let active (bag<- (gather neighbors grid.keys)))
-  (~.range (for yeahs (((~ pos n-live) active.items))
-             (may n-live
-               (be 3 pos)
-               (be 2 (and (grid .maps? pos) pos))
+  (~.range (for yeahs (((~ key n-neighbors) active.items))
+             (may n-neighbors
+               (be 3 key)
+               (be 2 (and (grid .maps? key) key))
                (else #no)))))
 
 (to (neighbors `(,x ,y))
