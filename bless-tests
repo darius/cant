@@ -1,0 +1,2 @@
+./t omnibus; cp omnibus.out omnibus.expected
+./t quick;   cp quick.out quick.expected
