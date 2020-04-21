@@ -2,7 +2,7 @@
   (to ~.read-rune   (__read-char me))
   (to ~.read-u8     (__get-u8 me))
   (to ~.read-all    (__read-all me))
-  (to ~.close       (__close-port me))
+  (to ~.close       (__close-source me))
   (to ~.ready?      (__char-ready? me))
   (to ~.read-line
     (let rune me.read-rune)

@@ -8,6 +8,7 @@
 (import (chezscheme)
   (player util)
   (player equality)
+  (player source)
   (player read)
   (player parse)                        ;just for self-evaluating? ?
   (player setting)
@@ -140,13 +141,6 @@
   (and (integer? i)
        (< -1 i (vector-length me))))
 
-(define (prim-read-all port)
-  (let reading ((cs '()))
-    (let ((c (read-char port)))
-      (if (eof-object? c)
-          (list->string (reverse cs))
-          (reading (cons c cs))))))
-
 (define (prim-display x sink)
   (cond ((or (char? x) (string? x) (symbol? x) (number? x))
          (display x sink)
@@ -197,7 +191,7 @@
 (define nonmeta-a-list
   `((__as-link ,as-link)
     (= ,cant=?)
-    (in ,(current-input-port))
+    (in ,(make-source (current-input-port)))
     (out ,(current-output-port))
     (err ,(current-error-port))
 
@@ -215,7 +209,7 @@
     (array? ,vector?)
     (box? ,box?)
     (term? ,term?)
-    (source? ,input-port?) ;TODO these only know about primitive sources/sinks
+    (source? ,source?) ;TODO these only know about primitive sources/sinks
     (sink? ,output-port?)
     (zilch? ,eof-object?)
     (box<- ,(case-lambda
@@ -233,11 +227,13 @@
     (assoc ,assoc)                      ;XXX doesn't use cant=?
     (sqrt ,sqrt)
     (panic ,prim-panic)
-    (open-input-file ,open-input-file)  ;XXX rename open-file-source
+    (open-input-file ,(make-source-maker open-input-file)) ;XXX rename open-file-source
     (open-output-file ,open-output-file) ; open-file-sink
-    (open-binary-file-source ,open-file-input-port) ; This actually has more options in Chez than just binary
-    (open-binary-file-sink ,open-file-output-port)  ; but let's just hack it in for now. 
-    (__get-u8 ,get-u8)
+    ;; These binary file openers actually have more options in Chez
+    ;; than just binary but let's just hack it in for now:
+    (open-binary-file-source ,(make-source-maker open-file-input-port))
+    (open-binary-file-sink ,open-file-output-port)
+    (__get-u8 ,source-get-u8)
     (__put-u8 ,put-u8)
 ;;    (__set-dbg! ,set-dbg!)
     (current-directory ,current-directory)
@@ -252,7 +248,7 @@
     (abs ,abs)
     (gcd ,gcd)
     (__array<-list ,list->vector)
-    (read ,cant-read)
+    (read ,(lambda (source) (cant-read (source-port source))))
     (__parse-exp ,parse-exp)
     (__parse-pat ,parse-pat)
     (system ,system)
@@ -260,14 +256,14 @@
     (number<-text ,string->number)
     (text<-number ,number->string)
     (list<-text ,string->list)
-    (text-source<- ,open-input-string)
+    (text-source<- ,(make-source-maker open-input-string))
     (text-sink<- ,open-output-string)
 
     (__get-output-string ,get-output-string)
     (self-evaluating? ,self-evaluating?)
     (maybe-macroexpand-expr ,maybe-macroexpand-expr)
     (maybe-macroexpand-patt ,maybe-macroexpand-patt)
-    (open-subprocess ,process)
+    (open-subprocess ,process/source)
     (__halp-log ,prim-halp-log)
     (nano-now ,prim-nano-now)
     (nanosleep ,prim-nanosleep)
@@ -336,10 +332,11 @@
     (__box-value-set! ,set-box!)
     (__term-tag ,term-tag)
     (__term-parts ,term-parts)
-    (__close-port ,close-port)
-    (__read-char ,read-char)
-    (__char-ready? ,char-ready?)
-    (__read-all ,prim-read-all)
+    (__close-sink ,close-port)
+    (__close-source ,close-source)
+    (__read-char ,source-read-char)
+    (__char-ready? ,source-char-ready?)
+    (__read-all ,source-read-all)
     (__write-char ,write-char)
     (__display ,prim-display)
     (__depict ,depict)
