@@ -106,27 +106,30 @@
 (to ((push constant) text far i vals)
   (empty text far i `(,@vals ,constant)))
 
-;; (seclude p): parse as p, but where p doesn't get to see or alter
-;; the incoming values. If p succeeds, producing new values, *then*
-;; append them to the incoming values for the overall result.
+;; (seclude p): parse as p, but with () in place of the incoming
+;; values. If p succeeds, producing new values, then succeed overall,
+;; producing the chain of the incoming values plus the new ones.
+;; For example, if the incoming values are (#\x #\y), then
+;; (feed text<-) succeeds, producing ("xy"). But
+;; (seclude (feed text<-)) produces (#\x #\y "").
 ;;
 ;; When you write a grammar, you typically want to seclude most
 ;; productions: e.g. a rule A ::= B C | D
 ;; would be like (seclude (either (then B C (feed a<-bc))
 ;;                                (then D   (feed a<-d))))
 ;;
-;; But a style that secludes all of your productions would be
-;; constraining, like writing a recursive-descent parser without ever
-;; passing parameters or keeping loop state. You *could* get along
-;; without those features, as long as the data only enters into
-;; semantics, not syntactic predicates: instead of taking parameters,
-;; return a closure that takes them, and instead of loop state, return
-;; a data structure for a later pass in code to deal with. These are
+;; But you needn't always seclude your productions: that'd be like
+;; writing a recursive-descent parser without ever passing parameters
+;; or keeping loop state. You *could* get along without those
+;; features, as long as the data only enters into semantics, not
+;; syntactic predicates: instead of taking parameters, return a
+;; closure that takes them, and instead of loop state, return a data
+;; structure for a later pass in code to deal with. These would be
 ;; pretty annoying hacks to need for things as ordinary as parsing
-;; left-associative operators -- which would be just a while-loop in a
-;; recursive-descent parser. In Parson it's equally simple: the `many`
-;; combinator (below) of a non-secluded loop body. (Call it a left
-;; fold if you prefer.)
+;; left-associative operators -- which in a recursive-descent parser
+;; would be just a while-loop. In Parson it's equally simple: the
+;; `many` combinator (below) of a non-secluded loop body. (Call it a
+;; left fold if you prefer.)
 ;;
 ;; Sometimes you want to seclude only part of a production. `seclude`
 ;; works together with `feed` to pipe results from producers to
