@@ -44,7 +44,7 @@ Hey, world.
 ### Any *interesting* example code?
 
 You can try browsing
-[examples/](https://github.com/darius/cant/tree/master/eg) and
+[examples/](https://github.com/darius/cant/tree/master/examples) and
 [library/](https://github.com/darius/cant/tree/master/library). See
 [examples/games](https://github.com/darius/cant/tree/master/examples/games) and
 [examples/automata](https://github.com/darius/cant/tree/master/examples/automata)
