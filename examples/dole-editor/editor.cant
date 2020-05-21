@@ -15,7 +15,7 @@
 
 (to (edit buffer)
   (begin editing ()
-    (buffer .redisplay)
+    buffer.redisplay
     (let key (read-key))
     (may (buffer.key-map key)
       (be 'exit)

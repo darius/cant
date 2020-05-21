@@ -95,7 +95,7 @@ Level ~w ~d Move ~w")
 ;; grid).
 (to (parse floor-plan)
   (do (let line-lengths (each ~.count floor-plan.split-lines))
-      (surely (= 1 line-lengths.range.count))) ;XXX require
+      (surely (= 1 line-lengths.range.count)))
   (array<-list floor-plan))
 
 (to (sokoban-grid<- spots)
