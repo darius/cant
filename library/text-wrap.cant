@@ -43,7 +43,7 @@
             (if (<= (+ line.count spaces w.count) width)
                 (do (line .extend! (chain (" " .repeat spaces) w))
                     (scanning 0 tokens.rest))
-                (link (flush line) (wrap-into (hey (flexarray<-) {.extend! w})
+                (link (flush line) (wrap-into (hey (flexarray<-) (~ .extend! w))
                                               tokens.rest width))))))))
 
 (export fill wrap)

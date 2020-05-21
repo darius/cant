@@ -1281,7 +1281,7 @@ might've been a dumb idea.
 ## Miscellany
 
 In a `begin` form like `(begin looping (...) ...)` you can omit the
-name: it defaults to `again`. I'm not sure I want this feature, but I
+name: it defaults to `loop`. I'm not sure I want this feature, but I
 guess other people might want it more.
 
 ```

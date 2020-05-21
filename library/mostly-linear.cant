@@ -32,14 +32,14 @@
 ;; inconsistent, we still try to determine what we can of the rest.
 (to (solve equations)
   (begin solving ((inconsistent? #no) ; Noticed a contradiction yet?
-                  (progress? #no)     ; Any progress since the last assessment?
-                  (agenda (push (extend empty equations) 'assessment)))
+                  (progress? #no)     ; Any progress in this pass?
+                  (agenda (push (extend empty equations) 'finish-pass)))
     (may (peek agenda)
       (be {nonempty task pending}
         (may task
-          (be 'assessment
+          (be 'finish-pass
             (hm (if progress?
-                    (solving inconsistent? #no (push pending 'assessment)))
+                    (solving inconsistent? #no (push pending 'finish-pass)))
                 (if inconsistent?    'inconsistent)
                 (if (empty? pending) 'done)
                 (else                'stuck)))
