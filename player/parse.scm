@@ -377,7 +377,7 @@
                    `((hide (make ,proc (to (~ ,@ps) ,@body)))
                      ,@es))))
               ((__ (: bindings list?) . body)
-               `(begin again ,bindings ,@body))))
+               `(begin loop ,bindings ,@body))))
     ('if     (mlambda
               ((__ test if-so if-not)
                `(may ,test

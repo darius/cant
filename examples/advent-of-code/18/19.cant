@@ -19,7 +19,7 @@
 
     (to ~.run
       (begin ()
-        (when vm.step (again))))
+        (when vm.step (loop))))
 ;       (when (program .maps? (regs ip))
 ;         (out .say "ip=~w ~w ~d " (regs ip) regs (show (program (regs ip))))
  ;        vm.step

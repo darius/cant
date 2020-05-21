@@ -37,7 +37,7 @@
       (be #\y #yes)
       (be #\n #no)
       (be #\q (os-exit 0))
-      (else (say "Please answer y or n (or q to quit).\n") (again)))))
+      (else (say "Please answer y or n (or q to quit).\n") (loop)))))
 
 (to (ask @prompt)
   (say (chain @prompt) " ") ;TODO oughta be (say @prompt " ")

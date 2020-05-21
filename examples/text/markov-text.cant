@@ -50,5 +50,5 @@
     (let (~ key count) items.first)
     (if (< n count)
         key
-        (again (- n count)
-               items.rest))))
+        (loop (- n count)
+              items.rest))))

@@ -28,7 +28,7 @@
      (quitter .^= ejector)
      (begin ()
        (play-turn)
-       (again)))))
+       (loop)))))
 
 (let quitter (box<-))
 (to (quit) (quitter.^ .eject 'quit))

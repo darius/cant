@@ -80,7 +80,7 @@
                 (link `(begin ((d ,next))
                          (if (= 0 (data d))
                              d
-                             (again ,top)))
+                             (loop ,top)))
                       rest))
         (else (let (link top rest) stack)
               (link (may rune
