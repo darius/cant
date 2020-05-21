@@ -35,17 +35,15 @@
     (if tokens.none?
         (if line.none? '() `(,(flush line)))
         (may tokens.first
-          (be {break}
-            (link (flush line) (wrap-into (flexarray<-) tokens.rest width)))
           (be {space}
             (scanning spaces.+ tokens.rest))
+          (be {break}
+            (link (flush line) (wrap-into (flexarray<-) tokens.rest width)))
           (be {word w}
             (if (<= (+ line.count spaces w.count) width)
                 (do (line .extend! (chain (" " .repeat spaces) w))
                     (scanning 0 tokens.rest))
-                (link (flush line)
-                      (do (let new-line (flexarray<-))
-                          (new-line .extend! w)
-                          (wrap-into new-line tokens.rest width)))))))))
+                (link (flush line) (wrap-into (hey (flexarray<-) {.extend! w})
+                                              tokens.rest width))))))))
 
 (export fill wrap)
