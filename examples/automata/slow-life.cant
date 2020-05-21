@@ -37,9 +37,9 @@
 (to (paint grid top left lines)
   (let bottom (+ top lines.count -1))
   (for each! (((~ i line) lines.items))
-    (for each! (((~ j ch) line.items))
+    (for each! (((~ j rune) line.items))
       (grid .set! (- bottom i) (+ left j)
-            (if ch.whitespace? 0 1)))))
+            (if rune.whitespace? 0 1)))))
 
 (to (grid<- n-rows n-cols)
   ;; G is an array storing, for each Life grid cell, its value (0 or

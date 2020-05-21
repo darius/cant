@@ -3,7 +3,7 @@
 (to (rune-set<- @runes)
   (let set runes.range)
   (make rune-set
-    (to (~ .maps? ch) (set .maps? ch))
+    (to (~ .maps? rune) (set .maps? rune))
     ))
     
 (export

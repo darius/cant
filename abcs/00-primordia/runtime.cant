@@ -482,8 +482,8 @@
           (may t.first
             (be #\~
               (parse sink t.rest args))
-            (be ch
-              (sink .display ch)
+            (be rune
+              (sink .display rune)
               (scanning sink t.rest args)))))
 
     ;; Parse a ~ field, then go back to scanning the rest of t.

@@ -20,10 +20,10 @@
       (may text.first
         (be #\newline (link {break} (parse-tokens text.rest)))
         (be #\space   (link {space} (parse-tokens text.rest)))
-        (be (? ~.whitespace? ch)
-          (oops "I don't know how to fill whitespace like" ch))
-        (be ch
-          (let word (flexarray<- ch))
+        (be (? ~.whitespace? rune)
+          (oops "I don't know how to fill whitespace like" rune))
+        (be rune
+          (let word (flexarray<- rune))
           (begin eating ((text text.rest))
             (if (or text.none? text.first.whitespace?)
                 (link {word (flush word)} (parse-tokens text))

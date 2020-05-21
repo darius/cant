@@ -151,8 +151,8 @@
   ;; We pretend control-X is the escape key, sheesh.
   ;; TODO optional timeout
 
-  (to (ctrl ch)
-    (- ch.uppercase 64))
+  (to (ctrl rune)
+    (- rune.uppercase 64))
 
   (let key-map
     (map<- (~ (text<- (ctrl #\X))   'esc) ;XXX a hack until the timeout works

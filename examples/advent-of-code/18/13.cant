@@ -11,13 +11,13 @@
   (to (add-cart! i dir)
     (tracks .push! (erase-cart dir))
     (carts .set! i {cart dir 0}))
-  (for each! (((~ i ch) world-str.items))
-    (may ch
+  (for each! (((~ i rune) world-str.items))
+    (may rune
       (be #\> (add-cart! i E))
       (be #\< (add-cart! i W))
       (be #\v (add-cart! i S))
       (be #\^ (add-cart! i N))
-      (else   (tracks .push! ch))))
+      (else   (tracks .push! rune))))
   {world (text<-list tracks.values) width carts})
 
 
@@ -41,9 +41,9 @@
 (to (show-cart {cart dir _})
   ("^>v<" dir))
 
-(to (maybe-turn cart ch)
+(to (maybe-turn cart rune)
   (let {cart dir veer} cart)
-  (may ch
+  (may rune
     (be #\/ {cart (turn-1 dir) veer})
     (be #\\ {cart (turn-2 dir) veer})
     (be #\+ (swerve dir veer))
@@ -76,9 +76,9 @@
 (let world0 (parse inputs))
 
 (to (show {world tracks w carts})
-  (for each! (((~ i ch) tracks.items))
+  (for each! (((~ i rune) tracks.items))
     (out .display (may (carts .get i)
-                    (be #no  ch)
+                    (be #no  rune)
                     (be cart (show-cart cart)))))
   out.newline)
 
