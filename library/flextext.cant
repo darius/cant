@@ -50,7 +50,7 @@
   (to (get-rune-after p)
     (t (if (< p head.^) p (+ p gap.^))))
 
-  ;; Return the `span` runes after `p0` as a text.
+  ;; Return the `span0` runes after `p0` as a text.
   (to (get p0 span0)
     (let {range p span} (clip-range p0 span0))
     (text<-list (each get-rune-after (p .span span))))
@@ -119,19 +119,21 @@
     ;; Grow the array so `replacement` fits in the gap.
     (let r-size replacement.count)
     (when (< gap.^ r-size)
+      (let old-sz (+ size.^ gap.^))     ;; TODO rename
+      (surely (= old-sz t.count))
       (let tail (- size.^ head.^)) ;XXX shouldn't this subtract the gap too?
-      (let sz   (+ (grow (+ size.^ gap.^))   ;; TODO rename
-                   r-size))
+      (let sz   (+ r-size (grow old-sz)))   ;; TODO rename
       (t .resize! sz)
-      (t .move! (- sz tail) t (+ head.^ gap.^) (+ size.^ gap.^)) ;TODO isn't the last just t.count ?
+      (t .move! (- sz tail) t (+ head.^ gap.^) old-sz)
       (gap .^= (- sz size.^)))
 
-    ;; Insert `replacement`.
+    ;; Insert `replacement` into the gap.
     (t .move! head.^ replacement 0 r-size)
-
     (head .+= r-size)
     (gap  .-= r-size)
-    (size .+= r-size))
+    (size .+= r-size)
+
+    (surely (= t.count (+ size.^ gap.^))))
 
   (make flextext
     (to ~.clear!
