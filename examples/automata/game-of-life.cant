@@ -9,7 +9,7 @@
   (let n-steps (may args
                  (be `(,_)         20)
                  (be `(,_ ,n-text) n-text.number)
-                 (be `(,prog ,@_)  (error ("Usage: ~d [#steps]" .format prog)))))
+                 (be `(,prog ,@_)  (oops ("Usage: ~d [#steps]" .format prog)))))
   (out .display cursor-hide)
   (run r-pentomino n-steps)
   (out .display cursor-show))

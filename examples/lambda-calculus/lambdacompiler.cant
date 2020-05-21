@@ -101,7 +101,7 @@
 ;; Scopes (called 's' above)
 
 (to (global-scope v)
-  (error "Unbound variable" v))
+  (oops "Unbound variable" v))
 
 (to ((scope<- param var-offsets) v)
   (if (= v param)

@@ -18,7 +18,7 @@
     (may b
       (be (? integer?) (rune<- (- me.code b)))
       (be (? rune?)    (- me.code b.code))
-      (else (error "Bad arg type" b))))
+      (else (oops "Bad arg type" b))))
   (to (~ .till b)     (interval<- me b))      ;These methods should be in a trait
   (to (~ .thru b)     (interval<- me b.+))    ;if they're a good idea at all...
   (to (~ .span n)     (interval<- me (+ me n)))

@@ -69,7 +69,7 @@
   (tape ([left head right]
          (chain-reverse left (Slink head right)))))
 
-(let square-displays (Then "-" (Then "#" error))) ;TODO don't assume binary squares
+(let square-displays (Then "-" (Then "#" oops))) ;TODO don't assume binary squares
 
 (to (show-square sq)
   (display (sq square-displays)))       ;a sq is a tuple-getter
@@ -119,7 +119,7 @@
   ;; thunkifying isn't strictly needed. TODO how much performance difference does it make?
   (let thunk (slist ([h t] ([_] (take h t)))
                     ([_] (take default-square Snil))))
-  (thunk error))
+  (thunk oops))
 
 (to (move-left left head right)
   (pop left ([h t] (Tape t h (Slink head right)))))
@@ -170,14 +170,14 @@
 ;; (0 <blank> 1 <blank> 0...)
 ;; (Undecidable p. 119)
 
-(to (List2 a b) (Then a (Then b error)))
+(to (List2 a b) (Then a (Then b oops)))
 
 ;; State           On tape 0    On tape 1
 (let b       (List2 (> 0 1)      None))
 (let c       (List2 (> 0 2)      None))
 (let e       (List2 (> 1 3)      None))
 (let f       (List2 (> 1 0)      None))
-(let example-transit (Transit (Then b (Then c (Then e (Then f error))))))
+(let example-transit (Transit (Then b (Then c (Then e (Then f oops))))))
 
 (let example-tape (init-tape Snil 0 Snil))
 
@@ -197,7 +197,7 @@
 (let s2       (List2 (> 1 3)      (< 1 2)))
 (let s3       (List2 (> 0 4)      (> 1 3)))
 (let s4       (List2 (< 1 0)      (> 1 4)))
-(let copy-machine-transit (Transit (Then s0 (Then s1 (Then s2 (Then s3 (Then s4 error)))))))
+(let copy-machine-transit (Transit (Then s0 (Then s1 (Then s2 (Then s3 (Then s4 oops)))))))
 
 (let copy-machine-tape (init-tape (Slink 1 Snil) 1 Snil))
 

@@ -22,7 +22,7 @@
 
   (to (count-check i)
     (unless (< i count.^)               ;TODO check negative too
-      (error "Bad index" flexarray i)))
+      (oops "Bad index" flexarray i)))
 
   (make flexarray {extending array-trait}
     (to (~ i)
@@ -42,12 +42,12 @@
     (to ~.pop!
       (let i count.^.-)
       (when (< i 0)
-        (error "Underflow" flexarray))
+        (oops "Underflow" flexarray))
       (count .^= i)
       (vec.^ i))
     (to (~ .pop! i)
       (when (< i 0)
-        (error "Out of range" flexarray))
+        (oops "Out of range" flexarray))
       (count-check i)
       (let popped (vec.^ i))
       (vec.^ .move! i vec.^ i.+ count.^)
@@ -56,7 +56,7 @@
     (to (~ .insert! i value)                 ;TODO code duplication .push!
       (let c count.^)
       (unless (<= i c)
-        (error "Bad index" flexarray i))
+        (oops "Bad index" flexarray i))
       (when (= c vec.^.count) (grow))
       (vec.^ .move! i.+ vec.^ i c)
       (vec.^ .set! i value)
@@ -91,8 +91,8 @@
     (to (~ .chain v)        (flexarray.snapshot .chain v))
     (to (~ .slice lo bound) (flexarray.snapshot .slice lo bound))
 
-    (to ~.first         (error "no .first on flexarray" flexarray))
-    (to ~.rest          (error "no .rest on flexarray" flexarray))
+    (to ~.first         (oops "no .first on flexarray" flexarray))
+    (to ~.rest          (oops "no .rest on flexarray" flexarray))
     ))
 
 (export

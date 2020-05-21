@@ -146,7 +146,7 @@
   (to ~.?number
     (number<-text me))
   (to ~.number
-    (or (number<-text me) (error "Not numeric" me)))
+    (or (number<-text me) (oops "Not numeric" me)))
   (to ~.text
     me)
   (to ~.symbol

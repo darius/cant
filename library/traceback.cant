@@ -1,4 +1,4 @@
-;; An error handler that prints a (crude) traceback.
+;; An oops handler that prints a (crude) traceback.
 
 ;; We try to call on less of the library than usual, to work better
 ;; when the system is borked.
@@ -7,13 +7,13 @@
 (to (module powers)
   (import powers out)
 
-  (to (on-error-traceback k evil)
-    (out .display "Error! Traceback:\n")
+  (to (on-oops-traceback k evil)
+    (out .display "Oops! Traceback:\n")
     (print-traceback k)
     (complain evil))
 
-  (to (on-error-complain k evil)
-    (out .display "Error!\n")
+  (to (on-oops-complain k evil)
+    (out .display "Oops!\n")
     (complain evil))
 
   (to (print-traceback k)
@@ -33,4 +33,4 @@
         (out .write evil)))
     out.newline)
 
-  (export on-error-traceback on-error-complain complain print-traceback))
+  (export on-oops-traceback on-oops-complain complain print-traceback))

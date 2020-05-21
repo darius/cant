@@ -9,7 +9,7 @@
   (let n-steps (may args.rest
                  (be '()        20)
                  (be `(,n-text) n-text.number)
-                 (else (error ("Usage: ~d [#steps]" .format (args 0))))))
+                 (else (oops ("Usage: ~d [#steps]" .format (args 0))))))
   (let grid (grid<- 24 39))
   (paint grid 10 18 '(" **"             ;TODO: read in a pattern
                       "** "

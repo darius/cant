@@ -1,12 +1,12 @@
-;; Get a continuation from an error signal, and invoke it.
+;; Get a continuation from an oops, and invoke it.
 
 (import ((use 'traceback) (export out))
-  on-error-traceback)
+  on-oops-traceback)
 
 (with-signal-handler
  (on (k evil)
-   (on-error-traceback k evil)
+   (on-oops-traceback k evil)
    (out .display "Now continuing with 42\n")
    (k .answer 42))
  (:
-   (out .print (+ 1 (error "I wish to complain" 'life 'is 'terrible)))))
+   (out .print (+ 1 (oops "I wish to complain" 'life 'is 'terrible)))))

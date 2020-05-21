@@ -1,10 +1,10 @@
 ;; PEG parsing
 ;; from https://github.com/darius/parson, but incomplete
 
-;; TODO: fuller error reporting
+;; TODO: fuller oops reporting
 ;; TODO: memoize
 ;; TODO: delay semantic actions until final success
-;; TODO: a top-level fn that raises an error on failure
+;; TODO: a top-level fn that oopses on failure
 
 ;; Glossary:
 ;;  p, q       parsing expression
@@ -14,7 +14,7 @@
 ;;             better support efficient access by index, though -- I
 ;;             don't recommend a linked list.)
 ;;  far        the rightmost index tentatively advanced to in text
-;;             (used for error reporting)
+;;             (used for oops reporting)
 ;;  i, j       index into text
 ;;  vals, vs   list of parsed values
 
@@ -35,10 +35,10 @@
     (to ~.invert            empty)
     (to (~ .capture-from _) failure)
     (to (~ .prefix _)       failure)
-    (to ~.leftovers         (error "Parse failed" failure.postmortem))
+    (to ~.leftovers         (oops "Parse failed" failure.postmortem))
     (to ~.?results          #no)
-    (to ~.results           (error "Parse failed" failure.postmortem))
-    (to ~.result            (error "Parse failed" failure.postmortem))
+    (to ~.results           (oops "Parse failed" failure.postmortem))
+    (to ~.result            (oops "Parse failed" failure.postmortem))
     (to ~.postmortem        `(,(text .slice 0 far) /
                               ,(text .slice far)))
     (to ~.display                         ;TODO change to .selfie
@@ -55,7 +55,7 @@
     (to ~.leftovers           i)
     (to ~.?results            vals)
     (to ~.results             vals)
-    (to ~.result              vals.maybe)    ;TODO nicer error on wrong # of vals
+    (to ~.result              vals.maybe)    ;TODO nicer oops on wrong # of vals
     (to ~.display
       ("~w ~w" .format (text .slice i) vals))))
 

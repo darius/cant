@@ -18,7 +18,7 @@
     (make missing)
     (let answer (map .get key missing))
     (if (= answer missing)
-        (error "Missing key" map key)
+        (oops "Missing key" map key)
         answer))
   (to (~ .get key)
     (map .get key #no))
@@ -42,7 +42,7 @@
     (make missing)
     (let key (map .find value missing))
     (when (= key missing)
-      (error "Missing value" value))
+      (oops "Missing value" value))
     key)
   (to ~.copy ;TODO rename .diverge; check that all uses want a !map result
     (!map<-items map.items))
@@ -60,18 +60,18 @@
     (let inverse (!map<-))
     (for each! (((~ k v) map.items))
       (when (inverse .maps? v)
-        (error ".inverse of noninvertible map" map))  ; or just allow it?
+        (oops ".inverse of noninvertible map" map))  ; or just allow it?
       (inverse .set! v k))
     inverse)
 
   ;; What's the right definition & interface for these for maps?
   ;; TODO also, rename to .or, .and ?
   (to (~ .union other)
-    (error "unimplemented .union"))
+    (oops "unimplemented .union"))
   (to (~ .intersect other)                 
-    (error "unimplemented .intersect"))
+    (oops "unimplemented .intersect"))
   (to (~ .difference other)
-    (error "unimplemented .difference"))
+    (oops "unimplemented .difference"))
 
 ;;  (to (~ .compare xs)
 ;;  (to (~ .slice keys)

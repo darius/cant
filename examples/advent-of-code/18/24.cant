@@ -14,7 +14,7 @@
               (each ~.count infection)
               (each ~.count immune-system))
 ;    (when (= (each ~.count infection) '(1273))
-;      (error "break"))
+;      (oops "break"))
     (let a1 (select-targets "Infection"     infection immune-system))
     (let a2 (select-targets "Immune System" immune-system infection))
     (let counts-before (each tally armies.values))

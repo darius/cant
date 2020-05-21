@@ -161,10 +161,10 @@
 (to (debug k plaint irritant)
   (complain plaint irritant)
   (traceback k)
-  (debugging (out-step<- k 'default-error-value)))
+  (debugging (out-step<- k 'default-oops-value)))
 
 (to (complain plaint irritant)
-  (out .say "Lambdaterp error: ~w: ~w\n" plaint irritant))
+  (out .say "Lambdaterp oops: ~w: ~w\n" plaint irritant))
 
 (to (traceback k)
   (each! (-> (out .print it)) k))

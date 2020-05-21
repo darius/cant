@@ -179,7 +179,7 @@
       (let move (player .pick-move board))
       (let possibles (link {resign} board.gen-legal-moves))  ;; isn't this poor factoring?
       (unless (possibles .find? move)
-        (error "Bad move" move))
+        (oops "Bad move" move))
       (unless player.interactive?
         (out .say "~d plays ~d.\n\n" (side-name mover) (unparse-move move)))
       (update move board))
@@ -336,7 +336,7 @@
            (~ "minimax" (minimax-player<- 2))))
   (out .display "(Moves look like 'e2e3')\n\n")
   (unless (= args.count 3)
-    (error ("usage: ~d white-player black-player" .format (args 0))))
+    (oops ("usage: ~d white-player black-player" .format (args 0))))
   (play-chess out
               (strategy-names (args 1))
               (strategy-names (args 2))))

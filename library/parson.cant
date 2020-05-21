@@ -198,18 +198,18 @@
   (let skeletons outcome.?results)
 
   (unless skeletons
-    (error "Ungrammatical grammar" outcome.display))
+    (oops "Ungrammatical grammar" outcome.display))
 
   (let lhses (bag<- (each ~.first skeletons)))
   (let duplicates (for where ((count lhses)) (< 1 count)))
   (when duplicates.some?
-    (error "Multiply-defined rules" (sort duplicates)))
+    (oops "Multiply-defined rules" (sort duplicates)))
 
   (let all-refs (union-over (for each ((`(,_ ,{lifted refs _}) skeletons))
                               refs)))
   (let undefined (all-refs .difference lhses))
   (when undefined.some?
-    (error "Undefined rules" (sort undefined.keys)))
+    (oops "Undefined rules" (sort undefined.keys)))
 
   skeletons)
 

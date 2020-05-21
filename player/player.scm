@@ -156,7 +156,7 @@
 (define raw-signal-handler-box (box #f))
 
 (define error-prim
-  (cps-prim<- #f 'error
+  (cps-prim<- #f 'oops
               (lambda (datum arguments k)
                 (handle-error k arguments))))
 
@@ -543,7 +543,7 @@
                     ;; N.B. in primordia.scm there's a list you have to keep in sync.
                     (__raw-signal-handler-box ,raw-signal-handler-box)
                     (__evaluate ,evaluate-prim)
-                    (error ,error-prim)
+                    (oops ,error-prim)
                     (with-ejector ,with-ejector-prim)
                     (__eject ,eject-prim)
                     (ejector-protect ,ejector-protect-prim)

@@ -17,7 +17,7 @@
       (be `(,text)
         text)
       (else
-        (error ("Usage: ~d [cryptogram]" .format (args 0))))))
+        (oops ("Usage: ~d [cryptogram]" .format (args 0))))))
   (for cbreak-mode ()
     (puzzle cryptogram)))
 

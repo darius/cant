@@ -203,8 +203,8 @@
       e)
     (be (list<- (list<- 'unquote-splicing e))
       e)
-    (be (link 'unquote _)          (error "Bad quasiquote"))
-    (be (link 'unquote-splicing _) (error "Bad quasiquote"))
+    (be (link 'unquote _)          (oops "Bad quasiquote"))
+    (be (link 'unquote-splicing _) (oops "Bad quasiquote"))
     (be (link first rest)
       ;; TODO quote if both parts are constant
       `(link ,(qq-expand first) ;XXX unhygienic but works for both exp and pat
@@ -274,7 +274,7 @@
         (be {to f params body}
           {closure r params body})))
     (be {empty-env}
-      (error "Unbound variable" name))))
+      (oops "Unbound variable" name))))
 
 
 (to (module powers)
@@ -392,7 +392,7 @@
             (on-death 'partner-died))))      ;TODO or whatever
 
       (to (~ .enqueue message)
-        ;; TODO: error if exited? Probably not.
+        ;; TODO: oops if exited? Probably not.
         (push! inbox-unchecked message)
         process.wake)
 
@@ -487,9 +487,9 @@
       (be {const value}
         {go k value})
       (be {var name}
-        {go k (env-get r name)})           ;TODO error handling
+        {go k (env-get r name)})           ;TODO oops handling
       (be {module-ref mod-name var-name}
-        {go k (module-ref mod-name var-name)}) ;XXX module-ref might error or block
+        {go k (module-ref mod-name var-name)}) ;XXX module-ref might oops or block
       (be {on ps e}
         {go k {closure r ps e}})
       (be {call e es}
@@ -603,19 +603,19 @@
       ))
 
   (to (apply-primitive p args k)
-    ;; Ugh, Cant's error-catching stuff is pretty clumsy.
-    ;; I'm not going to try to handle errors everywhere; only in these
+    ;; Ugh, Cant's oops-catching stuff is pretty clumsy.
+    ;; I'm not going to try to handle oopses everywhere; only in these
     ;; primitive calls (mostly). We can wait to do things properly until
     ;; we're making a VM in C for real.
     (may (with-signal-handler
           (on (cant-k evil)
-            ;; XXX wrong if the error occurs within a nested Cant call context.
+            ;; XXX wrong if the oops occurs within a nested Cant call context.
             ;;   TODO show it can go wrong
             ;;   We need to use an ejector to get this right.
-            (cant-k .answer {error evil}))
+            (cant-k .answer {oops evil}))
           (on ()
             (p @args)))
-      (be {error evil}
+      (be {oops evil}
         (exit k evil))
       (be result
         {go k result})))
@@ -669,7 +669,7 @@
     #no)
 
   (to (as-pid pid)
-    ;; TODO error if not a pid in the end
+    ;; TODO oops if not a pid in the end
     (if (symbol? pid) (registry pid) pid))
 
   (let registry (!map<-))

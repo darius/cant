@@ -10,7 +10,7 @@
 ;; and eats it if it finds it, but if it doesn't find a message
 ;; it understands, it leaves the tail alone and returns itself.
 ;; So:
-;; 1. Don't raise an error if you see no message you understand.
+;; 1. Don't oops if you see no message you understand.
 ;;    (Expect debugging troubles from this.)
 ;; 2. Make the message frames mutable?
 ;;    *Probably* easier to implement that way.
@@ -106,7 +106,7 @@
     (be `(% ,pattern ,@rest)           (terp-% pattern (nest rest r k)))
     (be `(let ,variable ,val-e ,@rest) (terp val-e r `(let ,variable ,rest ,r ,k)))
     (be `(,first ,@rest)               (terp first r (nest rest r k)))
-    (be '()                            (error "empty expression"))
+    (be '()                            (oops "empty expression"))
     (else                              (return k e))))
 
 (to (nest es r k)
@@ -114,7 +114,7 @@
 
 (to (make-message e r k)
   ;; XXX null message probably should be kept instead
-  ;; e.g. so you'd get an error on too many $'s
+  ;; e.g. so you'd get an oops on too many $'s
   (if (= '() e) k `(message ,e ,r ,k)))
 
 (to (return k value)

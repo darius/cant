@@ -1,6 +1,6 @@
 (to (expect expected value)
   (unless (= expected value)
-    (error "Smoke test failed" expected value)))
+    (oops "Smoke test failed" expected value)))
 
 (expect 42           42)
 (expect 'hello       'hello)

@@ -64,7 +64,7 @@
     (be `(and ,@ps)            `(() ,ps))
     (be `(view ,e ,p)          `((,e) (,p)))
     (be (? term? t)            `(() ,(list-subpatts t.parts)))
-    (be `(@ ,_) (error "An @-pattern must be at the end of a list" patt))
+    (be `(@ ,_) (oops "An @-pattern must be at the end of a list" patt))
     (be (list<- 'quasiquote q) `(() ,(quasiquote-subpatts q)))
     (be (? list? ps)           `(() ,(list-subpatts ps))))) ;TODO remove
 
@@ -73,7 +73,7 @@
     (be (list<- 'unquote p) `(,p))
     (be (list<- (list<- 'unquote-splicing p)) `(,p))
     (be (list<- 'unquote-splicing p)
-      (error "A ,@-pattern must be at the end of a list" q))
+      (oops "A ,@-pattern must be at the end of a list" q))
     (be (link qcar qcdr) `(',qcar ,@(quasiquote-subpatts qcdr)))
     (be (? term?) (qq-term-subpatts q))
     (else '())))

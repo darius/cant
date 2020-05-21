@@ -121,7 +121,7 @@
                   (mem .set! 0 new-program)
                   (running new-program (reg c)))))
           
-          (else (error "Bad opcode" opcode)))))))
+          (else (oops "Bad opcode" opcode)))))))
 
 (to (read-program source)
   (let program (flexarray<-))

@@ -22,7 +22,7 @@
       (let value (play e1 r))
       (if (match value p r)
           value
-          (error "Match failure" p value)))
+          (oops "Match failure" p value)))
     (be {call e1 e2}
       (call (play e1 r) (play e2 r)))
     (be {term tag es}

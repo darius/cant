@@ -12,7 +12,7 @@
 
 ;; Top level: listener and command line
 
-(let the-last-error (box<- #no))
+(let the-last-oops (box<- #no))
 
 (to (push-signal-handler handler)
   (let parent-handler the-signal-handler.^)
@@ -55,7 +55,7 @@
   ;; finally panicking.
   ;; N.B. cruder code and cruder output because we're trying to use
   ;; only primitives as far as possible:
-  (out .display "Error within error! Evils:\n")
+  (out .display "Oops within oops! Evils:\n")
   (begin printing ((xs evil))
     (unless xs.none?
       (out .write xs.first)
@@ -72,14 +72,14 @@
 
 (to (start-playing @(optional command-line-args))
   (import ((use 'traceback) (export out))
-    on-error-traceback)
+    on-oops-traceback)
 
   (let parent-handler the-signal-handler.^)
 
   (to (script-handler k evil)
     (the-signal-handler .^= parent-handler)
-    (the-last-error .^= {error k evil})
-    (on-error-traceback k evil))
+    (the-last-oops .^= {oops k evil})
+    (on-oops-traceback k evil))
 
   (let listener (listener<- main-interactive-setting script-handler))
 
@@ -126,15 +126,15 @@
   (import ((use 'debugger)
            (export out in extract-datum extract-script main-interactive-setting))
     inspect-sequel)
-  (may the-last-error.^
-    (be {error k evil}
+  (may the-last-oops.^
+    (be {oops k evil}
       (inspect-sequel k))
     (else
-      (out .display "No error to debug.\n"))))
+      (out .display "No oops to debug.\n"))))
 
 (to (breakpoint @values)
   ;; TODO automatically invoke the debugger
-  (error "Breakpoint" @values))
+  (oops "Breakpoint" @values))
 
 (full-powered-setting .resolve-each! primordial-setting full-powered-setting-extra-names)
 

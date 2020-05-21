@@ -2,15 +2,15 @@
 ;; This turned into essentially a repeat of test-continuations.scm.
 
 (import ((use 'traceback) (export out))
-  on-error-traceback)
+  on-oops-traceback)
 
 (to (factorial n)
   (if (= 0 n)
-      (error "I don't know 0!")
+      (oops "I don't know 0!")
       (* n (factorial (- n 1)))))
 
 (to (complain-and-resume sequel evil)
-  (on-error-traceback sequel evil)
+  (on-oops-traceback sequel evil)
   (out .say "About to resume, pretending 0! = 10\n")
   (sequel .answer 10))
 

@@ -6,7 +6,7 @@
 (make-trait map-primitive map
   (to (~ key)
     (may (__mapi-get key map)
-      (be #no (error "Missing key" map key))
+      (be #no (oops "Missing key" map key))
       (be (~ _ v) v)))
   (to (~ .get key @(optional default))
     (may (__mapi-get key map)

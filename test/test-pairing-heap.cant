@@ -51,7 +51,7 @@
                      '() (-> (= '() it)) ~.first insert-sorted ~.rest))
   (if (= history-1 history-2)
       history-1
-      (error "Test failed" `(,history-1 ,history-2))))
+      (oops "Test failed" `(,history-1 ,history-2))))
 
 (to (test-each-tail numbers)
   (begin testing ((ns numbers))

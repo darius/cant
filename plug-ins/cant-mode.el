@@ -120,7 +120,7 @@ them."
   (insert "  ")
   (let ((here (point)))
     (insert "\n")
-    (cant-mode-insert "  (error \"stub: &\"))\n" (car signature))
+    (cant-mode-insert "  (oops \"stub: &\"))\n" (car signature))
     (goto-char here)))
 
 (defun cant-mode-insert (template sexp)

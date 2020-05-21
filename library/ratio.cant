@@ -24,7 +24,7 @@
     (reduce n d)))
 
 (to (reduce n d)
-  (hm (if (= d 0) (error "Divide by 0"))
+  (hm (if (= d 0) (oops "Divide by 0"))
       (if (< d 0) (lowest-terms (- n) (- d)))
       (else       (lowest-terms n d))))
 

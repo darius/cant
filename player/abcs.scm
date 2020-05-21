@@ -35,10 +35,10 @@
   (cant-interpret
    '(do
                                         ;    (use "test/smoke-test")
-      ;; Let's default to traceback-on-error:
-      ;; TODO: also stash the error in the-last-error for below
-                                        ;    (push-signal-handler ((use 'traceback) 'on-error-traceback))
-      (the-last-error .^))))
+      ;; Let's default to traceback-on-oops:
+      ;; TODO: also stash the oops in the-last-oops for below
+                                        ;    (push-signal-handler ((use 'traceback) 'on-oops-traceback))
+      (the-last-oops .^))))
 
 (setting-ensure-bound primordial-setting '(primordial-setting))
 (setting-resolve! primordial-setting 'primordial-setting primordial-setting)

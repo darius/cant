@@ -34,10 +34,10 @@
     (= pq empty-pq))
 
   ;; Return the minimum element of PQ.
-  ;; Signals an error if PQ is empty.
+  ;; Oopses if PQ is empty.
   (to (pq-min pq)
     (may pq
-      (be {pq}        (error "pq-min of an empty pq"))
+      (be {pq}        (oops "pq-min of an empty pq"))
       (be {pq elem _} elem)))
 
   ;; Return a priority queue with a single element, ELEM.
@@ -64,11 +64,11 @@
                               {pq elem `(,pq)}))))
 
   ;; Return PQ with its minimum element removed.
-  ;; Signals an error if PQ is empty.
+  ;; Oopses if PQ is empty.
   (to (pq-remove-min pq)
     (may pq
       (be {pq}
-        (error "pq-remove-min of empty-pq"))
+        (oops "pq-remove-min of empty-pq"))
       (be {pq _ pqs}
         (begin merging ((pqs pqs))
           (may pqs

@@ -38,7 +38,7 @@
 (to (src-do-parts src)
   (may src
     (be `(do ,@es) es)
-    (else (error "I don't know how to unparse this sequence" src))))
+    (else (oops "I don't know how to unparse this sequence" src))))
 
 (to (lambda-parsing `(,[(? symbol? v) @vs] ,@body) src)
   ;; TODO adjust src in the curried case

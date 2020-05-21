@@ -39,7 +39,7 @@
 (make zip
   (to (~ xs ys)                           ;specialized for speed
     (to (mismatch)
-      (error "zip: mismatched arguments" xs ys))
+      (oops "zip: mismatched arguments" xs ys))
     (begin zipping ((xs xs) (ys ys))
       (hm (if xs.none? (if ys.none? '() (mismatch)))
           (if ys.none? (mismatch))
@@ -204,7 +204,7 @@
 
 (to (system/must-succeed command)
   (unless (= 0 (system command))
-    (error "Failed system command" command)))
+    (oops "Failed system command" command)))
 
 (to (setting<-map map)
   (__setting<- map.keys (array<-list map.values) #no))
@@ -261,7 +261,7 @@
     self-evaluating?
     maybe-macroexpand-expr maybe-macroexpand-patt
     setting? immutable-map? map<-items empty-setting
-    error with-ejector ejector-protect with-closing
+    oops with-ejector ejector-protect with-closing
     miranda-trait array-trait list-trait map-trait sink-trait
     as-list array<-list array<- map<- map<-lists tuple<-list yeah?
     list<- !map<- !map<-items !map<-lists set<- set<-list hash-set<-

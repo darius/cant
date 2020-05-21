@@ -1160,8 +1160,8 @@ installed by `ejector-protect` (like Common Lisp `unwind-protect`).
 
 Sometimes the system signals an error, or you signal one in your code:
 ```
--> (error "This is bad" 'bad 'hombre)
-Error! Traceback:
+-> (oops "This is bad" 'bad 'hombre)
+Oops! Traceback:
   (call '#<print-result:listener<-> ^)
   {~ ^^^}
   (^)

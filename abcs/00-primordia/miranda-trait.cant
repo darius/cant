@@ -2,4 +2,4 @@
 
 (make-trait miranda-trait me
   (to (~ .selfie sink) (sink .display (__depict me)))
-  (to message (error "Match failure" me message)))
+  (to message (oops "Match failure" me message)))

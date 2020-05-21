@@ -24,8 +24,8 @@
 
 (make-trait __cont-halt me
   (to ~.none?         #yes)
-  (to ~.first         (error "No more frames" me))
-  (to ~.rest          (error "No more frames" me))
+  (to ~.first         (oops "No more frames" me))
+  (to ~.rest          (oops "No more frames" me))
   (to (~ .selfie sink)   (sink .display "<halt-cont>"))
   (to (~ .answer result) (__reply me.__raw-k result))
   (to message (list-trait me message)))
@@ -193,10 +193,10 @@
 
 (let the-signal-handler (box<- panic))
 
-(to (__handle-error raw-k evil)
+(to (__handle-oops raw-k evil)
   ;; TODO set the-signal-handler to a backup handler before invoking the current one.
   ;; There's logic for this in top.cant, but let's try to not mix this with the fancier
   ;; stuff there.
   (the-signal-handler.^ (__wrap-cont raw-k) evil))
 
-(__raw-signal-handler-box .^= __handle-error)
+(__raw-signal-handler-box .^= __handle-oops)

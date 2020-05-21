@@ -102,7 +102,7 @@
           (to (~ key)
             (may (place key)
               (be {at i} (vals.^ i))
-              (else      (error "Missing key" !map key))))
+              (else      (oops "Missing key" !map key))))
           (to (~ .get key @(optional default))
             (may (place key)
               (be {at i} (vals.^ i))
@@ -145,7 +145,7 @@
                 (keys.^ .set! i deleted)
                 (count .^= count.^.-)
                 #no)
-              (else #no)))   ;XXX error instead? It is in Python.
+              (else #no)))   ;XXX oops instead? It is in Python.
           (to (~ .find value default)
             (let vs vals.^)
             (begin searching ((js (occupants)))  ;XXX should be lazy
@@ -256,7 +256,7 @@
 
 (to (surely ok? @arguments)
   (unless ok?
-    (error @(if arguments.none? '("Assertion failed") arguments))))
+    (oops @(if arguments.none? '("Assertion failed") arguments))))
 
 (to (count? x)
   (and (integer? x) (<= 0 x)))
@@ -304,7 +304,7 @@
     (be -1 -1)
     (be  0  0)
     (be +1 +1)
-    (else  (error "Incomparable" a b))))
+    (else  (oops "Incomparable" a b))))
 
 ;;XXX so should some of these be in list-trait?
 
@@ -402,11 +402,11 @@
           (to ~.count (- limit first))
           (to (~ i)
             (if (not (integer? i))
-                (error "Key error" range i)
+                (oops "Key error" range i)
                 (do (let j (+ first i))
                     (if (and (<= first j) (< j limit))
                         j
-                        (error "Out of range" range i)))))
+                        (oops "Out of range" range i)))))
           (to (~ .maps? i)
             (and (integer? i)
                  (do (let j (+ first i))
@@ -425,9 +425,9 @@
                   (to ~.first first)
                   (to ~.rest  (interval<- (+ first stride) limit stride))
                   (to (~ i)
-                    (error "TODO" range `(,i)))
+                    (oops "TODO" range `(,i)))
                   (to (~ .maps? i)
-                    (error "TODO" range (~ .maps? i)))
+                    (oops "TODO" range (~ .maps? i)))
                   )))
         (if (< stride 0)
             (if (< first limit)
@@ -437,12 +437,12 @@
                   (to ~.first first)
                   (to ~.rest  (interval<- (+ first stride) limit stride))
                   (to (~ i)
-                    (error "TODO" range `(,i)))
+                    (oops "TODO" range `(,i)))
                   (to (~ .maps? i)
-                    (error "TODO" range (~ .maps? i)))
+                    (oops "TODO" range (~ .maps? i)))
                   )))
         (else
-          (error "Zero stride" first limit stride)))))
+          (oops "Zero stride" first limit stride)))))
 
 ;; A lazy sequence of key-value pairs.
 (make enumerate
@@ -478,7 +478,7 @@
     (to (scanning sink t args)
       (if t.none? 
           (when args.some?
-            (error "Leftover arguments to .format" args))
+            (oops "Leftover arguments to .format" args))
           (may t.first
             (be #\~
               (parse sink t.rest args))
@@ -497,7 +497,7 @@
 
     (to (parsing sink t pad sign width args)
       (when t.none?
-        (error "Incomplete format")) ;TODO report the format-text
+        (oops "Incomplete format")) ;TODO report the format-text
       (may t.first
         (be #\w
           (maybe-pad sink pad sign width (~ .write args.first))
@@ -517,7 +517,7 @@
                      (~ .display ((text<-number args.first 16) .lowercase)))
           (scanning sink t.rest args.rest))
         (else
-          (error "Bad format text" (text<-list t)))))
+          (oops "Bad format text" (text<-list t)))))
 
     (to (maybe-pad sink pad sign width message)
       (hm (when width
@@ -525,7 +525,7 @@
             (let w (if sign (* sign width) width))
             (sink .display ((text<-writer message) .justify w pad)))
           (when sign
-            (error "Missing width in format text"))
+            (oops "Missing width in format text"))
           (else
             (call sink message))))
 

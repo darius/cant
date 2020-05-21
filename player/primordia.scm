@@ -132,7 +132,7 @@
    (append (map car nonmeta-a-list)
            '(__raw-signal-handler-box
              __evaluate
-             error
+             oops
              with-ejector
              __eject
              ejector-protect
