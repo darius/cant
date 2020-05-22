@@ -47,7 +47,6 @@
 ;; Read a 4-byte unsigned int, big-endian. TODO should be in a library
 (to (read-u32 source)
   (for foldl ((n 0) (_ (4 .till)))
-    (+ (n .<< 8)
-       source.read-rune.code)))
+    (+ (n .<< 8) source.read-rune.code)))
 
 (export chaos<- chaos random-chaos<- random-seed<-)

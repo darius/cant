@@ -12,13 +12,13 @@
 
 (to (run)
   (let strokes (flexarray<-))
-  (begin running ()
+  (begin ()
     (let echoes (fill (" " .join strokes.values) screen-width))
     (render ["Hit some keys; capital Q to quit.\n\n"
              echoes cursor])
     (let key (get-key))
     (unless (= key #\Q)
       (strokes .push! ("~w" .format key))
-      (running))))
+      (loop))))
 
 (export main run)

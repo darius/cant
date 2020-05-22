@@ -12,25 +12,19 @@
   (let start (nano-now))
   (begin typing ()
     (show (/ (- (nano-now) start) 1000000000)
-          (text<-list strokes))
-    (hm (unless in.ready?
-          ;; XXX This polling/sleeping approach sucks, but it's
-          ;; supported by the underlying Scheme.
-          (nanosleep 50000000)  ; 1/20 sec
-          (typing))
-        (else
-          (may (get-key)
-            (be 'esc
-              'done)
-            (be 'backspace
-              (unless strokes.none?
-                strokes.pop!)
-              (typing))
-            (be (? rune? key)
-              (strokes .push! key)
-              (typing))
-            (else
-              (typing)))))))
+          (text<-list strokes.values))
+    ;; XXX polling/sleeping with in.ready? sucks, but it's
+    ;; supported by the underlying Scheme.
+    (may (and in.ready? (get-key))
+      (be 'esc
+        'done)
+      (be ?key
+        (may ?key
+          (be #no        (nanosleep 50000000))  ; 1/20 sec
+          (be 'backspace (unless strokes.none? strokes.pop!))
+          (be (? rune?)  (strokes .push! ?key))
+          (else))
+        (typing)))))
 
 (to (show t body)
   (let cps (if (or (= t 0) body.none?)

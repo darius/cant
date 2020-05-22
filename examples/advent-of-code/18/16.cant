@@ -114,11 +114,10 @@ insn:    :count ' ' :count ' ' :count ' ' :count '\n' :hug.
     (let opcode (min-by (compose ~.count candidates)
                         candidates.keys))
     (when (= 1 (~.count (candidates opcode)))
-      (let op-name (((candidates opcode) .keys) .first)) ;clumsy
+      (let op-name (~.only (~.keys (candidates opcode))))
       (assignments .set! opcode op-name)
       (candidates .delete! opcode)
-      (for each! (((~ op2 names2) candidates.items))
-        (names2 .delete! op-name))
+      (each! (~ .delete! op-name) candidates.values)
       (when candidates.some?
         (pruning))))
   (surely candidates.none?)
