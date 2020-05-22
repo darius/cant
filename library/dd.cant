@@ -31,9 +31,9 @@
                                   nodes.first)
                               ;; TODO how to write this elegantly?
                               ;; Can't be this because it requires comparability of constants/none:
-                              ;; ((<=> nodes.keys (each ~.constant-value nodes))
+                              ;; (if (<=> nodes.keys (each ~.constant-value nodes))
                               ;; This is ok but wordier:
-                              ;; ((for every (((~ i node) nodes.items)) (= i node.constant-value))
+                              ;; (if (for every (((~ i node) nodes.items)) (= i node.constant-value))
                               ;; So for now we end up with:
                               (if (= (as-list nodes.keys) (each ~.constant-value nodes))
                                   choice)
