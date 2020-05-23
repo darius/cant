@@ -79,7 +79,7 @@
   (out .say "~d " question)
   (may in.read-line
     (be (? zilch?) (quit))
-    (be answer     answer.uppercase)))
+    (be answer     answer.trim.uppercase)))
 
 
 ;; Places
