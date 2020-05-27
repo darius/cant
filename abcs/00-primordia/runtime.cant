@@ -381,8 +381,7 @@
              (some pass? xs.rest)))))
 
 ;; (every pass? xs) = does pass? approve each x in xs?
-;; More precisely, if no xs then #yes, else #no if for some x in xs
-;; (pass? x) is #no, else (pass? xs.last). In order, short-circuited.
+;; More precisely, (not (some (compose not pass?) xs)).
 (make every {extending zipped-list-transducer}
   (to (~ pass? xs)
     (or xs.none?

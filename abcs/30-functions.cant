@@ -87,19 +87,15 @@
   (map<-items (for each ((value values))
                 (~ (f value) value))))
 
-;; Pair every x in xs with every y in ys.
+;; List every way to pick one element from each of the arguments.
+;; For example, (grid* '(a b) '(0 1)) = ((a 0) (a 1) (b 0) (b 1))
 ;; What's a good name for this? I like 'cartesian*' even less.
+;; 'combinations<-' maybe?
 (make grid*
-  (to (~ xs ys)        ;; fast path; redundant wrt the cases below
-    (for gather ((x xs))
-      (for each ((y ys))
-        `(,x ,y))))
-  (to (~)              ;; TODO document
-    '(()))
-  (to (~ xs @lists)    ;; TODO document
-    (for gather ((x xs))
-      (for each ((rest (grid* @lists)))
-        (link x rest)))))
+  (to (~)           '(()))
+  (to (~ xs @lists) (for gather ((x xs))
+                      (for each ((picks (grid* @lists)))
+                        (link x picks)))))
 
 ;; (intercalate T '(as bs cs)) = `(,@as ,T ,@bs ,T ,@cs)
 ;; TODO almost never used
