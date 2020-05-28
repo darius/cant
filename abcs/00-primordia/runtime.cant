@@ -477,7 +477,7 @@
     (to (scanning sink t args)
       (if t.none? 
           (when args.some?
-            (oops "Leftover arguments to .format" args))
+            (oops "Leftover arguments to format" args))
           (may t.first
             (be #\~
               (parse sink t.rest args))
