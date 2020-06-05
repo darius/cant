@@ -232,7 +232,7 @@
   (each! (~ focus) actions)
   focus)
 
-;; 'bind' on the maybe monad
+;; Like (f ?thing) but preserving #no-ness.
 (to (mayhap f ?thing)
   (may ?thing
     (be #no #no)
