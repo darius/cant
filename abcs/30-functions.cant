@@ -106,14 +106,6 @@
             (for gather ((x elements.rest)) ;TODO more efficient
               `(,between ,x)))))
 
-(to (link/lazy x thunk)
-  (make lazy-list {extending list-trait}
-    (to ~.none? #no)
-    (to ~.first x)
-    (to ~.rest  (thunk))
-    ;; XXX override parts of list-trait that need it for laziness
-    ))
-
 ;; TODO zipped-list-transducer for the below?
 
 (to (those/lazy keep? xs)

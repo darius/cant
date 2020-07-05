@@ -388,6 +388,14 @@
         (and (pass? xs.first)
              (every pass? xs.rest)))))
 
+(to (link/lazy x thunk)
+  (make lazy-list {extending list-trait}
+    (to ~.none? #no)
+    (to ~.first x)
+    (to ~.rest  (thunk))
+    ;; XXX override parts of list-trait that need it for laziness
+    ))
+
 ;; An interval represents a progression from a `first`, short of a
 ;; `limit`, successively by a `stride`.
 (make interval<-

@@ -32,6 +32,11 @@
   (to ~.text           (text<-number me))
   (to ~.number         me)
   (to (~ .gcd b)       (gcd me b))
+  (to ~.bits
+    ;; Lazy list because negative numbers end in infinite 1's:
+    (if (= me 0)
+        '()
+        (link/lazy (me .and 1) (: ((me .>> 1) .bits)))))
   ;; XXX sketchy support for 32-bit word ops:
   (to (~ .u+ a)        (__u+ me a))
   (to (~ .u- a)        (__u- me a))
