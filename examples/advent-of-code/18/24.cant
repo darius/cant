@@ -145,8 +145,7 @@ separator: '\n'.
 
 (to (part-1)
   (let armies (!map<-items (for each ((`(,name ,group-makers) matchup))
-                             (~ name (for each ((group-maker group-makers))
-                                       (group-maker 0))))))
+                             (~ name (each (~ 0) group-makers)))))
   (show-count armies)
   (battle armies)
   (sum-by tally armies.values))
@@ -168,8 +167,7 @@ separator: '\n'.
                              (~ name (do (let my-boost (may name
                                                          (be "Immune System" boost)
                                                          (else               0)))
-                                         (for each ((group-maker group-makers))
-                                           (group-maker my-boost)))))))
+                                         (each (~ my-boost) group-makers))))))
   (out .say "Trying immune boost of ~w\n" boost)
   (let win? (battle armies))
   (out .say "Immune boost of ~w ~d\n" boost (if win? "WORKED!" "failed"))
