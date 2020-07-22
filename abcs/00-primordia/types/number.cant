@@ -26,6 +26,7 @@
   (to ~.-              (__- me 1))
   (to ~.sqrt           (sqrt me))
   (to ~.floor          (floor me))
+  (to ~.ceiling        (ceiling me))
   (to ~.exact          (exact<-inexact me))
   (to ~.inexact        (inexact<-exact me))
   (to ~.magnitude      (abs me))

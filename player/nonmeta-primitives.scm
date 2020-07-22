@@ -223,6 +223,7 @@
     (inexact<-exact ,exact->inexact)  ;XXX rename or something
     (exact<-inexact ,inexact->exact)  ;XXX rename or something
     (floor ,floor)
+    (ceiling ,ceiling)
     (not ,not)
     (assoc ,assoc)                      ;XXX doesn't use cant=?
     (sqrt ,sqrt)
