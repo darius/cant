@@ -1,0 +1,40 @@
+;; List prime numbers
+;; TODO test correctness
+;; TODO use sieve; currently (list-primes-till 2000000) takes 8.5 minutes
+;; TODO add some way to reset/shrink the cache
+
+;; (Will be extended. We need the last element to be odd, so we can
+;; skip checking of even numbers.)
+(let known-primes (flexarray<- 2 3))
+
+;; Return a lazy list of all primes < limit.
+(to (list-primes-till limit)
+  (let n-known-initially known-primes.count)
+  (begin listing-known ((i 0))
+    (hm (if (= n-known-initially i) (venture-into-the-unknown limit))
+        (do (let p (known-primes i)))
+        (if (<= limit p) '())
+        (else (link/lazy p (: (listing-known i.+)))))))
+
+;; Add to known-primes from all candidates < limit; return a lazy list
+;; of the added primes.
+(to (venture-into-the-unknown limit)
+  (begin trying ((n (+ known-primes.last 2)))
+    (hm (if (<= limit n) '())
+        (if (known-factor? n) (trying (+ n 2)))
+        (else
+          (known-primes .push! n)
+          (link/lazy n (: (trying (+ n 2))))))))
+
+;; Is any known prime a factor of n?
+(to (known-factor? n)
+  ;; TODO if known-primes.values were lazy, this could be shorter
+  (let i-limit known-primes.count)
+  (let p-limit n.sqrt.floor.exact)
+  (begin checking ((i 0))
+    (and (< i i-limit)
+         (<= (let p (known-primes i)) p-limit)
+         (or (p .divides? n)
+             (checking i.+)))))
+              
+(export list-primes-till)

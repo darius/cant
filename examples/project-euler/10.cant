@@ -1,0 +1,13 @@
+;; https://projecteuler.net/problem=10
+;; Find the sum of all the primes below two million.
+
+(import (use 'primes) list-primes-till)
+
+(to (sum-of-primes-till limit)
+  (sum (list-primes-till limit)))
+
+;; (sum-of-primes-till 2000000)
+
+(to (main args)
+  (let arg (args 1))
+  (out .say "~w\n" (sum-of-primes-till arg.number)))

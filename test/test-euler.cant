@@ -15,3 +15,4 @@
 (loud-use "../examples/project-euler/07")
 (loud-use "../examples/project-euler/08")
 ((loud-use "../examples/project-euler/09") '*)
+((loud-use "../examples/project-euler/10") '(_ "10"))
