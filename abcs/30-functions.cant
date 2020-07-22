@@ -252,7 +252,7 @@
     list<-text text-source<- text-sink<-
     text<-list text<- text<-writer
     term<- rune<- array<-count inexact<-exact exact<-inexact
-    floor not void /
+    not void /
     self-evaluating?
     maybe-macroexpand-expr maybe-macroexpand-patt
     setting? immutable-map? map<-items empty-setting

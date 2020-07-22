@@ -31,7 +31,6 @@
                0
                (/ body.count.- t)))
   (let wpm (/ (* cps 60) 5))
-  (render [("~w seconds  ~w words/minute"
-            .format (floor t) (floor wpm))
+  (render [("~w seconds  ~w words/minute" .format t.floor wpm.floor)
            "   (Hit control-X to quit.)\n\n"
            body cursor]))

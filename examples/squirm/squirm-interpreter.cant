@@ -728,7 +728,7 @@
       nil? link? list? number? integer? symbol? claim? char? string? tuple?
       char<- tuple<- tuple<-list
       number<-string string<-number list<-string string<-list self-evaluating? 
-      inexact<-exact exact<-inexact floor not assoc sqrt
+      inexact<-exact exact<-inexact not assoc
       = not= < <=> > <= >= 
       * / + - expt abs gcd quotient remainder modulo
       string<-symbol
