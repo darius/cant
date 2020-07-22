@@ -9,6 +9,6 @@
   (use filename))
 
 (loud-use "test-lambda")
-(loud-use "test-euler")
+(loud-use "test-oiler")
 (loud-use "test-n-queens")
 (loud-use "test-squirm")

@@ -1,8 +1,4 @@
-;; https://projecteuler.net/problem=5
-;; The smallest positive number that is evenly divisible by all of the
-;; numbers from 1 to 20.
-
-(to (euler5 ns)
+(to (oiler5 ns)
   ((common-multiples<- ns) .first))
 
 (to (common-multiples<- ns)
@@ -21,6 +17,6 @@
   (begin listing ((k n))
     (link/lazy k (: (listing (+ k n))))))
 
-(out .print (euler5 (2 .thru 10)))
-;(out .print (euler5 (2 .thru 20)))
+(out .print (oiler5 (2 .thru 10)))
+;(out .print (oiler5 (2 .thru 20)))
 ;; XXX way too slow again

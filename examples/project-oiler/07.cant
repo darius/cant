@@ -1,8 +1,6 @@
-;; https://projecteuler.net/problem=7
-;; The 10,001st prime number.
 ;; TODO this lazy-list code is a little clumsy still
 
-(to (euler7 n)
+(to (oiler7 n)
   ((primes) n))
 
 (to (primes)
@@ -17,7 +15,7 @@
                    (for those/lazy ((k ns.rest))
                      (not (p .divides? k)))))))
 
-;(out .print (euler7 5))
-(out .print (euler7 100))
-;(out .print (euler7 10000))
+;(out .print (oiler7 5))
+(out .print (oiler7 100))
+;(out .print (oiler7 10000))
 ;; TODO implement the real sieve

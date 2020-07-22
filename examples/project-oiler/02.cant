@@ -1,0 +1,11 @@
+(to (oiler2 n)
+  (sum (those ~.even? (fibs n))))
+
+(to (fibs n)
+  (begin fibbing ((a 1) (b 1))
+    (if (<= a n)
+        (link a (fibbing b (+ a b)))
+        '())))
+
+;(out .print (oiler2 10))
+(out .print (oiler2 4000000))

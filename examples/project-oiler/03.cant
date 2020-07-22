@@ -1,0 +1,6 @@
+(import (use 'factor) factor)
+
+(to (oiler3 n)
+  (max @(factor n)))
+
+(out .print (oiler3 131957))
