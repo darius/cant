@@ -1,0 +1,24 @@
+;; https://projecteuler.net/problem=9
+;; There exists exactly one Pythagorean triplet for which a + b + c = 1000.
+;; a < b < c, a^2 + b^2 = c^2.
+;; Find the product abc.
+
+(to (answer total)
+  (let [a b c] (~.first (triplets<- total)))
+  (* a b c))
+
+;; Naive approach
+(to (triplets<- total)
+  (for gather ((c (interval<- (- total 2) (total .quotient 3) -1)))
+    (let c^2 (* c c))
+    (for yeahs ((b (interval<- c.- (c .quotient 2) -1)))
+      (let a^2 (- c^2 (* b b)))
+      (let a a^2.sqrt)
+      (and (= (+ a b c) total)
+           (< a b c)
+           [a.floor.exact b c]))))
+
+;; (answer 1000)
+
+(to (main _)
+  (out .say "~w\n" (answer 12)))

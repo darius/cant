@@ -14,3 +14,4 @@
 (loud-use "../examples/project-euler/06")
 (loud-use "../examples/project-euler/07")
 (loud-use "../examples/project-euler/08")
+(loud-use "../examples/project-euler/09")
