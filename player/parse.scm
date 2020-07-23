@@ -391,7 +391,7 @@
                `(if ,test ',(void) (do ,@body)))))
     ('hm     (mlambda
               ((__)
-               '(error "Fell off the end of 'hm'")) ;XXX hygiene
+               '(oops "Fell off the end of 'hm'")) ;XXX hygiene
               ((__ ('else . es))          `(do ,@es))
               ((__ ('do . es) . clauses)  `(do ,@es (hm ,@clauses)))
               ((__ ('and . es) . clauses) `(and ,@es (hm ,@clauses)))
