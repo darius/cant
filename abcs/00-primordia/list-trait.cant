@@ -15,6 +15,10 @@
       (if remainder.none?
           count
           (counting remainder.rest count.+))))
+  (to (~ .chain seq)                         ;TODO self if seq is ()
+    (if list.none?
+        seq
+        (link list.first (list.rest .chain seq))))
   (to (~ .slice i)
     (surely (<= 0 i))
     (hm (if (= i 0) list)
@@ -26,10 +30,10 @@
         (if (<= bound i) '())
         (if (= i 0) (link list.first (list.rest .slice 0 bound.-)))
         (else (list.rest .slice i.- bound.-))))
-  (to (~ .chain seq)                         ;TODO self if seq is ()
-    (if list.none?
-        seq
-        (link list.first (list.rest .chain seq))))
+  (to (~ .first-n n)  ; TODO better names?
+    (list .slice 0 n))
+  (to (~ .last-n n)   ; TODO better names? I'd like (~ .suffix n), except it suggests an index instead of a length
+    (list .slice (- list.count n)))
   (to (~ .compare xs)
     ;; N.B. mutable arrays compare by this method, so it's really a comparison as of right now
     (hm (if list.none? (if xs.none? 0 -1))
