@@ -32,9 +32,11 @@
                         '()
                         (scanning (f z xs.first) xs.rest))))))
 
-;; TODO is this worth it? sometimes what you want is the yeahs/lazy equivalent
-(to (detect include? xs)
-  ((those/lazy include? xs) .first))
+;; (detect ~.even? '(3 1 4 1 5 9 2 6)) = 4
+;; TODO is this worth it? sometimes what you want is the yeahs equivalent
+;; TODO #no if not found?
+(to (detect keep? xs)
+  ((those/lazy keep? xs) .first))
 
 ;; TODO I reimplemented this in 18/25.scm
 (to (pairs<- xs)
