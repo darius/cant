@@ -124,7 +124,7 @@ group: :count ' units each with ' :count ' hit points ' opt_qualities
 opt_qualities: '(' qualities ') ' | :hug.
 qualities: quality_list++'; ' :hug.
 quality_list: {'weak'|'immune'} ' to ' [word++', ' :hug] :hug.
-word: :letter+ :join.  # TODO ugly
+word: {:letter+}.
 separator: '\n'.
 "))
 (let semantics (grammar (map<- (~ 'Group (feed cook-group)))))
