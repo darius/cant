@@ -9,7 +9,7 @@
 (let input (with-input-file ~.read-all data-file))
 
 (let parse
-  (simple-parser<- "'depth: ' :count '\ntarget: ' [:count ',' :count :hug] '\n'"))
+  (like "'depth: ' :count '\ntarget: ' [:count ',' :count :hug] '\n'"))
 
 (let `(,depth ,target) (parse input))
 (out .print depth)

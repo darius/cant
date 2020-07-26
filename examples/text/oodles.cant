@@ -3,7 +3,7 @@
 ;; N.B. expressing probabilities as a fraction of 1000, since we don't yet
 ;; do floating point numbers.
 
-(import (use 'parson)    parse grammar<-)
+(import (use 'parson)    like)
 (import (use 'text-wrap) fill)
 
 (import (use 'chaos) chaos)         ;TODO pass it in
@@ -13,20 +13,17 @@
   (out .displayln (fill expanded 72)))
 
 (to (expand-text text probability)
-  ("" .join (for each ((token ((parse parser text) .results)))
+  ("" .join (for each ((token (parse text)))
               (expand token probability))))
-
-;;TODO use simple-parser<- or something
-(let grammar (grammar<- "
-phrase: (word | :anyone)*.
-word:   :letter+ {'!'}? :join.
-"))
-(let parser ((grammar (map<-)) 'phrase))
 
 (to (expand token probability)
   (if (and (menu .maps? token) (< (chaos .random-integer 1000) probability))
       (expand-text (menu token) (/ (* probability 4) 5))
       token))
+
+(let parse (like "([:letter+ {'!'}? :join] | :anyone)*"))
+;; TODO should be:
+;; (let parse (like "({:letter+ '!'?} | :anyone)*"))
 
 (let menu
   (map<-lists

@@ -1,7 +1,7 @@
 (import (use 'parson-core) feed take-1)
 
 (let parson (use 'parson))
-(import parson grammar<-)
+(import parson grammar<- like)
 (let parson-parse (parson 'parse))
 
 (to (average numbers)
@@ -75,15 +75,6 @@
   (chain @(for each ((line lines))
             (chain line "\n"))))
 
-;; I wish Parson made this convenient without the wrapper:
-(to (simple-parser<- template)
-  (let grammar (grammar<- (chain "start: " template " :end.\n"
-                                 "_ = :whitespace*.")))
-  (let peg ((grammar (map<-)) 'start))
-  (make parser
-    (to (~ text)        ((parson-parse peg text) .results))
-    (to (~ .parse text) (parson-parse peg text))))
-
 ;; TODO how much slower is this? Doesn't matter since it's no longer used!
 ;; (to (neighbors<- p)
 ;;   (for each ((d neighborhood-8))
@@ -111,7 +102,7 @@
   cycle scanl/lazy detect pairs<- yeahs/lazy 
   duplicates<- deletions<-
   chain-lines all-mins-by average neighbors-8<-
-  simple-parser<- vector+ vector- manhattan-distance<-
+  vector+ vector- manhattan-distance<-
   grammar<- parson-parse feed take-1
   bounds<- bounds-1d<- 
   )

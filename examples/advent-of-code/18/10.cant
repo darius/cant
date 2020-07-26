@@ -3,7 +3,7 @@
 (let input (with-input-file ~.read-lines data-file))
 
 (let parse
-  (simple-parser<-
+  (like
    "'position=<'_ :integer ','_ :integer :hug ['> velocity=<'_ :integer ','_ :integer '>' :hug]"))
 
 (let states (each parse input))

@@ -1,8 +1,7 @@
 (let input (with-input-file ~.read-lines data-file))
 ;(each! print (input .slice 0 5))
 
-(let parse
-  (simple-parser<- "(:integer | :skip)*"))
+(let parse (like "(:integer | :skip)*"))
 
 (let grammar (grammar<- "
 main: '#' :count ' @ ' :count ',' :count ': ' :count 'x' :count :end.

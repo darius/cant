@@ -213,4 +213,14 @@
 
   skeletons)
 
-(export grammar<- parse feed push)
+;; An amenity for concise code for the simplest parsers.
+(to (like template)
+  ;; TODO inefficient/error-prone to build a string and then parse it
+  (let grammar (grammar<- (chain "start: " template " :end.\n"
+                                 "_ = :whitespace*.")))
+  (let peg ((grammar (map<-)) 'start))
+  (make parser
+    (to (~ text)        ((parse peg text) .results))
+    (to (~ .parse text) (parse peg text))))
+
+(export grammar<- parse feed push like)

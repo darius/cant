@@ -1,4 +1,4 @@
-(import (use 'parson) parse grammar<-)
+(import (use 'parson) parse grammar<- like)
 
 (to (try grammar-text start-symbol subs inputs)
   (let parser ((grammar<- grammar-text) subs))
@@ -55,3 +55,8 @@ p      :  :whitespace.
 ")
 (let input "hello a world  is    nice    ")
 (try text 'split (!map<-) `(,input))
+
+(let simple-1 (like ":count ', ' :count"))
+(out .print (simple-1 "42, 137"))
+(out .displayln (~.display (simple-1 .parse "42, 137")))
+(out .displayln (~.display (simple-1 .parse "42, 137 and extra shit")))

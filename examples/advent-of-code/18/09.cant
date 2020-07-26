@@ -3,7 +3,7 @@
 (let input (with-input-file ~.read-all data-file))
 
 (let parse
-  (simple-parser<- ":count ' players; last marble is worth ' :count ' points\n'"))
+  (like ":count ' players; last marble is worth ' :count ' points\n'"))
 
 (let `(,n-players ,n-points) (parse input))
 
