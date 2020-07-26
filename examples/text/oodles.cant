@@ -13,7 +13,7 @@
   (out .displayln (fill expanded 72)))
 
 (to (expand-text text probability)
-  ("" .join (for each ((token (parse text)))
+  ("" .join (for each ((token (scan text)))
               (expand token probability))))
 
 (to (expand token probability)
@@ -21,7 +21,7 @@
       (expand-text (menu token) (/ (* probability 4) 5))
       token))
 
-(let parse (like "{:letter+ '!'? | :skip}*"))
+(let scan (like "{:letter+ '!'? | :skip}*"))
 
 (let menu
   (map<-lists
