@@ -68,9 +68,8 @@
   (surely (count? n))
   (ordinal-suffixes (if (< n 20) n (n .remainder 10))))
 
-(let ordinal-suffixes
-  (array<-list (for each ((n (20 .till)))
-                 ((ordinalize n) .last-n 2))))
+(let ordinal-suffixes (array<-list (for each ((n (20 .till)))
+                                     ((ordinalize n) .last-n 2))))
 
 
 (export numeralize ordinalize ordinalize-suffix)
