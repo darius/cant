@@ -47,36 +47,22 @@
 
 ;; Ordinals
 
+(import (use 'parson) like)
+
 (to (ordinalize n)
-  (let numeral (numeralize n))
-  (begin (((link (~ suffix replacement) rest) fix-ups))
-    (let i (- numeral.count suffix.count))
-    (if (and (<= 0 i) (= suffix (numeral .slice i)))
-        (chain (numeral .slice 0 i) replacement)
-        (loop rest))))
+  ("" .join (fix-up (numeralize n))))   ;TODO speed. fix-up is super slow.
 
-(let fix-ups '({~ "y"      "ieth"}
-               {~ "one"    "first"}
-               {~ "two"    "second"}
-               {~ "three"  "third"}
-               {~ "five"   "fifth"}
-               {~ "eight"  "eighth"}
-               {~ "nine"   "ninth"}
-               {~ "twelve" "twelfth"}
-               {~ ""       "th"})) ;; Always matches
- 
-'(to (ordinalize n) ;; TODO something like this instead
-  (let numeral (numeralize n))
-  (for first-yeah (((~ suffix replacement) fix-ups)) ;TODO better name? c'mon
-    (and (numeral .suffix? suffix)                        ;TODO something like
-         (numeral .replace-last-n suffix.count replacement))))   ;; TODO something like
-
-'(to (ordinalize n) ;; TODO or something like this
-  (let numeral (numeralize n))
-  (for first-yeah (((~ pattern replacement) fix-ups))
-    (let suffix (numeral .slice<- (- pattern.count)))
-    (and (= (numeral suffix) pattern)
-         (numeral .update suffix replacement))))  ;TODO .splice ?
+(let fix-up (like "
+  'y'      :end :'ieth'
+| 'one'    :end :'first'
+| 'two'    :end :'second'
+| 'three'  :end :'third'
+| 'five'   :end :'fifth'
+| 'eight'  :end :'eighth'
+| 'nine'   :end :'ninth'
+| 'twelve' :end :'twelfth'
+|          :end :'th'
+| :anyone start"))  ;;TODO reconsider `start` as the name, if we're gonna actually refer to it
 
 (to (ordinalize-suffix n)
   (surely (count? n))

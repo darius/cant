@@ -83,7 +83,7 @@
 
 (let word
   (seclude
-   (then (capture (many (skip-1 word-rune?)))
+   (then (capture (at-least-1 (skip-1 word-rune?)))
          (feed ~.symbol)
          __)))
 
