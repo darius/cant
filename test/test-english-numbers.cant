@@ -1,0 +1,13 @@
+(import (use 'english-numbers) numeralize ordinalize ordinalize-suffix)
+
+(to (test-numeral i)
+  (out .say "~4w ~d\n" i (numeralize i)))
+
+(to (test-ordinal i)
+  (when (count? i)
+    (out .say "~w~d ~d\n" i (ordinalize-suffix i) (ordinalize i))))
+
+(let numbers (chain (-2 .till 42) '(100 101 1000003 321450 9321461 1000110009321499)))
+
+(each! test-numeral numbers)
+(each! test-ordinal numbers)

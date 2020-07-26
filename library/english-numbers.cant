@@ -1,0 +1,95 @@
+;; Convert integers to their English numerals and ordinals.
+;; E.g. 11 -> "eleven", "eleventh"
+
+;; Numerals
+
+(to (numeralize n)
+  (surely (integer? n))
+  (may n.sign
+    (be -1 (chain "negative " (numeralize n.magnitude)))
+    (be  0 "zero")
+    (be +1 (digitize n 1000 " " (with-suffix zillions numeralize<1000)))))
+
+(to (numeralize<1000 n)
+  (digitize n 100 " " (with-suffix hundreds numeralize<100)))
+
+(to (numeralize<100 n)
+  (hm (if (< n 20) (numerals<20 n))
+      (else (digitize n 10 "-" sans-suffix))))
+
+(to (digitize n base separator render-item)
+  (take (n .digits base) ~.items
+        (-> (for those (((~ power digit) it))
+              (not= digit 0)))
+        (-> (each render-item it))
+        reverse
+        (-> (separator .join it))))
+
+;; Ways to render an item.
+
+(to ((with-suffix suffixes render) (~ power digit))
+  (" " .join (link (render digit) (yeahs suffixes `(,power)))))
+
+(to (sans-suffix (~ power digit))
+  ((smalls power) digit))
+
+;; Indexed by digits:
+(let numerals<20
+  [#no        "one"      "two"        "three"     "four"
+   "five"     "six"      "seven"      "eight"     "nine"
+   "ten"      "eleven"   "twelve"     "thirteen"  "fourteen"
+   "fifteen"  "sixteen"  "seventeen"  "eighteen"  "nineteen"])
+(let n-ty
+  [#no #no "twenty" "thirty" "forty" "fifty" "sixty" "seventy" "eighty" "ninety"])
+
+;; Indexed by powers:
+(let smalls [numerals<20 n-ty])
+(let hundreds [#no "hundred"])
+(let zillions `[#no ,@(take "thousand m* b* tr* quadr* quint* sext*"
+                            (~ .replace "*" "illion") ~.split)])
+
+
+;; Ordinals
+
+(to (ordinalize n)
+  (let numeral (numeralize n))
+  (begin ((fixes ordinalizers))
+    (let (link (~ suffix replacement) rest) fixes)
+    (let i (- numeral.count suffix.count))
+    (if (and (<= 0 i) (= suffix (numeral .slice i)))
+        (chain (numeral .slice 0 i) replacement)
+        (loop rest))))
+
+(let ordinalizers '({~ "y"      "ieth"}
+                    {~ "one"    "first"}
+                    {~ "two"    "second"}
+                    {~ "three"  "third"}
+                    {~ "five"   "fifth"}
+                    {~ "eight"  "eighth"}
+                    {~ "nine"   "ninth"}
+                    {~ "twelve" "twelfth"}
+                    {~ ""       "th"})) ;; Always matches
+
+'(to (ordinalize n) ;; TODO something like this instead
+  (let numeral (numeralize n))
+  (for first-yeah (((~ suffix replacement) ordinalizers)) ;TODO better name?
+    (and (numeral .suffix? suffix)                        ;TODO something like
+         (numeral .replace-last-n suffix.count replacement))))   ;; TODO something like. .splice with a 'slice' object?
+
+'(to (ordinalize n) ;; TODO or something like this
+  (let numeral (numeralize n))
+  (for detect (((~ pattern replacement) ordinalizers))
+    (let suffix (numeral .slice<- (- pattern.count)))
+    (and (= (numeral suffix) pattern)
+         (numeral .update suffix replacement))))
+
+(to (ordinalize-suffix n)
+  (surely (count? n))
+  (ordinal-suffixes (if (< n 20) n (n .remainder 10))))
+
+(let ordinal-suffixes
+  (array<-list (for each ((n (20 .till)))
+                 ((ordinalize n) .last-n 2))))
+
+
+(export numeralize ordinalize ordinalize-suffix)

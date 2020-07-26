@@ -8,6 +8,7 @@
   out.newline
   (use filename))
 
+(loud-use "test-english-numbers")
 (loud-use "test-lambda")
 (loud-use "test-oiler")
 (loud-use "test-n-queens")
