@@ -21,6 +21,7 @@
 ;; (yeahs maybe xs) = a list of the non-#no results of (maybe x) for x in xs,
 ;; in order.
 ;;TODO is this worth defining? good name?
+;;TODO this n-ary case is usually an error, complain? -- (yeahs maybe)
 (make yeahs {extending zipped-list-transducer}
   (to (~ maybe xs)
     ;; Inlining of (those itself (each maybe xs))
