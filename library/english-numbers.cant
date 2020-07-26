@@ -29,16 +29,16 @@
 (to (sans-suffix power digit)
   ((smalls power) digit))
 
-;; Indexed by digits:
+;; Indexed by digits. The _ entries are never accessed.
 (let numerals<20
-  [#no        "one"      "two"        "three"     "four"
-   "five"     "six"      "seven"      "eight"     "nine"
-   "ten"      "eleven"   "twelve"     "thirteen"  "fourteen"
-   "fifteen"  "sixteen"  "seventeen"  "eighteen"  "nineteen"])
+  '[_          "one"      "two"        "three"     "four"
+    "five"     "six"      "seven"      "eight"     "nine"
+    "ten"      "eleven"   "twelve"     "thirteen"  "fourteen"
+    "fifteen"  "sixteen"  "seventeen"  "eighteen"  "nineteen"])
 (let n-ty
-  [#no #no "twenty" "thirty" "forty" "fifty" "sixty" "seventy" "eighty" "ninety"])
+  '[_ _ "twenty" "thirty" "forty" "fifty" "sixty" "seventy" "eighty" "ninety"])
 
-;; Indexed by powers:
+;; Indexed by powers. The #no entries for 0th powers mean no suffix.
 (let smalls [numerals<20 n-ty])
 (let hundreds [#no "hundred"])
 (let zillions `[#no ,@(take "thousand m* b* tr* quadr* quint* sext*"
