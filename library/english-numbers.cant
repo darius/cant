@@ -49,8 +49,8 @@
 
 (to (ordinalize n)
   (let numeral (numeralize n))
-  (begin ((fixes ordinalizers))
-    (let (link (~ suffix replacement) rest) fixes)
+  (begin ((fix-ups ordinalizers))
+    (let (link (~ suffix replacement) rest) fix-ups)
     (let i (- numeral.count suffix.count))
     (if (and (<= 0 i) (= suffix (numeral .slice i)))
         (chain (numeral .slice 0 i) replacement)
