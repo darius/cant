@@ -8,29 +8,25 @@
   (may n.sign
     (be -1 (chain "negative " (numeralize n.magnitude)))
     (be  0 "zero")
-    (be +1 (digitize n 1000 " " (with-suffix zillions numeralize<1000)))))
+    (be +1 (" " .join (digitize n 1000 (with-suffix zillions numeralize<1000))))))
 
 (to (numeralize<1000 n)
-  (digitize n 100 " " (with-suffix hundreds numeralize<100)))
+  (" " .join (digitize n 100 (with-suffix hundreds numeralize<100))))
 
 (to (numeralize<100 n)
   (hm (if (< n 20) (numerals<20 n))
-      (else (digitize n 10 "-" sans-suffix))))
+      (else ("-" .join (digitize n 10 sans-suffix)))))
 
-(to (digitize n base separator render-item)
-  (take (n .digits base) ~.items
-        (-> (for those (((~ power digit) it))
-              (not= digit 0)))
-        (-> (each render-item it))
-        reverse
-        (-> (separator .join it))))
+(to (digitize n base render-term)
+  (reverse (for yeahs (((~ power digit) (~.items (n .digits base))))
+             (and (not= digit 0) (render-term power digit)))))
 
-;; Ways to render an item.
+;; Ways to render a term in a base**power expansion.
 
-(to ((with-suffix suffixes render) (~ power digit))
+(to ((with-suffix suffixes render) power digit)
   (" " .join (link (render digit) (yeahs suffixes `(,power)))))
 
-(to (sans-suffix (~ power digit))
+(to (sans-suffix power digit)
   ((smalls power) digit))
 
 ;; Indexed by digits:
