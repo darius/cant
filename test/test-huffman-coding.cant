@@ -1,4 +1,4 @@
-(import (use "../examples/huffman-coding") build-tree show-tree encoder<- encode decode)
+(import (use "../examples/huffman-coding") huffman-code<-)
 
 (let eg1
   '((#\z 9)
@@ -28,10 +28,9 @@
     (#\t 959)
     (#\e 1231)))
 
-(let t1 (build-tree (each tuple<-list eg1)))
-(show-tree out t1)
+(let huff (huffman-code<- (each tuple<-list eg1)))
+(huff .show out)
 
-(let enc1 (encoder<- t1))
-(let hello (encode enc1 "hello"))
+(let hello (huff.encoder "hello"))
 (out .print hello)
-(out .print (text<-list (decode t1 hello)))
+(out .print (text<-list (huff.decoder hello)))

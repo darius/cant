@@ -3,9 +3,25 @@
 (import (use 'pairing-heap) priority-queues<-)
 (import (priority-queues<- <=) pq<-list pq-insert pq-peek)
 
-(to (build-tree freqs)
-  (surely freqs.some?)
-  (begin ((pq (pq<-list (for each (((~ symbol frequency) freqs))
+(to (huffman-code<- frequency-items)
+  (code<-tree (build-tree frequency-items)))
+
+(to (code<-tree tree)
+  (make huffman-code
+    (to ~.encoder
+      (let map (map<-items (tabulate tree)))
+      (on (symbols) (gather map symbols)))
+    (to ~.decoder
+      (on (bits) (decode tree bits)))
+    (to ~.tabulate
+      (tabulate tree))
+    (to (~ .show sink)
+      (for each! (((~ symbol bits) (tabulate tree)))
+        (sink .say "~d ~d\n" symbol (text<-list (each "01" bits)))))))
+
+(to (build-tree frequency-items)
+  (surely frequency-items.some?)
+  (begin ((pq (pq<-list (for each (((~ symbol frequency) frequency-items))
                           (~ frequency {leaf symbol})))))
     (may (pq-peek pq)
       (be {nonempty (~ f1 t1) pq1}
@@ -13,10 +29,6 @@
           (be {empty} t1)
           (be {nonempty (~ f2 t2) pq2}
             (loop (pq-insert pq2 (~ (+ f1 f2) {branch t1 t2})))))))))
-
-(to (show-tree sink tree)
-  (for each! (((~ symbol bits) (tabulate tree)))
-    (sink .say "~d ~d\n" symbol (text<-list (each "01" bits)))))
 
 (to (tabulate tree)
   (begin ((tree tree) (path '()) (tail '()))
@@ -26,12 +38,6 @@
                                    (loop on-1 `(,@path 1)
                                          tail))))))
 
-(to (encoder<- tree)
-  (map<-items (tabulate tree)))
-
-(to (encode encoder symbols)
-  (gather encoder symbols))
-
 (to (decode root bits)
   (begin stepping ((tree root) (bits bits))
     (hm (if bits.none? '())
@@ -40,4 +46,4 @@
           (be {leaf symbol} (link symbol (stepping root bits.rest)))
           (be subtree       (stepping subtree bits.rest))))))
 
-(export build-tree show-tree encoder<- encode decode)
+(export huffman-code<-)
