@@ -28,7 +28,8 @@
     (959 #\t)
     (1231 #\e)))
 
-(let t1 (build-tree eg1))
+(let t1 (build-tree (for each ((`(,freq ,rune) eg1))
+                      (~ rune freq))))
 (show-tree t1)
 
 (let enc1 (encoder<- t1))

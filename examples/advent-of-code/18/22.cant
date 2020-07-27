@@ -97,15 +97,13 @@
     (+ t (manhattan-distance p target) (if (= tool 'torch) 0 7)))
 
   (import (priority-queues<- time-bound<=?)
-    pq-empty? pq-min
-    empty-pq unit-pq pq-merge pq-insert pq-remove-min)
+    pq-min unit-pq pq-merge pq-remove-min)
 
-  (begin searching ((pq (pq-insert empty-pq start-effort)))
+  (begin searching ((pq (unit-pq start-effort)))
     (to (continue new-efforts)
       (searching (pq-merge (pq-remove-min pq)
-                           (foldl pq-insert empty-pq (keep-early new-efforts)))))
-    (let effort (pq-min pq))
-    (let {at t state} effort)
+                           @(each unit-pq (keep-early new-efforts)))))
+    (let (and effort {at t state}) (pq-min pq))
     (let t0 (bests state))
     (if (< t0 t)
         (do (out .say "at ~3w skip\n" t)
@@ -116,10 +114,9 @@
 ;;            (surely (usable? tool p) "Tool is still usable after move")
             (if (and (= p target) (= tool 'torch))
                 t ; Final result: time to reach the target with torch equipped.
-                (do (let moves
-                      (for yeahs ((q (neighbors<- p)))
-                        (and (usable? tool q)
-                             {at t.+ {state q tool}})))
+                (do (let moves (for yeahs ((q (neighbors<- p)))
+                                 (and (usable? tool q)
+                                      {at t.+ {state q tool}})))
                     (let swap (equip effort (swap-tool p tool)))
                     (continue `(,swap ,@moves))))))))
 

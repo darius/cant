@@ -3,24 +3,17 @@
 (import (use 'pairing-heap) priority-queues<-)
 
 (import (priority-queues<- <=)
-  pq-empty? pq-min
-  empty-pq unit-pq pq-merge pq-insert pq-remove-min)
+  unit-pq pq-merge pq-insert pq-peek)
 
-;; TODO take a bag instead, or anyway a bag's items list
 (to (build-tree freqs)
-  (let pqs (for each ((`(,frequency ,symbol) freqs))
-             (unit-pq `(,frequency {leaf ,symbol}))))
-  ;; TODO? define pq-merge-many or something
-  (begin building ((pq (foldr pq-merge pqs empty-pq)))
-    ;; TODO? define pq-dequeue or something
-    (let `(,f1 ,t1) (pq-min pq))
-    (let rest (pq-remove-min pq))
-    (if (pq-empty? rest)
-        t1
-        (do (let `(,f2 ,t2) (pq-min rest))
-            (let combo `(,(+ f1 f2) {branch ,t1 ,t2}))
-            ;; TODO? define pq-replace-min
-            (building (pq-insert (pq-remove-min rest) combo))))))
+  (begin building ((pq (pq-merge @(for each (((~ symbol frequency) freqs))
+                                    (unit-pq (~ frequency {leaf symbol}))))))
+    (may (pq-peek pq)
+      (be {nonempty (~ f1 t1) pq1}
+        (may (pq-peek pq1)
+          (be {empty} t1)
+          (be {nonempty (~ f2 t2) pq2}
+            (building (pq-insert pq2 (~ (+ f1 f2) {branch t1 t2})))))))))
 
 (to (walk tree visit)
   (begin walking ((path '()) (tree tree))

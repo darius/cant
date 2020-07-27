@@ -45,7 +45,7 @@
     {pq elem '()})
 
   ;; Return a priority queue combining the elements of PQ1 and PQ2.
-  (to (pq-merge pq1 pq2)
+  (to (pq-merge2 pq1 pq2)
     (hm (if (pq-empty? pq1) pq2)
         (if (pq-empty? pq2) pq1)
         (do (let {pq min1 rest1} pq1)
@@ -79,14 +79,28 @@
             (be `(,pq1 ,pq2 ,@rest)
               (let {pq min1 rest1} pq1)
               (let {pq min2 rest2} pq2)
-              (pq-merge (if (<=? min1 min2)
-                            {pq min1 (link pq2 rest1)}
-                            {pq min2 (link pq1 rest2)})
-                        (merging rest))))))))
+              (pq-merge2 (if (<=? min1 min2)
+                             {pq min1 (link pq2 rest1)}
+                             {pq min2 (link pq1 rest2)})
+                         (merging rest))))))))
 
+  ;; Amenities
+
+  (to (pq-merge @pqs)
+    (foldr pq-merge2 pqs empty-pq))
+  
+  (to (pq-replace-min pq elem) ; TODO more-efficient impl
+    (pq-insert (pq-remove-min pq) elem))
+
+  (to (pq-peek pq) ; TODO more-efficient impl
+    (may pq
+      (be {pq} {empty})
+      (else {nonempty (pq-min pq) (pq-remove-min pq)})))
+  
   (export
     pq-empty? pq-min
-    empty-pq unit-pq pq-merge pq-insert pq-remove-min))
+    empty-pq unit-pq pq-merge pq-insert pq-remove-min
+    pq-replace-min pq-peek))
 
 (export 
   priority-queues<-)
