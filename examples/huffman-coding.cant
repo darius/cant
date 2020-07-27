@@ -13,7 +13,7 @@
       (on (symbols) (gather map symbols)))
     (to ~.decoder
       (on (bits) (decode tree bits)))
-    (to ~.tabulate
+    (to ~.table
       (tabulate tree))
     (to (~ .show sink)
       (for each! (((~ symbol bits) (tabulate tree)))
