@@ -1,7 +1,6 @@
 ;; Huffman coding
 
 (import (use 'pairing-heap) priority-queues<-)
-
 (import (priority-queues<- <=) pq<-list pq-insert pq-peek)
 
 (to (build-tree freqs)
@@ -15,22 +14,20 @@
           (be {nonempty (~ f2 t2) pq2}
             (loop (pq-insert pq2 (~ (+ f1 f2) {branch t1 t2})))))))))
 
-(to (walk tree visit)
-  (begin walking ((path '()) (tree tree))
-    (may tree
-      (be {leaf symbol}
-        (visit symbol (reverse path)))
-      (be {branch on-0 on-1}
-        (walking `(0 ,@path) on-0)
-        (walking `(1 ,@path) on-1)))))
-
 (to (show-tree tree)
-  (walk tree (on (symbol encoding)
-               (out .say "~d ~d\n" symbol (text<-list (each "01" encoding))))))
+  (for each! (((~ symbol bits) (tabulate tree)))
+    (out .say "~d ~d\n" symbol (text<-list (each "01" bits)))))
+
+(to (tabulate tree)
+  (begin ((tree tree) (path '()) (tail '()))
+    (may tree
+      (be {leaf symbol}      (link (~ symbol path) tail))
+      (be {branch on-0 on-1} (loop on-0 `(,@path 0)
+                                   (loop on-1 `(,@path 1)
+                                         tail))))))
 
 (to (encoder<- tree)
-  (hey (!map<-)
-       (-> (walk tree (method<- it '.set!)))))
+  (map<-items (tabulate tree)))
 
 (to (encode encoder symbols)
   (gather encoder symbols))
