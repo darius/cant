@@ -86,6 +86,9 @@
 
   ;; Amenities
 
+  (to (pq<-list elems)
+    (pq-merge @(each unit-pq elems)))
+
   (to (pq-merge @pqs)
     (foldr pq-merge2 pqs empty-pq))
   
@@ -100,7 +103,7 @@
   (export
     pq-empty? pq-min
     empty-pq unit-pq pq-merge pq-insert pq-remove-min
-    pq-replace-min pq-peek))
+    pq<-list pq-replace-min pq-peek))
 
 (export 
   priority-queues<-)

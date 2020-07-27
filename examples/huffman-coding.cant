@@ -2,18 +2,18 @@
 
 (import (use 'pairing-heap) priority-queues<-)
 
-(import (priority-queues<- <=)
-  unit-pq pq-merge pq-insert pq-peek)
+(import (priority-queues<- <=) pq<-list pq-insert pq-peek)
 
 (to (build-tree freqs)
-  (begin building ((pq (pq-merge @(for each (((~ symbol frequency) freqs))
-                                    (unit-pq (~ frequency {leaf symbol}))))))
+  (surely freqs.some?)
+  (begin ((pq (pq<-list (for each (((~ symbol frequency) freqs))
+                          (~ frequency {leaf symbol})))))
     (may (pq-peek pq)
       (be {nonempty (~ f1 t1) pq1}
         (may (pq-peek pq1)
           (be {empty} t1)
           (be {nonempty (~ f2 t2) pq2}
-            (building (pq-insert pq2 (~ (+ f1 f2) {branch t1 t2})))))))))
+            (loop (pq-insert pq2 (~ (+ f1 f2) {branch t1 t2})))))))))
 
 (to (walk tree visit)
   (begin walking ((path '()) (tree tree))
@@ -37,11 +37,10 @@
 
 (to (decode root bits)
   (begin stepping ((tree root) (bits bits))
-    (if bits.none?
-        '()
-        (do (let {branch @subtrees} tree)
-            (may (subtrees bits.first)
-              (be {leaf symbol} (link symbol (stepping root bits.rest)))
-              (be subtree       (stepping subtree bits.rest)))))))
+    (hm (if bits.none? '())
+        (do (let {branch @subtrees} tree))
+        (may (subtrees bits.first)
+          (be {leaf symbol} (link symbol (stepping root bits.rest)))
+          (be subtree       (stepping subtree bits.rest))))))
 
 (export build-tree show-tree encoder<- encode decode)
