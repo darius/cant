@@ -30,7 +30,7 @@
 
 (let t1 (build-tree (for each ((`(,freq ,rune) eg1))
                       (~ rune freq))))
-(show-tree t1)
+(show-tree out t1)
 
 (let enc1 (encoder<- t1))
 (let hello (encode enc1 "hello"))

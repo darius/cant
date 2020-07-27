@@ -14,9 +14,9 @@
           (be {nonempty (~ f2 t2) pq2}
             (loop (pq-insert pq2 (~ (+ f1 f2) {branch t1 t2})))))))))
 
-(to (show-tree tree)
+(to (show-tree sink tree)
   (for each! (((~ symbol bits) (tabulate tree)))
-    (out .say "~d ~d\n" symbol (text<-list (each "01" bits)))))
+    (sink .say "~d ~d\n" symbol (text<-list (each "01" bits)))))
 
 (to (tabulate tree)
   (begin ((tree tree) (path '()) (tail '()))
