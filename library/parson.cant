@@ -175,6 +175,7 @@
          (~ 'end end)
          (~ 'hug hug)
          (~ 'join (feed chain))
+         (~ 'tuple (feed-list tuple<-list))
          (~ 'drop drop)
          (~ 'whitespace (skip-1 ~.whitespace?))
          (~ 'count (seclude

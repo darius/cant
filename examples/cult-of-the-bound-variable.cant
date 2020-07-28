@@ -1,12 +1,6 @@
 ;; Universal Machine from http://www.boundvariable.org/task.shtml
 ;; Ported from https://github.com/darius/superbench
 ;; ~/git/superbench/um/um.lua
-;; TODO get running
-
-;;XXX .u<op> means small, unsigned op
-;; and I'm gonna assume 32-bit here
-;; Similar for .s<op> (signed).
-;; Do these mix OK? Is this reasonable?
 
 ;; TODO: mem could also be a typed array, but neither the array
 ;; nor the type is as simple...
@@ -104,7 +98,7 @@
 
           (be 10 ;(trace "output r~w\n" c)
 ;;            (surely (<= 0 (reg c) 255))
-            ;; We don't use (sink .write-u8 (reg c)) because sink may not be a binary sink:
+            ;; We don't use (sink .write-u8 (reg c)) because sink might not be a binary sink:
             (sink .display (rune<- (reg c)))
             (next))
 
@@ -144,7 +138,7 @@
 (to (append-byte u byte)
   (byte .u+ (u .u<< 8)))
 
-;; XXX put something like this in stdlib
+;; TODO put something like this in stdlib
 (to (with-binary-input-file fn filename)
   (with-closing fn (open-binary-input-file filename)))
 

@@ -7,22 +7,15 @@
 ;;   n     argument part of instruction
 ;;   reg   register
 
-(import (use 'parson) parse grammar<- feed)
+(import (use 'parson) like)
 
 (to (trm-parse program)
-  (array<-list ((parse parser program) .results)))
+  (array<-list (take program parse-program (-> (each insn<- it)))))
 
-(let grammar (grammar<- "
-program: insn* :end.
-insn:    {'1'+} {'#' '#'? '#'? '#'? '#'?} :make_insn.
-"))
+(let parse-program (like "[{'1'+} {'#' '#'? '#'? '#'? '#'?} :tuple]*"))
 
-(to (insn<- ones hashes)
+(to (insn<- (~ ones hashes))
   {insn (insn-table hashes.count) ones.count})
-
-(let parser
-  ((grammar (map<- (~ 'make_insn (feed insn<-))))
-   'program))
 
 (to (regs<- @texts)
   (array<- #no @texts))
