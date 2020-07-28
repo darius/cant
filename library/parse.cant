@@ -64,6 +64,7 @@
     (to (~ .selfie sink) (sink .write `(,lhs ,@rhs)))))
 
 ;; A parse tree and a remainder.
+;; TODO s/remainder/leftover/ or some such?
 (to (parse<- tree remainder)
   (make
     (to ~.tree      tree)
