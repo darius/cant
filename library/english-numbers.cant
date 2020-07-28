@@ -62,7 +62,7 @@
 | 'nine'   :end :'ninth'
 | 'twelve' :end :'twelfth'
 |          :end :'th'
-| :anyone start"))  ;;TODO reconsider `start` as the name, if we're gonna actually refer to it
+| :anyone loop"))
 
 (to (ordinalize-suffix n)
   (surely (count? n))
