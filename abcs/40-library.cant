@@ -71,6 +71,7 @@
     console
     extract-datum extract-script
     open-input-file open-output-file with-input-file with-output-file
+    open-binary-input-file open-binary-output-file
     system/must-succeed
     the-modules unuse load load-module
     the-last-oops push-signal-handler with-signal-handler the-signal-handler

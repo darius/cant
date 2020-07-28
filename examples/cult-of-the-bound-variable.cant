@@ -144,10 +144,10 @@
 
 ;; XXX put something like this in stdlib
 (to (with-binary-input-file fn filename)
-  (with-closing fn (open-binary-file-source filename)))
+  (with-closing fn (open-binary-input-file filename)))
 
 (to (with-binary-output-file fn filename)
-  (with-closing fn (open-binary-file-sink filename)))
+  (with-closing fn (open-binary-output-file filename)))
 
 (to (main `(,_ ,filename))
   (let program (with-binary-input-file read-program filename))

@@ -232,8 +232,8 @@
     (open-output-file ,open-output-file) ; open-file-sink
     ;; These binary file openers actually have more options in Chez
     ;; than just binary but let's just hack it in for now:
-    (open-binary-file-source ,(make-source-maker open-file-input-port))
-    (open-binary-file-sink ,open-file-output-port)
+    (open-binary-input-file ,(make-source-maker open-file-input-port))
+    (open-binary-output-file ,open-file-output-port)
     (__get-u8 ,source-get-u8)
     (__put-u8 ,put-u8)
 ;;    (__set-dbg! ,set-dbg!)
