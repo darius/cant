@@ -87,7 +87,7 @@
   (begin ticking ((state world0) (t 0))
     (when (< t 20000)
 ;      (out .say "time ~w\n" t)
-      (let `(,state1 ,crashes) (tick state))
+      (let (~ state1 crashes) (tick state))
 ;      (show state1)
       (if crashes.some?
           (xy-coords state crashes.first)
@@ -102,8 +102,7 @@
   (for each! ((pos (sort carts.keys)))
     (unless (crashes .find? pos)
       (move! pos carts tracks width carts1 crashes)))
-  (list<- {world tracks width carts1}
-          crashes.values))
+  (~ {world tracks width carts1} crashes.values))
 
 (to (move! pos carts tracks width carts1 crashes)
   (let {cart dir veer} (carts pos))
@@ -131,7 +130,7 @@
         (out .say "time ~w pop ~w\n" t pre-carts.count))
       (if (= pre-carts.count 1)
           (xy-coords state pre-carts.keys.first)
-          (do (let `(,state1 ,crashes) (tick state))
+          (do (let (~ state1 crashes) (tick state))
               (let {world tracks width carts} state1)
               (for each! ((pos crashes))
                 (carts .delete! pos))
