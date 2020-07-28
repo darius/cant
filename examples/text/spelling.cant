@@ -1,6 +1,8 @@
 ;; Norvig's (simpler) spelling corrector
 ;; http://norvig.com/spell-correct.html
 
+(import (use 'parson) like)
+
 ;; Try to find a word in `lexicon` that's similar to `word`.
 ;; Prefer the most common word with the fewest edits.
 (to (correct word)
@@ -32,14 +34,12 @@
                          (chain a (text<- (b 1) (b 0)) (b .slice 2)))))
   (uniquify (chain inserts deletes replaces swaps)))
 
-(to (uniquify xs)
-  xs.range.keys)
+(to (uniquify xs) xs.range.keys)
 
 (let alphabet (each text<- (#\a .thru #\z)))
 
-(to (words<-text text)
-  ;;  (re:findall "[a-z]+" text.lowercase))  ;TODO
-  text.lowercase.split)
+(to (words<-text text) (scan-words text.lowercase))
+(let scan-words (like "(!:letter :skip)* ({:letter+} start)?"))
 
 (let lexicon
   (bag<- (words<-text (with-input-file ~.read-all "examples/text/spelling.train.text"))))
