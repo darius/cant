@@ -136,12 +136,15 @@
   (player-registry name.lowercase))
 
 
-;; Basic grid ops
+;; Basic grid ops.
+;; {grid p q}: p's bits for the player to move, q's for the other player.
+;; The bits are 1 for an occupied square, 0 for empty.
+;; The 3 least-significant bits are the bottom row; next 3 are middle; then top.
 
 (let empty-grid {grid 0 0})
 
 (to (player-bits bits)
-  (for each ((i (9 .till)))
+  (for each ((i (interval<- 8 0 -1)))
     (1 .and (bits .>> i))))
 
 (to (won? {grid p q})
@@ -165,12 +168,10 @@
 
 ;; The presentation layer
 
-(to (whose-move grid)
-  ((player-marks grid) 0))
+(to (whose-move grid)   ((player-marks grid) 0))
+(to (last-to-move grid) ((player-marks grid) 1))
 
-(to (last-to-move grid)
-  ((player-marks grid) 1))
-
+;; X/O for the player to move, and for the other player.
 (to (player-marks {grid p q})
   (if (= (sum (player-bits p))
          (sum (player-bits q)))
@@ -178,13 +179,11 @@
       "OX"))
 
 (to (show {grid p q} @(optional ?spaces))
-  (let spaces (or ?spaces ("." .repeat 9)))
   (let marks (player-marks {grid p q}))
   ;; TODO: could become a 'map union' operation on the lists
-  ;; TODO: if player-bits generated in the reverse order, we wouldn't need reverse
-  (let values (for each ((slot (zip (reverse (player-bits p))
-                                    (reverse (player-bits q))
-                                    spaces)))
+  (let values (for each ((slot (zip (player-bits p)
+                                    (player-bits q)
+                                    (or ?spaces ("." .repeat 9)))))
                 (may slot
                   (be (~ 1 0 _) (marks 0))
                   (be (~ 0 1 _) (marks 1))
