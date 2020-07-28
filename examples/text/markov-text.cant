@@ -4,6 +4,7 @@
 
 (import (use 'chaos) random-chaos<-)
 (import (use 'text-wrap) fill)
+(import (use 'parson) like)
 
 (let order 2) ; Length of the context. TODO parameterize at command line
 (let start ('("START") .repeat order)) 
@@ -18,8 +19,9 @@
                         72))
     out.newline))
 
-(to (tokenize text)
-  text.lowercase.split)               ;TODO better
+;; TODO include non-word tokens, and format them appropriately above (adding spaces only between words):
+(to (tokenize text) (scan-words text.lowercase))
+(let scan-words (like "(!:letter :skip)* ({:letter+} start)?"))
 
 ;; A model is a map from a context to a bag of possible next tokens.
 ;; A context is a token-list of length `order`.
