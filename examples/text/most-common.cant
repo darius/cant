@@ -19,6 +19,7 @@
         (-> (format-table (each ~.parts it)))
         (-> (out .displayln ("\n" .join it)))))
 
-(to (words<-text text)
-  ;;  (re:findall "[a-z]+" text.lowercase))  ;TODO
-  text.lowercase.split)
+(import (use 'parson) like)
+
+(to (words<-text text) (scan-words text.lowercase))
+(let scan-words (like "(!:letter :skip)* ({:letter+} start)?"))
