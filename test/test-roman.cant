@@ -7,4 +7,4 @@
                      (be n   (roman<-number n))))
     (out .say "~d: ~d\n" x converted)))
 
-(main '(_ "mcmlxix" "1969" "i" "0"))
+(main '(_ "mcmlxix" "1969" "i" "420"))

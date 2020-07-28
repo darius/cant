@@ -1,29 +1,26 @@
 ;; Roman numerals
 
-(let values
-  (map<-lists '((#\M 1000) (#\D 500) (#\C 100) (#\L 50) (#\X 10) (#\V 5) (#\I 1))))
-
 ;; TODO: expose as a parson grammar, too?
 (to (number<-roman text)
   (let (~ _ total)
-    (for foldr ((digit (each values text.uppercase))
+    (for foldr ((value (each roman<-rune text.uppercase))
                 ((~ next total) (~ 0 0)))
-      (~ digit ((if (<= next digit) + -) total digit))))
+      (~ value ((if (<= next value) + -) total value))))
   total)
 
-(let digits (" I II III IV V VI VII VIII IX" .split " "))
-(let places (map<-items (zip "IVXLC"
-                             "XLCDM")))
+(let roman<-rune
+  (map<-lists '((#\M 1000) (#\D 500) (#\C 100) (#\L 50) (#\X 10) (#\V 5) (#\I 1))))
 
 (to (roman<-number n)
-  (let (~ tens ones) (n ./mod 10))
-  (chain (may tens
-           (be 0 "")
-           (else (times-X (roman<-number tens))))
-         (digits ones)))
+  (surely (< 0 n))
+  (for foldr ((digit n.digits) (roman ""))
+    (chain (roman*10 roman) (roman<-digit digit))))
 
-(to (times-X numeral)
-  (text<-list (each places numeral)))
+(to (roman*10 text)
+  (text<-list (each rune*10 text)))
 
+(let roman<-digit (array<-list (" I II III IV V VI VII VIII IX" .split " ")))
+(let rune*10 (map<-items (zip "IVXLC"
+                              "XLCDM")))
 
 (export number<-roman roman<-number)
