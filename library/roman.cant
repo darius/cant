@@ -4,7 +4,7 @@
   (map<-lists '((#\M 1000) (#\D 500) (#\C 100) (#\L 50) (#\X 10) (#\V 5) (#\I 1))))
 
 ;; TODO: expose as a parson grammar, too?
-(to (int<-roman text)
+(to (number<-roman text)
   (let (~ _ total)
     (for foldr ((digit (each values text.uppercase))
                 ((~ next total) (~ 0 0)))
@@ -15,15 +15,15 @@
 (let places (map<-items (zip "IVXLC"
                              "XLCDM")))
 
-(to (roman<-int n)
+(to (roman<-number n)
   (let (~ tens ones) (n ./mod 10))
   (chain (may tens
            (be 0 "")
-           (else (times-X (roman<-int tens))))
+           (else (times-X (roman<-number tens))))
          (digits ones)))
 
 (to (times-X numeral)
   (text<-list (each places numeral)))
 
 
-(export int<-roman roman<-int)
+(export number<-roman roman<-number)

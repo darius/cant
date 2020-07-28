@@ -1,10 +1,10 @@
-(import (use 'roman) int<-roman roman<-int)
+(import (use 'roman) number<-roman roman<-number)
 
 (to (main args)
   (for each! ((x args.rest))
     (let converted (may x.?number
-                     (be #no (int<-roman x))
-                     (be n   (roman<-int n))))
+                     (be #no (number<-roman x))
+                     (be n   (roman<-number n))))
     (out .say "~d: ~d\n" x converted)))
 
 (main '(_ "mcmlxix" "1969" "i" "0"))
