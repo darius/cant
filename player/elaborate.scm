@@ -71,7 +71,11 @@
            ,(elaborate-e e s-e)))))))
 
 (define (check-for-duplicates vars)
-  'ok)                                  ;TODO
+  (let checking ((vars vars) (already '()))
+    (cond ((null? vars) 'ok)
+          ((memq (car vars) already)
+           (printf "Warning: duplicate binding: ~s\n" (car vars))) ;TODO don't repeat the same warning
+          (else (checking (cdr vars) (cons (car vars) already))))))
 
 (define (elaborate-p p s)
   ((vector-ref methods/elaborate-p (pack-tag p))

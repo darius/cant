@@ -398,6 +398,8 @@
 
 ;; An interval represents a progression from a `first`, short of a
 ;; `limit`, successively by a `stride`.
+;; TODO above comment is inaccurate on negative strides: then limit is inclusive. Is this just a bad design?
+;; TODO methods like `k..infinity` or `k..-infinity by -3`
 (make interval<-
   (to (~ first limit)
     (if (<= limit first)
