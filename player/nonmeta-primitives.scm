@@ -344,9 +344,16 @@
 
     (__u+ ,(lambda (a b) (logand mask32 (+ a b)))) ;XXX revisit these definitions
     (__s+ ,(lambda (a b) (logand mask32 (+ a b)))) ;XXX I forget what distinction I meant to make
+    (__u* ,(lambda (a b) ;XXX not really different from s* so far
+             (unless (<= 0 a mask32) (error 'u* "Bad u32" a))
+             (unless (<= 0 b mask32) (error 'u* "Bad u32" b))
+             (logand mask32 (* a b))))
     (__s* ,(lambda (a b) (logand mask32 (* a b))))
     (__u- ,(lambda (a b) (logand mask32 (- a b))))
-    (__u/ ,(lambda (a b) (logand mask32 (fx/ a b))))
+    (__u/ ,(lambda (a b)
+             (unless (<= 0 a mask32) (error 'u/ "Bad u32" a))
+             (unless (<= 0 b mask32) (error 'u/ "Bad u32" b))
+             (logand mask32 (fx/ a b))))
     (__u<< ,(lambda (a b) (logand mask32 (ash a b))))
     (__u>> ,(lambda (a b) (logand mask32 (ash a (- b)))))
 

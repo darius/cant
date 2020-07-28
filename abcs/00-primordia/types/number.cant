@@ -52,6 +52,7 @@
   ;; XXX sketchy support for 32-bit word ops:
   (to (~ .u+ a)        (__u+ me a))
   (to (~ .u- a)        (__u- me a))
+  (to (~ .u* a)        (__u* me a))
   (to (~ .u/ a)        (__u/ me a))
   (to (~ .u>> a)       (__u>> me a))
   (to (~ .u<< a)       (__u<< me a))

@@ -21,13 +21,12 @@
   (let free-list (flexarray<-))
   (let reg (array<-count 8 0))         ;TODO: typed array, for efficiency
 
-  (let insn-count (box<- 0))
   (let tick-count (box<- 0))
 
   (begin running ((program program) (pc 0))
     
-;    (when (= tick-count.+! 30000)
-;      (os-exit 1))
+;;    (when (= tick-count.+! 29000000)
+;;      (os-exit 1))
 
     (to (next)
       (running program (pc .u+ 1)))
@@ -35,12 +34,12 @@
     (let inst (program pc))
     (let opcode (inst .u>> 28))
 
-    '(hide
-      (to (R i) (reg i))  ;; To print as unsigned like the reference output.
-      (trace "~08x [~4x ~4x ~4x ~4x ~4x ~4x ~4x ~4x] ~08x "
-             pc
-             (R 0) (R 1) (R 2) (R 3) (R 4) (R 5) (R 6) (R 7)
-             inst))
+    ;; (hide
+    ;;   (to (R i) (reg i))  ;; To print as unsigned like the reference output.
+    ;;   (trace "~08x [~4x ~4x ~4x ~4x ~4x ~4x ~4x ~4x] ~08x "
+    ;;          pc
+    ;;          (R 0) (R 1) (R 2) (R 3) (R 4) (R 5) (R 6) (R 7)
+    ;;          inst))
 
     (may opcode
       (be 13 ;(trace "r~w = 0x~08x\n" (7 .and (inst .u>> 25)) (inst .and 0x1FFFFFF))
@@ -68,11 +67,11 @@
             (next))
 
           (be 3 ;(trace "r~w = r~w + r~w\n" a b c)
-            (reg .set! a ((reg b) .s+ (reg c)))
+            (reg .set! a ((reg b) .u+ (reg c)))
             (next))
 
           (be 4 ;(trace "r~w = r~w * r~w\n" a b c)
-            (reg .set! a ((reg b) .s* (reg c)))
+            (reg .set! a ((reg b) .u* (reg c)))
             (next))
 
           (be 5 ;(trace "r~w = r~w / r~w\n" a b c)
@@ -104,20 +103,23 @@
             (next))
 
           (be 10 ;(trace "output r~w\n" c)
+;;            (surely (<= 0 (reg c) 255))
+            ;; We don't use (sink .write-u8 (reg c)) because sink may not be a binary sink:
             (sink .display (rune<- (reg c)))
             (next))
 
           (be 11 ;(trace "r~w = input\n" c)  ;; N.B. C version has fflush (stdout); first
             (let s source.read-rune)
+;;            (surely (or (zilch? s) (<= 0 s.code 255)))
             (reg .set! c
-                 (if (zilch? s) mask32 s.text)) ;XXX shouldn't this be an array of bytes?
+                 (if (zilch? s) mask32 s.code))
             (next))
 
           (be 12 ;(trace "dup r~w; finger r~w\n" b c)
             (hm (when (= (reg b) 0)
                   (running program (reg c)))
                 (else
-                  (let new-program (mem (reg b)))  ; originally ((mem (reg b)) .copy)) -- why?
+                  (let new-program (~.copy (mem (reg b))))
                   (mem .set! 0 new-program)
                   (running new-program (reg c)))))
           
