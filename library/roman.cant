@@ -3,8 +3,8 @@
 ;; TODO: expose as a parson grammar, too?
 (to (number<-roman text)
   (let (~ _ total)
-    (for foldr ((value (each value<-rune text.uppercase))
-                ((~ next total) (~ 0 0)))
+    (for foldr ((rune text.uppercase) ((~ next total) (~ 0 0)))
+      (let value (value<-rune rune))
       (~ value ((if (<= next value) + -) total value))))
   total)
 
