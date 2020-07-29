@@ -3,12 +3,12 @@
 ;; TODO: expose as a parson grammar, too?
 (to (number<-roman text)
   (let (~ _ total)
-    (for foldr ((value (each roman<-rune text.uppercase))
+    (for foldr ((value (each value<-rune text.uppercase))
                 ((~ next total) (~ 0 0)))
       (~ value ((if (<= next value) + -) total value))))
   total)
 
-(let roman<-rune
+(let value<-rune
   (map<-lists '((#\M 1000) (#\D 500) (#\C 100) (#\L 50) (#\X 10) (#\V 5) (#\I 1))))
 
 (to (roman<-number n)
