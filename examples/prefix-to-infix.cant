@@ -55,7 +55,7 @@
                  (be 'associative   left-p.+)))
   (binaries .set! name {binary left-p right-p assoc}))
 
-(def-prefix '- 10)                      ;XXX get the right precedences
+(def-prefix '- 99)
 (def-postfix '! 100)
 
 (def-infix '+ 10 'associative)
@@ -81,3 +81,6 @@
 (try '(* 3 1 4))
 (try '(- (- (- 1 2) 3) 4))
 (try '(- (- 1 2) (- 3 4)))
+(try '(+ (- 1) 2 (- (* 3 4)) (- 5)))
+(try '(- (^ 2 3)))
+(try '(^ (- 2) 3))
