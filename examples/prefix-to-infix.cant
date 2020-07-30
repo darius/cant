@@ -18,7 +18,7 @@
     (else
       ("~w" .format e))))
 
-(to (associative? op)
+(to (associative? op)                 ;TODO use def-infix info instead
   ('(+ *) .find? op))
 
 (to (fmt-unary p op x)
@@ -45,7 +45,11 @@
 (to (def-prefix name p)  (unaries .set! name {prefix p}))
 (to (def-postfix name p) (unaries .set! name {postfix p}))
 
-(to (def-infix name p)   (binaries .set! name {binary p p.+}))
+(to (def-infix name p @(optional associativity))
+  (binaries .set! name
+            {binary p (may (or associativity 'left-to-right)
+                        (be 'left-to-right p.+)
+                        (be 'right-to-left p))}))
 
 (def-prefix '- 10)                      ;XXX get the right precedences
 (def-postfix '! 100)
@@ -54,7 +58,7 @@
 (def-infix '- 10)
 (def-infix '* 20)
 (def-infix '/ 20)
-(binaries .set! '^ {binary 30 30})   ; right-to-left associativity (is this correct?)
+(def-infix '^ 30 'right-to-left)
 
 ;; smoke test
 
