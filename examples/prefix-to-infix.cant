@@ -19,8 +19,9 @@
     (else
       ("~w" .format e))))
 
-(to (associative? op)                 ;TODO use def-infix info instead
-  ('(+ *) .find? op))
+(to (associative? op)
+  (for mayhap (({binary _ _ assoc} (binaries .get op)))
+    (= assoc 'associative)))
 
 (to (fmt-unary p op x)
   (may (unaries .get op)
@@ -32,7 +33,7 @@
   (may (binaries .get op)
     (be #no
       ("~w(~d, ~d)" .format op (fmt 0 x) (fmt 0 y)))
-    (be {binary left right}
+    (be {binary left right _}
       (enclose p left ("~d ~w ~d" .format (fmt left x) op (fmt right y))))))
 
 (to (enclose outer inner text)
@@ -46,25 +47,27 @@
 (to (def-prefix name p)  (unaries .set! name {prefix p}))
 (to (def-postfix name p) (unaries .set! name {postfix p}))
 
-(to (def-infix name p @(optional associativity))
-  (binaries .set! name
-            {binary p (may (or associativity 'left-to-right)
-                        (be 'left-to-right p.+)
-                        (be 'right-to-left p))}))
+(to (def-infix name left-p @(optional associativity))
+  (let assoc (or associativity 'left-to-right))
+  (let right-p (may assoc
+                 (be 'left-to-right left-p.+)
+                 (be 'right-to-left left-p)
+                 (be 'associative   left-p.+)))
+  (binaries .set! name {binary left-p right-p assoc}))
 
 (def-prefix '- 10)                      ;XXX get the right precedences
 (def-postfix '! 100)
 
-(def-infix '+ 10)
+(def-infix '+ 10 'associative)
 (def-infix '- 10)
-(def-infix '* 20)
+(def-infix '* 20 'associative)
 (def-infix '/ 20)
 (def-infix '^ 30 'right-to-left)
 
 ;; smoke test
 
-(to (try pexp)
-  (out .say "~w -> ~d\n" pexp (format-infix pexp)))
+(to (try e)
+  (out .say "~36w -> ~w\n" e (format-infix e)))
 
 (try '(+ 1 2))
 (try '(* (+ 1 2) (+ (* 3 4) (* 5 6))))
