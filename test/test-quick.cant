@@ -69,6 +69,7 @@
 (loud-use "../examples/rosetta-code/lzw-compression")
 (loud-use "../examples/exercises-and-puzzles/max-path-sum")
 (((loud-use "../examples/text/oodles") 'main) '(ignore "garlic"))
+(loud-use "../examples/prefix-to-infix")
 (loud-use "../examples/exercises-and-puzzles/sicp1")
 (loud-use "../examples/exercises-and-puzzles/sicp2")
 (((loud-use "../examples/smalltalk72ish-sort-of") 'main) '(ignore))
