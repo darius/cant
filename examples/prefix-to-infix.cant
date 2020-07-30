@@ -9,12 +9,13 @@
 
 (to (fmt p e)
   (may e
-    (be `(,op ,x ,y)
-      (fmt-binary p op x y))
-    (be `(,(? associative? op) ,@xs)
-      (fmt p (foldl1 (on (x y) `(,op ,x ,y)) xs)))
-    (be `(,op ,x)
-      (fmt-unary p op x))
+    (be `(,op ,@args)
+      (surely (symbol? op) "Weird operator" e)
+      (if (and (associative? op) (not= args.count 2))
+          (fmt p (foldl1 (on (x y) `(,op ,x ,y)) args))
+          (may args
+            (be `(,x)    (fmt-unary p op x))
+            (be `(,x ,y) (fmt-binary p op x y)))))
     (else
       ("~w" .format e))))
 
@@ -65,6 +66,7 @@
 (to (try pexp)
   (out .say "~w -> ~d\n" pexp (format-infix pexp)))
 
+(try '(+ 1 2))
 (try '(* (+ 1 2) (+ (* 3 4) (* 5 6))))
 (try '(* (+ (- 1) 2)
          (+ (* 3 (! 4))
@@ -74,3 +76,5 @@
 (try '(* 3 (! 4)))
 (try '(* (! 4) 3))
 (try '(* 3 1 4))
+(try '(- (- (- 1 2) 3) 4))
+(try '(- (- 1 2) (- 3 4)))
