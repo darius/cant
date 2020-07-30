@@ -263,7 +263,7 @@
     list<- !map<- !map<-items !map<-lists set<- set<-list hash-set<-
     surely count? not= left-folding-operation right-folding-operation
     + * - transitive-comparison < <= <=> >= > compare
-    chain reverse foldl foldr foldr1 transpose zipped-list-transducer
+    chain reverse foldl foldl1 foldr foldr1 transpose zipped-list-transducer
     each each! some every interval<- enumerate
     read
     assoc  ;; TODO remove

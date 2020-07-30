@@ -9,9 +9,17 @@
 
 (to (fmt p e)
   (may e
-    (be `(,op ,x)    (fmt-unary p op x))
-    (be `(,op ,x ,y) (fmt-binary p op x y))
-    (else            ("~w" .format e))))
+    (be `(,op ,x ,y)
+      (fmt-binary p op x y))
+    (be `(,(? associative? op) ,@xs)
+      (fmt p (foldl1 (on (x y) `(,op ,x ,y)) xs)))
+    (be `(,op ,x)
+      (fmt-unary p op x))
+    (else
+      ("~w" .format e))))
+
+(to (associative? op)
+  ('(+ *) .find? op))
 
 (to (fmt-unary p op x)
   (may (unaries .get op)
@@ -50,4 +58,15 @@
 
 ;; smoke test
 
-(out .displayln (format-infix '(* (+ 1 2) (+ (* 3 4) (* 5 6)))))
+(to (try pexp)
+  (out .say "~w -> ~d\n" pexp (format-infix pexp)))
+
+(try '(* (+ 1 2) (+ (* 3 4) (* 5 6))))
+(try '(* (+ (- 1) 2)
+         (+ (* 3 (! 4))
+            (* 5 6))))
+(try '(! 4))
+(try '(! (- 4)))
+(try '(* 3 (! 4)))
+(try '(* (! 4) 3))
+(try '(* 3 1 4))

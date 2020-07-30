@@ -341,6 +341,12 @@
       xs.first
       (f xs.first (foldr1 f tail))))
 
+;; Like foldl but requiring xs to be nonempty.
+;; (foldl1 f '(a b c)) = (f (f 'a 'b) 'c)
+(to (foldl1 f xs)
+  (begin folding ((L xs.first) (Rs xs.rest))
+    (if Rs.none? L (folding (f L Rs.first) Rs.rest))))
+
 ;; (transpose '((a c e) (b d f)))   = '((a b) (c d) (e f)))
 ;; (transpose '((a b) (c d) (e f))) = '((a c e) (b d f))
 ;; TODO: name it (zip @rows) instead, like Python?
