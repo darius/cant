@@ -39,7 +39,7 @@
 (let alphabet (each text<- (#\a .thru #\z)))
 
 (to (words<-text text) (scan-words text.lowercase))
-(let scan-words (like "(!:letter :skip)* ({:letter+} loop)?"))
+(let scan-words (like "({:letter+} | :skip)*"))
 
 (let lexicon
   (bag<- (words<-text (with-input-file ~.read-all "examples/text/spelling.train.text"))))

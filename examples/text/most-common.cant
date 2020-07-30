@@ -22,4 +22,4 @@
 (import (use 'parson) like)
 
 (to (words<-text text) (scan-words text.lowercase))
-(let scan-words (like "(!:letter :skip)* ({:letter+} loop)?"))
+(let scan-words (like "({:letter+} | :skip)*"))
