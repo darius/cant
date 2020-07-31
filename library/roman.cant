@@ -4,7 +4,7 @@
 (to (number<-roman text)
   (let values (each value<-rune text.uppercase))
   (sum (for each ((value `(0 ,@values)) (next-value `(,@values 0)))
-         ;; Each letter goes into the sum either positively or negatively,
+         ;; Each letter goes into the sum either negatively or positively,
          ;; depending on the next letter. E.g. X in "XC" means -10, not 10.
          (take value (if (< value next-value) - +)))))
 
@@ -13,13 +13,11 @@
 
 (to (roman<-number n)
   (surely (< 0 n))
-  (for foldr ((digit n.digits) (roman ""))
-    (chain (roman*10 roman) (roman<-digit digit))))
+  (text<-list (for foldr ((digit n.digits) (roman '()))
+                (chain (each rune*10 roman) (runes<-digit digit)))))
 
-(to (roman*10 text)
-  (text<-list (each rune*10 text)))
-
-(let roman<-digit (array<-list (" I II III IV V VI VII VIII IX" .split " ")))
+(let runes<-digit
+  (array<-list (each ~.values (" I II III IV V VI VII VIII IX" .split " "))))
 (let rune*10 (map<-items (zip "IVXLC"
                               "XLCDM")))
 
