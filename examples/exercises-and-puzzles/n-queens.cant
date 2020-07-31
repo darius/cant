@@ -33,8 +33,7 @@
   (let env (!map<-))
 
   (to (exclude rr cc)
-    (when (and (<= 0 rr) (< rr n)
-               (<= 0 cc) (< cc n))
+    (when (and (<= 0 rr n.-) (<= 0 cc n.-))
       (env .set! (queen n rr cc) #no)))
   
   (for each! ((cc n.till))

@@ -17,8 +17,8 @@
 (to (grid-2d<- (~ xl yl) (~ xh yh) initializer)
   (let x-extent (+ (- xh xl) 1))
   (let y-extent (+ (- yh yl) 1))
-  (surely (<= 0 x-extent))
-  (surely (<= 0 y-extent))
+  (surely (count? x-extent))
+  (surely (count? y-extent))
 
   (let A (array<-count (* x-extent y-extent)
                        (may initializer

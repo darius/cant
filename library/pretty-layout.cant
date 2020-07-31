@@ -64,10 +64,8 @@
 
 (to (fits? w semidetermined-doc)
   (and (<= 0 w) (may semidetermined-doc
-                  (be `({text ,t} ,@x)
-                    (fits? (- w t.count) x))
-                  (else
-                    #yes))))
+                  (be `({text ,t} ,@x) (fits? (- w t.count) x))
+                  (else                #yes))))
 
 (to (lay-out w semidetermined-doc)
   (may semidetermined-doc

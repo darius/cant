@@ -10,7 +10,7 @@
            ((r Ns) .keys)))
            
 
-(let none   (set<-))
+(let none (set<-))
 
 (to (literal text)
   (let just-text (set<- text))
@@ -27,7 +27,7 @@
 (to ((either r s) Ns) ((r Ns) .union (s Ns)))
 
 (to (one-of runes)
-  (let set (~.range (each text<- runes)))
+  (let set (~.range (each ~.text runes)))
   (on (Ns)
     (if (Ns .maps? 1) set none)))
 
@@ -37,12 +37,11 @@
   ;; 0..max(Ns). (And we call neither r nor s if there are no Ns.)
   (hm (if Ns.none? none)
       (else
-       ;; TODO still pretty ugly
+       ;; TODO still kinda ugly
        (let r-matches (~.keys (r (~.range (0 .thru (max @Ns.keys))))))
        (let r-lengths (~.keys (~.range (each ~.count r-matches))))
        (let Ns-s (~.range (for gather ((n Ns.keys))
-                            (for yeahs ((m r-lengths))
-                              (and (<= m n) (- n m))))))
+                            (those count? (each (-> (- n it)) r-lengths)))))
        (let s-matches (~.keys (s Ns-s)))
        (~.range (for gather ((m1 r-matches))
                   (for yeahs ((m2 s-matches))
