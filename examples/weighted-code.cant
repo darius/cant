@@ -1,0 +1,70 @@
+;; Weighted codes
+;; from Hamming *The art of doing science and engineering*, ch. 11, p. 79
+
+;; These codes add one check digit to a message, to detect a single
+;; transposition or substitution error. The check digit is based on a
+;; weighted sum of the message digits, where the weights are [1..n],
+;; modulo a prime modulus.
+
+(import (use 'factoring) prime?)
+
+(to (weighted-code<- modulus)
+  (surely (prime? modulus))
+
+  (to (well-formed? ns)
+    (for every ((n ns))
+      (<= 0 n modulus.-)))
+  
+  (let normalize (~ .modulo modulus))
+
+  (make weighted-code
+    (to (~ .encode ns)
+      (surely (well-formed? ns))
+      (let check-digit (take (link 0 ns) weighted-sum - normalize))
+      (link check-digit ns))
+    (to (~ .decode encoded-ns)
+      (surely (well-formed? encoded-ns))
+      (surely encoded-ns.some?)
+      (let checksum (take encoded-ns weighted-sum normalize))
+      (and (= 0 checksum) encoded-ns.rest))))
+
+;; TODO
+;; Cleaner if we take the message in the reverse order?
+;; Write tests:
+;; - Smoke test
+;; - Are the different ways of computing the weighted sum equal?
+;; - Round-trip encode/decode = identity
+;; - Digits other than the check digit are encoded as-is
+;; - Errors are detected:
+;;   - swap nonequal symbols at non-modulus distance
+;;   - alter single symbols
+
+;; A few different ways to compute the weighted sum, just to see how
+;; to express them in Cant:
+
+;; ns[0] + 2*ns[1] + 3*ns[2] + ...
+(to (weighted-sum ns)
+  (sum (each * ns (1 .thru ns.count))))
+
+;; Equivalent, without multiplying:
+(to (weighted-sum-sans-* ns)
+  (take ns reverse running-sum running-sum ~.last))
+
+(to (running-sum numbers)
+  ;; (take (for foldl ((sums '(0)) (n numbers))
+  ;;         (link (+ n sums.first) sums))
+  ;;       reverse ~.rest))
+  (begin summing ((total 0) (ns numbers))
+    (if ns.none?
+        '()
+        (link/lazy (let total1 (+ total ns.first))
+                   (: (summing total1 ns.rest))))))
+
+;; Equivalent, in a loop:
+(to (weighted-sum-loop ns)
+  (begin ((ns (reverse ns)) (total-1 0) (total-2 0))
+    (may ns
+      (be '() total-2)
+      (be `(,n ,@rest)
+        (let n1 (+ n total-1))
+        (loop rest n1 (+ n1 total-2))))))
