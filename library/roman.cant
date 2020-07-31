@@ -1,12 +1,13 @@
 ;; Roman numerals
-
 ;; TODO: expose as a parson grammar, too?
+
 (to (number<-roman text)
-  (let (~ _ total)
-    (for foldr ((rune text.uppercase) ((~ next total) (~ 0 0)))
-      (let value (value<-rune rune))
-      (~ value ((if (<= next value) + -) total value))))
-  total)
+  (let values (array<-list (each value<-rune text.uppercase)))
+  (sum (for each (((~ i v) values.items))
+         ;; Each letter goes into the sum either positively or negatively,
+         ;; depending on the next letter. E.g. X in "XC" means -10, not 10.
+         (let next-v (values .get i.+ v))
+         (take v (if (< v next-v) - +)))))
 
 (let value<-rune
   (map<-lists '((#\M 1000) (#\D 500) (#\C 100) (#\L 50) (#\X 10) (#\V 5) (#\I 1))))
