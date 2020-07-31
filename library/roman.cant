@@ -3,11 +3,11 @@
 
 (to (number<-roman text)
   (let values (array<-list (each value<-rune text.uppercase)))
-  (sum (for each (((~ i v) values.items))
+  (sum (for each (((~ i val) values.items))
          ;; Each letter goes into the sum either positively or negatively,
          ;; depending on the next letter. E.g. X in "XC" means -10, not 10.
-         (let next-v (values .get i.+ v))
-         (take v (if (< v next-v) - +)))))
+         (let next-val (values .get i.+ val))
+         (take val (if (< val next-val) - +)))))
 
 (let value<-rune
   (map<-lists '((#\M 1000) (#\D 500) (#\C 100) (#\L 50) (#\X 10) (#\V 5) (#\I 1))))
