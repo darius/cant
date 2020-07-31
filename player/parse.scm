@@ -416,9 +416,10 @@
                (insist (all symbol? names) "bad syntax" names)
                (let ((map-var (gensym)))
                  `(let (~ ,@names)
-                    (hide (let ,map-var ,m)
-                          (~ ,@(map (lambda (name) `(,map-var ',name))
-                                    names))))))))
+                    ((on (,map-var) 
+                       (~ ,@(map (lambda (name) `(,map-var ',name))
+                                 names)))
+                     ,m))))))
     ('export (mlambda
               ((__ . names)
                (insist (all symbol? names) "bad syntax" names)
