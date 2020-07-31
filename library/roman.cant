@@ -2,12 +2,11 @@
 ;; TODO: expose as a parson grammar, too?
 
 (to (number<-roman text)
-  (let values (array<-list (each value<-rune text.uppercase)))
-  (sum (for each (((~ i val) values.items))
+  (let values (each value<-rune text.uppercase))
+  (sum (for each ((value `(0 ,@values)) (next-value `(,@values 0)))
          ;; Each letter goes into the sum either positively or negatively,
          ;; depending on the next letter. E.g. X in "XC" means -10, not 10.
-         (let next-val (values .get i.+ val))
-         (take val (if (< val next-val) - +)))))
+         (take value (if (< value next-value) - +)))))
 
 (let value<-rune
   (map<-lists '((#\M 1000) (#\D 500) (#\C 100) (#\L 50) (#\X 10) (#\V 5) (#\I 1))))
