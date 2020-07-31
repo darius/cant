@@ -1,4 +1,4 @@
-(import (use 'factor) factor)
+(import (use 'factoring) factor)
 
 (to (oiler3 n)
   (max @(factor n)))

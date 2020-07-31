@@ -1,4 +1,4 @@
-(import (use 'factor) factor)
+(import (use 'factoring) factor)
 
 (out .print (factor 1))
 (out .print (factor 2))
