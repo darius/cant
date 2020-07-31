@@ -1,4 +1,4 @@
-(import (use 'primes) list-primes-till)
+(import (use 'factoring) list-primes-till)
 
 (to (sum-of-primes-till limit)
   (sum (list-primes-till limit)))
