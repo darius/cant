@@ -39,6 +39,7 @@
 
 ;; Return a list of the prime factors of a positive integer.
 ;; TODO integrate with above, speed up
+;; TODO return a lazy list?
 (to (factor n)
   (surely (integer? n))
   (surely (< 0 n))
@@ -49,4 +50,8 @@
             (link d (if (= d n) '() (trying d (n .quotient d))))
             (trying d.+ n)))))
 
-(export factor list-primes-till)
+;; TODO reasonable efficiency
+(to (prime? n)
+  (= 1 (~.count (factor n))))
+
+(export factor list-primes-till prime?)

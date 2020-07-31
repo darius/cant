@@ -1,5 +1,3 @@
-;; TODO this lazy-list code is a little clumsy still
-
 (to (oiler7 n)
   ((primes) n))
 
@@ -7,13 +5,12 @@
   (link/lazy 2 (: (filter-prime (odd-integers 3)))))
 
 (to (odd-integers n)
-  (link/lazy n (: (odd-integers (+ n 2)))))
+  (link/lazy n (: (odd-integers (+ n 2))))) ;TODO infinite interval<-
 
 (to (filter-prime ns) 
-  (let p ns.first)
-  (link/lazy p (: (filter-prime
-                   (for those/lazy ((k ns.rest))
-                     (not (p .divides? k)))))))
+  (link/lazy (let p ns.first)
+             (: (filter-prime (for those/lazy ((k ns.rest))
+                                (not (p .divides? k)))))))
 
 ;(out .print (oiler7 5))
 (out .print (oiler7 100))
