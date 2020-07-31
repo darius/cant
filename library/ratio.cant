@@ -9,10 +9,8 @@
 
 (to (ratio? thing)
   (may thing
-    (be {ratio n d}
-      (and (integer? n) (integer? d) (not= d 0)))
-    (else
-      #no)))
+    (be {ratio n d} (and (integer? n) (integer? d) (not= d 0)))
+    (else           #no)))
 
 (make ratio<-
   (to (~ n)
@@ -24,9 +22,10 @@
     (reduce n d)))
 
 (to (reduce n d)
-  (hm (if (= d 0) (oops "Divide by 0"))
-      (if (< d 0) (lowest-terms (- n) (- d)))
-      (else       (lowest-terms n d))))
+  (may d.sign
+    (be -1 (lowest-terms (- n) (- d)))
+    (be  0 (oops "Divide by 0"))
+    (be +1 (lowest-terms n d))))
 
 (to (lowest-terms n d)
   (let g (n .gcd d))
