@@ -1,10 +1,11 @@
 (let ratio (use 'ratio))
 
-(import ratio ratio<- as-float)
+(import ratio ratio<- float<-ratio)
 (let `(,r+ ,r- ,r* ,r/ ,r-compare) (each ratio '(+ - * / compare)))
 
 ;; Generate good rational approximations of float in order of
 ;; increasing denominator.
+;; TODO move to ratio.cant
 (to (rationalize float)
   (if (< float 0)
       (each/lazy - (rationalize (- float)))
@@ -13,7 +14,7 @@
 (let pi (r/ (ratio<- 355) (ratio<- 113)))
 (let tau (r+ pi pi))
 (out .print pi)
-(out .print (as-float pi))
+(out .print (float<-ratio pi))
 (out .print tau)
 (out .print (r/ tau pi))
 (out .print (r- (ratio<- 1 2) (ratio<- 1 3)))

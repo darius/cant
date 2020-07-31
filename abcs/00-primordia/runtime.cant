@@ -394,6 +394,7 @@
         (and (pass? xs.first)
              (every pass? xs.rest)))))
 
+;; TODO better as (link x (lazy-list<- thunk)) ?
 (to (link/lazy x thunk)
   (make lazy-list {extending list-trait}
     (to ~.none? #no)

@@ -9,7 +9,7 @@
 
 (to (ratio? thing)
   (may thing
-    (be {ratio n d} (and (integer? n) (integer? d) (not= d 0)))
+    (be {ratio n d} (and (integer? n) (integer? d) (< 0 d))) ;TODO also check gcd?
     (else           #no)))
 
 (make ratio<-
@@ -52,12 +52,19 @@
 (to (compare {ratio n1 d1} {ratio n2 d2})
   ((* n1 d2) .compare (* n2 d1)))
 
-(to (as-float {ratio n d})
+(to (r-integer? {ratio n d})
+  (= d 1))
+
+(to (integer<-ratio {ratio n d})
+  (unless (= d 1) (oops "Not an integer" {ratio n d}))
+  n)
+
+(to (float<-ratio {ratio n d})
   (/ n.inexact d))
 
-((export ratio? ratio<- compare as-float)
- .override (map<-
-            (~ '+ r+)
-            (~ '- r-)
-            (~ '* r*)
-            (~ '/ r/)))
+;; TODO just export r-names instead of renaming
+((export ratio? ratio<- compare r-integer? integer<-ratio float<-ratio)
+ .override (map<- (~ '+ r+)
+                  (~ '- r-)
+                  (~ '* r*)
+                  (~ '/ r/)))

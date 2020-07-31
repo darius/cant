@@ -1,0 +1,49 @@
+;; https://en.wikipedia.org/wiki/FRACTRAN
+;; A Turing-complete esoteric language based on factoring of natural numbers.
+
+;; TODO once again, renaming imports is clumsy
+(import (let ratio-m (use 'ratio))
+  ratio? ratio<- r-integer? integer<-ratio)
+(let (list<- r* r-compare) (each ratio-m '(* compare)))
+
+;; Run a FRACTRAN program.
+(to (fractran fractions input)
+  ;; The program is a list of positive fractions.
+  (surely (every ratio? fractions))
+  (surely (every r-positive? fractions))
+  ;; The input is a positive integer.
+  (surely (and (integer? input) (< 0 input)))
+
+  (begin ((subject (ratio<- input)))
+    ;; Look for a whole-number product, from left to right:
+    (may (those/lazy r-integer? (each/lazy (-> (r* subject it)) fractions))
+      (be (? ~.none?) (integer<-ratio subject))  ; None, so we're done.
+      (be products    (loop products.first)))))  ; Repeat with the first one found.
+
+(to (r-positive? r)
+  (< 0 (r-compare r (ratio<- 0))))
+
+
+;; TODO we need this only because (read) doesn't know about fractions:
+
+(to (fractran-parse text)
+  (each (-> (ratio<- @it)) (fractran-syntax text)))
+
+(import (use 'parson) like)
+(let fractran-syntax (like "[:count '/' :count :hug] ** _"))
+
+
+;; Smoke test
+
+(import (use 'factoring) factor)
+
+;; Program from https://scienceblogs.com/goodmath/2006/10/27/prime-number-pathology-fractra
+(let eg-program "385/13 13/21 1/7 3/11 7/2 1/3")
+
+(let (~ a b) (~ 4 6))
+(let eg-input (* (2 .** a) (3 .** b)))
+
+(let eg-result (fractran (fractran-parse eg-program) eg-input))
+
+(out .say "Program: ~d\n" eg-program)
+(out .say "~w * ~w -> ~w\n" a b (~.count (factor eg-result)))
