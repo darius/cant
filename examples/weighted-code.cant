@@ -29,7 +29,6 @@
       (and (= 0 checksum) encoded-ns.rest))))
 
 ;; TODO
-;; Cleaner if we take the message in the reverse order?
 ;; Write tests:
 ;; - Smoke test
 ;; - Are the different ways of computing the weighted sum equal?
@@ -51,9 +50,6 @@
   (take ns reverse running-sum running-sum ~.last))
 
 (to (running-sum numbers)
-  ;; (take (for foldl ((sums '(0)) (n numbers))
-  ;;         (link (+ n sums.first) sums))
-  ;;       reverse ~.rest))
   (begin summing ((total 0) (ns numbers))
     (if ns.none?
         '()
@@ -68,3 +64,14 @@
       (be `(,n ,@rest)
         (let n1 (+ n total-1))
         (loop rest n1 (+ n1 total-2))))))
+
+
+;; Smoke test
+
+(let c (weighted-code<- 7))
+
+(let m '(3 1 4))
+(let cm (c .encode m))
+(out .say "encode ~w -> ~w\n" m cm)
+(let dcm (c .decode cm))
+(out .say "decode -> ~w\n" dcm)
