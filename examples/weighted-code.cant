@@ -37,7 +37,8 @@
 
 ;; Equivalent, without multiplying:
 (to (weighted-sum-sans-* ns)
-  (take ns reverse running-sum running-sum ~.last))
+  (hm (if ns.none? 0) ; (This case never comes up in the calls from above, though.)
+      (else (take ns reverse running-sum running-sum ~.last))))
 
 (to (running-sum numbers)
   (begin summing ((total 0) (ns numbers))
@@ -55,22 +56,42 @@
         (let n1 (+ n total-1))
         (loop rest n1 (+ n1 total-2))))))
 
-;; TODO
-;; More tests:
-;; - Are the different ways of computing the weighted sum equal?
-;; - Round-trip encode/decode = identity
-;; - Digits other than the check digit are encoded as-is
-;; - Errors are detected:
-;;   - swap nonequal symbols at non-modulus distance
-;;   - alter single symbols
-
 
 ;; Smoke test
 
 (let c (weighted-code<- 7))
 
 (let m '(3 1 4))
+
 (let cm (c .encode m))
 (out .say "encode ~w -> ~w\n" m cm)
+
 (let dcm (c .decode cm))
 (out .say "decode -> ~w\n" dcm)
+(surely (= m dcm))
+
+(let corrupt '(3 4 1 4)) ; Altered first message digit
+(out .say "decode ~w -> ~w\n" corrupt (c .decode corrupt))
+(surely (not (c .decode corrupt)))
+
+
+;; Property tests
+
+(import ((use 'squickcheck) (export out))
+  all should
+  a-list-of a-count a-choice)
+
+;; - Are the different ways of computing the weighted sum equal?
+
+(for all ((ns (a-list-of a-count)))
+  (should = (weighted-sum ns) (weighted-sum-sans-* ns)))
+
+(for all ((ns (a-list-of a-count)))
+  (should = (weighted-sum ns) (weighted-sum-loop ns)))
+
+;; TODO more tests:
+;; - Round-trip encode/decode = identity
+;; - Digits other than the check digit are encoded as-is
+;; - Errors are detected:
+;;   - swap nonequal symbols at non-modulus distance
+;;   - alter single symbols
