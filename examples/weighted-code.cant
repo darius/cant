@@ -28,20 +28,10 @@
       (let checksum (take encoded-ns weighted-sum normalize))
       (and (= 0 checksum) encoded-ns.rest))))
 
-;; TODO
-;; Write tests:
-;; - Smoke test
-;; - Are the different ways of computing the weighted sum equal?
-;; - Round-trip encode/decode = identity
-;; - Digits other than the check digit are encoded as-is
-;; - Errors are detected:
-;;   - swap nonequal symbols at non-modulus distance
-;;   - alter single symbols
-
 ;; A few different ways to compute the weighted sum, just to see how
 ;; to express them in Cant:
 
-;; ns[0] + 2*ns[1] + 3*ns[2] + ...
+;; 1*ns[0] + 2*ns[1] + 3*ns[2] + ...
 (to (weighted-sum ns)
   (sum (each * ns (1 .thru ns.count))))
 
@@ -64,6 +54,15 @@
       (be `(,n ,@rest)
         (let n1 (+ n total-1))
         (loop rest n1 (+ n1 total-2))))))
+
+;; TODO
+;; More tests:
+;; - Are the different ways of computing the weighted sum equal?
+;; - Round-trip encode/decode = identity
+;; - Digits other than the check digit are encoded as-is
+;; - Errors are detected:
+;;   - swap nonequal symbols at non-modulus distance
+;;   - alter single symbols
 
 
 ;; Smoke test
