@@ -136,9 +136,7 @@
 
 (to (swap i j message) ; TODO make this a mutable-array method?
   (let a (array<-list message))
-  (let t (a i))
-  (a .set! i (a j))
-  (a .set! j t)
+  (a .swap! i j)
   a.values)
 
 (for all ((message (a-list-of a-count)) (i a-count) (j a-count))
