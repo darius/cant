@@ -28,6 +28,7 @@
       (let checksum (take encoded-ns weighted-sum normalize))
       (and (= 0 checksum) encoded-ns.rest))))
 
+
 ;; A few different ways to compute the weighted sum, just to see how
 ;; to express them in Cant:
 

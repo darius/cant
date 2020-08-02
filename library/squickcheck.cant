@@ -72,7 +72,7 @@
     (rune<- (g .natural 256)))
 
   (to (a-printable-rune g)
-    (rune<- (g .natural 32 126)))
+    (rune<- (g .range 32 126))) ; TODO this is an exclusive range. do I want to exclude code 126?
 
   (to ((a-list-of gen) g)
     (for each ((_ g.a-size.till))
