@@ -116,6 +116,11 @@
         (should = message encoded.rest))))
 
 ;; - Detect error: alter single symbol
+
+;; TODO something like this in list-trait
+(to (alter xs alter!)
+  (~.values (hey (array<-list xs) alter!)))
+
 (for all ((message (a-list-of a-count)) (i a-count))
   (let length message.count)
   (hm (unless (and (every (-> (< it test-M)) message)
@@ -124,21 +129,11 @@
         #yes)
       (else
         (let encoded (test-code .encode message))
-        ;; TODO convenient way to update an immutable list
-        (let array (array<-list encoded))
-        (array .set! i ((+ (array i) 1) .modulo test-M))  ; TODO other alterations
-        (let altered array.values)
+        (let altered (alter encoded (~ .update i (-> (it.+ .modulo test-M)))))
         (let decoded (test-code .decode altered))
         (should not decoded))))
 
-
 ;; - Detect error: swap nonequal symbols at non-modulus distance
-
-(to (swap i j message) ; TODO make this a mutable-array method?
-  (let a (array<-list message))
-  (a .swap! i j)
-  a.values)
-
 (for all ((message (a-list-of a-count)) (i a-count) (j a-count))
   (let length message.count)
   (hm (unless (and (every (-> (< it test-M)) message)
@@ -149,7 +144,8 @@
         (let encoded (test-code .encode message))
         (or (= (encoded i) (encoded j))
             ((- i j) .divides? test-M)
-            (do (let decoded (test-code .decode (swap i j encoded)))
+            (do (let altered (alter encoded (~ .swap! i j)))
+                (let decoded (test-code .decode altered))
                 (should not decoded))))))
 
 
