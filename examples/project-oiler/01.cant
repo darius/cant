@@ -2,8 +2,7 @@
 
 (to (oiler1 n)
   (sum (for yeahs ((i (3 .till n)))
-         (and (or (= 0 (i .remainder 3))
-                  (= 0 (i .remainder 5)))
+         (and (or (3 .divides? i) (5 .divides? i))
               i))))
 
 ;(out .print (oiler1 10))
