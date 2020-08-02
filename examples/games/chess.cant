@@ -71,7 +71,7 @@
 
 (to (initial-chess-board<-)
   ;; XXX ok, what rep is nicest here?
-  (let squares '("----------"           ;TODO a vector instead?
+  (let squares '("----------"           ;TODO an array instead?
                  "-rnbqkbnr-"
                  "-pppppppp-"
                  "-        -"
@@ -81,7 +81,7 @@
                  "-PPPPPPPP-"
                  "-RNBQKBNR-"
                  "----------"))
-  (let castling '((#yes #yes) (#yes #yes))) ;TODO vector instead?
+  (let castling '((#yes #yes) (#yes #yes))) ;TODO array instead?
   (board<- 'white squares castling #no #no))
 
 (to (board<- mover squares castling en-passant-target outcome-param)
@@ -96,8 +96,7 @@
       (for each! (((~ i line) lines.items))
         (sink .say "~w|" (- 8 i))
         (for each! (((~ j piece) line.items))
-          (sink .say " ~d" (if (and (= piece #\space)
-                                    ((+ i j) .odd?))
+          (sink .say " ~d" (if (and (= piece #\space) ((+ i j) .odd?))
                                #\. ; An empty black square.
                                piece)))
         (sink .say "\n"))

@@ -19,6 +19,7 @@
 
   (make chaos
     (to (~ .random-count n)
+      ;; XXX surely 0 < n <= D
       ((next) .modulo n))                ;XXX could be better
     (to (~ .random-range lo hi)
       (+ lo (chaos .random-count (- hi lo))))

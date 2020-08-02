@@ -11,14 +11,14 @@
   (flexarray<-array (array<-count start-count start-value)))
 
 (to (flexarray<-array start-array)
+  (let A     (box<- start-array))
   (let count (box<- start-array.count))
-  (let vec   (box<- start-array))
 
   (to (grow)
-    (let old vec.^)
+    (let old A.^)
     (let n old.count)
-    (vec .^= (array<-count (if (= 0 n) 1 (* 2 n))))
-    (vec.^ .copy! old))
+    (A .^= (array<-count (if (= 0 n) 1 (* 2 n))))
+    (A.^ .copy! old))
 
   (to (count-check i)
     (unless (< i count.^)               ;TODO check negative too
@@ -27,16 +27,16 @@
   (make flexarray {extending array-trait}
     (to (~ i)
       (count-check i)
-      (vec.^ i))
+      (A.^ i))
     (to ~.count
       count.^)
     (to (~ .set! i value)
       (count-check i)
-      (vec.^ .set! i value))
+      (A.^ .set! i value))
     (to (~ .push! value)
       (let i count.^)
-      (when (= i vec.^.count) (grow))
-      (vec.^ .set! i value)
+      (when (= i A.^.count) (grow))
+      (A.^ .set! i value)
       (count .^= i.+)
       i)                              ; (should we be returning this?)
     (to ~.pop!
@@ -44,32 +44,32 @@
       (when (< i 0)
         (oops "Underflow" flexarray))
       (count .^= i)
-      (vec.^ i))
+      (A.^ i))
     (to (~ .pop! i)
       (when (< i 0)
         (oops "Out of range" flexarray))
       (count-check i)
-      (let popped (vec.^ i))
-      (vec.^ .move! i vec.^ i.+ count.^)
+      (let popped (A.^ i))
+      (A.^ .move! i A.^ i.+ count.^)
       count.-!
       popped)
     (to (~ .insert! i value)                 ;TODO code duplication .push!
       (let c count.^)
       (unless (<= i c)
         (oops "Bad index" flexarray i))
-      (when (= c vec.^.count) (grow))
-      (vec.^ .move! i.+ vec.^ i c)
-      (vec.^ .set! i value)
+      (when (= c A.^.count) (grow))
+      (A.^ .move! i.+ A.^ i c)
+      (A.^ .set! i value)
       (count .^= c.+)
       i)                                 ;TODO what's a good return value?
     (to ~.values ;; more efficient than array-trait's
-      (each vec.^ count.^.till))
+      (each A.^ count.^.till))
     (to ~.snapshot
-      (vec.^ .slice 0 count.^))         ;XXX make immutable
+      (A.^ .slice 0 count.^))         ;XXX make immutable
     (to (~ .move! dst source lo bound)
       (when (< lo bound)
         (count-check (+ dst (- bound lo) -1))
-        (vec.^ .move! dst source lo bound)))
+        (A.^ .move! dst source lo bound)))
     (to (~ .extend! values)
       (for each! ((v values))
         (flexarray .push! v)))
@@ -78,14 +78,14 @@
       (sink .write count.^)
       (sink .display ")>"))     
     (to (~ .resize! n)
-      (let old vec.^)
+      (let old A.^)
       (when (< old.count n) ;; TODO maybe we should always change the physical size
         (let new (array<-count n))
         (new .move! 0 old 0 (min old.count n))
-        (vec .^= new))
+        (A .^= new))
       (count .^= n))
     (to ~.clear!
-      (count .^= 0))                     ;TODO also reset vec?
+      (count .^= 0))                     ;TODO also reset A?
 
     ;; inefficient:
     (to (~ .chain v)        (flexarray.snapshot .chain v))
