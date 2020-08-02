@@ -3,7 +3,7 @@
 
 ;; (random-seed<-) -> seed (From system randomness.)
 ;; (chaos<- seed) -> chaos
-;; (chaos .sample-count n) -> int
+;; (chaos .sample-count n) -> n'
 
 (let D 2147483647)
 
@@ -21,7 +21,7 @@
     ;; TODO not thrilled with these names
     (to (~ .sample-count n)
       ;; XXX surely 0 < n <= D
-      ((next) .modulo n))                ;XXX could be better
+      ((next) .modulo n))                ;XXX not quite fair sampling
     (to (~ .sample xs)
       (xs (chaos .sample-count xs.count)))))
 
