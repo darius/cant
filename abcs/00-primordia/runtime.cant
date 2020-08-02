@@ -480,6 +480,12 @@
   (writer sink)
   sink.output-text)
 
+;; Return focus after sending it to each of the actions.
+;; Helpful for concisely creating-and-initializing an object, and such.
+(to (hey focus @actions)                ;TODO better name 'also'?
+  (each! (~ focus) actions)
+  focus)
+
 
 ;; printf-ish thing. TODO do something completely different?
 (let format

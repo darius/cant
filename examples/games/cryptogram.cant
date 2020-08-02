@@ -26,8 +26,7 @@
                 (code .get rune rune))))
 
 (to (random-code<- chaos)
-  (let shuffled (hey (array<-list alphabet) (~ .shuffle! chaos)))
-  (map<-items (zip alphabet shuffled.values)))
+  (map<-items (zip alphabet (alphabet .alter (~ .shuffle! chaos)))))
 
 (let alphabet (#\a .thru #\z))
 

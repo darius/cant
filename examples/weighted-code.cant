@@ -116,12 +116,6 @@
         (should = message encoded.rest))))
 
 ;; - Detect error: alter single symbol
-
-;; TODO something like this in list-trait
-;; N.B. cryptogram.cant could also use this
-(to (alter xs alter!)
-  (~.values (hey (array<-list xs) alter!)))
-
 (for all ((message (a-list-of a-count)) (i a-count))
   (let length message.count)
   (hm (unless (and (every (-> (< it test-M)) message)
@@ -130,7 +124,7 @@
         #yes)
       (else
         (let encoded (test-code .encode message))
-        (let altered (alter encoded (~ .update i (-> (it.+ .modulo test-M)))))
+        (let altered (encoded .alter (~ .update i (-> (it.+ .modulo test-M)))))
         (let decoded (test-code .decode altered))
         (should not decoded))))
 
@@ -145,7 +139,7 @@
         (let encoded (test-code .encode message))
         (or (= (encoded i) (encoded j))
             ((- i j) .divides? test-M)
-            (do (let altered (alter encoded (~ .swap! i j)))
+            (do (let altered (encoded .alter (~ .swap! i j)))
                 (let decoded (test-code .decode altered))
                 (should not decoded))))))
 

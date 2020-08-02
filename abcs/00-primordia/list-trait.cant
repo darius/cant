@@ -84,6 +84,8 @@
       (be 0 '())             
       (else (chain @(for each ((_ n.till))
                       list)))))
+  (to (~ .alter alter!)                 ;; TODO an experiment
+    (~.values (hey (array<-list list) alter!)))
   (to ~.maybe  ;; TODO an experiment TODO could be defined on maps in general too
     (if list.none?
         #no

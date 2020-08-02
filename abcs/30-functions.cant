@@ -219,12 +219,6 @@
   (to (~ input f)
     (f input)))
 
-;; Return focus after sending it to each of the actions.
-;; Helpful for concisely creating-and-initializing an object, and such.
-(to (hey focus @actions)                ;TODO better name 'also'?
-  (each! (~ focus) actions)
-  focus)
-
 ;; Like (f ?thing) but preserving #no-ness.
 (to (mayhap f ?thing)
   (may ?thing
