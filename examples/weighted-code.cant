@@ -81,6 +81,11 @@
   all should
   a-list-of a-count a-choice)
 
+;; TODO we lack a convenient way to generate this M for a test, and
+;; then generate messages from a suitable alphabet for M
+(let test-M 19)
+(let test-code (weighted-code<- test-M))
+
 ;; - Are the different ways of computing the weighted sum equal?
 
 (for all ((ns (a-list-of a-count)))
@@ -89,9 +94,24 @@
 (for all ((ns (a-list-of a-count)))
   (should = (weighted-sum ns) (weighted-sum-loop ns)))
 
-;; TODO more tests:
 ;; - Round-trip encode/decode = identity
+
+(for all ((message (a-list-of a-count))) ;TODO no way currently to say a number in range (0 .till 11)
+  (hm (when (every (-> (< it test-M)) message)
+        (let encoded (test-code .encode message))
+        (should = message (test-code .decode encoded)))
+      (else (out .say "?") #yes)))
+
 ;; - Digits other than the check digit are encoded as-is
+
+(for all ((message (a-list-of a-count)))
+  (hm (when (every (-> (< it test-M)) message)
+        (let encoded (test-code .encode message))
+        (should = message encoded.rest))
+      (else (out .say "?") #yes)))
+
+;; TODO:
 ;; - Errors are detected:
 ;;   - swap nonequal symbols at non-modulus distance
 ;;   - alter single symbols
+;; - run this file in the regular automated test

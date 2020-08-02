@@ -94,7 +94,7 @@
 
   ;; Helpers for gens
 
-  ;; TODO extract something like this to random.cant
+  ;; TODO extract something like this to chaos.cant
   (to (weighted-choice choices)
     (let total (sum-by ~.first choices))
     (on (g)
