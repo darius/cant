@@ -22,10 +22,13 @@
     (to (~ .sample-count n)
       ;; XXX surely 0 < n <= D
       ((next) .modulo n))                ;XXX not quite fair sampling
+    ;; TODO a trait for the remaining methods
     (to (~ .sample xs)
-      (xs (chaos .sample-count xs.count)))))
+      (xs (chaos .sample-count xs.count)))
+    (to (~ .probability numerator denominator)
+      (< (chaos .sample-count denominator) numerator))))
 
-;; TODO (chaos .sample-fraction n d) -> #yes n/d of the time. better name?
+;; TODO (chaos .sample-fraction n d) -> #yes n/d of the time. better name: .probability ?
 ;; TODO chaos-trait for methods like that. Or stick them into the number types.
 
 (let chaos<- park-miller-chaos<-)

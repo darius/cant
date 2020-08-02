@@ -17,8 +17,8 @@
               (expand token probability))))
 
 (to (expand token probability)
-  (if (and (menu .maps? token) (< (chaos .sample-count 1000) probability))
-      (expand-text (menu token) (/ (* probability 4) 5))
+  (if (and (menu .maps? token) (chaos .probability probability 1000))
+      (expand-text (menu token) ((* probability 4) .quotient 5))
       token))
 
 (let scan (like "{:letter+ '!'? | :skip}*"))
