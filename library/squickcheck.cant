@@ -48,9 +48,9 @@
       ;; TODO better method names
       (make gen
         (to ~.size           size)
-        (to (~ .natural n)   (chaos .random-integer n))
+        (to (~ .natural n)   (chaos .random-count n))
         (to (~ .range lo hi) (chaos .random-range lo hi)) ;TODO rename, .interval ?
-        (to ~.a-size         (chaos .random-integer size))
+        (to ~.a-size         (chaos .random-count size))
         (to (~ .choose xs)   (chaos .pick xs)))))
 
 

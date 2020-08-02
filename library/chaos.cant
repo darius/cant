@@ -3,7 +3,7 @@
 
 ;; (random-seed<-) -> seed (From system randomness.)
 ;; (chaos<- seed) -> chaos
-;; (chaos .random-integer n) -> int
+;; (chaos .random-count n) -> int
 
 (let D 2147483647)
 
@@ -18,16 +18,16 @@
     r)
 
   (make chaos
-    (to (~ .random-integer n)                ;TODO rename .random-count or something
+    (to (~ .random-count n)
       ((next) .modulo n))                ;XXX could be better
     (to (~ .random-range lo hi)
-      (+ lo (chaos .random-integer (- hi lo))))
+      (+ lo (chaos .random-count (- hi lo))))
     (to (~ .pick xs)
-      (xs (chaos .random-integer xs.count)))
-    (to (~ .shuffle! vec)
-      (let n vec.count)
+      (xs (chaos .random-count xs.count)))
+    (to (~ .shuffle! array)
+      (let n array.count)
       (for each! ((i n.till))
-        (vec .swap! i (+ i (chaos .random-integer (- n i))))))
+        (array .swap! i (+ i (chaos .random-count (- n i))))))
     ))
 
 (let chaos<- park-miller-chaos<-)
