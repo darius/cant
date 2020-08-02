@@ -47,7 +47,7 @@
 
 ;; Pick a random key from a nonempty bag, weighted by frequency.
 (to (sample-from-bag chaos bag)           ;TODO dedupe: similar in squickcheck.scm
-  (begin ((n     (chaos .random-count bag.total))
+  (begin ((n     (chaos .sample-count bag.total))
           (items bag.items))
     (let (~ key count) items.first)
     (if (< n count)

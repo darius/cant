@@ -3,7 +3,7 @@
 
 ;; (random-seed<-) -> seed (From system randomness.)
 ;; (chaos<- seed) -> chaos
-;; (chaos .random-count n) -> int
+;; (chaos .sample-count n) -> int
 
 (let D 2147483647)
 
@@ -18,18 +18,15 @@
     r)
 
   (make chaos
-    (to (~ .random-count n)
+    ;; TODO not thrilled with these names
+    (to (~ .sample-count n)
       ;; XXX surely 0 < n <= D
       ((next) .modulo n))                ;XXX could be better
-    (to (~ .random-range lo hi)
-      (+ lo (chaos .random-count (- hi lo))))
-    (to (~ .pick xs)
-      (xs (chaos .random-count xs.count)))
-    (to (~ .shuffle! array)
-      (let n array.count)
-      (for each! ((i n.till))
-        (array .swap! i (chaos .random-range i n))))
-    ))
+    (to (~ .sample xs)
+      (xs (chaos .sample-count xs.count)))))
+
+;; TODO (chaos .sample-fraction n d) -> #yes n/d of the time. better name?
+;; TODO chaos-trait for methods like that. Or stick them into the number types.
 
 (let chaos<- park-miller-chaos<-)
 (let chaos (chaos<- 1234567))

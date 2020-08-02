@@ -38,7 +38,7 @@
                     (be sliding
                       (history .push! board)
                       (animate sliding score)
-                      (let small? (< (chaos .random-count 10) 9))
+                      (let small? (< (chaos .sample-count 10) 9))
                       (let next-board (plop chaos sliding.last (if small? 2 4)))
                       (playing next-board forfeit?)))))))))
 
@@ -89,9 +89,9 @@
     ((move rows) .none?)))
 
 (to (random-empty-square chaos rows)
-  (chaos .pick (for gather (((~ r row) rows.items))
-                 (for yeahs (((~ c v) row.items))
-                   (and (= v 0) (~ r c))))))
+  (chaos .sample (for gather (((~ r row) rows.items))
+                   (for yeahs (((~ c v) row.items))
+                     (and (= v 0) (~ r c))))))
 
 (to (update rows at new-value)
   (for each (((~ r row) rows.items))

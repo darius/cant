@@ -4,7 +4,7 @@
 
 ; (out .say "seed: ~w\n" (random-seed<-))
 (for each! ((_ (10 .till)))
-  (out .say "~w " (chaos .random-count 4)))
+  (out .say "~w " (chaos .sample-count 4)))
 out.newline
 
         

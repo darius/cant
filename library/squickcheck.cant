@@ -48,10 +48,10 @@
       ;; TODO better method names
       (make gen
         (to ~.size           size)
-        (to (~ .natural n)   (chaos .random-count n))
-        (to (~ .range lo hi) (chaos .random-range lo hi)) ;TODO rename, .interval ?
-        (to ~.a-size         (chaos .random-count size))
-        (to (~ .choose xs)   (chaos .pick xs)))))
+        (to (~ .natural n)   (chaos .sample-count n))
+        (to (~ .range lo hi) (chaos .sample (lo .till hi))) ;TODO rename, .interval ?
+        (to ~.a-size         (chaos .sample-count size))
+        (to (~ .choose xs)   (chaos .sample xs)))))
 
 
   ;; Basic gens

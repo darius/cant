@@ -118,6 +118,7 @@
 ;; - Detect error: alter single symbol
 
 ;; TODO something like this in list-trait
+;; N.B. cryptogram.cant could also use this
 (to (alter xs alter!)
   (~.values (hey (array<-list xs) alter!)))
 

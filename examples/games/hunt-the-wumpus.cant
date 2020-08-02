@@ -139,7 +139,7 @@
   (to ~.wander
     ;; Move to a random neighbor, or just circle back.
     (let here wumpus.where)
-    (wumpus .go (chaos .pick (link here here.neighbors)))))
+    (wumpus .go (chaos .sample (link here here.neighbors)))))
 
 (to (pit<-)
   (make pit {extending (thing-trait<-)}
