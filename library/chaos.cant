@@ -27,7 +27,7 @@
     (to (~ .shuffle! array)
       (let n array.count)
       (for each! ((i n.till))
-        (array .swap! i (+ i (chaos .random-count (- n i))))))
+        (array .swap! i (chaos .random-range i n))))
     ))
 
 (let chaos<- park-miller-chaos<-)
@@ -44,7 +44,9 @@
           seed
           (trying)))))
 
-;; Read a 4-byte unsigned int, big-endian. TODO should be in a library
+;; Read a 4-byte unsigned int, big-endian.
+;; TODO should be in a library
+;; TODO use .read-u8 on a *binary* source. Then cult-of-the-bound-variable could use this too.
 (to (read-u32 source)
   (for foldl ((n 0) (_ (4 .till)))
     (+ (n .<< 8) source.read-rune.code)))
