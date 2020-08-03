@@ -3,10 +3,9 @@
 
 ;; Does regex match runes? (Anchored matching at both ends.)
 (to (regex-match regex runes)
-  (let ending-states
-    (for foldl ((states (regex (set<- accept)))
-                (c runes))
-      (union-over (each (~ c) states.keys))))
+  (let ending-states (for foldl ((states (regex (set<- accept)))
+                                 (c runes))
+                       (union-over (each (~ c) states.keys))))
   (ending-states .maps? accept))
 
 ;; A state is a function from rune c to set of successor states.
