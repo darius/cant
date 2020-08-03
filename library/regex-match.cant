@@ -27,10 +27,7 @@
 (to ((lit-rune ch) succs) (set<- (expect ch succs)))
 (to ((either r s) succs)  ((r succs) .union (s succs)))
 (to ((then r s) succs)    (r (s succs)))
-(to ((star r) succs)
-  (let my-succs succs.copy)
-  (my-succs .union! (r my-succs))
-  my-succs)
+(to ((star r) succs)      (hey succs.copy (-> (it .union! (r it)))))
 
 ;; Extras
 
