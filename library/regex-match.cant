@@ -6,8 +6,7 @@
   (let ending-states
     (for foldl ((states (regex (set<- accept)))
                 (c runes))
-      (union-over (for each ((state states.keys))
-                    (state c)))))
+      (union-over (each (~ c) states.keys))))
   (ending-states .maps? accept))
 
 ;; A state is a function from rune c to set of successor states.
