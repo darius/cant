@@ -1,5 +1,4 @@
 ;; Regular expression matching.
-;; Like nfa_simplest_set.py using a first straw man of a set datatype.
 
 ;; Does regex match runes? (Anchored matching at both ends.)
 (to (regex-match regex runes)
@@ -22,12 +21,76 @@
 ;; by a set of states, its start states. The input NFA might not be
 ;; fully constructed yet at the time we build the output, because of
 ;; the loop for the Kleene star -- so we need a mutable set.
-;; XXX wrong again, argh.
 (to (empty succs)         succs)
 (to ((lit-rune ch) succs) (set<- (expect ch succs)))
 (to ((either r s) succs)  ((r succs) .union (s succs)))
 (to ((then r s) succs)    (r (s succs)))
-(to ((star r) succs)      (hey succs.copy (-> (it .union! (r it)))))
+(to ((star r) succs)      (hey (sprout<- succs) (-> (it .union! (r it)))))
+
+;; XXX so, like, the theory is that the following would go into the
+;; main library and not count against this regex code... and it'd be
+;; created by a set.sprout method instead of a function.
+
+;; The 'sprout' of a parent set is a new mutable set bearing the same
+;; sort of relation to its parent as a Javascript object to its
+;; prototype. Let's just try this for now, and worry about our overall
+;; standard library design after.
+
+;; XXX Right, no point in worrying about the above design
+;; considerations because this doesn't work either; it just takes
+;; more-complicated situations to make it fail. The above code was a
+;; nice daydream. I'm still vaguely thinking maybe the idea could work
+;; after a giant reorg.
+
+(to (sprout<- parent)
+  (let mine (!map<-))
+  (to (unshadowed)
+    (for those ((k parent.keys))
+      (not (mine .maps? k))))
+  (make sprout {extending map-trait}
+    ;; copied and modified from (hash-set<-) in runtime.cant
+    ;; TODO a lot of these should be in a set trait
+    (to ~.none?            (and mine.none? parent.none?))
+    (to ~.count            (+ mine.count ((unshadowed) .count)))
+    (to ~.keys             (chain mine.keys (unshadowed)))
+    (to (~ .maps? key)     (or (mine .maps? key) (parent .maps? key)))
+    (to (~ .add! key)      (mine .set! key 1))
+    (to ~.copy             (set<-list sprout.keys))
+    (to (~ .add-all! vals) (for each! ((v vals)) (sprout .add! v)))
+    (to (~ .union! other)  (sprout .add-all! other.keys))
+    (to (~ .union other)
+      (let result sprout.copy)
+      (result .union! other)
+      result)
+    (to (~ .intersect other)
+      (let result (set<-))
+      (for each! ((x sprout.keys))
+        (when (other .maps? x)
+          (result .add! x)))
+      result)
+    (to (~ .difference other)
+      (let result (set<-))
+      (for each! ((x sprout.keys))
+        (unless (other .maps? x)
+          (result .add! x)))
+      result)
+    (to (~ .except other)
+      (let result (set<-))
+      (for each! ((x sprout.keys))
+        (unless (= other x)
+          (result .add! x)))
+      result)
+    (to (~ .intersects? map2)
+      (or (mine .intersects? map2) (parent .intersects? map2)))
+    (to ~.clear!         (oops ".clear! not supported on a sprout" sprout))
+    (to (~ .get key)     ((if (mine .maps? key) mine parent) .get key))
+    (to (~ key)          (sprout .get key 0)) ;I'm not sure this is a good idea, but it's to match the bag type
+    (to ~.items          (chain mine.items (each (-> (~ it 1)) (unshadowed))))
+    (to ~.values         (chain mine.values (each (-> 1) (unshadowed))))
+    (to (~ .delete! key) (oops ".delete! not supported on a sprout" sprout))
+    (to ~.total          sprout.count)
+    (to (~ .selfie sink)
+      (sink .say "#<sprout~w ~w>" mine.keys parent))))
 
 ;; Extras
 

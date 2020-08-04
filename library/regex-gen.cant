@@ -50,6 +50,7 @@
 
 ;; Extras
 
+(to (lit-rune rune) (literal rune.text))
 (let anyone   (literal "?"))
 (let empty    (literal ""))
 (to (maybe r) (either empty r))
@@ -64,6 +65,6 @@
                     empty literal star then either plus maybe one-of anyone)))
 
 (export
-  empty literal then either star plus maybe
+  empty lit-rune literal then either star plus maybe
   one-of anyone nonempty
   regex-generate regex-parse)

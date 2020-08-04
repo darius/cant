@@ -238,6 +238,7 @@
     (to (~ .intersects? map2)
       (!map .intersects? map2))
     (to ~.clear!         !map.clear!)
+    ;; TODO missing: (~ .get key default)
     (to (~ .get key)     (!map .get key))
     (to (~ key)          (!map .get key 0)) ;I'm not sure this is a good idea, but it's to match the bag type
     (to ~.items          !map.items)
