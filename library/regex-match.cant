@@ -1,110 +1,55 @@
 ;; Regular expression matching.
 
-;; Does regex match runes? (Anchored matching at both ends.)
-(to (regex-match regex runes)
-  (let ending-states (for foldl ((states (regex (set<- accept)))
-                                 (c runes))
-                       (union-over (each (~ c) states.keys))))
-  (ending-states .maps? accept))
+;; Does regex `re` match `runes`? (Anchored matching at both ends.)
+;; Algorithm: Antimirov derivatives.
+(to (regex-match re runes)
+  (take (foldl step `(,re) runes) (-> (some nullable? it))))
 
-;; A state is a function from rune c to set of successor states.
-(to (accept c)                    empty-set)
-(to ((shift succs) c)             succs)
-(to ((expect ch succs) c)         (if (= ch c)       succs empty-set))
-(to ((expect-any-of chs succs) c) (if (chs .maps? c) succs empty-set))
+(to (step res rune)
+  (take (gather (after rune) res) ~.range ~.keys))
 
-(let empty-set (set<-))
+(to (nullable? re)
+  (may re
+    (be {empty}      #yes)
+    (be {unit _}     #no)
+    (be {anyone}     #no)
+    (be {either r s} (or (nullable? r) (nullable? s)))
+    (be {then r s}   (and (nullable? r) (nullable? s)))
+    (be {star _}     #yes)))
 
-;; A regex is a function from NFA to NFA. The input NFA represents the
-;; 'rest of' the larger regex that this regex is part of; the output
-;; NFA represents this regex followed by the rest. An NFA is represented
-;; by a set of states, its start states. The input NFA might not be
-;; fully constructed yet at the time we build the output, because of
-;; the loop for the Kleene star -- so we need a mutable set.
-(to (empty succs)         succs)
-(to ((lit-rune ch) succs) (set<- (expect ch succs)))
-(to ((either r s) succs)  ((r succs) .union (s succs)))
-(to ((then r s) succs)    (r (s succs)))
-(to ((star r) succs)      (hey (sprout<- succs) (-> (it .union! (r it)))))
+(to (after rune)
+  (to (walk re)
+    (may re
+      (be {empty}      '())
+      (be {unit c}     (if (= c rune) '({empty}) '()))
+      (be {anyone}     '({empty}))
+      (be {either r s} (chain (walk r) (walk s)))
+      (be {then r s}   (let dr+s (each (-> (then it s)) (walk r)))
+                       (if (nullable? r) (chain dr+s (walk s)) dr+s))
+      (be {star r}     (each (-> (then it re)) (walk r))))))
 
-;; XXX so, like, the theory is that the following would go into the
-;; main library and not count against this regex code... and it'd be
-;; created by a set.sprout method instead of a function.
+;; Regex constructors
 
-;; The 'sprout' of a parent set is a new mutable set bearing the same
-;; sort of relation to its parent as a Javascript object to its
-;; prototype. Let's just try this for now, and worry about our overall
-;; standard library design after.
-
-;; XXX Right, no point in worrying about the above design
-;; considerations because this doesn't work either; it just takes
-;; more-complicated situations to make it fail. The above code was a
-;; nice daydream. I'm still vaguely thinking maybe the idea could work
-;; after a giant reorg.
-
-(to (sprout<- parent)
-  (let mine (!map<-))
-  (to (unshadowed)
-    (for those ((k parent.keys))
-      (not (mine .maps? k))))
-  (make sprout {extending map-trait}
-    ;; copied and modified from (hash-set<-) in runtime.cant
-    ;; TODO a lot of these should be in a set trait
-    (to ~.none?            (and mine.none? parent.none?))
-    (to ~.count            (+ mine.count ((unshadowed) .count)))
-    (to ~.keys             (chain mine.keys (unshadowed)))
-    (to (~ .maps? key)     (or (mine .maps? key) (parent .maps? key)))
-    (to (~ .add! key)      (mine .set! key 1))
-    (to ~.copy             (set<-list sprout.keys))
-    (to (~ .add-all! vals) (for each! ((v vals)) (sprout .add! v)))
-    (to (~ .union! other)  (sprout .add-all! other.keys))
-    (to (~ .union other)
-      (let result sprout.copy)
-      (result .union! other)
-      result)
-    (to (~ .intersect other)
-      (let result (set<-))
-      (for each! ((x sprout.keys))
-        (when (other .maps? x)
-          (result .add! x)))
-      result)
-    (to (~ .difference other)
-      (let result (set<-))
-      (for each! ((x sprout.keys))
-        (unless (other .maps? x)
-          (result .add! x)))
-      result)
-    (to (~ .except other)
-      (let result (set<-))
-      (for each! ((x sprout.keys))
-        (unless (= other x)
-          (result .add! x)))
-      result)
-    (to (~ .intersects? map2)
-      (or (mine .intersects? map2) (parent .intersects? map2)))
-    (to ~.clear!         (oops ".clear! not supported on a sprout" sprout))
-    (to (~ .get key)     ((if (mine .maps? key) mine parent) .get key))
-    (to (~ key)          (sprout .get key 0)) ;I'm not sure this is a good idea, but it's to match the bag type
-    (to ~.items          (chain mine.items (each (-> (~ it 1)) (unshadowed))))
-    (to ~.values         (chain mine.values (each (-> 1) (unshadowed))))
-    (to (~ .delete! key) (oops ".delete! not supported on a sprout" sprout))
-    (to ~.total          sprout.count)
-    (to (~ .selfie sink)
-      (sink .say "#<sprout~w ~w>" mine.keys parent))))
+(let empty {empty})
+(to (lit-rune c) {unit c})              ;TODO rename
+(let anyone {anyone})
+(to (either r s) {either r s})
+(to (then r s)   (may r
+                   (be {empty} s)
+                   (else {then r s})))
+(to (star r)     {star r})
 
 ;; Extras
-
-(to (anyone succs) (set<- (shift succs)))
-(to (one-of text)
-  (let rune-set text.range)
-  (on (succs)
-    (set<- (expect-any-of rune-set succs))))
 
 (to (maybe r) (either empty r))
 (to (plus r)  (then r (star r)))
 
 (to (literal text)
   (foldr then (each lit-rune text) empty))
+
+(to (one-of text)
+  (surely text.some?) ; since we don't currently have a {fail} regex type
+  (foldr1 either (each lit-rune text.range.keys)))
 
 ;; Concrete syntax
 
