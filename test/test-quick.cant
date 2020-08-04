@@ -38,6 +38,7 @@
 (loud-use "test-ratio")
 (loud-use "test-regex-gen")
 (loud-use "test-regex-match")
+(loud-use "test-regex-match-painfully")
 (loud-use "test-roman")
 (loud-use "test-sort")
 (loud-use "test-sset")

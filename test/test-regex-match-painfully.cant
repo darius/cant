@@ -1,0 +1,71 @@
+(import (use 'memoize) memoize)
+
+(to (re-generator<- alphabet)
+  (to ((tag name) @arguments)
+    `(,name ,@arguments))
+  (let gen
+    (memoize (on (size)
+               (let res (flexarray<-))
+               (when (= 1 size)
+                 (res .extend! (link 'empty (each (tag 'lit-rune) alphabet.values))))
+               (when (<= 2 size)
+                 (res .extend! (each (tag 'star) (gen size.-))))
+               (when (<= 3 size)
+                 (for each! ((i (1 .till size.-)))
+                   (for each! ((`(,re1 ,re2) (grid* (gen i) (gen (- size i 1)))))
+                     (res .push! ((tag 'either) re1 re2))
+                     (res .push! ((tag 'then) re1 re2)))))
+               res.values))))
+
+;; Smoke test for the above generator:
+;; (disabled)
+'(hide
+  (let g (re-generator<- "ab"))
+  (each! (-> (out .print it)) (g 1))
+  out.newline
+  (each! (-> (out .print it)) (g 2))
+  out.newline
+  (each! (-> (out .print it)) (g 3)))
+
+;; How many regexes of each size?
+;; (disabled)
+(to (tabulate alphabet)
+  (let g (re-generator<- alphabet))
+  (for each! ((size (1 .thru 8)))
+    (out .say "~w ~w ~w\n" alphabet.count size (take size g ~.count))))
+'(do
+  (tabulate "01")  out.newline
+  (tabulate "012") out.newline)
+
+;; The main thing now: test regexes generated as above, against all
+;; inputs up to an input size limit, with output judged according to
+;; the regex-gen module.
+
+(import (let gen-module (use 'regex-gen)) regex-generate)
+(import (let match-module (use 'regex-match)) regex-match)
+
+(to (test-exhaustively alphabet re-limit input-limit)
+  (let alphabet "ab")
+  (let g (re-generator<- alphabet))
+  (let gen-setting   (computational-setting .extend-map gen-module))
+  (let match-setting (computational-setting .extend-map match-module))
+  (for each! ((re (gather g (1 .thru re-limit))))
+    (out .say "~w\n" re)
+    (let rg (cant .play re gen-setting))
+    (let rm (cant .play re match-setting))
+    (for each! ((length (0 .thru input-limit)))
+      (let all-inputs (each text<-list (grid* @(`(,alphabet) .repeat length))))
+      (let should-match (regex-generate rg (set<- length)))
+      (let should-not (take ((set<-list all-inputs) .difference (set<-list should-match))
+                            ~.keys sort))
+      (out .say "~w Y: ~w N: ~w\n" length should-match should-not)
+      (for each! ((input should-match))
+        (unless (regex-match rm input)
+          (out .say "  FAIL: ~w should match ~w\n" re input)))
+      (for each! ((input should-not))
+        (when (regex-match rm input)
+          (out .say "  FAIL: ~w should not match ~w\n" re input))))
+    out.newline))
+
+;;(test-exhaustively "ab" 6 3)
+(test-exhaustively "ab" 2 2)  ; barely any, for quick automated 'testing'
