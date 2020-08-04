@@ -49,10 +49,9 @@
 (import (use 'regex-match) regex-match)
 
 (to (test-exhaustively alphabet re-limit input-limit)
-  (let g (re-generator<- alphabet))
   (let gen-setting   (computational-setting .extend-map (use 'regex-gen)))
   (let match-setting (computational-setting .extend-map (use 'regex-match)))
-  (for each! ((re (gather g (1 .thru re-limit))))
+  (for each! ((re (gather (re-generator<- alphabet) (1 .thru re-limit))))
     (out .say "~w\n" re)
     (let rg (cant .play re gen-setting))
     (let rm (cant .play re match-setting))
