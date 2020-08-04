@@ -1,10 +1,5 @@
-;; Find the sum of all the multiples of 3 or 5 below 1000.
-
 (to (oiler1 n)
-  (sum (for yeahs ((i (3 .till n)))
-         (and (or (3 .divides? i) (5 .divides? i))
-              i))))
+  (sum (for those ((i (3 .till n)))
+         (or (3 .divides? i) (5 .divides? i)))))
 
-;(out .print (oiler1 10))
 (out .print (oiler1 200))
-;(out .print (oiler1 1000))
