@@ -254,7 +254,7 @@
     oops with-ejector ejector-protect with-closing
     miranda-trait array-trait list-trait map-trait sink-trait
     as-list array<-list array<- map<- map<-lists tuple<-list yeah?
-    list<- !map<- !map<-items !map<-lists set<- set<-list hash-set<-
+    list<- !map<- !map<-items !map<-lists set<- set<-list
     surely count? not= left-folding-operation right-folding-operation
     + * - transitive-comparison < <= <=> >= > compare
     chain reverse foldl foldl1 foldr foldr1 transpose zipped-list-transducer
