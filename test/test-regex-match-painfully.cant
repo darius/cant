@@ -1,9 +1,9 @@
 (import (use 'memoize) memoize)
 
-;; Given `size`, return a list of Cant expressions, of that size,
-;; which produce regexes. (You have to play the expression in a
-;; setting that has imported a regex module.) The size is the count of
-;; regex constructors used.
+;; Given `alphabet` and `size`, return a list of Cant expressions, of
+;; that size, which produce regexes. (You have to play the expression
+;; in a setting that has imported a regex module.) The size is the
+;; count of regex constructors used.
 (to (re-generator<- alphabet)
   (to ((tag name) @arguments)
     `(,name ,@arguments))
