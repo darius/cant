@@ -1,5 +1,9 @@
 (import (use 'memoize) memoize)
 
+;; Given `size`, return a list of Cant expressions, of that size,
+;; which produce regexes. (You have to play the expression in a
+;; setting that has imported a regex module.) The size is the count of
+;; regex constructors used.
 (to (re-generator<- alphabet)
   (to ((tag name) @arguments)
     `(,name ,@arguments))
@@ -41,14 +45,13 @@
 ;; inputs up to an input size limit, with output judged according to
 ;; the regex-gen module.
 
-(import (let gen-module (use 'regex-gen)) regex-generate)
-(import (let match-module (use 'regex-match)) regex-match)
+(import (use 'regex-gen) regex-generate)
+(import (use 'regex-match) regex-match)
 
 (to (test-exhaustively alphabet re-limit input-limit)
-  (let alphabet "ab")
   (let g (re-generator<- alphabet))
-  (let gen-setting   (computational-setting .extend-map gen-module))
-  (let match-setting (computational-setting .extend-map match-module))
+  (let gen-setting   (computational-setting .extend-map (use 'regex-gen)))
+  (let match-setting (computational-setting .extend-map (use 'regex-match)))
   (for each! ((re (gather g (1 .thru re-limit))))
     (out .say "~w\n" re)
     (let rg (cant .play re gen-setting))
@@ -56,15 +59,14 @@
     (for each! ((length (0 .thru input-limit)))
       (let all-inputs (each text<-list (grid* @(`(,alphabet) .repeat length))))
       (let should-match (regex-generate rg (set<- length)))
-      (let should-not (take ((set<-list all-inputs) .difference (set<-list should-match))
+      (let should-not (take (all-inputs.range .difference should-match.range)
                             ~.keys sort))
       (out .say "~w Y: ~w N: ~w\n" length should-match should-not)
-      (for each! ((input should-match))
-        (unless (regex-match rm input)
-          (out .say "  FAIL: ~w should match ~w\n" re input)))
-      (for each! ((input should-not))
-        (when (regex-match rm input)
-          (out .say "  FAIL: ~w should not match ~w\n" re input))))
+      (for each! ((inputs  `(,should-match ,should-not))
+                  (should? '(#yes          #no)))
+        (for each! ((input inputs))
+          (unless (= should? (regex-match rm input))
+            (out .say "  FAIL: ~w should~d match ~w\n" re (if should? "" " not") input)))))
     out.newline))
 
 ;;(test-exhaustively "ab" 6 3)
