@@ -44,6 +44,7 @@
 ;; The main thing now: test regexes generated as above, against all
 ;; inputs up to an input size limit, with output judged according to
 ;; the regex-gen module.
+;; TODO regex-gen is a bit cryptic as a name. (generate the strings that a regex matches)
 
 (import (use 'regex-gen) regex-generate)
 (import (use 'regex-match) regex-match)
