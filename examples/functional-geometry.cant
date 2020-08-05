@@ -1,5 +1,4 @@
 ;; Henderson, "Functional geometry"
-;; XXX untested
 
 ;; see also https://sarabander.github.io/sicp/html/2_002e2.xhtml#g_t2_002e2_002e4
 ;; see also http://fssnip.net/aj
@@ -37,7 +36,7 @@
 ;; right, up: Where the x and y unit vectors in the source end up in
 ;;   the image, *relative to origin*.
 
-(let standard-frame {frame {v 0 0} {v 1 0} {v 0 1}})
+(let standard-frame {frame {v 0 0} {v 1 0} {v 0 1}}) ;TODO unused
 
 (to (map-vector {frame origin right up} {v x y})
   (v+ origin (v* x right) (v* y up)))
@@ -70,14 +69,14 @@
 ;; Squish p left of q.
 (to ((beside<- p q) {frame origin right up})
   (let half-right (v/ right 2))
-  (superpose<- (p {frame origin                 half-right up})
-               (q {frame (v+ origin half-right) half-right up})))
+  (chain (p {frame origin                 half-right up})
+         (q {frame (v+ origin half-right) half-right up})))
 
 ;; Squish p above q.  TODO make it below instead?
 (to ((stack<- p q) {frame origin right up})
   (let half-up (v/ up 2))
-  (superpose<- (q {frame origin              right half-up})
-               (p {frame (v+ origin half-up) right half-up})))
+  (chain (q {frame origin              right half-up})
+         (p {frame (v+ origin half-up) right half-up})))
 
 ;; A quarter-turn counterclockwise.
 (to ((turn<- p) {frame origin right up})
@@ -99,9 +98,23 @@
   (text<-writer (-> (write-postscript it p))))
 
 (to (write-postscript sink p)
-  (sink .displayln "500 500 scale  .1 .1 translate  0 setlinewidth")
-  (sink .displayln "0 0 moveto  1 0 lineto  1 1 lineto  0 1 lineto  0 0 lineto")
-  (for each! (({segment {v x0 y0} {v x1 y1}} (p standard-frame)))
+  (let frame {frame {v 0 0} {v 500 0} {v 0 500}})
+  ;;(sink .displayln "500 500 scale  .1 .1 translate  0 setlinewidth")
+  (sink .displayln "500 500 scale  0 setlinewidth")
+  (for each! (({segment {v x0 y0} {v x1 y1}} (p frame)))
     (sink .say "~d ~d moveto ~d ~d lineto\n"
           x0.inexact y0.inexact x1.inexact y1.inexact))
   (sink .displayln "stroke showpage"))
+
+
+;; Smoke test
+
+(let box (segments<- '({segment {v 0 0} {v 1 0}}
+                       {segment {v 1 0} {v 1 1}}
+                       {segment {v 1 1} {v 0 1}}
+                       {segment {v 0 1} {v 0 0}}
+                       {segment {v 0 0} {v 1 1}}
+                       )))
+
+(to (main args)
+  (write-postscript out (cycle<- box)))
