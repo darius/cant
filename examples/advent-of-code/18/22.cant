@@ -97,13 +97,14 @@
     (+ t (manhattan-distance p target) (if (= tool 'torch) 0 7)))
 
   (import (priority-queues<- time-bound<=?)
-    pq-min unit-pq pq-merge pq-remove-min)
+    unit-pq pq-peek pq-merge pq<-list)
 
   (begin searching ((pq (unit-pq start-effort)))
+    (let {nonempty (and effort {at t state}) rest-pq} (pq-peek pq))
+    
     (to (continue new-efforts)
-      (searching (pq-merge (pq-remove-min pq)
-                           @(each unit-pq (keep-early new-efforts)))))
-    (let (and effort {at t state}) (pq-min pq))
+      (searching (pq-merge rest-pq (pq<-list (keep-early new-efforts)))))
+
     (let t0 (bests state))
     (if (< t0 t)
         (do (out .say "at ~3w skip\n" t)
