@@ -115,6 +115,17 @@
                        {segment {v 0 1} {v 0 0}}
                        {segment {v 0 0} {v 1 1}}
                        )))
+(let X   (segments<- '({segment {v 0 0} {v 1 1}}
+                       {segment {v 0 1} {v 1 0}}
+                       )))
+(let Y (grid<- 10 10 '({segment {v 5 0} {v 5 5}}
+                       {segment {v 5 5} {v 10 10}}
+                       {segment {v 5 5} {v 0 10}}
+                       )))
+(let Z   (segments<- '({segment {v 0 1} {v 1 1}}
+                       {segment {v 1 1} {v 0 0}}
+                       {segment {v 0 0} {v 1 0}}
+                       )))
 
 (to (main args)
-  (write-postscript out (cycle<- box)))
+  (write-postscript out (quartet<- box Z (cycle<- Y) box)))
