@@ -3,5 +3,5 @@ make a fun puzzle game.
 
 Adapted from https://github.com/darius/sturm/blob/master/satgame.py
 
-There are filenames hardwired in the code -- it assumes we run from
+There are pathnames hardwired in the code -- it assumes we run from
 the main Cant directory.
