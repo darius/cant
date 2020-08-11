@@ -1,0 +1,135 @@
+;; A crude human interface for SAT solving -- I want to see if it can
+;; make a fun puzzle game.
+;; 
+;; Adapted from https://github.com/darius/sturm/blob/master/satgame.py
+
+(import ((use 'sturm) (export console))
+  cbreak-mode get-key render
+  cursor bold underlined green red blue yellow white on-black)
+
+(let filenames '("examples/games/sat-puzzle/trivial.dimacs"
+                 "examples/games/sat-puzzle/factoring6.dimacs"
+                 "examples/games/sat-puzzle/factoring2.dimacs"
+                 "examples/games/sat-puzzle/subsetsum_random.dimacs"))
+
+(to (main _)
+  (let games (array<-list (each (compose game<- dimacs-load)
+                                filenames)))
+  (for cbreak-mode ()
+    (play games)))
+
+(let instructions 
+"To win, put a * in every column. (Columns with no *'s are yellow.)
+Flip O's and *'s in a row by typing its key (listed on the left and right edges).
+Press the spacebar to mark/unmark the last row you flipped (as a memory aid).
+Press Tab to cycle to the next game, Esc to quit.")
+
+(to (play games)
+  (begin playing ((level 0))
+    (let game (games level))
+    (render (bg (white [instructions "\n\n"
+                        game.view "\n"
+                        (if game.solved? "You win!" "")])))
+    (let key (get-key))
+    (may key
+      (be 'esc)
+      (be #\tab
+        (playing (level.+ .modulo games.count)))
+      (be #\space
+        game.toggle-mark!
+        (playing level))
+      (else
+        (for mayhap ((v (game .variable-named key.uppercase)))
+          (game .flip! v))
+        (playing level)))))
+
+(to (game<- problem)
+  (let variables (sort (for each (((~ i var) problem.variables.items))
+                         (~ ((text<-number i.+ 36) 0) var))))
+  (let names     (map<-items variables))
+  (let last-flip (box<- #no))
+  (let marked    (!map-by (-> #no) problem.variables))
+  (let settings  (!map-by (-> #no) problem.variables))
+
+  (make game
+
+    (to ~.solved?
+      (problem .satisfied? settings))
+
+    (to (~ .variable-named name)
+      (names .get name))
+
+    (to (~ .flip! variable)
+      (settings .update variable not)
+      (last-flip .^= variable))
+
+    (to ~.toggle-mark!
+      (when last-flip.^
+        (marked .update last-flip.^ not)))
+
+    (to ~.view
+
+      (to (present v clause)
+        (let positive? (clause .find? v))
+        (let negative? (clause .find? (- v)))
+        (take (hm (unless (or positive? negative?) ".")
+                  (if (= positive? (settings v))   "*")
+                  (else                            "O"))
+              (if (clause-satisfied? clause settings)
+                  color-satisfied
+                  color-unsatisfied)))
+
+      (for each (((~ v-name v) variables))
+        (let name (take v-name
+                        (if (settings v) color-true color-false)
+                        (if (marked v) underlined itself)))
+        [name " " (for each ((clause problem.clauses))
+                    (present v clause))
+              " " name "\n"]))))
+
+;; TODO these colors suck on my current terminal
+(let bg on-black)
+(let color-true        (compose bg red))
+(let color-false       (compose bg white))
+(let color-satisfied   (compose bg blue))
+(let color-unsatisfied (compose bg bold yellow))
+
+
+;; A SAT problem is a list of clauses. It's satisfied when all are true.
+;; A clause is a list of literals. It's true when at least one is true.
+;; A literal is a positive or negative integer denoting a variable
+;; or its complement. Its truth depends on the settings.
+;; A settings is a partial map from positive integer to boolean.
+
+(to (problem<- clauses)
+  (make problem
+    (to ~.clauses clauses)
+    (to ~.variables
+      (take (gather (-> (each ~.magnitude it)) clauses)
+            (-> it.range.keys)
+            sort))
+    (to (~ .satisfied? settings)
+      (for every ((clause clauses))
+        (clause-satisfied? clause settings)))))
+
+(to (clause-satisfied? clause settings)
+  (for some ((literal clause))
+    (= (< 0 literal) (settings .get literal.magnitude))))
+
+(to (dimacs-load filename)
+  (with-input-file dimacs-read filename))
+
+(to (dimacs-read source)
+  (begin reading ((clauses '()) (pending-clause '()))
+    (may (read source)
+      (be (? zilch?)
+        (problem<- (reverse (if pending-clause.none?
+                                clauses
+                                (link pending-clause clauses)))))
+      (be (? (-> ('(c p) .find? it)))  ;; TODO need an OR pattern
+        source.read-line
+        (reading clauses pending-clause))
+      (be 0
+        (reading (link pending-clause clauses) '()))
+      (be (? integer? n)
+        (reading clauses (link n pending-clause))))))
