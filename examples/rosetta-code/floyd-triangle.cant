@@ -14,7 +14,7 @@
   (let widths (each ~.count rows.last))
   (for each! ((row rows.values))
     (out .displayln (" " .join (for each (((~ col text) row.items))
-                                 (text .right-justify (widths col)))))))
+                                 (text .pad-left (widths col)))))))
 
 (floyd-triangle 5)
 (floyd-triangle 14)
