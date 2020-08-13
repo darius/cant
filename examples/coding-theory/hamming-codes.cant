@@ -17,15 +17,15 @@
   (to (well-formed? bits)
     (every bit? bits))
 
-  (let pad (pad-right n-check-bits))
+  (let pad (~ .pad-right n-check-bits 0))
   (let taps
     (array<-list (transpose (for each ((place (0 .till (2 .** n-check-bits))))
                               (pad (place .digits 2))))))
 
   (to (parity m place)
     ;; TODO like (zip m.values (taps place)) instead?
-    (take (for each (((~ place b) ((taps place) .items)))
-            (if (= b 1) (m place) 0))
+    (take (for yeahs (((~ place b) ((taps place) .items)))
+            (and (= b 1) (m place)))
           sum (~ .modulo 2)))
 
   (make basic-hamming-code
@@ -63,9 +63,6 @@
 (to (power-of-2? n)                     ;XXX ugly
   (or (= n 1)
       (and (< 0 n) n.even? (power-of-2? (n .quotient 2)))))
-
-(to ((pad-right n) xs)                  ;TODO add to stdlib. trouble is, list vs. text...
-  (chain xs ('(0) .repeat (- n xs.count))))
 
 (to (bit? x)
   (and (count? x) (<= x 1)))

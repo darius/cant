@@ -84,6 +84,17 @@
       (be 0 '())             
       (else (chain @(for each ((_ n.till))
                       list)))))
+  (to (~ .pad-right n padding)
+    ;;TODO factor out duplicate code wrt text methods
+    (let pad (- n list.count))
+    (if (<= pad 0)
+        list
+        (chain list (`(,padding) .repeat pad))))
+  (to (~ .pad-left n padding)
+    (let pad (- n list.count))
+    (if (<= pad 0)
+        list
+        (chain (`(,padding) .repeat pad) list)))
   (to (~ .alter alter!)                 ;; TODO an experiment
     (~.values (hey (array<-list list) alter!)))
   (to ~.maybe  ;; TODO an experiment TODO could be defined on maps in general too
