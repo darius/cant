@@ -1,0 +1,113 @@
+;; Hamming codes
+;; from Hamming *The art of doing science and engineering*
+;; unfinished
+
+;; The simplest of these codes add parity checks to a message to
+;; correct a single substitution error.
+;; TODO The same principles can extend to detecting or correcting more
+;; substitution errors.
+
+(to (basic-hamming-code<- n-check-bits)
+  (surely (< 0 n-check-bits))
+
+  (let n-encoded-bits (- (2 .** n-check-bits) 1))
+  (let n-message-bits (- n-encoded-bits n-check-bits))
+  (surely (< 0 n-message-bits))
+  
+  (to (well-formed? bits)
+    (every bit? bits))
+
+  (let pad (pad-right n-check-bits))
+  (let taps
+    (array<-list (transpose (for each ((place (0 .till (2 .** n-check-bits))))
+                              (pad (place .digits 2))))))
+
+  (to (parity m place)
+    ;; TODO like (zip m.values (taps place)) instead?
+    (take (for each (((~ place b) ((taps place) .items)))
+            (if (= b 1) (m place) 0))
+          sum (~ .modulo 2)))
+
+  (make basic-hamming-code
+
+    (to ~.n-message-bits n-message-bits)
+    
+    (to (~ .encode bits)
+      (surely (well-formed? bits))
+      (surely (= bits.count n-message-bits))
+      (let m (array<-list
+              ;; TODO write this as a fold or something?
+              (link 0 (begin inserting ((p 1) (rest bits))
+                        (hm (if rest.none? '())
+                            (if (power-of-2? p) (link 0 (inserting p.+ rest)))
+                            (else (link rest.first (inserting p.+ rest.rest))))))))
+      (for each! ((place n-check-bits.till))
+        ;; TODO is this mutability safe? I should be very suspicious:
+        (m .set! (1 .<< place) (parity m place)))
+      m.values.rest)
+
+    (to (~ .decode encoded-bits)
+      (surely (well-formed? encoded-bits))
+      (surely (= encoded-bits.count n-encoded-bits))
+      (let m (array<-list (link 0 encoded-bits)))
+      (let encoded-n (count<-digits m.values 2))
+      (let syndrome (for each ((place n-check-bits.till))
+                      (parity m place)))
+      (let correction (1 .<< (count<-digits syndrome 2)))
+      (let corrected (encoded-n .xor correction)) ;; N.B. place 0 (meaning 'correct') is skipped below
+      (for yeahs (((~ power bit) (take (pad (corrected .digits 2))
+                                       ~.items ~.rest)))
+        (and (not (power-of-2? power))
+             bit)))))
+
+(to (power-of-2? n)                     ;XXX ugly
+  (or (= n 1)
+      (and (< 0 n) n.even? (power-of-2? (n .quotient 2)))))
+
+(to ((pad-right n) xs)                  ;TODO add to stdlib. trouble is, list vs. text...
+  (chain xs ('(0) .repeat (- n xs.count))))
+
+(to (bit? x)
+  (and (count? x) (<= x 1)))
+
+(to (count<-digits digits base)         ;N.B. little-endian
+  (for foldr ((digit digits) (total 0))
+    (+ (* base total) digit)))
+
+;; TODO number methods worth adding:
+;; n .bit k
+;; n .bitfield k length
+;; also corresponding update methods? sigh.
+;; how about just a method to convert a number to a virtual map (a bitarray), and vice versa?
+
+
+;; Smoke test
+
+(hide
+  (let c (basic-hamming-code<- 3))
+
+  (let m '(1 0 0 1))
+
+  (let cm (c .encode m))
+  (out .say "encode ~w -> ~w\n" m cm)
+
+  (let dcm (c .decode cm))
+  (out .say "decode -> ~w\n" dcm)
+  (surely (= m dcm))
+
+  (let corrupt-1 '(0 0 1 1 0 1 1)) ; Altered bit at position 6
+  (out .say "corrupt:  ~w\n" corrupt-1)
+  (out .say "decode -> ~w\n" (c .decode corrupt-1))
+  (surely (= m (c .decode corrupt-1))))
+
+
+;; Property tests
+
+(import ((use 'squickcheck) (export out))
+  all should
+  a-list-of a-count)
+
+
+
+;; TODO:
+;; - run this file in the regular automated test
