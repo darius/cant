@@ -1,0 +1,8 @@
+;; https://codegolf.stackexchange.com/questions/91725/the-squiggly-sequence
+;; Given positive integer n, if n is odd, repeat / that many times; if
+;; n is even, repeat \ that many times.
+
+(to (squiggly n)
+  (take (n .and 1) ["\\" "/"] (~ .repeat n)))
+
+(out .displayln ("\n" .join (each squiggly (1 .thru 6))))
