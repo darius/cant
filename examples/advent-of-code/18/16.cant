@@ -98,8 +98,7 @@ insn:    :count ' ' :count ' ' :count ' ' :count '\n' :hug.
   (let opcodes ((each ~.first constraints) .range))
   (let candidates (!map-by (-> op-name-set) opcodes.keys))
   (for each! ((`(,opcode ,op-names) constraints))
-    (candidates .set! opcode
-                ((candidates opcode) .intersect op-names.range)))
+    (candidates .update opcode (~ .intersect op-names.range)))
 
 ;; It turns out the above could've been just
 ;;  (let candidates
