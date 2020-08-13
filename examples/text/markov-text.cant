@@ -38,19 +38,9 @@
 
 (to (spew chaos model state)
   (begin spewing ((state state))
-    (may (sample-from-bag chaos (model state))
+    (may ((model state) .weighted-sample chaos)
       (be "END"
         '())
       (be choice
         (let next-state `(,@(state .slice 1) ,choice))
         (link choice (spewing next-state))))))
-
-;; Pick a random key from a nonempty bag, weighted by frequency.
-(to (sample-from-bag chaos bag)           ;TODO dedupe: similar in squickcheck.scm
-  (begin ((n     (chaos .sample-count bag.total))
-          (items bag.items))
-    (let (~ key count) items.first)
-    (if (< n count)
-        key
-        (loop (- n count)
-              items.rest))))

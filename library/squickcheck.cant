@@ -49,9 +49,9 @@
       (make gen
         (to ~.size           size)
         (to (~ .natural n)   (chaos .sample-count n))
-        (to (~ .range lo hi) (chaos .sample (lo .till hi))) ;TODO rename, .interval ?
+        (to (~ .range lo hi) ((lo .till hi) .sample-value chaos)) ;TODO rename, .interval ?
         (to ~.a-size         (chaos .sample-count size))
-        (to (~ .choose xs)   (chaos .sample xs)))))
+        (to (~ .choose xs)   (xs .sample-value chaos)))))
 
 
   ;; Basic gens
@@ -91,24 +91,10 @@
   (to ((a-choice @gens) g)
     ((g .choose gens) g))
 
-
-  ;; Helpers for gens
-
-  ;; TODO extract something like this to chaos.cant
-  (to (weighted-choice choices)
-    (let total (sum-by ~.first choices))
-    (on (g)
-      (begin scanning ((i (g .natural total))
-                       (`((,weight ,choice) ,@rest) choices))
-        (if (< i weight)
-            choice
-            (scanning (- i weight) rest)))))
-
-
+  
   (export
     a-claim a-count an-int a-rune a-printable-rune a-text a-printable-text
     a-list-of a-tuple a-choice
-    weighted-choice
     all should
     context<-
     ))

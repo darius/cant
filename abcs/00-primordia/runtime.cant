@@ -348,6 +348,9 @@
   (begin folding ((L xs.first) (Rs xs.rest))
     (if Rs.none? L (folding (f L Rs.first) Rs.rest))))
 
+(to (sum ns)
+  (foldl + 0 ns))
+
 ;; (transpose '((a c e) (b d f)))   = '((a b) (c d) (e f)))
 ;; (transpose '((a b) (c d) (e f))) = '((a c e) (b d f))
 ;; TODO: name it (zip @rows) instead, like Python?

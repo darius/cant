@@ -23,8 +23,6 @@
       ;; XXX surely 0 < n <= D
       ((next) .modulo n))                ;XXX not quite fair sampling
     ;; TODO a trait for the remaining methods
-    (to (~ .sample xs)
-      (xs (chaos .sample-count xs.count)))
     (to (~ .probability numerator denominator)
       (< (chaos .sample-count denominator) numerator))))
 

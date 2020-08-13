@@ -22,7 +22,7 @@
   (to (~ .shuffle! chaos)
     (let n me.count)
     (for each! ((i n.till))
-      (me .swap! i (chaos .sample (i .till n)))))
+      (me .swap! i ((i .till n) .sample-value chaos))))
   (to (~ .selfie sink)
     (sink .display "[")
     (when (< 0 me.count)

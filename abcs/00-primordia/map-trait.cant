@@ -64,6 +64,19 @@
       (inverse .set! v k))
     inverse)
 
+  (to (~ .sample-key chaos)
+    (map.keys .sample-value chaos))
+  (to (~ .sample-value chaos)
+    (map (map .sample-key chaos)))
+  ;; Pick a random key, weighted by corresponding value.
+  (to (~ .weighted-sample chaos)
+    (begin ((n     (chaos .sample-count (sum map.values)))
+            (items map.items))
+      (let (~ key count) items.first)
+      (if (< n count)
+          key
+          (loop (- n count) items.rest))))
+
   ;; What's the right definition & interface for these for maps?
   ;; TODO also, rename to .or, .and ?
   (to (~ .union other)

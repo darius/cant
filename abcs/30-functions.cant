@@ -142,9 +142,6 @@
   (to (~)
     itself))
 
-(to (sum ns)
-  (foldl + 0 ns))
-
 ;; (sum-by f '(a b)) = (+ (f 'a) (f 'b))
 ;;TODO overload 'sum' instead? (viz. other use of name below)
 (make sum-by {extending zipped-list-transducer}
