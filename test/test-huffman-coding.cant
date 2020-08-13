@@ -1,4 +1,4 @@
-(import (use "../examples/huffman-coding") huffman-code<-)
+(import (use "../examples/coding-theory/huffman-coding") huffman-code<-)
 
 (let eg1
   '((#\z 9)
