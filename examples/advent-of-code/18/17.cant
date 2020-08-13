@@ -82,7 +82,7 @@
         (may (grid .get next)
           (be #no
             (grid .set! next #\|)
-            (when (not (grid .get (under next)))
+            (unless (grid .get (under next))
               (flooding (under next)))
             (if (blocked? (under next))
                 (spilling x1 dx)
