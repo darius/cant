@@ -144,7 +144,7 @@
 (let empty-grid {grid 0 0})
 
 (to (player-bits bits)
-  (for each ((i (interval<- 8 0 -1)))
+  (for each ((i (8 .till 0 -1))) ;;TODO .till being inclusive here is ugly
     (1 .and (bits .>> i))))
 
 (to (won? {grid p q})

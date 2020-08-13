@@ -434,6 +434,7 @@
     (interval<- 0 limit))
   (to (~ first limit stride)
     ;; TODO factor the code better
+    ;; TODO reconsider: it's ugly for inclusive/exclusive to depend on the sign of the stride
     (hm (if (< 0 stride)
             (if (<= limit first)
                 '()

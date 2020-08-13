@@ -4,9 +4,9 @@
 
 ;; Naive approach
 (to (triplets<- total)
-  (for gather ((c (interval<- (- total 2) (total .quotient 3) -1)))
+  (for gather ((c ((- total 2) .till (total .quotient 3) -1)))  ;TODO ugly
     (let c^2 (* c c))
-    (for yeahs ((b (interval<- c.- (c .quotient 2) -1)))
+    (for yeahs ((b (c.- .till (c .quotient 2) -1)))
       (let a^2 (- c^2 (* b b)))
       (let a a^2.sqrt)
       (and (= (+ a b c) total)

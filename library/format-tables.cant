@@ -29,7 +29,7 @@
   (let n-rows (max 1 ((+ texts.count n-cols -1) .quotient n-cols)))
   (let padded (chain texts
                      ('("") .repeat (- (* n-rows n-cols) texts.count))))
-  (transpose (for each ((i (interval<- 0 texts.count n-rows))) ;TODO `chunk` function?
+  (transpose (for each ((i (0 .till texts.count n-rows))) ;TODO `chunk` function?
                (padded .slice i (+ i n-rows)))))
 
 (export format-table tabulate)
