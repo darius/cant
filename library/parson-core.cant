@@ -166,11 +166,8 @@
 (to (take-1 ok?)
   (capture (skip-1 ok?)))
 
-(to ((always value) _)              ;TODO move to stdlib?
-  value)
-
-(let any-1      (take-1 (always #yes)))
-(let skip-any-1 (skip-1 (always #yes)))
+(let any-1      (take-1 (-> #yes)))
+(let skip-any-1 (skip-1 (-> #yes)))
 
 ;; Succeed just at the end of the input.
 (let end (invert skip-any-1))
