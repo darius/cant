@@ -122,7 +122,7 @@
                     (continue `(,swap ,@moves))))))))
 
 (to (swap-tool q tool)
-  (let candidates (take (type<- q) usables ~.keys))
+  (let candidates (-> q type<- usables ~.keys))
   (if (= tool candidates.first)         ;TODO clumsy
       candidates.rest.first
       candidates.first))

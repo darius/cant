@@ -103,7 +103,7 @@
       (be (? rune?)
         (screen-state .establish! wanted-state)
         (out .display (if (= scene #\newline) cr-lf scene)))
-      (be (? (-> (or (list? it) (array? it))))
+      (be (? (:: (or (list? it) (array? it))))
         (for each! ((subscene scene.values))
           (paint cursor-seen? wanted-state subscene)))
       (else
@@ -195,7 +195,7 @@
     (if key-stack.some?
         key-stack.pop!
         (hey in.read-rune
-             (-> (surely (not (zilch? it))))))) ;shouldn't ever happen in raw/cbreak modes
+             (:: (surely (not (zilch? it))))))) ;shouldn't ever happen in raw/cbreak modes
 
   (make get-key
     (to (~)

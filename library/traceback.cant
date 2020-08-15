@@ -19,7 +19,7 @@
   (to (print-traceback k)
     (for each! ((frame (reverse k)))
       (out .display "  ")
-      (take out (bounded-writer<- (~ .write frame) 77))
+      (-> out (bounded-writer<- (~ .write frame) 77))
       (out .display "\n")))
 
   (to (complain evil)
@@ -27,7 +27,7 @@
       (be `(,(? text? plaint) ,@values)
         (out .display plaint)
         (out .display ": ")
-        (take out (bounded-writer<- (~ .write values) (* 80 20))))
+        (-> out (bounded-writer<- (~ .write values) (* 80 20))))
       (else
         (out .display "Nonstandard evil: ")
         (out .write evil)))

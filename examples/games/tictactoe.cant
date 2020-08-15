@@ -76,7 +76,7 @@
   (to ~.name "Human")
   (to (~ grid) 
     (begin asking ((plaint #no))
-      (ttt-render (take grid (if plaint show-with-moves show))
+      (ttt-render (-> grid (if plaint show-with-moves show))
                   [(whose-move grid) " move? [1-9; Q to quit] " cursor]
                   plaint)
       (may get-key.uppercase

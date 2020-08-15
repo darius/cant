@@ -6,7 +6,7 @@
   (sum (for each ((value `(0 ,@values)) (next-value `(,@values 0)))
          ;; Each letter goes into the sum either negatively or positively,
          ;; depending on the next letter. E.g. X in "XC" means -10, not 10.
-         (take value (if (< value next-value) - +)))))
+         (-> value (if (< value next-value) - +)))))
 
 (let value<-rune
   (map<-lists '((#\M 1000) (#\D 500) (#\C 100) (#\L 50) (#\X 10) (#\V 5) (#\I 1))))

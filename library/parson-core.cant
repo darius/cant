@@ -166,15 +166,15 @@
 (to (take-1 ok?)
   (capture (skip-1 ok?)))
 
-(let any-1      (take-1 (-> #yes)))
-(let skip-any-1 (skip-1 (-> #yes)))
+(let any-1      (take-1 (:: #yes)))
+(let skip-any-1 (skip-1 (:: #yes)))
 
 ;; Succeed just at the end of the input.
 (let end (invert skip-any-1))
 
 ;; E.g. (lit-1 #\x) advances past exactly "x", or fails.
 (to (lit-1 my-rune)
-  (skip-1 (-> (= my-rune it)))) ;TODO I think <=> in place of = would catch some bugs in client code
+  (skip-1 (:: (= my-rune it)))) ;TODO I think <=> in place of = would catch some bugs in client code
 
 ;; E.g. (lit "hello") advances past exactly "hello", or fails.
 (to (lit text)

@@ -10,7 +10,7 @@
 (import (use 'parson) like)
 
 (to (trm-parse program)
-  (array<-list (take program parse-program (-> (each insn<- it)))))
+  (array<-list (-> program parse-program (:: (each insn<- it)))))
 
 (let parse-program (like "[{'1'+} {'#' '#'? '#'? '#'? '#'?} :tuple]*"))
 

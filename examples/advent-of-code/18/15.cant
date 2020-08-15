@@ -64,7 +64,7 @@
   ;; Map from each remaining unit's position to its hit points,
   ;; initially 200. (A unit's species is known by its G or E on the
   ;; map.)
-  (let units (!map-by (-> 200) (where unit? area)))
+  (let units (!map-by (:: 200) (where unit? area)))
 
   ;; For each unit, do a turn. Return yes if the round completed.
   (to (do-round)

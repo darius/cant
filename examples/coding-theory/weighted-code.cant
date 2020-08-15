@@ -20,12 +20,12 @@
   (make weighted-code
     (to (~ .encode ns)
       (surely (well-formed? ns))
-      (let check-digit (take (link 0 ns) weighted-sum - normalize))
+      (let check-digit (-> (link 0 ns) weighted-sum - normalize))
       (link check-digit ns))
     (to (~ .decode encoded-ns)
       (surely (well-formed? encoded-ns))
       (surely encoded-ns.some?)
-      (let checksum (take encoded-ns weighted-sum normalize))
+      (let checksum (-> encoded-ns weighted-sum normalize))
       (and (= 0 checksum) encoded-ns.rest))))
 
 
@@ -39,7 +39,7 @@
 ;; Equivalent, without multiplying:
 (to (weighted-sum-sans-* ns)
   (hm (if ns.none? 0) ; (This case never comes up in the calls from above, though.)
-      (else (take ns reverse running-sum running-sum ~.last))))
+      (else (-> ns reverse running-sum running-sum ~.last))))
 
 (to (running-sum numbers)
   (begin summing ((total 0) (ns numbers))
@@ -98,17 +98,17 @@
 
 ;; - Round-trip encode/decode = identity
 (for all ((message (a-list-of a-count))) ;TODO no way currently to ask for a number in range test-M.till
-  (hm (unless (every (-> (< it test-M)) message)
+  (hm (unless (every (:: (< it test-M)) message)
         (out .say "?")
         #yes)
       (else
-        (should = message (take message
-                                (-> (test-code .encode it))
-                                (-> (test-code .decode it)))))))
+        (should = message (-> message
+                              (:: (test-code .encode it))
+                              (:: (test-code .decode it)))))))
 
 ;; - Digits other than the check digit are encoded as-is
 (for all ((message (a-list-of a-count)))
-  (hm (unless (every (-> (< it test-M)) message)
+  (hm (unless (every (:: (< it test-M)) message)
         (out .say "?")
         #yes)
       (else
@@ -118,20 +118,20 @@
 ;; - Detect error: alter single symbol
 (for all ((message (a-list-of a-count)) (i a-count))
   (let length message.count)
-  (hm (unless (and (every (-> (< it test-M)) message)
+  (hm (unless (and (every (:: (< it test-M)) message)
                    (<= i length))
         (out .say "?")
         #yes)
       (else
         (let encoded (test-code .encode message))
-        (let altered (encoded .alter (~ .update i (-> (it.+ .modulo test-M)))))
+        (let altered (encoded .alter (~ .update i (:: (it.+ .modulo test-M)))))
         (let decoded (test-code .decode altered))
         (should not decoded))))
 
 ;; - Detect error: swap nonequal symbols at non-modulus distance
 (for all ((message (a-list-of a-count)) (i a-count) (j a-count))
   (let length message.count)
-  (hm (unless (and (every (-> (< it test-M)) message)
+  (hm (unless (and (every (:: (< it test-M)) message)
                    (<= i length) (<= j length) (not= i j))
         (out .say "?")
         #yes)

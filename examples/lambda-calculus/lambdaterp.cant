@@ -167,7 +167,7 @@
   (out .say "Lambdaterp oops: ~w: ~w\n" plaint irritant))
 
 (to (traceback k)
-  (each! (-> (out .print it)) k))
+  (each! (:: (out .print it)) k))
 
 (to (debugging state)
   (let cmd (next-command))

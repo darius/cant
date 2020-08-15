@@ -95,7 +95,7 @@
 ;; Output
 
 (to (postscript<- p)
-  (text<-writer (-> (write-postscript it p))))
+  (text<-writer (:: (write-postscript it p))))
 
 (to (write-postscript sink p)
   (let frame {frame {v 0 0} {v 500 0} {v 0 500}})

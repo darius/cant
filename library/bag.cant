@@ -22,9 +22,9 @@
       (to ~.total              (sum !map.values))
       (to (~ .most-common @(optional n))
         ;; TODO heap-based n-largest function
-        (take (sort-by (~ .part 1) !map.items)
-              reverse
-              (if n (~ .first-n n) itself)))
+        (-> (sort-by (~ .part 1) !map.items)
+            reverse
+            (if n (~ .first-n n) itself)))
       ;; XXX fill in rest of bag interface (just the map interface, I guess)
       (to (~ .selfie sink)
         (sink .display "#<bag (")

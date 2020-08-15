@@ -117,9 +117,9 @@
                    me
                    (" " .repeat half)))))
   (to (~ .repeat n)
-    ("" .join (each (-> me) (interval<- 0 n))))
+    ("" .join (each (:: me) (interval<- 0 n))))
   (to (~ .format @arguments)
-    (text<-writer (-> (format .to-sink it me @arguments))))
+    (text<-writer (:: (format .to-sink it me @arguments))))
   (to ~.split-lines
     ;; TODO ugly. This 'if' is needed because we want a final "\n" to
     ;; yield the same output as a text with no final "\n". N.B. while

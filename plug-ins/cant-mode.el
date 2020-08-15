@@ -25,7 +25,7 @@
                     '("export" "for" "hide" "import" "make"
                       "make-trait" "to" "unless" "when"
                       ;; more experiments:
-;;                      ":" "->"  ;;XXX these are keywords too, but emacs seems to dislike them here
+;;                      ":" "::" ;;XXX these are keywords too, but emacs seems to dislike them here
                       "be" "given" "hm" "may" "on")
                     'symbols)
                    ))))
@@ -61,7 +61,7 @@
 
   ;; TODO revisit these experiments
   (put ': 'scheme-indent-function 0)
-  (put '-> 'scheme-indent-function 0)
+  (put ':: 'scheme-indent-function 0)
   (put 'be 'scheme-indent-function 1)
   (put 'hm 'scheme-indent-function 0)
   (put 'may 'scheme-indent-function 1)

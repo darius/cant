@@ -89,10 +89,10 @@
     ((move rows) .none?)))
 
 (to (random-empty-square chaos rows)
-  (take (for gather (((~ r row) rows.items))
-          (for yeahs (((~ c v) row.items))
-            (and (= v 0) (~ r c))))
-        (~ .sample-value chaos)))
+  (-> (for gather (((~ r row) rows.items))
+        (for yeahs (((~ c v) row.items))
+          (and (= v 0) (~ r c))))
+      (~ .sample-value chaos)))
 
 (to (update rows at new-value)
   (for each (((~ r row) rows.items))

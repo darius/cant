@@ -48,8 +48,8 @@ Press Tab to cycle to the next game, Esc to quit.")
                          (~ ((text<-number i.+ 36) 0) var))))
   (let names     (map<-items variables))
   (let last-flip (box<- #no))
-  (let marked    (!map-by (-> #no) problem.variables))
-  (let settings  (!map-by (-> #no) problem.variables))
+  (let marked    (!map-by (:: #no) problem.variables))
+  (let settings  (!map-by (:: #no) problem.variables))
 
   (make game
 
@@ -72,17 +72,17 @@ Press Tab to cycle to the next game, Esc to quit.")
       (to (present v clause)
         (let positive? (clause .find? v))
         (let negative? (clause .find? (- v)))
-        (take (hm (unless (or positive? negative?) ".")
-                  (if (= positive? (settings v))   "*")
-                  (else                            "O"))
-              (if (clause-satisfied? clause settings)
-                  color-satisfied
-                  color-unsatisfied)))
+        (-> (hm (unless (or positive? negative?) ".")
+                (if (= positive? (settings v))   "*")
+                (else                            "O"))
+            (if (clause-satisfied? clause settings)
+                color-satisfied
+                color-unsatisfied)))
 
       (for each (((~ v-name v) variables))
-        (let name (take v-name
-                        (if (settings v) color-true color-false)
-                        (if (marked v) underlined itself)))
+        (let name (-> v-name
+                      (if (settings v) color-true color-false)
+                      (if (marked v) underlined itself)))
         [name " " (for each ((clause problem.clauses))
                     (present v clause))
               " " name "\n"]))))
@@ -105,9 +105,9 @@ Press Tab to cycle to the next game, Esc to quit.")
   (make problem
     (to ~.clauses clauses)
     (to ~.variables
-      (take (gather (-> (each ~.magnitude it)) clauses)
-            (-> it.range.keys)
-            sort))
+      (-> (gather (:: (each ~.magnitude it)) clauses)
+          (:: it.range.keys)
+          sort))
     (to (~ .satisfied? settings)
       (for every ((clause clauses))
         (clause-satisfied? clause settings)))))
@@ -126,7 +126,7 @@ Press Tab to cycle to the next game, Esc to quit.")
         (problem<- (reverse (if pending-clause.none?
                                 clauses
                                 (link pending-clause clauses)))))
-      (be (? (-> ('(c p) .find? it)))  ;; TODO need an OR pattern
+      (be (? (:: ('(c p) .find? it)))  ;; TODO need an OR pattern
         source.read-line
         (reading clauses pending-clause))
       (be 0

@@ -2,7 +2,7 @@
   text-finder<- text-find/brute)
 
 (to (check-both pat cases)
-  (check (-> (text-find/brute pat it)) cases)
+  (check (:: (text-find/brute pat it)) cases)
   (check (text-finder<- pat) cases))
   
 (to (check match cases)

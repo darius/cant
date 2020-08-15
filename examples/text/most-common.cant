@@ -12,12 +12,12 @@
            (else (err .say "usage: ~d [number]\n" (args 0))
                  (os-exit 1))))
 
-  (take in.read-all
-        words<-text
-        bag<-
-        (~ .most-common N)
-        (-> (format-table (each ~.parts it)))
-        (-> (out .displayln ("\n" .join it)))))
+  (-> in.read-all
+      words<-text
+      bag<-
+      (~ .most-common N)
+      (:: (format-table (each ~.parts it)))
+      (:: (out .displayln ("\n" .join it)))))
 
 (import (use 'parson) like)
 

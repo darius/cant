@@ -24,9 +24,9 @@
 
   (to (parity m place)
     ;; TODO like (zip m.values (taps place)) instead?
-    (take (for yeahs (((~ place b) ((taps place) .items)))
-            (and (= b 1) (m place)))
-          sum (~ .modulo 2)))
+    (-> (for yeahs (((~ place b) ((taps place) .items)))
+          (and (= b 1) (m place)))
+        sum (~ .modulo 2)))
 
   (make basic-hamming-code
 
@@ -55,8 +55,7 @@
                       (parity m place)))
       (let correction (1 .<< (count<-digits syndrome 2)))
       (let corrected (encoded-n .xor correction)) ;; N.B. place 0 (meaning 'correct') is skipped below
-      (for yeahs (((~ power bit) (take (pad (corrected .digits 2))
-                                       ~.items ~.rest)))
+      (for yeahs (((~ power bit) (-> (corrected .digits 2) pad ~.items ~.rest)))
         (and (not (power-of-2? power))
              bit)))))
 

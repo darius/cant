@@ -3,6 +3,6 @@
 ;; n is even, repeat \ that many times.
 
 (to (squiggly n)
-  (take (n .and 1) ["\\" "/"] (~ .repeat n)))
+  (-> (n .and 1) ["\\" "/"] (~ .repeat n)))
 
 (out .displayln ("\n" .join (each squiggly (1 .thru 6))))

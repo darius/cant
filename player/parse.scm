@@ -357,7 +357,7 @@
     (':      (mlambda
               ((__ . body)
                `(to (_) ,@body))))
-    ('->     (mlambda
+    ('::     (mlambda
               ((__ e)
                `(on (it) ,e))))
     ('for    (mlambda

@@ -3,10 +3,10 @@
 ;; Does regex `re` match `runes`? (Anchored matching at both ends.)
 ;; Algorithm: Antimirov derivatives.
 (to (regex-match re runes)
-  (take (foldl step `(,re) runes) (-> (some nullable? it))))
+  (-> (foldl step `(,re) runes) (:: (some nullable? it))))
 
 (to (step res rune)
-  (take (gather (after rune) res) ~.range ~.keys))
+  (-> (gather (after rune) res) ~.range ~.keys))
 
 (to (nullable? re)
   (may re
@@ -24,9 +24,9 @@
       (be {unit c}     (if (= c rune) '({empty}) '()))
       (be {anyone}     '({empty}))
       (be {either r s} (chain (walk r) (walk s)))
-      (be {then r s}   (let dr+s (each (-> (then it s)) (walk r)))
+      (be {then r s}   (let dr+s (each (:: (then it s)) (walk r)))
                        (if (nullable? r) (chain dr+s (walk s)) dr+s))
-      (be {star r}     (each (-> (then it re)) (walk r))))))
+      (be {star r}     (each (:: (then it re)) (walk r))))))
 
 ;; Regex constructors
 

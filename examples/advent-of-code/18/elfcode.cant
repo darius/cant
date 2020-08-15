@@ -68,5 +68,5 @@
 
   (out .say "#ip ~w\n\n" ip-reg)
   (let stmts (each stmt<- program))
-  (each! (-> (out .print it)) stmts.items)
+  (each! (:: (out .print it)) stmts.items)
   'XXX)

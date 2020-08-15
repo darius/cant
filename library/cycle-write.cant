@@ -23,7 +23,7 @@
 ;; TODO better names?
 
 (to (cycle-write thing sink)
-  (take sink (cycle-writer<- (~ .write thing))))
+  (-> sink (cycle-writer<- (~ .write thing))))
 
 (to ((cycle-writer<- writer) sink)
   (let (~ cycle-sink flush-to) (cycle-sink<-))
@@ -84,7 +84,7 @@
               (let id (may tag
                         (be 0   ;; Second visit. Give thing a fresh id:
                           (hey id-counter.+!
-                               (-> (tags .set! thing it))))
+                               (:: (tags .set! thing it))))
                         (else   ;; Thereafter, just use that one:
                           tag)))
               (buffer .push! (~ .say "#~w" id))))))

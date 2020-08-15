@@ -1,7 +1,7 @@
 ;; https://rosettacode.org/wiki/Jewels_and_Stones
 
 (to (count-jewels stones jewels)
-  (tally-by (-> (jewels .find? it)) stones))
+  (tally-by (:: (jewels .find? it)) stones))
 
 (out .print (count-jewels "aAAbbbb" "aA"))
 (out .print (count-jewels "ZZ" "z"))

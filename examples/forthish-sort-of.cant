@@ -50,7 +50,7 @@
               (compiling frames tokens.rest))
             (be '<<
               (let `(,locals ,tail)
-                (split-on (-> (= it '--)) tokens.rest))
+                (split-on (:: (= it '--)) tokens.rest))
               (code .push! (grab<- locals.count))
               (compiling (link (reverse locals) frames)
                          tail.rest))

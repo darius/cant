@@ -41,8 +41,8 @@
 ;; Indexed by powers. The #no entries for 0th powers mean no suffix.
 (let smalls [numerals<20 n-ty])
 (let hundreds [#no "hundred"])
-(let zillions `[#no ,@(take "thousand m* b* tr* quadr* quint* sext*"
-                            (~ .replace "*" "illion") ~.split)])
+(let zillions `[#no ,@(-> "thousand m* b* tr* quadr* quint* sext*"
+                          (~ .replace "*" "illion") ~.split)])
 
 
 ;; Ordinals

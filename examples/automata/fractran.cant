@@ -16,7 +16,7 @@
 
   (begin ((subject (ratio<- input)))
     ;; Look for a whole-number product, from left to right:
-    (may (those/lazy r-integer? (each/lazy (-> (r* subject it)) fractions))
+    (may (those/lazy r-integer? (each/lazy (:: (r* subject it)) fractions))
       (be (? ~.none?) (integer<-ratio subject))  ; None, so we're done.
       (be products    (loop products.first)))))  ; Repeat with the first one found.
 
@@ -27,7 +27,7 @@
 ;; TODO we need this only because (read) doesn't know about fractions:
 
 (to (fractran-parse text)
-  (each (-> (ratio<- @it)) (fractran-syntax text)))
+  (each (:: (ratio<- @it)) (fractran-syntax text)))
 
 (import (use 'parson) like)
 (let fractran-syntax (like "[:count '/' :count :hug] ** _"))

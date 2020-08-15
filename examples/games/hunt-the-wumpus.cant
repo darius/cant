@@ -52,7 +52,7 @@
 
 (to (describe)
   (let here hunter.where)
-  (each! (-> (out .displayln it)) here.beware)
+  (each! (:: (out .displayln it)) here.beware)
   (out .say "You are in room ~d\n" here.name)
   (out .say "Tunnels lead to ~d\n" (" " .join (each ~.name here.neighbors))))
 
@@ -136,8 +136,9 @@
   (to ~.wander
     ;; Move to a random neighbor, or just circle back.
     (let here wumpus.where)
-    (take (link here here.neighbors) (~ .sample-value chaos)
-          (-> (wumpus .go it)))))
+    (-> (link here here.neighbors)
+        (~ .sample-value chaos)
+        (:: (wumpus .go it)))))
 
 (to (pit<-)
   (make pit {extending (thing-trait<-)}

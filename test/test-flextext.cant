@@ -16,7 +16,7 @@ out.newline
   (t .replace 0 0 "aXbXc")
   (let X (set<- #\X))
   (out .displayln (t .get 0 t.count))
-  (each! (-> (out .display it)) t.keys)
+  (each! (:: (out .display it)) t.keys)
   out.newline
   (for each! ((i (0 .thru t.count)))
     (out .say "back from ~w: ~w\n"

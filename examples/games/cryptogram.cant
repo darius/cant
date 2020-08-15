@@ -69,7 +69,7 @@
 
   (let code (those ~.letter? cryptogram.uppercase))
   (surely code.some?)
-  (let decoder (!map-by (-> #\space) code.range.keys))
+  (let decoder (!map-by (:: #\space) code.range.keys))
   (let point (box<- 0))           ; Index in `code` of the cursor
 
   (let lines (each clean cryptogram.uppercase.split-lines))

@@ -41,7 +41,7 @@
        (let r-matches (~.keys (r (~.range (0 .thru (max @Ns.keys))))))
        (let r-lengths (~.keys (~.range (each ~.count r-matches))))
        (let Ns-s (~.range (for gather ((n Ns.keys))
-                            (those count? (each (-> (- n it)) r-lengths)))))
+                            (those count? (each (:: (- n it)) r-lengths)))))
        (let s-matches (~.keys (s Ns-s)))
        (~.range (for gather ((m1 r-matches))
                   (for yeahs ((m2 s-matches))

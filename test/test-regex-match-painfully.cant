@@ -25,18 +25,18 @@
 ;; (disabled)
 '(hide
   (let g (re-generator<- "ab"))
-  (each! (-> (out .print it)) (g 1))
+  (each! (:: (out .print it)) (g 1))
   out.newline
-  (each! (-> (out .print it)) (g 2))
+  (each! (:: (out .print it)) (g 2))
   out.newline
-  (each! (-> (out .print it)) (g 3)))
+  (each! (:: (out .print it)) (g 3)))
 
 ;; How many regexes of each size?
 ;; (disabled)
 (to (tabulate alphabet)
   (let g (re-generator<- alphabet))
   (for each! ((size (1 .thru 8)))
-    (out .say "~w ~w ~w\n" alphabet.count size (take size g ~.count))))
+    (out .say "~w ~w ~w\n" alphabet.count size (-> size g ~.count))))
 '(do
   (tabulate "01")  out.newline
   (tabulate "012") out.newline)
@@ -59,8 +59,8 @@
     (for each! ((length (0 .thru input-limit)))
       (let all-inputs (each text<-list (grid* @(`(,alphabet) .repeat length))))
       (let should-match (regex-generate rg (set<- length)))
-      (let should-not (take (all-inputs.range .difference should-match.range)
-                            ~.keys sort))
+      (let should-not (-> (all-inputs.range .difference should-match.range)
+                          ~.keys sort))
       (out .say "~w Y: ~w N: ~w\n" length should-match should-not)
       (for each! ((inputs  `(,should-match ,should-not))
                   (should? '(#yes          #no)))

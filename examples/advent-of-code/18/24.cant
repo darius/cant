@@ -53,7 +53,7 @@
   result.values)
 
 (to (attacking selections)
-  (for each! ((group (sort-by (-> (- it.initiative)) selections.keys)))
+  (for each! ((group (sort-by (:: (- it.initiative)) selections.keys)))
     (when group.alive?
       (may (selections .get group)
         (be #no)

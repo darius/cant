@@ -66,9 +66,9 @@ Level ~w ~d Move ~w")
 
     (to (view-grid)
       (for each ((rune grid.unparse))
-        (take rune
-              (if ("iI" .find? rune) green itself)
-              (if (".I@" .find? rune) bold itself))))
+        (-> rune
+            (if ("iI" .find? rune) green itself)
+            (if (".I@" .find? rune) bold itself))))
 
     (render [(heading .format level.+ (name .center 50) trail.count)
              "\n\n"

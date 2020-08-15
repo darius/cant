@@ -42,7 +42,7 @@ state cant extends HighlightEntry
 
   /* Keywords.
    */
-  /@|:|->|~|_|\b(and|begin|do|else|if|let|or|quasiquote|quote|unquote|unquote-splicing|optional|view|be|call|export|for|given|hide|hm|import|make|may|make-trait|on|to|unless|when)\b/ {
+  /@|:|::|~|_|\b(and|begin|do|else|if|let|or|quasiquote|quote|unquote|unquote-splicing|optional|view|be|call|export|for|given|hide|hm|import|make|may|make-trait|on|to|unless|when)\b/ {
     keyword_face (true);
     language_print ($0);
     keyword_face (false);

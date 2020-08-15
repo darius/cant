@@ -6,7 +6,7 @@
 ;; `spacer`, with each column padded to its max width.
 ;; TODO right-justify numeric columns, or parameterize justification by column
 (to (format-table rows-of-things @(optional ?spacer ?justify))
-  (let rows (each (-> (each text-display it)) rows-of-things))
+  (let rows (each (:: (each text-display it)) rows-of-things))
   (let spacer  (or ?spacer  " "))
   (let justify (or ?justify ('.pad-right .method)))
   (hide (let lengths (each ~.count rows))
