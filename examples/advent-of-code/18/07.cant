@@ -17,13 +17,12 @@
 
 (let all-steps (~.range (chain @ordering)))
 (let nodes all-steps.keys)
-(let succs-set (for map-by ((_ nodes))
-                 (set<-)))
+(let succs-set (map-by (:: (set<-)) nodes))
 (for each! ((`(,pre ,post) ordering))   ;TODO use a mapreduce
   ((succs-set pre) .add! post))             ;TODO maybe use .get-set!
 
 (let succs (for map-by ((node nodes))
-             (sort (~.keys (succs-set node)))))
+             (-> node succs-set ~.keys sort)))
 
 (to (delay<- node)                ;maybe go back to calling them steps
   (let letter (node 0))            ;symbols aren't looking so great now

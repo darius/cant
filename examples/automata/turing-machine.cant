@@ -31,7 +31,7 @@
   (out .say "~d ~w ~w\n" (" " .repeat before.count) state next-acts))
 
 (to (show-squares squares)
-  (" " .join (each (:: ("~w" .format it)) squares)))
+  (" " .join (each ~.text squares)))
 
 (to (step {machine transit state (and tape {tape _ head _})})
   (for mayhap (((~ acts next-state) (transit .get (~ state head))))

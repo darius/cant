@@ -3,7 +3,7 @@
 ;; Does regex `re` match `runes`? (Anchored matching at both ends.)
 ;; Algorithm: Antimirov derivatives.
 (to (regex-match re runes)
-  (-> (foldl step `(,re) runes) (:: (some nullable? it))))
+  (some nullable? (foldl step `(,re) runes)))
 
 (to (step res rune)
   (-> (gather (after rune) res) ~.range ~.keys))

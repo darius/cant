@@ -210,7 +210,6 @@
 ;; Experiments
 
 ;; (-> input f g h) = (h (g (f input)))
-;: TODO better name 'with'?
 ;; Hm, (-> x) is just x, so this could also replace 'itself'...
 ;; is there a name suggestive of both functions? Maybe 'pass'?
 (make -> {extending left-folding-operation}
