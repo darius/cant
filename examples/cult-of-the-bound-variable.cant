@@ -30,41 +30,32 @@
         (let b (7 .and (inst .u>> 3)))
         (let c (7 .and inst))
         (may opcode
-
           (be 0
             (unless (= (reg c) 0)
               (reg .set! a (reg b)))
             (next))
-
           (be 1
             (reg .set! a ((mem (reg b))
                           (reg c)))
             (next))
-
           (be 2
             ((mem (reg a)) .set! (reg b) (reg c))
             (next))
-
           (be 3
             (reg .set! a ((reg b) .u+ (reg c)))
             (next))
-
           (be 4
             (reg .set! a ((reg b) .u* (reg c)))
             (next))
-
           (be 5
             (reg .set! a ((reg b) .u/ (reg c)))
             (next))
-
           (be 6
             ;; TODO these mask32 .and's shouldn't be needed with a proper `word32` type
             (reg .set! a (mask32 .and (((reg b) .and (reg c)) .not)))
             (next))
-
           (be 7
             "Successful exit")
-
           (be 8
             (let chunk (array<-count (reg c) 0))
             (reg .set! b
@@ -75,25 +66,21 @@
                        (mem .set! i chunk)
                        i)))
             (next))
-
           (be 9
             (mem .set! (reg c) #no)
             (free-list .push! (reg c))
             (next))
-
           (be 10
 ;;            (surely (<= 0 (reg c) 255))
             ;; We don't use (sink .write-u8 (reg c)) because sink might not be a binary sink:
             (sink .display (rune<- (reg c)))
             (next))
-
           (be 11
             (let s source.read-rune)
 ;;            (surely (or (zilch? s) (<= 0 s.code 255)))
             (reg .set! c
                  (if (zilch? s) mask32 s.code))
             (next))
-
           (be 12
             (hm (when (= (reg b) 0)
                   (running program (reg c)))
@@ -101,7 +88,6 @@
                   (let new-program (~.copy (mem (reg b))))
                   (mem .set! 0 new-program)
                   (running new-program (reg c)))))
-          
           (else (oops "Bad opcode" opcode)))))))
 
 (to (read-program source)
