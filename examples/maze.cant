@@ -12,6 +12,8 @@
 
 (import (use 'chaos) random-chaos<-)
 
+;; Return a maze generated on graph at random. (Not necessarily by
+;; uniform distribution.)
 (to (sample-maze chaos graph)
   (let open-doors (set<-))
   (let frontier (set<-))
@@ -106,13 +108,13 @@
   (~ (+ r dr) (+ c dc)))
 
 
-(to (smoke)
+(to (smoke-test)
 ;;  (let nr 30)
 ;;  (let nc 70)
   (let nr 20)
-  (let nc 20)
+  (let nc 40)
   (let graph (maze-graph<- nr nc))
   (let chaos (random-chaos<- system-randomness-source<-))
   (out .displayln (graph .show (sample-maze chaos graph))))
 
-(smoke)
+(smoke-test)
