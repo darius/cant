@@ -85,20 +85,20 @@
 
     (to (~ .show doors)
 
-      (to (door/wall r c if-door if-wall)
+      (to (edge r c if-door if-wall)
         (if (doors .maps? (~ r c)) if-door if-wall))
       
-      (to (E/W-walls r)
+      (to (E/W-edges r)
         ("  " .join (for each ((c (0 .thru nc 2)))
-                      (door/wall r c " " "|"))))
+                      (edge r c " " "|"))))
 
-      (to (N/S-walls r)
+      (to (N/S-edges r)
         (chain "+" ("+" .join (for each ((c (1 .till nc 2)))
-                                (door/wall r c "  " "--")))
+                                (edge r c "  " "--")))
                "+"))
 
       ("\n" .join (for each ((r (0 .thru nr)))
-                    (-> r (if r.even? N/S-walls E/W-walls)))))))
+                    (-> r (if r.even? N/S-edges E/W-edges)))))))
       
 (let directions (list<- (~ -1 0) (~ 1 0) (~ 0 -1) (~ 0 1)))
 
