@@ -70,35 +70,29 @@
   (make maze-graph
 
     (to ~.entry
-      (~ (~ 1 0) (~ 1 1)))   ;top-left corner
+      (~ (~ 1 0) (~ 1 1)))   ; top-left corner: wall and room
 
-    (to ~.exit-candidates    ;a range of walls around the bottom right
-      (chain (for each ((c ((nc .quotient 2) .till nc 2)))
-               (~ nr c.+))
-             (for each ((r ((nr .quotient 2) .till nr 2)))
-               (~ r.+ nc))))
+    (to ~.exit-candidates    ; a range of walls around the bottom right
+      (chain (each (:: (~ nr it.+)) ((nc .quotient 2) .till nc 2))
+             (each (:: (~ it.+ nc)) ((nr .quotient 2) .till nr 2))))
 
     (to (~ .neighbors room)
       (for yeahs ((d directions))
-        (let door (v+ room d))
-        (let neighbor (v+ door d))
+        (let edge (v+ room d))          ; wall or door
+        (let neighbor (v+ edge d))
         (and (room-in-bounds? neighbor)
-             (~ door neighbor))))
+             (~ edge neighbor))))
 
     (to (~ .show doors)
-
       (to (edge r c if-door if-wall)
         (if (doors .maps? (~ r c)) if-door if-wall))
-      
       (to (E/W-edges r)
         ("  " .join (for each ((c (0 .thru nc 2)))
                       (edge r c " " "|"))))
-
       (to (N/S-edges r)
         (chain "+" ("+" .join (for each ((c (1 .till nc 2)))
                                 (edge r c "  " "--")))
                "+"))
-
       ("\n" .join (for each ((r (0 .thru nr)))
                     (-> r (if r.even? N/S-edges E/W-edges)))))))
       
