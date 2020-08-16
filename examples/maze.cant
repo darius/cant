@@ -1,0 +1,118 @@
+;; Maze generation
+
+;; TODO
+;; - weight the choices in some interesting way
+;; - also make the mazes not so fucking easy
+;; - move around
+;;   - (keep shortest trail from start)
+;; - solve (trace left-hand-side)
+;;   - gen mazes that can't be solved that way
+;; - non-rectangle shapes
+;; - hex grid?
+
+(import (use 'chaos) random-chaos<-)
+
+(to (sample-maze chaos graph)
+  (let open-doors (set<-))
+  (let frontier (set<-))
+  (let visited-rooms (set<-))
+
+  (to (grow (~ new-door new-room))
+    (open-doors .add! new-door)
+    (visited-rooms .add! new-room)
+    (for each! (((~ door neighbor) (graph .neighbors new-room)))
+      (if (visited-rooms .maps? neighbor)
+          (frontier .delete! (~ door new-room))
+          (frontier .add! (~ door neighbor)))))
+
+  (grow graph.entry)
+  (begin ()
+    (when frontier.some?
+      (grow (frontier .sample-key chaos))
+      (loop)))
+  (open-doors .add! (graph.exit-candidates .sample-value chaos))
+  open-doors)
+
+(to (maze-graph<- n-room-r n-room-c)
+  ;; A network of n-room-r by n-room-c rooms, connectable horizontally
+  ;; and vertically. The rooms and walls are arranged like so, where
+  ;; 1,1 is a room and 1#2 is a wall:
+  ;;     0#1     0#3
+  ;; 1#0 1,1 1#2 1,3 1#4
+  ;;     2#1     2#3
+  ;; 3#0 3,1 3#2 3,3 3#4
+  ;;     4#1     4#3
+  ;; (In the code below, both rooms and walls are just tuples, like
+  ;; (~ 1 1) and (~ 1 2). I'm using different symbols above just to
+  ;; help distinguish rooms from walls in the diagram.)
+  
+  ;; The above 2x2-room example would be displayed as below, assuming
+  ;; no doors; where the first "--" at top left corresponds to the 0#1
+  ;; above, the top-left "|" corresponds to 1#0, and the top-left
+  ;; empty room corresponds to 1,1:
+  ;;  +--+--+
+  ;;  |  |  |
+  ;;  +--+--+
+  ;;  |  |  |
+  ;;  +--+--+
+
+  ;; To knock out a wall to form a door, add the coordinate-pair of
+  ;; the wall to a set of doors. Pass that set into the .show method.
+
+  (let nr (* 2 n-room-r))
+  (let nc (* 2 n-room-c))
+
+  (to (room-in-bounds? (~ r c))
+    (and (< 0 r nr) (< 0 c nc)))
+
+  (make maze-graph
+
+    (to ~.entry
+      (~ (~ 1 0) (~ 1 1)))   ;top-left corner
+
+    (to ~.exit-candidates    ;a range of walls around the bottom right
+      (chain (for each ((c ((nc .quotient 2) .till nc 2)))
+               (~ nr c.+))
+             (for each ((r ((nr .quotient 2) .till nr 2)))
+               (~ r.+ nc))))
+
+    (to (~ .neighbors room)
+      (for yeahs ((d directions))
+        (let door (v+ room d))
+        (let neighbor (v+ door d))
+        (and (room-in-bounds? neighbor)
+             (~ door neighbor))))
+
+    (to (~ .show doors)
+
+      (to (door/wall r c if-door if-wall)
+        (if (doors .maps? (~ r c)) if-door if-wall))
+      
+      (to (E/W-walls r)
+        ("  " .join (for each ((c (0 .thru nc 2)))
+                      (door/wall r c " " "|"))))
+
+      (to (N/S-walls r)
+        (chain "+" ("+" .join (for each ((c (1 .till nc 2)))
+                                (door/wall r c "  " "--")))
+               "+"))
+
+      ("\n" .join (for each ((r (0 .thru nr)))
+                    (-> r (if r.even? N/S-walls E/W-walls)))))))
+      
+(let directions (list<- (~ -1 0) (~ 1 0) (~ 0 -1) (~ 0 1)))
+
+(to (v+ (~ r c) (~ dr dc))
+  (~ (+ r dr) (+ c dc)))
+
+
+(to (smoke)
+;;  (let nr 30)
+;;  (let nc 70)
+  (let nr 20)
+  (let nc 20)
+  (let graph (maze-graph<- nr nc))
+  (let chaos (random-chaos<- system-randomness-source<-))
+  (out .displayln (graph .show (sample-maze chaos graph))))
+
+(smoke)
