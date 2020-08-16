@@ -22,10 +22,10 @@
   (to (grow (~ new-door new-room))
     (open-doors .add! new-door)
     (visited-rooms .add! new-room)
-    (for each! (((~ door neighbor) (graph .neighbors new-room)))
+    (for each! (((~ edge neighbor) (graph .neighbors new-room)))
       (if (visited-rooms .maps? neighbor)
-          (frontier .delete! (~ door new-room))
-          (frontier .add! (~ door neighbor)))))
+          (frontier .delete! (~ edge new-room))
+          (frontier .add! (~ edge neighbor)))))
 
   (grow graph.entry)
   (begin ()
