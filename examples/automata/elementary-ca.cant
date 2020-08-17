@@ -15,7 +15,7 @@
 
 (to (show bits)
   (let line (text<-list (each "-*" bits)))
-  (out .displayln (line .center 80)))
+  (out .displayln (line .center 79)))
 
 ;; There are 2**8 possible elementary CA's. Return the update rule
 ;; for the given-numbered one.
