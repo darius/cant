@@ -158,6 +158,9 @@
       (empty text (max far i.+) i.+ vals)
       (fail text far i vals)))
 
+(to (position text far i vals)
+  (empty text far i `(,@vals ,i)))
+
 
 ;; Derived combinators
 
@@ -202,5 +205,5 @@
 
 (export invert capture either then feed-list feed push seclude delay
         maybe many at-least-1
-        fail empty end skip-1 take-1 any-1 skip-any-1 lit-1 lit drop
+        fail empty end skip-1 position take-1 any-1 skip-any-1 lit-1 lit drop
         parse)

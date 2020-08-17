@@ -1,7 +1,6 @@
 ;; Generate a "Key-Word In Context" index.
 ;; TODO:
-;;   sort in output by *before* the <decoration>
-;;   preserve punctuation into the output
+;;   show line numbers?
 ;;   skip stopwords
 ;;   split by sentences instead of lines?
 ;;   reread Parnas
@@ -16,6 +15,22 @@
 (to (kwic lines)
   (each! show-group (group (gather contextify lines))))
 
+;; (contextify "leaves of grass")
+;; -> '({~ "leaves" {~ "leaves of grass" (0 6)}}  ;; where (0 6) is the span of the first word
+;;      {~ "of"     {~ "leaves of grass" (7 9)}}
+;;      {~ "grass"  {~ "leaves of grass" (10 15)}})
+(to (contextify line)
+  (let spans (word-spans line))
+  (for each (((~ i span) spans.items))
+    (let word (line .slice @span))
+    (~ word.lowercase (~ line span))))
+
+;; A crude notion of a word: a string of letters with an optional
+;; apostrophized suffix. Yield the positions (start end) for each word.
+(let word-spans
+  (like "([:position :letter+ ('\\'' :letter+)? :position :hug] | :skip)*"))
+;; TODO ugly: '\\''
+
 ;; Given a list of (~ key value), return a list of (~ key all-values)
 ;; sorted by key.
 (to (group items)
@@ -25,21 +40,11 @@
   (for each ((key (sort map.keys)))
     (~ key ((map key) .values))))
 
-;; Under a heading for `word`, show each of its lines.
-(to (show-group (~ word lines))
+;; Under a heading for `word`, show each of its occurrences.
+(to (show-group (~ word occurrences))
   (out .say "~d:\n" word)
-  (for each! ((line (sort lines)))
-    (out .say "  ~d\n" line)))
-
-;; (contextify "leaves of grass")
-;; -> '({~ "leaves" "<leaves> of grass"}
-;;      {~ "of"     "leaves <of> grass"}
-;;      {~ "grass"  "leaves of <grass>"})
-(to (contextify line)
-  (let words (tokenize line))
-  (for each (((~ i word) words.items))
-    (~ word.lowercase
-       (" " .join (words .alter (~ .set! i ("<~d>" .format word)))))))
-
-;; A crude notion of a word: a string of letters with an optional apostrophized suffix.
-(let tokenize (like "({:letter+ ('\\'' :letter+)?} | :skip)*"))
+  (for each! (((~ line `(,start ,end)) (sort occurrences)))
+    (out .say "  ~d<~d>~d\n"
+         (line .slice 0 start)
+         (line .slice start end)
+         (line .slice end))))
