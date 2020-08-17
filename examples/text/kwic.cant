@@ -3,6 +3,7 @@
 ;;   show line numbers?
 ;;   skip stopwords
 ;;   reread Parnas
+;;     y'know, the rotated outputs he describes are probably more useful
 
 (import (use 'parson) like)
 
