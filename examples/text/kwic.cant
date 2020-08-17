@@ -19,8 +19,7 @@
 ;;      {~ "of"     {~ "leaves of grass" (7 9)}}
 ;;      {~ "grass"  {~ "leaves of grass" (10 15)}})
 (to (contextify line)
-  (let spans (word-spans line))
-  (for each (((~ i span) spans.items))
+  (for each ((span (word-spans line)))
     (let word (line .slice @span))
     (~ word.lowercase (~ line span))))
 
@@ -43,7 +42,7 @@
 (to (show-group (~ word occurrences))
   (out .say "~d:\n" word)
   (for each! (((~ line `(,start ,end)) (sort occurrences)))
-    (out .say "  ~d<~d>~d\n"
+    (out .say "  ~d**~d**~d\n"
          (line .slice 0 start)
          (line .slice start end)
          (line .slice end))))
