@@ -1,0 +1,45 @@
+;; Generate a "Key-Word In Context" index.
+;; TODO:
+;;   sort in output by *before* the <decoration>
+;;   preserve punctuation into the output
+;;   skip stopwords
+;;   split by sentences instead of lines?
+;;   reread Parnas
+
+(import (use 'parson) like)
+
+;; From stdin to stdout.
+(to (main _)
+  (kwic in.read-all.split-lines))
+
+;; Write a sorted keyword-in-context index.
+(to (kwic lines)
+  (each! show-group (group (gather contextify lines))))
+
+;; Given a list of (~ key value), return a list of (~ key all-values)
+;; sorted by key.
+(to (group items)
+  (let map (!map<-))
+  (for each! (((~ key value) items))
+    ((map .get-set! key flexarray<-) .push! value))
+  (for each ((key (sort map.keys)))
+    (~ key ((map key) .values))))
+
+;; Under a heading for `word`, show each of its lines.
+(to (show-group (~ word lines))
+  (out .say "~d:\n" word)
+  (for each! ((line (sort lines)))
+    (out .say "  ~d\n" line)))
+
+;; (contextify "leaves of grass")
+;; -> '({~ "leaves" "<leaves> of grass"}
+;;      {~ "of"     "leaves <of> grass"}
+;;      {~ "grass"  "leaves of <grass>"})
+(to (contextify line)
+  (let words (tokenize line))
+  (for each (((~ i word) words.items))
+    (~ word.lowercase
+       (" " .join (words .alter (~ .set! i ("<~d>" .format word)))))))
+
+;; A crude notion of a word: a string of letters with an optional apostrophized suffix.
+(let tokenize (like "({:letter+ ('\\'' :letter+)?} | :skip)*"))
