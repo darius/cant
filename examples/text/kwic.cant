@@ -2,7 +2,6 @@
 ;; TODO:
 ;;   show line numbers?
 ;;   skip stopwords
-;;   split by sentences instead of lines?
 ;;   reread Parnas
 
 (import (use 'parson) like)
