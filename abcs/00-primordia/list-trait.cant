@@ -95,10 +95,12 @@
     (if (<= pad 0)
         list
         (chain (`(,padding) .repeat pad) list)))
+  (to ~.array
+    (array<-list list))
   (to (~ .sample-key chaos)
     (chaos .sample-count list.count))
   (to (~ .alter alter!)                 ;; TODO an experiment
-    (~.values (hey (array<-list list) alter!)))
+    (~.values (hey list.array alter!)))
   (to ~.maybe  ;; TODO an experiment TODO could be defined on maps in general too
     (if list.none?
         #no

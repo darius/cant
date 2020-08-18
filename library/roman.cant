@@ -17,7 +17,7 @@
                 (chain (each rune*10 roman) (runes<-digit digit)))))
 
 (let runes<-digit
-  (array<-list (each ~.values (" I II III IV V VI VII VIII IX" .split " "))))
+  (~.array (each ~.values (" I II III IV V VI VII VIII IX" .split " "))))
 (let rune*10 (map<-items (zip "IVXLC"
                               "XLCDM")))
 

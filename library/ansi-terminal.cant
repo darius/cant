@@ -20,7 +20,7 @@
   (chain prefix y.+.text ";" x.+.text "H"))
 
 (let [black red green yellow blue magenta cyan white]
-  (array<-list (0 .thru 7)))        ;TODO wish we didn't have to convert
+  ((0 .thru 7) .array))        ;TODO wish we didn't have to convert
 
 (to (bright color)
   (+ 60 color))

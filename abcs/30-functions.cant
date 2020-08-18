@@ -201,7 +201,7 @@
     (oops "Failed system command" command)))
 
 (to (setting<-map map)
-  (__setting<- map.keys (array<-list map.values) #no))
+  (__setting<- map.keys map.values.array #no))
 
 (to (system-randomness-source<-)
   (open-input-file "/dev/urandom"))

@@ -52,7 +52,7 @@
 
 ;; The UI to a sequence of Sokoban levels.
 (to (play grids name level)
-  (let trails (array<-list (each flexarray<- grids)))
+  (let trails (~.array (each flexarray<- grids)))
 
   (let heading
     "Move with the arrow keys or HJKL. U to undo.
@@ -96,7 +96,7 @@ Level ~w ~d Move ~w")
 (to (parse floor-plan)
   (do (let line-lengths (each ~.count floor-plan.split-lines))
       (surely (= 1 line-lengths.range.count)))
-  (array<-list floor-plan))
+  floor-plan.array)
 
 (to (sokoban-grid<- spots)
   ;; Since the width is constant, moving up or down from some square

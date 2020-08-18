@@ -41,7 +41,7 @@
   (surely (for every ((line field-text.split-lines))
             (= width line.count.+)))
 
-  (let area (array<-list field-text))
+  (let area field-text.array)
 
   (to (coords<- p)
     ("~w,~w" .format (p .quotient width) (p .modulo width)))

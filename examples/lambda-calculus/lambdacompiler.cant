@@ -36,8 +36,8 @@
         (be (? number?) (closure insn))))
     (may code
       (be `(make-closure ,m ,n ,@rest)
-        (let new-closure (array<-list (link (rest .slice m)
-                                            (each access (rest .slice 0 m)))))
+        (let new-closure (~.array (link (rest .slice m)
+                                        (each access (rest .slice 0 m)))))
         (running (rest .slice (+ m n)) local closure ret (link new-closure stack)))
       (be `(invoke ,@_)
         (let `(,argument ,callee ,@old-stack) stack)

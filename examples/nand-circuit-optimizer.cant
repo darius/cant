@@ -18,7 +18,7 @@
   (1 .<< n))
 
 (to (find-circuits wanted n-inputs max-gates)
-  (let inputs (array<-list (tabulate-inputs n-inputs)))
+  (let inputs (~.array (tabulate-inputs n-inputs)))
   (let mask (- (pow2 (pow2 n-inputs)) 1))
 
   (to (print-formula L-input R-input)

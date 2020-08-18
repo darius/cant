@@ -17,8 +17,7 @@
 (to (def-parsing def seq srcs)
   (may def
     (be `(to (,(? symbol? name) ,@params) ,@body)
-      (let ps (array<-list params))
-      (seq-parsing `((let ,name (,ps ,@body))
+      (seq-parsing `((let ,name (,params.array ,@body))
                      ,@seq)
                    srcs))))
 
@@ -44,7 +43,7 @@
   ;; TODO adjust src in the curried case
   (let parsed-body (if vs.none?
                        (seq-parse body)
-                       (exp-parse `(,(array<-list vs) ,@body))))
+                       (exp-parse `(,vs.array ,@body))))
   {lam v parsed-body src})
 
 (export seq-parse exp-parse)

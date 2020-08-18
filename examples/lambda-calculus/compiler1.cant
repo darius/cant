@@ -77,7 +77,7 @@
   (let assembly (build-prelude (export out) compile invoke reply))
 ;;  (show assembly)
 
-  (let code (array<-list (reverse assembly.insns)))  ; reverse so that labels index from the start
+  (let code (-> assembly.insns reverse ~.array))  ; reverse so that labels index from the start
   (running code.count  ; program counter + 1
            {bad-env}   ; "environment"
            '()         ; local stack

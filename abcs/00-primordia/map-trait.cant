@@ -63,6 +63,8 @@
         (oops ".inverse of noninvertible map" map))  ; or just allow it?
       (inverse .set! v k))
     inverse)
+  (to ~.array
+    (array-by map map.count))
 
   (to (~ .sample-key chaos)
     (map.keys .sample-value chaos))

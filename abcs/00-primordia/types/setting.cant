@@ -19,7 +19,7 @@
     (for each! ((name variables))
       (setting .resolve! name (resolve name))))
   (to (~ .extend-map map) ;TODO just call this one .extend, and drop the other?
-    (setting .extend map.keys (array<-list map.values)))
+    (setting .extend map.keys map.values.array))
   (to (~ .selfie sink)
     (sink .display "#<setting ")
     (sink .write setting.variables)   ;TODO a more concise/useful list

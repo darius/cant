@@ -12,7 +12,7 @@
   (__array<-list (as-list xs)))
 
 (to (array<- @elements)
-  (array<-list elements))
+  (__array<-list elements))
 
 (to (map<- @items)
   (map<-items items))

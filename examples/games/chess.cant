@@ -150,7 +150,7 @@
     (to (~ .move-piece place0 place1 ?en-passant-target)
       (let `(,r0 ,c0) place0)
       (let `(,r1 ,c1) place1)
-      (let rows (array<-list (each array<-list squares)))
+      (let rows (~.array (each ~.array squares)))
       (let piece ((rows r0) c0))
       ((rows r0) .set! c0 #\space)   ;; pretty clumsy
       ((rows r1) .set! c1 piece)

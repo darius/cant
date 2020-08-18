@@ -311,6 +311,12 @@
 
 (to (text<-list runes) (__string<-list (as-list runes)))
 
+(to (array-by f n)
+  (let a (array<-count n))
+  (for each! ((i n.till))
+    (a .set! i (f i)))
+  a)
+
 
 (make chain {extending right-folding-operation}
   (to (~ xs ys) (xs .chain ys))

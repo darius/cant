@@ -19,8 +19,8 @@
 
   (let pad (~ .pad-right n-check-bits 0))
   (let taps
-    (array<-list (transpose (for each ((place (0 .till (2 .** n-check-bits))))
-                              (pad (place .digits 2))))))
+    (~.array (transpose (for each ((place (0 .till (2 .** n-check-bits))))
+                          (pad (place .digits 2))))))
 
   (to (parity m place)
     ;; TODO like (zip m.values (taps place)) instead?
@@ -35,7 +35,7 @@
     (to (~ .encode bits)
       (surely (well-formed? bits))
       (surely (= bits.count n-message-bits))
-      (let m (array<-list
+      (let m (~.array
               ;; TODO write this as a fold or something?
               (link 0 (begin inserting ((p 1) (rest bits))
                         (hm (if rest.none? '())
@@ -49,7 +49,7 @@
     (to (~ .decode encoded-bits)
       (surely (well-formed? encoded-bits))
       (surely (= encoded-bits.count n-encoded-bits))
-      (let m (array<-list (link 0 encoded-bits)))
+      (let m (~.array (link 0 encoded-bits)))
       (let encoded-n (count<-digits m.values 2))
       (let syndrome (for each ((place n-check-bits.till))
                       (parity m place)))

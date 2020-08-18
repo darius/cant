@@ -25,7 +25,7 @@
     (xs .slice i (+ i k))))
 
 (let digits
-  (array<-list (each ~.number (k-slices<- input 1))))
+  (~.array (each ~.number (k-slices<- input 1))))
 
 (to (oiler8 n)
   (max @(each product<- (k-slices<- digits n))))
