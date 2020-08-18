@@ -59,9 +59,8 @@
         (and (not (power-of-2? power))
              bit)))))
 
-(to (power-of-2? n)                     ;XXX ugly
-  (or (= n 1)
-      (and (< 0 n) n.even? (power-of-2? (n .quotient 2)))))
+(to (power-of-2? n)
+  (integer? (n .log 2)))
 
 (to (bit? x)
   (and (count? x) (<= x 1)))

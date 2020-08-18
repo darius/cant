@@ -227,6 +227,8 @@
     (not ,not)
     (assoc ,assoc)                      ;XXX doesn't use cant=?
     (sqrt ,sqrt)
+    (exp ,exp)
+    (log ,log)
     (panic ,prim-panic)
     (open-input-file ,(make-source-maker open-input-file)) ;XXX rename open-file-source
     (open-output-file ,open-output-file) ; open-file-sink

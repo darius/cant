@@ -4,22 +4,17 @@
 ;; not doing don't-cares.
 
 (to (superopt truth-table max-gates)
-  (let n-inputs (int-log2 truth-table.count))
+  (let n-inputs (integer-log2 truth-table.count))
   (find-circuits (number<-text truth-table 2) n-inputs max-gates))
 
-(to (int-log2 n)
-  (begin searching ((p 0) (two**p 1))
-    (may (compare two**p n)
-      (be -1 (searching p.+ (* 2 two**p)))
-      (be  0 p)
-      (be +1 (oops "Not a power of 2" n)))))
-
-(to (pow2 n)
-  (1 .<< n))
+(to (integer-log2 n)
+  (may (n .log 2)
+    (be (? integer? power) power.exact)
+    (else (oops "Not a power of 2" n))))
 
 (to (find-circuits wanted n-inputs max-gates)
   (let inputs (~.array (tabulate-inputs n-inputs)))
-  (let mask (- (pow2 (pow2 n-inputs)) 1))
+  (let mask (- (1 .<< (1 .<< n-inputs)) 1))
 
   (to (print-formula L-input R-input)
     (let v-name (chain ("ABCDEF" .slice 0 n-inputs)
@@ -68,8 +63,8 @@
   ;; operators.
   (if (= n 0)
       '()
-      (do (let shift (pow2 n.-))
-          (link (- (pow2 shift) 1)
+      (do (let shift (1 .<< n.-))
+          (link (- (1 .<< shift) 1)
                 (for each ((iv (tabulate-inputs n.-)))
                   (iv .or (iv .<< shift)))))))
 

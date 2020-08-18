@@ -31,6 +31,9 @@
   (to ~.inexact        (inexact<-exact me))
   (to ~.magnitude      (abs me))
   (to ~.sign           (__number-compare me 0))
+  (to ~.exp            (exp me))
+  (to ~.ln             (log me))  ;; TODO better name?
+  (to (~ .log base)    (log me base))
   (to ~.text           (text<-number me))
   (to ~.number         me)
   (to (~ .gcd b)       (gcd me b))
