@@ -26,7 +26,7 @@
   (make random-player
     (to ~.interactive? #no)
     (to (~ .pick-move board)
-      (chaos .pick (as-list board.gen-legal-moves)))))
+      (board.gen-legal-moves .sample-value chaos))))
 
 (make greedy-player
   (to ~.interactive? #no)
