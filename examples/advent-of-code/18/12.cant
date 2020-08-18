@@ -48,4 +48,4 @@
 
 (out .say "~w\n" (part1))
 
-;; part2 done by leting part1 run longer, extrapolating the sums by inspection
+;; part2 done by letting part1 run longer, extrapolating the sums by inspection
