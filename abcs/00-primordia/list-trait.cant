@@ -96,9 +96,11 @@
         list
         (chain (`(,padding) .repeat pad) list)))
   (to ~.list
-    (as-list list))
+    (as-list list.values))
+  (to ~.text
+    (text<-list list.values))
   (to ~.array
-    (array<-list list))
+    (array<-list list.values))
   (to (~ .sample-key chaos)
     (chaos .sample-count list.count))
   (to (~ .alter alter!)                 ;; TODO an experiment

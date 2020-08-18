@@ -18,7 +18,7 @@
       (be #\v (add-cart! i S))
       (be #\^ (add-cart! i N))
       (else   (tracks .push! rune))))
-  {world (text<-list tracks.values) width carts})
+  {world tracks.text width carts})
 
 
 ;; Directions

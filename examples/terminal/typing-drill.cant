@@ -11,8 +11,7 @@
   (let strokes (flexarray<- (get-key)))
   (let start (nano-now))
   (begin typing ()
-    (show (/ (- (nano-now) start) 1000000000)
-          (text<-list strokes.values))
+    (show (/ (- (nano-now) start) 1000000000) strokes.text)
     ;; XXX polling/sleeping with in.ready? sucks, but it's
     ;; supported by the underlying Scheme.
     (may (and in.ready? (get-key))

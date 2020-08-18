@@ -30,7 +30,7 @@
 
 ;; A text from a small alphabet, to encourage overlap of patterns.
 (to (a-babble g)
-  (text<-list ((a-list-of a-letter) g)))
+  (~.text ((a-list-of a-letter) g)))
 
 (to (a-letter g)
   (g .range #\a #\c))

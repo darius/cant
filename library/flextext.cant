@@ -53,7 +53,7 @@
   ;; Return the `span0` runes after `p0` as a text.
   (to (get p0 span0)
     (let {range p span} (clip-range p0 span0))
-    (text<-list (each get-rune-after (p .span span))))
+    (~.text (each get-rune-after (p .span span))))
 
   ;; Return the position after the rune in the text that is in
   ;; rune-set and that comes up first in searching from p in

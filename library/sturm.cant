@@ -201,7 +201,7 @@
     (to (~)
       (let keys (flexarray<- (get-key-unmapped)))
       (begin matching ()
-        (let t (text<-list keys.values))
+        (let t keys.text)
         (hm (or (key-map .get t))
             (when (key-map-prefixes .maps? t)
               (keys .push! (get-key-unmapped))

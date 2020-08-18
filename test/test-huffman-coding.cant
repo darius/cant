@@ -33,4 +33,4 @@
 
 (let hello (huff.encoder "hello"))
 (out .print hello)
-(out .print (text<-list (huff.decoder hello)))
+(out .print ((huff.decoder hello) .text))

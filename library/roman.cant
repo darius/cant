@@ -13,8 +13,8 @@
 
 (to (roman<-number n)
   (surely (< 0 n))
-  (text<-list (for foldr ((digit n.digits) (roman '()))
-                (chain (each rune*10 roman) (runes<-digit digit)))))
+  (~.text (for foldr ((digit n.digits) (roman '()))
+            (chain (each rune*10 roman) (runes<-digit digit)))))
 
 (let runes<-digit
   (~.array (each ~.values (" I II III IV V VI VII VIII IX" .split " "))))

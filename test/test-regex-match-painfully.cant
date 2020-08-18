@@ -57,7 +57,7 @@
     (let rg (cant .play re gen-setting))
     (let rm (cant .play re match-setting))
     (for each! ((length (0 .thru input-limit)))
-      (let all-inputs (each text<-list (grid* @(`(,alphabet) .repeat length))))
+      (let all-inputs (each ~.text (grid* @(`(,alphabet) .repeat length))))
       (let should-match (regex-generate rg (set<- length)))
       (let should-not (-> (all-inputs.range .difference should-match.range)
                           ~.keys sort))

@@ -65,6 +65,8 @@
     inverse)
   (to ~.list
     (each map map.count.till))
+  (to ~.text
+    (text<-list map.list))
   (to ~.array
     (array-by map map.count))
 

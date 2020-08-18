@@ -11,9 +11,6 @@
   (surely (< 0 width))  ;TODO 'require' or something, for preconditions
   (wrap-into (flexarray<-) (parse-tokens text) width))
 
-(to (flush buffer)
-  (text<-list buffer.values))
-
 (to (parse-tokens text)
   (if text.none?
       '()
@@ -26,24 +23,24 @@
           (let word (flexarray<- rune))
           (begin eating ((text text.rest))
             (if (or text.none? text.first.whitespace?)
-                (link {word (flush word)} (parse-tokens text))
+                (link {word word.text} (parse-tokens text))
                 (do (word .push! text.first)
                     (eating text.rest))))))))
 
 (to (wrap-into line tokens width)
   (begin scanning ((spaces 0) (tokens tokens))
     (if tokens.none?
-        (if line.none? '() `(,(flush line)))
+        (if line.none? '() `(,line.text))
         (may tokens.first
           (be {space}
             (scanning spaces.+ tokens.rest))
           (be {break}
-            (link (flush line) (wrap-into (flexarray<-) tokens.rest width)))
+            (link line.text (wrap-into (flexarray<-) tokens.rest width)))
           (be {word w}
             (if (<= (+ line.count spaces w.count) width)
                 (do (line .extend! (chain (" " .repeat spaces) w))
                     (scanning 0 tokens.rest))
-                (link (flush line) (wrap-into (hey (flexarray<-) (~ .extend! w))
-                                              tokens.rest width))))))))
+                (link line.text
+                      (wrap-into (flexarray<-list w) tokens.rest width))))))))
 
 (export fill wrap)

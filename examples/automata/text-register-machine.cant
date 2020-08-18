@@ -86,7 +86,7 @@
                (flip lines2))))
 
 (to (flip texts)
-  (each text<-list (transpose-padded texts #\space)))
+  (each ~.text (transpose-padded texts #\space)))
 
 ;; Like `transpose` but handling different-length rows.
 (to (transpose-padded lists padding)

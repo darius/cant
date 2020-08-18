@@ -22,8 +22,8 @@
     (puzzle cryptogram)))
 
 (to (encrypt code text)
-  (text<-list (for each ((rune text.lowercase))
-                (code .get rune rune))))
+  (~.text (for each ((rune text.lowercase))
+            (code .get rune rune))))
 
 (to (random-code<- chaos)
   (map<-items (zip alphabet (alphabet .alter (~ .shuffle! chaos)))))

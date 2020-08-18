@@ -157,8 +157,8 @@
 ;; Return `text`, but munging out any runes that are used in our 
 ;; mnemonics but aren't legal in Python identifiers.
 (to (as-legal-py-identifier text)
-  (text<-list (for yeahs ((rune text))
-                (hm (if (":%" .find? rune) #no)
-                    (if ("-." .find? rune) #\_)
-                    (if (= #\? rune)       #\c)
-                    (else                  rune)))))
+  (~.text (for yeahs ((rune text))
+            (hm (if (":%" .find? rune) #no)
+                (if ("-." .find? rune) #\_)
+                (if (= #\? rune)       #\c)
+                (else                  rune)))))

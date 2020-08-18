@@ -79,10 +79,10 @@
       (gen g)))
 
   (to (a-text g)
-    (text<-list ((a-list-of a-rune) g)))
+    (~.text ((a-list-of a-rune) g)))
 
   (to (a-printable-text g)
-    (text<-list ((a-list-of a-printable-rune) g)))
+    (~.text ((a-list-of a-printable-rune) g)))
 
   ;; TODO find a new name for this after the retupling
   (to ((a-tuple @gens) g)

@@ -18,7 +18,7 @@
     (to (~ .show sink)
       ;; TODO it'd be nice if format-tables could help here
       (for each! (((~ symbol bits) (tabulate tree)))
-        (sink .say "~d ~d\n" symbol (text<-list (each "01" bits)))))))
+        (sink .say "~d ~d\n" symbol ((each "01" bits) .text))))))
 
 (to (build-tree frequency-items)
   (surely frequency-items.some?)
