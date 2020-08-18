@@ -95,6 +95,8 @@
     (if (<= pad 0)
         list
         (chain (`(,padding) .repeat pad) list)))
+  (to ~.list
+    (as-list list))
   (to ~.array
     (array<-list list))
   (to (~ .sample-key chaos)
