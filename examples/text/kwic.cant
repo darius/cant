@@ -35,8 +35,8 @@
   (let map (!map<-))
   (for each! (((~ key value) items))
     ((map .get-set! key flexarray<-) .push! value))
-  (for each ((key map.keys))
-    (~ key ((map key) .values))))
+  (for each (((~ key accum) map.items))
+    (~ key accum.values)))
 
 ;; Under a heading for `word`, show each of its occurrences.
 (to (show-group (~ word occurrences))
