@@ -112,7 +112,7 @@
 
 ;; Return a symbol whose name is the concatenation of ATOMS.
 (to (concat-symbol @atoms)
-  (~.symbol ("" .join (each coerce-text atoms))))
+  ((text-by coerce-text atoms) .symbol))
 
 ;;XXX finish porting
 (let abbrevs

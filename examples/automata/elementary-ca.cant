@@ -14,8 +14,7 @@
      (step state))))
 
 (to (show bits)
-  (let line ((each "-*" bits) .text))
-  (out .displayln (line .center 79)))
+  (out .displayln ((text-by "-*" bits) .center 79)))
 
 ;; There are 2**8 possible elementary CA's. Return the update rule
 ;; for the given-numbered one.

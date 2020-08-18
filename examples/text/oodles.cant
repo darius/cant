@@ -13,8 +13,8 @@
   (out .displayln (fill expanded 72)))
 
 (to (expand-text text probability)
-  ("" .join (for each ((token (scan text)))
-              (expand token probability))))
+  (for text-by ((token (scan text)))
+    (expand token probability)))
 
 (to (expand token probability)
   (if (and (menu .maps? token) (chaos .probability probability 1000))

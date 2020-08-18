@@ -20,8 +20,7 @@
   (elf .modulo board.count))
 
 (to (digits<- n)
-  (for each ((rune n.text))
-    rune.text.number))
+  (each (:: it.text.number) n.text))
 
 (to (part-1)
   (let limit (+ input 10))
@@ -31,7 +30,7 @@
       (step!)
       (working)))
   (let digits (board .slice input))
-  ("" .join (each ~.text digits.values)))
+  (text-by -> digits))
 
 (to (show)
   (for each! (((~ i recipe) board.items))

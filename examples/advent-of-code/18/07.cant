@@ -96,7 +96,7 @@
               (for each ((w workers))
                 (if w (w 0) '-))
               jobs
-              ("" .join outbox.values))
+              (text-by -> outbox))
     (if (some itself workers) ;clumsy, I guess
         (ticking t.+ (assign (work {state workers jobs})))
         t)))

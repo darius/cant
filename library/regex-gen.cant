@@ -27,7 +27,7 @@
 (to ((either r s) Ns) ((r Ns) .union (s Ns)))
 
 (to (one-of runes)
-  (let set (~.range (each ~.text runes)))
+  (let set ((each ~.text runes) .range))
   (on (Ns)
     (if (Ns .maps? 1) set none)))
 

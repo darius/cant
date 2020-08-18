@@ -14,7 +14,7 @@
   (-> '("") (~ .repeat rows) ~.array))
 
 ;; Return text representing rune at column x.
-(to (render-rune rune x)
+(to (render-rune rune x)  ;TODO make this a rune method?
   (if rune.printable?
       rune.text
       ("\\x~02x" .format rune.code)))

@@ -88,6 +88,13 @@
   (map<-items (for each ((value values))
                 (~ (f value) value))))
 
+(to (text-by f xs)
+  ;; TODO zipped-list-transducer? (also for map-by etc.)
+  ;; TODO also delete when (f x) = #no?
+  ;;      (or make (#no .text) = ""? that's a bit much...)
+  ;; TODO inconsistent to auto-.values here and not elsewhere, isn't it?
+  ("" .join (each (:: ((f it) .text)) xs.values)))
+
 ;; List every way to pick one element from each of the arguments.
 ;; For example, (grid* '(a b) '(0 1)) = ((a 0) (a 1) (b 0) (b 1))
 ;; TODO return tuples instead?
@@ -236,7 +243,7 @@
     intercalate compound-key<- yeahs where split-on itself max min-by
     those !map-by compose those/lazy
     -> foldr/lazy gather chain/lazy sum-by tally-by zip setting<-map
-    gather/lazy method<- link/lazy map-by
+    gather/lazy method<- link/lazy map-by text-by
     hey max-by tally min union-over each/lazy map<-values mayhap
     grid* sum = link link? list? number? integer? symbol? cue? ;TODO rename cue? or rm it
     claim? rune? array? box? term? source? sink? zilch? box<-

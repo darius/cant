@@ -13,11 +13,10 @@
 
 (to (roman<-number n)
   (surely (< 0 n))
-  (~.text (for foldr ((digit n.digits) (roman '()))
-            (chain (each rune*10 roman) (runes<-digit digit)))))
+  (for foldr ((digit n.digits) (roman ""))
+    (chain (text-by rune*10 roman) (roman<-digit digit))))
 
-(let runes<-digit
-  (~.array (each ~.values (" I II III IV V VI VII VIII IX" .split " "))))
+(let roman<-digit (~.array (" I II III IV V VI VII VIII IX" .split " ")))
 (let rune*10 (map<-items (zip "IVXLC"
                               "XLCDM")))
 
