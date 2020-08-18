@@ -9,7 +9,7 @@
 
 ;; From stdin to stdout.
 (to (main _)
-  (kwic in.read-all.split-lines))
+  (kwic in.read-lines))
 
 ;; Write a sorted keyword-in-context index.
 (to (kwic lines)
