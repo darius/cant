@@ -14,12 +14,9 @@
 
 (to (expand-text text probability)
   (for text-by ((token (scan text)))
-    (expand token probability)))
-
-(to (expand token probability)
-  (if (and (menu .maps? token) (chaos .probability probability 1000))
-      (expand-text (menu token) ((* probability 4) .quotient 5))
-      token))
+    (if (and (menu .maps? token) (chaos .probability probability 1000))
+        (expand-text (menu token) ((* probability 4) .quotient 5))
+        token)))
 
 (let scan (like "{:letter+ '!'? | :skip}*"))
 
@@ -51,4 +48,4 @@
      ("garlic" "green and red lasagne in cheese")
      )))
 
-(export main expand-text expand)
+(export main expand-text)
