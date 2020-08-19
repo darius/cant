@@ -22,10 +22,11 @@
     (~.array (transpose (for each ((place (0 .till (2 .** n-check-bits))))
                           (pad (place .digits 2))))))
 
-  (to (parity m place)
+  (to (parity message place)
     ;; TODO like (zip m.values (taps place)) instead?
+    ;; TODO confusing with two different variables named `place`
     (-> (for yeahs (((~ place b) ((taps place) .items)))
-          (and (= b 1) (m place)))
+          (and (= b 1) (message place)))
         sum (~ .modulo 2)))
 
   (make basic-hamming-code
