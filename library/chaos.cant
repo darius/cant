@@ -6,6 +6,7 @@
 ;; (chaos .sample-count n) -> n'
 
 (let D 2147483647)
+(let D-as-float D.inexact)
 
 ;; Multiplicative congruential
 (to (park-miller-chaos<- seed)
@@ -23,11 +24,14 @@
       ;; XXX surely 0 < n <= D
       ((next) .modulo n))                ;XXX not quite fair sampling
     ;; TODO a trait for the remaining methods
+    (to ~.sample-unit-real
+      (/ (next) D-as-float))
     (to (~ .probability numerator denominator)
-      (< (chaos .sample-count denominator) numerator))))
-
-;; TODO (chaos .sample-fraction n d) -> #yes n/d of the time. better name: .probability ?
-;; TODO chaos-trait for methods like that. Or stick them into the number types.
+      (surely (<= 0 numerator denominator))
+      (< (chaos .sample-count denominator) numerator))
+    (to (~ .probability p)
+      (surely (<= 0 p 1))
+      (< chaos.sample-unit-real p))))
 
 (let chaos<- park-miller-chaos<-)
 (let chaos (chaos<- 1234567))

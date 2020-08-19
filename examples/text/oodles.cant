@@ -1,22 +1,21 @@
 ;; Ported from: _Metamagical Themas_ by Douglas Hofstadter, 
 
-;; N.B. expressing probabilities as a fraction of 1000, since we don't yet
-;; do floating point numbers.
-
 (import (use 'parson)    like)
 (import (use 'text-wrap) fill)
 
-(import (use 'chaos) chaos)         ;TODO pass it in
+(import (use 'chaos) chaos)             ;TODO pass it in
 
 (to (main `(,_ ,@words))
-  (let expanded (expand-text (" " .join words) 1000))
+  (let expanded (expand-text (" " .join words) 1))
   (out .displayln (fill expanded 72)))
 
 (to (expand-text text probability)
   (for text-by ((token (scan text)))
-    (if (and (menu .maps? token) (chaos .probability probability 1000))
-        (expand-text (menu token) ((* probability 4) .quotient 5))
+    (if (and (menu .maps? token) (chaos .probability probability))
+        (expand-text (menu token) (* shrink probability))
         token)))
+
+(let shrink (/ 4 5))                    ;TODO floating-point
 
 (let scan (like "{:letter+ '!'? | :skip}*"))
 
