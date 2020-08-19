@@ -23,8 +23,8 @@
                           (pad (place .digits 2))))))
 
   (to (parity message place)
-    (-> (for yeahs ((place-bit (taps place))
-                    (message-bit message.values)) 
+    (-> (for each ((place-bit (taps place))
+                   (message-bit message.values)) 
           (place-bit .and message-bit))
         sum (~ .modulo 2)))
 
