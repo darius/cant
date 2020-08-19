@@ -22,7 +22,7 @@
           immune-system.some?)
         (else
           ;; Fight a round.
-          (attacking (!map<-items (chain a1 a2))) ;TODO immutable?
+          (attacking (map<-items (chain a1 a2)))
           (for each! (((~ army groups) armies.items))
             (armies .set! army (those ~.alive? groups)))
           
@@ -75,7 +75,7 @@
              attack-damage attack-type initiative)
   (let n-units (box<- initial-n-units))
   (to (effective-power) (* n-units.^ attack-damage))
-  (surely (not (immunities .intersects? weaknesses)))  ; TODO method .disjoint?
+  (surely (immunities .disjoint? weaknesses))
   (let qualities
     (map<-items (chain (for each ((key immunities.keys)) (~ key 'immunity))
                        (for each ((key weaknesses.keys)) (~ key 'weakness)))))
