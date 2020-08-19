@@ -38,8 +38,7 @@
 
 (to (read-collection source)
   (let name source.read-line)
-  (let levels-text source.read-all)
-  (let grids (for each ((floor-plan (levels-text .split "\n\n")))
+  (let grids (for each ((floor-plan (source.read-all .split "\n\n")))
                (sokoban-grid<- (parse floor-plan))))
   (~ grids name))
 
@@ -52,7 +51,7 @@
 
 ;; The UI to a sequence of Sokoban levels.
 (to (play grids name level)
-  (let trails (~.array (each flexarray<- grids)))
+  (let trails ((each flexarray<- grids) .array))
 
   (let heading
     "Move with the arrow keys or HJKL. U to undo.
