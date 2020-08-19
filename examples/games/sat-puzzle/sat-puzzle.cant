@@ -120,16 +120,14 @@ Press Tab to cycle to the next game, Esc to quit.")
   (with-input-file dimacs-read filename))
 
 (to (dimacs-read source)
-  (begin reading ((clauses '()) (pending-clause '()))
-    (may (read source)
-      (be (? zilch?)
-        (problem<- (reverse (if pending-clause.none?
-                                clauses
-                                (link pending-clause clauses)))))
-      (be (? (:: ('(c p) .find? it)))  ;; TODO need an OR pattern
-        source.read-line
-        (reading clauses pending-clause))
-      (be 0
-        (reading (link pending-clause clauses) '()))
-      (be (? integer? n)
-        (reading clauses (link n pending-clause))))))
+  (problem<- (begin reading ()
+               (let clause (begin reading-clause ()
+                             (may (read source)
+                               (be (? zilch?) '())
+                               (be 0          '())
+                               (be (? (:: ('(c p) .find? it)))  ;; TODO need an OR pattern
+                                 source.read-line
+                                 (reading-clause))
+                               (be (? integer? n)
+                                 (link n (reading-clause))))))
+               (if clause.none? '() (link clause (reading))))))
