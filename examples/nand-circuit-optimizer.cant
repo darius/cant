@@ -13,7 +13,7 @@
     (else (oops "Not a power of 2" n))))
 
 (to (find-circuits wanted n-inputs max-gates)
-  (let inputs (~.array (tabulate-inputs n-inputs)))
+  (let inputs ((tabulate-inputs n-inputs) .array))
   (let mask (- (1 .<< (1 .<< n-inputs)) 1))
 
   (to (print-formula L-input R-input)
@@ -72,3 +72,4 @@
 (superopt "0110" 3)
 (superopt "1011" 3)
 ;;(superopt "0110" 4)
+;;(superopt "01100111" 6)
