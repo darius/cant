@@ -9,6 +9,7 @@
     (be `(,n) (queens n.number))
     (else     (out .say "Usage: ~d board-size\n" (args 0)))))
 
+;; If possible, place n queens on an n*n board with none attacking any other.
 (to (queens n)
   (may (satisfy-first (queens-problem n) 1)
     (be #no (out .display "none\n"))

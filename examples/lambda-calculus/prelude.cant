@@ -1,4 +1,4 @@
-;; Prelude, built-ins
+;; Prelude, built-ins -- a basic "standard library" for lambda calculus
 
 (to (build-prelude powers interpret invoke reply)
   (import powers out)

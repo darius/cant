@@ -1,4 +1,4 @@
-;; Tic-tac-toe game
+;; Tic-tac-toe game, between AIs and/or humans.
 
 (import (use 'memoize) memoize)
 (import ((use 'sturm) (export console))
@@ -15,15 +15,15 @@
           (err .say "Available players: ~d\n"
                     (" " .join (sort player-registry.keys)))
           (os-exit 1))))
-  (tty-ttt @`(,@players ,empty-grid))) ;TODO allow @arguments in non-final position in expressions?
+  (console-tic-tac-toe @`(,@players ,empty-grid))) ;TODO allow @arguments in non-final position in expressions?
 
 (to (quick-test)
-  (tic-tac-toe spock-play spock-play {grid 0o610 0o061}))
+  (tty-tic-tac-toe spock-play spock-play {grid 0o610 0o061}))
 
 
 ;; Text-stream interface
 
-(to (tic-tac-toe player opponent grid)
+(to (tty-tic-tac-toe player opponent grid)
   (out .say "~d\n\n" (show grid))
   (hm (when (won? grid)   (out .say "~d wins.\n" (last-to-move grid)))
       (when (drawn? grid) (out .say "A draw.\n"))
@@ -33,23 +33,23 @@
                     player.name (whose-move grid))
 ;           (get-key)                    ;XXX
            )
-        (tic-tac-toe opponent player (player grid)))))
+        (tty-tic-tac-toe opponent player (player grid)))))
 
 
-;; Graphical TTY interface
+;; Console-mode interface
 
-(to (tty-ttt player opponent grid)
+(to (console-tic-tac-toe player opponent grid)
   (for cbreak-mode ()
-    (tty-playing player opponent grid)))
+    (console-playing player opponent grid)))
 
-(to (tty-playing player opponent grid)
+(to (console-playing player opponent grid)
 
   (to (continue)
     (may (player grid)
       (be #no
         (refresh ("~d (~d) resigns." .format player.name (whose-move grid))))
       (be next-grid
-        (tty-playing opponent player next-grid))))
+        (console-playing opponent player next-grid))))
 
   (to (refresh message)
     (ttt-render (show grid) message))

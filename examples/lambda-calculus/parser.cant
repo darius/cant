@@ -1,4 +1,4 @@
-;; Parsing
+;; Parsing from a Lisp s-expression syntax for lambda calculus
 
 (to (seq-parse lexps)
   (seq-parsing lexps lexps))

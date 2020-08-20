@@ -1,3 +1,5 @@
+;; Chess between computer strategies and/or a human.
+;; See chess-play.cant for a main program.
 ;; Unfinished port of one-day-i-will-play-chess
 
 (to (play-chess out white-strategy black-strategy)

@@ -13,8 +13,7 @@
                  "examples/games/sat-puzzle/subsetsum_random.dimacs"))
 
 (to (main _)
-  (let games (~.array (each (compose game<- dimacs-load)
-                            filenames)))
+  (let games (~.array (each (compose game<- dimacs-load) filenames)))
   (for cbreak-mode ()
     (play games)))
 
