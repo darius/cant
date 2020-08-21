@@ -28,7 +28,7 @@
   (hm (if xs.none? ys)
       (if ys.none? xs)
       (if (<= (key<- xs.first) (key<- ys.first))
-          (link xs.first (merge-by key<- xs.rest ys)))
+        (link xs.first (merge-by key<- xs.rest ys)))
       (else
         (link ys.first (merge-by key<- xs ys.rest)))))
 
