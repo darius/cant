@@ -12,9 +12,10 @@
 
 (to (sorted? xs)
   (or xs.none?
-      xs.rest.none?
-      (and (<= xs.first xs.rest.first)
-           (sorted? xs.rest))))
+      (begin checking ((x xs.first) (xs xs.rest))
+        (or xs.none?
+            (and (<= x xs.first)
+                 (checking xs.first xs.rest))))))
 
 (to (sort-by key<- sequence)
   ;; Merge sort
