@@ -20,12 +20,9 @@
   ;; Merge sort
   (begin sorting ((seq sequence))
     (begin splitting ((seq seq) (xs '()) (ys '()))
-      (hm (unless seq.none?
-            (splitting seq.rest ys (link seq.first xs)))
-          (when xs.none?
-            ys)
-          (else
-            (merge-by key<- (sorting xs) (sorting ys)))))))
+      (hm (if seq.some? (splitting seq.rest ys (link seq.first xs)))
+          (if xs.none?  ys) ; (already sorted since ys.count <= 1 in this case)
+          (else         (merge-by key<- (sorting xs) (sorting ys)))))))
 
 (to (merge-by key<- xs ys)
   (hm (if xs.none? ys)
