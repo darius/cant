@@ -1,11 +1,9 @@
 ;; Hamming codes
 ;; from Hamming *The art of doing science and engineering*
-;; unfinished
 
 ;; The simplest of these codes add parity checks to a message to
 ;; correct a single substitution error.
-;; TODO The same principles can extend to detecting or correcting more
-;; substitution errors.
+;; TODO The same principles can extend to detecting a double error.
 
 (to (basic-hamming-code<- n-check-bits)
   (surely (< 0 n-check-bits))
@@ -120,20 +118,11 @@
       (let dcc (c .decode corrupt))
       (surely (= dcc message)))
 
-    ;; Should report all 2-bit errors.
-    ;; TODO
+    ;; Should report all 2-bit errors (well, not the basic-hamming-code, those don't, so TODO)
     out.newline
     ))
 
 (test-exhaustively)
-
-
-;; Property tests
-
-(import ((use 'squickcheck) (export out))
-  all should
-  a-list-of a-count)
-
 
 
 ;; TODO:
