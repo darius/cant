@@ -55,7 +55,7 @@
                       (parity m place)))
       (let correction (1 .<< (count<-digits syndrome 2)))
       (let corrected (encoded-n .xor correction)) ;; N.B. place 0 (meaning 'correct') is skipped below
-      (for yeahs (((~ power bit) (-> (corrected .digits 2) pad ~.items ~.rest)))
+      (for yeahs (((~ power bit) (-> (corrected .digits 2) (~ .pad-right n-encoded-bits.+ 0) ~.items ~.rest)))
         (and (not (power-of-2? power))
              bit)))))
 
@@ -65,7 +65,7 @@
 (to (bit? x)
   (and (count? x) (<= x 1)))
 
-(to (count<-digits digits base)         ;N.B. little-endian
+(to (count<-digits digits base)         ;N.B. little-endian. TODO add to stdlib?
   (for foldr ((digit digits) (total 0))
     (+ (* base total) digit)))
 
@@ -94,6 +94,31 @@
   (out .say "corrupt:  ~w\n" corrupt-1)
   (out .say "decode -> ~w\n" (c .decode corrupt-1))
   (surely (= m (c .decode corrupt-1))))
+
+
+;; More systematic
+
+(to (test-exhaustively)
+  (let c (basic-hamming-code<- 3))
+  (let m-length c.n-message-bits)
+  (for each! ((m (0 .till (1 .<< m-length))))   ;; TODO itertools-style generator for subsets?
+    (let message ((m .digits 2) .pad-right m-length 0))  ;; TODO (m .digits 2 m-length)
+
+    (let cm (c .encode message))
+    (out .say "encode ~w -> ~w\n" message cm)
+
+    ;; decode of encode should = itself
+    (let dcm (c .decode cm))
+    (out .say "decode -> ~w\n" dcm)
+    (surely (= message dcm))
+
+    ;; should correct all 1-bit errors
+    ;; TODO
+    
+    out.newline
+    ))
+
+(test-exhaustively)
 
 
 ;; Property tests
