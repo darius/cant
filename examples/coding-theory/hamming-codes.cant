@@ -101,20 +101,28 @@
 (to (test-exhaustively)
   (let c (basic-hamming-code<- 3))
   (let m-length c.n-message-bits)
+  (let e-length (+ m-length 3))
   (for each! ((m (0 .till (1 .<< m-length))))   ;; TODO itertools-style generator for subsets?
     (let message ((m .digits 2) .pad-right m-length 0))  ;; TODO (m .digits 2 m-length)
 
     (let cm (c .encode message))
     (out .say "encode ~w -> ~w\n" message cm)
 
-    ;; decode of encode should = itself
+    ;; Decode of encode should = message.
     (let dcm (c .decode cm))
     (out .say "decode -> ~w\n" dcm)
     (surely (= message dcm))
 
-    ;; should correct all 1-bit errors
+    ;; Should correct all 1-bit errors.
+    (for each! ((place e-length.till))
+      (let corrupted (for each (((~ b bit) cm.items))
+                       (bit .xor ((= place b) .count))))
+      (let dcc (c .decode corrupted))
+      (out .say "corrupted: ~w -> ~w\n" corrupted dcc)
+      (surely (= dcc message)))
+
+    ;; Should report all 2-bit errors.
     ;; TODO
-    
     out.newline
     ))
 
