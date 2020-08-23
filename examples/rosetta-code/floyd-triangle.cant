@@ -13,8 +13,8 @@
       (loop r.+ (+ i r))))
   (let widths (each ~.count rows.last))
   (for each! ((row rows.values))
-    (out .displayln (" " .join (for each (((~ col text) row.items))
-                                 (text .pad-left (widths col)))))))
-
+    (out .displayln (" " .join (for each (((~ text width) (zip .ragged row widths)))
+                                 (text .pad-left width))))))
+    
 (floyd-triangle 5)
 (floyd-triangle 14)

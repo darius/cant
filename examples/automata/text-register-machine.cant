@@ -86,15 +86,7 @@
                (flip lines2))))
 
 (to (flip texts)
-  (each ~.text (transpose-padded texts #\space)))
-
-;; Like `transpose` but handling different-length rows.
-(to (transpose-padded lists padding)
-  (begin zipping ((lists lists))
-    (if (every ~.none? lists)
-        '()
-        (link (each (~ .get 0 padding) lists)
-              (zipping (each (~ .slice 1) lists))))))
+  (each ~.text (zip .padded #\space @texts)))
 
 ;; Smoke test
 (to (main _)

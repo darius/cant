@@ -47,7 +47,22 @@
           (else (link (~ xs.first ys.first)
                       (zipping xs.rest ys.rest))))))
   (to (~ @lists)
-    (each tuple<-list (transpose lists))))
+    (each tuple<-list (transpose lists)))
+  ;; Like (zip @lists), but clipping the lists to the length of the shortest:
+  ;; TODO move .ragged to zipped-list-transducer? and define zip in terms of it?
+  (to (~ .ragged @lists) ;; TODO better name .clip ? nah...
+    (begin zipping ((rows lists))
+      (if (some ~.none? rows)
+          '()
+          (link (tuple<-list (each ~.first rows))
+                (zipping (each ~.rest rows))))))
+  ;; Like (zip @lists), but right-padding the lists to match the longest:
+  (to (~ .padded padding @lists)
+    (begin zipping ((rows lists))
+      (if (every ~.none? rows)
+          '()
+          (link (each (~ .get 0 padding) rows)
+                (zipping (each (~ .slice 1) rows)))))))
 
 ;; XXX float contagion
 (make min {extending left-folding-operation}
