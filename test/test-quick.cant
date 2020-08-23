@@ -70,6 +70,8 @@
 
 (((loud-use "../examples/brainfuck/brainfuck") 'main) '(ignore))
 
+(loud-use "../examples/coding-theory/lzw-compression")
+
 (loud-use "../examples/exercises-and-puzzles/max-path-sum")
 (loud-use "../examples/exercises-and-puzzles/sicp1")
 (loud-use "../examples/exercises-and-puzzles/sicp2")
@@ -81,6 +83,5 @@
 (loud-use "../examples/lambda-calculus/lambdaterp")
 
 (loud-use "../examples/rosetta-code/floyd-triangle")
-(loud-use "../examples/rosetta-code/lzw-compression")
 
 (((loud-use "../examples/text/oodles") 'main) '(ignore "tomatoes"))
