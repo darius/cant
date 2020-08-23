@@ -5,7 +5,7 @@
   (to (~ .resolve! variable value)
     (__setting-resolve! setting variable value))
   (to (~ .extend variables values)
-    (__setting-extend variables values setting))
+    (__setting-extend variables (array<-list values) setting))
   (to (~ .extend-promises variables)
     (__setting-extend-promises setting variables))
   (to ~.extend-mutable
@@ -19,7 +19,7 @@
     (for each! ((name variables))
       (setting .resolve! name (resolve name))))
   (to (~ .extend-map map) ;TODO just call this one .extend, and drop the other?
-    (setting .extend map.keys map.values.array))
+    (setting .extend map.keys map.values))
   (to (~ .selfie sink)
     (sink .display "#<setting ")
     (sink .write setting.variables)   ;TODO a more concise/useful list

@@ -744,8 +744,8 @@ around to them.
 Lisp is known for `eval`; Cant's equivalent needs an explicit argument for the
 'setting' for evaluation: `(cant .play expression setting)`.
 
-You can create one with e.g. `(empty-setting .extend '(x y) [42
-137])`. There are others presupplied: 
+You can create one with e.g. `(empty-setting .extend '(x y) '(42
+137))`. There are others presupplied: 
  * `computational-setting` defines most names from this guide, but
 leaving out any capabilities.
  * `full-powered-setting` adds the capabilities, like `in` and `out`.

@@ -62,7 +62,7 @@
           (push (extract-datum focus)))
         (be 'value
           (let setting (main-interactive-setting ;TODO parameterize
-                        .extend '(*focus*) [focus]))
+                        .extend '(*focus*) `(,focus)))
           (out .print (cant .play (read in) setting))
           (continue))
         (be (? count?)
