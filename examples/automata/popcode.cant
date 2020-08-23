@@ -1,0 +1,196 @@
+;; A stack machine, sort of Joy-like, from
+;; https://billwadge.wordpress.com/2020/07/09/popcode-a-concatenative-language-with-looping/
+
+;; TODO better names for sop-foo
+
+(let trace? (box<- #no))
+
+(to (run code)
+  (~.run (vm<- code code '() '() prim-defs.copy (!map<-))))
+
+(to (vm<- reg block cstack stack defs store)
+  (make vm
+
+    (to ~.run
+      (when trace?.^ vm.trace)
+      (may vm.step
+        (be #no    stack)
+        (be new-vm new-vm.run)))
+
+    (to ~.step
+      (if reg.none?
+          (and cstack.some? (vm .break stack))
+          (may reg.first
+            (be (? symbol? name)
+              (may (defs .get name)
+                (be (? list? new-block) (vm .nest new-block stack))
+                (be #no                 (oops "Undefined name" name))
+                (be prim                (prim vm))))
+            (be (? self-evaluating? constant)
+              (vm .stack-step (link constant stack)))
+            (be `(quote ,constant)
+              (vm .stack-step (link constant stack))))))
+      
+    (to (~ .stack-step new-stack)
+      (vm<- reg.rest block cstack new-stack defs store))
+
+    (to (~ .nest new-block new-stack)
+      (vm<- new-block new-block (link reg.rest block cstack) new-stack defs store))
+
+    (to (~ .break new-stack)
+      (let (link old-reg old-block old-cstack) cstack)
+      (vm<- old-reg old-block old-cstack new-stack defs store))
+
+    (to ~.defs  defs)
+    (to ~.stack stack)
+    
+    ;; Stack operation
+    (to (~ .sop f)
+      (vm .stack-step (f stack)))
+    
+    ;; Stack operation, n-ary to 0
+    (to (~ .sop-0 n f)
+      (let (~ args rest) (pop-n n stack))
+      (f @args)
+      (vm .stack-step rest))
+
+    ;; Stack operation, n-ary to 1
+    (to (~ .sop-1 n f)
+      (let (~ args rest) (pop-n n stack))
+      (vm .stack-step (link (f @args) rest)))
+
+    (to ~.repeat-step
+      (let (link n new-block new-stack) stack)
+      (surely (count? n))
+      (surely (block? new-block))
+      (hm (if (= 0 n) (vm .stack-step new-stack))
+          (else (let new-cstack (link (link (Q new-block) n.- reg) block cstack))
+                (vm<- new-block new-block new-cstack new-stack defs store))))
+
+    (to ~.for-step
+      (let (link values new-block new-stack) stack)
+      (surely (list? values))
+      (surely (block? new-block))
+      (may values
+        (be '() (vm .stack-step new-stack))
+        (be (link first rest)
+          (let new-cstack (link (link (Q new-block) (Q rest) reg) block cstack))
+          (vm<- new-block new-block new-cstack (link first new-stack) defs store))))
+
+    (to ~.do-step
+      (let (link new-block new-stack) stack)
+      (vm .nest new-block new-stack))
+
+    (to ~.loop-step
+      (vm<- block block cstack stack defs store))
+
+    (to ~.loopc-step
+      (let (link top new-stack) stack)
+      (hm (if top (vm<- block block cstack new-stack defs store))
+          (else (vm .stack-step new-stack))))
+
+    (to ~.if-step
+      (let (link on-no on-yeah test new-stack) stack)
+      (let new-block (if test on-yeah on-no))
+      (let new-cstack (link reg.rest block cstack))
+      (vm<- new-block new-block new-cstack new-stack defs store))
+    
+    (to ~.fetch-step
+      (let (link at new-stack) stack)
+      (vm .stack-step (link (store at) new-stack)))
+
+    (to ~.store-step
+      (let (link at value new-stack) stack)
+      (store .set! at value)
+      (vm .stack-step new-stack))
+
+    (to ~.trace
+      (out .say "trace ~w\t~w\n" reg (reverse stack)))
+    ))
+
+(to (Q x) `(quote ,x))
+(to (block? x) (list? x))
+
+(to (pop-n n stack)
+  (begin popping ((n n) (stack stack) (args '()))
+    (if (= n 0)
+        (~ args stack)
+        (popping n.- stack.rest (link stack.first args)))))
+
+
+;; Primitives
+
+(to (def-prim name f)
+  (prim-defs .set! name f))
+(let prim-defs (!map<-))
+
+(def-prim 'repeat ~.repeat-step)
+(def-prim 'for    ~.for-step)
+(def-prim 'do     ~.do-step)
+(def-prim 'loop   ~.loop-step)
+(def-prim 'loopc  ~.loopc-step)
+(def-prim 'if     ~.if-step)
+(def-prim 'fetch  ~.fetch-step)
+(def-prim 'store  ~.store-step)
+
+(def-prim 'break (on (vm) (vm .break vm.stack)))
+(def-prim 'breakc (on (vm)
+                    (let (link top new-stack) vm.stack)
+                    (hm (if top (vm .break new-stack))
+                        (else (vm .stack-step new-stack)))))
+
+(def-prim 'def (on (vm)
+                 (let (link name value new-stack) vm.stack)
+                 (vm.defs .set! name value)
+                 (vm .stack-step new-stack)))
+
+(to (sop-0 n f) (on (vm) (vm .sop-0 n f)))
+(def-prim 'write   (sop-0 1 (:: (out .display it))))
+(def-prim 'writeln (sop-0 1 (:: (out .displayln it))))
+
+(to (sop-1 n f) (on (vm) (vm .sop-1 n f)))
+(def-prim '+ (sop-1 2 +))
+(def-prim '- (sop-1 2 -))
+(def-prim '* (sop-1 2 *))
+(def-prim '> (sop-1 2 >))
+
+(to (sop f) (on (vm) (vm .sop f)))
+(def-prim 'pop  (sop ~.rest))
+(def-prim 'dup  (sop (on (s) (link s.first s))))
+(def-prim 'swap (sop (on (s) (link (s 1) (s 0) s.rest.rest))))
+
+;; 2 npush rotates the top of the stack two levels deep
+(def-prim 'npush (sop (on ((link n top ss))
+                        (chain (ss .slice 0 n) (link top (ss .slice n))))))
+;; 1 unpush rotates to the top the value one level deep
+(def-prim 'unpush (sop (on ((link n ss))
+                         (link (ss n) (remove-nth ss n)))))
+
+;; TODO a list method?
+(to (remove-nth xs n)
+  (chain (xs .slice 0 n) (xs .slice n.+)))
+
+
+;; Let's try it out
+
+(to (smoke-test)
+  ;; Examples from the web page
+  (run '(2 3 + writeln))
+  (run '( 42  dup 0 > '() '(0 swap -) if  writeln))
+  (run '(-42  dup 0 > '() '(0 swap -) if  writeln))
+  ;; (The following line tweaked from the original, to get the right answer.)
+  (run '(0 1 '(dup 2 npush dup * + 1 unpush dup 99 > breakc 1 + loop) do pop writeln))
+;;  (run '(1 '(dup write 1 + ", " write loop) do)) ;; infinite loop
+  (run '('(dup 0 > '() '(0 swap -) if) 'abs def   -137 abs writeln))
+  (run '('("Happy Birthday" writeln) 3 repeat))
+  (run '('("Happy Birthday, " write writeln) '(Tom Dick Harry) for))
+  (run '("hey" 'x store  'x fetch writeln))
+  (run '('(dup fetch 1 + swap store) 'inc def  137 'n store  'n inc  'n fetch writeln))
+
+  ;; Sum of the first 100 squares, using fetch and store. (Was missing 'do' in the original.)
+  (run '(0 'sumsq store
+         1 '(dup 100 > breakc dup dup * 'sumsq fetch + 'sumsq store 1 + loop) do pop
+         'sumsq fetch writeln))
+  )
+
+(smoke-test)
