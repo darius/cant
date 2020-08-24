@@ -547,7 +547,7 @@
           (let new-width (+ (- rune #\0)
                             (if width (* 10 width) 0)))
           (parsing sink t.rest pad sign new-width args))
-        (be #\x  ; hex number, XXX works wrong on negative numbers
+        (be #\x  ; hex number, XXX works 'wrong' on negative numbers if you want 2's-complement unsigned
           (maybe-pad sink pad sign width
                      (~ .display ((text<-number args.first 16) .lowercase)))
           (scanning sink t.rest args.rest))

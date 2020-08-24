@@ -126,9 +126,7 @@
               "};")))
 
 (to (c-int-literal n)
-  (if (count? n)
-      ("0x~d" .format (text<-number n 16)) ;TODO ~h format or something
-      (text<-number n)))
+  ((if (count? n) "0x~x" "~d") .format n))
 
 (to (c-binop operator cv1 cv2)
   ("(~d ~d ~d)" .format cv1 operator cv2))
