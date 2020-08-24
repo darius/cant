@@ -13,7 +13,7 @@
   (let model (!map<-))
   (for each! ((filename argv.rest))
     (train model (tokenize (with-input-file ~.read-all filename))))
-  (unless model.none?
+  (when model.some?
     (let tokens (spew (random-chaos<- system-randomness-source<-) model start))
     (out .display (fill (" " .join tokens) ;TODO fill sort of splits it back -- add a function to text-wrap that wouldn't need to?
                         72))
