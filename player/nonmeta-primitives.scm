@@ -224,6 +224,7 @@
     (exact<-inexact ,inexact->exact)  ;XXX rename or something
     (floor ,floor)
     (ceiling ,ceiling)
+    (round ,round)
     (not ,not)
     (assoc ,assoc)                      ;XXX doesn't use cant=?
     (sqrt ,sqrt)
