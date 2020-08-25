@@ -1,0 +1,218 @@
+;; Generate a Miasma assembler in a choice of backend languages.
+;; This needs to be run from the main Cant directory because of some
+;; hard-coded paths. XXX
+
+(import (use "registers") register-number)
+(import (use "parse") the-specs set-up-spec-table)
+
+(to (main args)
+  (let backend (may args.rest
+                 (be '("c") c-backend)
+                 (be '("python") python-backend)
+                 (else (err .say "usage: ~d backend (where backend = 'c' or 'python')\n" (args 0))
+                       (os-exit 1))))
+  (set-up-spec-table)
+  (out .displayln (gen-assembler backend)))
+
+
+;; B for language backend
+(to (gen-assembler B)
+
+  (to (gen spec)
+    (let vars (make-variable-list (sum-by count-variables spec.params)))
+    ;; The .parenthesize call is an ugly accommodation to the fact
+    ;; that the C backend happens to generate macros. It doesn't
+    ;; logically belong at this point in the code, but rather in the
+    ;; backend. TODO
+    (let body (gen-body (each (:: (B .parenthesize it)) vars)
+                        spec.params))
+    (B .gen-definition spec.mnemonic.text vars body))
+
+  (to (make-variable-list n)
+    (each (:: (B .gen-variable it)) (1 .thru n)))
+  
+  (to (gen-body vars params)
+    (begin walking ((stmts '()) (vars vars) (params params))
+      (if params.none?
+          stmts
+          ((walk-code params.first gen-code gen-exp)
+           vars
+           (on (vars2 cv) 
+             (walking (link cv stmts) vars2 params.rest))))))
+
+  (to (gen-code code)
+    (may code
+      (be {bytes signed? count exp}
+        (for bind ((cv exp))
+          (let name ("push_~d~w" .format (if signed? "i" "u") (* 8 count)))
+          (unit (B .gen-exp-stmt (B .gen-call (B .gen-op-name name) cv)))))
+      (be {swap-args code}
+        (swapping code))
+      (be {mod-r/m e1 e2}
+        (for bind ((cv1 e1))
+          (for bind ((cv2 e2))
+            (unit (B .gen-exp-stmt (B .gen-call "mod_rm" cv1 cv2))))))))
+
+  (to (gen-exp exp)
+    (may exp
+      (be {literal n}
+        (unit (B .gen-integer n)))
+      (be {op operator e1 e2}
+        (for bind ((cv1 e1))
+          (for bind ((cv2 e2))
+            (unit (B .gen-binop operator.text cv1 cv2)))))
+      (be {hereafter}
+        (unit B.hereafter))
+      (be {arg @_}
+        (eating unit))))
+
+  ("\n" .join `(,B.prelude
+                ,(B .gen-enum (sort register-number.items))
+                ,B.spacer
+                ,@(each gen (sort-by ~.mnemonic the-specs.values))
+                ,B.postlude)))
+
+(to (count-variables code)
+
+  (to (on-code code)
+    (may code
+      (be {bytes _ _ exp}
+        exp)
+      (be {swap-args code}
+        code)
+      (be {mod-r/m e1 e2}
+        (for bind ((cv1 e1))
+          (for bind ((cv2 e2))
+            (unit (+ cv1 cv2)))))))
+
+  (to (on-exp exp)
+    (may exp
+      (be {literal _}
+        (unit 0))
+      (be {op _ e1 e2}
+        (for bind ((cv1 e1))
+          (for bind ((cv2 e2))
+            (unit (+ cv1 cv2)))))
+      (be {hereafter}
+        (unit 0))
+      (be {arg @_}
+        (unit 1))))
+
+  ((walk-code code on-code on-exp) '_ (on (_ count) count)))
+
+(to (walk-code code code-f exp-f)
+  (begin walking ((code code))
+    (may code
+      (be {bytes signedness arg1 arg2}
+        (let signed? (may signedness (be 'i #yes) (be 'u #no)))
+        (code-f {bytes signed? arg1 (walk-exp arg2 exp-f)}))
+      (be {swap-args arg}
+        (code-f {swap-args (walking arg)}))
+      (be {mod-r/m arg1 arg2}
+        (code-f {mod-r/m (walk-exp arg1 exp-f)
+                         (walk-exp arg2 exp-f)})))))
+
+(to (walk-exp exp exp-f)
+  (begin walking ((exp exp))
+    (may exp
+      (be (? integer?)         (exp-f {literal exp}))
+      (be {hereafter}          (exp-f exp))
+      (be {arg @_}             (exp-f exp))
+      (be {op rator arg1 arg2} (exp-f {op rator (walking arg1) (walking arg2)})))))
+
+(to ((unit v) args k)
+  (k args v))
+
+(to ((bind m2-proc m1) state k)
+  (m1 state (on (state1 v1)
+              ((m2-proc v1) state1 k))))
+
+(to ((swapping m) `(,z ,y ,@rest) k)
+  (m `(,y ,z ,@rest) k))
+
+(to ((eating m-proc) `(,z ,@rest) k)
+  ((m-proc z) rest k))
+
+
+;; Backends
+
+(make-trait c-like-backend-trait backend
+  (to ~.prelude
+    "")
+  (to ~.postlude
+    "")
+  (to ~.spacer
+    "")
+  (to (~ .gen-op-name name)
+    name)
+  (to (~ .gen-variable n)
+    ("v~w" .format n))
+  (to (~ .parenthesize e)
+    ("(~d)" .format e))
+  (to (~ .gen-exp-stmt exp)
+    (chain exp ";"))
+  (to (~ .gen-call name @exps)
+    ("~d(~d)" .format name (", " .join exps)))
+  (to (~ .gen-binop op exp1 exp2)
+    ("(~d ~d ~d)" .format exp1 op exp2))
+  (to (~ .gen-integer n)
+    ((if (count? n) "0x~x" "~d") .format n))
+  (to ~.hereafter
+    "hereafter"))
+  
+;; Return `text`, but munging out any runes that are used in our 
+;; mnemonics but aren't legal in C or Python identifiers.
+(to (bowdlerize text)
+  (for text-by ((rune text))
+    (hm (if (":%" .find? rune) "")
+        (if ("-." .find? rune) #\_)
+        (if (= #\? rune)       #\c)
+        (else                  rune))))
+
+(to (indent lines)
+  (each (:: (chain "    " it)) lines))
+
+
+;; C backend
+
+(make c-backend {extending c-like-backend-trait}
+  (to ~.prelude
+    (chain "/* Generated by Miasma */\n\n"
+           (with-input-file ~.read-all "examples/miasma-x86-toolkit/c/asm_stuff.h")))
+  (to (~ .gen-op-name name)
+    (chain "x86_" name))
+  (to (~ .gen-enum items)
+    ("" .join `("enum {\n"
+                ,@(for each (((~ sym val) items))
+                    ("  ~d = ~d,\n"
+                     .format (bowdlerize sym.text) (c-backend .gen-integer val)))
+                "};")))
+  (to (~ .gen-definition name vars stmts)
+    (let c-name (chain "x86_" (bowdlerize name)))
+    (" \\\n" .join `(,("#define ~d(~d)" .format c-name (", " .join vars))
+                     "  do {"
+                     "    const u8 *hereafter = x86_bptr;"
+                     ,@(indent stmts)
+                     "  } while (0)"))))
+
+
+;; Python backend
+
+(make python-backend {extending c-like-backend-trait}
+  (to ~.prelude
+    (chain "# Generated by Miasma\n\n"
+           (with-input-file ~.read-all "examples/miasma-x86-toolkit/python/x86_stub.py")))
+  (to (~ .gen-enum items)
+    ("\n" .join (for each (((~ sym val) items))
+                  (chain (bowdlerize sym.text)
+                         " = "
+                         (python-backend .gen-integer val)))))
+  (to (~ .gen-definition name vars stmts)
+    ("\n" .join `(,("def ~d(~d):" .format (bowdlerize name) (", " .join vars))
+                  "    global buf"
+                  "    hereafter = len(buf)"
+                  ,@(indent stmts))))
+  (to (~ .parenthesize e)
+    e) ; (Not bothering to parenthesize since our definitions aren't macros.)
+  (to (~ .gen-exp-stmt exp)
+    exp))

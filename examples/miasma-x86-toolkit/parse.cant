@@ -43,7 +43,7 @@
 (let the-specs (!map<-))
 
 ;; Load the specs from the i386 instruction table.
-(to (setup-spec-table)
+(to (set-up-spec-table)
   the-specs.clear!
   (load-table (with-input-file read-all "examples/miasma-x86-toolkit/tables/i386.scm")))
 
@@ -206,4 +206,4 @@
 (to (Ex-param extended-opcode operand)
   `{mod-r/m ,extended-opcode {arg ,operand}})
 
-(export the-specs setup-spec-table)
+(export the-specs set-up-spec-table)
