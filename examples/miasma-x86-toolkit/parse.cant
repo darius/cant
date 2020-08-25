@@ -1,3 +1,5 @@
+;; Parse the x86 instruction tables from tables/ into a map of spec objects.
+
 (import (use "registers") register?)
 
 ;; Instruction specs

@@ -1,3 +1,5 @@
+;; Collections of x86 registers.
+
 (to (legal-register? x size)
   ((possible-registers size) .find? x))
 
