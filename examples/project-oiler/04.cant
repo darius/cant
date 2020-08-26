@@ -1,8 +1,7 @@
 (to (oiler4 lo bound)
-  (max @(for gather ((i (lo .till bound))) ;TODO use pairs<-
-          (for yeahs ((j (i .till bound)))
-            (let p (* i j))
-            (and (palindrome? p.text) p)))))
+  (max @(for yeahs ((`(,i ,j) ((lo .till bound) .combinations 2)))
+          (let p (* i j))
+          (and (palindrome? p.text) p))))
 
 (to (palindrome? text)
   (<=> text (reverse text)))

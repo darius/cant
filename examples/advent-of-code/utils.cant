@@ -38,18 +38,6 @@
 (to (detect keep? xs)
   ((those/lazy keep? xs) .first))
 
-;; TODO I reimplemented this in 18/25.scm
-(to (pairs<- xs)
-  (begin outer ((outers xs))
-    (unless outers.none?
-      (let x1 outers.first)
-      (begin inner ((inners outers.rest))
-        (if inners.none?
-            (outer outers.rest)
-            (do (let x2 inners.first)
-                (link/lazy `(,x1 ,x2)
-                           (: (inner inners.rest)))))))))
-
 (to (yeahs/lazy f xs)
   (foldr/lazy (on (x z-thunk)
                 (if (let fx (f x))
@@ -101,7 +89,7 @@
   `(,(min @ns) ,(max @ns)))
 
 (export
-  cycle scanl/lazy detect pairs<- yeahs/lazy 
+  cycle scanl/lazy detect yeahs/lazy 
   duplicates<- deletions<-
   chain-lines all-mins-by average neighbors-8<-
   vector+ vector- manhattan-distance<-

@@ -11,10 +11,9 @@
 
 (to (constellate ps)
   (let sets (partitioning<- ps))
-  (for each! ((`(,p ,q) (unordered-pairs<- ps)))
-;    (out .print `(,p ,q)))
-    (when (<= (manhattan-distance<- p q) 3)
-      (sets .join! p q)))
+  (for each! ((pair (ps .combinations 2)))
+    (when (<= (manhattan-distance<- @pair) 3)
+      (sets .join! @pair)))
   sets)
 
 ;; Union/find on disjoint sets
@@ -44,14 +43,6 @@
       (let representatives (each chase elements))
       representatives.range.count)
     ))
-
-(to (unordered-pairs<- ps)
-  (if ps.none?
-      '()
-      (do (let p0 ps.first)
-          (chain (for each ((p1 ps.rest))
-                   `(,p0 ,p1))
-                 (unordered-pairs<- ps.rest)))))
 
 
 (out .display "\nPart 1\n")

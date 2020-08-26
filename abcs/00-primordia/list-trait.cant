@@ -105,6 +105,17 @@
     (chaos .sample-count list.count))
   (to (~ .alter alter!)                 ;; TODO an experiment
     (~.values (hey list.array alter!)))
+  (to (~ .combinations n)   ;; Ways to pick n of my elements. TODO lazy, name, map-trait version?
+    ;; TODO generate tuples instead of lists?
+    (surely (count? n))
+    (begin generating ((n n) (nxs list.count) (xs list))
+      (hm (if (< nxs n) '())
+          (if (= n 0)   '(()))
+          ;; (if (= nxs n) (list<- xs))   ;; an optimization, but does it actually help?
+          (else (chain (hide (let x xs.first)
+                             (for each ((ys (generating n.- nxs.- xs.rest)))
+                               (link x ys)))
+                       (generating n nxs.- xs.rest))))))
   (to ~.maybe  ;; TODO an experiment TODO could be defined on maps in general too
     (if list.none?
         #no
