@@ -20,12 +20,6 @@
   (for each! ((i array.keys))
     (array .set! i value)))
 
-(to (cycle xs)
-  (begin cycling ((ys xs))
-    (if ys.none?
-        (cycling xs)
-        (link/lazy ys.first (: (cycling ys.rest))))))
-
 (to (scanl/lazy f z xs)
   (begin scanning ((z z) (xs xs))
     (link/lazy z (: (if xs.none?
@@ -89,7 +83,7 @@
   `(,(min @ns) ,(max @ns)))
 
 (export
-  cycle scanl/lazy detect yeahs/lazy 
+  scanl/lazy detect yeahs/lazy 
   duplicates<- deletions<-
   chain-lines all-mins-by average neighbors-8<-
   vector+ vector- manhattan-distance<-

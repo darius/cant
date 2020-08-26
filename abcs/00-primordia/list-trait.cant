@@ -116,6 +116,11 @@
                              (for each ((ys (generating n.- nxs.- xs.rest)))
                                (link x ys)))
                        (generating n nxs.- xs.rest))))))
+  (to ~.cycle
+    (begin cycling ((xs list))
+      (if xs.none?
+          (cycling list)
+          (link/lazy xs.first (: (cycling xs.rest))))))
   (to ~.maybe  ;; TODO an experiment TODO could be defined on maps in general too
     (if list.none?
         #no
