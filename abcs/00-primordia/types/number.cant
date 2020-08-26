@@ -55,10 +55,7 @@
         (else (oops "Bad base" base))))
   (to ~.! ;; factorial
     (surely (count? me))  ;; TODO gamma function
-    (begin ((n me) (p 1))
-      (may n
-        (be 0 p)
-        (else (loop (- n 1) (* n p))))))
+    (foldl * 1 (1 .thru me)))
   (to (~ .choose k)   ;; TODO how about (n .! k) as a name?
     (surely (count? me))
     (surely (count? k))
