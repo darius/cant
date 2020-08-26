@@ -17,6 +17,7 @@
                   "test/partner-test.squirm"
                   "test/quasiquote-test.squirm"
                   "test/recur-test.squirm"
+                  "test/silly.squirm"
                   "test/throw-test.squirm"
                   "test/timeout-test.squirm"
                   ))
