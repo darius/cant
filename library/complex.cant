@@ -30,8 +30,8 @@
 (to (c/ c1 c2)
   (c* c1 (reciprocal c2)))
 
-(to (reciprocal c)
-  (r*c (/ 1 (c-abs^2 c))
+(to (reciprocal c)   ;;TODO call this (c/ c) ?
+  (r*c (/ (c-abs^2 c))
        (conjugate c)))
 
 ;; TODO fancier syntax for 'export' to handle this. Or just plain map literals.
