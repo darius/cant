@@ -7,7 +7,6 @@
   (cbreak-mode interact))
 
 (to (interact)
-  ;;(show 0 0 "(Start typing...)")
   (render "(Start typing...)")
   (let strokes (flexarray<- (get-key)))
   (let smoother (smoother<- 0))
