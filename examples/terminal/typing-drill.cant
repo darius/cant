@@ -7,29 +7,60 @@
   (cbreak-mode interact))
 
 (to (interact)
-  (show 0 "(Start typing...)")
+  ;;(show 0 0 "(Start typing...)")
+  (render "(Start typing...)")
   (let strokes (flexarray<- (get-key)))
+  (let smoother (smoother<- 0))
   (let start (nano-now))
   (begin typing ()
-    (show (/ (- (nano-now) start) 1000000000) strokes.text)
+    (let now (/ (- (nano-now) start)
+                1000000000))
+    (show now (smoother .rate-at now) strokes.text)
     ;; XXX polling/sleeping with in.ready? sucks, but it's
     ;; supported by the underlying Scheme.
     (may (and in.ready? (get-key))
-      (be 'esc
-        'done)
+      (be 'esc)
       (be ?key
         (may ?key
-          (be #no        (nanosleep 50000000))  ; 1/20 sec
-          (be 'backspace (unless strokes.none? strokes.pop!))
-          (be (? rune?)  (strokes .push! ?key))
+          (be #no
+            (nanosleep 50000000))  ; 1/20 sec
+          (be 'backspace
+            (when strokes.some? strokes.pop!))
+          (be (? rune?)
+            (smoother .add-at now 1)
+            (strokes .push! ?key))
           (else))
         (typing)))))
 
-(to (show t body)
+;; TODO update the wpm estimates less often than every frame
+(to (show t recent-rate body)
   (let cps (if (or (= t 0) body.none?)
                0
                (/ body.count.- t)))
-  (let wpm (/ (* cps 60) 5))
-  (render [("~w seconds  ~w words/minute" .format t.floor wpm.round)
-           "   (Hit control-X to quit.)\n\n"
+  (let wpm        (* wpm/cps cps))
+  (let wpm-recent (* wpm/cps recent-rate))
+  (render [("Words/minute        ~3w seconds        (Hit control-X to quit.)\n"
+            .format t.floor)
+           ("  lately:  ~3w\n  overall: ~3w\n\n"
+            .format wpm-recent.round.exact wpm.round.exact)
            body cursor]))
+
+(let wpm/cps (/ 60 5))
+
+;; Average impulses over time into a smoothed recent rate.
+(to (smoother<- start-time)
+  (let last-impulse (box<- start-time))
+  (let rate (box<- 1))
+  (make smoother
+    (to (~ .rate-at time)
+      (* rate.^ (decay-factor (- time last-impulse.^))))
+    (to (~ .add-at time amount)
+      (surely (<= last-impulse.^ time))
+      (rate .^= (+ (smoother .rate-at time) (/ amount timescale)))
+      (last-impulse .^= time)
+      rate.^)))
+
+;; Discount events older than about `timescale` seconds ago.
+(let timescale (2 .inexact))
+(to (decay-factor interval)
+  (~.exp (- (/ interval timescale))))
