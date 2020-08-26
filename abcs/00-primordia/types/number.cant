@@ -53,6 +53,16 @@
                   (do (let (~ q r) (n ./mod moduli.first)))
                   (else (link r (converting q moduli.rest))))))
         (else (oops "Bad base" base))))
+  (to ~.! ;; factorial
+    (surely (count? me))  ;; TODO gamma function
+    (begin ((n me) (p 1))
+      (may n
+        (be 0 p)
+        (else (loop (- n 1) (* n p))))))
+  (to (~ .choose k)   ;; TODO how about (n .! k) as a name?
+    (surely (count? me))
+    (surely (count? k))
+    (me.! .quotient (* k.! ((- me k) .!))))  ;; TODO more efficient code
   ;; XXX sketchy support for 32-bit word ops:
   (to (~ .u+ a)        (__u+ me a))
   (to (~ .u- a)        (__u- me a))
