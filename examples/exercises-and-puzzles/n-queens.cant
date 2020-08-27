@@ -1,8 +1,7 @@
-;; The N-queens problem as a BDD.
+;; The N-queens problem as a binary decision diagram.
 
 (import (use 'bdd)
-  bdd-and bdd-or satisfy-first
-  lit0 lit1 build-choice)
+  satisfy-first conjoin disjoin match-map)
 
 (to (main args)
   (may args.rest
@@ -13,12 +12,12 @@
 (to (queens n)
   (may (satisfy-first (queens-problem n) 1)
     (be #no (out .display "none\n"))
-    (be env (print-board n env))))
+    (be map (print-board n map))))
 
-(to (print-board n env)
+(to (print-board n map)
   (for each! ((row (board<- n)))
     (for each! ((var row))
-      (out .say "~d " (".Q" (env var))))
+      (out .say "~d " (".Q" (map var))))
     out.newline))
 
 (to (queens-problem n)
@@ -26,41 +25,26 @@
              (disjoin (for each ((c n.till))
                         (place-queen n r c))))))
 
-(to (conjoin nodes) (foldr1 bdd-and nodes))
-(to (disjoin nodes) (foldr1 bdd-or  nodes))
-
 (to (place-queen n r c)
 
-  (let env (!map<-))
+  (let map (!map<-))
 
   (to (exclude rr cc)
     (when (and (<= 0 rr n.-) (<= 0 cc n.-))
-      (env .set! (queen n rr cc) #no)))
-  
+      (map .set! (queen n rr cc) #no)))
+
   (for each! ((cc n.till))
     (exclude r cc))
-
   (for each! ((rr n.till))
     (exclude rr c))
-
   (for each! ((dd ((- n.-) .till n))) ; diagonals
     (exclude (+ r dd) (+ c dd))
     (exclude (+ r dd) (- c dd))
     (exclude (- r dd) (+ c dd))
     (exclude (- r dd) (- c dd)))
+  (map .set! (queen n r c) #yes) ; (Overlaps and overrides the above no's)
 
-  (env .set! (queen n r c) #yes) ; (Overlaps and overrides the above no's)
-
-  (match-env env))
-
-;; Return a BDD that evaluates to 1 just when every variable in env
-;; has its given value.
-(to (match-env env)                 ;TODO move this to bdd.scm?
-  (for foldl ((tree lit1)
-              ((~ var value) (sort env.items {reverse})))
-    (if value
-        (build-choice var lit0 tree)
-        (build-choice var tree lit0))))
+  (match-map map))
 
 ;; The variable for a queen at (row r, column c) in an n*n board.
 (to (queen n r c)
@@ -69,8 +53,7 @@
 ;; Return a 2-d array of distinct variables: each means there's a
 ;; queen at its position. Row/column numbers start from 0.
 (to (board<- n)
-  (to (start-row r) (+ 2 (* n r)))
   (for each ((r n.till))
-    ((start-row r) .till (start-row r.+))))
+    ((queen n r 0) .till (queen n r.+ 0))))
 
 (export queens queens-problem print-board)

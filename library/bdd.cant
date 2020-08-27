@@ -110,7 +110,26 @@
           (env .set! (ranks node) 1)
           (walking (if1s node))))))
 
-(export satisfy-first build-choice bdd-and bdd-or lit0 lit1 constant<- bdd-evaluate)
+
+;; Conveniences
+
+;; TODO just make bdd-and/bdd-or n-ary?
+(to (conjoin nodes) (foldr1 bdd-and nodes))
+(to (disjoin nodes) (foldr1 bdd-or  nodes))
+
+;; Return a BDD that evaluates to 1 just when every variable in env
+;; has its given value.
+(to (match-map map)
+  (for foldl ((tree lit1)
+              ((~ var value) (sort map.items {reverse})))
+    (if value
+        (build-choice var lit0 tree)
+        (build-choice var tree lit0))))
+
+
+(export
+  satisfy-first build-choice bdd-and bdd-or lit0 lit1 constant<- bdd-evaluate
+  conjoin disjoin match-map)
 ;; TODO export more, rename
 ;; XXX why is build-choice exported? well, you need to explicitly create the variable,
 ;;       though this interface sucks: 1. make-choice is better

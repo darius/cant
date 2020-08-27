@@ -367,7 +367,7 @@
             (transpose (each ~.rest rows)))))
 
 ;; zipped-list-transducer extends a unary list transducer into an n-ary one.
-;; E.g. (each f xs ys) = (each (:: (f @it)) (zip xs ys))
+;; E.g. (each f xs ys) = (each (on (x y) (f x y)) (zip xs ys))
 (make-trait zipped-list-transducer transducer
   (to (~ f @lists)
     (for transducer ((args (transpose lists)))
