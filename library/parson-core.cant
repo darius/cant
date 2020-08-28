@@ -73,20 +73,18 @@
 ;; (either p1 ... pn): a parser that succeeds just when one of its
 ;; arguments does, trying them in order.
 (make either {extending right-folding-operation}
-  (to (~ p q)
-    (on (text far i vals)
-      ((p text far i vals) .else q i vals)))
-  (to (~)
-    fail))
+  (to (~ p q) (on (text far i vals)
+                ((p text far i vals) .else q i vals)))
+  (to (~ p) p)
+  (to (~) fail))
 
 ;; (then p1 ... pn): a parser that succeeds just when all of p1..pn
 ;; do, each one starting where the last left off.
 (make then {extending right-folding-operation}
-  (to (~ p q)
-    (on (text far i vals)
-      ((p text far i vals) .continue q)))
-  (to (~)
-    empty))
+  (to (~ p q) (on (text far i vals)
+                ((p text far i vals) .continue q)))
+  (to (~ p) p)
+  (to (~) empty))
 
 ;; (feed-list f): a parser that replaces the vals with a singleton, (f vals).
 (to ((feed-list f) text far i vals)
