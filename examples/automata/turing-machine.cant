@@ -28,7 +28,7 @@
                    (be (~ acts _) acts)))
   (let before (show-squares (reverse L)))
   (out .say "~d ~d ~d\n" before (show-squares `(,h)) (show-squares R))
-  (out .say "~d ~w ~w\n" (" " .repeat before.count) state next-acts))
+  (out .say "~*d ~w ~w\n" before.count "" state next-acts))
 
 (to (show-squares squares)
   (" " .join (each ~.text squares)))
