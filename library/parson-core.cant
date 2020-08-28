@@ -75,7 +75,6 @@
 (make either {extending right-folding-operation}
   (to (~ p q) (on (text far i vals)
                 ((p text far i vals) .else q i vals)))
-  (to (~ p) p)
   (to (~) fail))
 
 ;; (then p1 ... pn): a parser that succeeds just when all of p1..pn
@@ -83,7 +82,6 @@
 (make then {extending right-folding-operation}
   (to (~ p q) (on (text far i vals)
                 ((p text far i vals) .continue q)))
-  (to (~ p) p)
   (to (~) empty))
 
 ;; (feed-list f): a parser that replaces the vals with a singleton, (f vals).
