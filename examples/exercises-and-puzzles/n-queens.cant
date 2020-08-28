@@ -1,7 +1,7 @@
 ;; The N-queens problem as a binary decision diagram.
 
 (import (use 'bdd)
-  satisfy-first conjoin disjoin match-map)
+  satisfy-first bdd-and bdd-or match-map)
 
 (to (main args)
   (may args.rest
@@ -21,9 +21,9 @@
     out.newline))
 
 (to (queens-problem n)
-  (conjoin (for each ((r n.till))
-             (disjoin (for each ((c n.till))
-                        (place-queen n r c))))))
+  (bdd-and @(for each ((r n.till))
+              (bdd-or @(for each ((c n.till))
+                         (place-queen n r c))))))
 
 (to (place-queen n r c)
 

@@ -2,8 +2,15 @@
 ;; Explained (in Python) at
 ;; https://codewords.recurse.com/issues/four/the-language-of-choice
 
-(to (bdd-and f g) (do-choose g lit0 f)) ;TODO rename do-choose
-(to (bdd-or  f g) (do-choose g f lit1))
+(make bdd-and {extending right-folding-operation}
+  (to (~ f g) (do-choose g lit0 f)) ;TODO rename do-choose
+  (to (~) lit1))
+;;(to (bdd-and f g) (do-choose g lit0 f)) ;TODO rename do-choose
+
+(make bdd-or {extending right-folding-operation}
+  (to (~ f g) (do-choose g f lit1))
+  (to (~) lit0))
+;;(to (bdd-or  f g) (do-choose g f lit1))
 
 (let lit0 0)
 (let lit1 1)
@@ -113,10 +120,6 @@
 
 ;; Conveniences
 
-;; TODO just make bdd-and/bdd-or n-ary?
-(to (conjoin nodes) (foldr1 bdd-and nodes))
-(to (disjoin nodes) (foldr1 bdd-or  nodes))
-
 ;; Return a BDD that evaluates to 1 just when every variable in map
 ;; has its given value.
 ;; TODO ugly inconsistency: this takes a map of variable -> claim
@@ -132,7 +135,7 @@
 
 (export
   satisfy-first build-choice bdd-and bdd-or lit0 lit1 constant<- bdd-evaluate
-  conjoin disjoin match-map)
+  match-map)
 ;; TODO export more, rename
 ;; XXX why is build-choice exported? well, you need to explicitly create the variable,
 ;;       though this interface sucks: 1. make-choice is better
