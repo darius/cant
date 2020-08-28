@@ -217,7 +217,7 @@
 
 ;; An amenity for concise code for the simplest parsers.
 (to (like template)
-  ;; TODO inefficient/error-prone to build a string and then parse it
+  ;; TODO inefficient/error-prone to build a text and then parse it
   (let grammar (grammar<- (chain "loop: " template " :end.\n"
                                  "_ = :whitespace*.")))
   (let peg ((grammar (map<-)) 'loop))
