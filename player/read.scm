@@ -271,6 +271,8 @@
 		(cond
 		 ((eof-object? c)
 		  (read-error port "Unexpected EOF in escape sequence"))
+                 ((char=? c #\newline)
+                  (loop prev-chars))
 		 ((assv c '((#\\ . #\\)
                             (#\" . #\")
                             (#\n . #\newline)

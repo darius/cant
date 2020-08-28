@@ -1,7 +1,7 @@
 (import (use "../examples/games/sokoban") read-collection)
 
-(let (~ grids name) (read-collection (text-source<-
-"Microban, by David Skinner (just #2)
+(let (~ grids name) (read-collection (text-source<- "\
+Microban, by David Skinner (just #2)
  #######
  #     #
  # .o. #

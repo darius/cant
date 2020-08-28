@@ -17,8 +17,8 @@
   (for cbreak-mode ()
     (play games)))
 
-(let instructions 
-"To win, put a * in every column. (Columns with no *'s are yellow.)
+(let instructions "\
+To win, put a * in every column. (Columns with no *'s are yellow.)
 Flip O's and *'s in a row by typing its key (listed on the left and right edges).
 Press the spacebar to mark/unmark the last row you flipped (as a memory aid).
 Press Tab to cycle to the next game, Esc to quit.")
