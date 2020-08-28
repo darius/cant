@@ -216,7 +216,7 @@
   skeletons)
 
 ;; An amenity for concise code for the simplest parsers.
-(to (like template)
+(to (like template) ;; TODO optional subs argument(s)
   ;; TODO inefficient/error-prone to build a text and then parse it
   (let grammar (grammar<- (chain "loop: " template " :end.\n"
                                  "_ = :whitespace*.")))
