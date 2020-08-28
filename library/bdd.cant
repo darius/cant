@@ -5,12 +5,10 @@
 (make bdd-and {extending right-folding-operation}
   (to (~ f g) (do-choose g lit0 f)) ;TODO rename do-choose
   (to (~) lit1))
-;;(to (bdd-and f g) (do-choose g lit0 f)) ;TODO rename do-choose
 
 (make bdd-or {extending right-folding-operation}
   (to (~ f g) (do-choose g f lit1))
   (to (~) lit0))
-;;(to (bdd-or  f g) (do-choose g f lit1))
 
 (let lit0 0)
 (let lit1 1)
