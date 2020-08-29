@@ -1,5 +1,5 @@
 (import (use 'parson-core)
-  invert capture either then feed-list feed push seclude delay maybe many at-least-1
+  deny capture either then feed-list feed push seclude delay maybe many at-least-1
   fail empty skip-1 take-1 any-1 skip-any-1 lit-1 lit)
 
 (to (try p text)
@@ -27,7 +27,7 @@
 (let sexpr
   (hide
    (let subexpr (delay (: sexpr)))
-   (let comment (then (lit-1 #\;) (many (then (invert (lit-1 #\newline))
+   (let comment (then (lit-1 #\;) (many (then (deny (lit-1 #\newline))
                                               skip-any-1))))
    (let __ (many (either (skip-1 ~.whitespace?)
                          comment)))

@@ -32,7 +32,7 @@
   (make failure
     (to (~ .continue _)     failure)
     (to (~ .else p j vs)    (p text far j vs))
-    (to ~.invert            empty)
+    (to ~.deny              empty)
     (to (~ .capture-from _) failure)
     (to (~ .prefix _)       failure)
     (to ~.leftovers         (oops "Parse failed" failure.postmortem))
@@ -49,7 +49,7 @@
   (make success
     (to (~ .continue p)       (p text far i vals))
     (to (~ .else _ _ _)       success)
-    (to ~.invert              fail)
+    (to ~.deny                fail)
     (to (~ .capture-from j)   (empty text far i `(,@vals ,(text .slice j i))))
     (to (~ .prefix pre-vals)  (empty text far i (chain pre-vals vals)))
     (to ~.leftovers           i)
@@ -59,11 +59,11 @@
     (to ~.display
       ("~w ~w" .format (text .slice i) vals))))
 
-;; (invert p): a parser that succeeds from a state just when p fails
+;; (deny p): a parser that succeeds from a state just when p fails
 ;; from the same state. Any parsing by p becomes mere lookahead; it
 ;; won't affect any of the result, not even the 'far' point.
-(to ((invert p) text far i vals)
-  (((p text far i vals) .invert) text far i vals))
+(to ((deny p) text far i vals)
+  (((p text far i vals) .deny) text far i vals))
 
 ;; Return a parser that acts like p, except it appends a value: the
 ;; text that p matched.
@@ -160,6 +160,10 @@
 
 ;; Derived combinators
 
+;; Succeed iff p does, but without advancing.
+(to (peek p)
+  (deny (deny p)))
+
 ;; Like (skip-1 ok?), but appending the one-element sequence (one-rune
 ;; subtext) to the vals.
 (to (take-1 ok?)
@@ -169,7 +173,7 @@
 (let skip-any-1 (skip-1 (:: #yes)))
 
 ;; Succeed just at the end of the input.
-(let end (invert skip-any-1))
+(let end (deny skip-any-1))
 
 ;; E.g. (lit-1 #\x) advances past exactly "x", or fails.
 (to (lit-1 my-rune)
@@ -199,7 +203,7 @@
   (to (~ p separator)
     (then p (many (then separator p)))))
 
-(export invert capture either then feed-list feed push seclude delay
-        maybe many at-least-1
+(export deny capture either then feed-list feed push seclude delay
+        maybe many at-least-1 peek
         fail empty end skip-1 position take-1 any-1 skip-any-1 lit-1 lit drop
         parse)
