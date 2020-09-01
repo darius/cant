@@ -84,24 +84,6 @@
                 ((p text far i vals) .continue q)))
   (to (~) empty))
 
-;; (feed-list f): a parser that replaces the vals with a singleton, (f vals).
-(to ((feed-list f) text far i vals)
-  (empty text far i `(,(f vals))))
-
-;; The same, but for a multi-argument f.
-(to (feed f)
-  (feed-list (on (vals) (f @vals))))
-
-;; TODO Python Parson also has alter(f), trace(message), others?
-
-;; Succeed, clearing away any vals.
-(to (drop text far i vals)
-  (empty text far i '()))
-
-;; Succeed, appending `constant` to the vals.
-(to ((push constant) text far i vals)
-  (empty text far i `(,@vals ,constant)))
-
 ;; (seclude p): parse as p, but with () in place of the incoming
 ;; values. If p succeeds, producing new values, then succeed overall,
 ;; producing the chain of the incoming values plus the new ones.
@@ -146,13 +128,13 @@
   (on (text far i vals)
     (p.^ text far i vals)))
 
-;; Advance one place if possible -- i.e. we're short of the end, and
-;; ok? is true of the element at the current place (normally, the rune
-;; we're looking at).
-(to ((skip-1 ok?) text far i vals)
-  (if (and (text .maps? i) (ok? (text i)))
-      (empty text (max far i.+) i.+ vals)
-      (fail text far i vals)))
+;; Succeed iff (?advance text i) is a yeah, the new i afterwards.
+(to ((match ?advance) text far i vals)
+  (may (?advance text i)
+    (be #no (fail text far i vals))
+    (be i1
+      (surely (<= i i1 text.count))
+      (empty text (max far i1) i1 vals))))
 
 (to (position text far i vals)
   (empty text far i `(,@vals ,i)))
@@ -163,8 +145,40 @@
 (to ((dynamic f) text far i vals)
   ((f @vals) text far i '()))
 
+;; Update the values by 'f'.
+;; TODO better name?
+(to ((alter f) text far i vals)
+  (empty text far i (f vals)))
+
+;; The next few could be defined in terms of 'alter', but wouldn't be much shorter:
+
+;; (feed-list f): a parser that replaces the vals with a singleton, (f vals).
+(to ((feed-list f) text far i vals)
+  (empty text far i `(,(f vals))))
+
+;; The same, but for a multi-argument f.
+(to ((feed f) text far i vals)
+  (empty text far i `(,(f @vals))))
+
+;; Succeed, clearing away any vals.
+(to (drop text far i vals)
+  (empty text far i '()))
+
+;; Succeed, appending `constant` to the vals.
+(to ((push constant) text far i vals)
+  (empty text far i `(,@vals ,constant)))
+
+;; TODO Python Parson also has trace(message), others?
+
 
 ;; Derived combinators
+
+;; Advance one place if possible -- i.e. we're short of the end, and
+;; ok? is true of the element at the current place (normally, the rune
+;; we're looking at).
+(to (skip-1 ok?)
+  (match (on (text i)
+           (and (text .maps? i) (ok? (text i)) i.+))))
 
 ;; Succeed iff p does, but without advancing.
 (to (peek p)
@@ -180,7 +194,7 @@
   (capture (skip-1 ok?)))
 
 (let any-1      (take-1 (:: #yes)))
-(let skip-any-1 (skip-1 (:: #yes)))
+(let skip-any-1 (match (on (text i) (and (text .maps? i) i.+))))
 
 ;; Succeed just at the end of the input.
 (let end (nix skip-any-1))
@@ -190,8 +204,14 @@
   (skip-1 (:: (= my-rune it)))) ;TODO I think <=> in place of = would catch some bugs in client code
 
 ;; E.g. (lit "hello") advances past exactly "hello", or fails.
-(to (lit text)
-  (then @(each lit-1 text)))
+(to (lit literal)
+  (if (<= literal.count 1) ;; Splitting into these two cases should be more efficient
+      (then @(each lit-1 literal))
+      (match (on (text i)
+               (and (text .maps? i)
+                    (do (let j (+ i literal.count))
+                        (and (= literal (text .slice i j))
+                             j)))))))
 
 ;; Always succeed, but preferably after p.
 (to (maybe p)
@@ -213,7 +233,8 @@
   (to (~ p separator)
     (then p (many (then separator p)))))
 
-(export nix capture either then feed-list feed push seclude delay
-        maybe many at-least-1 peek dynamic seek
-        fail empty end skip-1 position take-1 any-1 skip-any-1 lit-1 lit drop
+(export fail empty nix capture either then seclude delay match position
+        dynamic alter feed-list feed drop push
+        skip-1 peek seek take-1 any-1 skip-any-1 end lit-1 lit
+        maybe many at-least-1 
         parse)
