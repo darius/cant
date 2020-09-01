@@ -32,7 +32,7 @@
   (make failure
     (to (~ .continue _)     failure)
     (to (~ .else p j vs)    (p text far j vs))
-    (to ~.deny              empty)
+    (to ~.nix               empty)
     (to (~ .capture-from _) failure)
     (to (~ .prefix _)       failure)
     (to ~.leftovers         (oops "Parse failed" failure.postmortem))
@@ -49,7 +49,7 @@
   (make success
     (to (~ .continue p)       (p text far i vals))
     (to (~ .else _ _ _)       success)
-    (to ~.deny                fail)
+    (to ~.nix                 fail)
     (to (~ .capture-from j)   (empty text far i `(,@vals ,(text .slice j i))))
     (to (~ .prefix pre-vals)  (empty text far i (chain pre-vals vals)))
     (to ~.leftovers           i)
@@ -59,11 +59,11 @@
     (to ~.display
       ("~w ~w" .format (text .slice i) vals))))
 
-;; (deny p): a parser that succeeds from a state just when p fails
+;; (nix p): a parser that succeeds from a state just when p fails
 ;; from the same state. Any parsing by p becomes mere lookahead; it
 ;; won't affect any of the result, not even the 'far' point.
-(to ((deny p) text far i vals)
-  (((p text far i vals) .deny) text far i vals))
+(to ((nix p) text far i vals)
+  (((p text far i vals) .nix) text far i vals))
 
 ;; Return a parser that acts like p, except it appends a value: the
 ;; text that p matched.
@@ -162,7 +162,7 @@
 
 ;; Succeed iff p does, but without advancing.
 (to (peek p)
-  (deny (deny p)))
+  (nix (nix p)))
 
 ;; Like (skip-1 ok?), but appending the one-element sequence (one-rune
 ;; subtext) to the vals.
@@ -173,7 +173,7 @@
 (let skip-any-1 (skip-1 (:: #yes)))
 
 ;; Succeed just at the end of the input.
-(let end (deny skip-any-1))
+(let end (nix skip-any-1))
 
 ;; E.g. (lit-1 #\x) advances past exactly "x", or fails.
 (to (lit-1 my-rune)
@@ -203,7 +203,7 @@
   (to (~ p separator)
     (then p (many (then separator p)))))
 
-(export deny capture either then feed-list feed push seclude delay
+(export nix capture either then feed-list feed push seclude delay
         maybe many at-least-1 peek
         fail empty end skip-1 position take-1 any-1 skip-any-1 lit-1 lit drop
         parse)

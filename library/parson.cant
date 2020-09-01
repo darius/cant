@@ -2,7 +2,7 @@
 ;; XXX leaving out regexes, fnord, anonymous start
 
 (import (use 'parson-core)
-  deny capture either then feed-list feed push seclude delay
+  nix capture either then feed-list feed push seclude delay
   maybe many at-least-1
   fail empty end skip-1 position take-1 any-1 skip-any-1 lit-1 lit drop
   parse)
@@ -61,7 +61,7 @@
 (to (name-rune? rune) (or rune.letter?       (= rune #\_)))
 (to (word-rune? rune) (or rune.alphanumeric? (= rune #\_)))
 
-(let word-boundary (deny (skip-1 word-rune?)))
+(let word-boundary (nix (skip-1 word-rune?)))
 
 (let skip-line
   (delay (: (either (lit-1 #\newline)
@@ -90,7 +90,7 @@
 (to (text-quoted-by q-rune)
   (let q (lit-1 q-rune))
   (let quoted-rune
-    (then (either (lit-1 #\\) (deny q))
+    (then (either (lit-1 #\\) (nix q))
           any-1))
   (seclude
    (then q (many quoted-rune) q __
@@ -110,7 +110,7 @@
 
 (let factor
   (delay (: (seclude
-             (either (then (lit "!") __ factor (lift deny))
+             (either (then (lit "!") __ factor (lift nix))
                      (then primary
                            (either (then (lit "**") __ primary (lift many))
                                    (then (lit "++") __ primary (lift at-least-1))
