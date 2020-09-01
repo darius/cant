@@ -131,11 +131,13 @@
 ;; Succeed iff (?advance text i) is a yeah, the new i afterwards.
 (to ((match ?advance) text far i vals)
   (may (?advance text i)
-    (be #no (fail text far i vals))
+    (be #no
+      (fail text far i vals))
     (be i1
       (surely (<= i i1 text.count))
       (empty text (max far i1) i1 vals))))
 
+;; Push our current position in the text.
 (to (position text far i vals)
   (empty text far i `(,@vals ,i)))
 
@@ -145,8 +147,7 @@
 (to ((dynamic f) text far i vals)
   ((f @vals) text far i '()))
 
-;; Update the values by 'f'.
-;; TODO better name?
+;; Update the values by 'f'.  TODO better name?
 (to ((alter f) text far i vals)
   (empty text far i (f vals)))
 
@@ -173,13 +174,6 @@
 
 ;; Derived combinators
 
-;; Advance one place if possible -- i.e. we're short of the end, and
-;; ok? is true of the element at the current place (normally, the rune
-;; we're looking at).
-(to (skip-1 ok?)
-  (match (on (text i)
-           (and (text .maps? i) (ok? (text i)) i.+))))
-
 ;; Succeed iff p does, but without advancing.
 (to (peek p)
   (nix (nix p)))
@@ -188,16 +182,24 @@
 (to (seek p)
   (let seek-p (either p (then skip-any-1 (delay (: seek-p))))))
 
+;; Advance one place if possible -- i.e. we're short of the end, and
+;; ok? is true of the element at the current place (normally, the rune
+;; we're looking at).
+(to (skip-1 ok?)
+  (match (on (text i)
+           (and (text .maps? i) (ok? (text i)) i.+))))
+
+(let skip-any-1 (match (on (text i) (and (text .maps? i) i.+))))
+
+;; Succeed just at the end of the input.
+(let end (nix skip-any-1))
+
 ;; Like (skip-1 ok?), but appending the one-element sequence (one-rune
 ;; subtext) to the vals.
 (to (take-1 ok?)
   (capture (skip-1 ok?)))
 
-(let any-1      (take-1 (:: #yes)))
-(let skip-any-1 (match (on (text i) (and (text .maps? i) i.+))))
-
-;; Succeed just at the end of the input.
-(let end (nix skip-any-1))
+(let any-1 (capture skip-any-1))
 
 ;; E.g. (lit-1 #\x) advances past exactly "x", or fails.
 (to (lit-1 my-rune)
@@ -210,7 +212,7 @@
       (match (on (text i)
                (and (text .maps? i)
                     (do (let j (+ i literal.count))
-                        (and (= literal (text .slice i j))
+                        (and (= literal (text .slice i j)) ; (see above about <=>)
                              j)))))))
 
 ;; Always succeed, but preferably after p.
@@ -235,6 +237,6 @@
 
 (export fail empty nix capture either then seclude delay match position
         dynamic alter feed-list feed drop push
-        skip-1 peek seek take-1 any-1 skip-any-1 end lit-1 lit
+        peek seek skip-1 skip-any-1 end take-1 any-1 lit-1 lit
         maybe many at-least-1 
         parse)
