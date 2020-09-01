@@ -3,7 +3,7 @@
 
 (import (use 'parson-core)
   nix capture either then feed-list feed push seclude delay
-  maybe many at-least-1
+  maybe many at-least-1 seek
   fail empty end skip-1 position take-1 any-1 skip-any-1 lit-1 lit drop
   parse)
 
@@ -63,10 +63,7 @@
 
 (let word-boundary (nix (skip-1 word-rune?)))
 
-(let skip-line
-  (delay (: (either (lit-1 #\newline)
-                    (then skip-any-1 skip-line)
-                    empty))))
+(let skip-line (seek (either (lit-1 #\newline) end)))
 
 (let whitespace
   (at-least-1 (either (skip-1 ~.whitespace?)

@@ -157,12 +157,22 @@
 (to (position text far i vals)
   (empty text far i `(,@vals ,i)))
 
+;; Pop the values and give them to f to choose a peg to match with.
+;; This serves about the same purpose as monadic bind in other
+;; parser-combinator libraries.
+(to ((dynamic f) text far i vals)
+  ((f @vals) text far i '()))
+
 
 ;; Derived combinators
 
 ;; Succeed iff p does, but without advancing.
 (to (peek p)
   (nix (nix p)))
+
+;; Match p in the first position possible after skipping forward 0 or more places.
+(to (seek p)
+  (let seek-p (either p (then skip-any-1 (delay (: seek-p))))))
 
 ;; Like (skip-1 ok?), but appending the one-element sequence (one-rune
 ;; subtext) to the vals.
@@ -204,6 +214,6 @@
     (then p (many (then separator p)))))
 
 (export nix capture either then feed-list feed push seclude delay
-        maybe many at-least-1 peek
+        maybe many at-least-1 peek dynamic seek
         fail empty end skip-1 position take-1 any-1 skip-any-1 lit-1 lit drop
         parse)
