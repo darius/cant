@@ -1,0 +1,190 @@
+;; A crude ripoff of a video game
+;; Based on sturm/glutton.py
+
+;; TODO sturm really needs an optional debug frame
+;; TODO reverse-video for the glutton, as a highlighting? intensify when in eat-ghosts mode?
+;; TODO when eating ghosts, should we eat them all at once if possible?
+;; TODO maybe keep all agents in a position->agent !map, and don't materialize them in the grid datastructure
+;; TODO try using grid-2d for the grid
+;; TODO notice victory condition
+;; TODO fix: hardwired path to maze file
+;; TODO it's too slow
+
+(import (use 'chaos)
+  chaos<-)
+
+(import ((use 'sturm) (export console))
+  cbreak-mode get-key render
+  ;; TODO don't need 'em all
+  bold underlined blinking inverted unstyled
+  black red green yellow blue magenta cyan white
+  on-black on-red on-green on-yellow on-blue on-magenta on-cyan on-white)
+
+(let chaos (chaos<- 1234567))
+
+(let power-pill-interval 12000)  ;; in msec
+
+(let maze (for with-input-file ((source "examples/games/glutton/glutton.maze"))
+            source.read-lines.rest))
+
+(to (main _)
+  (cbreak-mode run))
+
+(to (run)
+  (let grid ((each ~.array maze) .array))
+  (let glutton (glutton<- #\< (find-glutton maze)))
+  (glutton .place-on! grid)
+
+  (let eating-ghosts-deadline (box<- #no))
+  (let ghosts (~.range (each (:: (ghost<- grid)) (4 .till))))
+  
+  ;; TODO cleaner to eject, I guess
+  (to (caught-by-ghost?)
+    ;; TODO overcompressed logic here
+    (for mayhap ((ghost (-> (those (:: (= glutton.p it.p)) ghosts.keys)
+                            (~ .get 0))))
+      (hey (not eating-ghosts-deadline.^)
+           (:: (if it
+                   (render (view grid ghosts.keys eating-ghosts-deadline.^))
+                   (ghosts .delete! ghost))))))
+
+  (let start (nano-now))
+  (begin playing ()
+    (let now (/ (- (nano-now) start)   ;; in msec
+                1000000))
+    (unless (for mayhap ((deadline eating-ghosts-deadline.^))
+              (<= now deadline))
+      (eating-ghosts-deadline .^= #no))
+    (render (view grid ghosts.keys eating-ghosts-deadline.^))
+    (may (and in.ready? (get-key))
+      (be #\Q)
+      (be #\q)
+      (be key
+        (may key
+          (be 'left  (glutton .face #\> left))
+          (be 'right (glutton .face #\< right))
+          (be 'up    (glutton .face #\V up))
+          (be 'down  (glutton .face #\^ down))
+          (else))
+        (glutton .act grid)
+        (when (= glutton.meal #\o)
+          (eating-ghosts-deadline .^= (+ now power-pill-interval)))
+        (unless (caught-by-ghost?)
+          (each! (~ .act grid) ghosts.keys)
+          (unless (caught-by-ghost?)
+            (unless key
+              (nanosleep 50000000))  ; 1/20 sec
+            (playing)))))))
+
+(let left    '(-1  0))
+(let right   '( 1  0))
+(let up      '( 0 -1))
+(let down    '( 0  1))
+(let stopped '( 0  0))
+
+(let headings [left right up down])
+
+(to (glutton<- start-glyph start-pos)
+  (let glyph   (box<- start-glyph))
+  (let heading (box<- stopped))
+  (let p       (box<- start-pos))
+  (let v       (box<- stopped))
+  (let meal    (box<- #no))
+
+  (make glutton
+    (to ~.p         p.^)
+    (to ~.v         v.^)
+    (to ~.heading   heading.^)
+    (to ~.glyph     glyph.^)
+    (to ~.meal      meal.^)
+    (to (~ .p! xy)  (p .^= xy))
+    (to (~ .v! xy)  (v .^= xy))
+    (to (~ .eat! m) (meal .^= m))
+
+    (to (~ .act grid)
+      (meal .^= #no)
+      (move-agent grid glutton))
+    (to (~ .face new-glyph dir)
+      (glyph .^= new-glyph)
+      (heading .^= dir))
+    (to (~ .place-on! grid)
+      (let `(,x ,y) p.^)
+      ((grid y) .set! x glyph.^))
+    ))
+
+(to (ghost<- grid)
+  (let heading (box<- (headings .sample-value chaos)))
+  (let p       (box<- ((find grid #\.) .sample-value chaos)))
+  (let v       (box<- stopped))         ;TODO take initial v from heading?
+
+  (make ghost
+    (to ~.p       p.^)
+    (to ~.v       v.^)
+    (to ~.heading heading.^)
+    (to ~.glyph   #\G)
+    (to (~ .p! xy)   (p .^= xy))
+    (to (~ .v! xy)   (v .^= xy))
+    (to (~ .eat! m))
+
+    (to (~ .act grid)
+      (when (chaos .probability 1 10)
+        (heading .^= (headings .sample-value chaos)))
+      (move-agent grid ghost))
+    ))
+
+(to (move-agent grid agent)
+
+  (to (move d)
+    (let `(,x ,y) (point+ agent.p d))
+    (hm (when (" .o<>V^G" .find? ((grid y) x))
+          (step x y)
+          (agent .v! d)
+          #yes)
+        (else #no)))
+
+  (to (step x y)
+    (let `(,x0 ,y0) agent.p)
+    (agent .eat! ((grid y) x))
+    ((grid y0) .set! x0 #\space)
+    ((grid y) .set! x agent.glyph)
+    (agent .p! `(,x ,y)))
+
+  (or (move agent.heading)
+      (move agent.v)))
+
+(to (point+ p q)
+  (each + p q))
+
+(to (find-glutton maze)
+  (~.first (find maze #\P)))
+
+(to (find grid ch)
+  (for gather (((~ y row) grid.items))
+    (for yeahs (((~ x c) row.items))
+      (and (= ch c) `(,x ,y)))))
+
+;; TODO blinky colors when eating-ghosts-deadline approaches
+(to (view grid ghosts eating-ghosts-deadline)
+
+  (to (color rune)
+    (hm (if (wall? rune) block)
+        (if ("<>V^" .find? rune) (yellow rune))
+        (if (and eating-ghosts-deadline (= rune #\G)) (cyan rune))
+        (else rune)))
+
+  (let rows (~.array (each ~.array grid.values)))
+  (for each! ((ghost ghosts))
+    (let `(,x ,y) ghost.p)
+    ((rows y) .set! x #\G))
+  (for each ((row rows.values))
+    (list<- (for each (((~ x rune) row.items))
+              (let sep? (and (wall? rune)
+                             (wall? (row .get x.+)))) ;TODO why this?
+              (let sep (" -" sep?.count))
+              `(,(color rune) ,(color sep)))
+            #\newline)))
+
+(let block (on-blue " "))
+
+(to (wall? rune)
+  (not (" .o<>V^G" .find? rune)))
