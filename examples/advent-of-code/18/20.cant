@@ -21,7 +21,7 @@ dir:  {'N' | 'S' | 'E' | 'W'} :Dir.
                                (~ 'Dir (feed dir<-)))))
 (let parse-main (semantics 'main))
 (to (parse text)
-  (~.result (parson-parse parse-main text)))
+  (~.result (parse-main .parse-outcome text)))
 
 
 (let infinity 999999)

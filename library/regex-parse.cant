@@ -1,6 +1,6 @@
 ;; Parse regular expressions
 
-(import (use 'parson) feed push parse grammar<-)
+(import (use 'parson) feed push grammar<-)
 
 ;; TODO: something like Python's raw string literals. \\\\ is awful.
 (let grammar (grammar<- "
@@ -37,6 +37,6 @@ rune     :  '\\\\' :anyone
            (~ 'dot     (push (builder 'anyone)))))
   (let parser ((grammar semantics) 'regex))
   (to (parse-regex text)
-    ((parse parser text) .result)))
+    ((parser .parse-outcome text) .result)))
 
 (export regex-parser<-)

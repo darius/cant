@@ -19,10 +19,7 @@ _:         :whitespace.
 (let grammar/semantics (grammar (!map<-)))
 (let parse-shifts (grammar/semantics 'shifts))
 
-(to (parse text)
-  (~.results (parson-parse parse-shifts text)))
-
-(let shifts (parse (chain-lines (sort input))))
+(let shifts (parse-shifts .parse (chain-lines (sort input))))
 
 (let zzzs (!map<-))            ; guard -> bag of minutes they're asleep
 (for each! ((`(,guard ,naps) shifts))

@@ -9,7 +9,7 @@ main: '#' :count ' @ ' :count ',' :count ': ' :count 'x' :count :end.
 (let semantics (grammar (map<-)))
 (let parse-main (semantics 'main))
 (to (parse text)
-  (~.results (parson-parse parse-main text)))
+  (parse-main .parse text))
 
 (let inputs (each parse input))
 ;(out .print inputs)

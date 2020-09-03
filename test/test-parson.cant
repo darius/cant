@@ -1,9 +1,9 @@
 (import (use 'parson-core)
-  nix capture either then feed-list feed push seclude delay maybe many at-least-1
+  nix either then feed-list feed push seclude delay maybe many at-least-1
   fail empty skip-1 take-1 any-1 skip-any-1 lit-1 lit)
 
 (to (try p text)
-  (out .say "~w --> ~d\n" text ((p text 0 0 '()) .display)))
+  (out .say "~w --> ~d\n" text ((p .parse-outcome text) .display)))
 
 ;(try skip-any-1 "a")
 (try any-1 "a")

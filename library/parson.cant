@@ -4,8 +4,7 @@
 (import (use 'parson-core)
   nix capture either then feed-list feed push seclude delay
   maybe many at-least-1 seek
-  fail empty end skip-1 position take-1 any-1 skip-any-1 lit-1 lit drop
-  parse)
+  fail empty end skip-1 position take-1 any-1 skip-any-1 lit-1 lit drop)
 
 
 ;; {lifted refs p<-} is a 'lifted' parser.
@@ -193,7 +192,7 @@
   )
 
 (to (parse-grammar text)
-  (let outcome (parse parson-grammar text))
+  (let outcome (parson-grammar .parse-outcome text))
   (let skeletons outcome.?results)
 
   (unless skeletons
@@ -218,8 +217,8 @@
   (let grammar (grammar<- ("_ = :whitespace*. start = loop :end. loop: ~d."
                            .format template)))
   (let peg ((grammar (map<-)) 'start))
-  (make parser
-    (to (~ text)        ((parse peg text) .results))
-    (to (~ .parse text) (parse peg text))))
+  (make parser                          ;TODO just return the peg
+    (to (~ text)        (peg .parse text))
+    (to (~ .parse text) (peg .parse-outcome text))))
 
-(export grammar<- parse feed push like)
+(export grammar<- feed push like)

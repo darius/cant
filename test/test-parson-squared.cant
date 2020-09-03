@@ -1,4 +1,4 @@
-(import (use 'parson) parse grammar<- like)
+(import (use 'parson) grammar<- like)
 
 (to (try grammar-text start-symbol subs inputs)
   (let parser ((grammar<- grammar-text) subs))
@@ -6,7 +6,7 @@
   (out .say "trying ~w: ~w\n" start-symbol start)
   (for each! ((input inputs))
     (out .print input)
-    (let outcome (parse start input))
+    (let outcome (start .parse-outcome input))
     (out .say "~d\n\n" outcome.display)))
 
 (let trivial "

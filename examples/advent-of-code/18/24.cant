@@ -129,10 +129,8 @@ separator: '\n'.
 "))
 (let semantics (grammar (map<- (~ 'Group (feed cook-group)))))
 (let parse-main (semantics 'main))
-(to (parse text)
-  (~.results (parson-parse parse-main text)))
 
-(let matchup (parse input))
+(let matchup (parse-main .parse input))
 
 
 (out .display "\nPart 1\n")

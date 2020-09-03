@@ -1,10 +1,9 @@
 ;; PEG parsing
-;; from https://github.com/darius/parson, but incomplete
+;; from https://github.com/darius/parson, though that has a bit more
 
 ;; TODO: fuller oops reporting
 ;; TODO: memoize
 ;; TODO: delay semantic actions until final success
-;; TODO: a top-level fn that oopses on failure
 
 ;; Glossary:
 ;;  p, q       parsing expression
@@ -18,70 +17,89 @@
 ;;  i, j       index into text
 ;;  vals, vs   list of parsed values
 
-;; A parser (i.e. parsing expression) is represented as a function 
-;;   p: text far i vals -> result
-;; where result is a failure or success object as defined below
+;; A parser (i.e. parsing expression) is represented as an object with the method
+;;   ~ .parsing text far i vals -> outcome
+;; where outcome is a failure or success object as defined below
 ;; (or anyway an object following the same protocol as failure/success).
 
-(to (parse parser text)
-  (parser text 0 0 '()))
+(make-trait peg-trait peg
+;; TODO conveniences like so, though let's try to span the space better with fewer methods:
+;;  (to (~ text)  ((peg .parse-outcome text) .results))
+;;  (to (~ .parse-1 text)  ((peg .parse-outcome text) .result))
+  (to (~ .parse text)  ((peg .parse-outcome text) .results))
+  (to (~ .?parse text) ((peg .parse-outcome text) .?results))
+  (to (~ .parse-outcome text)           ;TODO better name, etc.
+    (peg .parsing text 0 0 '()))
+  (to message
+    (miranda-trait peg message)))
+
 
 ;; The first, basic parsers just fail or succeed right away.
 
-(to (fail text far i vals)
-  (make failure
-    (to (~ .continue _)     failure)
-    (to (~ .else p j vs)    (p text far j vs))
-    (to ~.nix               empty)
-    (to (~ .capture-from _) failure)
-    (to (~ .prefix _)       failure)
-    (to ~.leftovers         (oops "Parse failed" failure.postmortem))
-    (to ~.?results          #no)
-    (to ~.results           (oops "Parse failed" failure.postmortem))
-    (to ~.result            (oops "Parse failed" failure.postmortem))
-    (to ~.postmortem        `(,(text .slice 0 far) /
-                              ,(text .slice far)))
-    (to ~.display                         ;TODO change to .selfie
-      (let `(,left / ,right) failure.postmortem)
-      ("failed: ~w/~w" .format left right))))
+(make fail {extending peg-trait}
+  (to (~ .parsing text far i vals)
+    (make failure
+      (to (~ .continue _)     failure)
+      (to (~ .else p j vs)    (p .parsing text far j vs))
+      (to ~.nix               empty)
+      (to (~ .capture-from _) failure)
+      (to (~ .prefix _)       failure)
+      (to ~.leftovers         (oops "Parse failed" failure.postmortem))
+      (to ~.?results          #no)
+      (to ~.results           (oops "Parse failed" failure.postmortem))
+      (to ~.result            (oops "Parse failed" failure.postmortem))
+      (to ~.postmortem        `(,(text .slice 0 far) /
+                                ,(text .slice far)))
+      (to ~.display                         ;TODO change to .selfie
+        (let `(,left / ,right) failure.postmortem)
+        ("failed: ~w/~w" .format left right)))))
 
-(to (empty text far i vals)
-  (make success
-    (to (~ .continue p)       (p text far i vals))
-    (to (~ .else _ _ _)       success)
-    (to ~.nix                 fail)
-    (to (~ .capture-from j)   (empty text far i `(,@vals ,(text .slice j i))))
-    (to (~ .prefix pre-vals)  (empty text far i (chain pre-vals vals)))
-    (to ~.leftovers           i)
-    (to ~.?results            vals)
-    (to ~.results             vals)
-    (to ~.result              vals.maybe)    ;TODO nicer oops on wrong # of vals
-    (to ~.display
-      ("~w ~w" .format (text .slice i) vals))))
+(make empty {extending peg-trait}
+  (to (~ .parsing text far i vals)
+    (make success
+      (to (~ .continue p)       (p .parsing text far i vals))
+      (to (~ .else _ _ _)       success)
+      (to ~.nix                 fail)
+      (to (~ .capture-from j)   (empty .parsing text far i `(,@vals ,(text .slice j i))))
+      (to (~ .prefix pre-vals)  (empty .parsing text far i (chain pre-vals vals)))
+      (to ~.leftovers           i)
+      (to ~.?results            vals)
+      (to ~.results             vals)
+      (to ~.result              vals.maybe)    ;TODO nicer oops on wrong # of vals
+      (to ~.display
+        ("~w ~w" .format (text .slice i) vals)))))
 
 ;; (nix p): a parser that succeeds from a state just when p fails
 ;; from the same state. Any parsing by p becomes mere lookahead; it
 ;; won't affect any of the result, not even the 'far' point.
-(to ((nix p) text far i vals)
-  (((p text far i vals) .nix) text far i vals))
+(to (nix p)
+  (make nix-p {extending peg-trait}
+    (to (~ .parsing text far i vals)
+      (((p .parsing text far i vals) .nix) .parsing text far i vals))))
 
 ;; Return a parser that acts like p, except it appends a value: the
 ;; text that p matched.
-(to ((capture p) text far i vals)
-  ((p text far i vals) .capture-from i))
+(to (capture p)
+  (make capture-p {extending peg-trait}
+    (to (~ .parsing text far i vals)
+      ((p .parsing text far i vals) .capture-from i))))
 
 ;; (either p1 ... pn): a parser that succeeds just when one of its
 ;; arguments does, trying them in order.
 (make either {extending right-folding-operation}
-  (to (~ p q) (on (text far i vals)
-                ((p text far i vals) .else q i vals)))
+  (to (~ p q)
+    (make either-p-q {extending peg-trait}
+      (to (~ .parsing text far i vals)
+        ((p .parsing text far i vals) .else q i vals))))
   (to (~) fail))
 
 ;; (then p1 ... pn): a parser that succeeds just when all of p1..pn
 ;; do, each one starting where the last left off.
 (make then {extending right-folding-operation}
-  (to (~ p q) (on (text far i vals)
-                ((p text far i vals) .continue q)))
+  (to (~ p q)
+    (make then-p-q {extending peg-trait}
+      (to (~ .parsing text far i vals)
+        ((p .parsing text far i vals) .continue q))))
   (to (~) empty))
 
 ;; (seclude p): parse as p, but with () in place of the incoming
@@ -112,8 +130,10 @@
 ;; Sometimes you want to seclude only part of a production. `seclude`
 ;; works together with `feed` to pipe results from producers to
 ;; consumers.
-(to ((seclude p) text far i vals)
-  ((p text far i '()) .prefix vals))
+(to (seclude p)
+  (make seclude-p {extending peg-trait}
+    (to (~ .parsing text far i vals)
+      ((p .parsing text far i '()) .prefix vals))))
 
 ;; When (thunk) gets called, it must return a parser p. We don't call
 ;; it right away; instead (delay thunk) returns a parser that, the
@@ -121,53 +141,61 @@
 ;; resulting p, then and thereafter. Use this for recursive grammars.
 ;; TODO: implement promises instead
 (to (delay thunk)
-  (let p (box<- (on (text far i vals)
+  (let p (box<- (to (_ .parsing text far i vals)
                   ;; TODO detect left-recursion loops at parse time
                   (p .^= (thunk))
-                  (p.^ text far i vals))))
-  (on (text far i vals)
-    (p.^ text far i vals)))
+                  (p.^ .parsing text far i vals))))
+  (make delay-p {extending peg-trait}
+    (to (~ .parsing text far i vals)
+      (p.^ .parsing text far i vals))))
 
 ;; Succeed iff (?advance text i) is a yeah, the new i afterwards.
-(to ((match ?advance) text far i vals)
-  (may (?advance text i)
-    (be #no
-      (fail text far i vals))
-    (be i1
-      (surely (<= i i1 text.count))
-      (empty text (max far i1) i1 vals))))
+(to (match ?advance)
+  (make match-p {extending peg-trait}
+    (to (~ .parsing text far i vals)
+      (may (?advance text i)
+        (be #no
+          (fail .parsing text far i vals))
+        (be i1
+          (surely (<= i i1 text.count))
+          (empty .parsing text (max far i1) i1 vals))))))
 
 ;; Push our current position in the text.
-(to (position text far i vals)
-  (empty text far i `(,@vals ,i)))
+(make position {extending peg-trait}
+  (to (~ .parsing text far i vals)
+    (empty .parsing text far i `(,@vals ,i))))
 
 ;; Pop the values and give them to f to choose a peg to match with.
 ;; This serves about the same purpose as monadic bind in other
 ;; parser-combinator libraries.
-(to ((dynamic f) text far i vals)
-  ((f @vals) text far i '()))
+(to (dynamic f)
+  (make dynamic-p {extending peg-trait}
+    (to (~ .parsing text far i vals)
+      ((f @vals) .parsing text far i '()))))
 
 ;; Update the values by 'f'.  TODO better name?
-(to ((alter f) text far i vals)
-  (empty text far i (f vals)))
+(to (alter f)
+  (make alter-p {extending peg-trait}
+    (to (~ .parsing text far i vals)
+      (empty .parsing text far i (f vals)))))
 
-;; The next few could be defined in terms of 'alter', but wouldn't be much shorter:
+;; The next few are defined in terms of 'alter', but might be worth
+;; making primitive for less overhead.
 
 ;; (feed-list f): a parser that replaces the vals with a singleton, (f vals).
-(to ((feed-list f) text far i vals)
-  (empty text far i `(,(f vals))))
+(to (feed-list f)
+  (alter (on (vals) `(,(f vals)))))
 
 ;; The same, but for a multi-argument f.
-(to ((feed f) text far i vals)
-  (empty text far i `(,(f @vals))))
+(to (feed f)
+  (alter (on (vals) `(,(f @vals)))))
 
 ;; Succeed, clearing away any vals.
-(to (drop text far i vals)
-  (empty text far i '()))
+(let drop (alter (:: '())))
 
 ;; Succeed, appending `constant` to the vals.
-(to ((push constant) text far i vals)
-  (empty text far i `(,@vals ,constant)))
+(to (push constant)
+  (alter (on (vals) `(,@vals ,constant))))
 
 ;; TODO Python Parson also has trace(message), others?
 
@@ -235,8 +263,8 @@
   (to (~ p separator)
     (then p (many (then separator p)))))
 
-(export fail empty nix capture either then seclude delay match position
+(export peg-trait
+        fail empty nix capture either then seclude delay match position
         dynamic alter feed-list feed drop push
         peek seek skip-1 skip-any-1 end take-1 any-1 lit-1 lit
-        maybe many at-least-1 
-        parse)
+        maybe many at-least-1)

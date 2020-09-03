@@ -2,7 +2,6 @@
 
 (let parson (use 'parson))
 (import parson grammar<- like)
-(let parson-parse (parson 'parse))
 
 (to (average numbers)
   (surely numbers.some? "Average of an empty list")
@@ -87,6 +86,6 @@
   duplicates<- deletions<-
   chain-lines all-mins-by average neighbors-8<-
   vector+ vector- manhattan-distance<-
-  grammar<- parson-parse feed take-1
+  grammar<- feed take-1
   bounds<- bounds-1d<- 
   )
