@@ -15,10 +15,9 @@
   (to (well-formed? bits)
     (every bit? bits))
 
-  (let pad (~ .pad-right n-check-bits 0))
   (let taps
     (~.array (transpose (for each ((place (0 .till (2 .** n-check-bits))))
-                          (pad (place .digits 2))))))
+                          (place .digits 2 n-check-bits)))))
 
   (to (parity message place)
     (-> (for each ((place-bit (taps place))
@@ -53,7 +52,7 @@
                       (parity m place)))
       (let correction (1 .<< (count<-digits syndrome 2)))
       (let corrected (encoded-n .xor correction)) ;; N.B. place 0 (meaning 'correct') is skipped below
-      (for yeahs (((~ power bit) (-> (corrected .digits 2) (~ .pad-right n-encoded-bits.+ 0) ~.items ~.rest)))
+      (for yeahs (((~ power bit) (-> (corrected .digits 2 n-encoded-bits.+) ~.items ~.rest)))
         (and (not (power-of-2? power))
              bit)))))
 
@@ -101,7 +100,7 @@
   (let m-length c.n-message-bits)
   (let e-length (+ m-length 3))
   (for each! ((m (0 .till (1 .<< m-length))))   ;; TODO itertools-style generator for subsets?
-    (let message ((m .digits 2) .pad-right m-length 0))  ;; TODO (m .digits 2 m-length)
+    (let message (m .digits 2 m-length))
 
     (let cm (c .encode message))
     (out .say "encode ~w -> ~w\n" message cm)
