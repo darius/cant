@@ -60,6 +60,7 @@
   (to (~ .split delimiter)
     ;; TODO deduplicate code
     ;; TODO define a strstr and use that
+    (surely delimiter.some?)
     (if me.none?
         '()
         (begin splitting ((t me))
