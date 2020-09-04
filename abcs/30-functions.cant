@@ -258,7 +258,7 @@
     intercalate compound-key<- yeahs where split-on itself max min-by
     those !map-by compose those/lazy
     -> foldr/lazy gather chain/lazy sum-by tally-by zip setting<-map
-    gather/lazy method<- link/lazy map-by text-by
+    gather/lazy method<- link/lazy array-by map-by text-by
     hey max-by tally min union-over each/lazy map<-values mayhap
     grid* sum = link link? list? number? integer? symbol? cue? ;TODO rename cue? or rm it
     claim? rune? array? box? term? source? sink? zilch? box<-
