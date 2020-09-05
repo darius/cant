@@ -20,18 +20,18 @@
 
   (make chaos
     ;; TODO not thrilled with these names
-    (to (~ .sample-count n)
+    (to (~ .sample-count n)        ;; a random integer in [0..n)
       ;; XXX surely 0 < n <= D
-      ((next) .modulo n))                ;XXX not quite fair sampling
+      ((next) .modulo n))    ;XXX not quite uniform sampling
     ;; TODO a trait for the remaining methods
-    (to ~.sample-unit-real
+    (to ~.sample-portion           ;; a random real in [0..1]
       (/ (next) D-as-float))
-    (to (~ .probability numerator denominator)
+    (to (~ .probability numerator denominator) ;; #yes with probability n/d, else #no
       (surely (<= 0 numerator denominator))
       (< (chaos .sample-count denominator) numerator))
-    (to (~ .probability p)
+    (to (~ .probability p) ;; #yes with probability p, else #no
       (surely (<= 0 p 1))
-      (< chaos.sample-unit-real p))))
+      (< chaos.sample-portion p))))
 
 (let chaos<- park-miller-chaos<-)
 (let chaos (chaos<- 1234567))
