@@ -30,7 +30,7 @@
                     (for each ((c alphabet))
                       (chain a c (b .slice 1)))))
   (let swaps      (for yeahs (((~ a b) del-splits))
-                    (and (< 1 b.count)
+                    (and (<= 2 b.count)
                          (chain a (text<- (b 1) (b 0)) (b .slice 2)))))
   (uniquify (chain inserts deletes replaces swaps)))
 
