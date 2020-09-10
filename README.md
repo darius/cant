@@ -18,6 +18,12 @@ idiosyncrasies. Call it a learning project, or outsider art.
 
 Just don't expect any stability, at least anytime soon.
 
+## How to run it?
+
+Install [Chez Scheme](https://cisco.github.io/ChezScheme/). Then run
+`./incant` (in Unix; if don't have a Unix shell, then adapt your
+invocation from that script).
+
 ## What's done so far?
 
 A new Lisp dialect with a molasses-slow interpreter and an
@@ -31,7 +37,7 @@ get familiar.
 ### Example code?
 
 ```
-$ ./incant       # You need Chez Scheme to run this.
+$ ./incant
 -> (out .say "Hey, world.\n")
 Hey, world.
 -> (to (fib n) (if (< n 2) 1 (+ (fib (- n 1)) (fib (- n 2)))))
