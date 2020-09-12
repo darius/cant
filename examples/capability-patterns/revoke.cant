@@ -1,0 +1,34 @@
+;; A small example of a capability pattern.
+
+;; For the sake of the example, imagine Alice is some entity you
+;; wouldn't trust all your powers to, but you can give Alice a
+;; particular power `x` by calling `(send-alice x)`.
+
+(to (send-alice x)                      ; A stand-in for the example
+  (out .say "Hey Alice, here's your ~w\n" x))
+
+;; You want to give a power to Alice, but only until you change your mind:
+
+(to (revocable<- power)
+  (let box (box<- power))
+  (to (revoke!) (box .^= void))
+  (make forwarder
+    (to message (call box.^ message)))
+  (~ revoke! forwarder))
+
+;; Let's say this power is just the stdout capability:
+(let (~ revoke-alices-out! alices-out) (revocable<- out))
+;; You give it to Alice:
+(send-alice alices-out)
+;; Notice you did not send revoke-alices-out! to Alice or anyone else.
+;; Only you get to revoke it.
+
+;; ... Ok, let's wait while Alice is doing stuff like:
+(alices-out .say "Yo\n")
+
+;; ... until you get fed up with her yo-dude shenanigans:
+(revoke-alices-out!)
+;; Of course your own `out` still works:
+(out .say "My own `out` is still here.\n")
+;; but this will fail because void has no .say method:
+(alices-out .say "duuude\n")
