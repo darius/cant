@@ -49,17 +49,14 @@
     (be #\+ (swerve dir veer))
     (else   cart)))
 
-(to (turn-1 dir) ; /  n e s w
-                 ; -> e n w s
-  (  '[1 0 3 2] dir))
+(to (turn-1 dir)     ; /  n e s w
+  ('[1 0 3 2] dir))  ; -> e n w s
 
-(to (turn-2 dir) ; \  n e s w
-                 ; -> w s e n
-  (  '[3 2 1 0] dir))
+(to (turn-2 dir)     ; \  n e s w
+  ('[3 2 1 0] dir))  ; -> w s e n
 
 (to (turn-right dir) ;    n e s w
-                     ; -> e s w n
-  (dir.+ .modulo 4))
+  (dir.+ .modulo 4)) ; -> e s w n
 
 (to (turn-left dir)
   (dir.- .modulo 4))
