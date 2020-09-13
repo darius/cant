@@ -11,10 +11,9 @@ import os, requests
 # Grab the session cookie from the https://adventofcode.com/ site:
 # right-click, Inspect, Application tab, Cookies, session.
 session = os.environ['ADVENT_SESSION']
-default_year = 2015
+default_year = 2019
 
 def download(day, year=default_year):
-    year = year % 100
     text = fetch(day)
     with open('examples/advent-of-code/%d/data/%02d.in' % (year, day), 'w') as f:
          f.write(text)
