@@ -121,6 +121,12 @@
                       (for each ((picks (grid* @lists)))
                         (link x picks)))))
 
+(make grid*/lazy
+  (to (~)           '(()))
+  (to (~ xs @lists) (for gather/lazy ((x xs))
+                      (for each/lazy ((picks (grid*/lazy @lists)))
+                        (link x picks)))))
+
 ;; (intercalate T '(as bs cs)) = `(,@as ,T ,@bs ,T ,@cs)
 ;; TODO almost never used
 (to (intercalate between elements)      ;TODO unify with .join
@@ -259,7 +265,7 @@
      ;; TODO: nonrandom order
   '(computational-setting read-all cant
     intercalate compound-key<- yeahs where split-on itself max min-by
-    those !map-by compose those/lazy yeahs/lazy
+    those !map-by compose those/lazy yeahs/lazy grid*/lazy
     -> foldr/lazy gather chain/lazy sum-by tally-by zip setting<-map
     gather/lazy method<- link/lazy array-by map-by text-by
     hey max-by tally min union-over each/lazy map<-values mayhap
