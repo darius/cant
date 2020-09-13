@@ -156,6 +156,9 @@
       (f xs.first
          (: (foldr/lazy f xs.rest z-thunk)))))
 
+(to (yeahs/lazy maybe xs)
+  (those/lazy itself (each/lazy maybe xs)))
+
 ;; ((compose f g) x) = (f (g x)), etc.
 (make compose {extending right-folding-operation}
   (to (~ f g)                   ;TODO support (to ((~ f g) @arguments)
@@ -256,7 +259,7 @@
      ;; TODO: nonrandom order
   '(computational-setting read-all cant
     intercalate compound-key<- yeahs where split-on itself max min-by
-    those !map-by compose those/lazy
+    those !map-by compose those/lazy yeahs/lazy
     -> foldr/lazy gather chain/lazy sum-by tally-by zip setting<-map
     gather/lazy method<- link/lazy array-by map-by text-by
     hey max-by tally min union-over each/lazy map<-values mayhap

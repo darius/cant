@@ -31,14 +31,6 @@
 (to (detect keep? xs)
   ((those/lazy keep? xs) .first))
 
-(to (yeahs/lazy f xs)
-  (foldr/lazy (on (x z-thunk)
-                (if (let fx (f x))
-                    (link/lazy fx z-thunk)
-                    (z-thunk)))
-              xs
-              (: '())))
-
 (to (duplicates<- xs)
   (let seen (set<-))
   (begin looking ((xs xs))
@@ -82,7 +74,7 @@
   `(,(min @ns) ,(max @ns)))
 
 (export
-  scanl/lazy detect yeahs/lazy 
+  scanl/lazy detect
   duplicates<- deletions<-
   chain-lines all-mins-by average neighbors-8<-
   vector+ vector- manhattan-distance<-
