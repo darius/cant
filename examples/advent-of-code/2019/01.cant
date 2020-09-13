@@ -1,0 +1,30 @@
+(let input (with-input-file ~.read-lines data-file))
+
+(let inputs (each ~.number input))
+;(out .print inputs)
+
+
+(out .display "\nPart 1\n")
+
+(to (fuel<- mass)
+  (- (mass .quotient 3) 2))
+  
+(to (part-1)
+  (sum (each fuel<- inputs)))
+
+(out .say "~w\n" (part-1))
+
+
+(out .display "\nPart 2\n")
+
+(to (transitive-fuel<- dry-mass)
+  ;; TODO fantasy: (sum (while ~.positive? (iterate fuel<- dry-mass)))
+  (begin summing ((total 0) (mass (fuel<- dry-mass)))
+    (if (<= mass 0)
+        total
+        (summing (+ total mass) (fuel<- mass)))))
+  
+(to (part-2)
+  (sum (each transitive-fuel<- inputs)))
+
+(out .say "~w\n" (part-2))

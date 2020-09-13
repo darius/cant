@@ -1,0 +1,25 @@
+;; TODO support runs on test data without changing the day's code
+;; TODO support running only part1 or part2 if desired
+;; TODO support -i mode
+;; TODO load into a module instead of main-interactive-setting
+
+(load "examples/advent-of-code/utils.cant")
+
+(to (main args)
+
+  (let stem "examples/advent-of-code/2019")
+  (to (run code-name data-name)
+    (cant .play `(do (let data-name ',data-name)
+                     (let data-file ',("~d/data/~d" .format stem data-name)))
+                main-interactive-setting)
+    (load ("~d/~d.cant" .format stem code-name)))
+
+  (may args
+    (be `(,_ ,filename)
+      (run filename ("~d.in" .format filename)))
+    (be `(,_ ,filename "-data" ,data-name)
+      (run filename data-name))
+    (be `(,me ,@_)
+      (err .say "Usage: cant ~d day [-data data]\n" me)
+      (err .say "e.g.:  cant ~d 06 -data 06.test\n" me)
+      (os-exit 1))))
