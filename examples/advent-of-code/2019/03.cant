@@ -1,0 +1,58 @@
+;; (Use run.cant to run this.)
+
+(let input (with-input-file ~.read-lines data-file))
+(let parse (like "[{:letter} :count :tuple] ** ','"))
+(let inputs (each parse input))
+
+(let delta<- (map<-lists '(("L" (-1 0))
+                           ("R" (1 0))
+                           ("U" (0 -1))
+                           ("D" (0 1)))))
+
+
+(out .display "\nPart 1\n")
+
+(to (part-1)
+
+  ;; Return a set of locations traced out by the path.
+  (to (trace path)
+    (let result (set<-))
+    (for foldl ((p '(0 0)) ((~ dir stride) path))
+      (let dp (delta<- dir))
+      (for foldl ((p p) (_ stride.till))
+        (hey (vector+ p dp) (:: (result .add! it)))))
+    result)
+
+  (let crossings ((trace (inputs 0)) .intersect (trace (inputs 1))))
+  (let closest (for min-by ((p crossings.keys))
+                 (manhattan-distance<- p '(0 0))))
+  (out .say "closest ~w\n" closest)
+  (manhattan-distance<- closest '(0 0)))
+
+(out .say "~w\n" (part-1))
+
+
+(out .display "\nPart 2\n")
+
+(let infinity 999999999)
+
+(to (part-2)
+
+  ;; Return a map from locations traced out by the path to their step-count.
+  (to (trace path)
+    (let result (!map<-))
+    (let step (box<- 0))
+    (for foldl ((p '(0 0)) ((~ dir stride) path))
+      (let dp (delta<- dir))
+      (for foldl ((p p) (_ stride.till))
+        (hey (vector+ p dp) (:: (result .set! it (min (result .get it infinity)
+                                                      step.+!))))))
+    result)
+
+  ;; TODO map .intersect
+  (let (list<- path0 path1) (each trace inputs))
+  (let crossings (path0.domain .intersect path1.domain))
+  (to (sum-of-steps p) (+ (path0 p) (path1 p)))
+  (min @(each sum-of-steps crossings.keys)))
+
+(out .say "~w\n" (part-2))

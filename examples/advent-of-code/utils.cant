@@ -61,6 +61,7 @@
 (let neighborhood-8 (for those ((d (grid* '(-1 0 1) '(-1 0 1))))
                       (not= d '(0 0))))
 
+(to (vector* c p) (for each ((coord p)) (* c coord)))
 (to (vector+ p q) (each + p q))
 (to (vector- p q) (each - p q))
 
@@ -77,7 +78,7 @@
   scanl/lazy detect
   duplicates<- deletions<-
   chain-lines all-mins-by average neighbors-8<-
-  vector+ vector- manhattan-distance<-
+  vector* vector+ vector- manhattan-distance<-
   grammar<- feed take-1
   bounds<- bounds-1d<- 
   )
