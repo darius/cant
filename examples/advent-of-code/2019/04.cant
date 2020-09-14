@@ -1,0 +1,41 @@
+;; (Use run.cant to run this.)
+
+(let input (with-input-file ~.read-all data-file))
+(let parse (like "(:count | :skip)*"))
+(let inputs (parse input))
+
+
+(out .display "\nPart 1\n")
+
+(to (part-1)
+  (to (valid? n)
+    (let digits (reverse n.digits))
+    (and (<= @digits) (doubled? digits digits.count)))
+  (to (doubled? xs n)
+    (and (<= 2 n)
+         (or (= (xs 0) (xs 1))
+             (doubled? xs.rest n.-))))
+  (tally-by valid? (interval<- @inputs)))
+
+(out .say "~w\n" (part-1))
+
+
+(out .display "\nPart 2\n")
+
+(to (part-2)
+  (to (valid? n)
+    (let digits (reverse n.digits))
+    (and (<= @digits) (only-doubled? digits digits.count)))
+  (to (only-doubled? xs n)
+    (and (<= 2 n)
+         (if (= (xs 0) (xs 1))
+             (or (not= (xs 0) (xs .get 2))
+                 (do (let rest (trim xs.first xs.rest))
+                     (only-doubled? rest rest.count)))
+             (only-doubled? xs.rest n.-))))
+  (tally-by valid? (interval<- @inputs)))
+
+(to (trim x ys) ;TODO there should be a list method that makes this trivial, without extra work
+  (for those ((y ys)) (not= x y)))
+
+(out .say "~w\n" (part-2))

@@ -1,5 +1,5 @@
+(import (use 'memoize) memoize)
 (import (use 'parson-core) feed take-1)
-
 (let parson (use 'parson))
 (import parson grammar<- like)
 
@@ -73,12 +73,3 @@
 
 (to (bounds-1d<- ns)
   `(,(min @ns) ,(max @ns)))
-
-(export
-  scanl/lazy detect
-  duplicates<- deletions<-
-  chain-lines all-mins-by average neighbors-8<-
-  vector* vector+ vector- manhattan-distance<-
-  grammar<- feed take-1
-  bounds<- bounds-1d<- 
-  )
