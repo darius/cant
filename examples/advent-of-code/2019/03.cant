@@ -24,10 +24,8 @@
     result)
 
   (let crossings ((trace (inputs 0)) .intersect (trace (inputs 1))))
-  (let closest (for min-by ((p crossings.keys))
-                 (manhattan-distance<- p '(0 0))))
-  (out .say "closest ~w\n" closest)
-  (manhattan-distance<- closest '(0 0)))
+  (min @(for each ((p crossings.keys))
+          (manhattan-distance<- p '(0 0)))))
 
 (out .say "~w\n" (part-1))
 
@@ -52,7 +50,7 @@
   ;; TODO map .intersect
   (let (list<- path0 path1) (each trace inputs))
   (let crossings (path0.domain .intersect path1.domain))
-  (to (sum-of-steps p) (+ (path0 p) (path1 p)))
-  (min @(each sum-of-steps crossings.keys)))
+  (min @(for each ((p crossings.keys))
+          (+ (path0 p) (path1 p)))))
 
 (out .say "~w\n" (part-2))
