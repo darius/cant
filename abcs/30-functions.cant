@@ -192,6 +192,19 @@
 ;; collection. What's a good name for this from that point of view?
 ;; total-count ? total ? sum-by ? count-by ?
 
+;; (-> input f g h) = (h (g (f input)))
+;; Hm, (-> x) is just x, so this could also replace 'itself'...
+;; is there a name suggestive of both functions? Maybe 'pass'?
+(make -> {extending left-folding-operation}
+  (to (~ input f)
+    (f input)))
+
+;; Like (f ?thing) but preserving #no-ness.
+(to (mayhap f ?thing)
+  (may ?thing
+    (be #no #no)
+    (else   (f ?thing))))
+
 (to (with-input-file fn filename)
   (with-closing fn (open-input-file filename)))
 
@@ -221,19 +234,6 @@
 
 
 ;; Experiments
-
-;; (-> input f g h) = (h (g (f input)))
-;; Hm, (-> x) is just x, so this could also replace 'itself'...
-;; is there a name suggestive of both functions? Maybe 'pass'?
-(make -> {extending left-folding-operation}
-  (to (~ input f)
-    (f input)))
-
-;; Like (f ?thing) but preserving #no-ness.
-(to (mayhap f ?thing)
-  (may ?thing
-    (be #no #no)
-    (else   (f ?thing))))
 
 ;; TODO is this the most useful version of this idea?
 (to (iterate f x)
