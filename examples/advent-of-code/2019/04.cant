@@ -30,12 +30,9 @@
     (and (<= 2 n)
          (if (= (xs 0) (xs 1))
              (or (not= (xs 0) (xs .get 2))
-                 (do (let rest (trim xs.first xs.rest))
+                 (do (let rest (drop-while (:: (= it xs.first)) xs.rest))
                      (only-doubled? rest rest.count)))
              (only-doubled? xs.rest n.-))))
   (tally-by valid? (interval<- @inputs)))
-
-(to (trim x ys) ;TODO there should be a list method that makes this trivial, without extra work
-  (for those ((y ys)) (not= x y)))
 
 (out .say "~w\n" (part-2))

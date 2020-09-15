@@ -244,6 +244,11 @@
           (link x (take-while prefix? xs.rest)))
       (else '())))
   
+(to (drop-while prefix? xs)             ;TODO as list/text method?
+  (if (and xs.some? (prefix? xs.first))
+      (drop-while prefix? xs.rest)
+      xs))
+  
 ;; Split xs at its first element where split-point? is true.
 ;; That is, return `(,head ,tail), where (chain head tail) = xs,
 ;; and either tail is () or (split-point? tail.first) is true
@@ -297,7 +302,7 @@
     surely count? not= left-folding-operation right-folding-operation
     + * - transitive-comparison < <= <=> >= > compare
     chain reverse foldl foldl1 foldr foldr1 transpose zipped-list-transducer
-    each each! some every interval<- enumerate take-while
+    each each! some every interval<- enumerate take-while drop-while
     read
     assoc  ;; TODO remove
     __as-link __array<-list ;; used implicitly by parse expansion
