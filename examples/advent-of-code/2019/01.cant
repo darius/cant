@@ -16,15 +16,8 @@
 (out .display "\nPart 2\n")
 
 (to (transitive-fuel<- dry-mass)
-  (sum (while ~.positive? (~.rest (iterate fuel<- dry-mass)))))
+  (sum (take-while ~.positive? (~.rest (iterate fuel<- dry-mass)))))
 
-(to (while prefix? xs)                  ;TODO as list method?
-  (hm (if xs.none? '())
-      (do (let x xs.first))
-      (if (prefix? x)
-          (link x (while prefix? xs.rest)))
-      (else '())))
-  
 (to (part-2)
   (sum (each transitive-fuel<- inputs)))
 
