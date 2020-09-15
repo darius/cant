@@ -24,6 +24,10 @@ Install [Chez Scheme](https://cisco.github.io/ChezScheme/). Then run
 `./incant` (in Unix; if don't have a Unix shell, then adapt your
 invocation from that script).
 
+If you use Emacs and want a language mode, then also install
+[plug-ins/cant-mode.el](https://github.com/darius/cant/blob/master/plug-ins/cant-mode.el);
+see the comments there.
+
 ## What's done so far?
 
 A new Lisp dialect with a molasses-slow interpreter and an
@@ -54,9 +58,7 @@ You can try browsing
 [library/](https://github.com/darius/cant/tree/master/library). See
 [examples/games](https://github.com/darius/cant/tree/master/examples/games) and
 [examples/automata](https://github.com/darius/cant/tree/master/examples/automata)
-for maybe-fun starting points. (To read with syntax-coloring in Emacs,
-first load
-[plug-ins/cant-mode.el](https://github.com/darius/cant/blob/master/plug-ins/cant-mode.el).)
+for maybe-fun starting points.
 
 To run a source file from the shell:
 
