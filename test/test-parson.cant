@@ -1,18 +1,20 @@
 (import (use 'parson-core)
-  nix either then feed-list feed push seclude delay maybe many at-least-1
-  fail empty skip-1 take-1 any-1 skip-any-1 lit-1 lit)
+  either then feed-list feed delay
+  skip-1 take-1 any-1 skip-any-1 lit-1 lit
+  ;; Still untested:
+  push fail empty)
 
 (to (try p text)
   (out .say "~w --> ~d\n" text ((p .parse-outcome text) .display)))
 
 ;(try skip-any-1 "a")
 (try any-1 "a")
-(try (seclude any-1) "a")
-(try (many any-1) "abc")
+(try any-1.seclude "a")
+(try any-1.many "abc")
 
 (let bal (hide
           (let sub-bal (delay (: bal)))
-          (maybe
+          (~.maybe
            (then (lit "(") sub-bal (lit ")") sub-bal))))
 
 (try bal "(abc")
@@ -20,22 +22,22 @@
 (try bal "()()xyz")
 (try bal "(()(()))")
 
-(try (many (lit-1 #\space)) "  hey")
+(try (~.many (lit-1 #\space)) "  hey")
 
 (let hug (feed-list itself))
 
 (let sexpr
   (hide
    (let subexpr (delay (: sexpr)))
-   (let comment (then (lit-1 #\;) (many (then (nix (lit-1 #\newline))
-                                              skip-any-1))))
-   (let __ (many (either (skip-1 ~.whitespace?)
-                         comment)))
-   (seclude
+   (let comment (then (lit-1 #\;) (~.many (then (~.nix (lit-1 #\newline))
+                                                skip-any-1))))
+   (let __ (~.many (either (skip-1 ~.whitespace?)
+                           comment)))
+   (~.seclude
     (then __
-          (either (then (lit-1 #\() __ (many subexpr) (lit-1 #\)) __
+          (either (then (lit-1 #\() __ subexpr.many (lit-1 #\)) __
                         hug)
-                  (then (take-1 ~.letter?) (many (take-1 ~.alphanumeric?)) __
+                  (then (take-1 ~.letter?) (~.many (take-1 ~.alphanumeric?)) __
                         (feed (compose ~.symbol chain))))))))
 
 (try sexpr "")

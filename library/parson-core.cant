@@ -30,6 +30,17 @@
   (to (~ .?parse text) ((peg .parse-outcome text) .?results))
   (to (~ .parse-outcome text)           ;TODO better name, etc.
     (peg .parsing text 0 0 '()))
+  ;; Convenience constructor methods:
+  (to ~.nix         (nix peg))
+  (to ~.capture     (capture peg))
+  (to ~.seclude     (seclude peg))
+  (to ~.peek        (peek peg))
+  (to ~.seek        (seek peg))
+  (to ~.maybe       (maybe peg))
+  (to ~.many        (many peg))
+  (to ~.at-least-1  (at-least-1 peg))
+  (to (~ .then q)   (then peg q))
+  (to (~ .either q) (either peg q))
   (to message
     (miranda-trait peg message)))
 
