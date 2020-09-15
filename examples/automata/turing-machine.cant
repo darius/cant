@@ -14,13 +14,12 @@
 ;; Visited blank squares are symbolized as '-'.
 
 (to (run machine @(optional option))
-  (begin running ((machine machine))
-    (when (= option 'loudly)
+  (let history (take-while yeah? (iterate step machine)))
+  (when (= option 'loudly)
+    (for each! ((machine history))
       (show-config machine)
-      out.newline)
-    (may (step machine)
-      (be #no     machine)
-      (be updated (running updated)))))
+      out.newline))
+  history.last)
 
 (to (show-config {machine transit state {tape L h R}})
   (let next-acts (may (transit .get (~ state h))
