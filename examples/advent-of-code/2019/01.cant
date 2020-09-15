@@ -1,3 +1,5 @@
+;; (Use run.cant to run this.)
+
 (let input (with-input-file ~.read-lines data-file))
 (let inputs (each ~.number input))
 

@@ -1,3 +1,5 @@
+;; (Use run.cant to run this.)
+
 (let input (with-input-file ~.read-all data-file))
 (let parse (like "(:integer | :skip)*"))
 (let inputs (parse input))
