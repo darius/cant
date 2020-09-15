@@ -127,15 +127,6 @@
                       (for each/lazy ((picks (grid*/lazy @lists)))
                         (link x picks)))))
 
-;; (intercalate T '(as bs cs)) = `(,@as ,T ,@bs ,T ,@cs)
-;; TODO almost never used
-(to (intercalate between elements)      ;TODO unify with .join
-  (if elements.none?
-      elements
-      (link elements.first
-            (for gather ((x elements.rest)) ;TODO more efficient
-              `(,between ,x)))))
-
 ;; TODO zipped-list-transducer for the below?
 
 (to (those/lazy keep? xs)
@@ -256,6 +247,15 @@
     (if (or xs.none? (split-point? xs.first))
         `(,(reverse r-head) ,xs)
         (scanning (link xs.first r-head) xs.rest))))
+
+;; (intercalate T '(as bs cs)) = `(,@as ,T ,@bs ,T ,@cs)
+;; TODO almost never used
+(to (intercalate between elements)      ;TODO unify with .join
+  (if elements.none?
+      elements
+      (link elements.first
+            (for gather ((x elements.rest)) ;TODO more efficient
+              `(,between ,x)))))
 
 ;; probably worthless
 (to (method<- actor cue)
