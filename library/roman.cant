@@ -12,7 +12,7 @@
   (map<-lists '((#\M 1000) (#\D 500) (#\C 100) (#\L 50) (#\X 10) (#\V 5) (#\I 1))))
 
 (to (roman<-number n)
-  (surely (< 0 n))
+  (surely (and (count? n) n.positive?))
   (for foldr ((digit n.digits) (roman ""))
     (chain (text-by rune*10 roman) (roman<-digit digit))))
 

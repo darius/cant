@@ -16,13 +16,10 @@
 (out .display "\nPart 2\n")
 
 (to (transitive-fuel<- dry-mass)
-  (sum (while positive? (~.rest (iterate fuel<- dry-mass)))))
+  (sum (while ~.positive? (~.rest (iterate fuel<- dry-mass)))))
 
 (to (iterate f x)                       ;TODO some version of this for stdlib
   (link/lazy x (: (iterate f (f x)))))
-
-(to (positive? x)                       ;TODO as number method?
-  (< 0 x))
 
 (to (while prefix? xs)                  ;TODO as list method?
   (hm (if xs.none? '())

@@ -113,7 +113,8 @@ Press Tab to cycle to the next game, Esc to quit.")
 
 (to (clause-satisfied? clause settings)
   (for some ((literal clause))
-    (= (< 0 literal) (settings .get literal.magnitude))))
+    ;; Either positive and in, or negative and out:
+    (= literal.positive? (settings .get literal.magnitude))))
 
 (to (dimacs-load filename)
   (with-input-file dimacs-read filename))

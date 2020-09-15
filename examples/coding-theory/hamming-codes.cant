@@ -6,11 +6,11 @@
 ;; TODO The same principles can extend to detecting a double error.
 
 (to (basic-hamming-code<- n-check-bits)
-  (surely (< 0 n-check-bits))
+  (surely n-check-bits.positive?)
 
   (let n-encoded-bits (- (2 .** n-check-bits) 1))
   (let n-message-bits (- n-encoded-bits n-check-bits))
-  (surely (< 0 n-message-bits))
+  (surely n-message-bits.positive?)
   
   (to (well-formed? bits)
     (every bit? bits))
