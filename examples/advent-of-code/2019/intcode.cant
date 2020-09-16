@@ -1,0 +1,19 @@
+(to (intcode-run core pc)
+  (begin ((pc pc))
+    (may (step core pc)
+      (be #no    (core 0))
+      (be new-pc (loop new-pc)))))
+
+(to (step core pc)
+  (to (P i) (core (+ pc i)))
+  (may (core pc)
+    (be 1 ; add
+      (core .set! (P 3) (+ (core (P 1)) (core (P 2))))
+      (+ pc 4))
+    (be 2 ; mul
+      (core .set! (P 3) (* (core (P 1)) (core (P 2))))
+      (+ pc 4))
+    (be 99 ; halt
+      #no)))
+
+(export intcode-run)

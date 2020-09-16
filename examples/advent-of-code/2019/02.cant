@@ -1,32 +1,19 @@
 ;; (Use run.cant to run this.)
 
+(import (use "intcode") intcode-run)
+
 (let input (with-input-file ~.read-all data-file))
 (let parse (like "(:integer | :skip)*"))
 (let inputs (parse input))
-
-(let core inputs.array)
-
-(to (run pc)
-  (let a (core (+ pc 1)))
-  (let b (core (+ pc 2)))
-  (let c (core (+ pc 3)))
-  (may (core pc)
-    (be 1 ; add
-      (core .set! c (+ (core a) (core b)))
-      (run (+ pc 4)))
-    (be 2 ; mul
-      (core .set! c (* (core a) (core b)))
-      (run (+ pc 4)))
-    (be 99 ; halt
-      (core 0))))
 
 
 (out .display "\nPart 1\n")
 
 (to (part-1)
+  (let core inputs.array)
   (core .set! 1 12)
   (core .set! 2 2)
-  (run 0)
+  (intcode-run core 0)
   (core 0))
 
 (out .say "~w\n" (part-1))
@@ -34,13 +21,11 @@
 
 (out .display "\nPart 2\n")
 
-(let initial-core inputs.array)
-
 (to (check noun verb)
-  (core .copy! initial-core)
+  (let core inputs.array)
   (core .set! 1 noun)
   (core .set! 2 verb)
-  (let result (run 0))
+  (let result (intcode-run core 0))
   (and (= result 19690720)
        (+ (* 100 noun) verb)))
 
