@@ -3,8 +3,7 @@
 (import (use "intcode") intcode-run)
 
 (let input (with-input-file ~.read-all data-file))
-(let parse (like "(:integer | :skip)*"))
-(let inputs (parse input))
+(let inputs (each ~.number (input.trim .split ",")))
 
 
 (out .display "\nPart 1\n")
