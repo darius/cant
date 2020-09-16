@@ -32,7 +32,7 @@
     (peg .parsing text 0 0 '()))
   ;; Convenience constructor methods:
   (to ~.nix         (nix peg))
-  (to ~.capture     (capture peg))
+  (to ~.grab        (grab peg))
   (to ~.seclude     (seclude peg))
   (to ~.peek        (peek peg))
   (to ~.seek        (seek peg))
@@ -53,7 +53,7 @@
       (to (~ .continue _)     failure)
       (to (~ .else p j vs)    (p .parsing text far j vs))
       (to ~.nix               empty)
-      (to (~ .capture-from _) failure)
+      (to (~ .grab-from _)    failure)
       (to (~ .prefix _)       failure)
       (to ~.leftovers         (oops "Parse failed" failure.postmortem))
       (to ~.?results          #no)
@@ -71,7 +71,7 @@
       (to (~ .continue p)       (p .parsing text far i vals))
       (to (~ .else _ _ _)       success)
       (to ~.nix                 fail)
-      (to (~ .capture-from j)   (empty .parsing text far i `(,@vals ,(text .slice j i))))
+      (to (~ .grab-from j)      (empty .parsing text far i `(,@vals ,(text .slice j i))))
       (to (~ .prefix pre-vals)  (empty .parsing text far i (chain pre-vals vals)))
       (to ~.leftovers           i)
       (to ~.?results            vals)
@@ -90,10 +90,10 @@
 
 ;; Return a parser that acts like p, except it appends a value: the
 ;; text that p matched.
-(to (capture p)
-  (make capture-p {extending peg-trait}
+(to (grab p)
+  (make grab-p {extending peg-trait}
     (to (~ .parsing text far i vals)
-      ((p .parsing text far i vals) .capture-from i))))
+      ((p .parsing text far i vals) .grab-from i))))
 
 ;; (either p1 ... pn): a parser that succeeds just when one of its
 ;; arguments does, trying them in order.
@@ -236,9 +236,9 @@
 ;; Like (skip-1 ok?), but appending the one-element sequence (one-rune
 ;; subtext) to the vals.
 (to (take-1 ok?)
-  (capture (skip-1 ok?)))
+  (grab (skip-1 ok?)))
 
-(let any-1 (capture skip-any-1))
+(let any-1 (grab skip-any-1))
 
 ;; E.g. (lit-1 #\x) advances past exactly "x", or fails.
 (to (lit-1 my-rune)
@@ -275,7 +275,7 @@
     (then p (many (then separator p)))))
 
 (export peg-trait
-        fail empty nix capture either then seclude delay match position
+        fail empty nix grab either then seclude delay match position
         dynamic alter feed-list feed drop push
         peek seek skip-1 skip-any-1 end take-1 any-1 lit-1 lit
         maybe many at-least-1)

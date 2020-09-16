@@ -2,7 +2,7 @@
 ;; XXX leaving out regexes, fnord, anonymous start
 
 (import (use 'parson-core)
-  nix capture either then feed-list feed push seclude delay
+  nix grab either then feed-list feed push seclude delay
   maybe many at-least-1 seek
   fail empty end skip-1 position take-1 any-1 skip-any-1 lit-1 lit drop)
 
@@ -72,14 +72,14 @@
 
 (let name 
   (seclude
-   (then (capture (then (skip-1 name-rune?)
-                        (many (skip-1 word-rune?))))
+   (then (grab (then (skip-1 name-rune?)
+                     (many (skip-1 word-rune?))))
          (feed ~.symbol)
          __)))
 
 (let word
   (seclude
-   (then (capture (at-least-1 (skip-1 word-rune?)))
+   (then (grab (at-least-1 (skip-1 word-rune?)))
          (feed ~.symbol)
          __)))
 
@@ -119,7 +119,7 @@
   (seclude
    (either (then (lit "(") __ pe (lit ")") __)
            (then (lit "[") __ pe (lit "]") __   (lift seclude))
-           (then (lit "{") __ pe (lit "}") __   (lift capture))
+           (then (lit "{") __ pe (lit "}") __   (lift grab))
            (then qtext (feed literal<-))
            (then dqtext (feed keyword<-))
            (then (lit ":") (either (then word  (feed unquote<-))
@@ -175,11 +175,11 @@
          (~ 'drop drop)
          (~ 'whitespace (skip-1 ~.whitespace?))
          (~ 'count (seclude
-                    (then (capture (at-least-1 (skip-1 ~.digit?))) ;; TODO no leading 0s
+                    (then (grab (at-least-1 (skip-1 ~.digit?))) ;; TODO no leading 0s
                           (feed ~.number))))
          (~ 'integer (seclude
-                      (then (capture (then (maybe (lit-1 #\-))
-                                           (at-least-1 (skip-1 ~.digit?))));; TODO no leading 0s
+                      (then (grab (then (maybe (lit-1 #\-))
+                                        (at-least-1 (skip-1 ~.digit?))));; TODO no leading 0s
                             (feed ~.number))))
          (~ 'position position)
          ;; TODO: more
