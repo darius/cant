@@ -6,7 +6,8 @@
 
 ;; TODO take in some virtualization of input and output
 (to (step core pc)
-
+  (surely (core .maps? pc))
+  
   (to (P mode i)
     (may mode
       (be 0 (core (core (+ pc i))))
@@ -19,7 +20,7 @@
   (let (list<- opcode a-mode b-mode c-mode)
     ((core pc) .digits '(100 10 10) 4)) ;TODO this is *really* slow
 
-  ;;(show core pc)
+  (show core pc)
   (may opcode
     (be 1 ; add
       (core .set! (Addr c-mode 3) (+ (P a-mode 1) (P b-mode 2)))
@@ -33,6 +34,16 @@
     (be 4 ; output
       (out .print (P a-mode 1))
       (+ pc 2))
+    (be 5 ; jump-if-true
+      (if (not= 0 (P a-mode 1)) (P b-mode 2) (+ pc 3)))
+    (be 6 ; jump-if-false
+      (if (= 0 (P a-mode 1)) (P b-mode 2) (+ pc 3)))
+    (be 7 ; less-than
+      (core .set! (Addr c-mode 3) (if (< (P a-mode 1) (P b-mode 2)) 1 0))
+      (+ pc 4))
+    (be 8 ; equals
+      (core .set! (Addr c-mode 3) (if (= (P a-mode 1) (P b-mode 2)) 1 0))
+      (+ pc 4))
     (be 99 ; halt
       #no)))
 
@@ -40,13 +51,21 @@
   (let (list<- opcode a-mode b-mode c-mode)
     ((core pc) .digits '(100 10 10) 4))
   (let modes [a-mode b-mode c-mode])
-  (out .say "~w ~d" pc (op-names opcode))
-  (for each! ((i (1 .thru (op-nargs opcode))))
+  (let {op name nargs} (ops opcode))
+  (out .say "~w ~d" pc name)
+  (for each! ((i (1 .thru nargs)))
     (out .say " ~d~w" (mode-names (modes i.-)) (core (+ pc i))))
   out.newline)
 
-(let op-names (map<-lists '((1 add) (2 mul) (3 input) (4 output) (99 halt))))
-(let op-nargs (map<-lists '((1 3)   (2 3)   (3 1)     (4 1)      (99 0))))
+(let ops (map<-lists '((1 {op add 3})
+                       (2 {op mul 3})
+                       (3 {op input 1})
+                       (4 {op output 1})
+                       (5 {op jump-if-true 2})
+                       (6 {op jump-if-false 2})
+                       (7 {op less-than 3})
+                       (8 {op equals 3})
+                       (99 {op halt 0}))))
 (let mode-names ["^" ""])
 
 (export intcode-run)

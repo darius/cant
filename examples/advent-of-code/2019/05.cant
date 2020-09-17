@@ -1,0 +1,24 @@
+;; (Use run.cant to run this.)
+
+(import (use "intcode") intcode-run)
+(let input (with-input-file ~.read-all data-file))
+(to (parse line) (each ~.number (line.trim .split ",")))
+(let inputs (parse input))
+
+
+(out .display "\nPart 1\n")
+
+(to (part-1)
+  (intcode-run inputs.array 0))
+
+(out .say "~w\n" (part-1))
+
+
+(out .display "\nPart 2\n")
+
+(let initial-core inputs.array)
+
+(to (part-2)
+  'XXX)
+
+(out .say "~w\n" (part-2))
