@@ -24,7 +24,8 @@
   (let core inputs.array)
   (core .set! 1 noun)
   (core .set! 2 verb)
-  (let result (intcode-run core 0))
+  (intcode-run core 0)
+  (let result (core 0))
   (and (= result 19690720)
        (+ (* 100 noun) verb)))
 
