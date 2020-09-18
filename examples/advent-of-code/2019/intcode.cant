@@ -1,11 +1,19 @@
-(to (intcode-run core pc)
+(to (intcode-run core pc @(optional interface))
+  (let face (or interface (i/o-interface<- in out)))
   (begin ((pc pc))
-    (may (step core pc)
-      (be #no)
+    (may (step core pc face)
+      (be #no    face)
       (be new-pc (loop new-pc)))))
 
+(to (i/o-interface<- source sink)
+  (make i/o-interface
+    (to ~.input
+      source.read-line.trim.number)
+    (to (~ .output x)
+      (sink .say "Output: ~w\n" x))))
+
 ;; TODO take in some virtualization of input and output
-(to (step core pc)
+(to (step core pc face)
   (surely (core .maps? pc))
   
   (to (P mode i)
@@ -20,7 +28,7 @@
   (let (list<- opcode a-mode b-mode c-mode)
     ((core pc) .digits '(100 10 10) 4)) ;TODO this is *really* slow
 
-  (show core pc)
+  ;;(show core pc)
   (may opcode
     (be 1 ; add
       (core .set! (Addr c-mode 3) (+ (P a-mode 1) (P b-mode 2)))
@@ -29,10 +37,10 @@
       (core .set! (Addr c-mode 3) (* (P a-mode 1) (P b-mode 2)))
       (+ pc 4))
     (be 3 ; input
-      (core .set! (Addr c-mode 1) in.read-line.number)
+      (core .set! (Addr c-mode 1) face.input)
       (+ pc 2))
     (be 4 ; output
-      (out .print (P a-mode 1))
+      (face .output (P a-mode 1))
       (+ pc 2))
     (be 5 ; jump-if-true
       (if (not= 0 (P a-mode 1)) (P b-mode 2) (+ pc 3)))
