@@ -34,10 +34,8 @@
 
   ;; Walk from YOU towards COM until also on the SAN path.
   ;; Then sum the steps just walked plus the steps from SAN to here.
-  (begin ((items (~.items (paths "YOU"))))
-    (let (~ i here) items.first)
-    (if (santa-set .maps? here)
-        (+ i ((paths "SAN") .find here))
-        (loop items.rest))))
+  (let (~ i here) (for detect (((~ _ here) ((paths "YOU") .items)))
+                    (santa-set .maps? here)))
+  (+ i ((paths "SAN") .find here)))
 
 (out .say "~w\n" (part-2))
