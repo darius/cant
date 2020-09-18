@@ -128,6 +128,7 @@
             (for each ((perm (permuting (remove-nth xs i))))
               (link x perm))))))
   (to ~.cycle
+    (surely list.some?)
     (begin cycling ((xs list))
       (if xs.none?
           (cycling list)
