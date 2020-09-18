@@ -406,6 +406,12 @@
         (and (pass? xs.first)
              (every pass? xs.rest)))))
 
+;; (gather f '(a b c)) = (chain (f 'a) (f 'b) (f 'c))
+(make gather {extending zipped-list-transducer}
+  (to (~ f xs)
+    (for foldr ((x xs) (gathered '()))
+      (chain (f x) gathered))))
+
 ;; TODO better as (link x (lazy-list<- thunk)) ?
 (to (link/lazy x thunk)
   (make lazy-list {extending list-trait}

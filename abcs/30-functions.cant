@@ -2,12 +2,6 @@
 ;; Some such functions are defined at an earlier stage in abcs/ because they're
 ;; used by other earlier-stage code.
 
-;; (gather f '(a b c)) = (chain (f 'a) (f 'b) (f 'c))
-(make gather {extending zipped-list-transducer}
-  (to (~ f xs)
-    (for foldr ((x xs) (gathered '()))
-      (chain (f x) gathered))))
-
 ;; (those ~.even? '(3 1 4 1 5 9 2 6)) = '(4 2 6)
 ;; No {extending zipped-list-transducer} for this one, because the
 ;; one-arg case is not substitutable for the n-arg: the n-arg version
