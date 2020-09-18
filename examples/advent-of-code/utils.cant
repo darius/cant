@@ -73,3 +73,11 @@
 
 (to (bounds-1d<- ns)
   `(,(min @ns) ,(max @ns)))
+
+;; TODO name, generalize?
+(to (collect items)
+  (let map (!map<-))
+  (for each! (((~ key value) items))
+    ((map .get-set! key flexarray<-) .push! value))
+  (for each (((~ key array) map.items))
+    (~ key array.values)))

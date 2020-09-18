@@ -1,0 +1,43 @@
+;; (Use run.cant to run this.)
+
+(let input (with-input-file ~.read-lines data-file))
+(let inputs (each (~ .split ")") input))
+
+(let places (map<-items (collect (each ~.tuple inputs))))
+
+
+(out .display "\nPart 1\n")
+
+(to (part-1)
+;;  (let roots (places.domain .difference (~.range (each (~ 1) inputs))))
+;;  (out .print roots) ; Turned out to be just "COM".
+  (to (count-orbits depth x)
+    (+ depth (sum (for each ((y (places .get x '())))
+                    (count-orbits depth.+ y)))))
+  (count-orbits 0 "COM"))
+
+(out .say "~w\n" (part-1))
+
+
+(out .display "\nPart 2\n")
+
+(to (part-2)
+  
+  ;; Map from each place to its path to COM (not including the place itself).
+  (let paths (!map<-))
+  (begin walking ((path '()) (here "COM"))
+    (paths .set! here path)
+    (for each! ((next (places .get here '())))
+      (walking (link here path) next)))
+  
+  (let santa-set ((paths "SAN") .range))
+
+  ;; Walk from YOU towards COM until also on the SAN path.
+  ;; Then sum the steps just walked plus the steps from SAN to here.
+  (begin ((items (~.items (paths "YOU"))))
+    (let (~ i here) items.first)
+    (if (santa-set .maps? here)
+        (+ i ((paths "SAN") .find here))
+        (loop items.rest))))
+
+(out .say "~w\n" (part-2))

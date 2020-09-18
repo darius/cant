@@ -5,6 +5,8 @@
 (to (parse line) (each ~.number (line.trim .split ",")))
 (let inputs (parse input))
 
+;; TODO virtualize I/O
+
 
 (out .display "\nPart 1\n")
 

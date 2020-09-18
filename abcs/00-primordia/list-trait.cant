@@ -101,6 +101,8 @@
     (text<-list list.values))
   (to ~.array
     (array<-list list.values))
+  (to ~.tuple
+    (tuple<-list list.values))
   (to (~ .sample-key chaos)
     (chaos .sample-count list.count))
   (to (~ .alter alter!)                 ;; TODO an experiment
