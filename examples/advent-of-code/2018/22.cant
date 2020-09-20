@@ -1,8 +1,6 @@
 ;; (Use run.cant to run this.)
 ;; Simple least-cost search was too slow.
 
-(import (use 'memoize)
-  memoize)
 (import (use 'pairing-heap)
   priority-queues<-)
 

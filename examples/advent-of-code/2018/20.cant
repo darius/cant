@@ -1,8 +1,5 @@
 ;; (Use run.cant to run this.)
 
-(import (use 'memoize)
-  memoize)
-
 (let input (with-input-file ~.read-all data-file))
 
 (to (alt<- @es) {alt es})
