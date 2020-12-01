@@ -11,7 +11,7 @@ import os, requests
 # Grab the session cookie from the https://adventofcode.com/ site:
 # right-click, Inspect, Application tab, Cookies, session.
 session = os.environ['ADVENT_SESSION']
-default_year = 2019
+default_year = 2020
 
 def download(day, year=default_year):
     text = fetch(day)
