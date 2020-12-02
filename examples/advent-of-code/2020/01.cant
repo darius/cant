@@ -23,6 +23,6 @@
   (for some ((`(,a ,b) (inputs .combinations 2)))
     (let c (- 2020 a b))
     (and (s .maps? c)
-         `(,a ,b ,c ,(* a b c)))))
+         (* a b c))))
 
 (out .say "~w\n" (part-2))
