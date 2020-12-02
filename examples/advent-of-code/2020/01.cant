@@ -18,6 +18,8 @@
 
 (to (part-2)
   (let s inputs.range)
+  ;; originally (for some ((`(,a ,b ,c) (inputs .combinations 3)))
+  ;; but that was almost too slow
   (for some ((`(,a ,b) (inputs .combinations 2)))
     (let c (- 2020 a b))
     (and (s .maps? c)
