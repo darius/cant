@@ -1,0 +1,33 @@
+;; (Use run.cant to run this.)
+
+(let input (with-input-file ~.read-lines data-file))
+(let parse (like ":count '-' :count _ {:letter} ': ' {:letter*}"))
+(let inputs (each parse input))
+
+
+(out .display "\nPart 1\n")
+
+(to (valid? `(,lo ,hi ,policy ,password))
+  (let p (policy 0))
+  (let n (tally-by (:: (= it p)) password))
+  (<= lo n hi))
+
+(to (part-1)
+  (tally-by valid? inputs))
+
+(out .say "~w\n" (part-1))
+
+
+(out .display "\nPart 2\n")
+
+(to (valid2? `(,lo ,hi ,policy ,password))
+  (let p (policy 0))
+  (not= (= p (password .get lo.-))
+        (= p (password .get hi.-))))
+
+;;(out .print (valid2? '(1 3 "a" "abcde")))
+
+(to (part-2)
+  (tally-by valid2? inputs))
+
+(out .say "~w\n" (part-2))
