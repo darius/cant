@@ -1,0 +1,22 @@
+;; (Use run.cant to run this.)
+
+(let input (~.array (with-input-file ~.read-lines data-file)))
+
+(to (part1)
+  (check 3 1))
+
+(to (check dx dy)
+  (begin sliding ((x 0) (y 0) (ntrees 0))
+    (may (input .get y)
+      (be #no ntrees)
+      (be row
+        (sliding (+ x dx)
+                 (+ y dy)
+                 (+ ntrees (~.count (= #\# (row (x .modulo row.count))))))))))
+
+(to (part2)
+  (* (check 1 1)
+     (check 3 1)
+     (check 5 1)
+     (check 7 1)
+     (check 1 2)))
