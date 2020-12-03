@@ -12,7 +12,15 @@
     (cant .play `(do (let data-name ',data-name)
                      (let data-file ',("~d/data/~d" .format stem data-name)))
                 main-interactive-setting)
-    (load ("~d/~d.cant" .format stem code-name)))
+    (load ("~d/~d.cant" .format stem code-name))
+    (run-part 'part1)
+    (run-part 'part2))
+
+  (to (run-part part)
+    (when (main-interactive-setting .binds? part)
+      (out .say "\nStarting ~d...\n" part)
+      (let answer ((main-interactive-setting part)))
+      (out .say "~d: ~w\n" part answer)))
 
   (may args
     (be `(,_ ,filename)

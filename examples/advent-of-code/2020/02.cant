@@ -5,20 +5,16 @@
 (let inputs (each parse input))
 
 
-(out .display "\nPart 1\n")
+(to (part1)
+  (tally-by valid? inputs))
 
 (to (valid? `(,lo ,hi ,policy ,password))
   (let p (policy 0))
   (let n (tally-by (:: (= it p)) password))
   (<= lo n hi))
 
-(to (part-1)
-  (tally-by valid? inputs))
-
-(out .say "~w\n" (part-1))
-
-
-(out .display "\nPart 2\n")
+(to (part2)
+  (tally-by valid2? inputs))
 
 (to (valid2? `(,lo ,hi ,policy ,password))
   (let p (policy 0))
@@ -26,8 +22,3 @@
         (= p (password hi.-))))
 
 ;;(out .print (valid2? '(1 3 "a" "abcde")))
-
-(to (part-2)
-  (tally-by valid2? inputs))
-
-(out .say "~w\n" (part-2))

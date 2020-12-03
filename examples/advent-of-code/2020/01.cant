@@ -3,20 +3,12 @@
 (let input (with-input-file ~.read-lines data-file))
 (let inputs (each ~.number input))
 
-
-(out .display "\nPart 1\n")
-
-(to (part-1)
+(to (part1)
   (for some ((`(,a ,b) (inputs .combinations 2)))
     (and (= (+ a b) 2020)
          (* a b))))
 
-(out .say "~w\n" (part-1))
-
-
-(out .display "\nPart 2\n")
-
-(to (part-2)
+(to (part2)
   (let s inputs.range)
   ;; originally (for some ((`(,a ,b ,c) (inputs .combinations 3)))
   ;; but that was almost too slow
@@ -24,5 +16,3 @@
     (let c (- 2020 a b))
     (and (s .maps? c)
          (* a b c))))
-
-(out .say "~w\n" (part-2))
