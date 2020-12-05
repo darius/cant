@@ -6,16 +6,12 @@
   (max @(each convert input)))
 
 (to (convert line)
-  ;; Pretty clumsy, oh well.
-  (let rr (line .slice 0 7))
-  (let cc (line .slice 7))
-  (let row (number<-text (-> rr (~ .replace "F" "0") (~ .replace "B" "1"))
-                         2))
-  (let col (number<-text (-> cc (~ .replace "L" "0") (~ .replace "R" "1"))
-                         2))
-  (+ (* row 8) col))
+  (-> line
+      (~ .replace "F" "0") (~ .replace "B" "1")
+      (~ .replace "L" "0") (~ .replace "R" "1")
+      (:: (number<-text it 2))))
 
 (to (part2)
   (let ids (each convert input))
-  (let range (~.range ((min @ids) .thru (max @ids))))
-  ((range .difference ids.range) .keys))
+  (let seats (~.range ((min @ids) .thru (max @ids))))
+  ((seats .difference ids.range) .keys))
