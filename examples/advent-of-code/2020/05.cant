@@ -6,10 +6,9 @@
   (max @(each convert input)))
 
 (to (convert line)
-  (-> line
-      (~ .replace "F" "0") (~ .replace "B" "1")
-      (~ .replace "L" "0") (~ .replace "R" "1")
-      (:: (number<-text it 2))))
+  (number<-text (text-by binarize line) 2))
+
+(let binarize (map<-items (zip "FBLR" "0101")))
 
 (to (part2)
   (let ids (each convert input))
