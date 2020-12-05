@@ -13,5 +13,5 @@
 
 (to (part2)
   (let ids (each convert input))
-  (let seats (~.range ((min @ids) .thru (max @ids))))
-  ((seats .difference ids.range) .keys))
+  (let seats ((min @ids) .thru (max @ids)))
+  ((seats.range .difference ids.range) .keys))
