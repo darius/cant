@@ -5,11 +5,9 @@
 
 (to (part1)
   (for tally-by ((group inputs))
-    (bag<- (chain @group))))
+    (set<-list (chain @group))))
 
 (to (part2)
   (for tally-by ((group inputs))
-    (for foldl ((qs all-qs) (g group))
-      (qs .intersect g.range))))
-
-(let all-qs ((#\a .thru #\z) .range))
+    (foldl1 (on (x y) (x .intersect y))
+            (each ~.range group))))
