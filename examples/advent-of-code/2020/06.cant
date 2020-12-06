@@ -5,7 +5,7 @@
 
 (to (part1)
   (for tally-by ((group inputs))
-    (set<-list (chain @group))))
+    (~.range (chain @group))))
 
 (to (part2)
   (for tally-by ((group inputs))
