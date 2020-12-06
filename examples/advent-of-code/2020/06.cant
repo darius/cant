@@ -1,0 +1,15 @@
+;; (Use run.cant to run this.)
+
+(let input (with-input-file ~.read-all data-file))
+(let inputs (each ~.split (input .split "\n\n")))
+
+(to (part1)
+  (for tally-by ((group inputs))
+    (bag<- (gather ~.values group))))
+
+(to (part2)
+  (for tally-by ((group inputs))
+    (for foldl ((qs all-qs) (g group))
+      (qs .intersect g.range))))
+
+(let all-qs ((#\a .thru #\z) .range))
