@@ -9,13 +9,9 @@
 
 (to (valid1? passport)
   (let keys ((each (~ 0) passport) .range))
-  (and (keys .maps? "byr")
-       (keys .maps? "iyr")
-       (keys .maps? "eyr")
-       (keys .maps? "hgt")
-       (keys .maps? "hcl")
-       (keys .maps? "ecl")
-       (keys .maps? "pid")))
+  (required-keys .subset-of? keys))
+
+(let required-keys (-> "byr iyr eyr hgt hcl ecl pid" ~.split ~.range))
 
 (to (part2)
   (tally-by valid2? inputs))

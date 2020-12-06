@@ -52,6 +52,9 @@
       (map2 .maps? k)))
   (to (~ .disjoint? map2)                    ;too trivial?
     (not (map .intersects? map2)))
+  (to (~ .subset-of? map2)  ;TODO be a stickler and make it a set method?
+    (for every ((k map.keys))
+      (map2 .maps? k)))
   (to ~.domain
     (set<-list map.keys))   ;TODO usually worth specializing
   (to ~.range
