@@ -7,8 +7,8 @@
 (to (part1)
   (tally-by valid1? inputs))
 
-(to (valid1? rec)
-  (let keys ((each (~ 0) rec) .range))
+(to (valid1? passport)
+  (let keys ((each (~ 0) passport) .range))
   (and (keys .maps? "byr")
        (keys .maps? "iyr")
        (keys .maps? "eyr")
@@ -20,9 +20,9 @@
 (to (part2)
   (tally-by valid2? inputs))
 
-(to (valid2? rec)
-  (and (valid1? rec)
-       (for every ((`(,k ,v) rec))
+(to (valid2? passport)
+  (and (valid1? passport)
+       (for every ((`(,k ,v) passport))
          (may k
            (be "byr" (<= 1920 v.number 2002))
            (be "iyr" (<= 2010 v.number 2020))
