@@ -19,13 +19,13 @@ _: :whitespace.
 (to (part1)
   (let goal "shiny gold")
   (let deep-contains?
-    (memoize (on (outer-bag)
-               (or (= outer-bag goal)    ;; except if at top; thus ~.- below
-                   (for some ((`(,_ ,bag) (holdings outer-bag)))
-                     (deep-contains? bag))))))
-  (~.- (tally-by deep-contains? holdings.keys)))
+    (memoize (on (bag)
+               (for some ((`(,_ ,sub-bag) (holdings bag)))
+                 (or (= sub-bag goal)
+                     (deep-contains? sub-bag))))))
+  (tally-by deep-contains? holdings.keys))
 
 (to (part2)
-  (~.- (begin count-inside ((bag "shiny gold"))
-         (+ 1 (sum (for each ((`(,n ,sub-bag) (holdings bag)))
-                     (* n (count-inside sub-bag))))))))
+  (begin deep-counting ((bag "shiny gold"))
+    (sum (for each ((`(,n ,sub-bag) (holdings bag)))
+           (* n (+ 1 (deep-counting sub-bag)))))))
