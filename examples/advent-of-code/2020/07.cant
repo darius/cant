@@ -4,21 +4,21 @@
 
 (let g (grammar<- "
 rule: np _ 'contain' _ [nps :hug] '.' :end.
-np: word _ word _ ('bags'|'bag') :hug.
+np: {word _ word} _ ('bags'|'bag').
 nps: 'no' _ 'other' _ 'bags' | [:count _ np :hug] ++ (','_).
-word: {:letter+}.
+word: :letter+.
 _: :whitespace.
 "))
 (let parser ((g (map<-)) 'rule))
 (let inputs (each (:: (parser .parse it)) input))
 
 ;; dim chartreuse bags contain 1 faded indigo bag.
-;; --> (("dim" "chartreuse") ((1 ("faded" "indigo"))))
+;; --> ("dim chartreuse" ((1 "faded indigo")))
 
 (let contains (!map<-lists inputs))
 
 (to (part1)
-  (let goal '("shiny" "gold"))
+  (let goal "shiny gold")
   (let transitive-contains?
     (memoize (on (outer-bag)
                (or (= outer-bag goal)    ;; except if at top; thus ~.- below
@@ -30,6 +30,6 @@ _: :whitespace.
   (~.- (tally-by transitive-contains? contains.keys)))
 
 (to (part2)
-  (~.- (begin count-inside ((bag '("shiny" "gold")))
+  (~.- (begin count-inside ((bag "shiny gold"))
          (+ 1 (sum (for each ((`(,n ,sub-bag) (contains bag)))
                      (* n (count-inside sub-bag))))))))
