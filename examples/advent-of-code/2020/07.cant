@@ -15,9 +15,7 @@ _: :whitespace.
 ;; dim chartreuse bags contain 1 faded indigo bag.
 ;; --> (("dim" "chartreuse") ((1 ("faded" "indigo"))))
 
-(let contains (!map<-))
-(for each! ((`(,container ,contained-list) inputs))
-  (contains .set! container contained-list))
+(let contains (!map<-lists inputs))
 
 (to (part1)
   (let goal '("shiny" "gold"))
