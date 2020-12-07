@@ -21,11 +21,8 @@ _: :whitespace.
   (let transitive-contains?
     (memoize (on (outer-bag)
                (or (= outer-bag goal)    ;; except if at top; thus ~.- below
-                   (may (contains .get outer-bag)
-                     (be #no #no)
-                     (be contents
-                       (for some ((`(,_ ,bag) contents))
-                         (transitive-contains? bag))))))))
+                   (for some ((`(,_ ,bag) (contains outer-bag)))
+                     (transitive-contains? bag))))))
   (~.- (tally-by transitive-contains? contains.keys)))
 
 (to (part2)
