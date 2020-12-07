@@ -18,12 +18,12 @@ _: :whitespace.
 
 (to (part1)
   (let goal "shiny gold")
-  (let transitive-contains?
+  (let deep-contains?
     (memoize (on (outer-bag)
                (or (= outer-bag goal)    ;; except if at top; thus ~.- below
                    (for some ((`(,_ ,bag) (holdings outer-bag)))
-                     (transitive-contains? bag))))))
-  (~.- (tally-by transitive-contains? holdings.keys)))
+                     (deep-contains? bag))))))
+  (~.- (tally-by deep-contains? holdings.keys)))
 
 (to (part2)
   (~.- (begin count-inside ((bag "shiny gold"))
