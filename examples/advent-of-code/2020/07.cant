@@ -11,7 +11,7 @@ _: :whitespace.
 "))
 (let parser ((g (map<-)) 'rule))
 (let inputs (each (:: (parser .parse it)) input))
-(let contains (!map<-lists inputs))
+(let holdings (!map<-lists inputs))
 
 ;; dim chartreuse bags contain 1 faded indigo bag.
 ;; --> ("dim chartreuse" ((1 "faded indigo")))
@@ -21,11 +21,11 @@ _: :whitespace.
   (let transitive-contains?
     (memoize (on (outer-bag)
                (or (= outer-bag goal)    ;; except if at top; thus ~.- below
-                   (for some ((`(,_ ,bag) (contains outer-bag)))
+                   (for some ((`(,_ ,bag) (holdings outer-bag)))
                      (transitive-contains? bag))))))
-  (~.- (tally-by transitive-contains? contains.keys)))
+  (~.- (tally-by transitive-contains? holdings.keys)))
 
 (to (part2)
   (~.- (begin count-inside ((bag "shiny gold"))
-         (+ 1 (sum (for each ((`(,n ,sub-bag) (contains bag)))
+         (+ 1 (sum (for each ((`(,n ,sub-bag) (holdings bag)))
                      (* n (count-inside sub-bag))))))))
