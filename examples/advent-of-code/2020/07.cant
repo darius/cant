@@ -17,13 +17,12 @@ _: :whitespace.
 ;; --> ("dim chartreuse" ((1 "faded indigo")))
 
 (to (part1)
-  (let goal "shiny gold")
-  (let deep-contains?
+  (let deep-gold?
     (memoize (on (bag)
                (for some ((`(,_ ,sub-bag) (holdings bag)))
-                 (or (= sub-bag goal)
-                     (deep-contains? sub-bag))))))
-  (tally-by deep-contains? holdings.keys))
+                 (or (= sub-bag "shiny gold")
+                     (deep-gold? sub-bag))))))
+  (tally-by deep-gold? holdings.keys))
 
 (to (part2)
   (begin deep-counting ((bag "shiny gold"))
