@@ -27,5 +27,5 @@ _: :whitespace.
 
 (to (part2)
   (begin deep-counting ((bag "shiny gold"))
-    (sum (for each ((`(,n ,sub-bag) (holdings bag)))
-           (* n (+ 1 (deep-counting sub-bag)))))))
+    (for sum-by ((`(,n ,sub-bag) (holdings bag)))
+      (* n (+ 1 (deep-counting sub-bag))))))
