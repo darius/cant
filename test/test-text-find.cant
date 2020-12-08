@@ -1,8 +1,8 @@
 (import (use 'text-find)
-  text-finder<- text-find/brute)
+  text-finder<-)
 
 (to (check-both pat cases)
-  (check (:: (text-find/brute pat it)) cases)
+  (check (~ .find-slice pat) cases)
   (check (text-finder<- pat) cases))
   
 (to (check match cases)
@@ -43,7 +43,7 @@
          (= pat (dat .slice 0 i)))))
 
 (for all ((pat a-babble) (dat a-babble))
-  (may (text-find/brute pat dat)
+  (may (dat .find-slice pat)
     (be #no (should no-match-through? pat dat (- dat.count pat.count)))
     (be i (and (should no-match-through? pat dat i.-) ;TODO rethink this `should` function
                (should = pat (dat .slice i (+ i pat.count)))))))
@@ -51,5 +51,5 @@
 ;; TODO some text method for (= pat (dat .slice i (+ i pat.count)))
 
 (for all ((pat a-babble) (dat a-babble))
-  (let i (text-find/brute pat dat))
+  (let i (dat .find-slice pat))
   (should = i ((text-finder<- pat) dat)))

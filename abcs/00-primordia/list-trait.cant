@@ -107,6 +107,21 @@
     (chaos .sample-count list.count))
   (to (~ .alter alter!)                 ;; TODO an experiment
     (~.values (hey list.array alter!)))
+  (to (~ .find-slice needle)
+    ;; Return the index of the first slice in `list` equal to `needle`, or #no.
+    ;;TODO interface like .find/.find?
+    ;;TODO also a variant to start at a nonzero index
+    (let P needle.count)
+    (let j-limit (+ (- list.count P) 1))
+    (begin sliding ((j 0))
+      (and (< j j-limit)
+           (begin checking ((i 0))
+             (hm (if (= i P)
+                     j)
+                 (if (= (needle i) (list (+ i j)))   ;; TODO random access may be slow, quadratic
+                     (checking i.+))
+                 (else
+                   (sliding j.+)))))))
   (to (~ .combinations n)   ;; Ways to pick n of my elements. TODO lazy, name, map-trait version?
     ;; TODO generate tuples instead of lists?
     (surely (count? n))

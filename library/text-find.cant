@@ -1,24 +1,9 @@
 ;; Text search:
 ;; Return the index of the first slice in DAT equal to PAT, or #no.
-;; Note that (text-find "" "") = 0.
+;; Note that ((text-finder<- "") "") = 0.
 
 ;; TODO this should be in runtime.cant somewhere
 (let alphabet-size 256)
-
-;; Brute force algorithm
-;; TODO make this a built-in text method
-(to (text-find/brute pat dat)
-  (let P pat.count)
-  (let j-limit (+ (- dat.count P) 1))
-  (begin sliding ((j 0))
-    (and (< j j-limit)
-         (begin checking ((i 0))
-           (hm (if (= i P)
-                   j)
-               (if (= (pat i) (dat (+ i j)))
-                   (checking i.+))
-               (else
-                   (sliding j.+)))))))
 
 ;; TODO better name?
 ;; Boyer-Moore-Horspool algorithm
@@ -53,4 +38,4 @@
                          (else
                            (checking k.- j.-))))))))))
 
-(export text-finder<- text-find/brute)
+(export text-finder<-)
