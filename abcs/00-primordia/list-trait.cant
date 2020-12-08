@@ -142,6 +142,11 @@
           (for gather (((~ i x) xs.items))
             (for each ((perm (permuting (remove-nth xs i))))
               (link x perm))))))
+  (to (~ .slices k)
+    ;; TODO make k optional
+    ;; TODO make it reasonably efficient without random access
+    (for each ((i (0 .thru (- list.count k))))
+      (list .slice i (+ i k))))
   (to ~.cycle
     (surely list.some?)
     (begin cycling ((xs list))

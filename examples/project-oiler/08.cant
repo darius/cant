@@ -20,15 +20,11 @@
 05886116467109405077541002256983155200055935729725
 71636269561882670428252483600823257530420752963450" .replace "\n" ""))
 
-(to (k-slices<- xs k)                   ;ugly: better name?
-  (for each ((i (0 .thru (- xs.count k))))
-    (xs .slice i (+ i k))))
-
 (let digits
-  (~.array (each ~.number (k-slices<- input 1))))
+  (~.array (each ~.number (input .slices 1))))
 
 (to (oiler8 n)
-  (max @(each product<- (k-slices<- digits n))))
+  (max @(each product<- (digits .slices n))))
 
 (to (product<- ns) ;ugly: the asymmetry of this name and `sum`.
   (foldl * 1 ns.values))

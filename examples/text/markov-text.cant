@@ -28,13 +28,9 @@
 
 (to (train model input)
   (let data (chain start input '("END"))) ;TODO as array?
-  (for each! ((datum (k-slices<- data order.+)))
+  (for each! ((datum (data .slices order.+)))
     (let context (datum .slice 0 order))
     ((model .get-set! context bag<-) .add! (datum order))))
-
-(to (k-slices<- xs k)                   ;ugly: better name?
-  (for each ((i (0 .thru (- xs.count k))))
-    (xs .slice i (+ i k))))
 
 (to (spew chaos model state)
   (begin spewing ((state state))
