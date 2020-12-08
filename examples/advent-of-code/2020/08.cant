@@ -8,13 +8,10 @@
   (run inputs 100000))
 
 (to (part2)
-  (begin budgeting ((n-steps 1000))
+  (for some ((n-steps (iterate (:: (* 2 it)) 1000)))
     (out .say "\nbudgeting ~w\n" n-steps)
-    (begin flipping ((pc 0))
-      (if (inputs .maps? pc)
-          (or (flip n-steps pc)
-              (flipping pc.+))
-          (budgeting (* 2 n-steps))))))
+    (for some ((pc inputs.keys))
+      (flip n-steps pc))))
 
 (to (flip n-steps pc)
   (let code inputs.copy)
