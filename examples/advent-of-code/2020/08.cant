@@ -1,7 +1,7 @@
 ;; (Use run.cant to run this.)
 
 (let input (with-input-file ~.read-lines data-file))
-(let parse (like "{:letter+} :whitespace {'+'|'-'} :integer"))
+(let parse (like "{:letter+} _ {'+'|'-'} :integer"))
 (let inputs (~.array (for each ((line input))
                        (let `(,op ,sign ,n) (parse line))
                        `(,op ,(* n (may sign (be "+" 1) (be "-" -1)))))))
