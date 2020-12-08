@@ -8,7 +8,7 @@
   (run inputs 100000))
 
 (to (part2)
-  (begin budgeting ((n-steps 100))
+  (begin budgeting ((n-steps 1000))
     (out .say "\nbudgeting ~w\n" n-steps)
     (begin flipping ((pc 0))
       (if (inputs .maps? pc)
