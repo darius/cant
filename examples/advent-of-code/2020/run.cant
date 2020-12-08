@@ -1,4 +1,3 @@
-;; TODO support running only part1 or part2 if desired
 ;; TODO load into a module instead of main-interactive-setting
 
 (load "examples/advent-of-code/utils.cant")
