@@ -13,10 +13,10 @@
 
 (to (part2)
   (let target 258585477)                ;from part1
-  (let cumsum (running-sum inputs))
+  (let sum-to (running-sum inputs))
   (for some ((i inputs.keys))
     (for some ((j ((+ i 2) .thru inputs.count)))
-      (and (= target (- (cumsum j) (cumsum i)))
+      (and (= target (- (sum-to j) (sum-to i)))
            (do (let slice (inputs .slice i j))
                (+ (min @slice) (max @slice)))))))
 
