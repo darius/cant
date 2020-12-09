@@ -13,11 +13,15 @@
 
 (to (part2)
   (let target 258585477)                ;from part1
-  (let cumsum (flexarray<- 0))
-  (for each! ((n inputs))
-    (cumsum .push! (+ cumsum.last n)))
+  (let cumsum (running-sum inputs 0))
   (for some ((i inputs.keys))
     (for some ((j ((+ i 2) .thru inputs.count)))
-      (and (= (- (cumsum j) (cumsum i)) target)
-           (do (let slice ((inputs .slice i j) .values))
+      (and (= target (- (cumsum j) (cumsum i)))
+           (do (let slice (inputs .slice i j))
                (+ (min @slice) (max @slice)))))))
+
+(to (running-sum inputs init)
+  (let result (flexarray<- init))
+  (for each! ((n inputs))
+    (result .push! (+ result.last n)))
+  result)
