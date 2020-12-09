@@ -22,3 +22,14 @@
 
 (to (running-sum xs)
   (~.array (link 0 (scanl + 0 xs))))
+
+;; Way faster, but I didn't think of it:
+(to (part2-like-julia)
+  (let target 258585477)                ;from part1
+  (begin searching ((i 0) (j 0) (total 0))
+    (may (compare target total)
+      (be -1 (searching i.+ j (- total (inputs i))))
+      (be 1  (searching i j.+ (+ total (inputs j))))
+      (be 0
+        (let slice (inputs .slice i j))
+        (+ (min @slice) (max @slice))))))
