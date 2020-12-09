@@ -1,0 +1,23 @@
+;; (Use run.cant to run this.)
+
+(let input (with-input-file ~.read-lines data-file))
+(let inputs (each ~.number input))
+
+(to (part1)
+  (for some ((i (25 .till inputs.count)))
+    (let n (inputs i))
+    (let ns (inputs .slice (- i 25) i))
+    (and (not (for some ((`(,a ,b) (ns .combinations 2)))
+                (= (+ a b) n)))
+         n)))
+
+(to (part2)
+  (let target 258585477)                ;from part1
+  (let cumsum (flexarray<- 0))
+  (for each! ((n inputs))
+    (cumsum .push! (+ cumsum.last n)))
+  (for some ((i inputs.keys))
+    (for some ((j ((+ i 2) .thru inputs.count)))
+      (and (= (- (cumsum j) (cumsum i)) target)
+           (do (let slice ((inputs .slice i j) .values))
+               (+ (min @slice) (max @slice)))))))
