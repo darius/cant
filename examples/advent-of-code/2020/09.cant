@@ -27,7 +27,7 @@
 (to (part2-like-julia)
   (let target 258585477)                ;from part1
   (begin searching ((i 0) (j 0) (total 0))
-    ;; Loop invariant:
+    ;; Loop invariant (assuming all the inputs are nonnegative):
     ;;   total = sum(inputs[i:j])
     ;;   Either total < target or it's the smallest sum,
     ;;   starting at i, that's >= target.
