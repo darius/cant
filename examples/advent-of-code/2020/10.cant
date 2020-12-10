@@ -12,9 +12,9 @@
 
 (to (part2)
   (let count-ways
-    (memoize (on (jj)
+    (memoize (on (joltage)
                (for sum-by ((decr '(1 2 3)))
-                 (let j (- jj decr))
+                 (let j (- joltage decr))
                  (hm (if (= j 0) 1)
                      (if (< j 0) 0)
                      (if (adapters .find? j) (count-ways j))
