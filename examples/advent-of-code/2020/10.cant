@@ -13,11 +13,10 @@
 (to (part2)
   (let count-ways
     (memoize (on (j)
-               (hm (if (= j goal) 1)
+               (hm (if (= goal j) 1)
                    (if (< goal j) 0)
-                   (else
-                     (for sum-by ((incr '(1 2 3)))
-                       (if (joltages .find? (+ j incr))
-                           (count-ways (+ j incr))
-                           0)))))))
+                   (else (for sum-by ((incr '(1 2 3)))
+                           (if (joltages .find? (+ j incr))
+                               (count-ways (+ j incr))
+                               0)))))))
   (count-ways 0))
