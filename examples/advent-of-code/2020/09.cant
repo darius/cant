@@ -34,9 +34,8 @@
     (may (compare target total)
       (be -1 (searching i.+ j (- total (inputs i))))
       (be 1  (searching i j.+ (+ total (inputs j))))
-      (be 0
-        (hm (when (<= 2 (- j i))
-              (let slice (inputs .slice i j))
-              (+ (min @slice) (max @slice)))
-            (else
-              (searching i j.+ (+ total (inputs j)))))))))
+      (be 0  (hm (when (< (- j i) 2)
+                   (searching i j.+ (+ total (inputs j))))
+                 (else
+                   (let slice (inputs .slice i j))
+                   (+ (min @slice) (max @slice))))))))
