@@ -11,7 +11,7 @@
                 (= (+ a b) n)))
          n)))
 
-(to (part2)
+(to (part2-naive) ; naive, adj.: the way I actually did it.
   (let target 258585477)                ;from part1
   (let sum-to (running-sum inputs))
   (for some ((i inputs.keys))
@@ -24,8 +24,7 @@
   (~.array (link 0 (scanl + 0 xs))))
 
 ;; Way faster, but I didn't think of it:
-;; (Also, doesn't account for the j-i>=2 requirement.)
-(to (part2-like-julia)
+(to (part2)
   (let target 258585477)                ;from part1
   (begin searching ((i 0) (j 0) (total 0))
     ;; Loop invariant (assuming all the inputs are nonnegative):
@@ -36,5 +35,8 @@
       (be -1 (searching i.+ j (- total (inputs i))))
       (be 1  (searching i j.+ (+ total (inputs j))))
       (be 0
-        (let slice (inputs .slice i j))
-        (+ (min @slice) (max @slice))))))
+        (hm (when (<= 2 (- j i))
+              (let slice (inputs .slice i j))
+              (+ (min @slice) (max @slice)))
+            (else
+              (searching i j.+ (+ total (inputs j)))))))))
