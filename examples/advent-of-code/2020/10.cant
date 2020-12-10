@@ -3,23 +3,21 @@
 (let input data-file.read-lines)
 (let adapters (each ~.number input))
 
+(let goal (+ 3 (max @adapters)))
+(let joltages (sort (link goal adapters)))
+
 (to (part1)
-  (let goal (+ 3 (max @adapters)))
-  (let joltages (link 0 (sort (link goal adapters))))
-  (let diffs (each - joltages.rest (joltages .slice 0 joltages.count.-)))
-  (* ((those (:: (= it 3)) diffs) .count)
-     ((those (:: (= it 1)) diffs) .count)))
+  (let diffs (bag<- (each - joltages (link 0 (joltages .slice 0 joltages.count.-)))))
+  (* (diffs 1) (diffs 3)))
 
 (to (part2)
-  (let goal (+ 3 (max @adapters)))
-  (let joltages ((sort (link goal adapters)) .range))
   (let count-ways
     (memoize (on (j)
                (hm (if (= j goal) 1)
                    (if (< goal j) 0)
                    (else
                      (to (try incr)
-                       (if (joltages .maps? (+ j incr))
+                       (if (joltages .find? (+ j incr))
                            (count-ways (+ j incr))
                            0))
                      (+ (try 3) (try 2) (try 1)))))))
