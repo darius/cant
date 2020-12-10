@@ -4,13 +4,14 @@
 (let adapters (each ~.number input))
 
 (let goal (+ 3 (max @adapters)))
-(let joltages (sort (link goal adapters)))
 
 (to (part1)
-  (let diffs (bag<- (each - joltages (link 0 (joltages .slice 0 joltages.count.-)))))
+  (let joltages (sort adapters))
+  (let diffs (bag<- (each - `(,@joltages ,goal) `(0 ,@joltages))))
   (* (diffs 1) (diffs 3)))
 
 (to (part2)
+  (let joltages (link goal adapters))
   (let count-ways
     (memoize (on (j)
                (hm (if (= goal j) 1)
