@@ -16,9 +16,8 @@
                (hm (if (= j goal) 1)
                    (if (< goal j) 0)
                    (else
-                     (to (try incr)
+                     (for sum-by ((incr '(1 2 3)))
                        (if (joltages .find? (+ j incr))
                            (count-ways (+ j incr))
-                           0))
-                     (+ (try 3) (try 2) (try 1)))))))
+                           0)))))))
   (count-ways 0))
