@@ -1,6 +1,6 @@
 ;; (Use run.cant to run this.)
 
-(let input (with-input-file ~.read-all data-file))
+(let input data-file.read-all)
 (let inputs (for each ((chunk (input .split "\n\n")))
               (each (~ .split ":") chunk.split)))
 

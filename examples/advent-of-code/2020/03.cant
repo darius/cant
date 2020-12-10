@@ -1,6 +1,6 @@
 ;; (Use run.cant to run this.)
 
-(let input (~.array (with-input-file ~.read-lines data-file)))
+(let input data-file.read-lines.array)
 
 (to (part1)
   (slide 3 1))
