@@ -17,8 +17,7 @@
   ;; We need a solution t to the congruences (t + minutes_i) = 0 (modulo bus_i)
   (let congruences (for each (((~ minutes bus) schedule))
                      (~ bus ((- minutes) .modulo bus))))  ;; TODO don't bother modding it here?
-  (let t (chinese-remainder congruences))
-  t)
+  (chinese-remainder congruences))
 
 ;; TODO extract the below to factoring.cant (and rename that module?)
                      
