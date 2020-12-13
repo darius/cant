@@ -1,0 +1,99 @@
+;; (Use run.cant to run this.)
+
+(let id data-file.read-line.number)
+(let second-line (data-file.read-line .split ","))
+
+(to (part1)
+  (let buses (yeahs ~.?number second-line))
+  (for some ((n (iterate ~.+ id)))
+    (let good-buses (those (~ .divides? n) buses))
+    (and good-buses.some?
+         (* good-buses.first (- n id)))))
+
+(to (part2-hail-mary)
+  (let schedule (for yeahs (((~ minutes entry) second-line.items))
+                  (and (not= entry "x")
+                       (~ minutes entry.number))))
+  ;;XXX Two assumptions:
+  ;;  1. The first schedule entry, at offset 0, is not "x".
+  ;;  2. The non-x entries are all prime.
+  (let product (foldl * 1 (each (~ part 2) schedule)))
+  (let decr factors.first)
+  (begin searching ((t product))
+    (if (for every (((~ minutes bus) schedule))
+          (bus .divides? (+ t minutes)))
+        t
+        (searching (- t decr)))))
+
+(to (part2)
+  (let schedule (for yeahs (((~ minutes entry) second-line.items))
+                  (and (not= entry "x")
+                       (~ minutes entry.number))))
+  ;; We need a solution t to the congruences (t + minutes_i) = 0 (modulo bus_i)
+  (let congruences (for each (((~ minutes bus) schedule))
+                     (~ bus ((- minutes) .modulo bus))))  ;; TODO don't bother modding it here?
+  (let t (chinese-remainder congruences))
+  t)
+
+;; TODO extract the below to factoring.cant (and rename that module?)
+                     
+;; congruences: list of (~ n_i a_i)
+;; Pre: every p_i is prime
+;;      (TODO make sure this works when they're only coprime. Not bothering to test that yet.)
+;;      every a_i is in [0..n_i)
+;; Return the smallest nonnegative x such that for every congruence, x = a_i (mod n_i)
+(to (chinese-remainder congruences)
+  (let N (* @(each (~ .part 0) congruences)))
+  (let x (for sum-by (((~ n_i a_i) congruences))
+           (let y_i (N .quotient n_i))  ;; .modulo n_i))  ; XXX is the modulo OK?
+           (let z_i (modular-inverse n_i y_i))
+           (* a_i y_i z_i)))  ;; TODO faster to take each of these modulo N?
+  (x .modulo N))
+
+;; Return n^-1 (mod p).
+;; Pre: p and n are coprime.
+;; Pre: 0 <= n < p   (this shouldn't be necessary but I'm avoiding thought here too)
+(to (modular-inverse p n)
+  (surely (= 1 (p .gcd n)) "coprime")
+;;  (surely (< n p) "in range")
+  (let (~ a b) (bezout p n))
+  ;; a*p + b*n = 1
+  ;; So:   b*n = 1 (mod p)
+  (b .modulo p))                        ;TODO do I care to normalize this here?
+
+;; Use Bezout to compute a modular inverse.
+;; The idea is Euclid's algorithm plus working backwards from the result.
+
+;; I'm gonna specialize to the coprime case, to avoid thought.
+(to (bezout u1 u2)
+  (surely (< 0 u1))
+  (surely (< 0 u2))
+;;  (surely (< u2 u1))   XXX
+  (out .say "bezout ~3w ~3w:   " u1 u2)
+;;  (when (= u2 1) ...
+  (let (~ q2 u3) (u1 ./mod u2))
+  (out .say "u1 = u2*q2 + u3: ~w = ~w * ~w + ~w\n" u1 u2 q2 u3)
+  (hm (when (= u3 1)
+        ;; Return solution (~ a1 a2) for
+        ;;          1 = a1*u1 + a2*u2
+        ;; We know:
+        ;;         u1 = q2*u2 + 1
+        ;; So:
+        ;;          1 = 1*u1 + -q2*u2
+        (~ 1 (- q2)))
+      (else
+        (let (~ a2 a3) (bezout u2 u3))
+        ;; We want a solution (a1,a2p) for
+        ;;          1 = a1*u1 + a2p*u2
+        ;; We know:
+        ;;          1 = a2*u2 + a3*u3
+        ;;         u1 = q2*u2 + u3
+        ;; So:
+        ;;         u3 = u1 - q2*u2
+        ;;          1 = a2*u2 + a3*(u1 - q2*u2)
+        ;;            = a2*u2 + a3*u1 - a3*q2*u2
+        ;;            = (a2-a3*q2)*u2 + a3*u1
+        ;;            = a3*u1 + (a2-a3*q2)*u2
+        ;; So     a1  = a3
+        ;;        a2p = a2-a3*q2
+        (~ a3 (- a2 (* a3 q2))))))
