@@ -1,0 +1,59 @@
+;; (Use run.cant to run this.)
+
+(let complex (use 'complex))
+(let (~ c+ c* r*c) (~ (complex '+) (complex '*) (complex 'r*c)))
+
+(let c0 {complex 0 0})
+(let ci {complex 0 1})
+
+(to (turn-left degrees heading)
+  (let (~ turns 0) (degrees ./mod 90))
+  (surely (<= 0 turns))
+  (-> turns (for iterate ((z heading))
+              (c* ci z))))
+
+(to (turn-right degrees heading)
+  (turn-left (- 360 degrees) heading))
+
+(let input data-file.read-lines)
+
+(to (part1)
+  (let (~ final-heading final-p)
+    (for foldl (((~ hd p) (~ E c0))
+                (move input))
+      (let act (move 0))
+      (let arg ((move .slice 1) .number))
+      (may act
+        (be #\N (~ hd (c+ p (r*c arg N))))
+        (be #\S (~ hd (c+ p (r*c arg S))))
+        (be #\E (~ hd (c+ p (r*c arg E))))
+        (be #\W (~ hd (c+ p (r*c arg W))))
+        (be #\L (~ (turn-left arg hd) p))
+        (be #\R (~ (turn-right arg hd) p))
+        (be #\F (~ hd (c+ p (r*c arg hd))))
+        (else (surely #no)))))
+  (let {complex x y} final-p)
+  (+ x.magnitude y.magnitude))
+
+(let E {complex 1 0})
+(let N (turn-left 90 E))
+(let W (turn-left 90 N))
+(let S (turn-left 90 W))
+
+(to (part2)
+  (let (~ final-v final-p)   ;; waypoint, ship position
+    (for foldl (((~ v p) (~ {complex 10 1} c0))
+                (move input))
+      (let act (move 0))
+      (let arg ((move .slice 1) .number))
+      (may act
+        (be #\N (~  (c+ v (r*c arg N))  p))
+        (be #\S (~  (c+ v (r*c arg S))  p))
+        (be #\E (~  (c+ v (r*c arg E))  p))
+        (be #\W (~  (c+ v (r*c arg W))  p))
+        (be #\L (~  (turn-left arg v)   p))
+        (be #\R (~  (turn-right arg v)  p))
+        (be #\F (~  v                   (c+ (r*c arg v) p)))
+        (else (surely #no)))))
+  (let {complex x y} final-p)
+  (+ x.magnitude y.magnitude))
