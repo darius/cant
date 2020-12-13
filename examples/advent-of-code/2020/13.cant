@@ -10,21 +10,6 @@
     (and good-buses.some?
          (* good-buses.first (- n id)))))
 
-(to (part2-hail-mary)
-  (let schedule (for yeahs (((~ minutes entry) second-line.items))
-                  (and (not= entry "x")
-                       (~ minutes entry.number))))
-  ;;XXX Two assumptions:
-  ;;  1. The first schedule entry, at offset 0, is not "x".
-  ;;  2. The non-x entries are all prime.
-  (let product (foldl * 1 (each (~ part 2) schedule)))
-  (let decr factors.first)
-  (begin searching ((t product))
-    (if (for every (((~ minutes bus) schedule))
-          (bus .divides? (+ t minutes)))
-        t
-        (searching (- t decr)))))
-
 (to (part2)
   (let schedule (for yeahs (((~ minutes entry) second-line.items))
                   (and (not= entry "x")
