@@ -38,6 +38,7 @@
 (map<- (~ 'conjugate conjugate)
        (~ 'abs^2 c-abs^2)
        (~ 'abs c-abs)
+       (~ 'r*c r*c)
        (~ '+ c+)
        (~ '- c-)
        (~ '* c*)
