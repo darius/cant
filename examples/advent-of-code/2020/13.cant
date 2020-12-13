@@ -30,17 +30,15 @@
 (to (chinese-remainder congruences)
   (let N (* @(each (~ .part 0) congruences)))
   (let x (for sum-by (((~ n_i a_i) congruences))
-           (let y_i (N .quotient n_i))  ;; .modulo n_i))  ; XXX is the modulo OK?
+           (let y_i (N .quotient n_i))
            (let z_i (modular-inverse n_i y_i))
-           (* a_i y_i z_i)))  ;; TODO faster to take each of these modulo N?
+           (* a_i y_i z_i)))
   (x .modulo N))
 
 ;; Return n^-1 (mod p).
 ;; Pre: p and n are coprime.
-;; Pre: 0 <= n < p   (this shouldn't be necessary but I'm avoiding thought here too)
 (to (modular-inverse p n)
   (surely (= 1 (p .gcd n)) "coprime")
-;;  (surely (< n p) "in range")
   (let (~ a b) (bezout p n))
   ;; a*p + b*n = 1
   ;; So:   b*n = 1 (mod p)
@@ -53,11 +51,9 @@
 (to (bezout u1 u2)
   (surely (< 0 u1))
   (surely (< 0 u2))
-;;  (surely (< u2 u1))   XXX
-  (out .say "bezout ~3w ~3w:   " u1 u2)
-;;  (when (= u2 1) ...
+;;  (out .say "bezout ~3w ~3w:   " u1 u2)
   (let (~ q2 u3) (u1 ./mod u2))
-  (out .say "u1 = u2*q2 + u3: ~w = ~w * ~w + ~w\n" u1 u2 q2 u3)
+;;  (out .say "u1 = u2*q2 + u3: ~w = ~w * ~w + ~w\n" u1 u2 q2 u3)
   (hm (when (= u3 1)
         ;; Return solution (~ a1 a2) for
         ;;          1 = a1*u1 + a2*u2
