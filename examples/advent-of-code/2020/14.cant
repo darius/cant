@@ -37,7 +37,6 @@
                 2))
 
 (to (enmask mask bits)
-  (surely (= mask.count bits.count))
   (~.text (for each ((m mask) (b bits))
             (may m
               (be #\X b)
