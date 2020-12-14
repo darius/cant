@@ -557,6 +557,10 @@
           (maybe-pad sink pad sign width
                      (~ .display ((text<-number args.first 16) .lowercase)))
           (scanning sink t.rest args.rest))
+        (be #\b  ; binary number, TODO use different symbol? what about unsigned?
+          (maybe-pad sink pad sign width
+                     (~ .display (text<-number args.first 2)))
+          (scanning sink t.rest args.rest))
         (be #\*
           (surely (or (= 0 width) (= #no width)))
           (let n args.first)
