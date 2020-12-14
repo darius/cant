@@ -30,9 +30,8 @@
         ;;(out .say "mem[~w] = ~w: value ~w\n" addr number value)
         (memory .set! addr value)))))
 
-;; I tried to do this with bitwise AND/OR, but it turns out Chez
-;; Scheme silently truncates those ops to 32 bits. So here we do it on
-;; text.
+;; I tried to do this with bitwise AND/OR, but accidentally used
+;; 32-bit-only ops. So here we do it on text.
 (to (enmask-number mask n)
   (number<-text (enmask mask ("~036b" .format n))
                 2))
