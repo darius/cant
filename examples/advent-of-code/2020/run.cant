@@ -15,7 +15,7 @@
     (load ("~d/~d.cant" .format stem code-name))
     (when (switches .maps? 'part1) (run-part 'part1))
     (when (switches .maps? 'part2) (run-part 'part2))
-    (when (not (or (switches .maps? 'part1) (switches .maps? 'part2)))
+    (when (not (or (switches .maps? 'part) (switches .maps? 'part1) (switches .maps? 'part2)))
       (or (run-part 'part2)
           (run-part 'part1))))
 
@@ -39,6 +39,9 @@
             (run filename))
           (be `("-data" ,data-name ,@rest)
             (switches .set! 'data data-name)
+            (parsing rest))
+          (be `("-part" ,@rest)
+            (switches .set! 'part #yes)
             (parsing rest))
           (be `("-part1" ,@rest)
             (switches .set! 'part1 #yes)
