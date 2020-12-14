@@ -59,9 +59,8 @@
           (memory .set! a number))))))
 
 (to (enmask2-many mask a)
-  (let a-text ("~036b" .format a))
   (let bit-values
-    (for each ((m mask) (rune a-text))
+    (for each ((m mask) (rune ("~036b" .format a)))
       (may m
         (be #\0 `(,rune))
         (be #\1 '(#\1))
