@@ -27,7 +27,6 @@
         (cur-mask .^= m))
       (be {mem addr number}
         (let value (enmask-number cur-mask.^ number))
-        ;;(out .say "mem[~w] = ~w: value ~w\n" addr number value)
         (memory .set! addr value)))))
 
 ;; I tried to do this with bitwise AND/OR, but accidentally used
@@ -56,7 +55,6 @@
         (cur-mask .^= m))
       (be {mem addr number}
         (let addrs (enmask2-many cur-mask.^ addr))
-        ;;(out .say "mem[...<~w>...] = ~w\n" addrs.count number)
         (for each! ((a addrs))
           (memory .set! a number))))))
 
@@ -68,7 +66,5 @@
         (be #\0 `(,rune))
         (be #\1 '(#\1))
         (be #\X '(#\0 #\1)))))
-  ;;(out .say "mask ~d\n" mask)
-  ;;(out .say "bit-values ~w\n" bit-values)
   (for each ((bits (grid* @bit-values)))
     (number<-text bits.text 2)))
