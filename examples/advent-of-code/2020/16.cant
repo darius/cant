@@ -14,8 +14,11 @@
                        (let `(,lo ,hi) (each ~.number (dash .split "-")))
                        (set<-list (lo .thru hi))))}))
 
-(let tickets (for each ((line nearby-ticket-text.split-lines.rest))
-               (each ~.number (line .split ","))))
+(to (parse-ticket line)
+  (each ~.number (line .split ",")))  
+
+(let your-ticket (parse-ticket your-ticket-text))
+(let tickets (each parse-ticket nearby-ticket-text.split-lines.rest))
 
 (to (part1)
   (sum-by ticket-error-rate tickets))
@@ -28,7 +31,6 @@
          (ruleset .maps? field))))
 
 (to (part2)
-  (let your-ticket (each ~.number (your-ticket-text .split ",")))
   (let columns (transpose (those valid-ticket? (link your-ticket tickets))))
   ;; so (columns 0) has all the values in the first field of all the valid tickets, etc.
 
