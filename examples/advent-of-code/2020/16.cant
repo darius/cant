@@ -29,8 +29,7 @@
 
 (to (part2)
   (let your-ticket (each ~.number (your-ticket-text .split ",")))
-  (let valid-tickets (those valid-ticket? (link your-ticket tickets)))
-  (let columns (transpose valid-tickets))
+  (let columns (transpose (those valid-ticket? (link your-ticket tickets))))
   ;; so (columns 0) has all the values in the first field of all the valid tickets, etc.
 
   (let available-rules (set<- @rules))
