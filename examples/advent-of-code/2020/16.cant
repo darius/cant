@@ -44,10 +44,10 @@
                         (for every ((n column))
                           (ruleset .maps? n))))
       (when (= 1 good-rules.count)
-        (progress? .^= #yes)
         (let gd good-rules.first)
         (rule-map .set! c gd)
-        (available-rules .delete! gd)))
+        (available-rules .delete! gd)
+        (progress? .^= #yes)))
 
     (when (and progress?.^ available-rules.some?)
       (solving)))
