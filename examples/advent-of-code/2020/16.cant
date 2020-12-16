@@ -1,0 +1,59 @@
+;; (Use run.cant to run this.)
+
+(let input (data-file.read-all .split "\n\n"))
+(let rules-text (input 0))
+(let your-ticket-text (((input 1) .split-lines) 1))
+(let nearby-ticket-text (input 2))
+
+(let rules
+  (for each ((line rules-text.split-lines))
+    (let `(,lhs ,rhs) (line .split ": "))
+    (let dashes (rhs .split " or "))
+    {rule lhs (foldl (on (x y) (x .union y)) (set<-)
+                     (for each ((dash dashes))
+                       (let `(,lo ,hi) (each ~.number (dash .split "-")))
+                       (set<-list (lo .thru hi))))}))
+
+(let tickets (for each ((line nearby-ticket-text.split-lines.rest))
+               (each ~.number (line .split ","))))
+
+(to (part1)
+  (sum-by ticket-error-rate tickets))
+
+(to (ticket-error-rate fields)
+  (sum (those invalid? fields)))
+
+(to (invalid? field)
+  (not (for some (({rule _ ruleset} rules))
+         (ruleset .maps? field))))
+
+(to (part2)
+  (let your-ticket (each ~.number (your-ticket-text .split ",")))
+  (let valid-tickets (those valid-ticket? (link your-ticket tickets)))
+  (let columns (transpose valid-tickets))
+  ;; so (columns 0) has all the values in the first field of all the valid tickets, etc.
+
+  (let available-rules (set<- @rules))
+  (let rule-map (!map<-))
+  (begin solving ()
+    (let progress? (box<- #no))
+
+    (for each! (((~ c column) columns.items))
+      (let good-rules (for those (({rule _ ruleset} available-rules.keys))
+                        (for every ((n column))
+                          (ruleset .maps? n))))
+      (when (= 1 good-rules.count)
+        (progress? .^= #yes)
+        (let gd good-rules.first)
+        (rule-map .set! c gd)
+        (available-rules .delete! gd)))
+
+    (when (and progress?.^ available-rules.some?)
+      (solving)))
+
+  (let departure-fields (for yeahs (((~ c {rule name _}) rule-map.items))
+                          (and (name .prefix? "departure") c)))
+  (* @(each your-ticket departure-fields)))
+
+(to (valid-ticket? fields)
+  ((those invalid? fields) .none?))
