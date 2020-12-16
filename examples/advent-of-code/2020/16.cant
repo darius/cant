@@ -9,10 +9,9 @@
   (for each ((line rules-text.split-lines))
     (let `(,lhs ,rhs) (line .split ": "))
     (let dashes (rhs .split " or "))
-    {rule lhs (foldl (on (x y) (x .union y)) (set<-)
-                     (for each ((dash dashes))
-                       (let `(,lo ,hi) (each ~.number (dash .split "-")))
-                       (set<-list (lo .thru hi))))}))
+    {rule lhs (union-over (for each ((dash dashes))
+                            (let `(,lo ,hi) (each ~.number (dash .split "-")))
+                            (set<-list (lo .thru hi))))}))
 
 (to (parse-ticket line)
   (each ~.number (line .split ",")))  
@@ -32,24 +31,24 @@
 
 (to (part2)
   (let columns (transpose (those valid-ticket? (link your-ticket tickets))))
-  ;; so (columns 0) has all the values in the first field of all the valid tickets, etc.
+  ;; (columns 0) is all the values in the 0th field of all the valid tickets, etc.
 
-  (let available-rules (set<- @rules))
+  (let remaining-rules (set<- @rules))
   (let rule-map (!map<-))
   (begin solving ()
     (let progress? (box<- #no))
 
     (for each! (((~ c column) columns.items))
-      (let viable-rules (for those (({rule _ ruleset} available-rules.keys))
+      (let viable-rules (for those (({rule _ ruleset} remaining-rules.keys))
                           (for every ((n column))
                             (ruleset .maps? n))))
       (when (= 1 viable-rules.count)
         (let rule viable-rules.first)
         (rule-map .set! c rule)
-        (available-rules .delete! rule)
+        (remaining-rules .delete! rule)
         (progress? .^= #yes)))
 
-    (when (and progress?.^ available-rules.some?)
+    (when (and progress?.^ remaining-rules.some?)
       (solving)))
 
   (let departure-fields (for yeahs (((~ c {rule name _}) rule-map.items))
