@@ -47,6 +47,7 @@
                 (for each (((~ col rune) line.items))
                   (~ `(,col ,row 0 0)
                      rune)))))
+
 (to (update-4d grid)
   (let active (bag<- (gather neighbors-4d grid.keys)))
   (~.range (for yeahs (((~ key n-neighbors) active.items))
