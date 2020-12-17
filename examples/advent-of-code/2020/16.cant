@@ -9,9 +9,9 @@
   (for each ((line rules-text.split-lines))
     (let `(,lhs ,rhs) (line .split ": "))
     (let dashes (rhs .split " or "))
-    {rule lhs (union-over (for each ((dash dashes))
-                            (let `(,lo ,hi) (each ~.number (dash .split "-")))
-                            (set<-list (lo .thru hi))))}))
+    {rule lhs (union @(for each ((dash dashes))
+                        (let `(,lo ,hi) (each ~.number (dash .split "-")))
+                        (set<-list (lo .thru hi))))}))
 
 (to (parse-ticket line)
   (each ~.number (line .split ",")))  

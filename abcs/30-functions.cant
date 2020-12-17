@@ -225,7 +225,7 @@
   (link/lazy x (: (iterate f (f x)))))
 
 ;; TODO too specialized for the stdlib
-(to (union-over sets)
+(to (union @sets)
   (let result (set<-))
   (for each! ((set sets))
     (result .union! set))
@@ -278,7 +278,7 @@
     those !map-by compose those/lazy yeahs/lazy grid*/lazy
     -> foldr/lazy gather chain/lazy sum-by tally-by zip setting<-map
     gather/lazy method<- link/lazy array-by map-by text-by iterate
-    hey max-by tally min union-over each/lazy map<-values mayhap
+    hey max-by tally min union each/lazy map<-values mayhap
     grid* sum = link link? list? number? integer? symbol? cue? ;TODO rename cue? or rm it
     claim? rune? array? box? term? source? sink? zilch? box<-
     text? number<-text text<-number
