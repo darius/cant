@@ -8,8 +8,7 @@
 (let rules
   (for each ((line rules-text.split-lines))
     (let `(,lhs ,rhs) (line .split ": "))
-    (let dashes (rhs .split " or "))
-    {rule lhs (union @(for each ((dash dashes))
+    {rule lhs (union @(for each ((dash (rhs .split " or ")))
                         (let `(,lo ,hi) (dash .split "-"))
                         (set<-list (lo.number .thru hi.number))))}))
 
