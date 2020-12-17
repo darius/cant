@@ -9,5 +9,4 @@
 
 (to (part2)
   (for tally-by ((group inputs))
-    (foldl1 (on (x y) (x .intersect y))
-            (each ~.range group))))
+    (intersect @(each ~.range group))))

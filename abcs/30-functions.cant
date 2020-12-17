@@ -231,6 +231,11 @@
     (result .union! set))
   result)
 
+(to (intersect @sets)
+  ;; TODO .intersect! like the above
+  (foldl1 (on (x y) (x .intersect y))
+          sets))
+
 (to (take-while prefix? xs)             ;TODO as list/text method?
   (hm (if xs.none? '())
       (do (let x xs.first))
@@ -278,7 +283,7 @@
     those !map-by compose those/lazy yeahs/lazy grid*/lazy
     -> foldr/lazy gather chain/lazy sum-by tally-by zip setting<-map
     gather/lazy method<- link/lazy array-by map-by text-by iterate
-    hey max-by tally min union each/lazy map<-values mayhap
+    hey max-by tally min union intersect each/lazy map<-values mayhap
     grid* sum = link link? list? number? integer? symbol? cue? ;TODO rename cue? or rm it
     claim? rune? array? box? term? source? sink? zilch? box<-
     text? number<-text text<-number
