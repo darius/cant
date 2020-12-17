@@ -31,8 +31,8 @@
 (to (lift peg-op)
   (feed-list
    (on (lifted)
-     {lifted (union-over (for each (({lifted refs _} lifted))
-                           refs))
+     {lifted (union @(for each (({lifted refs _} lifted))
+                       refs))
              (on (builder rules subs)
                (peg-op @(for each (({lifted _ p<-} lifted))
                           (p<- builder rules subs))))})))
@@ -62,6 +62,7 @@
 
 (let word-boundary (nix (skip-1 word-rune?)))
 
+(let end-line (lit-1 #\newline))
 (let skip-line (seek (either (lit-1 #\newline) end)))
 
 (let whitespace
@@ -169,6 +170,7 @@
          (~ 'letter (skip-1 ~.letter?))
          (~ 'digit (skip-1 ~.digit?))
          (~ 'end end)
+         (~ 'endline end-line)
          (~ 'hug hug)
          (~ 'join (feed chain))
          (~ 'tuple (feed-list tuple<-list))
@@ -203,8 +205,8 @@
   (when duplicates.some?
     (oops "Multiply-defined rules" (sort duplicates)))
 
-  (let all-refs (union-over (for each ((`(,_ ,{lifted refs _}) skeletons))
-                              refs)))
+  (let all-refs (union @(for each ((`(,_ ,{lifted refs _}) skeletons))
+                          refs)))
   (let undefined (all-refs .difference lhses))
   (when undefined.some?
     (oops "Undefined rules" (sort undefined.keys)))
