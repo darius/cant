@@ -15,10 +15,10 @@
   (out .display cursor-show))
 
 (to (run grid n-steps)
-  (for foldl ((grid grid) (_ n-steps.till))
-    (out .display clear-screen)
-    (show grid)
-    (update grid)))
+  (-> n-steps (for iterate ((grid grid))
+                (out .display clear-screen)
+                (show grid)
+                (update grid))))
 
 (to (update grid)
   (let active (bag<- (gather neighbors grid.keys)))
