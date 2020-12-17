@@ -1,0 +1,63 @@
+;; (Use run.cant to run this.)
+
+(let input data-file.read-lines)
+
+(to (part1)
+  (let n-steps 6)
+  (let final-grid ((iterate update (grid<-picture input)) n-steps))
+  final-grid.count)
+
+(to (grid<-picture lines)
+  (~.range (for where ((rune (map<-lines lines)))
+             (= rune #\#))))
+
+(to (map<-lines lines)
+  (map<-items (for gather (((~ row line) lines.items))
+                (for each (((~ col rune) line.items))
+                  (~ `(,col ,row 0)
+                     rune)))))
+
+(to (neighbors `(,x ,y ,z))
+  (for each ((`(,dx ,dy ,dz) neighborhood))
+    `(,(+ x dx) ,(+ y dy) ,(+ z dz))))
+
+(let neighborhood (for those ((d (grid* '(-1 0 1) '(-1 0 1) '(-1 0 1))))
+                    (not= d '(0 0 0))))
+
+(to (update grid)
+  (let active (bag<- (gather neighbors grid.keys)))
+  (~.range (for yeahs (((~ key n-neighbors) active.items))
+             (may n-neighbors
+               (be 3 key)
+               (be 2 (and (grid .maps? key) key))
+               (else #no)))))
+
+(to (part2)
+  (let n-steps 6)
+  (let initial-grid (grid<-picture-4d input))
+  (let final-grid ((iterate update-4d initial-grid) n-steps))
+  final-grid.count)
+
+(to (grid<-picture-4d lines)
+  (~.range (for where ((rune (map<-lines-4d lines)))
+             (= rune #\#))))
+
+(to (map<-lines-4d lines)
+  (map<-items (for gather (((~ row line) lines.items))
+                (for each (((~ col rune) line.items))
+                  (~ `(,col ,row 0 0)
+                     rune)))))
+(to (update-4d grid)
+  (let active (bag<- (gather neighbors-4d grid.keys)))
+  (~.range (for yeahs (((~ key n-neighbors) active.items))
+             (may n-neighbors
+               (be 3 key)
+               (be 2 (and (grid .maps? key) key))
+               (else #no)))))
+
+(to (neighbors-4d `(,x ,y ,z ,a))
+  (for each ((`(,dx ,dy ,dz ,da) neighborhood-4d))
+    `(,(+ x dx) ,(+ y dy) ,(+ z dz) ,(+ a da))))
+
+(let neighborhood-4d (for those ((d (grid* '(-1 0 1) '(-1 0 1) '(-1 0 1) '(-1 0 1))))
+                       (not= d '(0 0 0 0))))
