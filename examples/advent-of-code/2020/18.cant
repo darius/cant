@@ -1,0 +1,36 @@
+;; (Use run.cant to run this.)
+
+(let input data-file.read-lines)
+
+(let g1 (grammar<- "
+line: expr :end.
+expr: factor (_ op _ factor :hug)*.
+op: {'*' | '+'}.
+factor: :integer | '(' expr ')'.
+_: :whitespace.
+"))
+(let g (grammar<- "
+line: expr :end.
+expr: e1 (_ {'*'} _ e1 :hug)*.
+e1: factor (_ {'+'} _ factor :hug)*.
+factor: :integer | '(' expr ')'.
+_: :whitespace.
+"))
+(let parser ((g (map<-)) 'line))
+(let inputs (each (:: (parser .parse it)) input))
+
+(to (part1)
+  (sum (each ev-line inputs)))
+
+(to (ev-line `(,e))
+  (ev e))
+
+(to (ev e)
+  (may e
+    (be (? number?) e)
+    (be `(,lhs ,op ,rhs)
+      (may op
+        (be "+" (+ (ev lhs) (ev rhs)))
+        (be "*" (* (ev lhs) (ev rhs)))))))
+
+;;(to (part2)
