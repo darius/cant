@@ -16,10 +16,8 @@ time:      :count :drop ':' :count.
 
 _:         :whitespace.
 "))
-(let grammar/semantics (grammar (!map<-)))
-(let parse-shifts (grammar/semantics 'shifts))
-
-(let shifts (parse-shifts .parse (chain-lines (sort input))))
+(let parser (-> (map<-) grammar (~ 'shifts)))
+(let shifts (parser .parse (chain-lines (sort input))))
 
 (let zzzs (!map<-))            ; guard -> bag of minutes they're asleep
 (for each! ((`(,guard ,naps) shifts))

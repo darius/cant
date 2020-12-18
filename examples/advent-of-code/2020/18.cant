@@ -4,36 +4,24 @@
 
 (let g1 (grammar<- "
 line: expr :end.
-expr: factor (_ op _ factor :hug)*.
-op: {'*' | '+'}.
+expr: factor (_ '*' _ factor :mul | _ '+' _ factor :add)*.
 factor: :integer | '(' expr ')'.
 _: :whitespace.
 "))
 (let g2 (grammar<- "
 line: expr :end.
-expr: e1 (_ {'*'} _ e1 :hug)*.
-e1: factor (_ {'+'} _ factor :hug)*.
+expr: e1 (_ '*' _ e1 :mul)*.
+e1: factor (_ '+' _ factor :add)*.
 factor: :integer | '(' expr ')'.
 _: :whitespace.
 "))
 
+(to (parser<- grammar)
+  (-> (map<- (~ 'add (feed +)) (~ 'mul (feed *)))
+      grammar (~ 'line) ~.parse-it))
+
 (to (part1)
-  (let parser ((g1 (map<-)) 'line))
-  (for sum-by ((line input))
-    (ev-line (parser .parse line))))
+  (sum (gather (parser<- g1) input)))
 
 (to (part2)
-  (let parser ((g2 (map<-)) 'line))
-  (for sum-by ((line input))
-    (ev-line (parser .parse line))))
-
-(to (ev-line `(,e))
-  (ev e))
-
-(to (ev e)
-  (may e
-    (be (? number?) e)
-    (be `(,lhs ,op ,rhs)
-      (may op
-        (be "+" (+ (ev lhs) (ev rhs)))
-        (be "*" (* (ev lhs) (ev rhs)))))))
+  (sum (gather (parser<- g2) input)))

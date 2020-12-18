@@ -30,6 +30,7 @@
   (to (~ .?parse text) ((peg .parse-outcome text) .?results))
   (to (~ .parse-outcome text)           ;TODO better name, etc.
     (peg .parsing text 0 0 '()))
+  (to ~.parse-it (on (text) (peg .parse text)))
   ;; Convenience constructor methods:
   (to ~.nix         (nix peg))
   (to ~.grab        (grab peg))

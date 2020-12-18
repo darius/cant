@@ -11,11 +11,9 @@ clause: 'Before: [' [:count ', ' :count ', ' :count ', ' :count :hug] ']\n'
 program: insn* :hug.
 insn:    :count ' ' :count ' ' :count ' ' :count '\n' :hug.
 "))
-(let semantics (grammar (map<-)))
-(let parse-main (semantics 'main))
+(let parser (-> (map<-) grammar (~ 'main)))
 
-(let `(,observations ,program) (parse-main .parse input))
-;(each! print program)
+(let `(,observations ,program) (parser .parse input))
 (out .say "#obs: ~w\n" observations.count)
 
 

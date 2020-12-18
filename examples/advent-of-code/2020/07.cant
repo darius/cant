@@ -9,9 +9,8 @@ bags: 'no' _ 'other' _ 'bags' | [:count _ bag :hug] ++ (','_).
 word: :letter+.
 _: :whitespace.
 "))
-(let parser ((g (map<-)) 'rule))
-(let inputs (each (:: (parser .parse it)) input))
-(let holdings (!map<-lists inputs))
+(let parser (-> (map<-) g (~ 'rule) ~.parse-it))
+(let holdings (!map<-lists (each parser input)))
 
 ;; dim chartreuse bags contain 1 faded indigo bag.
 ;; --> ("dim chartreuse" ((1 "faded indigo")))
