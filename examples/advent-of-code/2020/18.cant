@@ -19,13 +19,13 @@ _: :whitespace.
 
 (to (part1)
   (let parser ((g1 (map<-)) 'line))
-  (sum (for each ((line input))
-         (ev-line (parser .parse line)))))
+  (for sum-by ((line input))
+    (ev-line (parser .parse line))))
 
 (to (part2)
   (let parser ((g2 (map<-)) 'line))
-  (sum (for each ((line input))
-         (ev-line (parser .parse line)))))
+  (for sum-by ((line input))
+    (ev-line (parser .parse line))))
 
 (to (ev-line `(,e))
   (ev e))
