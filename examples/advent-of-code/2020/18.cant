@@ -15,10 +15,9 @@ e1: factor (_ '+' _ factor :add)*.
 factor: :integer | '(' expr ')'.
 _: :whitespace.
 "))
-
+(let semantics (map<- (~ 'add (feed +)) (~ 'mul (feed *))))
 (to (parser<- grammar)
-  (-> (map<- (~ 'add (feed +)) (~ 'mul (feed *)))
-      grammar (~ 'line) ~.parse-it))
+  (-> semantics grammar (~ 'line) ~.parse-it))
 
 (to (part1)
   (sum (gather (parser<- g1) input)))
