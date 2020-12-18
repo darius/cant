@@ -9,18 +9,23 @@ op: {'*' | '+'}.
 factor: :integer | '(' expr ')'.
 _: :whitespace.
 "))
-(let g (grammar<- "
+(let g2 (grammar<- "
 line: expr :end.
 expr: e1 (_ {'*'} _ e1 :hug)*.
 e1: factor (_ {'+'} _ factor :hug)*.
 factor: :integer | '(' expr ')'.
 _: :whitespace.
 "))
-(let parser ((g (map<-)) 'line))
-(let inputs (each (:: (parser .parse it)) input))
 
 (to (part1)
-  (sum (each ev-line inputs)))
+  (let parser ((g1 (map<-)) 'line))
+  (sum (for each ((line input))
+         (ev-line (parser .parse line)))))
+
+(to (part2)
+  (let parser ((g2 (map<-)) 'line))
+  (sum (for each ((line input))
+         (ev-line (parser .parse line)))))
 
 (to (ev-line `(,e))
   (ev e))
@@ -32,5 +37,3 @@ _: :whitespace.
       (may op
         (be "+" (+ (ev lhs) (ev rhs)))
         (be "*" (* (ev lhs) (ev rhs)))))))
-
-;;(to (part2)
