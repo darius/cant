@@ -429,6 +429,14 @@
                         names)))))
     ('quasiquote (mlambda
                   ((__ q) (expand-quasiquote q))))
+    ;; Crude debugging aid. TODO make a better one
+    ('yo     (mlambda
+              ((__ e)
+               `((on (v) (out .say "yo ~w: ~w\n" ',e v) v) ;XXX hygiene
+                 ,e))
+              ((__ msg e)
+               `((on (u v) (out .say "yo ~d ~w: ~w\n" u ',e v) v) ;XXX hygiene
+                 ,msg ,e))))
     (__ #f)))
 
 (define (parse-bindings bindings receiver)
