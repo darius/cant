@@ -34,13 +34,13 @@
   (r*c (/ (c-abs^2 c))
        (conjugate c)))
 
-;; TODO fancier syntax for 'export' to handle this. Or just plain map literals.
-(map<- (~ 'conjugate conjugate)
-       (~ 'abs^2 c-abs^2)
-       (~ 'abs c-abs)
-       (~ 'r*c r*c)
-       (~ '+ c+)
-       (~ '- c-)
-       (~ '* c*)
-       (~ '/ c/)
-       )
+;; TODO fancier syntax for 'export' with renaming. Or just plain map literals.
+(export conjugate
+        c-abs^2
+        c-abs
+        r*c
+        c+
+        c-
+        c*
+        c/
+        )

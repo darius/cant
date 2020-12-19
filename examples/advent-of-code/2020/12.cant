@@ -1,7 +1,6 @@
 ;; (Use run.cant to run this.)
 
-(let complex (use 'complex))
-(let (~ c+ c* r*c) (~ (complex '+) (complex '*) (complex 'r*c)))
+(import (use 'complex) c+ c* r*c)
 
 (let c0 {complex 0 0})
 (let ci {complex 0 1})
