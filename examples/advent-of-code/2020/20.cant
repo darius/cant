@@ -1,0 +1,81 @@
+;; (Use run.cant to run this.)
+
+(import (use 'grid-2d) grid-2d<-)
+
+(let inputs (data-file.read-all .split "\n\n"))
+
+(let parse-label (like "'Tile ' :count ':'"))
+(to (parse t)
+  (let `(,label-line ,@lines) t.split-lines)
+  (let `(,key) (parse-label label-line))
+  (~ key {tile lines `(,lines.first
+                       ,(~.text (each ~.last lines))
+                       ,lines.last
+                       ,(~.text (each ~.first lines)))}))
+
+(let tile-map (map<-items (each parse inputs)))
+
+(let edge-map
+  (map<-items (collect (for gather (((~ key {tile _ edges}) tile-map.items))
+                         (for gather ((edge edges))
+                           (list<- (~ edge key)
+                                   (~ (~.text (reverse edge)) key)))))))
+(let compat-map
+  (map<-items (for each (((~ me {tile _ edges}) tile-map.items))
+                (let my-compats (~.range (gather edge-map edges)))
+                (my-compats .delete! me)
+                (~ me my-compats))))
+
+(let grid-corners (for where ((compats compat-map)) (= compats.count 2)))
+;;(let grid-edges   (for where ((compats compat-map)) (= compats.count 3)))
+;;(let grid-inside  (for where ((compats compat-map)) (= compats.count 4)))
+(surely (for every ((compats compat-map.values))
+          (<= 2 compats.count 4)))
+
+(to (complete-grid)
+  
+  ;; N.B. assuming 12x12 grid
+  (let grid-keys     (grid-2d<- (~ 0 0) (~ 11 11) {constant #no}))
+  (let grid-contents (grid-2d<- (~ 0 0) (~ 11 11) {constant #no}))
+  ;; TODO also need grid-tile-edges or something
+  (let remaining-tiles tile-map.copy)  ;; N.B. mutable
+
+  ;; N.B. assuming we can fill it without backtracking.
+  (to (place! pos key contents)
+    (grid-keys     .set! pos key)
+    (grid-contents .set! pos contents)
+    (remaining-tiles .delete! key))
+
+  (to (place-neighbor! already-pos new-pos)
+    (let dir (tuple- new-pos already-pos))
+    (oops "stub: place-neighbor!"))
+
+  (to (place-rest-of-line! y)
+    (for each! ((x (1 .thru 11)))
+      (place-neighbor! (~ x.- y) (~ x y))))
+  
+  (hide
+    (let corner grid-corners.first)
+    (place! (~ 0 0) corner 'contents)) ;XXX
+  (place-rest-of-line! 0)
+  (for each! ((y (1 .thru 11)))
+    (place-neighbor! (~ 0 y.-) (~ 0 y))
+    (place-rest-of-line! y))
+
+  )
+
+  (to (tuple- (~ x1 y1) (~ x0 y0))
+    (~ (- x1 x0) (- y1 y0))) 
+
+
+(to (part1)
+  (* @grid-corners))
+
+(to (part2)
+  (let grid (complete-grid))
+  ;; TODO orient it correctly
+  ;; TODO mask out sea monsters
+  ;; TODO count remaining #'s
+  2)
+
+;; XXX ugh failed on empty line at end
