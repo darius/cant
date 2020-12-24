@@ -73,6 +73,10 @@
           (~ x y))))
     (to ~.values
       A.values)
+    (to ~.rows
+      (for each ((y (yl .thru yh)))
+        (for each ((x (xl .thru xh)))
+          (A (at x y)))))
 
     (to (~ .show print-line!)
       (for each! ((y (yl .thru yh)))
