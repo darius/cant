@@ -58,9 +58,9 @@
         (for each! ((a addrs))
           (memory .set! a number))))))
 
-(to (enmask2-many mask a)
+(to (enmask2-many mask addr)
   (let bit-values
-    (for each ((m mask) (rune ("~036b" .format a)))
+    (for each ((m mask) (rune ("~036b" .format addr)))
       (may m
         (be #\0 `(,rune))
         (be #\1 '(#\1))
