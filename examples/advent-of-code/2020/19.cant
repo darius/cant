@@ -1,0 +1,56 @@
+;; (Use run.cant to run this.)
+
+(let input data-file.read-all)
+(let `(,rule-text ,data) (input .split "\n\n"))
+
+(let g1 (grammar<- "
+start: main :end.
+main: :count ': ' rhs.
+rhs: '\"' {:skip} '\"' :Lit | alt.
+alt: seq ('|'_ alt :Alt)?.
+seq: :count :Ref _ (seq :Seq)?.
+_: :whitespace*.
+"))
+
+(to ((Ref n) rules text i)
+  ((rules n) rules text i))
+
+(to ((Lit t) rules text i)
+  (if (= t (text .slice i i.+))
+      `(,i.+)
+      '()))
+
+(to ((Alt p q) rules text i)
+  (chain (p rules text i) (q rules text i)))
+
+(to ((Seq p q) rules text i)
+  (for gather ((j (p rules text i)))
+    (q rules text j)))
+
+(to (End rules text i)
+  (if (= text.count i) `(,i) '()))
+
+(let semantics (map<-
+                (~ 'Lit (feed Lit))
+                (~ 'Alt (feed Alt))
+                (~ 'Seq (feed Seq))
+                (~ 'Ref (feed Ref))
+                ))
+(to (parser<- grammar)
+  (-> semantics grammar (~ 'start) ~.parse-it))
+(let parse (parser<- g1))
+
+(to (part1)
+  (let rules (map<-lists (each parse rule-text.split-lines)))
+  (let rule0 (Seq (rules 0) End))
+  (tally-by (:: (~.some? (rule0 rules it 0))) data.split-lines))
+
+(to (part2)
+  (let rules1 (map<-lists (each parse rule-text.split-lines)))
+  (let new-rule-text "\
+8: 42 | 42 8
+11: 42 31 | 42 11 31")
+  (let new-rules (map<-lists (each parse new-rule-text.split-lines)))
+  (let rules2 (new-rules .override rules1))
+  (let rule0 (Seq (rules2 0) End))
+  (tally-by (:: (~.some? (rule0 rules2 it 0))) data.split-lines))
