@@ -2,24 +2,47 @@
 
 (import (use 'grid-2d) grid-2d<-)
 
+(to (flip lines)                        ;vertical flip of a tile
+  (reverse lines))
+(to (turn lines)                        ;right quarter-turn of a tile
+  (for each ((t (transpose lines)))
+    (~.text (reverse t))))
+(let orientations                       ;all the symmetry ops on a tile
+  (list<- (compose)
+          (compose turn)
+          (compose turn turn)
+          (compose turn turn turn)
+          (compose flip)
+          (compose turn flip) 
+          (compose turn turn flip) 
+          (compose turn turn turn flip)))
+
+(to (interior<- lines)                  ;remove all the edge pixels from a tile
+  (let ny lines.count)
+  (let nx lines.first.count)            ;surely all the same
+  (each (~ .slice 1 nx.-) (lines .slice 1 ny.-)))
+
+(to (edges<- lines)
+  (list<- lines.first
+          (~.text (each ~.last lines))
+          lines.last
+          (~.text (each ~.first lines))))
+
 (let inputs (data-file.read-all .split "\n\n"))
 
-(let parse-label (like "'Tile ' :count ':'"))
 (to (parse t)
   (let `(,label-line ,@lines) t.split-lines)
-  (let `(,key) (parse-label label-line))
-  (~ key {tile lines `(,lines.first
-                       ,(~.text (each ~.last lines))
-                       ,lines.last
-                       ,(~.text (each ~.first lines)))}))
+  (let `(,tid) (parse-label label-line))
+  (~ tid {tile lines (edges<- lines)}))
+(let parse-label (like "'Tile ' :count ':'"))
 
 (let tile-map (map<-items (each parse inputs)))
 
 (let edge-map
-  (map<-items (collect (for gather (((~ key {tile _ edges}) tile-map.items))
+  (map<-items (collect (for gather (((~ tid {tile _ edges}) tile-map.items))
                          (for gather ((edge edges))
-                           (list<- (~ edge key)
-                                   (~ (~.text (reverse edge)) key)))))))
+                           (let flipped (~.text (reverse edge)))
+                           (list<- (~ edge tid) (~ flipped tid)))))))
 (let compat-map
   (map<-items (for each (((~ me {tile _ edges}) tile-map.items))
                 (let my-compats (~.range (gather edge-map edges)))
@@ -33,48 +56,93 @@
           (<= 2 compats.count 4)))
 
 (to (complete-grid)
-  
-  ;; N.B. assuming 12x12 grid
-  (let grid-keys     (grid-2d<- (~ 0 0) (~ 11 11) {constant #no}))
-  (let grid-contents (grid-2d<- (~ 0 0) (~ 11 11) {constant #no}))
-  ;; TODO also need grid-tile-edges or something
-  (let remaining-tiles tile-map.copy)  ;; N.B. mutable
+  "So here's the plan. Start by placing a corner at top left.
+Raster-scan from there, placing each using a constraint from the
+previously placed. (Alternatively: grow out from the seed using a worklist.)
+A constraint is an edge value in a direction. Given an edge
+value in a direction, we must retrieve a list of oriented tiles
+that match on that edge; of the tiles still available, one will
+hopefully be unique.
+On placing a tile, remove it from the available tiles. At its 
+placement, save the interior of the tile and the map from direction
+to edge value.
+(If placements aren't all unique, I may have to institute a solver
+process -- backtracking search is probably simplest.)
 
-  ;; N.B. assuming we can fill it without backtracking.
-  (to (place! pos key contents)
-    (grid-keys     .set! pos key)
-    (grid-contents .set! pos contents)
-    (remaining-tiles .delete! key))
+Data structures:
+- remaining-tiles: a mutable set of tids (tile ids) available
+- grid: a grid of (oriented tile or #no)
+  - an oriented tile is {oriented-tile tid interior edge-map}
+  - an edge-map is a map from dir to edge-text
+- oriented-edge-map:
+  a map from edge-text to oriented-tile list (hopefully all unique by
+  the time each entry is used)
+
+Is there no simpler scheme that's likely to work?
+The worklist scheme is less likely to need backtracking.
+"
+  (let remaining-tiles tile-map.keys.range)
+  (let grid (grid-2d<- (~ 0 0) (~ 11 11) {constant #no})) ; N.B. assuming 12x12 grid
+  (let oriented-edge-map
+    (map<-items
+     (collect (for gather (((~ tid {tile lines _}) tile-map.items))
+                (for gather ((orient orientations))
+                  (let oriented-lines (orient lines))
+                  (let edges (edges<- oriented-lines))
+                  ;; TODO for each (dir,edge) of oriented-lines, (~ edge {oriented-tile tid XXX edge-map})
+                  'XXX)))))
+  
+  (to (place! pos (and {oriented-tile tid _ _} ot))
+    (grid .set! pos ot)
+    (remaining-tiles .delete! tid))
 
   (to (place-neighbor! already-pos new-pos)
-    (let dir (tuple- new-pos already-pos))
-    (oops "stub: place-neighbor!"))
+    (let dir (tuple- new-pos already-pos)) ;TODO consider from which pov to define dir
+    (let {oriented-tile _ _ edge-map} (grid already-pos))
+    (let edge (edge-map dir))
+    (let candidates (for those (({oriented-tile tid _ _} (oriented-edge-map edge)))
+                      (remaining-tiles .maps? tid)))
+    (surely (= 1 candidates.count) "unique candidate")
+    (place! new-pos candidates.first))
 
   (to (place-rest-of-line! y)
     (for each! ((x (1 .thru 11)))
       (place-neighbor! (~ x.- y) (~ x y))))
   
   (hide
-    (let corner grid-corners.first)
-    (place! (~ 0 0) corner 'contents)) ;XXX
+    (let corner-tid grid-corners.first)
+    (let oriented-corner 'XXX)
+    (place! (~ 0 0) oriented-corner))
   (place-rest-of-line! 0)
   (for each! ((y (1 .thru 11)))
     (place-neighbor! (~ 0 y.-) (~ 0 y))
     (place-rest-of-line! y))
 
-  )
+  grid)
 
-  (to (tuple- (~ x1 y1) (~ x0 y0))
-    (~ (- x1 x0) (- y1 y0))) 
+(to (tuple- (~ x1 y1) (~ x0 y0))
+  (~ (- x1 x0) (- y1 y0))) 
 
+(to (extract-image grid) ; Extract the tile interiors into a list of text lines
+  (let interior-rows
+    (for each ((row grid.rows))
+      (for each (({oriented-tile _ interior _} row))
+        interior)))
+  (chain @(each abut interior-rows)))
+
+(to (abut interiors) ; From a list of row-lists abutting horizontally, make a list of lines.
+  (for each ((rows (transpose interiors)))
+    ("" .join rows)))
 
 (to (part1)
   (* @grid-corners))
 
 (to (part2)
   (let grid (complete-grid))
+  (let image (extract-image grid))
   ;; TODO orient it correctly
-  ;; TODO mask out sea monsters
+  ;; TODO mask out sea monsters, or maybe just count them
+  ;;   Q: can sea monsters overlap?
   ;; TODO count remaining #'s
   2)
 

@@ -13,21 +13,28 @@
 
 (let program (each parse input))
 
-
 (to (part1)
+  (sum-run part1-do-mem))
+
+(to (part2)
+  (sum-run part2-do-mem))
+
+(to (sum-run do-mem)
   (let memory (!map<-))
-  (run1 memory)
+  (run memory do-mem)
   (sum memory.values))
 
-(to (run1 memory)
+(to (run memory do-mem)
   (let cur-mask (box<- #no))
   (for each! ((insn program))
     (may insn
       (be {mask m}
         (cur-mask .^= m))
       (be {mem addr number}
-        (let value (enmask-number cur-mask.^ number))
-        (memory .set! addr value)))))
+        (each! (~ memory) (do-mem cur-mask.^ addr number))))))
+
+(to (part1-do-mem mask addr number)
+  (list<- (~ .set! addr (enmask-number mask number))))
 
 ;; I tried to do this with bitwise AND/OR, but accidentally used
 ;; 32-bit-only ops. So here we do it on text.
@@ -41,22 +48,9 @@
               (be #\X b)
               (else   m)))))
 
-
-(to (part2)
-  (let memory (!map<-))
-  (run2 memory)
-  (sum memory.values))
-
-(to (run2 memory)
-  (let cur-mask (box<- #no))
-  (for each! ((insn program))
-    (may insn
-      (be {mask m}
-        (cur-mask .^= m))
-      (be {mem addr number}
-        (let addrs (enmask2-many cur-mask.^ addr))
-        (for each! ((a addrs))
-          (memory .set! a number))))))
+(to (part2-do-mem mask addr number)
+  (for each ((a (enmask2-many mask addr)))
+    (~ .set! a number)))
 
 (to (enmask2-many mask addr)
   (let bit-values
