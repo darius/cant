@@ -1,16 +1,7 @@
 ;; (Use run.cant to run this.)
 
 (let input data-file.read-lines)
-
-(let mem-lhs (like "'mem[' :count ']'"))
-(to (parse line)
-  (let `(,L ,R) (line .split " = "))
-  (may L
-    (be "mask" {mask R})
-    (else
-      (let `(,addr) (mem-lhs L))
-      {mem addr R.number})))
-
+(let parse (like "'mask = ' {:skip*} | 'mem[' :count '] = ' :count"))
 (let program (each parse input))
 
 (to (part1)
@@ -25,39 +16,32 @@
   (sum memory.values))
 
 (to (run memory do-mem)
-  (let cur-mask (box<- #no))
-  (for each! ((insn program))
+  (for foldl ((mask void) (insn program))
     (may insn
-      (be {mask m}
-        (cur-mask .^= m))
-      (be {mem addr number}
-        (each! (~ memory) (do-mem cur-mask.^ addr number))))))
+      (be `(,new-mask) new-mask)
+      (be `(,addr ,value)
+        (each! (~ memory) (do-mem mask addr value))
+        mask))))
 
-(to (part1-do-mem mask addr number)
-  (list<- (~ .set! addr (enmask-number mask number))))
+(to (part1-do-mem mask addr value)
+  (list<- (~ .set! addr (enmask1 mask value))))
 
-;; I tried to do this with bitwise AND/OR, but accidentally used
-;; 32-bit-only ops. So here we do it on text.
-(to (enmask-number mask n)
-  (number<-text (enmask mask ("~036b" .format n))
-                2))
+(to (enmask1 mask value)
+  (let masked (for each ((m mask) (b ("~036b" .format value)))
+                (may m
+                  (be #\X b)
+                  (else   m))))
+  (number<-text masked.text 2))
 
-(to (enmask mask bits)
-  (~.text (for each ((m mask) (b bits))
-            (may m
-              (be #\X b)
-              (else   m)))))
+(to (part2-do-mem mask addr value)
+  (for each ((a (enmask2 mask addr)))
+    (~ .set! a value)))
 
-(to (part2-do-mem mask addr number)
-  (for each ((a (enmask2-many mask addr)))
-    (~ .set! a number)))
-
-(to (enmask2-many mask addr)
-  (let bit-values
-    (for each ((m mask) (rune ("~036b" .format addr)))
-      (may m
-        (be #\0 `(,rune))
-        (be #\1 '(#\1))
-        (be #\X '(#\0 #\1)))))
+(to (enmask2 mask addr)
+  (let bit-values (for each ((m mask) (rune ("~036b" .format addr)))
+                    (may m
+                      (be #\0 `(,rune))
+                      (be #\1 '(#\1))
+                      (be #\X '(#\0 #\1)))))
   (for each ((bits (grid* @bit-values)))
     (number<-text bits.text 2)))
