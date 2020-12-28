@@ -47,14 +47,14 @@
       (hm (if (ok-radix? base)
               (begin converting ((n (abs me)))
                 (hm (if (= n 0) '())
-                    (do (let (~ q r) (n ./mod base)))
-                    (else (link r (converting q))))))
+                    (else (let (~ q r) (n ./mod base))
+                          (link r (converting q))))))
           (if (and (list? base) (every ok-radix? base)) ;; Mixed-radix digits
               (begin converting ((n (abs me)) (moduli base))
                 (hm (if (= n 0) '())
                     (if moduli.none? (list<- n))
-                    (do (let (~ q r) (n ./mod moduli.first)))
-                    (else (link r (converting q moduli.rest))))))
+                    (else (let (~ q r) (n ./mod moduli.first))
+                          (link r (converting q moduli.rest))))))
           (else (oops "Bad base" base))))
     (if min-length (digits .pad-right min-length 0) digits))
   (to ~.! ;; factorial
