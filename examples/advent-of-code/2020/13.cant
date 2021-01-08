@@ -11,12 +11,10 @@
          (* good-buses.first (- n id)))))
 
 (to (part2)
-  (let schedule (for yeahs (((~ minutes entry) second-line.items))
-                  (and (not= entry "x")
-                       (~ minutes entry.number))))
   ;; We need a solution t to the congruences (t + minutes_i) = 0 (modulo bus_i)
-  (chinese-remainder (for each (((~ minutes bus) schedule))
-                       (~ bus (- minutes)))))
+  (chinese-remainder (for yeahs (((~ minutes entry) second-line.items))
+                       (for mayhap ((bus entry.?number))
+                         (~ bus (- minutes))))))
 
 ;; TODO extract the below to factoring.cant (and rename that module?)
                      
