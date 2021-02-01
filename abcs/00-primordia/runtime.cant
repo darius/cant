@@ -255,10 +255,6 @@
 
 ;; stdlib
 
-(to (surely ok? @arguments)
-  (unless ok?
-    (oops @(if arguments.none? '("Assertion failed") arguments))))
-
 (to (count? x)
   (and (integer? x) (<= 0 x)))
 

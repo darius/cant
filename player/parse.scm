@@ -429,6 +429,14 @@
                         names)))))
     ('quasiquote (mlambda
                   ((__ q) (expand-quasiquote q))))
+    ('surely (mlambda
+              ((__ ok? . arguments)
+               (let ((failure-args (if (null? arguments)
+                                       `(',ok?)
+                                       arguments)))
+                 `(unless ,ok?
+                    (oops "Assertion failed" ;XXX hygiene
+                          ,@failure-args))))))
     ;; Crude debugging aid. TODO make a better one
     ('yo     (mlambda
               ((__ e)
