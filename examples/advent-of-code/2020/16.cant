@@ -22,11 +22,11 @@
   (sum-by ticket-error-rate tickets))
 
 (to (ticket-error-rate fields)
-  (sum (those invalid? fields)))
+  (sum (those (compose not valid?) fields)))
 
-(to (invalid? field)
-  (not (for some (({rule _ ruleset} rules))
-         (ruleset .maps? field))))
+(to (valid? field)
+  (for some (({rule _ ruleset} rules))
+    (ruleset .maps? field)))
 
 (to (part2)
   (let columns (transpose (those valid-ticket? (link your-ticket tickets))))
@@ -55,4 +55,4 @@
   (* @(each your-ticket departure-fields)))
 
 (to (valid-ticket? fields)
-  ((those invalid? fields) .none?))
+  (every valid? fields))
