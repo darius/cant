@@ -81,7 +81,7 @@ Data structures:
 Is there no simpler scheme that's likely to work?
 The worklist scheme is less likely to need backtracking.
 "
-  (let remaining-tiles tile-map.domain)
+  (let remaining-tiles tile-map.domain) ; TODO dubious use of .domain: we're making a *mutable* copy of the keys here
   (let grid (grid-2d<- (~ 0 0) (~ 11 11) {constant #no})) ; N.B. assuming 12x12 grid
   (let oriented-edge-map
     (map<-items
