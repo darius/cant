@@ -3,8 +3,7 @@
 (let inputs (with-input-file ~.read-all data-file))
 
 (to (parse world-str)
-  (surely (hide (let widths (each ~.count world-str.split-lines))
-                (= 1 widths.range.count)))
+  (surely (world-str.split-lines .uniform? ~.count))
   (let width world-str.split-lines.first.count.+)
   (let carts (!map<-))
   (let tracks (flexarray<-))
@@ -125,7 +124,7 @@
       (let {world _ _ pre-carts} state)
       (when (1000 .divides? t)
         (out .say "time ~w pop ~w\n" t pre-carts.count))
-      (if (= pre-carts.count 1)
+      (if pre-carts.one?
           (xy-coords state pre-carts.keys.first)
           (do (let (~ state1 crashes) (tick state))
               (let {world tracks width carts} state1)

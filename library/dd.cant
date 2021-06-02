@@ -17,9 +17,6 @@
     (to (~ .evaluate env) value)
     (to (~ @nodes)        (nodes value))))
 
-(to (all-same? xs)
-  (= 1 xs.range.count))
-
 (to (choice<- rank branches)
   (surely (< rank infinity))
   (make choice
@@ -27,7 +24,7 @@
     (to ~.constant-value  none)
     (to (~ .evaluate env) ((branches (env rank)) .evaluate env))
     (to ~.branches        branches)
-    (to (~ @nodes)        (hm (if (all-same? nodes)
+    (to (~ @nodes)        (hm (if nodes.uniform?
                                   nodes.first)
                               (if (= nodes.keys.list (each ~.constant-value nodes))
                                   choice)
@@ -49,7 +46,7 @@
                   ((subst rank c node) @(subst-each rank c branches)))))))
 
 (to (make-node rank branches)
-  (if (all-same? branches)
+  (if branches.uniform?
       branches.first
       (memo-node rank branches)))
 

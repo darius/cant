@@ -52,6 +52,6 @@
 
 ;; TODO reasonable efficiency
 (to (prime? n)
-  (= 1 (~.count (factor n))))
+  (~.one? (factor n)))
 
 (export factor list-primes-till prime?)

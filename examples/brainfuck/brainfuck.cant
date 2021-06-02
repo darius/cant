@@ -92,7 +92,7 @@
                       (be #\, `(absorb ,top))
                       (else   top))
                     rest)))))
-  (surely (= 1 expr-stack.count))
+  (surely expr-stack.one?)
   `(on (out-byte in-byte) ,@bf-prelude ,@expr-stack))
 
 (let bf-prelude

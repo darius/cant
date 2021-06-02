@@ -86,6 +86,14 @@
           key
           (loop (- n count) items.rest))))
 
+  ;; Questionably worth including these:
+  (to ~.one?
+    (= 1 map.count))
+  (to ~.uniform?  ;; TODO does this name suggest a count <=1, rather than =1?
+    (= 1 map.range.count))
+  (to (~ .uniform? f)
+    (~.uniform? (each f map.values)))
+
   ;; What's the right definition & interface for these for maps?
   ;; TODO also, rename to .or, .and ?
   (to (~ .union other)

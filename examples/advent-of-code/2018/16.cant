@@ -108,7 +108,7 @@ insn:    :count ' ' :count ' ' :count ' ' :count '\n' :hug.
   (begin pruning ()
     (let opcode (min-by (compose ~.count candidates)
                         candidates.keys))
-    (when (= 1 (~.count (candidates opcode)))
+    (when (~.one? (candidates opcode))
       (let op-name (~.only (~.keys (candidates opcode))))
       (assignments .set! opcode op-name)
       (candidates .delete! opcode)

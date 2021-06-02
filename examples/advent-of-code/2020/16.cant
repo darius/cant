@@ -41,8 +41,8 @@
       (let viable-rules (for those (({rule _ ruleset} remaining-rules.keys))
                           (for every ((n column))
                             (ruleset .maps? n))))
-      (when (= 1 viable-rules.count)
-        (let rule viable-rules.first)
+      (when viable-rules.one?
+        (let rule viable-rules.only)
         (rule-map .set! c rule)
         (remaining-rules .delete! rule)
         (progress? .^= #yes)))
