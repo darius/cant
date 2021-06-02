@@ -102,7 +102,6 @@ The worklist scheme is less likely to need backtracking.
     (let edge (edge-map dir))
     (let candidates (for those (({oriented-tile tid _ _} (oriented-edge-map edge)))
                       (remaining-tiles .maps? tid)))
-    (surely candidates.one? "unique candidate")
     (place! new-pos candidates.only))
 
   (to (place-rest-of-line! y)

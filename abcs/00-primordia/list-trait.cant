@@ -159,7 +159,7 @@
         (do (unless list.rest.none?
               (oops "Tried to convert to maybe from count >1" list))
             list.first)))
-  (to ~.only  ;; TODO an experiment TODO could be defined on maps in general too
+  (to ~.only  ;; TODO an experiment TODO could be defined on maps in general too, but then there's only-key vs. only-value
     (when list.none?
       (oops "Tried to .only from empty" list))
     (unless list.rest.none?
