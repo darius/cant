@@ -2,15 +2,15 @@
 
 (let inputs (with-input-file ~.read-all data-file))
 
-(to (parse world-str)
-  (surely (world-str.split-lines .uniform? ~.count))
-  (let width world-str.split-lines.first.count.+)
+(to (parse world-text)
+  (surely (world-text.split-lines .uniform? ~.count))
+  (let width world-text.split-lines.first.count.+)
   (let carts (!map<-))
   (let tracks (flexarray<-))
   (to (add-cart! i dir)
     (tracks .push! (erase-cart dir))
     (carts .set! i {cart dir 0}))
-  (for each! (((~ i rune) world-str.items))
+  (for each! (((~ i rune) world-text.items))
     (may rune
       (be #\> (add-cart! i E))
       (be #\< (add-cart! i W))
