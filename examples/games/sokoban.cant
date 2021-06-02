@@ -93,7 +93,7 @@ Level ~w ~d Move ~w")
 ;; with every line the same length (which we call the width of the
 ;; grid).
 (to (parse floor-plan)
-  (surely (floor-plan.split-lines .uniform? ~.count))
+  (surely (floor-plan.split-lines .unique? ~.count))
   floor-plan.array)
 
 (to (sokoban-grid<- spots)

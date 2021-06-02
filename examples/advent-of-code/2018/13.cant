@@ -3,7 +3,7 @@
 (let inputs (with-input-file ~.read-all data-file))
 
 (to (parse world-text)
-  (surely (world-text.split-lines .uniform? ~.count))
+  (surely (world-text.split-lines .unique? ~.count))
   (let width world-text.split-lines.first.count.+)
   (let carts (!map<-))
   (let tracks (flexarray<-))

@@ -24,7 +24,7 @@
     (to ~.constant-value  none)
     (to (~ .evaluate env) ((branches (env rank)) .evaluate env))
     (to ~.branches        branches)
-    (to (~ @nodes)        (hm (if nodes.uniform?
+    (to (~ @nodes)        (hm (if nodes.unique?
                                   nodes.first)
                               (if (= nodes.keys.list (each ~.constant-value nodes))
                                   choice)
@@ -46,7 +46,7 @@
                   ((subst rank c node) @(subst-each rank c branches)))))))
 
 (to (make-node rank branches)
-  (if branches.uniform?
+  (if branches.unique?
       branches.first
       (memo-node rank branches)))
 
