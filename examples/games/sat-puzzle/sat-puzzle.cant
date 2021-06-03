@@ -105,7 +105,7 @@ Press Tab to cycle to the next game, Esc to quit.")
     (to ~.clauses clauses)
     (to ~.variables
       (-> (gather (:: (each ~.magnitude it)) clauses)
-          (:: it.range.keys)
+          ~.nub
           sort))
     (to (~ .satisfied? settings)
       (for every ((clause clauses))

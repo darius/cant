@@ -6,7 +6,7 @@
   (some nullable? (foldl step `(,re) runes)))
 
 (to (step res rune)
-  (-> (gather (after rune) res) ~.range ~.keys))
+  (~.nub (gather (after rune) res)))
 
 (to (nullable? re)
   (may re
@@ -49,7 +49,7 @@
 
 (to (one-of text)
   (surely text.some?) ; since we don't currently have a {fail} regex type
-  (foldr1 either (each lit-rune text.range.keys)))
+  (foldr1 either (each lit-rune text.nub)))
 
 ;; Concrete syntax
 

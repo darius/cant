@@ -247,7 +247,7 @@
 
 ;; E.g. (lit "hello") advances past exactly "hello", or fails.
 (to (lit literal)
-  (if (<= literal.count 1) ;; Splitting into these two cases should be more efficient
+  (if literal.maybe? ;; Splitting into these two cases should be more efficient
       (then @(each lit-1 literal))
       (match (on (text i)
                (and (text .maps? i)

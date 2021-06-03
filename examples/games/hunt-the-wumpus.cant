@@ -101,7 +101,7 @@
       (each! (~ .welcome thing) others))))
 
 (to (standardize warnings)
-  (sort warnings.range.keys))
+  (sort warnings.nub))
 
 (make limbo
   (to (~ .release thing))

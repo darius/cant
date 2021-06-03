@@ -79,7 +79,7 @@ Level ~w ~d Move ~w")
       (be #\n (playing (level.+ .modulo trails.count)))
       (be #\p (playing (level.- .modulo trails.count)))
       (be #\u
-        (when (< 1 trail.count)
+        (when trail.plural?
           trail.pop!)
         (playing level))
       (be key

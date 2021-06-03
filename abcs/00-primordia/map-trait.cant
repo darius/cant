@@ -87,13 +87,16 @@
           (loop (- n count) items.rest))))
 
   ;; Questionably worth including these:
-  (to ~.one?
-    (= 1 map.count))
+  (to ~.one?    (= 1 map.count))
+  (to ~.maybe?  (<= map.count 1))
+  (to ~.plural? (< 1 map.count))
   (to ~.unique?
     (= 1 map.range.count))
   (to (~ .unique? f)
     (~.unique? (each f map.values)))
-
+  (to ~.nub
+    map.range.keys)
+  
   ;; What's the right definition & interface for these for maps?
   ;; TODO also, rename to .or, .and ?
   (to (~ .union other)
