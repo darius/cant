@@ -247,8 +247,6 @@
   (mcase dp
     ((: __ list?)
      `(~ ,@dp))
-    ((: __ term?)
-     dp)
     (__ (error 'parse "Bad definition pattern" dp))))
 
 (define (explode-term thing)
