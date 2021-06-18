@@ -304,9 +304,18 @@
 (define (parse-clause clause ctx)
   (mcase clause
     (('to pat . body)
-     (let ((p (parse-p pat ctx))
-           (e (parse-e `(do ,@body) ctx)))
-       (list p (pat-vars-defined p) (exp-vars-defined e) e)))))
+     (mcase pat
+       (((: head list?) . params)
+        ;; TODO I doubt this experimental syntax is worth supporting --
+        ;;  it's motivated by consistency with the definition syntax (to ((f x) y) ...)
+        ;;  but it enables weird code like (make f (to ((list<- x) y) 42))
+        ;; Also, if we really want this consistency, it ought to go into make-trait too.
+        (parse-clause `(to ,head (make _ (to (~ ,@params) ,@body)))
+                      ctx))
+       (__
+        (let ((p (parse-p pat ctx))
+              (e (parse-e `(do ,@body) ctx)))
+          (list p (pat-vars-defined p) (exp-vars-defined e) e)))))))
 
 (define (look-up-macro key)
   (mcase key
