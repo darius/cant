@@ -64,6 +64,7 @@
 
 (loud-use "../examples/automata/elementary-ca")
 (loud-use "../examples/automata/fractran")
+(loud-use "../examples/automata/popcode")
 (((loud-use "../examples/automata/slow-life") 'smoke-test))
 (((loud-use "../examples/automata/text-register-machine") 'main) '(ignore))
 (((loud-use "../examples/automata/turing-machine") 'smoke-test))
