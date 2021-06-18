@@ -243,12 +243,6 @@
       (vector-ref optional-matcher-cache n)
       (optional-match-exp<- n)))
 
-(define (expand-definition-pattern dp)
-  (mcase dp
-    ((: __ list?)
-     `(~ ,@dp))
-    (__ (error 'parse "Bad definition pattern" dp))))
-
 (define (explode-term thing)
   (and (term? thing)
        (cons (term-tag thing) (term-parts thing))))
@@ -344,11 +338,10 @@
                            (error 'parse "Bad clause: 'be' or 'else' missing" clause)))
                          clauses)))))
     ('to     (mlambda
-              ((__ (head . param-spec) . body)
-               (let ((pattern (expand-definition-pattern param-spec)))
-                 (if (symbol? head)
-                     `(make ,head (to ,pattern ,@body))
-                     `(to ,head (make _ (to ,pattern ,@body))))))))
+              ((__ (head . params) . body)
+               (if (symbol? head)
+                   `(make ,head (to (~ ,@params) ,@body))
+                   `(to ,head (make _ (to (~ ,@params) ,@body)))))))
     ('on     (mlambda
               ((__ dp . body)
                `(to (_ ,@dp) ,@body))))
