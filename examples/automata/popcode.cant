@@ -144,17 +144,17 @@
                  (vm.defs .set! name value)
                  (vm .stack-step new-stack)))
 
-(to (sop-0 n f) (on (vm) (vm .sop-0 n f)))
+(to ((sop-0 n f) vm) (vm .sop-0 n f))
 (def-prim 'write   (sop-0 1 (:: (out .display it))))
 (def-prim 'writeln (sop-0 1 (:: (out .displayln it))))
 
-(to (sop-1 n f) (on (vm) (vm .sop-1 n f)))
+(to ((sop-1 n f) vm) (vm .sop-1 n f))
 (def-prim '+ (sop-1 2 +))
 (def-prim '- (sop-1 2 -))
 (def-prim '* (sop-1 2 *))
 (def-prim '> (sop-1 2 >))
 
-(to (sop f) (on (vm) (vm .sop f)))
+(to ((sop f) vm) (vm .sop f))
 (def-prim 'pop  (sop ~.rest))
 (def-prim 'dup  (sop (on (s) (link s.first s))))
 (def-prim 'swap (sop (on (s) (link (s 1) (s 0) s.rest.rest))))
