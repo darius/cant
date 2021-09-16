@@ -347,8 +347,7 @@
 ;; Like foldl but requiring xs to be nonempty.
 ;; (foldl1 f '(a b c)) = (f (f 'a 'b) 'c)
 (to (foldl1 f xs)
-  (begin folding ((L xs.first) (Rs xs.rest))
-    (if Rs.none? L (folding (f L Rs.first) Rs.rest))))
+  (foldl f xs.first xs.rest))
 
 (to (sum ns)
   (foldl + 0 ns))
