@@ -80,8 +80,8 @@
 ;;  - Sometimes it's *almost* applicable, but ok? needs to take `(,i ,x) as the argument.
 ;;    But if we make that change, then it's barely different from yeahs.
 (to (where ok? map)
-  (for yeahs (((~ i x) map.items))
-    (and (ok? x) i)))
+  (for gather (((~ i x) map.items))
+    (if (ok? x) `(,i) '())))
 
 ;; Make a map from k to (f k) for k in keys.
 (to (map-by f keys) ;TODO maybe name it map<-keys ? along with a map<-values ?
