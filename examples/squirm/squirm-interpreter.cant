@@ -77,8 +77,8 @@
   ;;  (out .print `(seq-parse ,exps))
   (may exps
     ;; Not sure we want this:
-    ;;    ('()
-    ;;     (exp-parse #no))
+    ;;    (be '()
+    ;;      (exp-parse #no))
     (be `(,e)
       (exp-parse e))
     (be `((let ,p ,e) ,@es)
@@ -134,7 +134,6 @@
         (be expanded (exp-parse expanded))))))
 
 (to (exp-macro-expand operator operands) ;TODO: make it extensible
-  ;; TODO: quasiquote
   (may operator
     (be 'and
       (may operands
