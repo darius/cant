@@ -1,6 +1,4 @@
 ;; List prime numbers
-;; TODO test correctness
-;; TODO use sieve; currently (list-primes-till 2000000) takes 8.5 minutes
 ;; TODO add some way to reset/shrink the cache
 
 ;; (Will be extended. We need the last element to be odd, so we can
@@ -11,34 +9,43 @@
 (to (list-primes-till limit)
   (let n-known-initially known-primes.count)
   (begin listing-known ((i 0))
-    (hm (if (= n-known-initially i) (venture-into-the-unknown limit))
+    (hm (if (= i n-known-initially) (venture-into-the-unknown limit))
         (do (let p (known-primes i)))
         (if (<= limit p) '())
         (else (link/lazy p (: (listing-known i.+)))))))
+
+;; Each odd prime found so far appears in a value of this map, in a
+;; list keyed by the next candidate multiple of the prime to check.
+;; E.g. 3 initially appears in (sieve 9) => '(3)
+;;   (at 9, because 6 will get skipped because it's even).
+;; Then after the sieve reaches 9, it will appear in (sieve 15) => '(3 5)
+;;   (because 5 will have been inserted into the sieve earlier, also at 15).
+(let sieve (!map<-))
+
+(to (next-sieve! n p)
+  (let next-key (+ n p p)) ;; Twice p because n and p are odd, and we only check odd numbers.
+  (sieve .set! next-key (link p (sieve .get next-key '()))))
+
+(next-sieve! 3 3)
 
 ;; Add to known-primes from all candidates < limit; return a lazy list
 ;; of the added primes.
 (to (venture-into-the-unknown limit)
   (begin trying ((n (+ known-primes.last 2)))
-    (hm (if (<= limit n) '())
-        (if (known-factor? n) (trying (+ n 2)))
+    (hm (when (<= limit n)
+          '())
+        (when (let factors (sieve .get n))
+          (sieve .delete! n)
+          (for each! ((p factors))
+            (next-sieve! n p))
+          (trying (+ n 2)))
         (else
           (known-primes .push! n)
+          (next-sieve! n n)
           (link/lazy n (: (trying (+ n 2))))))))
 
-;; Is any known prime a factor of n?
-(to (known-factor? n)
-  ;; TODO if known-primes.values were lazy, this could be shorter
-  (let i-limit known-primes.count)
-  (let p-limit n.sqrt.floor.exact)
-  (begin checking ((i 0))
-    (and (< i i-limit)
-         (<= (let p (known-primes i)) p-limit)
-         (or (p .divides? n)
-             (checking i.+)))))
-
 ;; Return a list of the prime factors of a positive integer.
-;; TODO integrate with above, speed up
+;; TODO integrate with the above to speed this up
 ;; TODO return a lazy list?
 (to (factor n)
   (surely (integer? n))
@@ -53,5 +60,23 @@
 ;; TODO reasonable efficiency
 (to (prime? n)
   (~.one? (factor n)))
+
+
+
+(to (test-me-till limit)
+  (let primes (~.range (list-primes-till limit)))
+  (for each! ((n (1 .till limit)))
+    (let factors (factor n))
+    (hm (when (primes .maps? n)
+          (surely (= `(,n) factors)))
+        (else
+          (surely (not factors.one?))
+          (surely (= n (* @factors)))
+          (surely (<= @factors))
+          (each! (:: (surely (primes .maps? it))) factors)))))
+
+;;(test-me-till 5000)
+;;(out .print (as-list (list-primes-till 2000000)))
+
 
 (export factor list-primes-till prime?)
