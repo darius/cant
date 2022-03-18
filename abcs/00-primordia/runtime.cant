@@ -288,7 +288,9 @@
       (may xs
         (be `()           #yes)
         (be `(,x1 ,@rest) (and (compare? x0 x1)
-                               (comparing x1 rest)))))))
+                               (comparing x1 rest))))))
+  (to (~)
+    #yes))
 
 (make <   {extending transitive-comparison} (to (~ a b)      (= (compare a b) -1)))
 (make <=  {extending transitive-comparison} (to (~ a b) (not (= (compare a b)  1))))
