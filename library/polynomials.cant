@@ -1,0 +1,58 @@
+;; Univariate polynomials
+;; Representation: list of coefficients in decreasing order of degree
+;; TODO lots of things
+
+(to (polynomial<- coeffs)
+  (drop-while (:: (= it 0)) coeffs))
+
+;; TODO hm, maybe make this a method on numbers or lists?
+(to (evaluate coeffs x)
+  ;; Horner's method
+  (for foldl ((accum 0) (c coeffs))
+    (+ (* accum x) c)))
+
+(to (derivative coeffs)
+  (hm (if coeffs.none? '())
+      (else
+        (let n coeffs.count.-)
+        (each * (coeffs .first-n n) (interval<- n 1 -1)))))   ;TODO reconsider def of interval<-
+
+;; TODO: needs complex numbers, and some way to make it converge generally
+;; TODO an interface that can fail (if constant polynomial, or no real root)
+(to (find-root poly x0)
+  (find-fixpoint (newton poly x0)))
+
+;; Successive approximations to a root by Newton's method, taking x0
+;; as the starting guess.
+(to (newton poly x0)
+  (let dpoly (derivative poly))
+  (for iterate ((x x0.inexact))
+    (- x (/ (evaluate poly x)
+            (evaluate dpoly x)))))
+
+;; Return the first approximate repeat in successive elements of xs.
+;; (Assumes an infinite list.)
+;; TODO extract this to a good place in stdlib
+(to (find-fixpoint xs)
+  (let `(,x0 ,xs1) `(,xs.first ,xs.rest))
+  (let x1 xs1.first)
+  (if (approx= x0 x1)
+      x1
+      (find-fixpoint xs1)))
+
+;; TODO extract this to a good place in stdlib, with some kind of tolerance param
+(to (approx= x0 x1)
+  (let d (- x1 x0))
+  (< d.magnitude epsilon))  ;; XXX super crude
+
+(let epsilon 1e-4)  ;; XXX also crude
+
+;; import Numeric.IEEE
+;; approxEqIEEE x y =
+;;     ( sameSignificandBits x y >= d
+;;     || (x < epsilon && y < epsilon)
+;;     || (isNaN x && isNaN y)
+;;     )
+;;   where d = (floatDigits x + 1) `div` 2
+
+(export polynomial<- evaluate derivative find-root)
