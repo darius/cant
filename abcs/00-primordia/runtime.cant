@@ -418,6 +418,20 @@
     ;; XXX override parts of list-trait that need it for laziness
     ))
 
+(make not-yet-forced)
+(to (link/lazier x thunk)      ;TODO just replace link/lazy with this?
+  (let box (box<- not-yet-forced))
+  (make lazy-list {extending list-trait}
+    (to ~.none? #no)
+    (to ~.first x)
+    (to ~.rest
+      (hm (when (= not-yet-forced (let v box.^))
+            (box .^= (let v1 (thunk)))
+            v1)
+          (else v)))
+    ;; XXX override parts of list-trait that need it for laziness
+    ))
+
 ;; An interval represents a progression from a `first`, short of a
 ;; `limit`, successively by a `stride`.
 ;; TODO above comment is inaccurate on negative strides: then limit is inclusive. Is this just a bad design?
