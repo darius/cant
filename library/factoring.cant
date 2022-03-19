@@ -41,11 +41,11 @@
   (if (= n 1)
       '()
       (begin trying ((n n) (primes the-primes))
-        (let d primes.first)
-        (if (d .divides? n)
-            (link d (if (= d n)
+        (let p primes.first)
+        (if (p .divides? n)
+            (link p (if (= p n)
                         '()
-                        (trying (n .quotient d) primes)))
+                        (trying (n .quotient p) primes)))
             (trying n primes.rest)))))
 
 ;; TODO reasonable efficiency
