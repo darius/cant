@@ -5,28 +5,34 @@
 (to (polynomial<- coeffs)
   (drop-while (:: (= it 0)) coeffs))
 
+;; Readable text for a polynomial, like "2x^2 + 42".
+;; TODO like " - 5x" instead of " + -5x"
 (to (show coeffs)
-  (may coeffs
-    (be '() "0")
-    (else (" + " .join (for yeahs ((c coeffs) (k (interval<- coeffs.count.- 0 -1))) ;TODO reconsider def of interval<-
-                         (and (not= 0 c)
-                              (do (let x (may k
-                                           (be 0 "")
-                                           (be 1 "x")
-                                           (else ("x^~w" .format k))))
-                                  (if (= 1 c) x ("~w~d" .format c x)))))))))
+  (if coeffs.none?
+      "0"
+      (" + " .join (for yeahs ((c coeffs) (k (interval<- coeffs.count.- 0 -1))) ;TODO reconsider def of interval<-
+                     (and (not= 0 c)
+                          (do (let x (may k
+                                       (be 0 "")
+                                       (be 1 "x")
+                                       (else ("x^~w" .format k))))
+                              (if (and (not= 0 k) (= 1 c))  ;; TODO less ugly
+                                  x
+                                  ("~w~d" .format c x))))))))
 
+;; Value of a polynomial at a given x value.
 ;; TODO hm, maybe make this a method on numbers or lists?
 (to (evaluate coeffs x)
   ;; Horner's method
   (for foldl ((accum 0) (c coeffs))
     (+ (* accum x) c)))
 
+;; Derivative with respect to x.
 (to (derivative coeffs)
-  (hm (if coeffs.none? '())
-      (else
-        (let n coeffs.count.-)
-        (each * (coeffs .first-n n) (interval<- n 1 -1)))))   ;TODO reconsider def of interval<-
+  (if coeffs.none?
+      '()
+      (do (let n coeffs.count.-)
+          (each * (coeffs .first-n n) (interval<- n 1 -1)))))   ;TODO reconsider def of interval<-
 
 ;; TODO: needs complex numbers, and some way to make it converge generally
 ;; TODO an interface that can fail (if constant polynomial, or no real root)
