@@ -5,6 +5,17 @@
 (to (polynomial<- coeffs)
   (drop-while (:: (= it 0)) coeffs))
 
+(to (show coeffs)
+  (may coeffs
+    (be '() "0")
+    (else (" + " .join (for yeahs ((c coeffs) (k (interval<- coeffs.count.- 0 -1))) ;TODO reconsider def of interval<-
+                         (and (not= 0 c)
+                              (do (let x (may k
+                                           (be 0 "")
+                                           (be 1 "x")
+                                           (else ("x^~w" .format k))))
+                                  (if (= 1 c) x ("~w~d" .format c x)))))))))
+
 ;; TODO hm, maybe make this a method on numbers or lists?
 (to (evaluate coeffs x)
   ;; Horner's method
@@ -55,4 +66,4 @@
 ;;     )
 ;;   where d = (floatDigits x + 1) `div` 2
 
-(export polynomial<- evaluate derivative find-root)
+(export polynomial<- show evaluate derivative find-root)
