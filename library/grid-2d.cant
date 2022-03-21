@@ -102,11 +102,11 @@
 ;; -> (g .set! (~ 2 2) 'a)
 ;; -> g
 ;; #<grid-2d (2,1)..(4,2)>
-;; -> (out .display g.show)
+;; -> (g .show out)
 ;; (* * *)
 ;; (a * *)
 ;; -> (g .set! (~ 3 1) 'b)
-;; -> (out .display g.show)
+;; -> (g .show out)
 ;; (* * *)
 ;; (a * *)
 ;; -> (g .get (~ 3 1))
