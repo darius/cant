@@ -78,13 +78,12 @@
         (for each ((x (xl .thru xh)))
           (A (at x y)))))
 
-    (to (~ .show print-line!)
+    (to (~ .show sink)
       (for each! ((y (yl .thru yh)))
-        (print-line! (for each ((x (xl .thru xh)))
+        (sink .print (for each ((x (xl .thru xh)))
                        (A (at x y))))))
-    ;; TODO ~.show used to print to stdout. Change to print onto arg or return a text.
-;;    (to ~.show
-;;      (grid-2d .show print))
+    (to ~.show  ;; TODO different name?
+      (text<-writer (:: (grid-2d .show it))))
     (to (~ .selfie sink)
       (sink .display ("#<grid-2d (~w,~w)..(~w,~w)>"
                       .format xl yl xh yh)))
@@ -93,29 +92,23 @@
 (export grid-2d<-)
 
 ;; TODO add to tests
-;; -> (let g (grid-2d<- (~ 2 1) (~ 4 2) '*))
+;; -> (let g (grid-2d<- (~ 2 1) (~ 4 2) {constant '*}))
 ;; #<grid-2d (2,1)..(4,2)>
 ;; -> (g 2 2)
-;; ...
+;; Oops! ...
 ;; Match failure: (#<grid-2d (2,1)..(4,2)> (2 2))
-;; -> (g '(2 2))
+;; -> (g (~ 2 2))
 ;; *
 ;; -> (g .set! (~ 2 2) 'a)
 ;; -> g
 ;; #<grid-2d (2,1)..(4,2)>
-;; -> g.show
+;; -> (out .display g.show)
 ;; (* * *)
 ;; (a * *)
-;; #no
-;; -> (g .show (on (row) (out .displayln (text-by -> row))))
-;; ***
-;; a**
-;; #no
 ;; -> (g .set! (~ 3 1) 'b)
-;; -> (g .show (on (row) (out .displayln (text-by -> row))))
-;; *b*
-;; a**
-;; #no
+;; -> (out .display g.show)
+;; (* * *)
+;; (a * *)
 ;; -> (g .get (~ 3 1))
 ;; b
 ;; -> (g .get (~ 3 3))
@@ -123,5 +116,5 @@
 ;; -> (g .get (~ 3 3) 'blah)
 ;; blah
 ;; -> (g (~ 2 42))
-;; ...
+;; Oops! ...
 ;; y coordinate out of range: (42)
