@@ -40,13 +40,12 @@
   (surely (< 0 n))
   (if (= n 1)
       '()
-      (begin trying ((n n) (primes the-primes))
-        (let p primes.first)
+      (begin trying ((n n) (p the-primes.first) (primes the-primes.rest))
         (if (p .divides? n)
             (link p (if (= p n)
                         '()
-                        (trying (n .quotient p) primes)))
-            (trying n primes.rest)))))
+                        (trying (n .quotient p) p primes)))
+            (trying n primes.first primes.rest)))))
 
 ;; TODO reasonable efficiency
 (to (prime? n)
