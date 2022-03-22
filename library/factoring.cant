@@ -30,7 +30,10 @@
         (next-sieve! n n)
         (link/lazier n (: (sieving (+ n 2)))))))
 
-(let the-primes (link 2 3 (sieving 5)))
+;; XXX used to be just (link 2 3 (sieving 5))... but some uses hit the
+;; primitive list-ref since this started as a nonlazy list. Then list-ref barfed.
+;; I knew that could happen but sort of hoped I wouldn't have to deal with it yet.
+(let the-primes (link/lazier 2 (: (link/lazier 3 (: (sieving 5))))))
 
 ;; Return a list of the prime factors of a positive integer.
 ;; TODO return a lazy list?
