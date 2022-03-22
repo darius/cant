@@ -1,0 +1,71 @@
+;; Gregorian calendar date-related stuff
+;; TODO name date.cant or something
+;; TODO similar for times but ugh timezones etc.
+;; TODO tests
+
+;; TODO features:
+;; text parsing/unparsing
+;; ... what else? BC/AD?
+
+;; TODO wider range of y handled
+;; TODO 0-based integers for m and d are error-prone: define a good interface
+;; TODO bidirectional conversions are a job for relational programming
+
+;; TODO from Gimpel:
+;; ex. 2.10: a kind of mixed-radix process for date -> day
+;; ex. 2.15: numerical computation of day -> date
+;; ex. 2.14: print a calendar for a month
+
+(to (ok-year? y)
+  (< 1900 y 2100))              ;for now
+
+(to (ok-month? m)
+  (<= 0 m 11))
+
+(to (ok-day? y m d)
+  (let nd (+ (month-days m) (~.count (and (leap-year? y) (= m 1)))))
+  (<= 0 d nd.-))
+
+(to (leap-year? y)
+  (surely (ok-year? y))
+  (4 .divides? y))
+
+(to (day<-date {date y m d})
+  (surely (ok-year? y))
+  (surely (ok-month? m))
+  (surely (ok-day? y m d))
+  (let dy (- y 1901))  ; TODO 1901 instead of 1900 is kind of sketchy?
+  (+ (* 365 dy)        ; regular days in preceding years
+     (dy .quotient 4)  ; leap days in preceding years
+     (sum-by month-days m.till)  ; TODO precompute running sums
+     (~.count (and (leap-year? y) (< 1 m))) ;TODO ugly
+     d))
+
+;; TODO sloppy, probably buggy
+(to (date<-day d) ;TODO I'm using d for both month days and day<-date days, find a better convention
+  (surely (count? d))
+  (let (~ y4 d4) (d ./mod days/4-years))
+  (let (~ y1 d1) (d4 ./mod 365))
+  (let dy (+ (* y4 4) y1))
+  (let y (+ 1901 dy))
+  ;; TODO use precomputed running sums
+  (begin ((m 0) (d d1))
+    (let md (+ (month-days m) (~.count (and (leap-year? y) (= m 1))))) ;TODO ugly
+    (if (< d md)
+        {date y m d}
+        (loop m.+ (- d md)))))
+
+(let days/4-years (+ (* 4 365) 1))
+
+(to (weekday<-day d)
+  ((+ d 2) .modulo 7)) ;; +2 because 1 Jan 1901 was a Tuesday
+
+(let month-days [31 28 31 30 31 30 31 31 30 31 30 31])
+(let month-names
+  (("January February March April May June July August September October November December" .split)
+   .array))
+(let weekday-names
+  (("Sunday Monday Tuesday Wednesday Thursday Friday Saturday" .split)
+   .array))
+
+(export leap-year? day<-date date<-day weekday<-day)

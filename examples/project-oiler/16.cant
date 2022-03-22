@@ -1,0 +1,3 @@
+;; Power digit sum
+
+(out .print (sum ((2 .** 1000) .digits)))

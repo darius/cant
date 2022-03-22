@@ -1,0 +1,7 @@
+;; Lattice paths
+
+(to (count-paths n)
+  ;; For an n-by-n grid, take 2n steps, exactly n of them horizontal.
+  ((* 2 n) .choose n))
+
+(out .print (count-paths 20))

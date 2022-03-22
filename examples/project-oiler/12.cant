@@ -1,0 +1,36 @@
+;; Highly-divisible triangular number
+
+(import (use 'factoring) factor)
+
+;; TODO use lazy scanl
+(let triangle-numbers
+  (begin listing ((sum 0) (n 1))
+    (let sum1 (+ sum n))
+    (link/lazy sum1 (: (listing sum1 n.+)))))
+
+(to (count-divisors-naively n)
+  (tally-by (~ .divides? n)  (1 .thru n)))
+
+(to (count-divisors n)
+  (may n
+    (be 1 1)
+    (else (let powers (run-lengths (factor n)))
+          (* @(each ~.+ powers)))))
+  ;; eg 12 = 2^2 * 3^1; 1 2 3 4 6 12 
+  ;; So it's 6 divisors, the product of the incremented powers, (2+1)*(1+1)
+
+;; E.g. (a a b b b c) => (2 3 1)
+(to (run-lengths xs)
+  (surely xs.some?)
+  (begin scanning ((n 1) (x xs.first) (xs xs.rest))
+    (may xs
+      (be '() `(,n))
+      (be `(,(= x) ,@rest) (scanning n.+ x rest))
+      (else (link n (scanning 1 xs.first xs.rest))))))
+
+(for each! ((n (1 .thru 42)))  ;; Quickie test of count-divisors
+  (surely (= (count-divisors-naively n) (count-divisors n))))
+
+(let highly-divisibles (for those/lazy ((n triangle-numbers))
+                         (< 500 (count-divisors n))))
+(out .print highly-divisibles.first)

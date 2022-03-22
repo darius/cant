@@ -1,0 +1,3 @@
+;; Factorial digit sum
+
+(out .print (-> 100 ~.! ~.digits sum))

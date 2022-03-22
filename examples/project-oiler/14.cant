@@ -1,0 +1,29 @@
+;; Longest Collatz sequence
+
+(to (collatz-step n)
+  (hm (if n.even? (n .quotient 2))
+      (else (+ (* 3 n) 1))))
+
+;; Trivial logic, but it'll be slow if we take this up to a million:
+
+(to (collatz-chain n)
+  (take-while (:: (not= it 1)) (iterate collatz-step n)))
+
+(let trivial-answer (for max-by ((n (1 .till 10)))
+                      ((collatz-chain n) .count)))
+;;(out .print trivial-answer)
+
+;; So let's memoize.
+
+(import (use 'memoize) memoize)
+
+(let collatz-length
+  (memoize (on (n)
+             (hm (if (= n 1) 0)
+                 (else (+ 1 (collatz-length (collatz-step n))))))))
+
+(for each! ((n (1 .till 10)))  ;; Test it.
+  (surely (= (collatz-length n) ((collatz-chain n) .count))))
+
+(let real-answer (max-by collatz-length (1 .till 1000000)))
+(out .print real-answer)
