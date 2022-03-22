@@ -1,18 +1,7 @@
-(to (oiler7 n)
-  ((primes) n))
+;; 10001st prime
 
-(to (primes)
-  (link/lazy 2 (: (filter-prime (odd-integers 3)))))
+(import (use 'factoring) the-primes)
 
-(to (odd-integers n)
-  (link/lazy n (: (odd-integers (+ n 2))))) ;TODO infinite interval<-
-
-(to (filter-prime ns) 
-  (link/lazy (let p ns.first)
-             (: (filter-prime (for those/lazy ((k ns.rest))
-                                (not (p .divides? k)))))))
-
-;(out .print (oiler7 5))
-(out .print (oiler7 100))
-;(out .print (oiler7 10000))
-;; TODO implement the real sieve
+;(out .print (the-primes 5))
+(out .print (the-primes 100))
+;(out .print (the-primes 10000))

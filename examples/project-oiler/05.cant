@@ -2,21 +2,30 @@
   ((common-multiples<- ns) .first))
 
 (to (common-multiples<- ns)
-  (foldr1 intersect (each multiples<- ns)))
+  (foldr1 common (each multiples<- ns)))
 
 ;; Pre: xs and ys are sorted and infinite.
 ;; TODO sset module could be made to work with infinite sets
-(to (intersect xs ys)
+(to (common xs ys)
   (may (xs.first .compare ys.first)
-    (be -1 (intersect xs.rest ys))
-    (be +1 (intersect xs ys.rest))
+    (be -1 (common xs.rest ys))
+    (be +1 (common xs ys.rest))
     (be  0 (link/lazy xs.first
-                      (: (intersect xs.rest ys.rest))))))
+                      (: (common xs.rest ys.rest))))))
 
 (to (multiples<- n)                     ;TODO infinite interval<- with stride
   (begin listing ((k n))
     (link/lazy k (: (listing (+ k n))))))
 
 (out .print (oiler5 (2 .thru 10)))
-;(out .print (oiler5 (2 .thru 20)))
-;; XXX way too slow again
+
+;; TODO delete all the above -- it's too slow for (2 .thru 20)
+
+;; TODO move to stdlib, & use Scheme's lcm
+(to (lcm2 m n)
+  ((* m n) .quotient (m .gcd n)))
+
+(to (lcm @ns)
+  (foldr1 lcm2 ns))
+
+;;(out .print (lcm @(as-list (2 .thru 20))))

@@ -3,3 +3,4 @@
          (or (3 .divides? i) (5 .divides? i)))))
 
 (out .print (oiler1 200))
+;;(out .print (oiler1 1000))

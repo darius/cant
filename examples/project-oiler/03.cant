@@ -4,3 +4,4 @@
   (max @(factor n)))
 
 (out .print (oiler3 131957))
+;;(out .print (oiler3 600851475143))

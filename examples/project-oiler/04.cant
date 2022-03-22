@@ -7,8 +7,4 @@
   (<=> text (reverse text)))
 
 (out .print (oiler4 10 30))
-;(out .print (oiler4 10 100))
-;(out .print (oiler4 100 1000))
-
-;; This code'd be adequate on a nice fast Cant system; but
-;; it's absurdly too slow right now. Need a cleverer algorithm.
+;;(out .print (oiler4 100 1000))
