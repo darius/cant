@@ -1,0 +1,12 @@
+;; Names scores
+
+;; TODO code a proper csv-file reader (I edited the quotes out of the data file)
+(let line (with-input-file ~.read-line "examples/project-oiler/p022_names.comma.txt"))
+(let names (sort (line .split ",")))
+
+(for each! ((name names))
+  (surely (every ~.uppercase? name)))
+
+(out .print (for sum-by (((~ rank name) names.items))
+              (* rank.+ (sum (for each ((rune name.values))
+                               (- rune (- #\A 1)))))))
