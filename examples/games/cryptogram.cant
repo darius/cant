@@ -164,9 +164,6 @@
   r.values)
 
 (to (running-sum numbers)
-  (let sums (flexarray<- 0))
-  (for each! ((n numbers))              ;TODO scanl
-    (sums .push! (+ sums.last n)))
-  sums.values)
+  (scanl + 0 numbers))
 
 (export main)

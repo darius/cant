@@ -1,6 +1,6 @@
 ;; Non-abundant sums
 
-(import (use 'factoring) factor)
+(import (use 'factoring) list-divisors)
 
 ;; "It can be shown that all integers greater than 28123 can be
 ;; written as the sum of two abundant numbers."
@@ -15,30 +15,10 @@
 (to (abundant? n)
   (< n (sum-proper-divisors n)))
 
-;; TODO copied from 21.cant
-;; TODO speed it up more?
 (to (sum-proper-divisors n)
-  (- (sum (divisors-of n)) n))
+  (- (sum (list-divisors n)) n))
 
-(to (divisors-of n)
-  (hm (if (= n 1) '(1))
-      (else (let pairs (run-encode (factor n)))
-            (let powers (for each (((~ prime power) pairs))
-                          (for each ((k (0 .thru power)))
-                            (prime .** k))))
-            (for each ((factors (grid* @powers)))
-              (* @factors)))))
-
-;; E.g. (a a b b b c) => ((~ a 2) (~ b 3) (~ c 1))
-(to (run-encode xs)
-  (surely xs.some?)
-  (begin scanning ((n 1) (x xs.first) (xs xs.rest))
-    (may xs
-      (be '() `(,(~ x n)))
-      (be `(,(= x) ,@rest) (scanning n.+ x rest))
-      (else (link (~ x n) (scanning 1 xs.first xs.rest))))))
-
-(let small-abundants (those abundant? (1 .thru limit)))
+(let small-abundants (those abundant? (1 .till limit)))
 
 ;; Faster version of (those (:: (<= it limit)) (each sum (grid* small-abundants small-abundants)))
 (to (list-sums)
@@ -57,4 +37,4 @@
 (let small-abundant-sums (set<-list (list-sums)))
 
 (out .print (answer)) ;; 4179871
-;; Almost 10 minutes still.
+;; TODO Almost 10 minutes still.

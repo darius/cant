@@ -1,52 +1,19 @@
 ;; Amicable numbers
 
-(import (use 'factoring) factor)
+(import (use 'factoring) list-divisors)
 (import (use 'memoize) memoize)
 
 (to (answer-for n)
-  (sum (amicables< n)))
-
-(to (amicables< n)
-  (those amicable? (1 .till n)))
+  (sum (those amicable? (1 .till n))))
 
 (to (amicable? n)
   (and (< 1 n)     ;; 1 is annoying and obviously not amicable
        (do (let k (sum-of-proper-divisors n))
            (and (not= k n) (= n (sum-of-proper-divisors k))))))
 
-;; (let sum-of-proper-divisors
-;;   (memoize (on (n)
-;;              (sum (proper-divisors-naive n)))))
-
-(to (proper-divisors-naive n)
-  (those (~ .divides? n) (1 .thru (n .quotient 2))))
-
 (to (sum-proper-divisors n)
-  (- (sum (divisors-of n)) n))
+  (- (sum (list-divisors n)) n))
 
-(let sum-of-proper-divisors
-  (memoize sum-proper-divisors))
+(let sum-of-proper-divisors (memoize sum-proper-divisors))
 
-(to (divisors-of n)
-  (hm (if (= n 1) '(1))
-      (else (let pairs (run-encode (factor n)))
-            (let powers (for each (((~ prime power) pairs))
-                          (for each ((k (0 .thru power)))   ;; TODO use scanl * instead of each .**
-                            (prime .** k))))
-            (for each ((factors (grid* @powers)))
-              (* @factors)))))
-
-;; TODO adapted from 12.cant
-;; E.g. (a a b b b c) => ((~ a 2) (~ b 3) (~ c 1))
-(to (run-encode xs)
-  (surely xs.some?)
-  (begin scanning ((n 1) (x xs.first) (xs xs.rest))
-    (may xs
-      (be '() `(,(~ x n)))
-      (be `(,(= x) ,@rest) (scanning n.+ x rest))
-      (else (link (~ x n) (scanning 1 xs.first xs.rest))))))
-
-;; (out .print (those amicable? (1 .thru 1300)))
-
-;; (Took >5 minutes with proper-divisors-naive. Much better now:)
 (out .print (answer-for 10000)) ;; 31626

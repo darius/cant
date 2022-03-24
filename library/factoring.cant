@@ -50,6 +50,28 @@
                         (trying (n .quotient p) p primes)))
             (trying n primes.first primes.rest)))))
 
+;; List n's divisors. Comes up a few times already in project-oiler, where the
+;; naivest way to write it is too slow. I doubt it's really worth including here...
+(to (list-divisors n)
+  ;; (those (~ .divides? n) (1 .thru n))
+  (hm (if (= n 1) '(1))
+      (else (let pairs (run-encode (factor n)))
+            (let powers (for each (((~ prime power) pairs))
+                          (for each ((k (0 .thru power)))
+                            (prime .** k))))
+            (for each ((factors (grid* @powers)))
+              (* @factors)))))
+
+;; E.g. (a a b b b c) => ((~ a 2) (~ b 3) (~ c 1))
+(to (run-encode xs)
+  (surely xs.some?)
+  (begin scanning ((n 1) (x xs.first) (xs xs.rest))
+    (may xs
+      (be '() `(,(~ x n)))
+      (be `(,(= x) ,@rest) (scanning n.+ x rest))
+      (else (link (~ x n) (scanning 1 xs.first xs.rest))))))
+
+
 ;; TODO reasonable efficiency
 (to (prime? n)
   (= n ((factor n) .first)))
@@ -85,4 +107,4 @@
 ;;(out .print (as-list (list-primes-till 2000000)))
 
 
-(export factor the-primes prime? list-primes-till)
+(export factor the-primes prime? list-primes-till list-divisors)

@@ -150,6 +150,15 @@
 (to (yeahs/lazy maybe xs)
   (those/lazy itself (each/lazy maybe xs)))
 
+(to (scanl/lazy f z xs)
+  (begin scanning ((z z) (xs xs))
+    (link/lazy z (: (if xs.none?
+                        '()
+                        (scanning (f z xs.first) xs.rest))))))
+
+(to (scanl f z xs) ;; TODO better name
+  (as-list (scanl/lazy f z xs)))
+
 ;; ((compose f g) x) = (f (g x)), etc.
 (make compose {extending right-folding-operation}
   (to (~ f g)                   ;TODO support (to ((~ f g) @arguments)
@@ -283,6 +292,7 @@
     those !map-by compose those/lazy yeahs/lazy grid*/lazy
     -> foldr/lazy gather chain/lazy sum-by tally-by zip setting<-map
     gather/lazy method<- link/lazy link/lazier array-by map-by text-by iterate
+    scanl/lazy scanl
     hey max-by tally min union intersect each/lazy map<-values mayhap
     grid* sum = link link? list? number? integer? symbol? cue? ;TODO rename cue? or rm it
     claim? rune? array? box? term? source? sink? zilch? box<-
