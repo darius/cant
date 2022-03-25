@@ -1,14 +1,12 @@
 ;; Lexicographic permutations
-;; TODO doc/cleanup
 
 (to (lex-permutation n i)
-  (let mixed-radix-i (reverse (i .digits (as-list (2 .thru n)))))   ;; TODO ugly to need as-list
-  (let cvt (mixed-radix-i .pad-left n.- 0))
+  (let i-in-mixed-radix (reverse (i .digits (as-list (1 .thru n)))))   ;; TODO ugly to need as-list
+  (let cvt (i-in-mixed-radix .pad-left n 0))
   (let digits-free (flexarray<-list n.till))
   (let result (flexarray<-))
-  (for each! ((j n.-.till))
+  (for each! ((j n.till))
     (result .push! (digits-free .pop! (cvt j))))
-  (result .push! digits-free.pop!)
   result.values)
 
 ;; Quickie test
