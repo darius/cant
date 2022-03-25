@@ -1,0 +1,34 @@
+;; Lexicographic permutations
+;; TODO doc/cleanup
+
+(to (lex-permutation n i)
+  (let mixed-radix-i (reverse (i .digits (as-list (2 .thru n)))))   ;; TODO ugly to need as-list
+  (let cvt (mixed-radix-i .pad-left n.- 0))
+  (let digits-free (flexarray<-list n.till))
+  (let result (flexarray<-))
+  (for each! ((j n.-.till))
+    (result .push! (digits-free .pop! (cvt j))))
+  (result .push! digits-free.pop!)
+  result.values)
+
+;; Quickie test
+(let N 4)
+(let lex-perm-naive (sort N.till.permutations))
+(for each! ((i N.!.till))
+  (surely (= (lex-perm-naive i) (lex-permutation N i))))
+
+(let answer (lex-permutation 10 999999))
+(out .displayln ("" .join (each ~.text answer)))
+
+
+"Here's how it should go for N=3:
+
+i   out       mixradix
+              *2 *1
+0   0 1 2      0  0
+1   0 2 1      0  1
+2   1 0 2      1  0
+3   1 2 0      1  1
+4   2 0 1      2  0
+5   2 1 0      2  1
+"
