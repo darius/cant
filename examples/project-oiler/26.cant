@@ -1,0 +1,48 @@
+;; Reciprocal cycles
+;; Find the value of d < 1000 for which 1/d contains the longest
+;; recurring cycle in its decimal fraction part.
+
+(to (answer)
+  (my-max-by cycle-length (2 .till 1000)))
+
+;; Very slow with stdlib's max-by
+;; because it calls cycle-length repeatedly on the current best value.
+;; (also we'd rather foldl)
+'(to (max-by key<- xs) (foldr1 (on (x y) (if (> (key<- x) (key<- y)) x y))
+                               xs))
+;; TODO replace stdlib's max-by with this
+(to (my-max-by key<- xs)
+  (surely xs.some?)
+  (let x0 xs.first)
+  (let (~ best-x best-key) (for foldl ((best-so-far (~ x0 (key<- x0)))
+                                       (x xs))
+                             (let (~ _ bkey) best-so-far)
+                             (let xkey (key<- x))
+                             (if (> xkey bkey) (~ x xkey) best-so-far)))
+  best-x)
+
+(to (cycle-length d)
+  (find-repeat-length (long-reciprocal-states d)))
+
+(to (find-repeat-length xs)
+  (let index (!map<-)) ;; Map from x to the last index where x previously occurred in xs
+  (begin scanning ((pairs xs.items))
+    (hm (if pairs.none? 0)
+        (else (let (~ i x) pairs.first)
+              (may (index .get x)
+                (be #no
+                  (index .set! x i)
+                  (scanning pairs.rest))
+                (be prev
+                  (- i prev)))))))
+
+;; Compute the decimal reciprocal of denom by long division.
+;; List the states we go through in doing this (may be infinite).
+(to (long-reciprocal-states denom)
+  (begin dividing ((numer 1))
+    (let (~ digit remainder) (numer ./mod denom))
+    (hm (if (= remainder 0) '())
+        (else (link/lazy remainder
+                         (: (dividing (* remainder 10))))))))
+
+(out .print (answer))
