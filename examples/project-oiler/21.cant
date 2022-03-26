@@ -8,8 +8,8 @@
 
 (to (amicable? n)
   (and (< 1 n)     ;; 1 is annoying and obviously not amicable
-       (do (let k (sum-of-proper-divisors n))
-           (and (not= k n) (= n (sum-of-proper-divisors k))))))
+       (not= n (let k (sum-of-proper-divisors n)))
+       (= n (sum-of-proper-divisors k))))
 
 (to (sum-proper-divisors n)
   (- (sum (list-divisors n)) n))
