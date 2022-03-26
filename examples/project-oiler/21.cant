@@ -8,12 +8,10 @@
 
 (to (amicable? n)
   (and (< 1 n)     ;; 1 is annoying and obviously not amicable
-       (not= n (let k (sum-of-proper-divisors n)))
-       (= n (sum-of-proper-divisors k))))
+       (not= n (let k (sum-proper-divisors n)))
+       (= n (sum-proper-divisors k))))
 
-(to (sum-proper-divisors n)
-  (- (sum (list-divisors n)) n))
-
-(let sum-of-proper-divisors (memoize sum-proper-divisors))
+(let sum-proper-divisors (memoize (on (n)
+                                    (- (sum (list-divisors n)) n))))
 
 (out .print (answer-for 10000)) ;; 31626
