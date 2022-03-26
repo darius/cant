@@ -65,10 +65,27 @@
   (to (~ a b) (if (< a b) b a)))
 
 ;; `(min-by f xs)` = an `x` in `xs` giving the minimum value of `(f x)`.
-(to (min-by key<- xs) (foldr1 (on (x y) (if (< (key<- x) (key<- y)) x y))
-                              xs))
-(to (max-by key<- xs) (foldr1 (on (x y) (if (> (key<- x) (key<- y)) x y))
-                              xs))
+(to (min-by key<- xs)
+  ;; The simplest code (foldr1 (on (x y) (if (< (key<- x) (key<- y)) x y)) xs))
+  ;; can be painfully slow, from repeated calls to key<- on the best x so far.
+  (surely xs.some?)
+  (let x0 xs.first)
+  (let (~ best-x _) (for foldl ((best-so-far (~ x0 (key<- x0)))
+                                (x xs.rest))
+                      (let (~ _ bsf-key) best-so-far)
+                      (let xkey (key<- x))
+                      (if (< xkey bsf-key) (~ x xkey) best-so-far)))
+  best-x)
+
+(to (max-by key<- xs)
+  (surely xs.some?)
+  (let x0 xs.first)
+  (let (~ best-x _) (for foldl ((best-so-far (~ x0 (key<- x0)))
+                                (x xs.rest))
+                      (let (~ _ bsf-key) best-so-far)
+                      (let xkey (key<- x))
+                      (if (> xkey bsf-key) (~ x xkey) best-so-far)))
+  best-x)
 
 ;; ((compound-key<- f g h) x) = (list<- (f x) (g x) (h x))
 (to ((compound-key<- @key-fns) x)   ;; TODO shorter name? combo-key? call-each?

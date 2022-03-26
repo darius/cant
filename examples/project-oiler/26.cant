@@ -3,38 +3,23 @@
 ;; recurring cycle in its decimal fraction part.
 
 (to (answer)
-  (my-max-by cycle-length (2 .till 1000)))
-
-;; Very slow with stdlib's max-by
-;; because it calls cycle-length repeatedly on the current best value.
-;; (also we'd rather foldl)
-'(to (max-by key<- xs) (foldr1 (on (x y) (if (> (key<- x) (key<- y)) x y))
-                               xs))
-;; TODO replace stdlib's max-by with this
-(to (my-max-by key<- xs)
-  (surely xs.some?)
-  (let x0 xs.first)
-  (let (~ best-x best-key) (for foldl ((best-so-far (~ x0 (key<- x0)))
-                                       (x xs))
-                             (let (~ _ bkey) best-so-far)
-                             (let xkey (key<- x))
-                             (if (> xkey bkey) (~ x xkey) best-so-far)))
-  best-x)
+  (max-by cycle-length (2 .till 1000)))
 
 (to (cycle-length d)
   (find-repeat-length (long-reciprocal-states d)))
 
-(to (find-repeat-length xs)
-  (let index (!map<-)) ;; Map from x to the last index where x previously occurred in xs
-  (begin scanning ((pairs xs.items))
-    (hm (if pairs.none? 0)
-        (else (let (~ i x) pairs.first)
-              (may (index .get x)
+;; Find the first repeated state and return the length of the state cycle.
+(to (find-repeat-length states)
+  (let index (!map<-)) ;; Map from state to the last index where state previously occurred in states
+  (begin scanning ((pairs states.items))
+    (hm (if pairs.none? 0) ;; No cycle means length 0
+        (else (let (~ i state) pairs.first)
+              (may (index .get state)
                 (be #no
-                  (index .set! x i)
+                  (index .set! state i)
                   (scanning pairs.rest))
-                (be prev
-                  (- i prev)))))))
+                (be prev-i
+                  (- i prev-i)))))))
 
 ;; Compute the decimal reciprocal of denom by long division.
 ;; List the states we go through in doing this (may be infinite).
