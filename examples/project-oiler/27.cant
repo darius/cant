@@ -1,0 +1,32 @@
+;; Quadratic primes
+
+;; Considering n^2 + an + b where integer |a| < 1000, |b| <= 1000,
+;; find a and b that produce the maximum number of primes for consecutive values of n from 0 up.
+
+(import (use 'factoring) prime?)
+
+(to (answer limit)
+  (let ab-pair (best-pair-within limit))
+  (let primes (initial-primes (poly-values (quadratic @ab-pair))))
+  (out .say "~w yields ~w primes: ~w\n" ab-pair primes.count primes)
+  (out .print (* @ab-pair)))
+
+(to (best-pair-within limit)
+  ;; TODO is there any symmetry to cut down the (a,b) to consider?
+  (for max-by ((pair (grid* ((- limit.-) .till limit)
+                            ((- limit) .thru limit))))
+    (~.count (initial-primes (poly-values (quadratic @pair))))))
+
+(to (initial-primes ns)
+  (for take-while ((n ns))
+    (and (< 0 n) (prime? n))))
+
+(to (poly-values f)
+  (each/lazy f (iterate ~.+ 0))) ;; TODO counting up ought to be a number method
+
+(to ((quadratic a b) n)
+  (+ b (* n (+ a n))))
+
+(answer 100) ;; -59231
+;;real	11m39.048s
+;; TODO faster prime? function
