@@ -74,7 +74,9 @@
 
 ;; TODO reasonable efficiency
 (to (prime? n)
-  (= n ((factor n) .first)))
+  (surely (and (integer? n) (< 0 n)))
+  (and (< 1 n)
+       (= n ((factor n) .first))))
 
 
 
