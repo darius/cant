@@ -1,11 +1,8 @@
 (to (oiler2 n)
-  (sum (those ~.even? (fibs n))))
+  (sum (those ~.even? (take-while (:: (<= it n)) fibs))))
 
-(to (fibs n)
-  (begin fibbing ((a 1) (b 1))
-    (if (<= a n)
-        (link a (fibbing b (+ a b)))
-        '())))
+(let fibs (begin ((a 1) (b 1))
+            (link/lazy a (: (loop b (+ a b))))))
 
 ;(out .print (oiler2 10))
 (out .print (oiler2 4000000))
