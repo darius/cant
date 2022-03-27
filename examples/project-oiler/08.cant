@@ -27,7 +27,7 @@
   (max @(each product<- (digits .slices n))))
 
 (to (product<- ns) ;ugly: the asymmetry of this name and `sum`.
-  (foldl * 1 ns.values))
+  (* @ns.values))
 
 (out .print (oiler8 4))
 ;(out .print (oiler8 13))
