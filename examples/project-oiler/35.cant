@@ -1,0 +1,31 @@
+;; Circular primes
+
+(import (use 'factoring) list-primes-till prime?)
+
+(to (answer limit)
+  (let circulars (those circular? (list-primes-till limit)))
+  (out .say "circulars: ~w\n" circulars)
+  circulars.count)
+
+(to (circular? p)
+  ;; TODO ugh
+  (every prime? (-> (reverse p.digits) rotations ~.rest (:: (each number<-digits it)))))
+
+(to (number<-digits ds)
+  (count<-digits (reverse ds) 10))
+
+;; TODO Grabbed from hamming-codes.cant
+(to (count<-digits digits base)         ;N.B. little-endian. TODO add to stdlib?
+  (for foldr ((digit digits) (total 0))
+    (+ (* base total) digit)))
+
+(to (rotations xs)
+  (surely xs.some?)
+  (begin rotating ((pre '()) (post xs))
+    (if post.none?
+        '()
+        (link (chain post (reverse pre))  ;; TODO nicer?
+              (rotating (link post.first pre) post.rest)))))
+
+;;(out .print (answer 100))
+(out .print (answer 1000000)) ;; 55
