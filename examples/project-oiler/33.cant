@@ -1,0 +1,35 @@
+;; Digit cancelling fractions
+
+(import (use 'ratio) ratio<-)
+(let r* ((use 'ratio) '*))  ;; man this is a pain
+
+(to (canceling-fraction num den)
+  ;; TODO really clumsy
+  (let nd num.digits)
+  (let dd den.digits)
+  (may ((nd.range .intersect dd.range) .keys)
+    (be `(,common)
+      (let rnd (those (:: (not= it common)) nd))
+      (let rdd (those (:: (not= it common)) dd))
+      (and (not= common 0)
+           (= 1 rnd.count)
+           (= 1 rdd.count)       ;; TODO multiarg = like (= 1 x y)
+           (not= rdd '(0))
+           (= (let r (ratio<- num den)) (ratio<- rnd.first rdd.first))
+           (do (out .say "FOUND ~w/~w\n" num den) #yes)
+           r))
+    (else #no)))
+  
+;; There are exactly four non-trivial examples of this type of
+;; fraction, less than one in value, and containing two digits in the
+;; numerator and denominator.
+
+;; If the product of these four fractions is given in its lowest
+;; common terms, find the value of the denominator.
+
+(let fractions (for gather ((num (11 .thru 99)))
+                 (for yeahs ((den (num.+ .thru 99)))
+                   (canceling-fraction num den))))
+(out .say "Found ~w fractions: ~w\n" fractions.count fractions)
+(let {ratio p-num p-den} (foldr r* fractions (ratio<- 1)))
+(out .say "Product: ~w/~w\n" p-num p-den) ;; TODO function in ratio.cant
