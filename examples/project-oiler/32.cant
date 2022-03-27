@@ -1,0 +1,55 @@
+;; Pandigital products
+
+;; The product 7254 is unusual, as the identity, 39 × 186 = 7254,
+;; containing multiplicand, multiplier, and product is 1 through 9
+;; pandigital.
+
+;; Find the sum of all products whose multiplicand/multiplier/product
+;; identity can be written as a 1 through 9 pandigital.
+
+"
+Strategies:
+
+1. List all numbers up to 5 digits, skip repeat-digit ones, factor
+what's left, look for pandigital products.
+
+2. List first factors, list second factors > the first (and using
+fresh digits), check the product, save good ones in a set.
+
+The last step of #1 seems more of a pain than #2. So let's try #2.
+
+3-digit * 3-digit is > 10000, for total 10-digit, too many.
+2-digit * 3-digit is > 12*123 = 1476, for 9 digits, just right.
+1-digit * 4-digit    > 1*2345 = 2345, also 9 digits.
+"
+
+(to (answer)
+  (let products (set<-))
+  
+  (to (list-picks max-length choices)
+    (link (~ '() choices)
+          (hm (if (= max-length 0) '())
+              (else (for gather ((choice choices))
+                      (let remnant (those (:: (not= it choice)) choices))
+                      (for each (((~ picked unpicked) (list-picks max-length.- remnant)))
+                        (~ (link choice picked) unpicked)))))))
+
+  (for each! (((~ picked1 unpicked1) (list-picks 2 (1 .thru 9))))
+    (let a (count<-digits picked1 10))
+    (for each! (((~ picked2 unpicked2) (list-picks 4 unpicked1)))
+      (let b (count<-digits picked2 10))
+      (when (< a b)
+        (let product (* a b))
+        (when (= (sort product.digits) (sort unpicked2)) ;; TODO sets as proper data would permit a nicer expression
+          (out .say "found ~w * ~w = ~w\n" a b product)
+          (products .add! product)))))
+
+  (out .print (sort products.keys))
+  (sum products.keys))
+
+;; TODO Grabbed from hamming-codes.cant
+(to (count<-digits digits base)         ;N.B. little-endian. TODO add to stdlib?
+  (for foldr ((digit digits) (total 0))
+    (+ (* base total) digit)))
+
+(out .print (answer))
