@@ -19,6 +19,9 @@
 
 (next-sieve! 3 3)
 
+(let known-primes (set<- 2 3)) ;; Set of primes found so far, for a faster prime? function
+(let last-known-prime (box<- 3))
+
 ;; Return a lazy list of the added primes.
 (to (sieving n)
   (hm (when (let factors (sieve .get n))
@@ -27,6 +30,8 @@
           (next-sieve! n p))
         (sieving (+ n 2)))
       (else
+        (known-primes .add! n)
+        (last-known-prime .^= n)
         (next-sieve! n n)
         (link/lazier n (: (sieving (+ n 2)))))))
 
@@ -50,6 +55,20 @@
                         (trying (n .quotient p) p primes)))
             (trying n primes.first primes.rest)))))
 
+;; TODO better algorithm?
+(to (prime? n)
+  (surely (and (integer? n) (< 0 n)))
+  (and (< 1 n)
+       (if (<= n last-known-prime.^)
+           (known-primes .maps? n)
+           (= n (smallest-factor n)))))
+
+(to (smallest-factor n) ;; Pre: 1 < n
+  ;; TODO You'd think it'd be faster to cut the search short as soon the
+  ;; trial divisor is >= sqrt(n), but that seems substantially slower.
+  ;; So we're not doing that. Am I confused, or what?
+  (~.first (drop-while (:: (not (it .divides? n))) the-primes)))
+  
 ;; List n's divisors. Comes up a few times already in project-oiler, where the
 ;; naivest way to write it is too slow. I doubt it's really worth including here...
 (to (list-divisors n)
@@ -70,13 +89,6 @@
       (be '() `(,(~ x n)))
       (be `(,(= x) ,@rest) (scanning n.+ x rest))
       (else (link (~ x n) (scanning 1 xs.first xs.rest))))))
-
-
-;; TODO reasonable efficiency
-(to (prime? n)
-  (surely (and (integer? n) (< 0 n)))
-  (and (< 1 n)
-       (= n ((factor n) .first))))
 
 
 

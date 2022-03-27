@@ -12,7 +12,6 @@
   (out .print (* @ab-pair)))
 
 (to (best-pair-within limit)
-  ;; TODO is there any symmetry to cut down the (a,b) to consider?
   (for max-by ((pair (grid* ((- limit.-) .till limit)
                             ((- limit) .thru limit))))
     (~.count (initial-primes (poly-values (quadratic @pair))))))
@@ -27,6 +26,5 @@
 (to ((quadratic a b) n)
   (+ b (* n (+ a n))))
 
-(answer 100) ;; -59231
-;;real	11m39.048s
-;; TODO faster prime? function
+(answer 1000) ;; -59231
+;;real	2m35.123s

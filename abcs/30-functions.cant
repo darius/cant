@@ -302,9 +302,13 @@
 
 ;; Package it all up
 
+;; TODO design a trace-log feature
+;;(let trace-sink out)
+
 (let computational-setting-names
      ;; TODO: nonrandom order
   '(computational-setting read-all cant
+;;    trace-sink
     intercalate compound-key<- yeahs where split-on itself max min-by
     those !map-by compose those/lazy yeahs/lazy grid*/lazy
     -> foldr/lazy gather chain/lazy sum-by tally-by zip setting<-map
