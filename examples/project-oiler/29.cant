@@ -1,0 +1,12 @@
+;; Distinct powers
+
+;; Maybe the problem's intent was to find a way to do it without
+;; materializing huge numbers, but I'll just materialize them.
+
+(to (answer n)
+  (let terms (for each ((`(,a ,b) (grid* (2 .thru n) (2 .thru n))))
+               (a .** b)))
+  terms.range.count)
+
+(out .print (answer 5))
+(out .print (answer 100))
