@@ -12,11 +12,10 @@
 ;; denominations in the recurrence:
 (let count-ways
   (memoize (on (goal denoms)
-             (surely (<= 0 goal))
-             (hm (if (= goal 0) 1)
+             (hm (if (< goal 0) 0)
+                 (if (= goal 0) 1)
                  (else (for sum-by ((coin denoms))
-                         (for sum-by ((amount (interval<- coin goal.+ coin)))
-                           (count-ways (- goal amount)
-                                       (those (:: (< it coin)) denoms)))))))))
+                         (count-ways (- goal coin)
+                                     (those (:: (<= it coin)) denoms))))))))
 
 (out .print (count-ways 200 denominations))
