@@ -1,0 +1,22 @@
+;; Coin sums
+
+(import (use 'memoize) memoize)
+
+;; 1p, 2p, 5p, 10p, 20p, 50p, £1 (100p), and £2 (200p).
+(let denominations '(1 2 5 10 20 50 100 200))
+;; How many different ways can £2 be made using any number of coins?
+
+;; Rough idea: ways(k) =? sum(ways(k-coin) for coin in denominations)
+;; But that's wrong: you could add coins in different orders and it'd
+;; count every different order separately. So exclude larger
+;; denominations in the recurrence:
+(let count-ways
+  (memoize (on (goal denoms)
+             (surely (<= 0 goal))
+             (hm (if (= goal 0) 1)
+                 (else (for sum-by ((coin denoms))
+                         (for sum-by ((amount (interval<- coin goal.+ coin)))
+                           (count-ways (- goal amount)
+                                       (those (:: (< it coin)) denoms)))))))))
+
+(out .print (count-ways 200 denominations))
