@@ -1,0 +1,35 @@
+;; Digit factorials
+
+;; Find the sum of all 'curious' numbers. (Not counting 1-digit numbers.)
+
+(to (curious? n)
+  (= n (sum-by ~.! n.digits)))
+
+;; What's an upper bound on these?
+;; -> (for each! ((d (2 .thru 10)))
+;;      (out .say "~2w: ~w\n    ~w\n" d (- (10 .** d) 1) (* d (9 .!))))
+;;  2: 99
+;;     725760
+;;  3: 999
+;;     1088640
+;;  4: 9999
+;;     1451520
+;;  5: 99999
+;;     1814400
+;;  6: 999999
+;;     2177280
+;;  7: 9999999
+;;     2540160
+;;  8: 99999999
+;;     2903040
+;;  9: 999999999
+;;     3265920
+;; 10: 9999999999
+;;     3628800
+;; So we should try up to 6-digit numbers. (If it can't reach itself
+;; using seven 9!'s, it can't with smaller digits either.)
+;; It turns out 5 digits are enough.
+
+(let answers (those curious? (10 .till (10 .** 5))))
+(out .print answers)
+(out .print (sum answers))
