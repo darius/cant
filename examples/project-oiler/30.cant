@@ -1,0 +1,22 @@
+;; Digit fifth powers
+
+;; Warm-up problem
+(to (answer4)
+  (to (sum-of-digit4s n)
+    (sum-by (~ .** 4) n.digits))
+  (for those ((n (2 .till (10 .** 4))))
+    (= n (sum-of-digit4s n))))
+
+(out .print (answer4))
+
+
+;; Real one.
+(to (answer5)
+  (to (sum-of-digit5s n)
+    (sum-by (~ .** 5) n.digits))
+  (for those ((n (2 .till 200000))) ;; We need to go somewhat higher than 10^5
+    (= n (sum-of-digit5s n))))
+
+(let answer (answer5))
+(out .print answer)
+(out .print (sum answer)) ;; 443839
