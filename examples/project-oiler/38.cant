@@ -2,7 +2,7 @@
 
 (to (answer)
   ;; List permutations of 1..9 in decreasing order; return the first good one.
-  (detect pandigital-multiple? (for each/lazy ((i (interval<- ((9 .!) .-) -1 -1)))
+  (detect pandigital-multiple? (for each/lazy ((i (((9 .!) .-) .down-thru 0)))
                                  (lex-permutation 9 i))))
 
 (to (pandigital-multiple? digits)

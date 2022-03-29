@@ -36,7 +36,7 @@ nxn:
 
 (to (diagonals-sum n)
   (to (square k) (* k k))
-  (let diag1 (each square (interval<- 1 n.+ 2)))  ;; 1^2, 3^2, 5^2, ... n^2
+  (let diag1 (each square (1 .thru n 2)))  ;; 1^2, 3^2, 5^2, ... n^2
   (let diag2 (for each (((~ i k) diag1.rest.items))
                (- k (* 2 i.+))))
   (let diag3 (for each (((~ i k) diag1.rest.items))

@@ -1,5 +1,6 @@
 ;; Univariate polynomials
 ;; Representation: list of coefficients in decreasing order of degree
+;; TODO tests
 ;; TODO lots of things
 
 (to (polynomial<- coeffs)
@@ -10,7 +11,7 @@
 (to (show coeffs)
   (if coeffs.none?
       "0"
-      (" + " .join (for yeahs ((c coeffs) (k (interval<- coeffs.count.- 0 -1))) ;TODO reconsider def of interval<-
+      (" + " .join (for yeahs ((c coeffs) (k (coeffs.count.- .down-thru 0)))
                      (and (not= 0 c)
                           (do (let x (may k
                                        (be 0 "")
@@ -29,10 +30,9 @@
 
 ;; Derivative with respect to x.
 (to (derivative coeffs)
-  (if coeffs.none?
-      '()
-      (do (let n coeffs.count.-)
-          (each * (coeffs .first-n n) (interval<- n 1 -1)))))   ;TODO reconsider def of interval<-
+  (hm (if coeffs.none? '())
+      (else (let n coeffs.count.-)
+            (each * (coeffs .first-n n) (n .down-thru 1)))))
 
 ;; TODO: needs complex numbers, and some way to make it converge generally
 ;; TODO an interface that can fail (if constant polynomial, or no real root)

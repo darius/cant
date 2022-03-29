@@ -19,6 +19,8 @@
   (to (~ .till @args)  (interval<- me @args))
   (to (~ .thru b @r)   (interval<- me b.+ @r))
   (to (~ .span n)      (interval<- me (+ me n)))
+  (to (~ .down-till n) (interval<- me (+ n 1) -1))  ;; TODO just use .till with negative stride? or what?
+  (to (~ .down-thru n) (interval<- me n -1))        ;; TODO just use .till with negative stride? or what?
   (to ~.+              (__+ me 1))
   (to ~.-              (__- me 1))
   (to ~.even?          (surely (integer? me)) (= 0 (me .modulo 2)))

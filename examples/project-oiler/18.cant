@@ -23,10 +23,10 @@
     [04 62 98 27 23 09 70 98 73 93 38 53 60 04 23]])
 
 (let triangle data)
-;; TODO ugly that we mutate the input:
-(for each! ((r (interval<- (- data.count 2) 0 -1)))  ;; TODO reconsider interval<- interface
-  (let row (triangle r))
-  (let next (triangle r.+))
-  (for each! ((c row.count.till))
-    (row .set! c (+ (row c) (max (next c) (next c.+))))))
+;; TODO ugly that we mutate the input. Should be doable as a fold instead.
+(for each! ((r (data.count.- .down-till 0)))
+  (let prev (triangle r.-))
+  (let next (triangle r))
+  (for each! ((c prev.count.till))
+    (prev .set! c (+ (prev c) (max (next c) (next c.+))))))
 (out .print ((triangle 0) 0))
