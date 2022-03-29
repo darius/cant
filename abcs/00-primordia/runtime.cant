@@ -415,7 +415,15 @@
     (to ~.none? #no)
     (to ~.first x)
     (to ~.rest  (thunk))
-    ;; XXX override parts of list-trait that need it for laziness
+    (to (~ .slice i bound) ;; overridden for the sake of a lazy result
+      (surely (<= 0 i))
+      (hm (if (<= bound i) '())  ;; TODO do i-1 .rest's here too for consistency?
+          (else (let suffix (lazy-list .slice i))
+                (let n (- bound i))
+                (begin copying ((j 0) (ll suffix))
+                  (link/lazy ll.first (: (let j1 j.+)
+                                         (if (< j1 n) (copying j1 ll.rest) '())))))))
+    ;; TODO any more parts of list-trait that need overriding for laziness? Plausibly: .chain 
     ))
 
 (make not-yet-forced)
@@ -429,7 +437,9 @@
             (box .^= (let v1 (thunk)))
             v1)
           (else v)))
-    ;; XXX override parts of list-trait that need it for laziness
+    (to (~ .slice i bound) ;; overridden for the sake of a lazy result
+      (oops "Not yet implemented"))     ;TODO
+    ;; TODO any more parts of list-trait that need overriding for laziness? Plausibly: .chain 
     ))
 
 ;; An interval represents a progression from a `first`, short of a

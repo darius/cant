@@ -26,8 +26,8 @@
         (else (list.rest .slice i.-))))
   (to (~ .slice i bound)     ;XXX result is a link-list; be more generic?
     (surely (<= 0 i))
-    (hm (if list.none? list)
-        (if (<= bound i) '())
+    (hm (if (<= bound i) '())
+        (if list.none? '())
         (if (= i 0) (link list.first (list.rest .slice 0 bound.-)))
         (else (list.rest .slice i.- bound.-))))
   (to (~ .first-n n)  ; TODO better names?
