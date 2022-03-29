@@ -1,0 +1,17 @@
+;; Truncatable primes
+
+(import (use 'factoring) the-primes prime?)
+
+(to (answer n)
+  (let results (-> (those/lazy doubly-truncatable? the-primes) (~ .first-n n) as-list))
+  (out .print results)
+  (sum results))
+
+(to (doubly-truncatable? p)
+  (and (<= 10 p)
+       (do (let pt p.text)
+           (for every ((n (1 .till pt.count)))
+             (and (-> pt (~ .first-n n) ~.number prime?)
+                  (-> pt (~ .last-n n) ~.number prime?))))))
+
+(out .print (answer 11)) ;; 748317
