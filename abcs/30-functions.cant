@@ -141,15 +141,15 @@
 ;; TODO zipped-list-transducer for the below?
 
 (to (those/lazy keep? xs)
-  (if xs.none?
-      '()
+  (hm (if xs.none? '())
       (if (keep? xs.first)
-          (link/lazy xs.first (: (those/lazy keep? xs.rest)))
-          (those/lazy keep? xs.rest))))
+          (link/lazy xs.first (: (those/lazy keep? xs.rest))))
+      (else (those/lazy keep? xs.rest))))
 
 (to (each/lazy f xs)
-  (for foldr/lazy ((x xs) (rest-thunk (: '())))
-    (link/lazy (f x) rest-thunk)))
+  (hm (if xs.none? '())
+      (else (link/lazy (f xs.first)
+                       (: (each/lazy f xs.rest))))))
 
 (to (gather/lazy f xs)
   (for foldr/lazy ((x xs) (rest-thunk (: '())))
