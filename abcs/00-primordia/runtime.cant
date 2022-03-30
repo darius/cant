@@ -418,9 +418,8 @@
     (to (~ .slice i bound) ;; overridden for the sake of a lazy result
       (surely (<= 0 i))
       (hm (if (<= bound i) '())  ;; TODO do i-1 .rest's here too for consistency?
-          (else (let suffix (lazy-list .slice i))
-                (let n (- bound i))
-                (begin copying ((j 0) (ll suffix))
+          (else (let n (- bound i))
+                (begin copying ((j 0) (ll (lazy-list .slice i)))
                   (link/lazy ll.first (: (let j1 j.+)
                                          (if (< j1 n) (copying j1 ll.rest) '())))))))
     ;; TODO any more parts of list-trait that need overriding for laziness? Plausibly: .chain 
@@ -438,7 +437,12 @@
             v1)
           (else v)))
     (to (~ .slice i bound) ;; overridden for the sake of a lazy result
-      (oops "Not yet implemented"))     ;TODO
+      (surely (<= 0 i))
+      (hm (if (<= bound i) '())  ;; TODO do i-1 .rest's here too for consistency?
+          (else (let n (- bound i))
+                (begin copying ((j 0) (ll (lazy-list .slice i)))
+                  (link/lazier ll.first (: (let j1 j.+)
+                                           (if (< j1 n) (copying j1 ll.rest) '())))))))
     ;; TODO any more parts of list-trait that need overriding for laziness? Plausibly: .chain 
     ))
 
