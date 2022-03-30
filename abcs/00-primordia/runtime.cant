@@ -292,18 +292,18 @@
   (to (~)
     #yes))
 
-(make <   {extending transitive-comparison} (to (~ a b)      (= (compare a b) -1)))
-(make <=  {extending transitive-comparison} (to (~ a b) (not (= (compare a b)  1))))
-(make <=> {extending transitive-comparison} (to (~ a b)      (= (compare a b)  0))) ; XXX better name?
-(make >=  {extending transitive-comparison} (to (~ a b) (not (= (compare a b) -1))))
-(make >   {extending transitive-comparison} (to (~ a b)      (= (compare a b)  1)))
+(make <   {extending transitive-comparison} (to (~ a b)      (= (compare a b) '<)))
+(make <=  {extending transitive-comparison} (to (~ a b) (not (= (compare a b) '>))))
+(make <=> {extending transitive-comparison} (to (~ a b)      (= (compare a b) '=))) ; XXX better name?
+(make >=  {extending transitive-comparison} (to (~ a b) (not (= (compare a b) '<))))
+(make >   {extending transitive-comparison} (to (~ a b)      (= (compare a b) '>)))
 
 (to (compare a b)
   (may (a .compare b)
-    (be -1 -1)
-    (be  0  0)
-    (be +1 +1)
-    (else  (oops "Incomparable" a b))))
+    (be '< '<)
+    (be '= '=)
+    (be '> '>)
+    (else (oops "Incomparable" a b))))
 
 ;;XXX so should some of these be in list-trait?
 

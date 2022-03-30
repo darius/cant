@@ -36,10 +36,10 @@
     (list .slice (- list.count n)))
   (to (~ .compare xs)
     ;; N.B. mutable arrays compare by this method, so it's really a comparison as of right now
-    (hm (if list.none? (if xs.none? 0 -1))
-        (if xs.none? 1)
+    (hm (if list.none? (if xs.none? '= '<))
+        (if xs.none? '>)
         (else (may (list.first .compare xs.first)
-                (be 0 (list.rest .compare xs.rest))
+                (be '= (list.rest .compare xs.rest))
                 (be d d)))))
   ;; A sequence is a kind of collection. Start implementing that:
   (to ~.keys

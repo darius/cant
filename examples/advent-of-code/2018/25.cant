@@ -35,9 +35,9 @@
       (let yi (chase y))
       ;; TODO path compression, etc.
       (may (xi .compare yi)
-        (be 0)
-        (be -1 (next .set! yi xi))
-        (be +1 (next .set! xi yi))))
+        (be '=)
+        (be '< (next .set! yi xi))
+        (be '> (next .set! xi yi))))
     (to ~.count
       ;; TODO: there's a trickier but more efficient method looking only at the next array, right?
       (let representatives (each chase elements))

@@ -55,9 +55,9 @@
 
 (to (subst rank value node)
   (may (rank .compare node.rank)
-    (be -1 node) ; N.B. node must be a constant, iff we arrived here (XXX why?)
-    (be  0 (node.branches value))
-    (be +1 (make-node node.rank
+    (be '< node) ; N.B. node must be a constant, iff we arrived here (XXX why?)
+    (be '= (node.branches value))
+    (be '> (make-node node.rank
                       (subst-each rank value node.branches)))))
 
 (to (valid? node)

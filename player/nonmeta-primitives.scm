@@ -18,21 +18,21 @@
 
 (define (char-compare x y)
   (and (char? x) (char? y)      ;; XXX raise an error instead?
-       (cond ((char<? x y) -1)
-             ((char=? x y)  0)
-             (else         +1))))
+       (cond ((char<? x y) '<)
+             ((char=? x y) '=)
+             (else         '>))))
 
 (define (number-compare x y)
   (and (number? x) (number? y)      ;; XXX raise an error instead?
-       (cond ((< x y) -1)
-             ((= x y)  0)
-             (else    +1))))
+       (cond ((< x y) '<)
+             ((= x y) '=)
+             (else    '>))))
 
 (define (string-compare x y)
   (and (string? x) (string? y)      ;; XXX raise an error instead?
-       (cond ((string<? x y) -1)
-             ((string=? x y)  0)
-             (else           +1))))
+       (cond ((string<? x y) '<)
+             ((string=? x y) '=)
+             (else           '>))))
 
 ;; Misc primitives
 

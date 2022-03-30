@@ -32,9 +32,9 @@
     ;;   Either total < target or it's the smallest sum,
     ;;   starting at i, that's >= target.
     (may (compare target total)
-      (be -1 (searching i.+ j (- total (inputs i))))
-      (be 1  (searching i j.+ (+ total (inputs j))))
-      (be 0  (hm (when (< (- j i) 2)
+      (be '< (searching i.+ j (- total (inputs i))))
+      (be '> (searching i j.+ (+ total (inputs j))))
+      (be '= (hm (when (< (- j i) 2)
                    (searching i j.+ (+ total (inputs j))))
                  (else
                    (let slice (inputs .slice i j))

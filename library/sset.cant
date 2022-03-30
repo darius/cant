@@ -28,17 +28,17 @@
   (hm (if xs.none? ys)
       (if ys.none? xs)
       (else (may (xs.first .compare ys.first)
-              (be -1 (link xs.first (sset-union xs.rest ys)))
-              (be  0 (link xs.first (sset-union xs.rest ys.rest)))
-              (be  1 (link ys.first (sset-union xs ys.rest)))))))
+              (be '< (link xs.first (sset-union xs.rest ys)))
+              (be '= (link xs.first (sset-union xs.rest ys.rest)))
+              (be '> (link ys.first (sset-union xs ys.rest)))))))
 
 (to (sset-difference xs ys)
   (hm (if xs.none? '())
       (if ys.none? xs)
       (else (may (xs.first .compare ys.first)
-              (be -1 (link xs.first (sset-difference xs.rest ys)))
-              (be  0 (sset-difference xs.rest ys.rest))
-              (be  1 (sset-difference xs ys.rest))))))
+              (be '< (link xs.first (sset-difference xs.rest ys)))
+              (be '= (sset-difference xs.rest ys.rest))
+              (be '> (sset-difference xs ys.rest))))))
 
 ;; TODO intersect
 

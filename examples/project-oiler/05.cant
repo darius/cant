@@ -8,9 +8,9 @@
 ;; TODO sset module could be made to work with infinite sets
 (to (common xs ys)
   (may (xs.first .compare ys.first)
-    (be -1 (common xs.rest ys))
-    (be +1 (common xs ys.rest))
-    (be  0 (link/lazy xs.first
+    (be '< (common xs.rest ys))
+    (be '> (common xs ys.rest))
+    (be '= (link/lazy xs.first
                       (: (common xs.rest ys.rest))))))
 
 (to (multiples<- n)                     ;TODO infinite interval<- with stride

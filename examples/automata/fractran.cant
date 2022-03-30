@@ -21,7 +21,7 @@
       (be products    (loop products.first)))))  ; Repeat with the first one found.
 
 (to (r-positive? r)
-  (< 0 (r-compare r (ratio<- 0))))
+  (= '> (r-compare r (ratio<- 0))))
 
 
 ;; TODO we need this only because (read) doesn't know about fractions:

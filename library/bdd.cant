@@ -93,9 +93,9 @@
 ;; given value, `replacement`. Again, node must be standardized.
 (to (subst rank replacement node)
   (may (rank .compare (ranks node))
-    (be -1 node)
-    (be  0 (do-choose replacement (if0s node) (if1s node)))
-    (be +1 (make-choice (ranks node)
+    (be '< node)
+    (be '= (do-choose replacement (if0s node) (if1s node)))
+    (be '> (make-choice (ranks node)
                         (subst rank replacement (if0s node))
                         (subst rank replacement (if1s node))))))
 
