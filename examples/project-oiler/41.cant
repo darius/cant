@@ -1,0 +1,36 @@
+;; Pandigital prime
+;; mostly copied from 38.cant
+
+(import (use 'factoring) prime?)
+
+(to (answer)
+  (for some ((nd (9 .down-thru 1))) ;; n digits
+    (let digsum (sum (1 .thru nd)))
+    (and (not (3 .divides? digsum)) ;; (Every permutation would be a multiple of 3)
+         (find-largest-prime nd))))
+  
+(to (find-largest-prime nd)
+  ;; List permutations of 1..9 in decreasing order; return the first good one.
+  (let acceptables (for yeahs/lazy ((i (((nd .!) .-) .down-thru 0)))
+                     (let n (count<-digits (lex-permutation nd i)))
+                     (out .say "prime? ~w\n" n)
+                     (and (prime? n) n)))
+  (and acceptables.some? acceptables.first))
+
+(to (count<-digits digits)
+  (for foldl ((total 0) (digit digits))
+    (+ (* 10 total) digit)))
+
+(to (detect keep? xs)
+  ((those/lazy keep? xs) .first))
+
+(to (lex-permutation n i)
+  (let i-in-mixed-radix (reverse (i .digits (as-list (1 .thru n)))))   ;; TODO ugly to need as-list
+  (let cvt (i-in-mixed-radix .pad-left n 0))
+  (let digits-free (flexarray<-list (1 .thru n)))  ;; changed from 24.cant
+  (let result (flexarray<-))
+  (for each! ((j n.till))
+    (result .push! (digits-free .pop! (cvt j))))
+  result.values)
+
+(out .print (answer)) ;; 7652413
