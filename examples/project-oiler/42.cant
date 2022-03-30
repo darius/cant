@@ -1,0 +1,26 @@
+;; Coded triangle numbers
+
+(let line (with-input-file ~.read-line "examples/project-oiler/p042_words.comma.txt"))
+(let words (line .split ","))
+
+(to (answer)
+  (tally-by triangle-word? words))
+
+(to (triangle-word? text)
+  (triangle-number? (for sum-by ((rune text))
+                      (surely rune.uppercase?)
+                      (- rune (- #\A 1)))))
+
+;; TODO this is rather too much code
+(to (triangle-number? n)
+  (begin checking ((tns triangle-numbers))
+    (may (compare n tns.first)
+      (be -1 #no)
+      (be  0 #yes)
+      (be +1 (checking tns.rest)))))
+
+(let triangle-numbers
+  (begin ((acc 1) (delta 2))
+    (link/lazy acc (: (loop (+ acc delta) delta.+)))))
+
+(out .print (answer))
