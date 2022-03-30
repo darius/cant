@@ -9,8 +9,8 @@
 ;; position which are consistent with their neighbors, then search for
 ;; global solutions that fit the tiles together.
 
-(let triples (for those ((t (grid* (0 .thru 9) (0 .thru 9) (0 .thru 9))))
-               (= t.range.count 3)))   ;; TODO invent a method: .distinct? .permutation? (or what?)
+;; (An 'invertible' list has distinct elements.)
+(let triples (those ~.invertible? (grid* (0 .thru 9) (0 .thru 9) (0 .thru 9))))
 
 (let tiles (flexarray<-))
 (for each! (((~ i p) (~.items (link 1 (the-primes .first-n 7)))))

@@ -440,7 +440,7 @@
 (to (formals? x)
   (and (list? x)
        (every symbol? x)
-       (set? x)))
+       x.invertible?))
 
 (to (parse-e xe)
   (may xe
@@ -461,6 +461,3 @@
   (if (xs .find? x)
       xs
       (chain xs `(,x))))
-
-(to (set? xs)
-  (= xs.count xs.range.count))
