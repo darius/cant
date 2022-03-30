@@ -1,0 +1,18 @@
+;; Integer right triangles
+
+(to (answer n)
+  (let perimeters (bag<- (list-pythagorean-perimeters n)))
+  (max-by perimeters perimeters.keys))
+
+(to (list-pythagorean-perimeters n)
+  ;; Naive approach
+  (for gather ((a (1 .till n.-))) ;; longest leg
+    (let a^2 (* a a))
+    (for yeahs ((b (1 .thru (min a (- n a)))))  ;; other leg
+      (let c (~.sqrt (+ a^2 (* b b))))
+      (and (integer? c)
+           (<= (let p (+ a b c)) n)
+;;           (do (out .say "~w: ~w ~w ~w\n" p a b c) #yes)
+           p))))
+
+(out .print (answer 1000)) ;; 840
