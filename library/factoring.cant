@@ -72,12 +72,11 @@
 (to (list-divisors n)
   ;; (those (~ .divides? n) (1 .thru n))
   (hm (if (= n 1) '(1))
-      (else (let pairs (run-encode (factor n)))
-            (let powers (for each (((~ prime power) pairs))
-                          (for each ((k (0 .thru power)))
-                            (prime .** k))))
-            (for each ((factors (grid* @powers)))
-              (* @factors)))))
+      (else
+        (let powers (for each (((~ prime power) (run-encode (factor n))))
+                      (each (~ .power-of prime) (0 .thru power))))
+        (for each ((factors (grid* @powers)))
+          (* @factors)))))
 
 ;; E.g. (a a b b b c) => ((~ a 2) (~ b 3) (~ c 1))
 (to (run-encode xs)
