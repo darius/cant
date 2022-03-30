@@ -1,0 +1,59 @@
+(import (use 'factoring) the-primes)
+
+;; TODO adapted from hamming-codes.cant
+(to (count<-digits digits)
+  (for foldl ((total 0) (digit digits))
+    (+ (* 10 total) digit)))
+
+;; We'll take a constraint-solver approach: find 3-digit tiles for each
+;; position which are consistent with their neighbors, then search for
+;; global solutions that fit the tiles together.
+
+(let triples (for those ((t (grid* (0 .thru 9) (0 .thru 9) (0 .thru 9))))
+               (= t.range.count 3)))   ;; TODO invent a method: .distinct? .permutation? (or what?)
+
+(let tiles (flexarray<-))
+(for each! (((~ i p) (~.items (link 1 (the-primes .first-n 7)))))
+  (out .say "collecting period-~w tiles\n" p)
+  ;; TODO make the tiles-sets mutable sets instead, and do
+  ;; arc-consistency. May not make a huge difference, though, since
+  ;; when we enumerate right-to-left, those arcs will get pruned
+  ;; immediately on visiting.
+  (let tiles-i (for those ((triple triples))
+                 (and (p .divides? (count<-digits triple))
+                      (or (= i 0)
+                          (-> (each (~ .last-n (- 3 1)) (tiles i.-))
+                              ~.range
+                              (~ .maps? (triple .first-n (- 3 1))))))))
+  (tiles .push! tiles-i))
+
+;;(for each! (((~ i t) tiles.items))
+;;  (out .say "~w's tiles: ~w\n" i t))
+(out .say "naive tile counts: ~w ~w\n"
+     (each ~.count tiles.values) (* @(each ~.count tiles.values)))
+
+;; TODO For the enumeration we'd like to have for each position a map
+;; from an overlap to a list of next digit candidates. But we'll just
+;; use the tile array we have, and filter as we search.
+
+(let solutions
+  (begin outer ((last-tiles tiles.last))
+    (may last-tiles
+      (be '() '())
+      (be `(,lt ,@lts)
+        (chain
+         (begin extending ((place (- tiles.count 2))
+                           (suffix lt))  ;; a partial solution from place+1 rightward
+           (hm (when (< place 0)
+                 (out .say "found ~w\n" suffix)
+                 (list<- suffix))
+               (else
+                 (for gather ((next-digit
+                               (~.nub (for yeahs ((t (tiles place)))
+                                        (and (= t.rest (suffix .first-n 2))
+                                             (not (suffix .find? t.first))
+                                             t.first)))))
+                   (extending place.- (link next-digit suffix))))))
+         (outer lts))))))
+
+(out .say "sum: ~w\n" (sum (each count<-digits solutions)))
