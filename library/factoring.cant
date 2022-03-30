@@ -61,14 +61,12 @@
   (and (< 1 n)
        (if (<= n last-known-prime.^)
            (known-primes .maps? n)
-           (= n (smallest-factor n)))))
+           (begin trying ((primes the-primes))
+             (let p primes.first)
+             (hm (if (= 0 (n .modulo p)) #no)
+                 (if (< (* p p) n) (trying primes.rest))
+                 (else #yes))))))
 
-(to (smallest-factor n) ;; Pre: 1 < n
-  ;; TODO You'd think it'd be faster to cut the search short as soon the
-  ;; trial divisor is >= sqrt(n), but that seems substantially slower.
-  ;; So we're not doing that. Am I confused, or what?
-  (~.first (drop-while (:: (not (it .divides? n))) the-primes)))
-  
 ;; List n's divisors. Comes up a few times already in project-oiler, where the
 ;; naivest way to write it is too slow. I doubt it's really worth including here...
 (to (list-divisors n)
