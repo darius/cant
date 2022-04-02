@@ -286,7 +286,7 @@
         (scanning (link xs.first r-head) xs.rest))))
 
 ;; (intercalate T '(as bs cs)) = `(,@as ,T ,@bs ,T ,@cs)
-;; XXX this code actually gives you (intercate 'T '(a b c)) = '(a T b T c)
+;; XXX this code actually gives you (intercalate 'T '(a b c)) = '(a T b T c)
 ;; TODO almost never used
 (to (intercalate between elements)      ;TODO unify with .join
   (hm (if elements.none? '())
