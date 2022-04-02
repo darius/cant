@@ -252,10 +252,7 @@
 
 ;; TODO too specialized for the stdlib
 (to (union @sets)
-  (let result (set<-))
-  (for each! ((set sets))
-    (result .union! set))
-  result)
+  (hey (set<-) @(each (:: (~ .union! it)) sets)))
 
 (to (intersect @sets)
   ;; TODO .intersect! like the above
