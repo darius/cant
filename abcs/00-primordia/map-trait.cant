@@ -97,7 +97,7 @@
   (to (~ .unique? f)
     (~.unique? (each f map.values)))
   (to ~.nub
-    map.range.keys)
+    map.range.keys)  ;; TODO preserve order of map.keys
   
   ;; What's the right definition & interface for these for maps?
   ;; TODO also, rename to .or, .and ?
