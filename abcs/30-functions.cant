@@ -286,13 +286,13 @@
         (scanning (link xs.first r-head) xs.rest))))
 
 ;; (intercalate T '(as bs cs)) = `(,@as ,T ,@bs ,T ,@cs)
+;; XXX this code actually gives you (intercate 'T '(a b c)) = '(a T b T c)
 ;; TODO almost never used
 (to (intercalate between elements)      ;TODO unify with .join
-  (if elements.none?
-      elements
-      (link elements.first
-            (for gather ((x elements.rest)) ;TODO more efficient
-              `(,between ,x)))))
+  (hm (if elements.none? '())
+      (else (link elements.first
+                  (for foldr ((element elements.rest) (result '()))
+                    (link between element result))))))
 
 ;; probably worthless
 (to (method<- actor cue)
