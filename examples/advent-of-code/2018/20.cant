@@ -62,7 +62,7 @@ dir:  {'N' | 'S' | 'E' | 'W'} :Dir.
   (out .say "count for >= 1000 distance: ~w\n" how-many)
   (max @rooms.values))
 
-(to (vec? p)
+(to (vec? p)                            ;TODO unused
   (and (list? p) (= p.count 2) (every number? p)))
 
 (let empty-map (!map<-))                ;TODO immutable

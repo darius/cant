@@ -25,7 +25,7 @@
                          (be {constant value} value)
                          (be {map _} #no))))
   (let at
-    (if (and (= xl 0) (= yl 0))
+    (if (= xl yl 0)
         (on (x y)                    ;special-cased for speed
           (+ (* y x-extent) x))
         (on (x y)        ;maybe a hashmap is actually more efficient?

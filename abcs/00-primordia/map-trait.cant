@@ -92,10 +92,11 @@
   (to ~.one?    (= 1 map.count))
   (to ~.maybe?  (<= map.count 1))
   (to ~.plural? (< 1 map.count))
-  (to ~.unique?
-    (= 1 map.range.count))
+  (to ~.unique?   ;; Equiv to map.range.one? but presumably more efficient
+    (let values map.values)
+    (and values.some? (= @values.list)))
   (to (~ .unique? f)
-    (~.unique? (each f map.values)))
+    ((each f map.values) .unique?))
   (to ~.nub
     map.range.keys)  ;; TODO preserve order of map.keys
   

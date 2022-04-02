@@ -188,9 +188,18 @@
 
 ;; The defs for primordial-setting
 
+(define (multiarg-cant=? . args)
+  (or (null? args)
+      (let ((arg1 (car args)))
+;;        (all (lambda (arg) (cant=? arg1 arg)) (cdr args)))))
+        (let loop ((rest (cdr args)))
+          (or (null? rest)
+              (and (cant=? arg1 (car rest))
+                   (loop (cdr rest))))))))
+
 (define nonmeta-a-list
   `((__as-link ,as-link)
-    (= ,cant=?)
+    (= ,multiarg-cant=?)
     (in ,(make-source (current-input-port)))
     (out ,(current-output-port))
     (err ,(current-error-port))
