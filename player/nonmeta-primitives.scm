@@ -235,7 +235,7 @@
     (ceiling ,ceiling)
     (round ,round)
     (not ,not)
-    (assoc ,assoc)                      ;XXX doesn't use cant=?
+    (assoc ,(lambda (x alist) (assp (lambda (key) (cant=? x key)) alist)))
     (sqrt ,sqrt)
     (exp ,exp)
     (log ,log)
