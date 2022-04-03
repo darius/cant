@@ -5,19 +5,31 @@
 (to (list-primes-till limit)
   (take-while (:: (< it limit)) the-primes))
 
+;; An incremental Sieve of Eratosthenes, implicitly leaving out the
+;; even numbers. (Incremental because we don't know how high we're
+;; going to be asked to go.) We keep a map keyed on the next numbers
+;; to cross out, for all the odd primes we've discovered so far. The
+;; step size for each odd prime p is 2p, since we only consider odd
+;; numbers: so for p we'll first insert 2p at the key p^2, then after
+;; we reach p^2 we'll delete it and insert 2p at the key p^2+2p, then
+;; afterwards at p^2+4p, etc. (We start at p^2 because smaller
+;; multiples k of p will have already been scheduled for sieving on
+;; the factors of k.)
+;; Sometimes multiple primes are at the same key, so the value for each
+;; key is a list.
+
 ;; Each odd prime found so far appears in a value of this map, in a
 ;; list keyed by the next candidate multiple of the prime to check.
-;; E.g. 3 initially appears in (sieve 9) => '(3)
+;; E.g. 3 initially appears in (sieve 9) => '(6)
 ;;   (at 9, because 6 will get skipped because it's even).
-;; Then after the sieve reaches 9, it will appear in (sieve 15) => '(3 5)
-;;   (because 5 will have been inserted into the sieve earlier, also at 15).
+;; Then after the sieve reaches 9, that key will be deleted and 3 will
+;; reappear in (sieve 15), and so on afterwards. 
 (let sieve (!map<-))
 
-(to (next-sieve! n p)
-  (let next-key (+ n p p)) ;; Twice p because n and p are odd, and we only check odd numbers.
-  (sieve .set! next-key (link p (sieve .get next-key '()))))
+(to (next-sieve! step next-key)
+  (sieve .set! next-key (link step (sieve .get next-key '()))))
 
-(next-sieve! 3 3)
+(next-sieve! (* 2 3) (3 .** 2)) ;; Schedule the prime 3 into the sieving
 
 (let known-primes (set<- 2 3)) ;; Set of primes found so far, for a faster prime? function
 (let last-known-prime (box<- 3))
@@ -26,13 +38,13 @@
 (to (sieving n)
   (hm (when (let factors (sieve .get n))
         (sieve .delete! n)
-        (for each! ((p factors))
-          (next-sieve! n p))
+        (for each! ((step factors))
+          (next-sieve! step (+ n step))) 
         (sieving (+ n 2)))
       (else
         (known-primes .add! n)
         (last-known-prime .^= n)
-        (next-sieve! n n)
+        (next-sieve! (* 2 n) (n .** 2)) ;; Schedule the prime n into the sieving
         (link/lazier n (: (sieving (+ n 2)))))))
 
 ;; XXX used to be just (link 2 3 (sieving 5))... but some uses hit the
@@ -42,7 +54,6 @@
 
 ;; Return a list of the prime factors of a positive integer.
 ;; TODO return a lazy list?
-;; TODO is this actually faster than naive-factor
 (to (factor n)
   (surely (integer? n))
   (surely (< 0 n))
@@ -64,7 +75,7 @@
            (begin trying ((primes the-primes))
              (let p primes.first)
              (hm (if (= 0 (n .modulo p)) #no)
-                 (if (< (* p p) n) (trying primes.rest))
+                 (if (< (p .** 2) n) (trying primes.rest))
                  (else #yes))))))
 
 ;; List n's divisors. Comes up a few times already in project-oiler, where the
