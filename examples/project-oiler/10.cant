@@ -1,10 +1,5 @@
 (import (use 'factoring) list-primes-till)
 
-(to (sum-of-primes-till limit)
-  (sum (list-primes-till limit)))
-
-;; (sum-of-primes-till 2000000)
-
 (to (main args)
   (let arg (args 1))
-  (out .say "~w\n" (sum-of-primes-till arg.number)))
+  (out .say "~w\n" (sum (list-primes-till arg.number))))

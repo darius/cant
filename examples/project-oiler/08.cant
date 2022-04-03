@@ -24,10 +24,7 @@
   (~.array (each ~.number (input .slices 1))))
 
 (to (oiler8 n)
-  (max @(each product<- (digits .slices n))))
-
-(to (product<- ns) ;ugly: the asymmetry of this name and `sum`.
-  (* @ns.values))
+  (max @(each (:: (* @it.list)) (digits .slices n))))
 
 (out .print (oiler8 4))
 ;(out .print (oiler8 13))

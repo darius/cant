@@ -2,18 +2,15 @@
   (let [a b c] (~.first (triplets<- total)))
   (* a b c))
 
-;; Naive approach
 (to (triplets<- total)
-  (for gather ((c ((- total 2) .till (total .quotient 3) -1)))  ;TODO ugly
+  (for gather ((c ((- total 2) .down-till (total .quotient 3))))
     (let c^2 (* c c))
-    (for yeahs ((b (c.- .till (c .quotient 2) -1)))
-      (let a^2 (- c^2 (* b b)))
-      (let a a^2.sqrt)
-      (and (= (+ a b c) total)
+    (for yeahs ((b (c.- .down-till (c .quotient 2))))
+      (and (< 0 (let a (- total c b)))
            (< a b c)
-           [a.floor.exact b c]))))
-
-;; (answer 1000)
+           (= c^2 (+ (* a a) (* b b)))
+           [a b c]))))
 
 (to (main _)
   (out .say "~w\n" (answer 12)))
+;;  (out .say "~w\n" (answer 1000)))

@@ -1,9 +1,6 @@
 (to (oiler6 ns)
-  (- (square (sum ns))
-     (sum-by square ns)))
-
-(to (square n)
-  (* n n))
+  (- ((sum ns) .** 2)
+     (sum-by (~ .** 2) ns)))
 
 (out .print (oiler6 (1 .thru 10)))
 ;(out .print (oiler6 (1 .thru 100)))

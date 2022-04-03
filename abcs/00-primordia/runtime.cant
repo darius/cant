@@ -264,7 +264,8 @@
 (make-trait left-folding-operation operation
   (to (~ a b @arguments)
     (foldl operation (operation a b) arguments))
-  (to (~ a) a))      ; Of course this no-op by default is overridable.
+  (to (~ a) ;; TODO leave this one-arg no-op out, because we'll generally want to typecheck `a` anyway?
+    a))      ; Of course this no-op by default is overridable.
 
 (make-trait right-folding-operation operation
   (to (~ @arguments)
@@ -272,10 +273,12 @@
 
 (make + {extending left-folding-operation}
   (to (~ a b) (a .+ b))
+  (to (~ a) (surely (number? a) "+ of non-number" a) a)
   (to (~) 0))
 
 (make * {extending left-folding-operation}
   (to (~ a b) (a .* b))
+  (to (~ a) (surely (number? a) "* of non-number" a) a)
   (to (~) 1))
 
 (make - {extending left-folding-operation}
