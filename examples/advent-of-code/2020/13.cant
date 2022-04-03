@@ -34,7 +34,7 @@
 ;; Return n^-1 (mod p).
 ;; Pre: p and n are coprime.
 (to (modular-inverse p n)
-  (surely (= 1 (p .gcd n)) "coprime")
+  (surely (= 1 (gcd p n)) "coprime")
   (let (~ a b) (bezout p n))
   ;; a*p + b*n = 1
   ;; So:   b*n = 1 (mod p)

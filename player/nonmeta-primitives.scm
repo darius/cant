@@ -260,6 +260,7 @@
     (expt ,expt)
     (abs ,abs)
     (gcd ,gcd)
+    (lcm ,lcm)
     (__array<-list ,list->vector)
     (read ,(lambda (source) (cant-read (source-port source))))
     (__parse-exp ,parse-exp)

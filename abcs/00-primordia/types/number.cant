@@ -45,7 +45,6 @@
   (to (~ .log base)    (log me base))
   (to ~.text           (text<-number me))
   (to ~.number         me)
-  (to (~ .gcd b)       (gcd me b))
   (to ~.digits         (me .digits 10))
   (to (~ .digits base @(optional min-length))  ;; N.B. little-endian
     (let digits

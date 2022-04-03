@@ -1,6 +1,5 @@
 (to (oiler1 n)
-  (sum (for those ((i (3 .till n)))
-         (or (3 .divides? i) (5 .divides? i)))))
+  (sum (~.nub (chain (3 .till n 3) (5 .till n 5)))))
 
 (out .print (oiler1 200))
 ;;(out .print (oiler1 1000))

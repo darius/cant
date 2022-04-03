@@ -1,9 +1,2 @@
-;; TODO move to stdlib, & use Scheme's lcm
-(to (lcm2 m n)
-  ((* m n) .quotient (m .gcd n)))
-
-(to (lcm @ns)
-  (foldr1 lcm2 ns))
-
 (out .print (lcm @(as-list (2 .thru 10))))
 ;;(out .print (lcm @(as-list (2 .thru 20))))

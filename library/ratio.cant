@@ -28,7 +28,7 @@
     (be +1 (lowest-terms n d))))
 
 (to (lowest-terms n d)
-  (let g (n .gcd d))
+  (let g (gcd n d))
   ;; TODO when we can mix number types: return an int if d/g = 1.
   {ratio (n .quotient g)
          (d .quotient g)})

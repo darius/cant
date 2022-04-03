@@ -50,7 +50,6 @@
 (to (remainder n d) (n .remainder d))
 (to (modulo n d)    (n .modulo d))
 (to (expt m n)      (m .** n))
-(to (gcd m n)       (m .gcd n))
 (to (abs n)         n.magnitude)
 (to (sqrt n)        n.sqrt)
 
