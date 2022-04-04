@@ -1,2 +1,3 @@
 ./t omnibus || echo omnibus failed
 ./t quick   || echo quick failed
+./t oiler-further || echo oiler-further failed

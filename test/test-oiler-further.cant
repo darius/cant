@@ -1,0 +1,22 @@
+(to (loud-use filename)
+  out.newline
+  (out .display "-------- ")
+  (out .display filename)
+  (out .display " --------")
+  out.newline
+  (use filename))
+  
+(loud-use "../examples/project-oiler/11")
+(loud-use "../examples/project-oiler/13")
+(loud-use "../examples/project-oiler/15")
+(loud-use "../examples/project-oiler/16")
+(loud-use "../examples/project-oiler/17")
+(loud-use "../examples/project-oiler/18")
+(loud-use "../examples/project-oiler/19")
+(loud-use "../examples/project-oiler/24")
+(loud-use "../examples/project-oiler/25")
+(loud-use "../examples/project-oiler/28")
+(loud-use "../examples/project-oiler/29")
+(loud-use "../examples/project-oiler/31")
+(loud-use "../examples/project-oiler/41")
+(loud-use "../examples/project-oiler/42")
