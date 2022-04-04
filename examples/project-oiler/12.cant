@@ -1,6 +1,6 @@
 ;; Highly-divisible triangular number
 
-(import (use 'factoring) factor)
+(import (use 'factoring) factor list-divisors)
 
 (to (count-divisors n)
   (let powers (run-lengths (factor n)))
@@ -19,7 +19,7 @@
 
 (for each! ((n (1 .thru 42)))  ;; Quickie test of count-divisors
   (surely (= (count-divisors n)
-             (tally-by (~ .divides? n) (1 .thru n)))))
+             (~.count (list-divisors n)))))
 
 (let triangle-numbers (scanl/lazy + 1 (iterate ~.+ 2)))
 
