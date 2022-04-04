@@ -1,5 +1,4 @@
 ;; TODO add a quickly-runnable test
-;; TODO add me to the repo
 
 (import (use 'grid-2d) grid-2d<-)
 
