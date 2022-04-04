@@ -2,8 +2,6 @@
 
 (import (use 'factoring) factor)
 
-(let triangle-numbers (scanl/lazy + 1 (iterate ~.+ 2)))
-
 (to (count-divisors n)
   (let powers (run-lengths (factor n)))
   (* @(each ~.+ powers)))
@@ -22,6 +20,8 @@
 (for each! ((n (1 .thru 42)))  ;; Quickie test of count-divisors
   (surely (= (count-divisors n)
              (tally-by (~ .divides? n) (1 .thru n)))))
+
+(let triangle-numbers (scanl/lazy + 1 (iterate ~.+ 2)))
 
 (let highly-divisibles (for those/lazy ((n triangle-numbers))
                          (< 500 (count-divisors n))))
