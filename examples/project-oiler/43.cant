@@ -22,8 +22,7 @@
   (tiles .push! (for those ((triple triples))
                   (and (p .divides? (count<-digits triple))
                        (or tiles.none?
-                           ((each (~ .last-n 2) tiles.last)
-                            .find? (triple .first-n 2)))))))
+                           ((each ~.rest tiles.last) .find? triple.but-last))))))
 
 ;; TODO For the enumeration we'd like to have for each position a map
 ;; from an overlap to a list of next digit candidates. But we'll just

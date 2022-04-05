@@ -179,12 +179,7 @@
       (be `(message ,e2 ,r2 ,k2)
         (take-message replace e2 r2 k2))
       (else (walking k.last (on (k-prime)
-                              (chain (but-last k) `(,k-prime))))))))
-
-(to (but-last xs)
-  (may xs
-    (be `(,_) '())
-    (be `(,x ,@rest) `(,x ,@(but-last rest)))))
+                              (chain k.but-last `(,k-prime))))))))
 
 ;; N.B. that'd be easier if we kept the k in the *first* slot
 

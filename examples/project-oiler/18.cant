@@ -23,10 +23,8 @@
     (04 62 98 27 23 09 70 98 73 93 38 53 60 04 23)))
 
 (to (max-path-sum triangle)
-  ;; TODO a list.but-last method would be handy in two places here
-  (let tri (reverse triangle))
-  (~.first (for foldl ((so-far tri.first) (steps tri.rest))
-             (each + steps (each max @(so-far .slices so-far.count.-))))))
+  (~.first (for foldr ((steps triangle.but-last) (so-far triangle.last))
+             (each + steps (each max so-far.rest so-far.but-last)))))
 
 (out .print (max-path-sum small-example))
 (out .print (max-path-sum data))

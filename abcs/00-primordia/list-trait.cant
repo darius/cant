@@ -76,6 +76,9 @@
   (to (~ .last)
     (let rest list.rest)
     (if rest.none? list.first rest.last))
+  (to (~ .but-last) ;; TODO better name? TODO prefer to return a slice? (for e.g. text)
+    (let rest list.rest)
+    (if rest.none? '() (link list.first rest.but-last)))
   (to (~ .prefix? p)
     (= (list .slice 0 p.count) p))   ;TODO more efficient
   (to (~ .repeat n)
