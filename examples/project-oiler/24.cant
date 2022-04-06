@@ -1,9 +1,9 @@
 ;; Lexicographic permutations
 
 (to (lex-permutation n i)
-  (let i-in-mixed-radix (reverse (i .digits (as-list (1 .thru n)))))   ;; TODO ugly to need as-list
-  (let digit-supply (flexarray<-list n.till))
   (let result (flexarray<-))
+  (let digit-supply (flexarray<-list n.till))
+  (let i-in-mixed-radix (reverse (i .digits ((1 .thru n) .list)))) ;; TODO uglyish
   (for each! ((pos (i-in-mixed-radix .pad-left n 0)))
     (result .push! (digit-supply .pop! pos)))
   result.values)
