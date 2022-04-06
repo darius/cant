@@ -8,26 +8,24 @@
 (to (cycle-length d)
   (find-repeat-length (long-reciprocal-states d)))
 
+;; Compute the infinite decimal reciprocal of denom by long division.
+;; List the states we go through in doing this.
+(to (long-reciprocal-states denom)
+  (begin dividing ((numer 1))
+    (let (~ digit remainder) (numer ./mod denom))
+    (link/lazy remainder
+               (: (dividing (* remainder 10))))))
+
 ;; Find the first repeated state and return the length of the state cycle.
 (to (find-repeat-length states)
   (let index (!map<-)) ;; Map from state to the last index where it previously occurred
   (begin scanning ((pairs states.items))
-    (hm (if pairs.none? 0) ;; No cycle means length 0
-        (else (let (~ i state) pairs.first)
-              (may (index .get state)
-                (be #no
-                  (index .set! state i)
-                  (scanning pairs.rest))
-                (be prev-i
-                  (- i prev-i)))))))
+    (let (~ i state) pairs.first)
+    (may (index .get state)
+      (be #no
+        (index .set! state i)
+        (scanning pairs.rest))
+      (be prev-i
+        (- i prev-i)))))
 
-;; Compute the decimal reciprocal of denom by long division.
-;; List the states we go through in doing this (may be infinite).
-(to (long-reciprocal-states denom)
-  (begin dividing ((numer 1))
-    (let (~ digit remainder) (numer ./mod denom))
-    (hm (if (= remainder 0) '())
-        (else (link/lazy remainder
-                         (: (dividing (* remainder 10))))))))
-
-(out .print (answer))
+(out .print (answer)) ;; 983
