@@ -24,12 +24,11 @@
     (+ (* 10 total) digit)))
 
 (to (lex-permutation n i)
-  (let i-in-mixed-radix (reverse (i .digits (as-list (1 .thru n)))))   ;; TODO ugly to need as-list
-  (let cvt (i-in-mixed-radix .pad-left n 0))
-  (let digits-free (flexarray<-list (1 .thru n)))  ;; changed from utils.cant
   (let result (flexarray<-))
-  (for each! ((j n.till))
-    (result .push! (digits-free .pop! (cvt j))))
+  (let digit-supply (flexarray<-list (1 .thru n)))  ;; changed from utils.cant
+  (let i-in-mixed-radix (reverse (i .digits (1 .thru n) n)))   ;; TODO ugly to need reverse
+  (for each! ((pos i-in-mixed-radix))
+    (result .push! (digit-supply .pop! pos)))
   result.values)
 
 (out .print (answer)) ;; 7652413

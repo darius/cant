@@ -53,8 +53,9 @@
                 (hm (if (= n 0) '())
                     (else (let (~ q r) (n ./mod base))
                           (link r (converting q))))))
-          (if (and (list? base) (for every ((r base)) ;; Mixed-radix digits
-                                  (and (integer? r) (< 0 r))))
+          (if (and ;; (list? base)  TODO less-crude types
+                   (for every ((r base)) ;; Mixed-radix digits
+                     (and (integer? r) (< 0 r))))
               (begin converting ((n (abs me)) (moduli base))
                 (hm (if (= n 0) '())
                     (if moduli.none? (list<- n))
