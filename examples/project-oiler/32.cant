@@ -23,6 +23,8 @@ The last step of #1 seems more of a pain than #2. So let's try #2.
 1-digit * 4-digit    > 1*2345 = 2345, also 9 digits.
 "
 
+(import (use "utils") count<-digits)
+
 (to (answer)
   (let products (set<-))
   
@@ -46,10 +48,5 @@ The last step of #1 seems more of a pain than #2. So let's try #2.
 
   (out .print (sort products.keys))
   (sum products.keys))
-
-;; TODO Grabbed from hamming-codes.cant
-(to (count<-digits digits base)         ;N.B. little-endian. TODO add to stdlib?
-  (for foldr ((digit digits) (total 0))
-    (+ (* base total) digit)))
 
 (out .print (answer))
