@@ -6,34 +6,19 @@
 ;; written as the sum of two abundant numbers."
 (let limit 28123)
 
-(to (answer)
-  (sum (those not-sum-of-2-abundants? (1 .thru limit))))
-
-(to (not-sum-of-2-abundants? n)
-  (not (small-abundant-sums .maps? n)))
-
 (to (abundant? n)
   (< n (sum-proper-divisors n)))
 
 (to (sum-proper-divisors n)
   (- (sum (list-divisors n)) n))
 
-(let small-abundants (those abundant? (1 .till limit)))
-
-;; Faster version of (~.range (those (:: (<= it limit)) (each sum (grid* small-abundants small-abundants))))
-(to (sums-set<-)
-  (let sums (set<-))
-  (let items small-abundants.items.list)
-  (for each! (((~ i a) items))
-    (begin summing ((jbs items))
-      (let (~ j b) jbs.first)
-      (let a+b (+ a b))
-      (when (<= a+b limit)
-        (sums .add! a+b)
-        (when (< j i)
-          (summing jbs.rest)))))
-  sums)
-
-(let small-abundant-sums (sums-set<-))
+(to (answer)
+  ;; Ported from Norvig's answer. Not too much slower than my longer one.
+  (let abundants (those abundant? (1 .till limit)))
+  (let abundants-set abundants.range)
+  (to (abundants-sum? k) ;; Can k (<= limit) be written as the sum of two abundant numbers?
+    (for some ((a abundants))
+      (abundants-set .maps? (- k a))))
+  (sum (those (compose not abundants-sum?) (1 .thru limit))))
 
 (out .print (answer)) ;; 4179871
