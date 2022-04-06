@@ -3,7 +3,7 @@
 ;; Considering n^2 + an + b where integer |a| < 1000, |b| <= 1000,
 ;; find a and b that produce the maximum number of primes for consecutive values of n from 0 up.
 
-(import (use 'factoring) prime?)
+(import (use 'factoring) prime? list-primes-till)
 
 (to (answer limit)
   (let ab-pair (best-pair-within limit))
@@ -12,8 +12,8 @@
   (out .print (* @ab-pair)))
 
 (to (best-pair-within limit)
-  (for max-by ((pair (grid* ((- limit.-) .till limit)
-                            ((- limit) .thru limit))))
+  (let b-candidates (list-primes-till limit.+)) ; b must be prime because for n=0 the quadratic's value =b
+  (for max-by ((pair (grid* ((- limit.-) .till limit) b-candidates)))
     (~.count (initial-primes (poly-values (quadratic @pair))))))
 
 (to (initial-primes ns)
@@ -27,4 +27,3 @@
   (+ b (* n (+ a n))))
 
 (answer 1000) ;; -59231
-;;real	2m35.123s
