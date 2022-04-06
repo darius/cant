@@ -25,9 +25,8 @@
 ;; If the product of these four fractions is given in its lowest
 ;; common terms, find the value of the denominator.
 
-(let fractions (for gather ((num (11 .thru 99)))
-                 (for yeahs ((den (num.+ .thru 99)))
-                   (canceling-fraction num den))))
+(let fractions (for yeahs ((pair ((11 .thru 99) .combinations 2)))
+                 (canceling-fraction @pair)))
 (out .say "Found ~w fractions: ~w\n" fractions.count fractions)
 (let {ratio p-num p-den} (foldr r* fractions (ratio<- 1)))
 (out .say "Product: ~w/~w\n" p-num p-den) ;; TODO function in ratio.cant
