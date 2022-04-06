@@ -1,31 +1,6 @@
 ;; Lexicographic permutations
 
-(to (lex-permutation n i)
-  (let result (flexarray<-))
-  (let digit-supply (flexarray<-list n.till))
-  (let i-in-mixed-radix (reverse (i .digits ((1 .thru n) .list)))) ;; TODO uglyish
-  (for each! ((pos (i-in-mixed-radix .pad-left n 0)))
-    (result .push! (digit-supply .pop! pos)))
-  result.values)
-
-(hide ;; Quickie test
-  (let N 4)
-  (let lex-perm-naive (sort N.till.permutations))
-  (for each! ((i N.!.till))
-    (surely (= (lex-perm-naive i) (lex-permutation N i)))))
+(import (use "utils") lex-permutation)
 
 (let answer (lex-permutation 10 999999))
 (out .displayln ("" .join (each ~.text answer)))
-
-
-"Here's how it should go for N=3:
-
-i   out       mixradix
-              *2 *1
-0   0 1 2      0  0
-1   0 2 1      0  1
-2   1 0 2      1  0
-3   1 2 0      1  1
-4   2 0 1      2  0
-5   2 1 0      2  1
-"

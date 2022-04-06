@@ -1,5 +1,7 @@
 ;; Pandigital multiples
 
+(import (use "utils") lex-permutation detect)
+
 (to (answer)
   ;; List permutations of 1..9 in decreasing order; return the first good one.
   (detect pandigital-multiple? (for each/lazy ((i (((9 .!) .-) .down-thru 0)))
@@ -22,24 +24,6 @@
 (to (count<-digits digits)
   (for foldl ((total 0) (digit digits))
     (+ (* 10 total) digit)))
-
-;; TODO copied from advent-of-code utils.cant
-;; (detect ~.even? '(3 1 4 1 5 9 2 6)) = 4
-;; TODO is this worth it? sometimes what you want is the yeahs equivalent
-;; TODO #no if not found?
-(to (detect keep? xs)
-  ((those/lazy keep? xs) .first))
-
-;; copied from 24.cant
-(to (lex-permutation n i)
-  (let i-in-mixed-radix (reverse (i .digits (as-list (1 .thru n)))))   ;; TODO ugly to need as-list
-  (let cvt (i-in-mixed-radix .pad-left n 0))
-  (let digits-free (flexarray<-list (1 .thru n)))  ;; changed from 24.cant
-  (let result (flexarray<-))
-  (for each! ((j n.till))
-    (result .push! (digits-free .pop! (cvt j))))
-  result.values)
-
 
 
 ;;(out .print (pandigital-multiple? '(1 9 2 3 8 4 5 7 6)))

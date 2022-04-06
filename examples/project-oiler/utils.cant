@@ -1,0 +1,34 @@
+(to (lex-permutation n i)
+  (let result (flexarray<-))
+  (let digit-supply (flexarray<-list n.till))
+  (let i-in-mixed-radix (reverse (i .digits ((1 .thru n) .list)))) ;; TODO uglyish
+  (for each! ((pos (i-in-mixed-radix .pad-left n 0)))
+    (result .push! (digit-supply .pop! pos)))
+  result.values)
+
+(hide ;; Quickie test
+  (let N 4)
+  (let lex-perm-naive (sort N.till.permutations))
+  (for each! ((i N.!.till))
+    (surely (= (lex-perm-naive i) (lex-permutation N i)))))
+
+"Here's how it should go for N=3:
+
+i   out       mixradix
+              *2 *1
+0   0 1 2      0  0
+1   0 2 1      0  1
+2   1 0 2      1  0
+3   1 2 0      1  1
+4   2 0 1      2  0
+5   2 1 0      2  1
+"
+
+;; TODO copied from advent-of-code utils.cant
+;; (detect ~.even? '(3 1 4 1 5 9 2 6)) = 4
+;; TODO is this worth it? sometimes what you want is the yeahs equivalent
+;; TODO #no if not found?
+(to (detect keep? xs)
+  ((those/lazy keep? xs) .first))
+
+(export lex-permutation detect)

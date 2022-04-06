@@ -2,6 +2,8 @@
 ;; mostly copied from 38.cant
 
 (import (use 'factoring) prime?)
+;;(import (use "utils") lex-permutation)  TODO
+(import (use "utils") detect)
 
 (to (answer)
   (for some ((nd (9 .down-thru 1))) ;; n digits
@@ -21,13 +23,10 @@
   (for foldl ((total 0) (digit digits))
     (+ (* 10 total) digit)))
 
-(to (detect keep? xs)
-  ((those/lazy keep? xs) .first))
-
 (to (lex-permutation n i)
   (let i-in-mixed-radix (reverse (i .digits (as-list (1 .thru n)))))   ;; TODO ugly to need as-list
   (let cvt (i-in-mixed-radix .pad-left n 0))
-  (let digits-free (flexarray<-list (1 .thru n)))  ;; changed from 24.cant
+  (let digits-free (flexarray<-list (1 .thru n)))  ;; changed from utils.cant
   (let result (flexarray<-))
   (for each! ((j n.till))
     (result .push! (digits-free .pop! (cvt j))))
