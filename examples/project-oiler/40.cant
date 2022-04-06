@@ -6,11 +6,7 @@
     (champ-digits index.-))
   (* @(each (:: (champ (10 .** it))) (0 .thru 6))))
 
-(let champ-digits
-  ;; Super dumb. TODO smarter
-  (begin champing ((i 1))
-    (begin copying ((ds (reverse i.digits)))
-      (hm (if ds.none? (champing i.+))
-          (else (link/lazier ds.first (: (copying ds.rest))))))))
+;; Super dumb. TODO smarter
+(let champ-digits (gather/lazy (:: (reverse it.digits)) (iterate ~.+ 1)))
 
 (out .print (answer)) ;; 210

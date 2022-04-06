@@ -306,12 +306,15 @@
      ;; TODO: nonrandom order
   '(computational-setting read-all cant
 ;;    trace-sink
-    intercalate compound-key<- yeahs where split-on itself max min-by
-    those !map-by compose those/lazy yeahs/lazy grid*/lazy
-    -> foldr/lazy gather chain/lazy sum-by tally-by zip setting<-map
-    gather/lazy method<- link/lazy link/lazier array-by map-by text-by iterate
-    scanl/lazy scanl
-    hey max-by tally min union intersect each/lazy map<-values mayhap
+    intercalate compound-key<- yeahs where split-on itself 
+    those compose zip setting<-map
+    link/lazier lazier<- 
+    those/lazy yeahs/lazy grid*/lazy
+    foldr/lazy gather chain/lazy 
+    each/lazy gather/lazy link/lazy scanl/lazy iterate
+    array-by map-by !map-by map<-values text-by method<- ->
+    sum-by tally-by tally max min max-by min-by
+    hey union intersect mayhap
     grid* sum = link link? list? number? integer? symbol? cue? ;TODO rename cue? or rm it
     claim? rune? array? box? term? source? sink? zilch? box<-
     text? number<-text text<-number
@@ -329,7 +332,7 @@
     count? not= left-folding-operation right-folding-operation
     + * - transitive-comparison < <= <=> >= > compare
     gcd lcm
-    chain reverse foldl foldl1 foldr foldr1 transpose zipped-list-transducer
+    chain reverse foldl foldl1 foldr foldr1 scanl transpose zipped-list-transducer
     each each! some every interval<- enumerate take-while drop-while
     read
     assoc  ;; TODO remove

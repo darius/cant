@@ -449,6 +449,11 @@
     ;; TODO any more parts of list-trait that need overriding for laziness? Plausibly: .chain 
     ))
 
+(to (lazier<- xs) ;; Convert from '/lazy' to '/lazier'. TODO we shouldn't need this
+  (begin copying ((xs xs))
+    (hm (if xs.none? '())
+        (else (link/lazier xs.first (: (copying xs.rest)))))))
+
 ;; An interval represents a progression from a `first`, short of a
 ;; `limit`, successively by a `stride`.
 ;; TODO above comment is inaccurate on negative strides: then limit is inclusive. Is this just a bad design?
