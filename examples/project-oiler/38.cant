@@ -1,6 +1,6 @@
 ;; Pandigital multiples
 
-(import (use "utils") lex-permutation detect)
+(import (use "utils") lex-permutation count<-digits detect)
 
 (to (answer)
   ;; List permutations of 1..9 in decreasing order; return the first good one.
@@ -19,12 +19,6 @@
                 (let next-j (+ j multiple.count))
                 (and (= multiple (digits .slice j next-j))
                      (checking next-j k.+)))))))
-
-;; TODO adapted from hamming-codes.cant
-(to (count<-digits digits)
-  (for foldl ((total 0) (digit digits))
-    (+ (* 10 total) digit)))
-
 
 ;;(out .print (pandigital-multiple? '(1 9 2 3 8 4 5 7 6)))
 

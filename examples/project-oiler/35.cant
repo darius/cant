@@ -1,6 +1,7 @@
 ;; Circular primes
 
 (import (use 'factoring) list-primes-till prime?)
+(import (use "utils") count<-digits)
 
 (to (answer limit)
   (let circulars (those circular? (list-primes-till limit)))
@@ -8,14 +9,7 @@
   circulars.count)
 
 (to (circular? p)
-  (every prime? (-> p.digits rotations ~.rest (:: (each number<-digits it)))))
-
-(to (number<-digits ds)
-  (count<-digits ds 10))
-
-(to (count<-digits digits base)         ;N.B. big-endian. TODO add to stdlib?
-  (for foldl ((total 0) (digit digits))
-    (+ (* base total) digit)))
+  (every prime? (-> p.digits rotations ~.rest (:: (each count<-digits it)))))
 
 (to (rotations xs)
   (surely xs.some?)

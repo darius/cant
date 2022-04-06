@@ -1,9 +1,5 @@
 (import (use 'factoring) the-primes)
-
-;; TODO adapted from hamming-codes.cant
-(to (count<-digits digits)
-  (for foldl ((total 0) (digit digits))
-    (+ (* 10 total) digit)))
+(import (use "utils") count<-digits)
 
 ;; We'll take a constraint-solver approach: find 3-digit tiles for each
 ;; position which are consistent with their neighbors, then search for

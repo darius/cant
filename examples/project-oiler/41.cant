@@ -1,9 +1,8 @@
 ;; Pandigital prime
-;; mostly copied from 38.cant
 
 (import (use 'factoring) prime?)
 ;;(import (use "utils") lex-permutation)  TODO
-(import (use "utils") detect)
+(import (use "utils") detect count<-digits)
 
 (to (answer)
   (for some ((nd (9 .down-thru 1))) ;; n digits
@@ -17,11 +16,7 @@
                      (let n (count<-digits (lex-permutation nd i)))
                      (out .say "prime? ~w\n" n)
                      (and (prime? n) n)))
-  (and acceptables.some? acceptables.first))
-
-(to (count<-digits digits)
-  (for foldl ((total 0) (digit digits))
-    (+ (* 10 total) digit)))
+  (and acceptables.some? acceptables.first)) ;; TODO variant of detect?
 
 (to (lex-permutation n i)
   (let result (flexarray<-))
