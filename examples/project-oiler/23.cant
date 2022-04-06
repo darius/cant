@@ -20,21 +20,20 @@
 
 (let small-abundants (those abundant? (1 .till limit)))
 
-;; Faster version of (those (:: (<= it limit)) (each sum (grid* small-abundants small-abundants)))
-(to (list-sums)
-  (let sums (flexarray<-))
-  (let ks (array<-list small-abundants))
-  (for each! ((i ks.keys))
-    (let k (ks i))
-    (begin summing ((j 0))
-      (let kk (+ k (ks j)))
-      (when (<= kk limit)
-        (sums .push! kk)
+;; Faster version of (~.range (those (:: (<= it limit)) (each sum (grid* small-abundants small-abundants))))
+(to (sums-set<-)
+  (let sums (set<-))
+  (let items small-abundants.items.list)
+  (for each! (((~ i a) items))
+    (begin summing ((jbs items))
+      (let (~ j b) jbs.first)
+      (let a+b (+ a b))
+      (when (<= a+b limit)
+        (sums .add! a+b)
         (when (< j i)
-          (summing j.+)))))
-  sums.values)
+          (summing jbs.rest)))))
+  sums)
 
-(let small-abundant-sums (set<-list (list-sums)))
+(let small-abundant-sums (sums-set<-))
 
 (out .print (answer)) ;; 4179871
-;; TODO Almost 10 minutes still.
