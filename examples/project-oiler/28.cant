@@ -14,8 +14,8 @@
          ;; For the square with k^2 at upper right, the other three
          ;; diagonal values are almost the same, minus a deficit
          ;; that's a multiple of k-1: an increasing multiple as you
-         ;; wind back counterclockwise. So the overall sum is that
-         ;; deficit from 4k^2.
+         ;; wind back counterclockwise. So these four corners add up
+         ;; to 4k^2 minus that deficit.
          (- (* 4 (k .** 2))
             (* (+ 1 2 3) k.-)))))
   
