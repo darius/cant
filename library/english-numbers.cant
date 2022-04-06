@@ -18,7 +18,8 @@
       (else ("-" .join (digitize n 10 sans-suffix)))))
 
 (to (digitize n base render-term)
-  (reverse (for yeahs (((~ power digit) (~.items (n .digits base))))
+  (let digits (reverse (n .digits base)))
+  (reverse (for yeahs (((~ power digit) digits.items))
              (and (not= 0 digit) (render-term power digit)))))
 
 ;; Ways to render a term in a base**power expansion.

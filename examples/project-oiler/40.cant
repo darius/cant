@@ -7,6 +7,6 @@
   (* @(each (:: (champ (10 .** it))) (0 .thru 6))))
 
 ;; Super dumb. TODO smarter
-(let champ-digits (gather/lazy (:: (reverse it.digits)) (iterate ~.+ 1)))
+(let champ-digits (gather/lazy ~.digits (iterate ~.+ 1)))
 
 (out .print (answer)) ;; 210

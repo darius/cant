@@ -13,7 +13,7 @@
            (~.one? (let rnd (those (:: (not= it common)) nd)))
            (~.one? (let rdd (those (:: (not= it common)) dd)))
            (not= rdd '(0))
-           (= (ratio<- rnd.first rdd.first) (let r (ratio<- num den)))
+           (= (ratio<- rnd.only rdd.only) (let r (ratio<- num den)))
            (do (out .say "FOUND ~w/~w\n" num den) #yes)
            r))
     (else #no)))

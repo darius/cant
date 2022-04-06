@@ -9,7 +9,7 @@
 
 (to (part-1)
   (to (valid? n)
-    (let digits (reverse n.digits))
+    (let digits n.digits)
     (and (<= @digits) (doubled? digits digits.count)))
   (to (doubled? xs n)
     (and (<= 2 n)
@@ -24,7 +24,7 @@
 
 (to (part-2)
   (to (valid? n)
-    (let digits (reverse n.digits))
+    (let digits n.digits)
     (and (<= @digits) (only-doubled? digits digits.count)))
   (to (only-doubled? xs n)
     (and (<= 2 n)

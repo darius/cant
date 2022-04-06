@@ -26,8 +26,7 @@
 (to (lex-permutation n i)
   (let result (flexarray<-))
   (let digit-supply (flexarray<-list (1 .thru n)))  ;; changed from utils.cant
-  (let i-in-mixed-radix (reverse (i .digits (1 .thru n) n)))   ;; TODO ugly to need reverse
-  (for each! ((pos i-in-mixed-radix))
+  (for each! ((pos (i .digits (n .down-thru 1) n)))
     (result .push! (digit-supply .pop! pos)))
   result.values)
 

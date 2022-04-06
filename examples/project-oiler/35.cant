@@ -8,15 +8,13 @@
   circulars.count)
 
 (to (circular? p)
-  ;; TODO ugh
-  (every prime? (-> (reverse p.digits) rotations ~.rest (:: (each number<-digits it)))))
+  (every prime? (-> p.digits rotations ~.rest (:: (each number<-digits it)))))
 
 (to (number<-digits ds)
-  (count<-digits (reverse ds) 10))
+  (count<-digits ds 10))
 
-;; TODO Grabbed from hamming-codes.cant
-(to (count<-digits digits base)         ;N.B. little-endian. TODO add to stdlib?
-  (for foldr ((digit digits) (total 0))
+(to (count<-digits digits base)         ;N.B. big-endian. TODO add to stdlib?
+  (for foldl ((total 0) (digit digits))
     (+ (* base total) digit)))
 
 (to (rotations xs)

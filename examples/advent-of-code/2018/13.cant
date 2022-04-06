@@ -90,7 +90,7 @@
           (ticking state1 t.+)))))
 
 (to (xy-coords {world _ width _} pos)
-  (pos .digits `(,width)))
+  (reverse (pos .digits `(,width))))
 
 (to (tick {world tracks width carts})
   (let carts1 carts.copy)
