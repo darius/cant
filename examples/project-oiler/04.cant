@@ -1,12 +1,7 @@
 (to (oiler4 lo bound)
-  ;; TODO I first wrote this, and would like to:
-  ;; (max @(for yeahs ((`(,i ,j) ((lo .till bound) .combinations 2)))
-  ;; but it only worked by accident: .combinations skips the i=j case.
-  ;; Do we want a .combinations-inclusive method, or what? Blah.
-  (max @(for gather ((i (lo .till bound)))
-          (for yeahs ((j (i .till bound)))
-            (let p (* i j))
-            (and (palindrome? p.text) p)))))
+  (max @(for yeahs ((`(,i ,j) ((lo .till bound) .bag-combinations 2)))
+          (let p (* i j))
+          (and (palindrome? p.text) p))))
 
 (to (palindrome? text)
   (<=> text (reverse text)))

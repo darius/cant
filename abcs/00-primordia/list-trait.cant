@@ -136,6 +136,15 @@
                              (for each ((ys (generating n.- nxs.- xs.rest)))
                                (link x ys)))
                        (generating n nxs.- xs.rest))))))
+  (to (~ .bag-combinations n) ;; Ways to pick n of my elements w/ duplicates allowed. TODO experimental
+    (surely (count? n))
+    (begin generating ((n n) (xs list))
+      (hm (if (= n 0) '(()))
+          (if xs.none? '())
+          (else (chain (hide (let x xs.first)
+                             (for each ((ys (generating n.- xs)))
+                               (link x ys)))
+                       (generating n xs.rest))))))
   (to ~.permutations
     (to (remove-nth xs n) ;; TODO a list method?
       (chain (xs .slice 0 n) (xs .slice n.+)))

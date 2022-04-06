@@ -1,22 +1,21 @@
 ;; Digit fifth powers
 
-;; Warm-up problem
-(to (answer4)
-  (to (sum-of-digit4s n)
-    (sum-by (~ .** 4) n.digits))
-  (for those ((n (2 .till (10 .** 4))))
-    (= n (sum-of-digit4s n))))
-
-(out .print (answer4))
-
-
-;; Real one.
+;; Naive approach.
 (to (answer5)
   (to (sum-of-digit5s n)
     (sum-by (~ .** 5) n.digits))
-  (for those ((n (2 .till 200000))) ;; We need to go somewhat higher than 10^5
+  (for those ((n (2 .till 400000))) ;; We need to go somewhat higher than 10^5
     (= n (sum-of-digit5s n))))
 
-(let answer (answer5))
+;; Smarter approach from toddmowen's discussion post.
+(to (smarter)
+  (for yeahs ((digits ((0 .thru 9) .bag-combinations 6)))
+    (let n (sum-by (~ .** 5) digits))
+    (and (= n (sum-by (~ .** 5) n.digits))
+         (< 1 n) ;; 1 is excluded by the problem statement
+         n)))
+
+;;(let answer (answer5))
+(let answer (smarter))
 (out .print answer)
 (out .print (sum answer)) ;; 443839
