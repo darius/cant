@@ -56,7 +56,9 @@
           (if (and ;; (list? base)  TODO less-crude types
                    (for every ((r base)) ;; Mixed-radix digits
                      (and (integer? r) (< 0 r))))
-              (begin converting ((n (abs me)) (moduli (reverse base)) (result '()))
+              (begin converting ((n (abs me))
+                                 (moduli (reverse base))
+                                 (result '()))
                 (hm (if (= n 0) result)
                     (if moduli.none? (link n result))
                     (else (let (~ q r) (n ./mod moduli.first))
