@@ -12,11 +12,10 @@
   
 (to (find-largest-prime nd)
   ;; List permutations of 1..9 in decreasing order; return the first good one.
-  (let acceptables (for yeahs/lazy ((i (((nd .!) .-) .down-thru 0)))
-                     (let n (count<-digits (my-lex-permutation nd i)))
-                     (out .say "prime? ~w\n" n)
-                     (and (prime? n) n)))
-  (and acceptables.some? acceptables.first)) ;; TODO variant of detect?
+  ((~ .get 0) (for yeahs/lazy ((i (((nd .!) .-) .down-thru 0)))
+                (let n (count<-digits (my-lex-permutation nd i)))
+                (out .say "prime? ~w\n" n)
+                (and (prime? n) n))))
 
 (to (my-lex-permutation nd i)
   ;; +1 to each digit because my permutations are of (1 .thru nd) instead of (0 .till nd)
