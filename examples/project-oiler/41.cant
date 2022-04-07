@@ -11,7 +11,7 @@
          (find-largest-prime nd))))
   
 (to (find-largest-prime nd)
-  ;; List permutations of 1..9 in decreasing order; return the first good one.
+  ;; List permutations of 1..nd in decreasing order; return the first good one.
   ((~ .get 0) (for yeahs/lazy ((i (((nd .!) .-) .down-thru 0)))
                 (let n (count<-digits (my-lex-permutation nd i)))
                 (out .say "prime? ~w\n" n)
