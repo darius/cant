@@ -3,21 +3,6 @@
 (import (use 'ratio) ratio<-)
 (let r* ((use 'ratio) '*))  ;; man this is a pain
 
-(to (canceling-fraction num den)
-  ;; TODO really clumsy
-  (let nd num.digits)
-  (let dd den.digits)
-  (may ((nd.range .intersect dd.range) .keys)
-    (be `(,common)
-      (and (not= common 0)
-           (~.one? (let rnd (those (:: (not= it common)) nd)))
-           (~.one? (let rdd (those (:: (not= it common)) dd)))
-           (not= rdd '(0))
-           (= (ratio<- rnd.only rdd.only) (let r (ratio<- num den)))
-           (do (out .say "FOUND ~w/~w\n" num den) #yes)
-           r))
-    (else #no)))
-  
 ;; There are exactly four non-trivial examples of this type of
 ;; fraction, less than one in value, and containing two digits in the
 ;; numerator and denominator.
@@ -25,6 +10,25 @@
 ;; If the product of these four fractions is given in its lowest
 ;; common terms, find the value of the denominator.
 
+(to (canceling-fraction num den)
+  (let nr num.digits.range)
+  (let dr den.digits.range)
+  (may ((dr .difference nr) .keys)
+    (be `(,(? ~.positive? ddig))
+      (may ((nr .intersect dr) .keys)
+        (be `(,(? ~.positive? common))
+          (may ((nr .difference dr) .keys)
+            (be `(,ndig)
+              (and (= (ratio<- ndig ddig) (let r (ratio<- num den)))
+                   (do (out .say "FOUND ~w/~w\n" num den) #yes)
+                   r))         
+            (else #no)))
+        (else #no)))
+    (else #no)))
+;; TODO so much nesting and else-no's. We could use a bigger 'may' on all three
+;; venn-diagram expressions at once, but that's slower with no short-circuiting.
+;; Design better pattern-matching/control-flow constructs?
+  
 (let fractions (for yeahs ((pair ((11 .thru 99) .combinations 2)))
                  (canceling-fraction @pair)))
 (out .say "Found ~w fractions: ~w\n" fractions.count fractions)
