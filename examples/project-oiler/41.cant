@@ -1,8 +1,7 @@
 ;; Pandigital prime
 
 (import (use 'factoring) prime?)
-(import (use "utils") lex-permutation)
-(import (use "utils") detect count<-digits)
+(import (use "utils") count<-digits lex-permutation)
 
 (to (answer)
   (for some ((nd (9 .down-thru 1))) ;; n digits
