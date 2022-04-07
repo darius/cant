@@ -27,22 +27,17 @@ The last step of #1 seems more of a pain than #2. So let's try #2.
 
 (to (answer)
   (let products (set<-))
-  
-  (to (list-picks max-length choices)
-    (link (~ '() choices)
-          (hm (if (= max-length 0) '())
-              (else (for gather ((choice choices))
-                      (let remnant (those (:: (not= it choice)) choices))
-                      (for each (((~ picked unpicked) (list-picks max-length.- remnant)))
-                        (~ (link choice picked) unpicked)))))))
 
-  (for each! (((~ picked1 unpicked1) (list-picks 2 (1 .thru 9))))
-    (let a (count<-digits picked1 10))
-    (for each! (((~ picked2 unpicked2) (list-picks 4 unpicked1)))
-      (let b (count<-digits picked2 10))
-      (when (< a b)
+  (let all-digits ((1 .thru 9) .list))
+  (for each! ((a-b-combos (all-digits .combinations 5)))
+    (let p-digits (those (:: (not (a-b-combos .find? it)))
+                         all-digits))
+    (for each! ((a-b-digits a-b-combos.permutations))
+      (for each! ((split '(1 2)))
+        (let a (count<-digits (a-b-digits .slice 0 split)))
+        (let b (count<-digits (a-b-digits .slice split)))
         (let product (* a b))
-        (when (= (sort product.digits) (sort unpicked2)) ;; TODO sets as proper data would permit a nicer expression
+        (when (= p-digits (sort product.digits))
           (out .say "found ~w * ~w = ~w\n" a b product)
           (products .add! product)))))
 
