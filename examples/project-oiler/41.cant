@@ -13,7 +13,6 @@
   ;; List permutations of 1..nd in decreasing order; return the first good one.
   ((~ .get 0) (for yeahs/lazy ((i (((nd .!) .-) .down-thru 0)))
                 (let n (count<-digits (my-lex-permutation nd i)))
-                (out .say "prime? ~w\n" n)
                 (and (prime? n) n))))
 
 (to (my-lex-permutation nd i)
