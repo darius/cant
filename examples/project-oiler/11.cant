@@ -29,16 +29,17 @@
 ;; What is the greatest product of four adjacent numbers in the same
 ;; direction (up, down, left, right, or diagonally) in the 20×20 grid?
 
-(to (products deltas)
-  (for each ((key grid.keys))
-    (* @(for each ((delta deltas))
-          (let xy (each + key.parts delta))
-          (grid .get (~ @xy) 0)))))
+(to (products dx dy)
+  (for each (((~ x y) grid.keys))
+    (* @(for each ((d '(0 1 2 3)))
+          (let pt (~ (+ x (* d dx))
+                     (+ y (* d dy))))
+          (grid .get pt 0)))))
 
-(let horiz (products '((0 0) (1 0) (2 0) (3 0))))
-(let vert  (products '((0 0) (0 1) (0 2) (0 3))))
-(let diag1 (products '((0 0) (1 1) (2 2) (3 3))))
-(let diag2 (products '((0 0) (-1 1) (-2 2) (-3 3))))
+(let horiz (products 1 0))
+(let vert  (products 0 1))
+(let diag1 (products 1 1))
+(let diag2 (products -1 1))
 (let best (max @(chain horiz vert diag1 diag2)))
 
 (out .print best)
