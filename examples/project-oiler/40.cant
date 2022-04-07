@@ -2,8 +2,8 @@
 
 (to (answer)
   (to (champ index)
-    (out .say "~w: ~w\n" index (champ-digits index.-))
-    (champ-digits index.-))
+    (hey (champ-digits index.-)
+         (:: (out .say "~w: ~w\n" index it))))
   (* @(each (:: (champ (10 .** it))) (0 .thru 6))))
 
 ;; Super dumb. TODO smarter
