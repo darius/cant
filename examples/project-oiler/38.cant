@@ -22,4 +22,4 @@
 
 ;;(out .print (pandigital-multiple? '(1 9 2 3 8 4 5 7 6)))
 
-(out .print (answer)) ;; 932718654
+(out .print (count<-digits (answer))) ;; 932718654
