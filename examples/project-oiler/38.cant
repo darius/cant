@@ -11,14 +11,10 @@
   (surely (= 9 digits.count))
   (for some ((i '(1 2 3 4)))
     (let n (count<-digits (digits .slice 0 i)))
-    (begin checking ((j i)   ;; index into digits
-                     (k 2))  ;; multiplier
-      (hm (if (= j 9) #yes)
-          (if (> j 9) #no)
-          (else (let multiple ((* k n) .digits))
-                (let next-j (+ j multiple.count))
-                (and (= multiple (digits .slice j next-j))
-                     (checking next-j k.+)))))))
+    (begin checking ((target (* 2 n)) (rest (digits .slice i)))
+      (or rest.none?
+          (and (rest .prefix? (let td target.digits))
+               (checking (+ target n) (rest .slice td.count)))))))
 
 ;;(out .print (pandigital-multiple? '(1 9 2 3 8 4 5 7 6)))
 
