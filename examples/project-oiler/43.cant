@@ -10,11 +10,6 @@
 
 (let tiles (flexarray<-))
 (for each! ((p (link 1 (the-primes .first-n 7))))
-  (out .say "collecting period-~w tiles\n" p)
-  ;; TODO make the tiles-sets mutable sets instead, and do
-  ;; arc-consistency. May not make a huge difference, though, since
-  ;; when we enumerate right-to-left, those arcs will get pruned
-  ;; immediately on visiting.
   (tiles .push! (for those ((triple triples))
                   (and (p .divides? (count<-digits triple))
                        (or tiles.none?
@@ -38,4 +33,4 @@
                                             t.first)))))
                   (extending place.- (link next-digit suffix))))))))
 
-(out .say "sum: ~w\n" (sum (each count<-digits solutions)))
+(out .say "sum: ~w\n" (sum-by count<-digits solutions))
