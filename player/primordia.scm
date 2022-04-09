@@ -33,7 +33,7 @@
 
 (define type-names '(array
                      box
-                     claim
+                     bool
                      cps
                      ejector
                      link
@@ -168,7 +168,7 @@
 
 (define script/array     (script-for 'array))
 (define script/box       (script-for 'box))
-(define script/claim     (script-for 'claim))
+(define script/bool      (script-for 'bool))
 (define script/cps       (script-for 'cps))
 (define script/ejector   (script-for 'ejector))
 (define script/link      (script-for 'link))
@@ -199,7 +199,7 @@
    ((output-port? object) script/sink)
    ((source? object)      script/source)
    ((char? object)        script/rune)
-   ((boolean? object)     script/claim)
+   ((boolean? object)     script/bool)
    ((term? object)        script/term)
    ((mapi? object)        script/map)
    ((eq? object (void))   script/void)

@@ -54,7 +54,6 @@
           (be 'setr  (regs a))
           (be 'seti  a)
        
-          ;; TODO I'm not sure about this method name claim.count
           (be 'gtir  (~.count (> a (regs b))))
           (be 'gtri  (~.count (> (regs a) b)))
           (be 'gtrr  (~.count (> (regs a) (regs b))))

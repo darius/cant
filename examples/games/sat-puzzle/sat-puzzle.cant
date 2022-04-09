@@ -98,7 +98,7 @@ Press Tab to cycle to the next game, Esc to quit.")
 ;; A clause is a list of literals. It's true when at least one is true.
 ;; A literal is a positive or negative integer denoting a variable
 ;; or its complement. Its truth depends on the settings.
-;; A settings is a partial map from positive integer to boolean.
+;; A settings is a partial map from positive integer to bool.
 
 (to (problem<- clauses)
   (make problem

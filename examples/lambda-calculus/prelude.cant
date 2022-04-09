@@ -3,7 +3,7 @@
 (to (build-prelude powers interpret invoke reply)
   (import powers out)
 
-  (to (make-church<-claim lc-no)
+  (to (make-church<-bool lc-no)
     {primitive (on (lc-yes)
                  {primitive (on (x)
                               (may x
@@ -45,7 +45,7 @@
 
   (let builtins-env
     {module
-     (map<- (~ 'make-church<-claim {primitive make-church<-claim})
+     (map<- (~ 'make-church<-bool {primitive make-church<-bool})
 
             (~ 'add1 {primitive ~.+})
             (~ 'make-church<-count {primitive make-church<-count})
@@ -64,8 +64,8 @@
 
        (to (no if-yes if-no) if-no)
        (to (yes if-yes if-no) if-yes)
-       (let church<-claim (make-church<-claim no yes))
-       (to (claim<-church p) (p #yes #no))
+       (let church<-bool (make-church<-bool no yes))
+       (to (bool<-church p) (p #yes #no))
 
        (to (if pred y n) (pred y n))
        (to (and p q) (if p q no))

@@ -120,7 +120,7 @@
 
 ;; Return a BDD that evaluates to 1 just when every variable in map
 ;; has its given value.
-;; TODO ugly inconsistency: this takes a map of variable -> claim
+;; TODO ugly inconsistency: this takes a map of variable -> bool
 ;;   while satisfy-first produces a map of variable -> bit
 ;;   Also naming: env vs. map
 (to (match-map map)

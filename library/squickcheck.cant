@@ -55,9 +55,9 @@
 
 
   ;; Basic gens
-  ;; TODO maybe name like <claim> etc.
+  ;; TODO maybe name like <bool> etc.
 
-  (to (a-claim g)
+  (to (a-bool g)
     (may (g .natural 2)
       (be 0 #no)
       (be 1 #yes)))
@@ -93,7 +93,7 @@
 
   
   (export
-    a-claim a-count an-int a-rune a-printable-rune a-text a-printable-text
+    a-bool a-count an-int a-rune a-printable-rune a-text a-printable-text
     a-list-of a-tuple a-choice
     all should
     context<-

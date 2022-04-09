@@ -212,7 +212,7 @@
     (integer? ,integer?)
     (symbol? ,symbol?)
     (cue? ,cue?)
-    (claim? ,boolean?)
+    (bool? ,boolean?)
     (rune? ,char?)
     (text? ,string?)
     (array? ,vector?)

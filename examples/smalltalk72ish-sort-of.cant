@@ -135,7 +135,7 @@
   (trace `(send ,object ,k))
   (may object
     (be (? number?) (send-number object k))
-    (be (? claim?)  (send-claim object k))
+    (be (? bool?)   (send-bool object k))
     (be `(,tag ,e ,r)
       (surely (= tag tag-definition))
       (terp e r k))))
@@ -153,7 +153,7 @@
           (terp e3 r2
                 `(number-+ ,self ,(nest rest r2 k2))))))))
 
-(to (send-claim self k)
+(to (send-bool self k)
   (may k
     (be `(message ,e2 ,r2 ,k2)
       (may e2

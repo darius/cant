@@ -723,7 +723,7 @@
   (let primitives-from-cant
     (export
       link first rest list chain length nth slice
-      nil? link? list? number? integer? symbol? claim? char? string? tuple?
+      nil? link? list? number? integer? symbol? bool? char? string? tuple?
       char<- tuple<- tuple<-list
       number<-string string<-number list<-string string<-list self-evaluating? 
       inexact<-exact exact<-inexact not assoc
