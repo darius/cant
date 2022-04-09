@@ -12,8 +12,8 @@
 ;;  (let roots (places.domain .difference (~.range (each (~ 1) inputs))))
 ;;  (out .print roots) ; Turned out to be just "COM".
   (to (count-orbits depth x)
-    (+ depth (sum (for each ((y (places .get x '())))
-                    (count-orbits depth.+ y)))))
+    (+ depth (for sum-by ((y (places .get x '())))
+               (count-orbits depth.+ y))))
   (count-orbits 0 "COM"))
 
 (out .say "~w\n" (part-1))

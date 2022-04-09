@@ -10,7 +10,7 @@
   (- (mass .quotient 3) 2))
   
 (to (part-1)
-  (sum (each fuel<- inputs)))
+  (sum-by fuel<- inputs))
 
 (out .say "~w\n" (part-1))
 
@@ -21,6 +21,6 @@
   (sum (take-while ~.positive? (~.rest (iterate fuel<- dry-mass)))))
 
 (to (part-2)
-  (sum (each transitive-fuel<- inputs)))
+  (sum-by transitive-fuel<- inputs))
 
 (out .say "~w\n" (part-2))

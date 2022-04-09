@@ -34,7 +34,7 @@
 
 ;; 1*ns[0] + 2*ns[1] + 3*ns[2] + ...
 (to (weighted-sum ns)
-  (sum (each * ns (1 .thru ns.count))))
+  (sum-by * ns (1 .thru ns.count)))
 
 ;; Equivalent, without multiplying:
 (to (weighted-sum-sans-* ns)
