@@ -409,7 +409,7 @@ Collections fit in this taxonomy:
       list    -- special in being a 'value' type already. N.B. immutable.
       text    -- ditto
       array, flexarray
-      interval, lazy list, enumeration
+      march, lazy list, enumeration
     grid-2d   -- Just because this came up a lot in Advent of Code;
               -- we don't have general multidimensional arrays as yet.
 ```
@@ -1047,11 +1047,11 @@ authority.
 Another weakness of the design of traversals is the tendency to
 eagerness. The sequence you pass in needn't be materialized: it can be
 a lazy list, or another incrementally-produced representation such as
-an interval. So in principle there may be no need for iterators, a
-whole separate kind of thing in the ontology of many other
-languages. However, Cant doesn't make it as convenient to create a
-lazy sequence as an eager one, or as natural to remember that you may
-be consuming a lazy sequence which may have side effects. With
+an arithmetic progression. So in principle there may be no need for
+iterators, a whole separate kind of thing in the ontology of many
+other languages. However, Cant doesn't make it as convenient to create
+a lazy sequence as an eager one, or as natural to remember that you
+may be consuming a lazy sequence which may have side effects. With
 iterators, these issues would be abated. (I was aware of this design
 problem when I chose to make sequence traversals just work directly on
 sequences. This sort of pattern has been common in this project: "Ugh,
