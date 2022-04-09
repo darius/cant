@@ -33,7 +33,7 @@
   (~.text ((a-list-of a-letter) g)))
 
 (to (a-letter g)
-  (g .range #\a #\c))
+  (g .interval #\a #\c))
 
 (for all ((pat a-babble))
   (should = 0 ((text-finder<- pat) pat)))

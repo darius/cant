@@ -47,11 +47,11 @@
     (to (~ chaos size)
       ;; TODO better method names
       (make gen
-        (to ~.size           size)
-        (to (~ .natural n)   (chaos .sample-count n))
-        (to (~ .range lo hi) ((lo .till hi) .sample-value chaos)) ;TODO rename, .interval ?
-        (to ~.a-size         (chaos .sample-count size))
-        (to (~ .choose xs)   (xs .sample-value chaos)))))
+        (to ~.size              size)
+        (to (~ .natural n)      (chaos .sample-count n))
+        (to (~ .interval lo hi) ((lo .till hi) .sample-value chaos))
+        (to ~.a-size            (chaos .sample-count size))
+        (to (~ .choose xs)      (xs .sample-value chaos)))))
 
 
   ;; Basic gens
@@ -66,13 +66,13 @@
     (g .natural g.size))
 
   (to (an-int g)
-    (g .range (- g.size) g.size))
+    (g .interval (- g.size) g.size))
 
   (to (a-rune g)
     (rune<- (g .natural 256)))
 
   (to (a-printable-rune g)
-    (rune<- (g .range 32 126))) ; TODO this is an exclusive range. do I want to exclude code 126?
+    (rune<- (g .interval 32 126))) ; TODO this is an exclusive range. do I want to exclude code 126?
 
   (to ((a-list-of gen) g)
     (for each ((_ g.a-size.till))

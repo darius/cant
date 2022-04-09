@@ -118,7 +118,7 @@
                    me
                    (" " .repeat half)))))
   (to (~ .repeat n)
-    ("" .join (each (:: me) (interval<- 0 n))))
+    ("" .join (each (:: me) (march<- 0 n))))
   (to (~ .format @arguments)
     (text<-writer (:: (format .to-sink it me @arguments))))
   (to ~.split-lines

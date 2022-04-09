@@ -13,14 +13,14 @@
     ;; TODO no-op if in range and (me,dst) == (source,lo)
     (let lo->dst (- dst lo))
     (for each! ((i (if (<= dst lo)
-                       (interval<- lo bound)
-                       (interval<- bound.- lo -1))))
+                       (march<- lo bound)
+                       (march<- bound.- lo -1))))
       (me .set! (+ i lo->dst)
           (source i))))
   (to ~.values
-    (each me (interval<- 0 me.count)))
+    (each me (march<- 0 me.count)))
   (to ~.items
-    (for each ((i (interval<- 0 me.count)))
+    (for each ((i (march<- 0 me.count)))
       (~ i (me i))))
   (to (~ .get key default)
     (hm (unless (count? key) default)

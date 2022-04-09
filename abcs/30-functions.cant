@@ -333,7 +333,7 @@
     + * - transitive-comparison < <= <=> >= > compare
     gcd lcm
     chain reverse foldl foldl1 foldr foldr1 scanl transpose zipped-list-transducer
-    each each! some every interval<- enumerate take-while drop-while
+    each each! some every march<- take-while drop-while
     read
     assoc  ;; TODO remove
     __as-link __array<-list ;; used implicitly by parse expansion

@@ -19,11 +19,11 @@
       (be (? integer?) (rune<- (- me.code b)))
       (be (? rune?)    (- me.code b.code))
       (else (oops "Bad arg type" b))))
-  (to (~ .till @args) (interval<- me @args))      ;These methods should be in a trait
-  (to (~ .thru b @r)  (interval<- me b.+ @r))     ;if they're a good idea at all...
-  (to (~ .span n)     (interval<- me (+ me n)))
-  (to (~ .down-till n) (interval<- me (+ n 1) -1))  ;; TODO just use .till with negative stride? or what?
-  (to (~ .down-thru n) (interval<- me n -1))        ;; TODO just use .till with negative stride? or what?
+  (to (~ .till @args) (march<- me @args))      ;These methods should be in a trait
+  (to (~ .thru b @r)  (march<- me b.+ @r))     ;if they're a good idea at all...
+  (to (~ .span n)     (march<- me (+ me n)))
+  (to (~ .down-till n) (march<- me (+ n 1) -1))  ;; TODO just use .till with negative stride? or what?
+  (to (~ .down-thru n) (march<- me n -1))        ;; TODO just use .till with negative stride? or what?
   (to ~.+             (me .+ 1))
   (to ~.-             (me .- 1))
   )

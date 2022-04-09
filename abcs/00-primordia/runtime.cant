@@ -454,18 +454,18 @@
     (hm (if xs.none? '())
         (else (link/lazier xs.first (: (copying xs.rest)))))))
 
-;; An interval represents a progression from a `first`, short of a
+;; A march represents an arithmetic progression from a `first`, short of a
 ;; `limit`, successively by a `stride`.
 ;; TODO above comment is inaccurate on negative strides: then limit is inclusive. Is this just a bad design?
 ;; TODO methods like `k..infinity` or `k..-infinity by -3`
-(make interval<-
+(make march<-
   (to (~ first limit)
     (if (<= limit first)
         '()
         (make range {extending list-trait}
           (to ~.none? #no)
           (to ~.first first)
-          (to ~.rest  (interval<- first.+ limit))
+          (to ~.rest  (march<- first.+ limit))
           (to ~.count (- limit first))
           (to (~ i)
             (if (not (integer? i))
@@ -481,7 +481,7 @@
           ;; TODO: .compare
           )))
   (to (~ limit)
-    (interval<- 0 limit))
+    (march<- 0 limit))
   (to (~ first limit stride)
     ;; TODO factor the code better
     ;; TODO reconsider: it's ugly for inclusive/exclusive to depend on the sign of the stride
@@ -491,7 +491,7 @@
                 (make range {extending list-trait}
                   (to ~.none? #no)
                   (to ~.first first)
-                  (to ~.rest  (interval<- (+ first stride) limit stride))
+                  (to ~.rest  (march<- (+ first stride) limit stride))
                   (to (~ i)
                     (oops "TODO" range `(,i)))
                   (to (~ .maps? i)
@@ -503,7 +503,7 @@
                 (make range {extending list-trait}
                   (to ~.none? #no)
                   (to ~.first first)
-                  (to ~.rest  (interval<- (+ first stride) limit stride))
+                  (to ~.rest  (march<- (+ first stride) limit stride))
                   (to (~ i)
                     (oops "TODO" range `(,i)))
                   (to (~ .maps? i)
