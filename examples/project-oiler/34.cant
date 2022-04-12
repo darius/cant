@@ -33,19 +33,17 @@
 ;; (let answers (those curious? (10 .till (10 .** 5))))
 
 
-;; A faster search, over unordered bags of digits instead of over numbers:
+;; A faster search, over unordered bags of factorial terms instead of over numbers:
 
 (import (use "utils") count<-digits)
 
-(to (?curious digits)
-  (let n (sum-by ~.! digits))
-  (and (<= 10 n)
-       (curious? n)
-       n))
-
-(let all-digits ((1 .thru 9) .list)) ;; 0! = 1!, so 0 would be redundant in this list
+(let digit-factorials (each ~.! (1 .thru 9))) ;; 0! = 1!, so 0 would be redundant in this list
 (let answers (~.nub (for gather ((n-digits (2 .thru 5)))
-                      (yeahs ?curious (all-digits .bag-combinations n-digits)))))
+                      (for yeahs ((terms (digit-factorials .bag-combinations n-digits)))
+                        (let n (sum terms))
+                        (and (<= 10 n)
+                             (curious? n)
+                             n)))))
 
 (out .print answers)
 (out .print (sum answers))
