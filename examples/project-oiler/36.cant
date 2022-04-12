@@ -22,8 +22,7 @@
 ;; for palindromes in the other base.
 (to (v2-answer max-ndigits)
   (for gather ((ndigs (1 .thru max-ndigits)))
-    (for yeahs ((n (list-decimal-palindromes ndigs)))
-      (and (double-palindrome? n) n))))
+    (those double-palindrome? (list-decimal-palindromes ndigs))))
 
 (to (list-decimal-palindromes ndigs)
   ;; N.B. some results are 'palindromes' only if you count leading
