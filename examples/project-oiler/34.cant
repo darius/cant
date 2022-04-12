@@ -43,7 +43,7 @@
        (curious? n)
        n))
 
-(let all-digits ((1 .thru 9) .list)) ;; 0! = 1!, so it'd be redundant in this list
+(let all-digits ((1 .thru 9) .list)) ;; 0! = 1!, so 0 would be redundant in this list
 (let answers (~.nub (for gather ((n-digits (2 .thru 5)))
                       (yeahs ?curious (all-digits .bag-combinations n-digits)))))
 
