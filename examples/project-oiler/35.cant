@@ -14,8 +14,8 @@
 ;; Faster version: only enumerate numbers using the digits 1,3,7,9.
 (to (v2-answer limit)
   (link 2 5 (for gather ((nds (1 .thru 6)))
-              (for gather ((combos ("1379" .bag-combinations nds)))
-                (for yeahs ((digits combos.permutations.nub))
+              (for gather ((combo ("1379" .bag-combinations nds)))
+                (for yeahs ((digits combo.permutations.nub))
                   (and (-> digits.text rotations (:: (every (compose prime? ~.number) it)))
                        digits.text.number))))))
 
