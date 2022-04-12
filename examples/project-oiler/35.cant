@@ -2,8 +2,8 @@
 
 (import (use 'factoring) list-primes-till prime?)
 
-(to (v1-answer limit)
-  (for those ((p (list-primes-till limit)))
+(to (v1-answer max-ndigits)
+  (for those ((p (list-primes-till (10 .** max-ndigits))))
     (-> p.text rotations ~.rest (:: (every (compose prime? ~.number) it)))))
 
 (to (rotations xs)
@@ -12,17 +12,14 @@
     (chain (xs .slice i) (xs .slice 0 i))))
 
 ;; Faster version: only enumerate numbers using the digits 1,3,7,9.
-(to (v2-answer limit)
-  (link 2 5 (for gather ((nds (1 .thru 6)))
+(to (v2-answer max-ndigits)
+  (link 2 5 (for gather ((nds (1 .thru max-ndigits)))
               (for gather ((combo ("1379" .bag-combinations nds)))
                 (for yeahs ((digits combo.permutations.nub))
                   (and (-> digits.text rotations (:: (every (compose prime? ~.number) it)))
                        digits.text.number))))))
 
-(to (print-answer)
-;;  (let circulars (v1-answer 1000000))
-  (let circulars (v2-answer 1000000))
-  (out .say "circulars: ~w\n" (sort circulars))
-  (out .print circulars.count))
-
-(print-answer)
+;;(let circulars (v1-answer 6))
+(let circulars (v2-answer 6))
+(out .say "circulars: ~w\n" (sort circulars))
+(out .print circulars.count)
