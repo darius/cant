@@ -30,6 +30,22 @@
 ;; using seven 9!'s, it can't with smaller digits either.)
 ;; It turns out 5 digits are enough.
 
-(let answers (those curious? (10 .till (10 .** 5))))
+;; (let answers (those curious? (10 .till (10 .** 5))))
+
+
+;; A faster search, over unordered bags of digits instead of over numbers:
+
+(import (use "utils") count<-digits)
+
+(to (?curious digits)
+  (let n (sum-by ~.! digits))
+  (and (<= 10 n)
+       (curious? n)
+       n))
+
+(let all-digits ((1 .thru 9) .list)) ;; 0! = 1!, so it'd be redundant in this list
+(let answers (~.nub (for gather ((n-digits (2 .thru 5)))
+                      (yeahs ?curious (all-digits .bag-combinations n-digits)))))
+
 (out .print answers)
 (out .print (sum answers))
