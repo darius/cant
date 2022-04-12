@@ -3,9 +3,12 @@
 ;; Find the sum of all numbers, less than one million, which are
 ;; palindromic in base 10 and base 2.
 
-(to (answer limit)
+(import (use "utils") count<-digits)
+
+(to (v1-answer max-ndigits)
+  (let limit (10 .** max-ndigits))
   ;; Only check odd numbers: in binary an even palindrome would have to start with 0
-  (sum (those double-palindrome? (1 .till limit 2))))
+  (those double-palindrome? (1 .till limit 2)))
 
 (to (double-palindrome? n)
   (and (palindrome? n.digits)
@@ -15,4 +18,24 @@
 (to (palindrome? xs)
   (= xs (reverse xs)))
 
-(out .print (answer 1000000))
+;; Faster way: enumerate palindromes in one base directly, and filter
+;; for palindromes in the other base.
+(to (v2-answer max-ndigits)
+  (for gather ((ndigs (1 .thru max-ndigits)))
+    (for yeahs ((n (list-decimal-palindromes ndigs)))
+      (and (double-palindrome? n) n))))
+
+(to (list-decimal-palindromes ndigs)
+  ;; N.B. some results are 'palindromes' only if you count leading
+  ;; 0's, so the above caller still checks for genuine palindromes.
+  (let (~ half remainder) (ndigs ./mod 2))
+  (for gather ((low (grid* @(`(,decimals) .repeat half))))
+    (for each ((mid (grid* @(`(,decimals) .repeat remainder))))
+      (count<-digits (reverse low (chain mid low))))))
+
+(let decimals ((0 .thru 9) .list))
+
+;;(out .print (v1-answer 6))
+(let answers (v2-answer 6))
+(out .print (sort answers.nub))
+(out .print (sum answers))
