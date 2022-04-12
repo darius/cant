@@ -6,10 +6,9 @@
   (for those ((p (list-primes-till (10 .** max-ndigits))))
     (-> p.text rotations ~.rest (:: (every (compose prime? ~.number) it)))))
 
+;; "abc" -> ("abc" "bca" "cab")
 (to (rotations xs)
-  (surely xs.some?)
-  (for each/lazy ((i xs.count.till))
-    (chain (xs .slice i) (xs .slice 0 i))))
+  ((chain xs xs.but-last) .slices xs.count))
 
 ;; Faster version: only enumerate numbers using the digits 1,3,7,9.
 (to (v2-answer max-ndigits)
