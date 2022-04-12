@@ -23,9 +23,10 @@ The last step of #1 seems more of a pain than #2. So let's try #2.
 1-digit * 4-digit    > 1*2345 = 2345, also 9 digits.
 "
 
+(import (use 'factoring) list-divisors)
 (import (use "utils") count<-digits)
 
-(to (answer)
+(to (answer-2)
   (let products (set<-))
 
   (let all-digits ((1 .thru 9) .list))
@@ -41,7 +42,22 @@ The last step of #1 seems more of a pain than #2. So let's try #2.
           (out .say "found ~w * ~w = ~w\n" a b product)
           (products .add! product)))))
 
-  (out .print (sort products.keys))
   (sum products.keys))
 
-(out .print (answer))
+;; So strategy #2 worked, but coming back to #1, it turns out to be
+;; a bit nicer and a bit faster, actually:
+(to (answer-1)
+  (let all-digits ((1 .thru 9) .list))
+  (for sum-by ((p-combos (all-digits .combinations 4))) ;; (5-digit products can't come up, d'oh)
+    (let m-digits (those (:: (not (p-combos .find? it)))
+                         all-digits))
+    (for sum-by ((p-digits (p-combos .permutations)))
+      (let p (count<-digits p-digits))
+      (or (for some ((a (list-divisors p)))
+            (and (< a 100) ;; redundant quick filter
+                 (do (let b (p .quotient a))
+                     (and (= m-digits (sort (chain a.digits b.digits)))
+                          p))))
+          0))))
+
+(out .print (answer-1))
