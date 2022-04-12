@@ -45,19 +45,17 @@ The last step of #1 seems more of a pain than #2. So let's try #2.
   (sum products.keys))
 
 ;; So strategy #2 worked, but coming back to #1, it turns out to be
-;; a bit nicer and a bit faster, actually:
+;; a bit nicer, actually. A bit slower in this form, though it can be
+;; elaborated to be faster than the above:
 (to (answer-1)
   (let all-digits ((1 .thru 9) .list))
-  (for sum-by ((p-combos (all-digits .combinations 4))) ;; (5-digit products can't come up, d'oh)
-    (let m-digits (those (:: (not (p-combos .find? it)))
-                         all-digits))
-    (for sum-by ((p-digits (p-combos .permutations)))
-      (let p (count<-digits p-digits))
-      (or (for some ((a (list-divisors p)))
-            (and (< a 100) ;; redundant quick filter
-                 (do (let b (p .quotient a))
-                     (and (= m-digits (sort (chain a.digits b.digits)))
-                          p))))
-          0))))
+  (for sum-by ((p-digits (all-digits .permutations 4))) ;; (5-digit products can't come up, d'oh)
+    (let p (count<-digits p-digits))
+    (or (for some ((a (list-divisors p)))
+          (and (< a 100) ;; redundant quick filter
+               (do (let b (p .quotient a))
+                   (and (= all-digits (sort (chain a.digits b.digits p-digits)))
+                        p))))
+        0)))
 
 (out .print (answer-1))
