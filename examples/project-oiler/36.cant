@@ -4,7 +4,8 @@
 ;; palindromic in base 10 and base 2.
 
 (to (answer limit)
-  (sum (those double-palindrome? (1 .till limit))))
+  ;; Only check odd numbers: in binary an even palindrome would have to start with 0
+  (sum (those double-palindrome? (1 .till limit 2))))
 
 (to (double-palindrome? n)
   (and (palindrome? n.digits)
@@ -14,5 +15,4 @@
 (to (palindrome? xs)
   (= xs (reverse xs)))
 
-;;(out .print (those double-palindrome? (1 .till 1000)))
 (out .print (answer 1000000))
