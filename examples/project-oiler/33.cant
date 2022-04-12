@@ -1,6 +1,6 @@
 ;; Digit cancelling fractions
 
-(import (use 'ratio) ratio<-)
+(import (use 'ratio) ratio<- ratio-show)
 (let r* ((use 'ratio) '*))  ;; man this is a pain
 
 ;; There are exactly four non-trivial examples of this type of
@@ -20,7 +20,7 @@
           (may ((nr .difference dr) .keys)
             (be `(,ndig)
               (and (= (ratio<- ndig ddig) (let r (ratio<- num den)))
-                   (do (out .say "FOUND ~w/~w\n" num den) #yes)
+                   (out .say "Found ~d\n" (ratio-show r))
                    r))         
             (else #no)))
         (else #no)))
@@ -31,6 +31,4 @@
   
 (let fractions (for yeahs ((pair ((11 .thru 99) .combinations 2)))
                  (canceling-fraction @pair)))
-(out .say "Found ~w fractions: ~w\n" fractions.count fractions)
-(let {ratio p-num p-den} (foldr r* fractions (ratio<- 1)))
-(out .say "Product: ~w/~w\n" p-num p-den) ;; TODO function in ratio.cant
+(out .say "Product: ~d\n" (ratio-show (foldr r* fractions (ratio<- 1))))

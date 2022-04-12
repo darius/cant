@@ -62,8 +62,11 @@
 (to (float<-ratio {ratio n d})
   (/ n.inexact d))
 
+(to (ratio-show {ratio n d})
+  ("~w/~w" .format n d))
+
 ;; TODO just export r-names instead of renaming
-((export ratio? ratio<- compare r-integer? integer<-ratio float<-ratio)
+((export ratio? ratio<- compare r-integer? integer<-ratio float<-ratio ratio-show)
  .override (map<- (~ '+ r+)
                   (~ '- r-)
                   (~ '* r*)
