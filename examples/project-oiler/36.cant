@@ -30,7 +30,7 @@
     (for each ((low (decimals .k-tuples (ndigits .quotient 2))))
       (count<-digits (reverse low (chain mid low))))))
 
-(let decimals ((0 .thru 9) .list))
+(let decimals (0 .thru 9))
 
 ;;(out .print (v1-answer 6))
 (let answers (v2-answer 6))
