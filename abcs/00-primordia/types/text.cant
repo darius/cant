@@ -150,5 +150,10 @@
     me)
   (to ~.symbol
     (symbol<- me))
+  (to ~.last                            ;TODO copied from array-trait
+    (me me.count.-))
+  (to (~ .but-last)                     ;TODO copied from array-trait
+    (surely me.some?)
+    (me .slice 0 me.count.-))
   (to message
     (list-trait me message))) ;XXX use trait syntax instead
