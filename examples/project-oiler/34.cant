@@ -27,7 +27,8 @@
 ;; 10: 9999999999
 ;;     3628800
 ;; So we should try up to 6-digit numbers. (If it can't reach itself
-;; using seven 9!'s, it can't with smaller digits either.)
+;; using seven 9!'s, it can't with smaller digits either.) (Uh, that
+;; was sloppy heuristic thinking, not a proof.)
 ;; It turns out 5 digits are enough.
 
 ;; (let answers (those curious? (10 .till (10 .** 5))))
