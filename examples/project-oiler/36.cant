@@ -26,9 +26,8 @@
 (to (list-decimal-palindromes ndigits)
   ;; N.B. some results are 'palindromes' only if you count leading
   ;; 0's, so the above caller still checks for genuine palindromes.
-  (let (~ half remainder) (ndigits ./mod 2))
-  (for gather ((low (grid* @(`(,decimals) .repeat half))))
-    (for each ((mid (grid* @(`(,decimals) .repeat remainder))))
+  (for gather ((mid (decimals .k-tuples (ndigits .remainder 2))))
+    (for each ((low (decimals .k-tuples (ndigits .quotient 2))))
       (count<-digits (reverse low (chain mid low))))))
 
 (let decimals ((0 .thru 9) .list))

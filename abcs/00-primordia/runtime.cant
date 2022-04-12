@@ -412,6 +412,17 @@
     (for foldr ((x xs) (gathered '()))
       (chain (f x) gathered))))
 
+;; List every way to pick one element from each of the arguments.
+;; For example, (grid* '(a b) '(0 1)) = ((a 0) (a 1) (b 0) (b 1))
+;; TODO return tuples instead?
+;; What's a good name for this? I like 'cartesian*' even less.
+;; 'combinations<-' maybe?
+(make grid*
+  (to (~)           '(()))
+  (to (~ xs @lists) (for gather ((x xs))
+                      (for each ((picks (grid* @lists)))
+                        (link x picks)))))
+
 ;; TODO better as (link x (lazy-list<- thunk)) ?
 (to (link/lazy x thunk)
   (make lazy-list {extending list-trait}

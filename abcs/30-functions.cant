@@ -121,17 +121,6 @@
   ;; TODO inconsistent to auto-.values here and not elsewhere, isn't it?
   ("" .join (each (:: ((f it) .text)) xs.values)))
 
-;; List every way to pick one element from each of the arguments.
-;; For example, (grid* '(a b) '(0 1)) = ((a 0) (a 1) (b 0) (b 1))
-;; TODO return tuples instead?
-;; What's a good name for this? I like 'cartesian*' even less.
-;; 'combinations<-' maybe?
-(make grid*
-  (to (~)           '(()))
-  (to (~ xs @lists) (for gather ((x xs))
-                      (for each ((picks (grid* @lists)))
-                        (link x picks)))))
-
 (make grid*/lazy
   (to (~)           '(()))
   (to (~ xs @lists) (for gather/lazy ((x xs))

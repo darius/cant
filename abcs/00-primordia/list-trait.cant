@@ -162,6 +162,8 @@
     ;; TODO make it reasonably efficient without random access
     (for each ((i (0 .thru (- list.count k))))
       (list .slice i (+ i k))))
+  (to (~ .k-tuples k)
+    (grid* @(`(,list) .repeat k)))
   (to ~.cycle
     (surely list.some?)
     (begin cycling ((xs list))
