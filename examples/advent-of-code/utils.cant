@@ -38,7 +38,7 @@
 
 (to (deletions<- t)
   (for each ((i t.count.-.till))
-    `(,(t .slice 0 i) ,(t .slice i.+))))
+    `(,(t .from 0 i) ,(t .from i.+))))
 
 (to (chain-lines lines)
   (chain @(for each ((line lines))

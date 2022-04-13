@@ -6,8 +6,8 @@
   (to (~ .maps? i)    (__vector-maps? me i))
   (to (~ .chain v)    (__vector-append me v))
   (to ~.values        (__vector->list me))
-  (to (~ .slice i)    (__subvector me i me.count))
-  (to (~ .slice i j)  (__subvector me i j))
+  (to (~ .from i)     (__subvector me i me.count))
+  (to (~ .from i j)   (__subvector me i j))
   (to (and (~ .move! dst source lo bound)
            message)
     ;; Block-copy source[lo..bound) to me[dst..dst+(bound-lo)).

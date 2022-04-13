@@ -1,7 +1,7 @@
 (make-trait array-trait me
-  (to (~ .slice i)
-    (me .slice i me.count))
-  (to (~ .slice i bound)
+  (to (~ .from i)
+    (me .from i me.count))
+  (to (~ .from i bound)
     (let v (array<-count (- bound i)))
     (v .move! 0 me i bound)
     v)
@@ -28,12 +28,12 @@
     (let t (me i))
     (me .set! i (me j))
     (me .set! j t))
-  ;; TODO put methods like this and .slice in an immutable-array-trait used by the text primitive type too
+  ;; TODO put methods like this and .from in an immutable-array-trait used by the text primitive type too
   (to ~.last
     (me me.count.-))
   (to (~ .but-last)
     (surely me.some?)
-    (me .slice 0 me.count.-))
+    (me .from 0 me.count.-))
 ;TODO
 ;  (to ~.first (oops "Mutable arrays don't do .first" me))
 ;  (to ~.rest  (oops "Mutable arrays don't do .rest" me))

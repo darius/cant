@@ -38,8 +38,8 @@
 
 (to (perform {tape L h R} act)
   (may act
-    (be '<   {tape (L .slice 1) (L .get 0 '-) `(,h ,@R)})
-    (be '>   {tape `(,h ,@L)    (R .get 0 '-) (R .slice 1)})
+    (be '<   {tape (L .from 1) (L .get 0 '-) `(,h ,@R)})
+    (be '>   {tape `(,h ,@L)   (R .get 0 '-) (R .from 1)})
     (be mark {tape L mark R})))
 
 

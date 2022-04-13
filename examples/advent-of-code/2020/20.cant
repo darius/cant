@@ -20,7 +20,7 @@
 (to (interior<- lines)                  ;remove all the edge pixels from a tile
   (let ny lines.count)
   (let nx lines.first.count)            ;surely all the same
-  (each (~ .slice 1 nx.-) (lines .slice 1 ny.-)))
+  (each (~ .from 1 nx.-) (lines .from 1 ny.-)))
 
 (to (edges<- lines)
   (list<- lines.first

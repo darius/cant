@@ -57,7 +57,7 @@
        (may (regs .get n "")           ;TODO how about just (regs n)?
          (be "" 1)
          (be text
-           (regs .set! n (text .slice 1))
+           (regs .set! n (text .from 1))
            (may (text 0)
              (be #\1 2)
              (be #\# 3))))))))
@@ -97,7 +97,7 @@
   (let regs (regs<- "" "1#1#11##"))
   (show move-r2-r1 0 regs)
   (run move-r2-r1 regs)
-  (out .print (regs .slice 1)))
+  (out .print (regs .from 1)))
 
 
 (export trm-parse regs<- run show main)

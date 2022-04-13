@@ -125,7 +125,7 @@
         (else ; Found one, let's slide:
           (let sum (+ (row i) (row j)))
           (let slid
-            `(,@(row .slice 0 i) ,sum ,@(row .slice j.+) 0))
+            `(,@(row .from 0 i) ,sum ,@(row .from j.+) 0))
           `(,(if same? j low) ,slid)))))
 
 (to (right rows) (each flip-h (left (flip-h rows))))

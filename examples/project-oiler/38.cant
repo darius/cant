@@ -10,11 +10,11 @@
 (to (pandigital-multiple? digits)
   (surely (= 9 digits.count))
   (for some ((i '(1 2 3 4)))
-    (let n (count<-digits (digits .slice 0 i)))
-    (begin checking ((target (* 2 n)) (rest (digits .slice i)))
+    (let n (count<-digits (digits .from 0 i)))
+    (begin checking ((target (* 2 n)) (rest (digits .from i)))
       (or rest.none?
           (and (rest .prefix? (let td target.digits))
-               (checking (+ target n) (rest .slice td.count)))))))
+               (checking (+ target n) (rest .from td.count)))))))
 
 ;;(out .print (pandigital-multiple? '(1 9 2 3 8 4 5 7 6)))
 

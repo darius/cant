@@ -87,7 +87,7 @@ dir:  {'N' | 'S' | 'E' | 'W'} :Dir.
                         (#\W (-1 0)))))
 
 (to (test text)
-  (out .say "~w...: " (text .slice 0 40))
+  (out .say "~w...: " (text .from 0 40))
   (let exp (parse text))
   (out .print (furthest-distance exp)))
 

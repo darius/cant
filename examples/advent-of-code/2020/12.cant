@@ -21,7 +21,7 @@
     (for foldl (((~ hd p) (~ E c0))
                 (move input))
       (let act (move 0))
-      (let arg ((move .slice 1) .number))
+      (let arg ((move .from 1) .number))
       (may act
         (be #\N (~ hd (c+ p (r*c arg N))))
         (be #\S (~ hd (c+ p (r*c arg S))))
@@ -44,7 +44,7 @@
     (for foldl (((~ v p) (~ {complex 10 1} c0))
                 (move input))
       (let act (move 0))
-      (let arg ((move .slice 1) .number))
+      (let arg ((move .from 1) .number))
       (may act
         (be #\N (~  (c+ v (r*c arg N))  p))
         (be #\S (~  (c+ v (r*c arg S))  p))

@@ -65,8 +65,8 @@
             (showing .set! i line)))
         ;; TODO: styling for the logs
         (out .display (goto 0 rows))
-        (for each! ((message (logs.^ .slice 0 console-rows)))
-          (out .display (message .slice 0 cols))
+        (for each! ((message (logs.^ .from 0 console-rows)))
+          (out .display (message .from 0 cols))
           (out .display clear-to-right)
           (out .display "\r\n"))
         (out .display (goto point-x.^ point-y.^))

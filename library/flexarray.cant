@@ -65,7 +65,7 @@
     (to ~.values ;; more efficient than array-trait's
       (each A.^ count.^.till))
     (to ~.snapshot
-      (A.^ .slice 0 count.^))         ;XXX make immutable
+      (A.^ .from 0 count.^))         ;XXX make immutable
     (to (~ .move! dst source lo bound)
       (when (< lo bound)
         (count-check (+ dst (- bound lo) -1))
@@ -88,8 +88,8 @@
       (count .^= 0))                     ;TODO also reset A?
 
     ;; inefficient:
-    (to (~ .chain v)        (flexarray.snapshot .chain v))
-    (to (~ .slice lo bound) (flexarray.snapshot .slice lo bound))
+    (to (~ .chain v)       (flexarray.snapshot .chain v))
+    (to (~ .from lo bound) (flexarray.snapshot .from lo bound))
 
     (to ~.first         (oops "no .first on flexarray" flexarray))
     (to ~.rest          (oops "no .rest on flexarray" flexarray))

@@ -16,7 +16,7 @@ _: :whitespace*.
   ((rules n) rules text i))
 
 (to ((Lit t) rules text i)
-  (if (= t (text .slice i i.+))
+  (if (= t (text .from i i.+))
       `(,i.+)
       '()))
 

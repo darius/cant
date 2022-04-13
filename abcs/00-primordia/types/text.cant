@@ -6,8 +6,8 @@
   (to (~ i)          (__string-ref me i))
   (to (~ .maps? i)   (__string-maps? me i))
   (to (~ .chain t)   (__string-append me t))
-  (to (~ .slice i)   (__substring me i me.count))
-  (to (~ .slice i j) (__substring me i j))
+  (to (~ .from i)    (__substring me i me.count))
+  (to (~ .from i j)  (__substring me i j))
   (to (and (~ .compare t) message)
     (if (text? t)
         (__string-compare me t)    ; just a speedup
@@ -33,7 +33,7 @@
             "")
           (do (let c (me i)))
           (unless c.whitespace?
-            (me .slice i))
+            (me .from i))
           (else (scanning i.+)))))
   (to ~.trim-right
     (begin scanning ((i me.count))
@@ -41,7 +41,7 @@
             "")
           (do (let c (me i.-)))
           (unless c.whitespace?
-            (me .slice 0 i))
+            (me .from 0 i))
           (else (scanning i.-)))))
   (to ~.trim
     me.trim-left.trim-right)
@@ -54,8 +54,8 @@
               (begin scanning ((i 1))
                 (hm (if (= i limit) `(,t))
                     (if ((t i) .whitespace?)
-                        (link (t .slice 0 i)
-                              (splitting ((t .slice i.+) .trim-left))))
+                        (link (t .from 0 i)
+                              (splitting ((t .from i.+) .trim-left))))
                     (else (scanning i.+))))))))
   (to (~ .split delimiter)
     ;; TODO deduplicate code
@@ -69,13 +69,13 @@
               (do (let limit t.count)
                   (begin scanning ((i 0))
                     (hm (if (= i limit) `(,t))
-                        (if (= delimiter (t .slice i (+ i delimiter.count)))
-                            (link (t .slice 0 i)
-                                  (splitting (t .slice (+ i delimiter.count)))))
+                        (if (= delimiter (t .from i (+ i delimiter.count)))
+                            (link (t .from 0 i)
+                                  (splitting (t .from (+ i delimiter.count)))))
                         (else (scanning i.+)))))))))
   (to ~.lowercase (text<-list (each ~.lowercase me)))
   (to ~.uppercase (text<-list (each ~.uppercase me)))
-  (to ~.capitalize (chain ((me .slice 0 1) .uppercase) (me .slice 1)))
+  (to ~.capitalize (chain ((me .from 0 1) .uppercase) (me .from 1)))
   (to (~ .replace pattern replacement) ;TODO more efficient
     ;; TODO unify the cases?
     (hm (if pattern.none?
@@ -87,7 +87,7 @@
           ;; TODO define a strstr and use that
           (begin scanning ((i 0))
             (hm (if (= i limit) '())
-                (if (= pattern (me .slice i (+ i pattern.count)))
+                (if (= pattern (me .from i (+ i pattern.count)))
                     (chain (list<-text replacement)
                            (scanning (+ i pattern.count))))
                 (else (link (me i) (scanning i.+)))))))))
@@ -126,7 +126,7 @@
     ;; yield the same output as a text with no final "\n". N.B. while
     ;; that's convenient it's also information-destroying.
     (let tweaked (if (and me.some? (= me.last #\newline))
-                     (me .slice 0 me.count.-)
+                     (me .from 0 me.count.-)
                      me))
     ;; TODO it'd be nice for efficiency if tweaked could be a view instead of a copy
     (tweaked .split "\n"))
@@ -154,6 +154,6 @@
     (me me.count.-))
   (to (~ .but-last)                     ;TODO copied from array-trait
     (surely me.some?)
-    (me .slice 0 me.count.-))
+    (me .from 0 me.count.-))
   (to message
     (list-trait me message))) ;XXX use trait syntax instead

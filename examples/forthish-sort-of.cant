@@ -12,8 +12,8 @@
 ;; Pop `count` values from the data stack into fresh local variables.
 (to (grab<- count)
   (to (grab {state s r})
-    {state (s .slice count)
-           (chain (s .slice 0 count) r)}))
+    {state (s .from count)
+           (chain (s .from 0 count) r)}))
 
 ;; Push the kth local variable.
 (to (local<- k)
@@ -24,7 +24,7 @@
 (to (ungrab<- count)
   (to (ungrab {state s r})
     {state s
-           (r .slice count)}))
+           (r .from count)}))
 
 (to (stack-op-2-1<- op)
   (to (stack-op-2-1 {state (link z y s) r})

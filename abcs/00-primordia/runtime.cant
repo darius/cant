@@ -429,11 +429,11 @@
     (to ~.none? #no)
     (to ~.first x)
     (to ~.rest  (thunk))
-    (to (~ .slice i bound) ;; overridden for the sake of a lazy result
+    (to (~ .from i bound) ;; overridden for the sake of a lazy result
       (surely (<= 0 i))
       (hm (if (<= bound i) '())  ;; TODO do i-1 .rest's here too for consistency?
           (else (let n (- bound i))
-                (begin copying ((j 0) (ll (lazy-list .slice i)))
+                (begin copying ((j 0) (ll (lazy-list .from i)))
                   (link/lazy ll.first (: (let j1 j.+)
                                          (if (< j1 n) (copying j1 ll.rest) '())))))))
     ;; TODO any more parts of list-trait that need overriding for laziness? Plausibly: .chain 
@@ -450,11 +450,11 @@
             (box .^= (let v1 (thunk)))
             v1)
           (else v)))
-    (to (~ .slice i bound) ;; overridden for the sake of a lazy result
+    (to (~ .from i bound) ;; overridden for the sake of a lazy result
       (surely (<= 0 i))
       (hm (if (<= bound i) '())  ;; TODO do i-1 .rest's here too for consistency?
           (else (let n (- bound i))
-                (begin copying ((j 0) (ll (lazy-list .slice i)))
+                (begin copying ((j 0) (ll (lazy-list .from i)))
                   (link/lazier ll.first (: (let j1 j.+)
                                            (if (< j1 n) (copying j1 ll.rest) '())))))))
     ;; TODO any more parts of list-trait that need overriding for laziness? Plausibly: .chain 

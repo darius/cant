@@ -29,7 +29,7 @@
 (to (train model input)
   (let data (chain start input '("END"))) ;TODO as array?
   (for each! ((datum (data .k-slices order.+)))
-    (let context (datum .slice 0 order))
+    (let context (datum .from 0 order))
     ((model .get-set! context bag<-) .add! (datum order))))
 
 (to (spew chaos model state)
@@ -38,5 +38,5 @@
       (be "END"
         '())
       (be choice
-        (let next-state `(,@(state .slice 1) ,choice))
+        (let next-state `(,@(state .from 1) ,choice))
         (link choice (spewing next-state))))))

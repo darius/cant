@@ -29,7 +29,7 @@
                        (else #no)))
            (be "hcl" (and (v .prefix? "#")
                           (= v.count 7)
-                          (yeah? (number<-text (v .slice 1) 16)))) ;; (lenient about uppercase though...)
+                          (yeah? (number<-text (v .from 1) 16)))) ;; (lenient about uppercase though...)
            (be "ecl" ('("amb" "blu" "brn" "gry" "grn" "hzl" "oth") .find? v))
            (be "pid" (and (= v.count 9)
                           (every ~.digit? v)))

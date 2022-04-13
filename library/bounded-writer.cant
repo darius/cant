@@ -19,7 +19,7 @@
              (sink .display chunk)
              (budget .-= length))
            (else
-             (sink .display (chunk .slice 0 budget.^))
+             (sink .display (chunk .from 0 budget.^))
              (sink .display "..")
              ts.close
              (ejector .eject void))))

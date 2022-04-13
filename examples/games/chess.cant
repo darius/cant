@@ -93,8 +93,8 @@
       mover)
 
     (to (~ .selfie sink)
-      (let lines (each (~ .slice 1 9)
-                       (squares .slice 1 9)))
+      (let lines (each (~ .from 1 9)
+                       (squares .from 1 9)))
       (for each! (((~ i line) lines.items))
         (sink .say "~w|" (- 8 i))
         (for each! (((~ j piece) line.items))

@@ -40,15 +40,15 @@
 
 (to (no-match-through? pat dat k)
   (not (for some ((i (0 .thru k)))
-         (= pat (dat .slice 0 i)))))
+         (= pat (dat .from 0 i)))))
 
 (for all ((pat a-babble) (dat a-babble))
   (may (dat .find-slice pat)
     (be #no (should no-match-through? pat dat (- dat.count pat.count)))
     (be i (and (should no-match-through? pat dat i.-) ;TODO rethink this `should` function
-               (should = pat (dat .slice i (+ i pat.count)))))))
+               (should = pat (dat .from i (+ i pat.count)))))))
 
-;; TODO some text method for (= pat (dat .slice i (+ i pat.count)))
+;; TODO some text method for (= pat (dat .from i (+ i pat.count)))
 
 (for all ((pat a-babble) (dat a-babble))
   (let i (dat .find-slice pat))

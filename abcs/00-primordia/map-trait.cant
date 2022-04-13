@@ -110,5 +110,5 @@
     (oops "unimplemented .difference"))
 
 ;;  (to (~ .compare xs)
-;;  (to (~ .slice keys)
+;;  (to (~ .from keys)
   )

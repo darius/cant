@@ -29,7 +29,7 @@
     (when (< board.count limit)
       (step!)
       (working)))
-  (let digits (board .slice input))
+  (let digits (board .from input))
   (text-by -> digits))
 
 (to (show)
@@ -57,7 +57,7 @@
 ;    (show)
     (begin checking ((j i))
       (if (< (+ j pc) board.count)
-          (do (when (for every (((~ k p) pattern.items))   ;(= pattern (board .slice j (+ j pc)))   ; ugh
+          (do (when (for every (((~ k p) pattern.items))   ;(= pattern (board .from j (+ j pc)))   ; ugh
                       (= p (board (+ j k))))
                 (out .print j)
                 (os-exit 0))

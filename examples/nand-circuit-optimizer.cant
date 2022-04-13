@@ -17,8 +17,8 @@
   (let mask (- (1 .<< (1 .<< n-inputs)) 1))
 
   (to (print-formula L-input R-input)
-    (let v-name (chain ("ABCDEF" .slice 0 n-inputs)
-                       ("abcdefghijklmnopqrstuvwxyz" .slice n-inputs)))
+    (let v-name (chain ("ABCDEF" .from 0 n-inputs)
+                       ("abcdefghijklmnopqrstuvwxyz" .from n-inputs)))
     (for each! ((i L-input.keys))
       (let g (v-name (+ i n-inputs)))
       (let L (v-name (L-input i)))

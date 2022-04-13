@@ -4,7 +4,7 @@
 
 (let parse (like "{:skip :skip :skip :skip :skip} ' => ' :anyone"))
 
-(let initial-lineup (input.first .slice ("initial state: " .count)))
+(let initial-lineup (input.first .from ("initial state: " .count)))
 (let inputs (each parse input.rest.rest))
 
 

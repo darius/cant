@@ -36,9 +36,9 @@
         (be (? number?) (closure insn))))
     (may code
       (be `(make-closure ,m ,n ,@rest)
-        (let new-closure (~.array (link (rest .slice m)
-                                        (each access (rest .slice 0 m)))))
-        (running (rest .slice (+ m n)) local closure ret (link new-closure stack)))
+        (let new-closure (~.array (link (rest .from m)
+                                        (each access (rest .from 0 m)))))
+        (running (rest .from (+ m n)) local closure ret (link new-closure stack)))
       (be `(invoke ,@_)
         (let `(,argument ,callee ,@old-stack) stack)
         (running (callee 0) argument callee ret `(,local ,closure ,@old-stack)))
@@ -46,7 +46,7 @@
         (let `(,return-value ,new-local ,new-closure ,new-ret ,@new-stack) stack)
         (running ret new-local new-closure new-ret (link return-value new-stack)))
       (be `(pushcont ,n ,@code1)
-        (let new-ret (code1 .slice n))
+        (let new-ret (code1 .from n))
         (let new-stack `(,local ,closure ,ret ,@stack))
         (running code1 local closure new-ret new-stack))
       (be `(halt ,@_)                      ;XXX need to emit this somewhere

@@ -322,7 +322,7 @@ besides `if`: (from
           "")
         (do (let c (me i.-)))
         (unless c.whitespace?
-          (me .slice 0 i))
+          (me .from 0 i))
         (else (scanning i.-)))))
 ```
 corresponding to Scheme
@@ -367,8 +367,8 @@ OK, moving on. Scheme functions on lists:
 | `(cdr xs)`                    | `xs.rest`     |  |
 | `(length xs)`                 | `xs.count`     |  |
 | `(list-ref xs n)`             | `(xs n)`     |  |
-| `(list-tail xs n)`            | `(xs .slice n)`     |  There's also `(xs .slice start-index after-index)` |
-| `(member x xs)`               | `(xs .slice (xs .find x))`     |  (Provided `x` is in `xs`. More on `.find` below.) |
+| `(list-tail xs n)`            | `(xs .from n)`     |  There's also `(xs .from start-index after-index)` |
+| `(member x xs)`               | `(xs .from (xs .find x))`     |  (Provided `x` is in `xs`. More on `.find` below.) |
 | `(cadr (assoc 'x '((a b) (x y))))`   | `((map<-lists '((a b) (x y))) 'x)`     |  More on maps below. |
 
 The accessors on lists above are all generic. They apply to texts (strings) too, for a start:
@@ -382,7 +382,7 @@ The accessors on lists above are all generic. They apply to texts (strings) too,
 | `(string-length s)`           | `s.count`     | Just like `.count` on lists. |
 | `(string-ref s n)`            | `(s n)`       | Likewise. |
 | `(string-append s1 s2)`       | `(chain s1 s2)`       |  |
-| `(substring s i1 i2)`         | `(s .slice i1 i2)`     |  |
+| `(substring s i1 i2)`         | `(s .from i1 i2)`     |  |
 
 Same drill with vectors:
 
@@ -1023,7 +1023,7 @@ for the text type, it's currently a list, avoiding the
 quadratic-copying blowup.
 
 When you have an array and actually want its first or rest, those are
-still doable with `(array 0)` or `(array .slice 1)`. The first/rest
+still doable with `(array 0)` or `(array .from 1)`. The first/rest
 methods are meant for traversal.
 
 This business of calling `.values` yourself is definitely a wart. I

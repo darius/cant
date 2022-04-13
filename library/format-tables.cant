@@ -27,6 +27,6 @@
   (let n-rows (max 1 ((+ texts.count n-cols -1) .quotient n-cols)))
   (let padded (texts .pad-right (* n-rows n-cols) ""))
   (transpose (for each ((i (0 .till texts.count n-rows))) ;TODO `chunk` function?
-               (padded .slice i (+ i n-rows)))))
+               (padded .from i (+ i n-rows)))))
 
 (export format-table tabulate)

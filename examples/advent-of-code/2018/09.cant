@@ -100,8 +100,8 @@
               )))
 
     (to ~.array                        ;XXX unused?
-      (chain (V .slice 0 L.^)
-             (V .slice H.^)))
+      (chain (V .from 0 L.^)
+             (V .from H.^)))
     ))
 
 (let scores

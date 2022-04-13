@@ -21,7 +21,7 @@
 ;;      {~ "grass"  {~ "leaves of grass" (10 15)}})
 (to (contextify line)
   (for each ((span (word-spans line)))
-    (let word (line .slice @span))
+    (let word (line .from @span))
     (~ word.lowercase (~ line span))))
 
 ;; A crude notion of a word: a string of letters with an optional
@@ -43,6 +43,6 @@
   (out .say "~d:\n" word)
   (for each! (((~ line `(,start ,end)) (sort occurrences)))
     (out .say "  ~d**~d**~d\n"
-         (line .slice 0 start)
-         (line .slice start end)
-         (line .slice end))))
+         (line .from 0 start)
+         (line .from start end)
+         (line .from end))))

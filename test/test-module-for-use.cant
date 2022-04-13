@@ -3,7 +3,7 @@ out.newline
 
 (to (left-pad text)
   (if (mayhap ~.whitespace? (text .get 0))
-      (left-pad (text .slice 1))
+      (left-pad (text .from 1))
       text))
 
 (export left-pad)

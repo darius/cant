@@ -40,7 +40,7 @@
                 (chunks .push! chunk)
                 (let new-chunk (chunks code))
                 (chunks .set! chunks.count.-
-                        (chain chunk (new-chunk .slice 0 1)))
+                        (chain chunk (new-chunk .from 0 1)))
                 (decoding (chunks code) codes.rest)))
             output.values)))
 

@@ -56,7 +56,7 @@
       (if (every ~.none? rows)
           '()
           (link (each (~ .get 0 padding) rows)
-                (zipping (each (~ .slice 1) rows)))))))
+                (zipping (each (~ .from 1) rows)))))))
 
 ;; XXX float contagion
 (make min {extending left-folding-operation}

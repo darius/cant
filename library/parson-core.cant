@@ -60,8 +60,8 @@
       (to ~.?results          #no)
       (to ~.results           (oops "Parse failed" failure.postmortem))
       (to ~.result            (oops "Parse failed" failure.postmortem))
-      (to ~.postmortem        `(,(text .slice 0 far) /
-                                ,(text .slice far)))
+      (to ~.postmortem        `(,(text .from 0 far) /
+                                ,(text .from far)))
       (to ~.display                         ;TODO change to .selfie
         (let `(,left / ,right) failure.postmortem)
         ("failed: ~w/~w" .format left right)))))
@@ -72,14 +72,14 @@
       (to (~ .continue p)       (p .parsing text far i vals))
       (to (~ .else _ _ _)       success)
       (to ~.nix                 fail)
-      (to (~ .grab-from j)      (empty .parsing text far i `(,@vals ,(text .slice j i))))
+      (to (~ .grab-from j)      (empty .parsing text far i `(,@vals ,(text .from j i))))
       (to (~ .prefix pre-vals)  (empty .parsing text far i (chain pre-vals vals)))
       (to ~.leftovers           i)
       (to ~.?results            vals)
       (to ~.results             vals)
       (to ~.result              vals.maybe)    ;TODO nicer oops on wrong # of vals
       (to ~.display
-        ("~w ~w" .format (text .slice i) vals)))))
+        ("~w ~w" .format (text .from i) vals)))))
 
 ;; (nix p): a parser that succeeds from a state just when p fails
 ;; from the same state. Any parsing by p becomes mere lookahead; it
@@ -252,7 +252,7 @@
       (match (on (text i)
                (and (text .maps? i)
                     (do (let j (+ i literal.count))
-                        (and (= literal (text .slice i j)) ; (see above about <=>)
+                        (and (= literal (text .from i j)) ; (see above about <=>)
                              j)))))))
 
 ;; Always succeed, but preferably after p.

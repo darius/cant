@@ -161,14 +161,14 @@
 
 ;; 2 npush rotates the top of the stack two levels deep
 (def-prim 'npush (sop (on ((link n top ss))
-                        (chain (ss .slice 0 n) (link top (ss .slice n))))))
+                        (chain (ss .from 0 n) (link top (ss .from n))))))
 ;; 1 unpush rotates to the top the value one level deep
 (def-prim 'unpush (sop (on ((link n ss))
                          (link (ss n) (remove-nth ss n)))))
 
 ;; TODO a list method?
 (to (remove-nth xs n)
-  (chain (xs .slice 0 n) (xs .slice n.+)))
+  (chain (xs .from 0 n) (xs .from n.+)))
 
 
 ;; Let's try it out
