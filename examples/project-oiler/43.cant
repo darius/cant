@@ -1,5 +1,4 @@
 (import (use 'factoring) the-primes)
-(import (use "utils") count<-digits)
 
 ;; We'll take a constraint-solver approach: find 3-digit tiles for each
 ;; position which are consistent with their neighbors, then search for

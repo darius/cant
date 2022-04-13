@@ -24,7 +24,6 @@ The last step of #1 seems more of a pain than #2. So let's try #2.
 "
 
 (import (use 'factoring) list-divisors)
-(import (use "utils") count<-digits)
 
 (to (answer-2)
   (let products (set<-))

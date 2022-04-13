@@ -47,10 +47,10 @@
       (surely (well-formed? encoded-bits))
       (surely (= encoded-bits.count n-encoded-bits))
       (let m (~.array (link 0 encoded-bits)))
-      (let encoded-n (count<-digits m.values 2))
+      (let encoded-n (count<-digits (reverse m.values) 2))
       (let syndrome (for each ((place n-check-bits.till))
                       (parity m place)))
-      (let correction (1 .<< (count<-digits syndrome 2)))
+      (let correction (1 .<< (count<-digits (reverse syndrome) 2)))
       (let corrected (encoded-n .xor correction)) ;; N.B. place 0 (meaning 'correct') is skipped below
       (for yeahs (((~ power bit) (-> (corrected .digits 2 n-encoded-bits.+) reverse ~.items ~.rest)))
         (and (not (power-of-2? power))
@@ -61,10 +61,6 @@
 
 (to (bit? x)
   (and (count? x) (<= x 1)))
-
-(to (count<-digits digits base)         ;N.B. little-endian. TODO add to stdlib?
-  (for foldr ((digit digits) (total 0))
-    (+ (* base total) digit)))
 
 ;; TODO number methods worth adding:
 ;; n .bit k

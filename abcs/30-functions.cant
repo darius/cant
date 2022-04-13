@@ -249,7 +249,15 @@
   (if (and xs.some? (prefix? xs.first))
       (drop-while prefix? xs.rest)
       xs))
-  
+
+;; Inverse to number.digits method.
+;; TODO mirror all the number.digits features
+;; TODO what about signed numbers, non-integers...? Is this whole thing misconceived?
+(to (count<-digits digits @(optional base))
+  (let b (or base 10))
+  (for foldl ((total 0) (digit digits))
+    (+ (* b total) digit)))
+
 ;; Split xs at its first element where split-point? is true.
 ;; That is, return `(,head ,tail), where (chain head tail) = xs,
 ;; and either tail is () or (split-point? tail.first) is true
@@ -310,7 +318,7 @@
     list<- !map<- !map<-items !map<-lists set<- set<-list
     count? not= left-folding-operation right-folding-operation
     + * - transitive-comparison < <= <=> >= > compare
-    gcd lcm
+    gcd lcm count<-digits
     chain reverse foldl foldl1 foldr foldr1 scanl transpose zipped-list-transducer
     each each! some every march<- take-while drop-while
     read

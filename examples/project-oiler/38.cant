@@ -1,6 +1,6 @@
 ;; Pandigital multiples
 
-(import (use "utils") lex-permutation count<-digits detect)
+(import (use "utils") lex-permutation detect)
 
 (to (answer)
   ;; List permutations of 1..9 in decreasing order; return the first good one.
