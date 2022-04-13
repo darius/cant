@@ -125,7 +125,7 @@
                      (checking i.+))
                  (else
                    (sliding j.+)))))))
-  (to (~ .k-sets k)   ;; Ways to pick k of my elements. TODO lazy, map-trait versiong?
+  (to (~ .k-sets k)   ;; Ways to pick k of my elements. TODO lazy, map-trait version?
     ;; TODO k-sets and k-bags are lists, not sets or bags. How bad is this? Better ideas?
     (surely (count? k))
     (begin generating ((n k) (nxs list.count) (xs list))
