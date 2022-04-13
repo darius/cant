@@ -5,6 +5,9 @@
 ;; correct a single substitution error.
 ;; TODO The same principles can extend to detecting a double error.
 
+;; The code has lots of 'reverse' calls because the stdlib digits
+;; stuff is big-endian, while little-endian is natural here.
+
 (to (basic-hamming-code<- n-check-bits)
   (surely n-check-bits.positive?)
 
