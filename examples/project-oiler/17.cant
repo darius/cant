@@ -3,7 +3,7 @@
 (import (use 'english-numbers) numeralize)
 
 (to (count-number-letters n)
-  (let nletters (~.count (those ~.letter? (numeralize n))))
+  (let nletters (tally-by ~.letter? (numeralize n)))
   ;; Adjust our answer because e.g. (numeralize 301) => "three hundred one"
   ;; but the specified answer was to be "three hundred and one".
   (if (and (< 100 n 1000) (not (100 .divides? n)))
