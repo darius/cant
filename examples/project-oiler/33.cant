@@ -29,6 +29,6 @@
 ;; venn-diagram expressions at once, but that's slower with no short-circuiting.
 ;; Design better pattern-matching/control-flow constructs?
   
-(let fractions (for yeahs ((pair ((11 .thru 99) .combinations 2)))
+(let fractions (for yeahs ((pair ((11 .thru 99) .k-sets 2)))
                  (canceling-fraction @pair)))
 (out .say "Product: ~d\n" (ratio-show (foldr r* fractions (ratio<- 1))))

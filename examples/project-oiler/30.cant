@@ -9,7 +9,7 @@
 
 ;; Smarter approach from toddmowen's discussion post.
 (to (smarter)
-  (for yeahs ((digits ((0 .thru 9) .bag-combinations 6)))
+  (for yeahs ((digits ((0 .thru 9) .k-bags 6)))
     (let n (sum-by (~ .** 5) digits))
     (and (= n (sum-by (~ .** 5) n.digits))
          (< 1 n) ;; 1 is excluded by the problem statement

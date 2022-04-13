@@ -68,7 +68,7 @@
   (to ~.! ;; factorial
     (surely (count? me))  ;; TODO gamma function
     (foldl * 1 (1 .thru me)))
-  (to (~ .choose k)   ;; TODO how about (n .! k) as a name?
+  (to (~ .choose k)   ;; TODO how about (n .! k) as a name? or (n .count-k-sets k)
     (surely (count? me))
     (surely (count? k))
     (me.! .quotient (* k.! ((- me k) .!))))  ;; TODO more efficient code

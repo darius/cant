@@ -1,10 +1,10 @@
 (to (oiler4 lo bound)
-  (max @(for yeahs ((`(,i ,j) ((lo .till bound) .bag-combinations 2)))
+  (max @(for yeahs ((`(,i ,j) ((lo .till bound) .k-bags 2)))
           (let p (* i j))
           (and (palindrome? p.text) p))))
 
 (to (palindrome? text)
   (<=> text (reverse text)))
 
-(out .print (oiler4 10 30))
+(out .print (oiler4 10 30)) ;; 696
 ;;(out .print (oiler4 100 1000))

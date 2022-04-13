@@ -37,11 +37,11 @@
 ;; A faster search, over unordered bags of factorial terms instead of over numbers:
 (let digit-factorials (each ~.! (1 .thru 9))) ;; 0! = 1!, so 0 would be redundant in this list
 (let answers (~.nub (for gather ((n-digits (2 .thru 5)))
-                      (for yeahs ((terms (digit-factorials .bag-combinations n-digits)))
+                      (for yeahs ((terms (digit-factorials .k-bags n-digits)))
                         (let n (sum terms))
                         (and (<= 10 n)
                              (curious? n)
                              n)))))
 
 (out .print answers)
-(out .print (sum answers))
+(out .print (sum answers)) ;; 40730

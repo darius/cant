@@ -125,10 +125,10 @@
                      (checking i.+))
                  (else
                    (sliding j.+)))))))
-  (to (~ .combinations n)   ;; Ways to pick n of my elements. TODO lazy, name, map-trait version?
-    ;; TODO generate tuples instead of lists?
-    (surely (count? n))
-    (begin generating ((n n) (nxs list.count) (xs list))
+  (to (~ .k-sets k)   ;; Ways to pick k of my elements. TODO lazy, map-trait versiong?
+    ;; TODO k-sets and k-bags are lists, not sets or bags. How bad is this? Better ideas?
+    (surely (count? k))
+    (begin generating ((n k) (nxs list.count) (xs list))
       (hm (if (< nxs n) '())
           (if (= n 0)   '(()))
           ;; (if (= nxs n) (list<- xs))   ;; an optimization, but does it actually help?
@@ -136,9 +136,9 @@
                              (for each ((ys (generating n.- nxs.- xs.rest)))
                                (link x ys)))
                        (generating n nxs.- xs.rest))))))
-  (to (~ .bag-combinations n) ;; Ways to pick n of my elements w/ duplicates allowed. TODO experimental
-    (surely (count? n))
-    (begin generating ((n n) (xs list))
+  (to (~ .k-bags k) ;; Ways to pick k of my elements w/ duplicates allowed. TODO experimental; name?
+    (surely (count? k))
+    (begin generating ((n k) (xs list))
       (hm (if (= n 0) '(()))
           (if xs.none? '())
           (else (chain (hide (let x xs.first)
@@ -155,14 +155,14 @@
             (for each ((perm (permuting (remove-nth xs i))))
               (link x perm))))))
   (to (~ .permutations k)
-    (for gather ((elements (list .combinations k)))
-      elements.permutations))
-  (to (~ .slices k)
+    (for gather ((picks (list .k-sets k)))
+      picks.permutations))
+  (to (~ .k-slices k)
     ;; TODO make k optional
     ;; TODO make it reasonably efficient without random access
     (for each ((i (0 .thru (- list.count k))))
       (list .slice i (+ i k))))
-  (to (~ .k-tuples k)
+  (to (~ .k-lists k)
     (grid* @(`(,list) .repeat k)))
   (to ~.cycle
     (surely list.some?)

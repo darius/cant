@@ -21,10 +21,10 @@
 71636269561882670428252483600823257530420752963450" .replace "\n" ""))
 
 (let digits
-  (~.array (each ~.number (input .slices 1))))
+  (~.array (each ~.number (input .k-slices 1))))
 
 (to (oiler8 n)
-  (max @(each (:: (* @it.list)) (digits .slices n))))
+  (max @(each (:: (* @it.list)) (digits .k-slices n))))
 
-(out .print (oiler8 4))
+(out .print (oiler8 4)) ;; 5832
 ;(out .print (oiler8 13))

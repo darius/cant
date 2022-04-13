@@ -30,7 +30,7 @@ The last step of #1 seems more of a pain than #2. So let's try #2.
   (let products (set<-))
 
   (let all-digits ((1 .thru 9) .list))
-  (for each! ((a-b-combos (all-digits .combinations 5)))
+  (for each! ((a-b-combos (all-digits .k-sets 5)))
     (let p-digits (those (:: (not (a-b-combos .find? it)))
                          all-digits))
     (for each! ((a-b-digits a-b-combos.permutations))
@@ -58,4 +58,5 @@ The last step of #1 seems more of a pain than #2. So let's try #2.
                         p))))
         0)))
 
+;;(out .print (answer-2))
 (out .print (answer-1))
