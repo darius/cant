@@ -21,8 +21,7 @@
   (for each ((`(,dx ,dy ,dz) neighborhood))
     `(,(+ x dx) ,(+ y dy) ,(+ z dz))))
 
-(let neighborhood ((grid* '(-1 0 1) '(-1 0 1) '(-1 0 1))
-                   .remove '(0 0 0)))
+(let neighborhood (('(-1 0 1) .k-lists 3) .remove '(0 0 0)))
 
 (to (update grid)
   (let active (bag<- (gather neighbors grid.keys)))
@@ -60,5 +59,4 @@
   (for each ((`(,dx ,dy ,dz ,da) neighborhood-4d))
     `(,(+ x dx) ,(+ y dy) ,(+ z dz) ,(+ a da))))
 
-(let neighborhood-4d ((grid* '(-1 0 1) '(-1 0 1) '(-1 0 1) '(-1 0 1))
-                      .remove '(0 0 0 0)))
+(let neighborhood-4d (('(-1 0 1) .k-lists 4) .remove '(0 0 0 0)))

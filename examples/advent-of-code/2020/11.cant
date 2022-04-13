@@ -5,8 +5,7 @@
 (let nrows inputs.count)
 (let ncols ((inputs 0) .count))
 
-(let neighborhood ((grid* '(-1 0 1) '(-1 0 1))
-                   .remove '(0 0)))
+(let neighborhood (('(-1 0 1) .k-lists 2) .remove '(0 0)))
 (to (neighbors `(,x ,y))
   (for each ((`(,dx ,dy) neighborhood))
     `(,(+ x dx) ,(+ y dy))))
