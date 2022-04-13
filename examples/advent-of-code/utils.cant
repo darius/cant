@@ -52,8 +52,8 @@
   (for each ((`(,dx ,dy) neighborhood-8))
     `(,(+ x dx) ,(+ y dy))))
 
-(let neighborhood-8 (for those ((d (grid* '(-1 0 1) '(-1 0 1))))
-                      (not= d '(0 0))))
+(let neighborhood-8 ((grid* '(-1 0 1) '(-1 0 1))
+                     .remove '(0 0)))
 
 (to (vector* c p) (for each ((coord p)) (* c coord)))
 (to (vector+ p q) (each + p q))

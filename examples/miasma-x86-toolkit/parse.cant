@@ -5,8 +5,7 @@
 ;; Instruction specs
 
 (to (spec<- mnemonic stem params+ doc-text uses)
-  (let params (for those ((p params+))
-                (not= p '{bytes u 0 0})))
+  (let params (params+ .remove '{bytes u 0 0}))
   (make spec                            ;TODO struct maker?
     (to ~.mnemonic mnemonic)
     (to ~.stem     stem)
