@@ -5,7 +5,12 @@
 (to (answer)
   ;; List permutations of 1..9 in decreasing order; return the first good one.
   (detect pandigital-multiple? (for each/lazy ((i (((9 .!) .-) .down-thru 0)))
-                                 (lex-permutation 9 i))))
+                                 (my-lex-permutation 9 i))))
+
+;; TODO ugh we've needed this hack twice now
+(to (my-lex-permutation nd i)
+  ;; +1 to each digit because my permutations are of (1 .thru nd) instead of (0 .till nd)
+  (each ~.+ (lex-permutation nd i)))
 
 (to (pandigital-multiple? digits)
   (surely (= 9 digits.count))
@@ -15,7 +20,5 @@
       (or rest.none?
           (and (rest .prefix? (let td target.digits))
                (checking (+ target n) (rest .from td.count)))))))
-
-;;(out .print (pandigital-multiple? '(1 9 2 3 8 4 5 7 6)))
 
 (out .print (count<-digits (answer))) ;; 932718654
