@@ -4,8 +4,10 @@
   (sset<-list xs))
 
 (to (sset<-list xs)
-  ;; TODO don't need the full sset-insert here
-  ;;  -- maybe worth adding a "sort -u" equivalent to sort.cant
+  ;; TODO maybe worth adding a "sort -u" equivalent to sort.cant, with
+  ;; a specialized implementation. Here, this impl using .nub seems
+  ;; slower on my trivial test cases:
+  ;; (sort xs.nub))
   (for foldr ((x (sort xs)) (ss '()))
     (sset-insert ss x)))
 
