@@ -40,7 +40,7 @@
   ;; development so we don't hang once the truncatables run out.)
   (gather/lazy sort batches.rest))
 
-(to (extend-left seed digit)  (count<-digits (link digit seed.digits)))
+(to (extend-left seed digit)  (~.number (chain digit.text seed.text)))
 (to (extend-right seed digit) (+ (* 10 seed) digit))
 
 (let left-truncatables (list-truncatables extend-right))
