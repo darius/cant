@@ -48,7 +48,7 @@ The last step of #1 seems more of a pain than #2. So let's try #2.
 ;; elaborated to be faster than the above:
 (to (answer-1)
   (let all-digits ((1 .thru 9) .list))
-  (for sum-by ((p-digits (all-digits .permutations 4))) ;; (5-digit products can't come up, d'oh)
+  (for sum-by ((p-digits (all-digits .k-permutations 4))) ;; (5-digit products can't come up)
     (let p (count<-digits p-digits))
     (or (for some ((a (list-divisors p)))
           (and (< a 100) ;; redundant quick filter
@@ -58,4 +58,4 @@ The last step of #1 seems more of a pain than #2. So let's try #2.
         0)))
 
 ;;(out .print (answer-2))
-(out .print (answer-1))
+(out .print (answer-1)) ;; 45228

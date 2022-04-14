@@ -4,7 +4,7 @@
 ;; position which are consistent with their neighbors, then search for
 ;; global solutions that fit the tiles together.
 
-(let triples ((0 .thru 9) .permutations 3))
+(let triples ((0 .thru 9) .k-permutations 3))
 
 (let tiles (flexarray<-))
 (for each! ((p (link 1 (the-primes .first-n 7))))
@@ -31,4 +31,4 @@
                                             t.first)))))
                   (extending place.- (link next-digit suffix))))))))
 
-(out .say "sum: ~w\n" (sum-by count<-digits solutions))
+(out .say "sum: ~w\n" (sum-by count<-digits solutions)) ;; 16695334890
