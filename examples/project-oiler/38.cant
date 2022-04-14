@@ -20,12 +20,16 @@
           (and (rest .prefix? (let td target.digits))
                (checking (+ target n) (rest .from td.count)))))))
 
-;; Not so brute-force.
-;; This is still slower than it needs to be, since we could try digits from 9
-;; down-thru 1, and early-out by comparing to the current best.
+;; Not so brute-force. This is still slower than it needs to be,
+;; since we could early-out by comparing to the current best.
 (to (v2-answer)
   (max @(for gather ((ndigits (1 .thru 4)))
-          (yeahs ?build-pandigital ((1 .thru 9) .permutations ndigits)))))
+          (let perms (-> ((9 .down-thru 1) .permutations ndigits)
+                         ;; Sorting because (~ .permutations ndigits) doesn't respect order
+                         (:: (sort it {reverse}))))
+          (-> (yeahs/lazy ?build-pandigital perms)
+              (~ .from 0 1)
+              ~.list))))
 
 (to (?build-pandigital base)
   (let n (count<-digits base))
