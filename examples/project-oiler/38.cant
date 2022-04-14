@@ -3,7 +3,7 @@
 (import (use "utils") lex-permutation detect)
 
 (to (v1-answer)
-  ;; List permutations of 1..9 in decreasing order; return the first good one.
+  ;; List permutations of 1..9 in descending order; return the first good one.
   (detect pandigital-multiple? (for each/lazy ((i (((9 .!) .-) .down-thru 0)))
                                  (my-lex-permutation 9 i))))
 
@@ -27,15 +27,15 @@
           (-> (yeahs/lazy ?build-pandigital ((9 .down-thru 1) .k-permutations ndigits))
               (~ .get 0)))))
 
-(to (?build-pandigital base)
-  (let n (count<-digits base))
-  (begin checking ((k 2) (result base))
-    (and (not (result .find? 0))
-         result.invertible?
-         (may (compare result.count 9)
+(to (?build-pandigital base-digits)
+  (let base (count<-digits base-digits))
+  (begin building ((i 2) (prefix base-digits))
+    (and (not (prefix .find? 0))
+         prefix.invertible?
+         (may (compare prefix.count 9)
            (be '> #no)
-           (be '= result)
-           (be '< (checking k.+ (chain result ((* k n) .digits))))))))
+           (be '= prefix)
+           (be '< (building i.+ (chain prefix ((* i base) .digits))))))))
 
 ;;(let result (v1-answer))
 (let result (v2-answer))
