@@ -20,7 +20,9 @@
           (and (rest .prefix? (let td target.digits))
                (checking (+ target n) (rest .from td.count)))))))
 
-;; Not so brute-force.
+;; Not so brute-force. For each possible base-prefix length, find the
+;; first base prefix that works from the candidates in descending
+;; order.
 (to (v2-answer)
   (max @(for yeahs ((ndigits (1 .thru 4)))
           (-> (yeahs/lazy ?build-pandigital ((9 .down-thru 1) .k-permutations ndigits))
