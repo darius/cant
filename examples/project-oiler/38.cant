@@ -2,7 +2,7 @@
 
 (import (use "utils") lex-permutation detect)
 
-(to (answer)
+(to (v1-answer)
   ;; List permutations of 1..9 in decreasing order; return the first good one.
   (detect pandigital-multiple? (for each/lazy ((i (((9 .!) .-) .down-thru 0)))
                                  (my-lex-permutation 9 i))))
@@ -20,4 +20,23 @@
           (and (rest .prefix? (let td target.digits))
                (checking (+ target n) (rest .from td.count)))))))
 
-(out .print (count<-digits (answer))) ;; 932718654
+;; Not so brute-force.
+;; This is still slower than it needs to be, since we could try digits from 9
+;; down-thru 1, and early-out by comparing to the current best.
+(to (v2-answer)
+  (max @(for gather ((ndigits (1 .thru 4)))
+          (yeahs ?build-pandigital ((1 .thru 9) .permutations ndigits)))))
+
+(to (?build-pandigital base)
+  (let n (count<-digits base))
+  (begin checking ((k 2) (result base))
+    (and (not (result .find? 0))
+         result.invertible?
+         (may (compare result.count 9)
+           (be '> #no)
+           (be '= result)
+           (be '< (checking k.+ (chain result ((* k n) .digits))))))))
+
+;;(let result (v1-answer))
+(let result (v2-answer))
+(out .print (count<-digits result)) ;; 932718654
