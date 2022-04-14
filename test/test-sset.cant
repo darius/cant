@@ -1,5 +1,6 @@
 (import (use 'sset)
-  sset<- sset<-list sset-elements sset-insert sset-remove sset-union sset-difference)
+  sset<- sset<-list sset-elements sset-insert sset-remove
+  sset-union sset-difference sset-intersect)
 
 (import ((use 'squickcheck) (export out))
   a-count a-list-of
@@ -26,5 +27,5 @@
     (should = (sset-elements sr) (sort mr.keys))))
 
 (test-binary-ops-correspond sset-union (on (x y) (x .union y)))
-;;(test-binary-ops-correspond sset-intersect (on (x y) (x .intersect y)))
+(test-binary-ops-correspond sset-intersect (on (x y) (x .intersect y)))
 (test-binary-ops-correspond sset-difference (on (x y) (x .difference y)))

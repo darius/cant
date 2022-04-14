@@ -1,11 +1,16 @@
 ;; Truncatable primes
 
 (import (use 'factoring) the-primes prime?)
+(import (use 'sort) merge)
 
 (to (answer n)
-  (let results (-> (those/lazy doubly-truncatable? the-primes) (~ .first-n n) as-list))
+  (let results (v1-list n))
+;;  (let results (v2-list n))
   (out .print results)
   (sum results))
+
+(to (v1-list n)
+  (-> (those/lazy doubly-truncatable? the-primes) (~ .first-n n) as-list))
 
 (to (doubly-truncatable? p)
   (and (<= 10 p)
@@ -14,4 +19,38 @@
              (and (-> pt (~ .first-n n) ~.number prime?)
                   (-> pt (~ .last-n n) ~.number prime?))))))
 
-(out .print (answer 11)) ;; 748317
+(to (grow-left seeds)
+  (for yeahs ((`(,digit ,seed) (grid* (1 .thru 9) seeds)))
+    (let candidate (count<-digits (link digit seed.digits)))
+    (and (prime? candidate) candidate)))
+
+;; N.B. never terminates if the seeds list ever gets empty
+(let right-truncatables (gather/lazy itself (~.rest (iterate grow-left '(2 3 5 7)))))
+
+(to (grow-right seeds)
+  (for yeahs ((`(,seed ,digit) (grid* seeds (1 .thru 9))))
+    (let candidate (+ (* 10 seed) digit))
+    (and (prime? candidate) candidate)))
+
+;; N.B. never terminates if the seeds list ever gets empty
+(let left-truncatables (gather/lazy itself (~.rest (iterate grow-right '(2 3 5 7)))))
+
+;; TODO do this part with code, dammit
+(let M 1000)
+(let N 79)
+
+(let RT (as-list (right-truncatables .first-n M)))
+(let LT (as-list (left-truncatables .first-n N)))
+
+(out .print LT)
+out.newline
+(out .print RT)
+out.newline
+(let final-answer (~.keys (LT.range .intersect RT.range)))
+(out .print (sort final-answer))
+(out .print (sum final-answer))
+
+;;(out .print (answer 11)) ;; 748317
+
+;; TODO (use 'sset)
+;; but it needs an intersect function
