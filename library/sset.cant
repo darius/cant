@@ -1,5 +1,8 @@
 ;; Immutable sorted sets
 
+(to (sset? thing)
+  (< @thing.list))
+
 (to (sset<- @xs)
   (sset<-list xs))
 
@@ -53,5 +56,5 @@
 ;; TODO intersect
 
 (export
-  sset<- sset<-list sset-elements sset-insert sset-remove
+  sset? sset<- sset<-list sset-elements sset-insert sset-remove
   sset-union sset-difference sset-intersect)
