@@ -1,16 +1,12 @@
 ;; Pandigital multiples
 
-(import (use "utils") lex-permutation detect)
+(import (use "utils") permuter<- detect)
 
 ;; List permutations of 1..9 in descending order; return the first good one.
 (to (v1-answer)
-  (detect pandigital-multiple? (for each/lazy ((i (((9 .!) .-) .down-thru 0)))
-                                 (my-lex-permutation 9 i))))
-
-;; TODO ugh we've needed this hack twice now
-(to (my-lex-permutation nd i)
-  ;; +1 to each digit because my permutations are of (1 .thru nd) instead of (0 .till nd)
-  (each ~.+ (lex-permutation nd i)))
+  ;; TODO we could just use the list.permutations method if it were lazy
+  (let descending-perm (permuter<- (9 .down-thru 1)))
+  (detect pandigital-multiple? (each/lazy descending-perm ((9 .!) .till))))
 
 (to (pandigital-multiple? digits)
   (for some ((i '(1 2 3 4)))

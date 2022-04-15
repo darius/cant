@@ -1,7 +1,7 @@
 ;; Pandigital prime
 
 (import (use 'factoring) prime?)
-(import (use "utils") lex-permutation)
+(import (use "utils") permuter<-)
 
 (to (answer)
   (for some ((nd (9 .down-thru 1))) ;; n digits
@@ -11,12 +11,8 @@
   
 (to (find-largest-prime nd)
   ;; List permutations of 1..nd in decreasing order; return the first good one.
-  ((~ .get 0) (for yeahs/lazy ((i (((nd .!) .-) .down-thru 0)))
-                (let n (count<-digits (my-lex-permutation nd i)))
-                (and (prime? n) n))))
-
-(to (my-lex-permutation nd i)
-  ;; +1 to each digit because my permutations are of (1 .thru nd) instead of (0 .till nd)
-  (each ~.+ (lex-permutation nd i)))
+  ;; TODO we could just use the list.permutations method if it were lazy
+  (let perm (permuter<- (nd .down-thru 1)))
+  ((~ .get 0) (those/lazy prime? (each/lazy (compose count<-digits perm) ((nd .!) .till)))))
 
 (out .print (answer)) ;; 7652413

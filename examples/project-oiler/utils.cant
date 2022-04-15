@@ -1,3 +1,9 @@
+(to (permuter<- xs)
+  (let n xs.count)
+  (let x<-digit xs.array)
+  (on (k)
+    (each x<-digit (lex-permutation n k))))
+
 (to (lex-permutation n i)
   (let result (flexarray<-))
   (let digit-supply (flexarray<-list n.till))
@@ -30,4 +36,4 @@ i   out       mixradix
 (to (detect keep? xs)
   ((those/lazy keep? xs) .first))
 
-(export lex-permutation detect)
+(export permuter<- lex-permutation detect)
