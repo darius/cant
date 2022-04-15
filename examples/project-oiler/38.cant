@@ -2,8 +2,8 @@
 
 (import (use "utils") lex-permutation detect)
 
+;; List permutations of 1..9 in descending order; return the first good one.
 (to (v1-answer)
-  ;; List permutations of 1..9 in descending order; return the first good one.
   (detect pandigital-multiple? (for each/lazy ((i (((9 .!) .-) .down-thru 0)))
                                  (my-lex-permutation 9 i))))
 
@@ -23,8 +23,8 @@
 ;; Not so brute-force. For each possible base-prefix length, find the
 ;; first base prefix that works, trying prefixes in descending order.
 (to (v2-answer)
-  (max @(for yeahs ((ndigits (1 .thru 4)))
-          (some ?build-pandigital ((9 .down-thru 1) .k-permutations ndigits)))))
+  (max @(for yeahs ((length (1 .thru 4)))
+          (some ?build-pandigital ((9 .down-thru 1) .k-permutations length)))))
 
 (to (?build-pandigital base-digits)
   (let base (count<-digits base-digits))
