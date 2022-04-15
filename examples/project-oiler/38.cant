@@ -25,8 +25,7 @@
 ;; order.
 (to (v2-answer)
   (max @(for yeahs ((ndigits (1 .thru 4)))
-          (-> (yeahs/lazy ?build-pandigital ((9 .down-thru 1) .k-permutations ndigits))
-              (~ .get 0)))))
+          (some ?build-pandigital ((9 .down-thru 1) .k-permutations ndigits)))))
 
 (to (?build-pandigital base-digits)
   (let base (count<-digits base-digits))
