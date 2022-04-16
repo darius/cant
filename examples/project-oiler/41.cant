@@ -5,8 +5,7 @@
 
 (to (answer)
   (for some ((nd (9 .down-thru 1))) ;; n digits
-    (let digsum (sum (1 .thru nd)))
-    (and (not (3 .divides? digsum)) ;; (Every permutation would be a multiple of 3)
+    (and (not (3 .divides? (sum (1 .thru nd)))) ;; Skip 'obvious' multiples of 3
          (find-largest-prime nd))))
   
 (to (find-largest-prime nd)
