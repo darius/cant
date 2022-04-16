@@ -5,7 +5,8 @@
 ;;    (hey (v1-champ index)
     (hey (v2-champ index)
          (:: (out .say "~w: ~w\n" index it))))
-  (* @(each (:: (champ (10 .** it))) (0 .thru 6))))
+  (* @(each champ
+            (each (~ .power-of 10) (0 .thru 6)))))
 
 ;; Super dumb but works.
 (let champ-digits (gather/lazy ~.digits (iterate ~.+ 1)))
@@ -15,17 +16,17 @@
 ;;    1 2 3 4 5 6 7 8 9    (length 1*9)
 ;;    10 11 ... 98 99      (length 2*90)
 ;;                         ...
-;;    ...                  (length n*9*10^(n-1))
+;;    ...                  (length d*9*10^(d-1))
 (to (v2-champ index)
   (surely (< 0 index))
-  (begin skipping ((n 1) (i index))
-    (let power (10 .** n.-))
-    (let chunk-length (* n 9 power))
+  (begin skipping ((d 1) (i index))
+    (let power (10 .** d.-))         ;; The number starting this chunk
+    (let chunk-length (* d 9 power)) ;; How many digits in this chunk
     (hm (when (<= i chunk-length)
-          (let (~ q r) (i.- ./mod n))
-          (let number (+ power q))
-          (number.digits r))
+          (let (~ q r) (i.- ./mod d))
+          (let qth-number (+ power q))
+          (qth-number.digits r))
         (else
-          (skipping n.+ (- i chunk-length))))))
+          (skipping d.+ (- i chunk-length))))))
 
 (out .print (answer)) ;; 210
