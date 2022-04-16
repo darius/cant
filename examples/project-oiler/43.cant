@@ -1,21 +1,16 @@
 (import (use 'factoring) the-primes)
 
-;; We'll take a constraint-solver approach: find 3-digit tiles for each
-;; position which are consistent with their neighbors, then search for
+;; We'll take a constraint-solver approach: find 3-digit tiles for
+;; each position which satisfy the divisor condition, then search for
 ;; global solutions that fit the tiles together.
 
+;; Originally the tile-building phase also propagated the constraints
+;; from the leftward neighbors, but that was actually a bit slower.
+
 (let triples ((0 .thru 9) .k-permutations 3))
-
-(let tiles (flexarray<-))
-(for each! ((p (link 1 (the-primes .first-n 7))))
-  (tiles .push! (for those ((triple triples))
-                  (and (p .divides? (count<-digits triple))
-                       (or tiles.none?
-                           ((each ~.rest tiles.last) .find? triple.but-last))))))
-
-;; TODO For the enumeration we'd like to have for each position a map
-;; from an overlap to a list of next digit candidates. But we'll just
-;; use the tile array we have, and filter as we search.
+(let tiles (~.array (for each ((p (link 1 (the-primes .first-n 7))))
+                      (for those ((triple triples))
+                        (p .divides? (count<-digits triple))))))
 
 (let solutions
   (for gather ((last-tile tiles.last))
