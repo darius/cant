@@ -22,7 +22,7 @@
   (sum-by ticket-error-rate tickets))
 
 (to (ticket-error-rate fields)
-  (sum (keep (compose not valid?) fields)))
+  (sum (skip valid? fields)))
 
 (to (valid? field)
   (for some (({rule _ ruleset} rules))

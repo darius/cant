@@ -58,7 +58,7 @@
   (surely (= r1 r2) "Final maps diverge" r1 r2))
 
 (to (a-list-remove key a-list)
-  (for keep ((`(,k ,_) a-list))
-    (not= k key)))
+  (for skip ((`(,k ,_) a-list))
+    (= k key)))
 
 (random-tests 18)

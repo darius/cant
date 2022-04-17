@@ -475,6 +475,11 @@
   (for foldr ((x xs) (kept '()))
     (if (keep? x) (link x kept) kept)))
 
+;; Short for (keep (compose not skip?) xs)
+(to (skip skip? xs)
+  (for foldr ((x xs) (kept '()))
+    (if (skip? x) kept (link x kept))))
+
 ;; A march represents an arithmetic progression from a `first`, short of a
 ;; `limit`, successively by a `stride`.
 ;; TODO above comment is inaccurate on negative strides: then limit is inclusive. Is this just a bad design?

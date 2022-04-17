@@ -125,6 +125,9 @@
           (link/lazy xs.first (: (keep/lazy keep? xs.rest))))
       (else (keep/lazy keep? xs.rest))))
 
+(to (skip/lazy skip? xs)
+  (keep/lazy (compose not skip?) xs))
+
 (to (each/lazy f xs)
   (hm (if xs.none? '())
       (else (link/lazy (f xs.first)
@@ -301,9 +304,8 @@
   '(computational-setting read-all cant
 ;;    trace-sink
     intercalate compound-key<- yeahs where split-on itself 
-    keep compose zip setting<-map
+    compose zip setting<-map
     link/lazier lazier<- 
-    keep/lazy yeahs/lazy grid*/lazy
     foldr/lazy gather chain/lazy 
     each/lazy gather/lazy link/lazy scanl/lazy iterate
     array-by map-by !map-by map<-values text-by method<- ->
@@ -327,7 +329,8 @@
     + * - transitive-comparison < <= <=> >= > compare
     gcd lcm count<-digits
     chain reverse foldl foldl1 foldr foldr1 scanl transpose zipped-list-transducer
-    each each! some every march<-
+    each each! some every march<- yeahs/lazy grid*/lazy
+    keep skip keep/lazy skip/lazy
     keep-while skip-while keep-while/lazy
     read
     assoc  ;; TODO remove

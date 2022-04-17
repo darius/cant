@@ -16,8 +16,8 @@
 (out .say "part 1 ~w\n" reduced.count)
 
 (to (scour atom)
-  (for keep ((c reduced))
-    (not= atom c.uppercase)))
+  (for skip ((c reduced))
+    (= atom c.uppercase)))
 
 (to (try atom)
   (~.count (reduce (scour atom))))

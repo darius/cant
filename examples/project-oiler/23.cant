@@ -19,6 +19,6 @@
   (to (abundants-sum? k) ;; Can k (<= limit) be written as the sum of two abundant numbers?
     (for some ((a abundants))
       (abundants-set .maps? (- k a))))
-  (sum (keep (compose not abundants-sum?) (1 .thru limit))))
+  (sum (skip abundants-sum? (1 .thru limit))))
 
 (out .print (answer)) ;; 4179871

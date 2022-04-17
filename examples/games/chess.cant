@@ -189,8 +189,8 @@
       ((map<-values unparse-move board.get-moves) .get text))
 
     (to ~.gen-legal-moves
-      (for keep ((move board.gen-piece-moves))
-        (not (~.checking? (update move board)))))
+      (for skip ((move board.gen-piece-moves))
+        (~.checking? (update move board))))
 
     (to ~.get-moves
       (link {resign} board.get-piece-moves))
