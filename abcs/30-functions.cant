@@ -260,6 +260,10 @@
       (skip-while prefix? xs.rest)
       xs))
 
+(to (keep-until stop? xs) (keep-while (compose not stop?) xs))
+(to (skip-until stop? xs) (skip-while (compose not stop?) xs))
+(to (keep-until/lazy stop? xs) (keep-while/lazy (compose not stop?) xs))
+
 ;; Inverse to number.digits method.
 ;; TODO mirror all the number.digits features
 ;; TODO what about signed numbers, non-integers...? Is this whole thing misconceived?
@@ -331,7 +335,7 @@
     chain reverse foldl foldl1 foldr foldr1 scanl transpose zipped-list-transducer
     each each! some every march<- yeahs/lazy grid*/lazy
     keep skip keep/lazy skip/lazy
-    keep-while skip-while keep-while/lazy
+    keep-while skip-while keep-while/lazy keep-until skip-until keep-until/lazy
     read
     assoc  ;; TODO remove
     __as-link __array<-list ;; used implicitly by parse expansion

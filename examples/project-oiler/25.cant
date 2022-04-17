@@ -4,6 +4,6 @@
 (let fibs (begin ((a 1) (b 1))
             (link/lazy a (: (loop b (+ a b))))))
 
-(let (~ i fib-i) (~.first (for skip-while (((~ index value) fibs.items))
-                            (< (value .log 10) 999)))) ;; 999 digits after the leftmost
+(let (~ i fib-i) (~.first (for skip-until (((~ index value) fibs.items))
+                            (<= 999 (value .log 10))))) ;; 999 digits after the leftmost
 (out .print i.+) ;; Increment because their index convention is 1-based
