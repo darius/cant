@@ -55,7 +55,7 @@
       (to (~ .else p j vs)    (p .parsing text far j vs))
       (to ~.nix               empty)
       (to (~ .grab-from _)    failure)
-      (to (~ .prefix _)       failure)
+      (to (~ .preface _)      failure)
       (to ~.leftovers         (oops "Parse failed" failure.postmortem))
       (to ~.?results          #no)
       (to ~.results           (oops "Parse failed" failure.postmortem))
@@ -73,7 +73,7 @@
       (to (~ .else _ _ _)       success)
       (to ~.nix                 fail)
       (to (~ .grab-from j)      (empty .parsing text far i `(,@vals ,(text .from j i))))
-      (to (~ .prefix pre-vals)  (empty .parsing text far i (chain pre-vals vals)))
+      (to (~ .preface pre-vals) (empty .parsing text far i (chain pre-vals vals)))
       (to ~.leftovers           i)
       (to ~.?results            vals)
       (to ~.results             vals)
@@ -116,15 +116,15 @@
 
 ;; (seclude p): parse as p, but with () in place of the incoming
 ;; values. If p succeeds, producing new values, then succeed overall,
-;; producing the chain of the incoming values plus the new ones.
+;; producing the new values chained after the incoming values.
 ;; For example, if the incoming values are (#\x #\y), then
 ;; (feed text<-) succeeds, producing ("xy"). But
 ;; (seclude (feed text<-)) produces (#\x #\y "").
 ;;
 ;; When you write a grammar, you typically want to seclude most
-;; productions: e.g. a rule A ::= B C | D
-;; would be like (seclude (either (then B C (feed a<-bc))
-;;                                (then D   (feed a<-d))))
+;; productions: e.g. for a rule A ::= B C | D
+;; you'd write (seclude (either (then B C (feed a<-bc))
+;;                              (then D   (feed a<-d))))
 ;;
 ;; But you needn't always seclude your productions: that'd be like
 ;; writing a recursive-descent parser without ever passing parameters
@@ -132,8 +132,8 @@
 ;; features, as long as the data only enters into semantics, not
 ;; syntactic predicates: instead of taking parameters, return a
 ;; closure that takes them, and instead of loop state, return a data
-;; structure for a later pass in code to deal with. These would be
-;; pretty annoying hacks to need for things as ordinary as parsing
+;; structure for a later pass in code to deal with. These hacks would
+;; be pretty annoying to need for things as ordinary as parsing
 ;; left-associative operators -- which in a recursive-descent parser
 ;; would be just a while-loop. In Parson it's equally simple: the
 ;; `many` combinator (below) of a non-secluded loop body. (Call it a
@@ -145,7 +145,7 @@
 (to (seclude p)
   (make seclude-p {extending peg-trait}
     (to (~ .parsing text far i vals)
-      ((p .parsing text far i '()) .prefix vals))))
+      ((p .parsing text far i '()) .preface vals))))
 
 ;; When (thunk) gets called, it must return a parser p. We don't call
 ;; it right away; instead (delay thunk) returns a parser that, the
