@@ -26,4 +26,7 @@
   (to (~ .down-thru n) (march<- me n -1))        ;; TODO just use .till with negative stride? or what?
   (to ~.+             (me .+ 1))
   (to ~.-             (me .- 1))
+  (to ~.number ;; TODO experimental. Worth it?
+    (hm (if (__char-digit? me) (- me #\0))
+        (else (oops "Not a number" me))))
   )
