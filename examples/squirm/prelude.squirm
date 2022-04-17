@@ -25,12 +25,12 @@
   (for foldr ((x xs) (ys '()))
     (chain (f x) ys)))
 
-(to (those ok? xs)
+(to (keep ok? xs)
   (for foldr ((x xs) (ys '()))
     (if (ok? x) (link x ys) ys)))
 
 (to (yeahs f xs)             ;TODO better name?
-  (those itself (each f xs)))
+  (keep itself (each f xs)))
 
 (to (foldl f z xs)
   (if (nil? xs)

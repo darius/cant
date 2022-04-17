@@ -26,4 +26,4 @@
   (for every ((point (area<- claim)))
     (= 1 (covered-area point))))
 
-(out .print `(the undisputed claims are ,(those undisputed? claims)))
+(out .print `(the undisputed claims are ,(keep undisputed? claims)))

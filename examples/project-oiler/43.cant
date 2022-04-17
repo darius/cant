@@ -9,7 +9,7 @@
 
 (let triples ((0 .thru 9) .k-permutations 3))
 (let tiles (~.array (for each ((p (link 1 (the-primes .prefix 7))))
-                      (for those ((triple triples))
+                      (for keep ((triple triples))
                         (p .divides? (count<-digits triple))))))
 
 (let solutions

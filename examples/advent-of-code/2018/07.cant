@@ -76,14 +76,14 @@
           (if (= n 0)
               (do (outbox .push! node)
                   (let new-nodes
-                    (sort (for those ((s (succs node)))
+                    (sort (for keep ((s (succs node)))
                             (surely (< 0 (pred-count s)))
                             (= 0 (pred-count .update s ~.-)))))
                   ;; let's assume assigning happens elsewhere for now
                   (working rest `(#no ,@ws2) (merge new-nodes jobs)))
               (working rest `((,node ,n) ,@ws2) jobs))))))
 
-  (let first-steps (sort (for those ((node nodes))
+  (let first-steps (sort (for keep ((node nodes))
                            (= 0 (pred-count node)))))
 
   (out .say "Second Workers Pending Done\n")

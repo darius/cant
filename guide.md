@@ -938,7 +938,7 @@ sake of any side effects.
 
 `(gather f '(a b c))` = `(chain (f 'a) (f 'b) (f 'c))`
 
-`(those ~.even? '(3 1 4 1 5 9 2 6))` = `'(4 2 6)`
+`(keep ~.even? '(3 1 4 1 5 9 2 6))` = `'(4 2 6)`
 
 `(some pass? xs)` = does `pass?` approve any `x` in `xs`?
 More precisely, the first non-`#no` result of `(pass? x)` for `x` in `xs`,

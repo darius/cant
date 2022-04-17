@@ -16,7 +16,7 @@
 
   (begin ((subject (ratio<- input)))
     ;; Look for a whole-number product, from left to right:
-    (may (those/lazy r-integer? (each/lazy (:: (r* subject it)) fractions))
+    (may (keep/lazy r-integer? (each/lazy (:: (r* subject it)) fractions))
       (be (? ~.none?) (integer<-ratio subject))  ; None, so we're done.
       (be products    (loop products.first)))))  ; Repeat with the first one found.
 

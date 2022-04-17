@@ -81,7 +81,7 @@
 ;; List n's divisors. Comes up a few times already in project-oiler, where the
 ;; naivest way to write it is too slow. I doubt it's really worth including here...
 (to (list-divisors n)
-  ;; (those (~ .divides? n) (1 .thru n))
+  ;; (keep (~ .divides? n) (1 .thru n))
   (hm (if (= n 1) '(1))
       (else
         (let powers (for each (((~ prime power) (run-encode (factor n))))

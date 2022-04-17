@@ -71,7 +71,7 @@
   (let start-effort {at 0 start-state})
 
   (to (keep-early efforts)
-    (for those (({at t state} efforts))
+    (for keep (({at t state} efforts))
       ;; TODO un-duplicate this:
       (may (bests .get state)
         (be #no

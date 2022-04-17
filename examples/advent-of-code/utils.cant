@@ -23,7 +23,7 @@
 ;; TODO is this worth it? sometimes what you want is the yeahs equivalent
 ;; TODO #no if not found?
 (to (detect keep? xs)
-  ((those/lazy keep? xs) .first))
+  ((keep/lazy keep? xs) .first))
 
 (to (duplicates<- xs)
   (let seen (set<-))

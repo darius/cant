@@ -71,7 +71,7 @@ insn:    :count ' ' :count ' ' :count ' ' :count '\n' :hug.
   (for each ((sample observations))
     (let `(,regs-pre (,op ,a ,b ,c) ,regs-post) sample)
     (let compatible-ops
-      (for those ((op-name all-op-names))
+      (for keep ((op-name all-op-names))
         (let vm (vm<- regs-pre.array))
         (vm .do op-name a b c)
         (<=> regs-post vm.get-regs.values)))

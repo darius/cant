@@ -126,7 +126,7 @@
                  (else
                    (sliding j.+)))))))
   (to (~ .remove x)
-    (those (:: (not= x it)) list))
+    (keep (:: (not= x it)) list))
   (to (~ .k-sets k)   ;; Ways to pick k of my elements. TODO lazy, map-trait version?
     ;; TODO k-sets and k-bags are lists, not sets or bags. How bad is this? Better ideas?
     ;; TODO document as a contract?: for all of these combinatorial .k-foo methods,

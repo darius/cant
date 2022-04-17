@@ -4,7 +4,7 @@
 (import (use 'memoize) memoize)
 
 (to (answer-for n)
-  (sum (those amicable? (1 .till n))))
+  (sum (keep amicable? (1 .till n))))
 
 (to (amicable? n)
   (and (< 1 n)     ;; 1 is annoying and obviously not amicable

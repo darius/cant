@@ -23,6 +23,6 @@
 
 (let triangle-numbers (scanl/lazy + 1 (iterate ~.+ 2)))
 
-(let highly-divisibles (for those/lazy ((n triangle-numbers))
+(let highly-divisibles (for keep/lazy ((n triangle-numbers))
                          (< 500 (count-divisors n))))
 (out .print highly-divisibles.first)

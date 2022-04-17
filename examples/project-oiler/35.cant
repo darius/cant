@@ -3,7 +3,7 @@
 (import (use 'factoring) list-primes-till prime?)
 
 (to (v1-answer max-ndigits)
-  (for those ((p (list-primes-till (10 .** max-ndigits))))
+  (for keep ((p (list-primes-till (10 .** max-ndigits))))
     (-> p.text rotations ~.rest (:: (every (compose prime? ~.number) it)))))
 
 ;; "abc" -> ("abc" "bca" "cab")

@@ -100,7 +100,7 @@ The worklist scheme is less likely to need backtracking.
     (let dir (tuple- new-pos already-pos)) ;TODO consider from which pov to define dir
     (let {oriented-tile _ _ edge-map} (grid already-pos))
     (let edge (edge-map dir))
-    (let candidates (for those (({oriented-tile tid _ _} (oriented-edge-map edge)))
+    (let candidates (for keep (({oriented-tile tid _ _} (oriented-edge-map edge)))
                       (remaining-tiles .maps? tid)))
     (place! new-pos candidates.only))
 

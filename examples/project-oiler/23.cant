@@ -14,11 +14,11 @@
 
 (to (answer)
   ;; Ported from Norvig's answer. Not too much slower than my longer one.
-  (let abundants (those abundant? (1 .till limit)))
+  (let abundants (keep abundant? (1 .till limit)))
   (let abundants-set abundants.range)
   (to (abundants-sum? k) ;; Can k (<= limit) be written as the sum of two abundant numbers?
     (for some ((a abundants))
       (abundants-set .maps? (- k a))))
-  (sum (those (compose not abundants-sum?) (1 .thru limit))))
+  (sum (keep (compose not abundants-sum?) (1 .thru limit))))
 
 (out .print (answer)) ;; 4179871

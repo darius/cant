@@ -7,12 +7,12 @@
 
   ;; Return a list of those rules with word on the rhs.
   (let lexical-rules
-    (memoize (on (word) (for those ((rule rules))
+    (memoize (on (word) (for keep ((rule rules))
                           (= rule.rhs word)))))
 
   ;; Return a list of those rules where cat starts the rhs.
   (let rules-starting-with
-    (memoize (on (cat) (those (~ .starts-with? cat) rules))))
+    (memoize (on (cat) (keep (~ .starts-with? cat) rules))))
 
   ;; Look for the categories needed to complete the parse.
   (to (extend-parse lhs rhs rest needed)
@@ -35,7 +35,7 @@
 
     ;; Return all complete parses of a list of words.
     (to (~ .parse words)
-      (each ~.tree (those ~.complete? (grammar .parse-prefixes words))))
+      (each ~.tree (keep ~.complete? (grammar .parse-prefixes words))))
 
     ;; Return all parses of any prefix of words (working bottom-up).
     (to (~ .parse-prefixes words)

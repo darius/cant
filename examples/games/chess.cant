@@ -189,7 +189,7 @@
       ((map<-values unparse-move board.get-moves) .get text))
 
     (to ~.gen-legal-moves
-      (for those ((move board.gen-piece-moves))
+      (for keep ((move board.gen-piece-moves))
         (not (~.checking? (update move board)))))
 
     (to ~.get-moves

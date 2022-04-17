@@ -22,7 +22,7 @@
   (let inserts    (for gather (((~ a b) splits))
                     (for each ((c alphabet))
                       (chain a c b))))
-  (let del-splits (for those (((~ a b) splits))
+  (let del-splits (for keep (((~ a b) splits))
                     b.some?))
   (let deletes    (for each (((~ a b) del-splits))
                     (chain a (b .from 1))))

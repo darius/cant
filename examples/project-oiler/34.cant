@@ -31,7 +31,7 @@
 ;; was sloppy heuristic thinking, not a proof.)
 ;; It turns out 5 digits are enough.
 
-;; (let answers (those curious? (10 .till (10 .** 5))))
+;; (let answers (keep curious? (10 .till (10 .** 5))))
 
 
 ;; A faster search, over unordered bags of factorial terms instead of over numbers:

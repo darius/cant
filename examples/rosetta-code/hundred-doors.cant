@@ -7,6 +7,6 @@
   (for each! ((stride doors))
     (for each! ((door (stride .thru 100 stride)))
       (open? .update door not)))
-  (those open? doors))
+  (keep open? doors))
 
 (out .print (doors-puzzle))

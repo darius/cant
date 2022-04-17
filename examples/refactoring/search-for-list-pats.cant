@@ -13,7 +13,7 @@
 
 (to (report-badness filename)
 ;;  (out .say "Checking ~d...\n" filename)
-  (may (those bad-expr? (with-input-file read-all filename))
+  (may (keep bad-expr? (with-input-file read-all filename))
     (be '() 'ok)
     (be top-level-bad-exprs
       (out .say "In ~d these top-level expressions harbor badness:\n" filename)

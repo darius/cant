@@ -4,7 +4,7 @@
 (to (answer5)
   (to (sum-of-digit5s n)
     (sum-by (~ .** 5) n.digits))
-  (for those ((n (2 .till 400000))) ;; We need to go somewhat higher than 10^5
+  (for keep ((n (2 .till 400000))) ;; We need to go somewhat higher than 10^5
     (= n (sum-of-digit5s n))))
 
 ;; Smarter approach from toddmowen's discussion post.

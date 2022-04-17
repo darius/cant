@@ -24,7 +24,7 @@
           ;; Fight a round.
           (attacking (map<-items (chain a1 a2)))
           (for each! (((~ army groups) armies.items))
-            (armies .set! army (those ~.alive? groups)))
+            (armies .set! army (keep ~.alive? groups)))
           
           (let counts-after (each tally armies.values))
           (if (= counts-before counts-after)

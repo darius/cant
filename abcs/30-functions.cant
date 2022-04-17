@@ -8,7 +8,7 @@
 ;;TODO this n-ary case is usually an error, complain? -- (yeahs maybe)
 (make yeahs {extending zipped-list-transducer}
   (to (~ maybe xs)
-    ;; Inlining of (those itself (each maybe xs))
+    ;; Inlining of (keep itself (each maybe xs))
     (for foldr ((x xs) (kept '()))
       (may (maybe x)
         (be #no  kept)
@@ -119,11 +119,11 @@
 
 ;; TODO zipped-list-transducer for the below?
 
-(to (those/lazy keep? xs)
+(to (keep/lazy keep? xs)
   (hm (if xs.none? '())
       (if (keep? xs.first)
-          (link/lazy xs.first (: (those/lazy keep? xs.rest))))
-      (else (those/lazy keep? xs.rest))))
+          (link/lazy xs.first (: (keep/lazy keep? xs.rest))))
+      (else (keep/lazy keep? xs.rest))))
 
 (to (each/lazy f xs)
   (hm (if xs.none? '())
@@ -144,7 +144,7 @@
          (: (foldr/lazy f xs.rest z-thunk)))))
 
 (to (yeahs/lazy maybe xs)
-  (those/lazy itself (each/lazy maybe xs)))
+  (keep/lazy itself (each/lazy maybe xs)))
 
 (to (scanl/lazy f z xs)
   (begin scanning ((z z) (xs xs))
@@ -301,9 +301,9 @@
   '(computational-setting read-all cant
 ;;    trace-sink
     intercalate compound-key<- yeahs where split-on itself 
-    those compose zip setting<-map
+    keep compose zip setting<-map
     link/lazier lazier<- 
-    those/lazy yeahs/lazy grid*/lazy
+    keep/lazy yeahs/lazy grid*/lazy
     foldr/lazy gather chain/lazy 
     each/lazy gather/lazy link/lazy scanl/lazy iterate
     array-by map-by !map-by map<-values text-by method<- ->

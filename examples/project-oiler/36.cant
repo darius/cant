@@ -6,7 +6,7 @@
 (to (v1-answer max-ndigits)
   (let limit (10 .** max-ndigits))
   ;; Only check odd numbers: in binary an even palindrome would have to start with 0
-  (those double-palindrome? (1 .till limit 2)))
+  (keep double-palindrome? (1 .till limit 2)))
 
 (to (double-palindrome? n)
   (and (palindrome? n.digits)
@@ -19,7 +19,7 @@
 ;; Faster way: enumerate palindromes in one base directly, and filter
 ;; for palindromes in the other base.
 (to (v2-answer max-ndigits)
-  (those double-palindrome? (gather list-decimal-palindromes (1 .thru max-ndigits))))
+  (keep double-palindrome? (gather list-decimal-palindromes (1 .thru max-ndigits))))
 
 (to (list-decimal-palindromes ndigits)
   ;; N.B. some results are 'palindromes' only if you count leading

@@ -54,7 +54,7 @@
       (+ p s)))
 
   (to (open-neighbors<- p)
-    (for those ((q (neighbors<- p)))
+    (for keep ((q (neighbors<- p)))
       (= (area q) #\.)))
 
   ;; A unit is a goblin or elf.
@@ -98,7 +98,7 @@
 
   (to (maybe-attack p)
     (let enemy (enemy<- (area p)))
-    (may (for those ((q (neighbors<- p)))
+    (may (for keep ((q (neighbors<- p)))
            (= enemy (area q)))
       (be '() #no)
       (be targets
