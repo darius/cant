@@ -32,7 +32,7 @@
 (to (derivative coeffs)
   (hm (if coeffs.none? '())
       (else (let n coeffs.count.-)
-            (each * (coeffs .first-n n) (n .down-thru 1)))))
+            (each * (coeffs .prefix n) (n .down-thru 1)))))
 
 ;; TODO: needs complex numbers, and some way to make it converge generally
 ;; TODO an interface that can fail (if constant polynomial, or no real root)

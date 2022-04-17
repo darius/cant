@@ -5,7 +5,7 @@
 (to (answer n)
 ;;  (let results (v1-list))
   (let results (v2-list))
-  (let prefix ((results .first-n n) .list))
+  (let prefix ((results .prefix n) .list))
   (out .print prefix)
   (sum prefix))
 
@@ -16,8 +16,8 @@
   (and (<= 10 p)
        (do (let pt p.text)
            (for every ((n (1 .till pt.count)))
-             (and (-> pt (~ .first-n n) ~.number prime?)
-                  (-> pt (~ .last-n n) ~.number prime?))))))
+             (and (-> pt (~ .prefix n) ~.number prime?)
+                  (-> pt (~ .suffix n) ~.number prime?))))))
 
 ;; Faster to grow truncatables separately in each direction, and intersect them.
 (to (v2-list)

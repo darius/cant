@@ -30,9 +30,9 @@
         (if list.none? '())
         (if (= i 0) (link list.first (list.rest .from 0 bound.-)))
         (else (list.rest .from i.- bound.-))))
-  (to (~ .first-n n)  ; TODO better names?
+  (to (~ .prefix n)  ; TODO better names?
     (list .from 0 n))
-  (to (~ .last-n n)   ; TODO better names? I'd like (~ .suffix n), except it suggests an index instead of a length
+  (to (~ .suffix n)   ; TODO better names? might suggest an index instead of a length
     (list .from (- list.count n)))
   (to (~ .compare xs)
     ;; N.B. mutable arrays compare by this method, so it's really a comparison as of right now

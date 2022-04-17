@@ -24,7 +24,7 @@
         ;; TODO heap-based n-largest function
         (-> (sort-by (~ .part 1) !map.items)
             reverse
-            (if n (~ .first-n n) itself)))
+            (if n (~ .prefix n) itself)))
       ;; XXX fill in rest of bag interface (just the map interface, I guess)
       (to (~ .selfie sink)
         (sink .display "#<bag (")

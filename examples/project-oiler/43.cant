@@ -8,7 +8,7 @@
 ;; from the leftward neighbors, but that was actually a bit slower.
 
 (let triples ((0 .thru 9) .k-permutations 3))
-(let tiles (~.array (for each ((p (link 1 (the-primes .first-n 7))))
+(let tiles (~.array (for each ((p (link 1 (the-primes .prefix 7))))
                       (for those ((triple triples))
                         (p .divides? (count<-digits triple))))))
 
