@@ -1,5 +1,5 @@
 (import (use 'memoize) memoize)
-(import (use 'parson-core) feed take-1)
+(import (use 'parson-core) feed keep-1)
 (let parson (use 'parson))
 (import parson grammar<- like)
 

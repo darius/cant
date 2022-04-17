@@ -1,6 +1,6 @@
 (import (use 'parson-core)
   either then feed-list feed delay
-  skip-1 take-1 any-1 skip-any-1 lit-1 lit
+  skip-1 keep-1 any-1 skip-any-1 lit-1 lit
   ;; Still untested:
   push fail empty)
 
@@ -37,7 +37,7 @@
     (then __
           (either (then (lit-1 #\() __ subexpr.many (lit-1 #\)) __
                         hug)
-                  (then (take-1 ~.letter?) (~.many (take-1 ~.alphanumeric?)) __
+                  (then (keep-1 ~.letter?) (~.many (keep-1 ~.alphanumeric?)) __
                         (feed (compose ~.symbol chain))))))))
 
 (try sexpr "")

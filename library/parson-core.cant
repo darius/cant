@@ -236,7 +236,7 @@
 
 ;; Like (skip-1 ok?), but appending the one-element sequence (one-rune
 ;; subtext) to the vals.
-(to (take-1 ok?)
+(to (keep-1 ok?)
   (grab (skip-1 ok?)))
 
 (let any-1 (grab skip-any-1))
@@ -278,5 +278,5 @@
 (export peg-trait
         fail empty nix grab either then seclude delay match position
         dynamic alter feed-list feed drop push
-        peek seek skip-1 skip-any-1 end take-1 any-1 lit-1 lit
+        peek seek skip-1 skip-any-1 end keep-1 any-1 lit-1 lit
         maybe many at-least-1)
