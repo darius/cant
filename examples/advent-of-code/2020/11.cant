@@ -30,8 +30,8 @@
 (to (same? (~ e1 o1) (~ e2 o2))
   (and (= e1.count e2.count)
        (= o1.count o2.count)
-       (for every ((k e1.keys)) (e2 .maps? k))
-       (for every ((k o1.keys)) (o2 .maps? k))))
+       (e1 .subset-of? e2)
+       (o1 .subset-of? o2)))
 
 (to (part1)
   (begin stepping ((grid grid0) (n 1))
