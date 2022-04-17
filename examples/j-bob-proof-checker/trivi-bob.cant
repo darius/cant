@@ -439,7 +439,7 @@
 (to (formals? x)
   (and (list? x)
        (every symbol? x)
-       x.invertible?))
+       x.distinct?))
 
 (to (parse-e xe)
   (may xe

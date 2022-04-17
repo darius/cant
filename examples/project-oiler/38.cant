@@ -26,7 +26,7 @@
   (let base (count<-digits base-digits))
   (begin building ((i 2) (prefix base-digits))
     (and (not (prefix .find? 0))
-         prefix.invertible?
+         prefix.distinct?
          (may (compare prefix.count 9)
            (be '> #no)
            (be '= prefix)

@@ -66,8 +66,8 @@
         (oops ".inverse of noninvertible map" map))  ; or just allow it?
       (inverse .set! v k))
     inverse)
-  (to ~.invertible? ;TODO better name? e.g. you'd say an invertible list has 'distinct' elements
-    (= map.count map.range.count))
+  (to ~.distinct? ;TODO better name? .invertible?
+    (= map.count map.range.count))      ;TODO more efficient
   (to ~.list
     (each map map.count.till))
   (to ~.text
