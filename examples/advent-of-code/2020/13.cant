@@ -5,7 +5,7 @@
 
 (to (part1)
   (let buses (yeahs ~.?number second-line))
-  (for some ((n id.march))
+  (for some ((n id.and-up))
     (let good-buses (keep/lazy (~ .divides? n) buses))
     (and good-buses.some?
          (* good-buses.first (- n id)))))

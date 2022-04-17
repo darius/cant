@@ -21,7 +21,7 @@
   (surely (= (count-divisors n)
              (~.count (list-divisors n)))))
 
-(let triangle-numbers (scanl/lazy + 1 (2 .march)))
+(let triangle-numbers (scanl/lazy + 1 (2 .and-up)))
 
 (let highly-divisibles (for keep/lazy ((n triangle-numbers))
                          (< 500 (count-divisors n))))

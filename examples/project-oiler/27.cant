@@ -21,7 +21,7 @@
     (and (< 0 n) (prime? n))))
 
 (to (poly-values f)
-  (each/lazy f (0 .march)))
+  (each/lazy f (0 .and-up)))
 
 (to ((quadratic a b) n)
   (+ b (* n (+ a n))))
