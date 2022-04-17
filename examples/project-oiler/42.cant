@@ -12,7 +12,7 @@
                       (- rune (- #\A 1)))))
 
 (to (triangle-number? n)
-  ((~ .find? n) (take-while (:: (<= it n))
+  ((~ .find? n) (keep-while (:: (<= it n))
                             triangle-numbers)))
 
 (let triangle-numbers (scanl/lazy + 1 (iterate ~.+ 2)))

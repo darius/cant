@@ -35,8 +35,8 @@
 (to (list-truncatables extend)
   (to (grow seeds)
     (those prime? (each (:: (extend @it)) (grid* seeds (1 .thru 9)))))
-  (let batches (take-while/lazy ~.some? (iterate grow '(2 3 5 7))))
-  ;; (The take-while isn't needed for our final answer, but helpful in
+  (let batches (keep-while/lazy ~.some? (iterate grow '(2 3 5 7))))
+  ;; (The keep-while isn't needed for our final answer, but helpful in
   ;; development so we don't hang once the truncatables run out.)
   (gather/lazy sort batches.rest))
 

@@ -30,7 +30,7 @@
     (and (<= 2 n)
          (if (= (xs 0) (xs 1))
              (or (not= (xs 0) (xs .get 2))
-                 (do (let rest (drop-while (:: (= it xs.first)) xs.rest))
+                 (do (let rest (skip-while (:: (= it xs.first)) xs.rest))
                      (only-doubled? rest rest.count)))
              (only-doubled? xs.rest n.-))))
   (tally-by valid? (march<- @inputs)))

@@ -17,7 +17,7 @@
     (~.count (initial-primes (poly-values (quadratic @pair))))))
 
 (to (initial-primes ns)
-  (for take-while ((n ns))
+  (for keep-while ((n ns))
     (and (< 0 n) (prime? n))))
 
 (to (poly-values f)

@@ -14,7 +14,7 @@
 ;; Visited blank squares are symbolized as '-'.
 
 (to (run machine @(optional option))
-  (let history (take-while yeah? (iterate step machine)))
+  (let history (keep-while yeah? (iterate step machine)))
   (when (= option 'loudly)
     (for each! ((machine history))
       (show-config machine)

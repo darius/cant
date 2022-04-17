@@ -4,7 +4,7 @@
 ;; TODO lots of things
 
 (to (polynomial<- coeffs)
-  (drop-while (:: (= it 0)) coeffs))
+  (skip-while (:: (= it 0)) coeffs))
 
 ;; Readable text for a polynomial, like "2x^2 + 42".
 ;; TODO like " - 5x" instead of " + -5x"
