@@ -550,6 +550,10 @@
           (to ~.first (~ i xs.first))
           (to ~.rest  (enumerate xs.rest i.+))))))
 
+;; TODO is this the most useful version of this idea?
+(to (iterate f x)
+  (link/lazy x (: (iterate f (f x)))))
+
 (to (text<- @runes)
   (text<-list runes))
 

@@ -65,6 +65,8 @@
                           (converting q moduli.rest (link r result))))))
           (else (oops "Bad base" base))))
     (if min-length (digits .pad-left min-length 0) digits))
+  (to ~.march  ;; TODO better name .march-up ?
+    (iterate ~.+ me)) ;; TODO march<- ought to support the infinite
   (to ~.! ;; factorial
     (surely (count? me))  ;; TODO gamma function
     (foldl * 1 (1 .thru me)))

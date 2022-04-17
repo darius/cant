@@ -15,6 +15,6 @@
   ((~ .find? n) (keep-while (:: (<= it n))
                             triangle-numbers)))
 
-(let triangle-numbers (scanl/lazy + 1 (iterate ~.+ 2)))
+(let triangle-numbers (scanl/lazy + 1 (2 .march)))
 
-(out .print (answer))
+(out .print (answer)) ;; 162
