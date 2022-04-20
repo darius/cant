@@ -2,7 +2,7 @@
 
 (to (test regex n)
   (let r (regex-parse regex))
-  (out .say "~d (~w)\n~d\n" regex n ("-" .repeat regex.count))
+  (out .say "~d (~w)\n~d\n" regex n (text-by (:: "-") regex))
   (let Ns ((0 .thru n) .range))
   (for each! ((text (regex-generate r Ns)))
     (out .say "~w\n" text))
