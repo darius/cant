@@ -71,6 +71,7 @@
 
 (((loud-use "../examples/brainfuck/brainfuck") 'main) '(ignore))
 
+(loud-use "../examples/coding-theory/hamming-codes")
 (loud-use "../examples/coding-theory/lzw-compression")
 
 (loud-use "../examples/exercises-and-puzzles/max-path-sum")

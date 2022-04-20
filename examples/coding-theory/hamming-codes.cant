@@ -65,12 +65,6 @@
 (to (bit? x)
   (and (count? x) (<= x 1)))
 
-;; TODO number methods worth adding:
-;; n .bit k
-;; n .bitfield k length
-;; also corresponding update methods? sigh.
-;; how about just a method to convert a number to a virtual map (a bitarray), and vice versa?
-
 
 ;; Smoke test
 
@@ -121,7 +115,3 @@
     ))
 
 (test-exhaustively)
-
-
-;; TODO:
-;; - run this file in the regular automated test
