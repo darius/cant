@@ -93,7 +93,7 @@
   (if (special? x) (green x) x))
 
 (to (move<-key digit-rune)
-  (- #\9 digit-rune))
+  (- #\9 digit-rune)) ;; (See the comment below on the bit numbering)
 
 
 ;; 'AI' players
@@ -140,6 +140,7 @@
 ;; {grid p q}: p's bits for the player to move, q's for the other player.
 ;; The bits are 1 for an occupied square, 0 for empty.
 ;; The 3 least-significant bits are the bottom row; next 3 are middle; then top.
+;; (This means the UI's squares 1..9 are internally numbered as bits 8..0.)
 
 (let empty-grid {grid 0 0})
 
