@@ -11,7 +11,7 @@
 
 ;; An array of texts, one per screen row.
 (to (display-buffer<-)
-  (-> '("") (~ .repeat rows) ~.array))
+  (array<-count rows ""))
 
 ;; Return text representing rune at column x.
 (to (render-rune rune x)  ;TODO make this a rune method?
