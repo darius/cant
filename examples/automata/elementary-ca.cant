@@ -21,7 +21,6 @@
 ;; for the given-numbered one.
 (to (rule<-index n)
   (on (left center right)
-    (let i (+ (* left 4) (* center 2) right))
-    ((n .>> i) .and 1)))
+    (n .bit (+ (* left 4) (* center 2) right))))
 
 (run (rule<-index 110) '(1) 30)
