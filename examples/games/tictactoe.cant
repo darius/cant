@@ -180,7 +180,7 @@
 
 ;; Convert from a list of 0/1 to a list of #no/mark (mark will be X or O).
 (to (mask mark bits)
-  (each `(#no ,mark) bits))
+  (each [#no mark] bits))
 
 (to (show {grid p q} @(optional ?spaces))
   (let marks (player-marks {grid p q}))
