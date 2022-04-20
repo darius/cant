@@ -143,9 +143,8 @@
 
 (let empty-grid {grid 0 0})
 
-(to (player-bits bits)
-  (for each ((i (8 .till 0 -1))) ;;TODO .till being inclusive here is ugly
-    (1 .and (bits .>> i))))
+(to (player-bits p)
+  (p .digits 2 9)) ;; base-2 expansion, length 9
 
 (to (won? {grid p q})
   (for some ((way ways-to-win))
