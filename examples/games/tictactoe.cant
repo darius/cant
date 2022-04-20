@@ -178,17 +178,17 @@
       "XO"
       "OX"))
 
+;; Convert from a list of 0/1 to a list of #no/mark (mark will be X or O).
+(to (mask mark bits)
+  (each `(#no ,mark) bits))
+
 (to (show {grid p q} @(optional ?spaces))
   (let marks (player-marks {grid p q}))
-  ;; TODO: could become a 'map union' operation on the lists
-  (let values (for each ((slot (zip (player-bits p)
-                                    (player-bits q)
-                                    (or ?spaces ("." .repeat 9)))))
-                (may slot
-                  (be (~ 1 0 _) (marks 0))
-                  (be (~ 0 1 _) (marks 1))
-                  (be (~ 0 0 s) s))))
-  (grid-format .format @values))
+  (let squares (for each ((mover (mask (marks 0) (player-bits p)))
+                          (other (mask (marks 1) (player-bits q)))
+                          (empty (or ?spaces ("." .repeat 9))))
+                 (or mover other empty)))
+  (grid-format .format @squares))
 
 (let grid-format ("\n" .join ('(" ~d ~d ~d") .repeat 3)))
 
