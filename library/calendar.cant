@@ -28,7 +28,7 @@
 
 (to (leap-year? y)
   (surely (ok-year? y))
-  (4 .divides? y))
+  (y .even? 4))
 
 (to (day<-date {date y m d})
   (surely (ok-year? y))

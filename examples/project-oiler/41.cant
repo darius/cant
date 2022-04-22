@@ -4,9 +4,9 @@
 (import (use "utils") permuter<-)
 
 (to (answer)
-  (for some ((nd (9 .down-thru 1))) ;; n digits
-    (and (not (3 .divides? (sum (1 .thru nd)))) ;; Skip 'obvious' multiples of 3
-         (find-largest-prime nd))))
+  (some find-largest-prime
+        (for skip ((nd (9 .down-thru 1))) ;; n digits
+          ((sum (1 .thru nd)) .even? 3)))) ;; Skip 'obvious' multiples of 3
   
 (to (find-largest-prime nd)
   ;; List permutations of 1..nd in decreasing order; return the first good one.

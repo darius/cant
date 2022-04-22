@@ -155,7 +155,7 @@
     (hm (when (= rune #\tab)
           (begin padding ()
             (r .push! #\space)
-            (unless (8 .divides? r.count)
+            (unless (r.count .even? 8)
               (padding))))
         (when (< rune #\space)
           (r .push! #\space))

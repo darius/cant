@@ -52,7 +52,7 @@
   (let pc pattern.count)
   (out .say "pattern: ~w\n" pattern)
   (begin working ((i 0))
-    (when (1000 .divides? i)
+    (when (i .even? 1000)
       (out .say "working ~w\n" i))
 ;    (show)
     (begin checking ((j i))

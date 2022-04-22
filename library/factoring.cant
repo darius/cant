@@ -60,7 +60,7 @@
   (if (= n 1)
       '()
       (begin trying ((n n) (p the-primes.first) (primes the-primes.rest))
-        (if (p .divides? n)
+        (if (n .even? p)
             (link p (if (= p n)
                         '()
                         (trying (n .quotient p) p primes)))
@@ -74,7 +74,7 @@
            (known-primes .maps? n)
            (begin trying ((primes the-primes))
              (let p primes.first)
-             (hm (if (= 0 (n .modulo p)) #no)
+             (hm (if (n .even? p) #no)
                  (if (< (p .** 2) n) (trying primes.rest))
                  (else #yes))))))
 
@@ -109,7 +109,7 @@
     (if (= n 1)
         '()
         (begin trying ((d 2) (n n))
-          (if (d .divides? n)
+          (if (n .even? d)
               (link d (if (= d n) '() (trying d (n .quotient d))))
               (trying d.+ n)))))
 

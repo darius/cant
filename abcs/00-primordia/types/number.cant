@@ -22,11 +22,11 @@
   (to (~ .down-thru n) (march<- me n -1))        ;; TODO just use .till with negative stride? or what?
   (to ~.+              (__+ me 1))
   (to ~.-              (__- me 1))
-  (to ~.even?          (surely (integer? me)) (= 0 (me .modulo 2)))
-  (to ~.odd?           (surely (integer? me)) (not= 0 (me .modulo 2)))
-  (to (~ .divides? b)  (surely (integer? me)) (= 0 (b .modulo me)))
   (to (~ .** b)        (expt me b))
-  (to (~ .power-of b)  (expt b me))
+  (to ~.even?          (surely (integer? me)) (= 0 (__modulo me 2)))
+  (to (~ .even? b)     (surely (integer? me)) (= 0 (__modulo me b)))
+  (to ~.odd?           (surely (integer? me)) (not= 0 (__modulo me 2)))
+  (to (~ .odd? b)      (surely (integer? me)) (not= 0 (__modulo me b)))
   (to ~.sqrt           (sqrt me))
   (to ~.floor          (floor me))
   (to ~.ceiling        (ceiling me))
@@ -38,8 +38,6 @@
                          (be '< -1)
                          (be '=  0)
                          (be '>  1)))
-  (to ~.negative?      (< me 0))
-  (to ~.positive?      (< 0 me))
   (to ~.exp            (exp me))
   (to ~.ln             (log me))  ;; TODO better name?
   (to (~ .log base)    (log me base))
@@ -74,8 +72,12 @@
     (surely (count? me))
     (surely (count? k))
     (me.! .quotient (* k.! ((- me k) .!))))  ;; TODO more efficient code
+  (to ~.negative?      (< me 0))
+  (to ~.positive?      (< 0 me))
   (to (~ .bit i)
     ((me .>> i) .and 1))
+  (to (~ .divides? b)  (surely (integer? me)) (= 0 (__modulo b me)))
+  (to (~ .power-of b)  (expt b me))
   ;; XXX sketchy support for 32-bit word ops:
   (to (~ .u+ a)        (__u+ me a))
   (to (~ .u- a)        (__u- me a))
