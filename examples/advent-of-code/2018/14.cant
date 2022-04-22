@@ -17,10 +17,10 @@
   (board (coord elf)))
 
 (to (coord elf)
-  (elf .modulo board.count))
+  (board .ity elf))
 
 (to (digits<- n)
-  (each (:: it.text.number) n.text))
+  (each ~.number n.text))
 
 (to (part-1)
   (let limit (+ input 10))

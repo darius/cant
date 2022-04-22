@@ -33,7 +33,7 @@ Press Tab to cycle to the next game, Esc to quit.")
     (may key
       (be 'esc)
       (be #\tab
-        (playing (level.+ .modulo games.count)))
+        (playing (games .ity level.+)))
       (be #\space
         game.toggle-mark!
         (playing level))

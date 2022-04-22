@@ -76,8 +76,8 @@ Level ~w ~d Move ~w")
 
     (may get-key.lowercase
       (be #\q 'done)
-      (be #\n (playing (level.+ .modulo trails.count)))
-      (be #\p (playing (level.- .modulo trails.count)))
+      (be #\n (playing (trails .ity level.+)))
+      (be #\p (playing (trails .ity level.-)))
       (be #\u
         (when trail.plural?
           trail.pop!)

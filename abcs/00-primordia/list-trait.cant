@@ -193,5 +193,7 @@
     (unless list.rest.none?
       (oops "Tried to .only from count >1" list))
     list.first)
+  (to (~ .ity i) ;; Wrap index i around into my domain
+    (list.count .ity i))
   (to message
     (map-trait list message)))

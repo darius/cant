@@ -1,7 +1,7 @@
 ;; The classic interview problem.
 
 (for each! ((n (1 .thru 30)))
-  (out .displayln (may [(n .modulo 3) (n .modulo 5)]
+  (out .displayln (may [(3 .ity n) (5 .ity n)]
                     (be [0 0] "FizzBuzz")
                     (be [0 _] "Fizz")
                     (be [_ 0] "Buzz")

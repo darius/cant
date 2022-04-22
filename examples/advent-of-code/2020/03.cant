@@ -10,7 +10,7 @@
     (may (input .get y)
       (be #no ntrees)
       (be row
-        (let tree? (= #\# (row (x .modulo row.count))))
+        (let tree? (= #\# (row (row .ity x))))
         (sliding (+ x dx) (+ y dy) (+ ntrees tree?.count))))))
 
 (to (part2)

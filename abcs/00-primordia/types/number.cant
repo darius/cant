@@ -76,6 +76,7 @@
   (to ~.positive?      (< 0 me))
   (to (~ .bit i)
     ((me .>> i) .and 1))
+  (to (~ .ity b)       (surely (integer? me)) (__modulo b me))
   (to (~ .divides? b)  (surely (integer? me)) (= 0 (__modulo b me)))
   (to (~ .power-of b)  (expt b me))
   ;; XXX sketchy support for 32-bit word ops:

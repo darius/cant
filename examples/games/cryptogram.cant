@@ -77,7 +77,7 @@
                             (tally-by ~.letter? line)))))
 
   (to (shift-by offset)
-    (point .^= ((+ point.^ offset) .modulo code.count)))
+    (point .^= (code .ity (+ point.^ offset))))
 
   (to (shift-till offset stop?)
     (shift-by offset)
