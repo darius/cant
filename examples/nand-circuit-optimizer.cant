@@ -61,12 +61,11 @@
   ;; element per circuit input. Transposed is the most useful form
   ;; because we can compute all test cases in parallel with bitwise
   ;; operators.
-  (if (= n 0)
-      '()
-      (do (let shift (1 .<< n.-))
-          (link (- (1 .<< shift) 1)
-                (for each ((iv (tabulate-inputs n.-)))
-                  (iv .or (iv .<< shift)))))))
+  (hm (if (= n 0) '())
+      (else (let shift (1 .<< n.-))
+            (link (- (1 .<< shift) 1)
+                  (for each ((iv (tabulate-inputs n.-)))
+                    (iv .or (iv .<< shift)))))))
 
 
 (superopt "0110" 3)

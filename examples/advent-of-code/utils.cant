@@ -28,13 +28,14 @@
 (to (duplicates<- xs)
   (let seen (set<-))
   (begin looking ((xs xs))
-    (if xs.none?
-        '()
-        (do (let x xs.first)
-            (if (seen .maps? x)
-                (link/lazy x (: (looking xs.rest)))
-                (do (seen .add! x)
-                    (looking xs.rest)))))))
+    (hm (if xs.none?
+          '())
+        (let x xs.first)
+        (if (seen .maps? x)
+          (link/lazy x (: (looking xs.rest))))
+        (else
+          (seen .add! x)
+          (looking xs.rest)))))
 
 (to (deletions<- t)
   (for each ((i t.count.-.till))
