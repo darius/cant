@@ -12,8 +12,7 @@
   (wrap-into (flexarray<-) (parse-tokens text) width))
 
 (to (parse-tokens text)
-  (if text.none?
-      '()
+  (hm (if text.none? '())
       (may text.first
         (be #\newline (link {break} (parse-tokens text.rest)))
         (be #\space   (link {space} (parse-tokens text.rest)))
@@ -29,18 +28,19 @@
 
 (to (wrap-into line tokens width)
   (begin scanning ((spaces 0) (tokens tokens))
-    (if tokens.none?
-        (if line.none? '() `(,line.text))
+    (hm (if tokens.none?
+            (if line.none? '() `(,line.text)))
         (may tokens.first
           (be {space}
             (scanning spaces.+ tokens.rest))
           (be {break}
             (link line.text (wrap-into (flexarray<-) tokens.rest width)))
           (be {word w}
-            (if (<= (+ line.count spaces w.count) width)
-                (do (line .extend! (chain (" " .repeat spaces) w))
-                    (scanning 0 tokens.rest))
-                (link line.text
-                      (wrap-into (flexarray<-list w) tokens.rest width))))))))
+            (hm (when (<= (+ line.count spaces w.count) width)
+                  (line .extend! (chain (" " .repeat spaces) w))
+                  (scanning 0 tokens.rest))
+                (else
+                  (link line.text
+                        (wrap-into (flexarray<-list w) tokens.rest width)))))))))
 
 (export fill wrap)
