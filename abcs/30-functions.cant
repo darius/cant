@@ -263,6 +263,7 @@
 ;; Inverse to number.digits method.
 ;; TODO mirror all the number.digits features
 ;; TODO what about signed numbers, non-integers...? Is this whole thing misconceived?
+;; TODO check that all digits are valid?
 (to (count<-digits digits @(optional base))
   (let b (or base 10))
   (for foldl ((total 0) (digit digits))
