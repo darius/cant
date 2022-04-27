@@ -7,10 +7,10 @@
 
 (let infinity 999999)  ;; N.B. we don't have floats yet
 
-(make none)  ;; Disjoint from all the values of constants.
+(make nil)  ;; Disjoint from all the values of constants.
 
 (to (constant<- value)
-  (surely (not= value none) "That can't be a constant value -- it's reserved")
+  (surely (not= value nil) "That can't be a constant value -- it's reserved")
   (make
     (to ~.rank            infinity)
     (to ~.constant-value  value)
@@ -21,7 +21,7 @@
   (surely (< rank infinity))
   (make choice
     (to ~.rank            rank)
-    (to ~.constant-value  none)
+    (to ~.constant-value  nil)
     (to (~ .evaluate env) ((branches (env rank)) .evaluate env))
     (to ~.branches        branches)
     (to (~ @nodes)        (hm (if nodes.unique?
@@ -66,14 +66,15 @@
 (to (satisfy node goal)
   (let env (!map<-))
   (begin walking ((node node))
-    (if (not= none node.constant-value)
+    (if (not= nil node.constant-value)
         (and (= goal node.constant-value)
              env)
         (for foldr/lazy (((~ value branch) node.branches.items)
                          (try-remaining-branches (: #no)))
-          (if (`(,none ,goal) .find? branch.constant-value)
-              (do (env .set! node.rank value)
-                  (walking branch))
-              (try-remaining-branches))))))
+          (hm (when (`(,nil ,goal) .find? branch.constant-value)
+                (env .set! node.rank value)
+                (walking branch))
+              (else
+                (try-remaining-branches)))))))
 
 (export constant<- variable<- satisfy valid?)

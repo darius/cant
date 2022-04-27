@@ -80,6 +80,7 @@
     (let rest list.rest)
     (if rest.none? '() (link list.first rest.but-last)))
   (to (~ .prefix? p)
+    ;; TODO return p.count on success?
     (= (list .from 0 p.count) p))   ;TODO more efficient
   (to (~ .repeat n)
     ;;TODO a method to get an empty seq of my type; and then factor out duplicate code

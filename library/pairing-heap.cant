@@ -48,8 +48,8 @@
   (to (pq-merge2 pq1 pq2)
     (hm (if (pq-empty? pq1) pq2)
         (if (pq-empty? pq2) pq1)
-        (do (let {pq min1 rest1} pq1)
-            (let {pq min2 rest2} pq2))
+        (let {pq min1 rest1} pq1)
+        (let {pq min2 rest2} pq2)
         (if (<=? min1 min2)
             {pq min1 (link pq2 rest1)})
         (else
