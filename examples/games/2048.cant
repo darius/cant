@@ -119,7 +119,7 @@
     (let j i.+)
     (hm (when (<= 4 j)
           `(4 ,row)) ; There was no space or coincidence to slide into.
-        (do (let same? (= (row i) (row j))))
+        (let same? (= (row i) (row j)))
         (when (= same? (= (row i) 0))
           (checking j))
         (else ; Found one, let's slide:

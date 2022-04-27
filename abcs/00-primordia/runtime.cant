@@ -70,7 +70,7 @@
         (to (occupants)
           (begin walking ((i (- (capacity) 1)))
             (hm (if (< i 0)       '())
-                (do (let k (keys.^ i)))
+                (let k (keys.^ i))
                 (if (= k none)    (walking i.-))
                 (if (= k deleted) (walking i.-))
                 (else             (link i (walking i.-))))))

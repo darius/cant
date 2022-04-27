@@ -107,7 +107,7 @@
   (begin walking ((node node))
     (hm (when (<= node lit1)
           (and (= node goal-node) env))
-        (do (let if0 (if0s node)))
+        (let if0 (if0s node))
         (when (or (< lit1 if0) (= if0 goal-node))
           (env .set! (ranks node) 0)
           (walking if0))

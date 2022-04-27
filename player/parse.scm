@@ -394,6 +394,7 @@
                '(oops "Fell off the end of 'hm'")) ;XXX hygiene
               ((__ ('else . es))          `(do ,@es))
               ((__ ('do . es) . clauses)  `(do ,@es (hm ,@clauses)))
+              ((__ ('let . es) . clauses) `(do (let ,@es) (hm ,@clauses)))
               ((__ ('and . es) . clauses) `(and ,@es (hm ,@clauses)))
               ((__ ('or . es) . clauses)  `(or ,@es (hm ,@clauses)))
               ((__ ('if e e1) . clauses)  `(if ,e ,e1 (hm ,@clauses)))

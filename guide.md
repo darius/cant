@@ -320,7 +320,7 @@ besides `if`: (from
   (begin scanning ((i me.count))
     (hm (when (= i 0)
           "")
-        (do (let c (me i.-)))
+        (let c (me i.-))
         (unless c.whitespace?
           (me .from 0 i))
         (else (scanning i.-)))))
@@ -340,7 +340,7 @@ corresponding to Scheme
 I considered making `hm` a naively structural macro which would unnest
 any kind of form of its arguments. But that would be more
 error-prone. Instead it complains if any of the subforms is not syntax
-it knows about: `if`, `when`, `unless`, `do`, `may`, `and`, `or`, or `else`. If
+it knows about: `if`, `when`, `unless`, `let`, `do`, `may`, `and`, `or`, or `else`. If
 there's no `else` clause, then running off the end will cause a
 runtime error: so you'll occasionally see code like (from
 [examples/nand-circuit-optimizer.cant](https://github.com/darius/cant/blob/master/examples/nand-circuit-optimizer.cant))

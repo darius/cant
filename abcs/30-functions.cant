@@ -239,14 +239,14 @@
 
 (to (keep-while prefix? xs)             ;TODO as list/text method?
   (hm (if xs.none? '())
-      (do (let x xs.first))
+      (let x xs.first)
       (if (prefix? x)
           (link x (keep-while prefix? xs.rest)))
       (else '())))
   
 (to (keep-while/lazy prefix? xs)
   (hm (if xs.none? '())
-      (do (let x xs.first))
+      (let x xs.first)
       (if (prefix? x)
           (link/lazy x (: (keep-while/lazy prefix? xs.rest))))
       (else '())))

@@ -85,7 +85,7 @@
     (begin stepping ((q (vector+ p dp)) (places '()))
       (hm (if (empties .maps? q) (link q places))
           (if (occupied .maps? q) (link q places))
-          (do (let `(,x ,y) q))
+          (let `(,x ,y) q)
           (if (< x 0) places)
           (if (= x ncols) places)
           (if (< y 0) places)

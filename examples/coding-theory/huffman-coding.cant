@@ -42,7 +42,7 @@
 (to (decode root bits)
   (begin stepping ((tree root) (bits bits))
     (hm (if bits.none? '())
-        (do (let {branch @subtrees} tree))
+        (let {branch @subtrees} tree)
         (may (subtrees bits.first)
           (be {leaf symbol} (link symbol (stepping root bits.rest)))
           (be subtree       (stepping subtree bits.rest))))))
