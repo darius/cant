@@ -18,7 +18,7 @@
                  (checking xs.first xs.rest))))))
 
 (to (sort-by key<- sequence)
-  ;; Merge sort
+  ;; Merge sort  (TODO make stable)
   (begin sorting ((seq sequence))
     (begin splitting ((seq seq) (xs '()) (ys '()))
       (hm (if seq.some? (splitting seq.rest ys (link seq.first xs)))
