@@ -162,6 +162,9 @@
             (let value (f (!map key)))  ;TODO what about a (!map .get key) version? how to factor this?
             (!map .set! key value)
             value)
+          (to (~ .merge! other-map)   ;TODO better name?
+            (for each! (((~ k v) other-map.items))
+              (!map .set! k v)))
           (to (~ .selfie sink)
             (sink .display "#<!map (")
             (sink .write count.^)
