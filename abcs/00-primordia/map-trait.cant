@@ -74,6 +74,8 @@
     (text<-list map.list))
   (to ~.array
     (array-by map map.count))
+  (to ~.map
+    (map<-items map.items.list))
 
   (to (~ .sample-key chaos)
     (map.keys .sample-value chaos))
