@@ -156,8 +156,6 @@
             (count .^= 0)
             (keys .^= [none])
             (vals .^= [#no]))
-          (to ~.copy
-            (!map<-items !map.items))
           (to (~ .update key f)         ;TODO define in a mutable-map-trait ?
             (let value (f (!map key)))  ;TODO what about a (!map .get key) version? how to factor this?
             (!map .set! key value)
