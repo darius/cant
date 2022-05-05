@@ -43,25 +43,24 @@
   (begin compiling ((frames '()) (tokens tokens))
     (hm (when tokens.none?
           (surely frames.none?))      ;XXX require
-        (else
-          (may tokens.first
-            (be (? number? n)
-              (code .push! (push<- n))
-              (compiling frames tokens.rest))
-            (be '<<
-              (let (~ locals tail)
-                (split-on (:: (= it '--)) tokens.rest))
-              (code .push! (grab<- locals.count))
-              (compiling (link (reverse locals) frames)
-                         tail.rest))
-            (be '>>
-              (surely frames.some?) ;XXX require
-              (code .push! (ungrab<- frames.first.count))
-              (compiling frames.rest tokens.rest))
-            (be (? symbol? word)
-              (code .push! (or (compile-local frames word)
-                               (dictionary word)))
-              (compiling frames tokens.rest))))))
+        (may tokens.first
+          (be (? number? n)
+            (code .push! (push<- n))
+            (compiling frames tokens.rest))
+          (be '<<
+            (let (~ locals tail) (split-on (:: (= it '--))
+                                           tokens.rest))
+            (code .push! (grab<- locals.count))
+            (compiling (link (reverse locals) frames)
+                       tail.rest))
+          (be '>>
+            (surely frames.some?) ;XXX require
+            (code .push! (ungrab<- frames.first.count))
+            (compiling frames.rest tokens.rest))
+          (be (? symbol? word)
+            (code .push! (or (compile-local frames word)
+                             (dictionary word)))
+            (compiling frames tokens.rest)))))
   code.values)
 
 (to (compile-local frames word)
