@@ -7,8 +7,7 @@
 
 (to (play line nsteps)
   (let numbers (each ~.number (line .split ",")))
-  (let sightings (!map<-items (-> numbers.but-last
-                                  (:: (zip it.values it.keys)))))
+  (let sightings numbers.but-last.inverse.copy)
   (for foldl ((n numbers.last)
               (i (numbers.count.- .till nsteps.-)))
     (hey (- i (sightings .get n i))
