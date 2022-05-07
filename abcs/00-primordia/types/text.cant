@@ -12,14 +12,8 @@
     (if (text? t)
         (__string-compare me t)    ; just a speedup
         (list-trait me message)))   ; TODO but is this what we really want? (<=> "a" '(#\a))
-  (to (~ .join texts)   ;should this be a function, not a method?
-    (if texts.none?
-        ""
-        ;; De-quadratified (foldr1 (on (x y) (chain x me y)) texts)
-        (do (let mine me.values)
-            (text<-list (foldr1 (on (s runes)
-                                  (s.values .chain (mine .chain runes.values)))
-                                texts)))))
+  (to (~ .join texts)
+    (text<-list ((list<-text me) .join texts)))
   (to ~.values
     (list<-text me))
   (to (~ .get key)
