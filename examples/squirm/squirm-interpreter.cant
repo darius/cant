@@ -734,7 +734,7 @@
       register unregister
       module-load   ;; for now
       reverse zip transpose itself
-      count? yeah? min max grid* intercalate sum sum-by
+      count? yeah? min max grid* sum sum-by
       write print display read
       ;; TODO see if I've changed the stdlib relevantly since collecting these
       ))

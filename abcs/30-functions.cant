@@ -283,15 +283,6 @@
   (for foldl ((total 0) (digit digits))
     (+ (* b total) digit)))
 
-;; (intercalate T '(as bs cs)) = `(,@as ,T ,@bs ,T ,@cs)
-;; XXX this code actually gives you (intercalate 'T '(a b c)) = '(a T b T c)
-;; TODO almost never used
-(to (intercalate between elements)      ;TODO unify with .join
-  (hm (if elements.none? '())
-      (else (link elements.first
-                  (for foldr ((element elements.rest) (result '()))
-                    (link between element result))))))
-
 ;; probably worthless
 (to (method<- actor cue)
   (on (@arguments)
@@ -307,7 +298,7 @@
      ;; TODO: nonrandom order
   '(computational-setting read-all cant
 ;;    trace-sink
-    intercalate compound-key<- yeahs where while until itself 
+    compound-key<- yeahs where while until itself 
     compose zip setting<-map
     link/lazier lazier<- 
     foldr/lazy gather chain/lazy 

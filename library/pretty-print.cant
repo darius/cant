@@ -43,5 +43,13 @@
 (to (docs<- sexprs)
   (<> @(intercalate line (each doc<-sx sexprs))))
 
+;; (intercalate 'T '(a b c)) = '(a T b T c)
+;; TODO unify with list .join method somehow?
+(to (intercalate between elements)
+  (hm (if elements.none? '())
+      (else (link elements.first
+                  (for foldr ((element elements.rest) (result '()))
+                    (link between element result))))))
+
 (export
   pp<- doc<-sx)
