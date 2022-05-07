@@ -263,8 +263,8 @@
 ;; Combined keep-until and skip-until: split xs at its first element
 ;; where suffix? is true.
 ;; That is, return the pair (~ head tail), where (chain head tail) = xs,
-;; and either tail is () or (suffix? tail.first) is true
-;; at the first possible place.
+;; and either tail is () or (suffix? tail.first) is true at the first
+;; possible place.
 (to (until suffix? xs)
   (begin scanning ((r-head '()) (xs xs))
     (if (or xs.none? (suffix? xs.first))
