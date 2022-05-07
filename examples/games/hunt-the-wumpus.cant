@@ -52,7 +52,7 @@
 
 (to (describe)
   (let here hunter.where)
-  (each! (:: (out .displayln it)) here.beware)
+  (out .display-lines here.beware)
   (out .say "You are in room ~d\n" here.name)
   (out .say "Tunnels lead to ~d\n" (" " .join (each ~.name here.neighbors))))
 

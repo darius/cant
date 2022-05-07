@@ -76,8 +76,7 @@
               ("~d ~d ~w" .format show-addr fn.name n)))
   (let right (for each (((~ i text) regs.items.rest))
                ("\tr~w: ~d" .format i text)))
-  (for each! ((line (abut left right)))
-    (out .displayln line)))
+  (out .display-lines (abut left right)))
 
 ;; Combine two lists of lines into one, combined horizontally
 ;; so that lines1 goes to the left of lines2, not above it.

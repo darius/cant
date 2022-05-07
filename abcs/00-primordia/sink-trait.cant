@@ -21,5 +21,7 @@
   (to (~ .displayln a)                  ;TODO ugh the name
     (sink .display a)
     sink.newline)
+  (to (~ .display-lines lines) ;; To go with source.read-lines
+    (each! (:: (sink .displayln it)) lines))
   (to message
     (miranda-trait sink message)))

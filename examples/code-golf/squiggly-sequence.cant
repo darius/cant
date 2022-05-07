@@ -5,4 +5,4 @@
 (to (squiggly n)
   (-> (n .and 1) ["\\" "/"] (~ .repeat n)))
 
-(out .displayln ("\n" .join (each squiggly (1 .thru 6))))
+(out .display-lines (each squiggly (1 .thru 6)))
