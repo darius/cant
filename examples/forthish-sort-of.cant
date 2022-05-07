@@ -48,8 +48,7 @@
             (code .push! (push<- n))
             (compiling frames tokens.rest))
           (be '<<
-            (let (~ locals tail) (split-on (:: (= it '--))
-                                           tokens.rest))
+            (let (~ locals tail) (until (:: (= it '--)) tokens.rest))
             (code .push! (grab<- locals.count))
             (compiling (link (reverse locals) frames)
                        tail.rest))

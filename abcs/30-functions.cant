@@ -260,6 +260,20 @@
 (to (skip-until stop? xs) (skip-while (compose not stop?) xs))
 (to (keep-until/lazy stop? xs) (keep-while/lazy (compose not stop?) xs))
 
+;; Combined keep-until and skip-until: split xs at its first element
+;; where suffix? is true.
+;; That is, return the pair (~ head tail), where (chain head tail) = xs,
+;; and either tail is () or (suffix? tail.first) is true
+;; at the first possible place.
+(to (until suffix? xs)
+  (begin scanning ((r-head '()) (xs xs))
+    (if (or xs.none? (suffix? xs.first))
+        (~ (reverse r-head) xs)
+        (scanning (link xs.first r-head) xs.rest))))
+
+(to (while prefix? xs)
+  (until (compose not prefix?) xs))
+
 ;; Inverse to number.digits method.
 ;; TODO mirror all the number.digits features
 ;; TODO what about signed numbers, non-integers...? Is this whole thing misconceived?
@@ -268,17 +282,6 @@
   (let b (or base 10))
   (for foldl ((total 0) (digit digits))
     (+ (* b total) digit)))
-
-;; Split xs at its first element where split-point? is true.
-;; That is, return the pair (~ head tail), where (chain head tail) = xs,
-;; and either tail is () or (split-point? tail.first) is true
-;; at the first possible place.
-;; TODO I forgot this existed
-(to (split-on split-point? xs)
-  (begin scanning ((r-head '()) (xs xs))
-    (if (or xs.none? (split-point? xs.first))
-        (~ (reverse r-head) xs)
-        (scanning (link xs.first r-head) xs.rest))))
 
 ;; (intercalate T '(as bs cs)) = `(,@as ,T ,@bs ,T ,@cs)
 ;; XXX this code actually gives you (intercalate 'T '(a b c)) = '(a T b T c)
@@ -304,7 +307,7 @@
      ;; TODO: nonrandom order
   '(computational-setting read-all cant
 ;;    trace-sink
-    intercalate compound-key<- yeahs where split-on itself 
+    intercalate compound-key<- yeahs where while until itself 
     compose zip setting<-map
     link/lazier lazier<- 
     foldr/lazy gather chain/lazy 

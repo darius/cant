@@ -70,7 +70,7 @@
   ;; We copy sexpr.rest until we hit the doc-text.
   ;; Preceding were our params, and the reg/flag list optionally follows.
   (let (~ params (link doc-text (optional uses)))
-    (split-on text? sexpr.rest))
+    (until text? sexpr.rest))
   (spec<- (mnemonic<- stem params)
           stem
           (each parse-param params)
