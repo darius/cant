@@ -1,0 +1,100 @@
+;; A helper for stumped Wordle players.
+
+(let instructions "\
+Enter the replies you get back from Wordle, and I'll see what words can match.
+A Wordle reply has colored letters, which you'll need to encode like
+    fROn.T
+meaning:
+    Your guess was 'FRONT'.
+    F and N are not in the target word (black colored).
+    R and O are, but they're out of place (brown colored).
+    T is in the word at this exact place (green).
+
+I'll tell you how many dictionary words still match all the clues, and
+if this narrows it down enough, then which words.
+")
+
+(to (main args)
+  (play (load-dictionary)))
+
+
+;; Dictionary files
+
+(let wordle-words-filename "examples/games/wordle-words.text") ;;TODO paths relative to this source file
+
+(to (load-dictionary)
+  (may (catch-oops (: (open-input-file wordle-words-filename)))
+    (be {oops _} ;;TODO some reasonable way to match just file I/O errors, etc.
+      (make-dictionary wordle-words-filename))
+    (be sink
+      (with-closing ~.read-lines sink))))
+
+(to (make-dictionary filename)
+  (out .say "Building the wordle dictionary...\n")
+  (let words (keep wordle-word? (with-input-file ~.read-lines "/usr/share/dict/words")))
+  (with-output-file (~ .display-lines words) filename)
+  words)
+
+(to (wordle-word? word)
+  (and (= word.count 5) (every ~.lowercase? word)))
+
+
+;; The UI
+
+(to (play dictionary)
+  (out .displayln instructions)
+  (begin playing ((words dictionary))
+    (out .say "~w left" words.count)
+    (when (<= words.count 12) (out .say ": ~d" (" " .join words)))
+    out.newline
+    (unless words.maybe?
+      (out .say "> ")
+      (unless (quit? (let reply in.read-line))
+        (let clues (parse-reply reply))
+        (hm (when (= clues.count 5)
+              (playing (filter clues words)))
+            (else
+              (out .say "Enter a 5-letter Wordle clue, as explained above. (Or <enter> to quit.)\n")
+              (playing words)))))))
+
+(to (quit? input)
+  (or (zilch? input) input.trim.none?))
+
+(to (parse-reply reply)
+  ;; TODO ugly
+  (with-ejector
+   (on (ejector)
+     (let cluelets (begin parsing ((runes reply.list))
+                     (may runes
+                       (be '() '())
+                       (be (link #\. (? ~.letter? r) rest)
+                         (link (:: (found<- r.lowercase it))
+                               (parsing rest)))
+                       (be (link (? ~.letter? r) rest)
+                         (link (if r.uppercase?
+                                   (:: (elsewhere<- r.lowercase it))
+                                   (:: (absent<- r)))
+                               (parsing rest)))
+                       (else
+                         (out .say "I don't understand ~w\n" runes.text)
+                         (ejector .eject '())))))
+     (for each (((~ i clue<-) cluelets.items))
+       (clue<- i)))))
+
+
+;; Clues
+
+;; Return those of the words that match the clues.
+(to (filter clues words)
+  (for keep ((word words))
+    (every (~ word) clues)))
+
+(to ((found<- letter i) word)
+  (= (word i) letter))
+
+(to ((absent<- letter) word)
+  (not (word .find? letter)))
+
+(to ((elsewhere<- letter i) word)
+  (and (not= (word i) letter)
+       (word .find? letter)))
