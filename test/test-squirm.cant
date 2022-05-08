@@ -3,7 +3,7 @@
                  nanosleep
                  out
                  with-input-file
-                 with-signal-handler))
+                 catch-oops))
   run-file)
 
 (let test-names '("test/smoke-test.squirm"

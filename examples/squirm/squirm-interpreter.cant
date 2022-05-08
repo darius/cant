@@ -281,7 +281,7 @@
     nanosleep
     out
     with-input-file
-    with-signal-handler)
+    catch-oops)
 
   ;; Main
 
