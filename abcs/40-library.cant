@@ -74,7 +74,7 @@
     open-binary-input-file open-binary-output-file
     system/must-succeed
     the-modules unuse load load-module
-    the-last-oops push-signal-handler with-signal-handler the-signal-handler
+    the-last-oops push-signal-handler with-signal-handler the-signal-handler catch-oops
     listener<- debug breakpoint))
 (let full-powered-setting
   (empty-setting .extend-promises

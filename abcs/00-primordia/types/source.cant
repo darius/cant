@@ -14,5 +14,8 @@
                '()
                (link rune (reading me.read-rune)))))))
   (to ~.read-lines
-    me.read-all.split-lines)  ;; TODO inefficient. also, maybe include the newlines?
+    (begin reading ()
+      (if (zilch? (let line me.read-line))
+          '()
+          (link line (reading)))))
   )

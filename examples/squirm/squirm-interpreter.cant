@@ -605,14 +605,10 @@
     ;; I'm not going to try to handle oopses everywhere; only in these
     ;; primitive calls (mostly). We can wait to do things properly until
     ;; we're making a VM in C for real.
-    (may (with-signal-handler
-          (on (cant-k evil)
+    (may (catch-oops (: (p @args)))
             ;; XXX wrong if the oops occurs within a nested Cant call context.
             ;;   TODO show it can go wrong
             ;;   We need to use an ejector to get this right.
-            (cant-k .answer {oops evil}))
-          (on ()
-            (p @args)))
       (be {oops evil}
         (exit k evil))
       (be result

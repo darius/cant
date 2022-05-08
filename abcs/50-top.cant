@@ -136,6 +136,11 @@
   ;; TODO automatically invoke the debugger
   (oops "Breakpoint" @values))
 
+(to (catch-oops thunk)
+  ;; TODO worth troubling to make it {ok (thunk)} on success?
+  (with-signal-handler (on (cant-k evil) (cant-k .answer {oops evil}))
+                       thunk))
+
 (full-powered-setting .resolve-each! primordial-setting full-powered-setting-extra-names)
 
 (import (use 'flexarray)  flexarray<- flexarray<-list)
