@@ -213,10 +213,10 @@
     (to ~.copy             (set<-list !map.keys)) ;TODO tune
     (to (~ .add! key)      (!map .set! key 1))    ;N.B. matching the bag type here
     (to (~ .add-all! vals) (for each! ((v vals)) (set .add! v)))
-    (to (~ .union! other)  (set .add-all! other.keys))
+    (to (~ .merge! other)  (set .add-all! other.keys))  ;N.B. overrides map-trait
     (to (~ .union other)
       (let result set.copy)
-      (result .union! other)
+      (result .merge! other)
       result)
     (to (~ .intersect other)                 ;TODO rename to .and, etc., I guess
       (let result (set<-))

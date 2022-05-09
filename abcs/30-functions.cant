@@ -230,7 +230,7 @@
 
 ;; TODO too specialized for the stdlib
 (to (union @sets)
-  (hey (set<-) @(each (:: (~ .union! it)) sets)))
+  (hey (set<-) @(each (:: (~ .merge! it)) sets)))
 
 (to (intersect @sets)
   ;; TODO .intersect! like the above
