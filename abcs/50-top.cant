@@ -137,7 +137,8 @@
   (oops "Breakpoint" @values))
 
 (to (catch-oops thunk)
-  ;; TODO worth troubling to make it {ok (thunk)} on success?
+  ;; XXX On oops, this doesn't eject back to the catch point.
+  ;; And there's seemingly no way to do this with the current primitives.
   (with-signal-handler (on (cant-k evil) (cant-k .answer {oops evil}))
                        thunk))
 
