@@ -85,7 +85,7 @@
                (flip lines2))))
 
 (to (flip texts)
-  (each ~.text (zip .padded #\space @texts)))
+  (each (:: it.parts.text) (zip .padded #\space @texts)))
 
 ;; Smoke test
 (to (main _)

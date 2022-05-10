@@ -45,7 +45,7 @@
     (begin zipping ((rows lists))
       (if (every ~.none? rows)
           '()
-          (link (each (~ .get 0 padding) rows)
+          (link (tuple<-list (each (~ .get 0 padding) rows))
                 (zipping (each (~ .from 1) rows)))))))
 
 ;; XXX float contagion
