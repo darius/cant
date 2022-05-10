@@ -3,12 +3,14 @@
 ;; TODO tests
 ;; TODO lots of things
 
-(to (polynomial<- coeffs)
+;; TODO always keep the constant term?
+(to (poly<- coeffs)
   (skip-while (:: (= it 0)) coeffs))
 
-;; Readable text for a polynomial, like "2x^2 + 42".
+;; Readable text for a poly, like "2x^2 + 42".
 ;; TODO like " - 5x" instead of " + -5x"
 (to (show coeffs)
+  (surely (poly? coeffs))
   (if coeffs.none?
       "0"
       (" + " .join (for yeahs ((c coeffs) (k (coeffs.count.- .down-thru 0)))
@@ -21,8 +23,12 @@
                                   x
                                   ("~w~d" .format c x))))))))
 
-;; Value of a polynomial at a given x value.
-;; TODO hm, maybe make this a method on numbers or lists?
+(to (poly? coeffs)
+  (and (list? coeffs)
+       (every number? coeffs)))
+
+;; Value of a poly at a given x value.
+;; TODO hm, maybe make this a method on lists?
 (to (evaluate coeffs x)
   ;; Horner's method
   (for foldl ((accum 0) (c coeffs))
@@ -35,7 +41,7 @@
             (each * (coeffs .prefix n) (n .down-thru 1)))))
 
 ;; TODO: needs complex numbers, and some way to make it converge generally
-;; TODO an interface that can fail (if constant polynomial, or no real root)
+;; TODO an interface that can fail (if constant poly, or no real root)
 (to (find-root poly x0)
   (find-fixpoint (newton poly x0)))
 
@@ -72,4 +78,23 @@
 ;;     )
 ;;   where d = (floatDigits x + 1) `div` 2
 
-(export polynomial<- show evaluate derivative find-root)
+(to (poly-degree coeffs)
+  (max 0 coeffs.count.-))
+
+(to (poly+ p q)
+  (poly<- (reverse (each (:: (call + it)) (zip .padded 0 (reverse p) (reverse q))))))
+
+(to (poly* p q)
+  (let accum (array<-count (+ (poly-degree p) (poly-degree q) 1)
+                           0))
+  (let rp (reverse p))
+  (let rq (reverse q))
+  (for each! (((~ i pi) rp.items))
+    (for each! (((~ j pj) rq.items))
+      (accum .update (+ i j) (:: (+ it (* pi pj))))))
+  (poly<- (reverse accum.values)))
+  
+(export
+  poly<- poly? show
+  evaluate poly+ poly* derivative find-root
+  poly-degree)

@@ -22,7 +22,7 @@
 ;; corresponding y in ys, etc. The inputs must all have the same
 ;; length.
 (make zip
-  (to (~ xs ys)                           ;specialized for speed
+  (to (~ xs ys)   ;specialized for speed (TODO still worth bothering?)
     (to (mismatch)
       (oops "zip: mismatched arguments" xs ys))
     (begin zipping ((xs xs) (ys ys))
