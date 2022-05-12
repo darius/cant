@@ -157,11 +157,9 @@
 ;;   (unparse-e (equality/path e path thm)) => (if bar '2 (if foo '1 banana))
 
 (to (equality/path e path thm)
-  (if (has-path? e path)
-      (set-at-path e path
-                   (trace equality/equation (get-at-path e path)
-                                            (snip-premises e path thm)))
-      e))
+  (update-at-path e path
+                  (on (subexp)
+                    (trace equality/equation subexp (snip-premises e path thm)))))
 
 ;; As far as possible, remove any top-level if-then-elses from thm.
 ;; This is possible when the if-question appears also as the question
@@ -311,9 +309,13 @@
 
 
 ;; Rewriting.
-;; Is there some lensy way this could be shorter?
-;; Well, get-at-path is only used together with set-at-path, so maybe we could combine them...
+;; TODO less code wanted
 
+(to (update-at-path e path f)
+  (if (has-path? e path)
+      (set-at-path e path (f (get-at-path e path)))
+      e))
+  
 (to (get-at-path e path)
   (foldl get-at-direction e path))
 
