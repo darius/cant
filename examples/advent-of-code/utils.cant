@@ -3,8 +3,8 @@
 (let parson (use 'parson))
 (import parson grammar<- like)
 
-(to (average numbers)
-  (surely numbers.some? "Average of an empty list")
+(to (mean numbers)
+  (surely numbers.some? "Mean of an empty list")
   (/ (sum numbers) numbers.count))
 
 (to (all-mins-by fn xs)

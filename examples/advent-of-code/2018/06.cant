@@ -51,7 +51,7 @@
 (to (integer<- n)
   n.floor.exact)
 
-(let centroid (each (compose integer<- average)
+(let centroid (each (compose integer<- mean)
                     (transpose centers)))
 (out .say "centroid included?: ~w\n" (included? centroid))
 

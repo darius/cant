@@ -119,9 +119,9 @@
                  -1
                  (may (successors grid)
                    (be '() 0)
-                   (be succs (- (average (each drunk-evaluate succs)))))))))
+                   (be succs (- (mean (each drunk-evaluate succs)))))))))
 
-(to (average numbers)
+(to (mean numbers)
   (/ (sum numbers) numbers.count))
 
 (let player-registry
