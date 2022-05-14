@@ -70,7 +70,7 @@
       (be {reply}
         (reply k st.first))
       (be {invoke _}
-        (let `(,fn ,arg ,@_) st)
+        (let (link fn arg _) st)
         (invoke fn arg k))
       ))
 
