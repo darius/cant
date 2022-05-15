@@ -26,7 +26,7 @@
 
 ;; TODO we need this only because (read) doesn't know about fractions:
 
-(to (fractran-parse text)
+(to (fractran-parse text) ;TODO move most of this parser to ratio.cant
   (each (:: (ratio<- @it)) (fractran-syntax text)))
 
 (import (use 'parson) like)

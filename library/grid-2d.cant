@@ -48,14 +48,17 @@
     (to (~ (~ x y))
       (check x y)
       (A (at x y)))
+
     (to (~ .set! (~ x y) value)
       (check x y)
       (A .set! (at x y) value))
+
     (to (~ .get (~ x y) default)
       (if (and (<= xl x xh)
                (<= yl y yh))
           (A (at x y))
           default))
+
     (to (~ .maps? (~ x y))
       (and (<= xl x xh)
            (<= yl y yh)))
@@ -65,14 +68,17 @@
 
     (to ~.items
       (zip grid-2d.keys A.values))
+
     (to ~.keys
       ;; Could be a one-liner: (grid* (xl .thru xh) (yl .thru yh))
       ;; except that'd be column-major order. Hm, hm.
       (for gather ((y (yl .thru yh)))
         (for each ((x (xl .thru xh)))
           (~ x y))))
+
     (to ~.values
       A.values)
+
     (to ~.rows
       (for each ((y (yl .thru yh)))
         (for each ((x (xl .thru xh)))
@@ -84,6 +90,7 @@
                        (A (at x y))))))
     (to ~.show  ;; TODO different name?
       (text<-writer (:: (grid-2d .show it))))
+
     (to (~ .selfie sink)
       (sink .display ("#<grid-2d (~w,~w)..(~w,~w)>"
                       .format xl yl xh yh)))

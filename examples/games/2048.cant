@@ -104,8 +104,9 @@
 ;; animate the move -- an empty list if there's no move leftward.
 (to (left rows)
   (begin sliding ((states (for each ((row rows))
-                            (slide `(0 ,row)))))
-    (let `(,lows ,board) (transpose states))
+                            (slide (~ 0 row)))))
+    (let lows (each (~ .part 0) states))
+    (let board (each (~ .part 1) states))
     (if (for every ((lo lows))
           (<= 4 lo))
         '()
@@ -113,20 +114,23 @@
 
 ;; Slide row one place leftward, leaving fixed any places left of the
 ;; position at `low`. Advance low past merging or completion. Return
-;; the updated `(,low ,row) state.
-(to (slide `(,low ,row))
+;; the updated (~ low row) state.
+(to (slide (~ low row))
   (begin checking ((i low))
+    ;; Find the first suffix matching either (0 nonzero-n ...)
+    ;;                                    or (nonzero-n same-n ...)
+    ;; then collapse these two neighboring values into their sum,
+    ;; and pad out the row with a 0 at far right.
     (let j i.+)
     (hm (when (<= 4 j)
-          `(4 ,row)) ; There was no space or coincidence to slide into.
+          (~ 4 row)) ; No such suffix found.
         (let same? (= (row i) (row j)))
         (when (= same? (= (row i) 0))
           (checking j))
-        (else ; Found one, let's slide:
+        (else ; Found one, let's collapse and pad:
           (let sum (+ (row i) (row j)))
-          (let slid
-            `(,@(row .from 0 i) ,sum ,@(row .from j.+) 0))
-          `(,(if same? j low) ,slid)))))
+          (let slid `(,@(row .from 0 i) ,sum ,@(row .from j.+) 0))
+          (~ (if same? j low) slid)))))
 
 (to (right rows) (each flip-h (left (flip-h rows))))
 (to (up rows)    (each flip-d (left (flip-d rows))))
