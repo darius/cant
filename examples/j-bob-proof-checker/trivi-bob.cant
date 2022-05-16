@@ -328,18 +328,18 @@
                                    path.rest)))))
 
 (to (get-at-direction e dir)
-  (may dir
-    (be 'Q       (may e (be {if q _ _}    q)))
-    (be 'A       (may e (be {if _ a _}    a)))
-    (be 'E       (may e (be {if _ _ e}    e)))
-    (be (? nat?) (may e (be {call _ args} (get-arg args dir))))))
+  (may (~ dir e)
+    (be (~ 'Q       {if q _ _})    q)
+    (be (~ 'A       {if _ a _})    a)
+    (be (~ 'E       {if _ _ e})    e)
+    (be (~ (? nat?) {call _ args}) (get-arg args dir))))
 
 (to (set-at-direction e1 dir e2)
-  (may dir
-    (be 'Q       (may e1 (be {if q a e}    {if e2 a e})))
-    (be 'A       (may e1 (be {if q a e}    {if q e2 e})))
-    (be 'E       (may e1 (be {if q a e}    {if q a e2})))
-    (be (? nat?) (may e1 (be {call f args} {call f (set-arg args dir e2)})))))
+  (may (~ dir e1)
+    (be (~ 'Q       {if q a e})    {if e2 a e})
+    (be (~ 'A       {if q a e})    {if q e2 e})
+    (be (~ 'E       {if q a e})    {if q a e2})
+    (be (~ (? nat?) {call f args}) {call f (set-arg args dir e2)})))
 
 (to (get-arg args n)
   (args n.-))
