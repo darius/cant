@@ -20,12 +20,11 @@
   (hunter .go A)
   (wumpus .go C)
   ((pit<-) .go D)
-  (with-ejector
-   (on (ejector)
-     (quitter .^= ejector)
-     (begin ()
-       (play-turn)
-       (loop)))))
+  (with-ejector (on (ejector)
+                  (quitter .^= ejector)
+                  (begin ()
+                      (play-turn)
+                    (loop)))))
 
 (let quitter (box<-))
 (to (quit) (quitter.^ .eject 'quit))
