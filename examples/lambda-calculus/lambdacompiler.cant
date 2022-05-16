@@ -41,7 +41,7 @@
         (running (rest .from (+ m n)) local closure ret (link new-closure stack)))
       (be `(invoke ,@_)
         (let (link argument callee old-stack) stack)
-        (running (callee 0) argument callee ret `(,local ,closure ,@old-stack)))
+        (running (callee 0) argument callee ret (link local closure old-stack)))
       (be `(return ,@_)
         (let (link return-value new-local new-closure new-ret new-stack) stack)
         (running ret new-local new-closure new-ret (link return-value new-stack)))
