@@ -345,6 +345,7 @@
   (args n.-))
 
 (to (set-arg args n e)
+  ;; TODO (args .set n.- e)
   (if (= n 1)
       (link e args.rest)
       (link args.first (set-arg args.rest n.- e))))
@@ -359,12 +360,12 @@
                       path.rest))))
 
 (to (has-direction? e dir)
-  (may dir
-    (be 'Q       (may e (be {if _ _ _} #yes) (else #no)))
-    (be 'A       (may e (be {if _ _ _} #yes) (else #no)))
-    (be 'E       (may e (be {if _ _ _} #yes) (else #no)))
-    (be (? nat?) (may e (be {call _ args} (<= 1 dir args.count))
-                        (else             #no)))))
+  (may (~ dir e)
+    (be (~ 'Q       {if _ _ _})    #yes)
+    (be (~ 'A       {if _ _ _})    #yes)
+    (be (~ 'E       {if _ _ _})    #yes)
+    (be (~ (? nat?) {call _ args}) (<= 1 dir args.count))
+    (else                          #no)))
 
 
 ;; Some expression helpers.
