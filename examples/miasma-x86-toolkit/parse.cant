@@ -91,7 +91,7 @@
     (be '=16
       (size-mode-param 16))
     (be '=32
-      (size-mode-param 16))
+      (size-mode-param 32))
     (be (? operand? operand)
       (parse-operand operand))
     (be `(,first ,@rest)
