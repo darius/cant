@@ -16,8 +16,7 @@
     (let echoes (fill (" " .join strokes.values) screen-width))
     (render ["Hit some keys; capital Q to quit.\n\n"
              echoes cursor])
-    (let key (get-key))
-    (unless (= key #\Q)
+    (unless (= #\Q (let key (get-key)))
       (strokes .push! ("~w" .format key))
       (loop))))
 
