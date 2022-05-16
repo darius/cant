@@ -61,19 +61,18 @@ if this narrows it down enough, then which words.
   (or (zilch? input) input.trim.none?))
 
 (to (parse-reply reply)
-  ;; TODO ugly
   (with-ejector
    (on (ejector)
      (let cluelets (begin parsing ((runes reply.list))
                      (may runes
                        (be '() '())
                        (be (link #\. (? ~.letter? r) rest)
-                         (link (:: (found<- r.lowercase it))
+                         (link (found<- r.lowercase)
                                (parsing rest)))
                        (be (link (? ~.letter? r) rest)
                          (link (if r.uppercase?
-                                   (:: (elsewhere<- r.lowercase it))
-                                   (:: (absent<- r)))
+                                   (elsewhere<- r.lowercase)
+                                   (absent<- r))
                                (parsing rest)))
                        (else
                          (out .say "I don't understand ~w\n" runes.text)
@@ -89,12 +88,12 @@ if this narrows it down enough, then which words.
   (for keep ((word words))
     (every (~ word) clues)))
 
-(to ((found<- letter i) word)
+(to (((found<- letter) i) word)
   (= (word i) letter))
 
-(to ((absent<- letter) word)
+(to (((absent<- letter) i) word)
   (not (word .find? letter)))
 
-(to ((elsewhere<- letter i) word)
+(to (((elsewhere<- letter) i) word)
   (and (not= (word i) letter)
        (word .find? letter)))
