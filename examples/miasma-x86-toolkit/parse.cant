@@ -63,9 +63,7 @@
 ;; Parse instruction table entries.
 
 (to (parse-spec sexpr)
-  (surely (and (list? sexpr)
-               (<= 3 sexpr.count)
-               (symbol? sexpr.first))
+  (surely (may? sexpr (be (link (? symbol?) _ _ _)))
           "Spec has the basics")
   (let stem sexpr.first.text)
   ;; We copy sexpr.rest until we hit the doc-text.
@@ -106,10 +104,10 @@
                   (Ex.Gx-param arg1 arg2))
               (if (and ((operand-of 'G) arg1) ((operand-of 'E) arg2))
                   (Gx.Ex-param arg1 arg2))))
-        (be `(,foo ,arg)
-          (surely (extended-opcode-tags .find? foo))
+        (be `(,tag ,arg)
+          (surely (extended-opcode-tags .find? tag))
           (surely ((operand-of 'E) arg))
-          (let extended-opcode (extended-opcode-tags .find foo))
+          (let extended-opcode (extended-opcode-tags .find tag))
           (Ex-param extended-opcode arg))))))
 
 ;; Return a symbol whose name is the concatenation of ATOMS.
