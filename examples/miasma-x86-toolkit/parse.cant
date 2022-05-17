@@ -136,11 +136,11 @@
   (may? x (be (list<- (? symbol?) (= tag) (or 1 2 4)))))
 
 (to (parse-operand `(,symbol ,tag ,size))
-  (may tag
-    (be 'I (signed-immediate-param size))
-    (be 'U (unsigned-immediate-param size))
-    (be 'J (relative-jump-param size))
-    (be 'O (offset-param size))))
+  (-> size (may tag
+             (be 'I signed-immediate-param)
+             (be 'U unsigned-immediate-param)
+             (be 'J relative-jump-param)
+             (be 'O offset-param))))
 
 ;; TODO name like foo-param<-
 
