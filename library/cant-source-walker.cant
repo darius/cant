@@ -62,7 +62,7 @@
     (be (? self-evaluating?)   none)
     (be `(quote ,_)            none)
     (be `(and ,@ps)            `(() ,ps))
-    (be `(view ,e ,p)          `((,e) (,p)))
+    (be `(-> ,e ,p)            `((,e) (,p)))
     (be (? term? t)            `(() ,(list-subpatts t.parts)))
     (be `(@ ,_) (oops "An @-pattern must be at the end of a list" patt))
     (be (list<- 'quasiquote q) `(() ,(quasiquote-subpatts q)))

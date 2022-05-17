@@ -137,7 +137,7 @@
         (pack<- p-constant datum))
        (('and . ps)
         (parse-and-pat ps ctx))
-       (('view e1 p1)
+       (('-> e1 p1)
         (pack<- p-view (parse-e e1 ctx) (parse-p p1 ctx)))
        ;; XXX complain if you see a bare , or ,@. but this will fall out of disallowing defaulty lists.
        (('list<- . ps)
@@ -159,7 +159,7 @@
         ;; N.B. the spread operator (like [a b @cs] still binds cs to
         ;;  a *list*, not an array. I guess that's surprising? I'm not
         ;;  sure it's bad.
-        (parse-p `(view ',maybe-vector->list (list<- ,@(vector->list p)))
+        (parse-p `(-> ',maybe-vector->list (list<- ,@(vector->list p)))
                  ctx))
        (('@ __)                      ;XXX make @vars be some disjoint type
         (error 'parse "An @-pattern must be at the end of a list" p))
@@ -179,7 +179,7 @@
 (define (make-term-pat tag-pat arguments-pat)
   ;; This should probably be in the kernel, but I'm going to make up
   ;; an expansion for now.
-  ;; (term<- tag arguments) -> (view explode-term (link tag arguments))
+  ;; (term<- tag arguments) -> (-> explode-term (link tag arguments))
   (pack<- p-view
           explode-term-exp
           (make-cons-pat tag-pat arguments-pat)))
@@ -202,18 +202,18 @@
   (mcase key
     ('?      (mlambda
               ((__ e)
-               `(view ,e #t)) ;TODO check result with yeah? instead of = #yes
+               `(-> ,e #t)) ;TODO check result with yeah? instead of = #yes
               ((__ e p1)
-               `(and (view ,e #t) ,p1))))
+               `(and (-> ,e #t) ,p1))))
     ('=      (mlambda
               ((__ e)
                (let ((param (gensym)))
-                 `(view (on (,param) (= ,param ,e)) ;XXX hygiene
-                        #t)))))
+                 `(-> (on (,param) (= ,param ,e)) ;XXX hygiene
+                      #t)))))
     ('optional (mlambda
                 ((__ . ps)
-                 `(view ,(optional-match-exp (length ps))
-                        ,(make-term 'ok (reverse ps))))))
+                 `(-> ,(optional-match-exp (length ps))
+                      ,(make-term 'ok (reverse ps))))))
     ('quasiquote (mlambda
                   ((__ quoted)
                    (expand-quasiquote-pat quoted))))
@@ -475,7 +475,7 @@
      ;;  expansion, will bind to a *list*, not an array. Also, I don't
      ;;  even know exactly what to expect of a pattern like `[a b @,c]
      ;;  -- N.B. different from ,@c -- should this be an error, or what?
-     `(view ',maybe-vector->list ,(list 'quasiquote (vector->list qq))))
+     `(-> ',maybe-vector->list ,(list 'quasiquote (vector->list qq))))
     ;; TODO any other datatypes like vectors with a ,pat inside?
     ;;  We should probably at least try to notice them and complain.
     (__ `',qq)))
@@ -487,7 +487,7 @@
     (if (or (not (symbol? tag))
             (any (mlambda (('unquote-splicing __) #t) (__ #f)) parts))
         (let* ((foo (cons tag parts))
-               (result (list 'view
+               (result (list '->
                              `',explode-term
                              (list 'quasiquote foo))))
           result)

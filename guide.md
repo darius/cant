@@ -620,7 +620,7 @@ common by example, but here it all is for reference:
 - `(and pattern1 pattern2 ...)` matches when the subject matches all
   of the subpatterns, trying them each in left-to-right order.
 
-- `(view expression subpattern)` does this: evaluate `expression`,
+- `(-> expression subpattern)` does this: evaluate `expression`,
   then call the value with the subject as argument, then take the
   result as the new subject to match against `subpattern`.
 
