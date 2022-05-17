@@ -29,11 +29,10 @@
 
 (to (bad-patt? patt)
   (may (let p (macroexpand-outer-patt patt))
-    (be `(,s ,@_)
-      (if (not ('(~ list<- link quote and view @ quasiquote) .find? s))
-          (do (out .say "This subpattern is bad: ~w\n" patt)
-              #yes)
-          (bad-part? (patt-subparts p))))
+    (be (-- `(,s ,@_)
+            (unless ('(~ list<- link quote -- -> when unless @ quasiquote) .find? s)))
+      (out .say "This subpattern is bad: ~w\n" patt)
+      #yes)
     (else (bad-part? (patt-subparts p)))))
 
 (export main bad-expr? bad-patt?)

@@ -646,6 +646,11 @@ above:
 
 - `(? expression pattern)` is sugar for `(-- (? expression) pattern)`.
 
+- `(when expression)` ignores the subject. It evaluates `expression`
+  and succeeds iff the result is not `#no`.
+
+- `(unless expression)` is like `(when (not expression))`.
+
 - `(= expression)` evaluates `expression` and succeeds if the value
   equals the subject.
 

@@ -219,6 +219,14 @@
     ('quasiquote (mlambda
                   ((__ quoted)
                    (expand-quasiquote-pat quoted))))
+    ('unless (mlambda
+              ((__ e1 . es)
+               `(-> (on (_) (do ,e1 ,@es))
+                    #f))))
+    ('when   (mlambda
+              ((__ e1 . es)
+               `(-> (on (_) (not (do ,e1 ,@es))) ;XXX hygiene
+                    #f))))
     (__ #f)))
 
 (define (up-to-n-optional n)

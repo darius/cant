@@ -61,7 +61,7 @@
     (be (? symbol?)            none)
     (be (? self-evaluating?)   none)
     (be `(quote ,_)            none)
-    (be `(and ,@ps)            `(() ,ps))
+    (be `(-- ,@ps)             `(() ,ps))
     (be `(-> ,e ,p)            `((,e) (,p)))
     (be (? term? t)            `(() ,(list-subpatts t.parts)))
     (be `(@ ,_) (oops "An @-pattern must be at the end of a list" patt))
