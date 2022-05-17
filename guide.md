@@ -1128,7 +1128,7 @@ example](https://github.com/darius/cant/blob/master/library/sturm.cant#L197-L198
 returns the next rune from standard input, but raises an
 assertion error if it's the end-of-file. (I know, using an assertion
 here was lazy and sinful.) Perhaps more commonly [you'd
-use](https://github.com/darius/cant/blob/master/examples/games/cryptogram.cant#L120-L121)
+use](https://github.com/darius/cant/blob/master/examples/dole-editor/fundamental-mode.cant#L9-L26)
 `hey` to create a new object (the focus) and initialize it (the
 actions).
 
@@ -1137,7 +1137,8 @@ The
 `(-> input f g h)` is like `(h (g (f input)))`. It's
 [occasionally](https://github.com/darius/cant/blob/master/library/bag.cant#L25-L27)
 [handy](https://github.com/darius/cant/blob/master/examples/text/most-common.cant#L15-L20)
-in place of things like Clojure's threading macros.
+in place of things like Clojure's threading macros. (`->` as a pattern works similarly,
+`(-> f g h output-pattern)`, but there the input comes from the context.)
 
 
 ## Ejectors
@@ -1300,6 +1301,8 @@ name: it defaults to `loop`. I'm not sure I want this feature, but I
 guess other people might want it more.
 
 ```
+more syntax: may?, given?
+
 more naming conventions:
 foo<-
 dest<-src
