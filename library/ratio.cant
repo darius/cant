@@ -65,8 +65,13 @@
 (to (ratio-show {ratio n d})
   ("~w/~w" .format n d))
 
+(import (use 'parson) like)
+(let ratio-syntax (like ":count '/' :count"))
+(to (ratio-parse text)
+  (ratio<- @(ratio-syntax text)))
+
 ;; TODO just export r-names instead of renaming
-((export ratio? ratio<- compare r-integer? integer<-ratio float<-ratio ratio-show)
+((export ratio? ratio<- compare r-integer? integer<-ratio float<-ratio ratio-show ratio-parse)
  .override (map<- (~ '+ r+)
                   (~ '- r-)
                   (~ '* r*)

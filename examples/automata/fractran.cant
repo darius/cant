@@ -3,7 +3,7 @@
 
 ;; TODO once again, renaming imports is clumsy
 (import (let ratio-m (use 'ratio))
-  ratio? ratio<- r-integer? integer<-ratio)
+  ratio? ratio<- r-integer? integer<-ratio ratio-parse)
 (let (list<- r* r-compare) (each ratio-m '(* compare)))
 
 ;; Run a FRACTRAN program.
@@ -23,14 +23,8 @@
 (to (r-positive? r)
   (= '> (r-compare r (ratio<- 0))))
 
-
-;; TODO we need this only because (read) doesn't know about fractions:
-
-(to (fractran-parse text) ;TODO move most of this parser to ratio.cant
-  (each (:: (ratio<- @it)) (fractran-syntax text)))
-
-(import (use 'parson) like)
-(let fractran-syntax (like "[:count '/' :count :hug] ** _"))
+(to (fractran-parse text)
+  (each ratio-parse text.split))
 
 
 ;; Smoke test

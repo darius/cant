@@ -1,6 +1,6 @@
 (let ratio (use 'ratio))
 
-(import ratio ratio<- float<-ratio)
+(import ratio ratio<- float<-ratio ratio-parse)
 (let `(,r+ ,r- ,r* ,r/ ,r-compare) (each ratio '(+ - * / compare)))
 
 ;; Generate good rational approximations of float in order of
@@ -12,7 +12,10 @@
       (oops "XXX unimplemented")))
 
 (let pi (r/ (ratio<- 355) (ratio<- 113)))
+(surely (= pi (ratio-parse "355/113")))
+
 (let tau (r+ pi pi))
+
 (out .print pi)
 (out .print (float<-ratio pi))
 (out .print tau)
