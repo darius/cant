@@ -194,8 +194,8 @@
   (to (get-key-unmapped)
     (if key-stack.some?
         key-stack.pop!
-        (hey in.read-rune
-             (:: (surely (not (zilch? it))))))) ;shouldn't ever happen in raw/cbreak modes
+        (let (-> zilch? #no) ;shouldn't ever happen in raw/cbreak modes
+          in.read-rune)))
 
   (make get-key
     (to (~)
