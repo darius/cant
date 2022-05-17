@@ -26,7 +26,7 @@
                       "make-trait" "to" "unless" "when"
                       ;; more experiments:
 ;;                      ":" "::" ;;XXX these are keywords too, but emacs seems to dislike them here
-                      "be" "given" "hm" "may" "on")
+                      "be" "given" "given?" "hm" "may" "may?" "on")
                     'symbols)
                    ))))
   (setq font-lock-defaults

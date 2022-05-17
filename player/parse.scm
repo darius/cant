@@ -345,6 +345,9 @@
     ('may    (mlambda
               ((__ subject . clauses)
                `((given ,@clauses) ,subject))))
+    ('may?   (mlambda
+              ((__ subject . clauses)
+               `((given? ,@clauses) ,subject))))
     ('given  (mlambda                   ;TODO experiment; also, better name
               ((__ . clauses)
                `(make _
@@ -356,6 +359,16 @@
                           (clause
                            (error 'parse "Bad clause: 'be' or 'else' missing" clause)))
                          clauses)))))
+    ('given? (mlambda                   ;TODO experiment; also, better name
+              ((__ . clauses)
+               `(make _
+                  ,@(map (mlambda
+                          (('be pat)
+                           `(to (~ ,pat) #t))
+                          (clause
+                           (error 'parse "Bad clause: 'be' expected" clause)))
+                         clauses)
+                  (to (~ _) #f)))))
     ('to     (mlambda
               ((__ (head . params) . body)
                (if (symbol? head)

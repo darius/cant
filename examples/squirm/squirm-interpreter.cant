@@ -144,7 +144,7 @@
       (may operands
         (be `(,f ,pairs ,@body)
           (for each! ((pair pairs))
-            (surely (and (list? pair) (= pair.count 2))))
+            (surely (may? pair (be `(,_ ,_)))))
           `(do
              (to (,f ,@(each (~ 0) pairs))
                ,@body)
@@ -165,7 +165,7 @@
       (may operands
         (be `(,f ,pairs ,@body)
           (for each! ((pair pairs))
-            (surely (and (list? pair) (= pair.count 2))))
+            (surely (may? pair (be `(,_ ,_)))))
           `(,f (on ,(each (~ 0) pairs) ,@body)
                ,@(each (~ 1) pairs)))))
     (be 'or

@@ -24,13 +24,13 @@
 (to (mnemonic<- stem params)
   (combined-mnemonic<- stem (each coerce-text (suffixes params))))
 
+;; Return an instruction mnemonic formed out of STEM and SPECS.
+(to (combined-mnemonic<- stem specs)
+  (~.symbol ("-" .join (link stem specs))))
+
 ;; Return a text that looks like X, an atom.
 (to (coerce-text x)
   ("~d" .format x))
-
-;; Return an instruction mnemonic formed out of STEM and SPECS.
-(to (combined-mnemonic<- stem specs)
-  (~.symbol ("-" .join `(,stem ,@specs)))) ;TODO join with some other separator? "/"?
 
 (to (suffixes x)
   (may x
@@ -129,17 +129,13 @@
 (let extended-opcode-tags '[/0 /1 /2 /3 /4 /5 /6 /7])
 
 (to (operand? x)
-  (may x
-    (be `(,(? symbol?) ,(? symbol? tag) ,size)
-      (and ('(I U J O) .find? tag)
-           ('(1 2 4) .find? size)))
-    (else #no)))
+  (may? x (be (-- `(,(? symbol?) ,(? symbol? tag) ,size)
+                  (when (and ('(I U J O) .find? tag)
+                             ('(1 2 4) .find? size)))))))
 
 (to ((operand-of tag) x)                ;XXX duplicate code
-  (may x
-    (be `(,(? symbol?) ,(= tag) ,size)
-      ('(1 2 4) .find? size))
-    (else #no)))
+  (may? x (be (-- `(,(? symbol?) ,(= tag) ,size)
+                  (when ('(1 2 4) .find? size))))))
 
 (to (parse-operand `(,symbol ,tag ,size))
   (may tag
