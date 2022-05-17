@@ -3,16 +3,17 @@
 ;; TODO: use parson instead? semantic feedback is awkward
 (to (read-tree source)
   (begin parsing ()
-    (let nc (read source)) (surely (not (zilch? nc)))
-    (let nm (read source)) (surely (not (zilch? nm)))
+    (let (-- nc (-> zilch? #no)) (read source))
+    (let (-- nm (-> zilch? #no)) (read source))
     {node (for each/seq ((_ nc.till))
             (parsing))
           (for each/seq ((_ nm.till))
             (read source))}))
 
 (to (each/seq f xs) ;force calls in left-to-right order. kinda embarrassing.
-  (reverse (for foldl ((results '()) (x xs))
-             (link (f x) results))))
+  (let results (flexarray<-))
+  (for each! ((x xs)) (results .push! (f x)))
+  results.values)
 
 (let input (with-input-file read-tree data-file))
 
