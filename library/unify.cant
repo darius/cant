@@ -12,16 +12,10 @@
   (var 0))
 
 (to (apply s val)                   ;XXX rename
-  (let v (s .subst val))
-  (if (variable? v)
-      (if (= v val) v (apply s v))
-      v))
-;; TODO seems clumsy. How about:
-;;  (may (s .subst val)
-;;    (be (-- (? variable? v) (unless (= v val)))
-;;    (be (? variable? v (unless (= v val)))    ;TODO support this sugar?
-;;      (apply s v))
-;;    (be other other)))
+  (may (s .subst val)
+    (be (-- (? variable? v) (unless (= v val)))
+      (apply s v))
+    (be v v)))
 
 (make empty-subst
   (to (~ .subst val)
