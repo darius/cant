@@ -657,6 +657,13 @@ above:
 - `(optional pattern1 ... pattern_n)` matches a list of length 0 to n,
   where any elements that do exist match the corresponding subpattern.
 
+- `(or pattern1 ... pattern_n)` tries each pattern in turn, and succeeds
+  iff any pattern succeeds. There's an obvious issue: what if the
+  different patterns produce different bindings? Currently we just
+  drop any bindings from any subpattern. Ultimately I want to make this
+  require that all the subpatterns create the same bindings, or maybe
+  just that there are none created at all.
+
 
 ## The callable-message idiom
 

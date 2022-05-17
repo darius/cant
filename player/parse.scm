@@ -227,6 +227,12 @@
               ((__ e1 . es)
                `(-> (on (_) (not (do ,e1 ,@es))) ;XXX hygiene
                     #f))))
+    ('or     (mlambda
+              ((__ . ps)
+               ;; TODO fancier semantics that can bind variables? Requiring every branch to bind the same?
+               ;; TODO for now just complain if a p binds anything?
+               `(? (given? ,@(map (lambda (p) `(be ,p))
+                                  ps))))))
     (__ #f)))
 
 (define (up-to-n-optional n)
