@@ -139,6 +139,8 @@
         (parse-and-pat ps ctx))
        (('-> e1 p1)
         (pack<- p-view (parse-e e1 ctx) (parse-p p1 ctx)))
+       (('-> e1 e2 . rest)
+        (parse-p `(-> ,e1 (-> ,e2 . ,rest)) ctx))
        ;; XXX complain if you see a bare , or ,@. but this will fall out of disallowing defaulty lists.
        (('list<- . ps)
         (parse-list-pat ps ctx))
