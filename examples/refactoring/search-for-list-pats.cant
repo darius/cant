@@ -28,11 +28,13 @@
       (some bad-patt? subpatts)))
 
 (to (bad-patt? patt)
-  (may (let p (macroexpand-outer-patt patt))
-    (be (-- `(,s ,@_)
-            (unless ('(~ list<- link quote -- -> when unless @ quasiquote) .find? s)))
+  (may (macroexpand-outer-patt patt)
+    (be (-- `(,s ,@_) (unless (patt-keywords .find? s)))
       (out .say "This subpattern is bad: ~w\n" patt)
       #yes)
-    (else (bad-part? (patt-subparts p)))))
+    (be p (bad-part? (patt-subparts p)))))
+
+(let patt-keywords (link ("@" .symbol)  ; XXX ugh c'mon there must be a better way
+                         '(~ list<- link quote -- -> when unless quasiquote)))
 
 (export main bad-expr? bad-patt?)
