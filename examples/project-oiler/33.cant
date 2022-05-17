@@ -16,7 +16,7 @@
   (may ((dr .difference nr) .keys)
     (be `(,(? ~.positive? ddig))
       (may ((nr .intersect dr) .keys)
-        (be `(,(? ~.positive? common))
+        (be `(,(? ~.positive?))
           (may ((nr .difference dr) .keys)
             (be `(,ndig)
               (and (= (ratio<- ndig ddig) (let r (ratio<- num den)))
