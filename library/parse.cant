@@ -54,8 +54,8 @@
     (to ~.rhs rhs)
     (to (~ .starts-with? cat)
       (may rhs
-        (be `(,(= cat) ,@_) #yes)
-        (else               #no)))))
+        (be (link (= cat) _) #yes)
+        (else                #no)))))
 
 (to (tree<- lhs rhs)
   (make _
