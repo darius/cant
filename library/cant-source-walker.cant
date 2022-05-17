@@ -12,6 +12,7 @@
     (be (? self-evaluating?)           none)
     (be `(quote ,_)                    none)
     (be (? term? t)                    `(,t.parts ()))
+    (be `(~ ,@es)                      `(,es ()))
     (be `(let ,p ,e)                   `((,e) (,p)))
     (be `(make ,(? symbol?) ,@clauses) (make-subparts clauses))
     (be `(make ,(? text?) ,@clauses)   (make-subparts clauses))
@@ -19,7 +20,9 @@
     (be `(do ,@es)                     `(,es ()))
     (be `(call ,e1 ,e2)                `((,e1 ,e2) ()))
     (be `(,e1 ,(? cue?) ,@es)          `((,e1 ,@es) ()))
-    (be `(,e1 ,@es)                    `((,e1 ,@es) ()))))
+    (be `(,e1 ,@es)                    `((,e1 ,@es) ()))
+    (be (? array? a)                   (expr-subparts `(array<- ,@a.list))) ;XXX hygiene ;TODO macroexpand should handle this?
+    (be weird (oops "Weird expression" weird))))
 
 (to (make-subparts tail)
   (may tail
@@ -66,7 +69,8 @@
     (be (? term? t)            `(() ,(list-subpatts t.parts)))
     (be `(@ ,_) (oops "An @-pattern must be at the end of a list" patt))
     (be (list<- 'quasiquote q) `(() ,(quasiquote-subpatts q)))
-    (be (? list? ps)           `(() ,(list-subpatts ps))))) ;TODO remove
+    (be (? list? ps)           `(() ,(list-subpatts ps))) ;TODO remove
+    (be (? array? a)           `(() ,(list-subpatts a.list)))))
 
 (to (quasiquote-subpatts q)
   (may q
