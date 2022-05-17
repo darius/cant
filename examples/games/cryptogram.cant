@@ -56,7 +56,7 @@
           (be #\tab      (pad .shift-to-space  1))
           (be 'backspace (pad .shift-by -1) (pad .jot #\space))
           (be 'del       (pad .jot #\space) (pad .shift-by 1))
-          (be (and (? rune?) (? ~.uppercase?))
+          (be (-- (? rune?) (? ~.uppercase?))
                          (pad .shift-to-code 1 key))
           (else          (when (or (= key #\space) (alphabet .find? key))
                            (pad .jot key)

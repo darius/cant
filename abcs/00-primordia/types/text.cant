@@ -8,7 +8,7 @@
   (to (~ .chain t)   (__string-append me t))
   (to (~ .from i)    (__substring me i me.count))
   (to (~ .from i j)  (__substring me i j))
-  (to (and (~ .compare t) message)
+  (to (-- (~ .compare t) message)
     (if (text? t)
         (__string-compare me t)    ; just a speedup
         (list-trait me message)))   ; TODO but is this what we really want? (<=> "a" '(#\a))

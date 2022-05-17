@@ -92,7 +92,7 @@ The worklist scheme is less likely to need backtracking.
                   ;; TODO for each (dir,edge) of oriented-lines, (~ edge {oriented-tile tid XXX edge-map})
                   'XXX)))))
   
-  (to (place! pos (and {oriented-tile tid _ _} ot))
+  (to (place! pos (-- {oriented-tile tid _ _} ot))
     (grid .set! pos ot)
     (remaining-tiles .delete! tid))
 

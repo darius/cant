@@ -8,8 +8,8 @@
   (to ~.values        (__vector->list me))
   (to (~ .from i)     (__subvector me i me.count))
   (to (~ .from i j)   (__subvector me i j))
-  (to (and (~ .move! dst source lo bound)
-           message)
+  (to (-- (~ .move! dst source lo bound)
+          message)
     ;; Block-copy source[lo..bound) to me[dst..dst+(bound-lo)).
     (if (array? source)
         (__vector-move! me dst source lo bound)

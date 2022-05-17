@@ -617,12 +617,15 @@ common by example, but here it all is for reference:
   a Lisp list like `(foo x y z ...)` is interpreted specially
   according to `foo`: other special foo's follow below.
 
-- `(and pattern1 pattern2 ...)` matches when the subject matches all
+- `(-- pattern1 pattern2 ...)` matches when the subject matches all
   of the subpatterns, trying them each in left-to-right order.
 
-- `(-> expression subpattern)` does this: evaluate `expression`,
-  then call the value with the subject as argument, then take the
-  result as the new subject to match against `subpattern`.
+- `(-> expression1 expression2 ... pattern1)` transforms the subject
+  before matching against pattern1 at the end. It works like so:
+  evaluate `expression1`, then call this value with the subject as
+  argument, then take the result as the new subject for the next
+  expression treated the same way. Continue until you reach the
+  end, pattern1. Match the now-current subject against pattern1.
 
 The remaining kinds of pattern are syntactic sugar implemented on the
 above:
@@ -641,7 +644,7 @@ above:
   should be an error if the result is not `#yes` or `#no`. Currently
   it can be anything.)
 
-- `(? expression pattern)` is sugar for `(and (? expression) pattern)`.
+- `(? expression pattern)` is sugar for `(-- (? expression) pattern)`.
 
 - `(= expression)` evaluates `expression` and succeeds if the value
   equals the subject.

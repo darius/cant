@@ -18,7 +18,7 @@
       v))
 ;; TODO seems clumsy. How about:
 ;;  (may (s .subst val)
-;;    (be (and (? variable? v) (-> (= val) #no))   ;TODO Cant only has (= val) patterns; we want not= here
+;;    (be (-- (? variable? v) (-> (= val) #no))   ;TODO Cant only has (= val) patterns; we want not= here
 ;;      (apply s v))
 ;;    (be other other)))
 

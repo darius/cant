@@ -60,10 +60,10 @@
 
   (make cycle-sink {extending sink-trait}
 
-    (to (and (~ .display atom) message)
+    (to (-- (~ .display atom) message)
       (buffer .push! message))
 
-    (to (and (~ .write-u8 u8) message)
+    (to (-- (~ .write-u8 u8) message)
       (buffer .push! message))
 
     (to (~ .write thing)

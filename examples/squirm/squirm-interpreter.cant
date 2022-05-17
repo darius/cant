@@ -396,7 +396,7 @@
 
       (to ~.wake
         (may state.^
-          (be (and {blocked _ _ _ _ _} thunk)
+          (be (-- {blocked _ _ _ _ _} thunk)
             (schedule! process)
             (state .^= {go thunk #no})) ;(TODO still a bit clumsy)
           (else)))
@@ -619,7 +619,7 @@
       (may clauses
         (be '()
           #no)
-        (be `(,(and clause {clause p e}) ,@rest)
+        (be `(,(-- clause {clause p e}) ,@rest)
           !map.clear!
           (may (match-pat r !map p datum)
             (be #no  (matching rest))

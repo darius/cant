@@ -61,7 +61,7 @@
   (let cr-lf            (chain clear-to-right "\r\n"))
 
   (make state<-
-    (to (and (~ fg bg styles) tuple)
+    (to (-- (~ fg bg styles) tuple)
       (make state
         (to ~.reveal            tuple)
         (to (~ .set-fg code)    (state<- code bg   styles))

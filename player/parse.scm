@@ -135,7 +135,7 @@
         (pack<- p-constant p))
        (('quote datum)
         (pack<- p-constant datum))
-       (('and . ps)
+       (('-- . ps)
         (parse-and-pat ps ctx))
        (('-> e1 p1)
         (pack<- p-view (parse-e e1 ctx) (parse-p p1 ctx)))
@@ -206,7 +206,7 @@
               ((__ e)
                `(-> ,e #t)) ;TODO check result with yeah? instead of = #yes
               ((__ e p1)
-               `(and (-> ,e #t) ,p1))))
+               `(-- (-> ,e #t) ,p1))))
     ('=      (mlambda
               ((__ e)
                (let ((param (gensym)))

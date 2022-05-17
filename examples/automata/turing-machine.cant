@@ -32,7 +32,7 @@
 (to (show-squares squares)
   (" " .join (each ~.text squares)))
 
-(to (step {machine transit state (and tape {tape _ head _})})
+(to (step {machine transit state (-- tape {tape _ head _})})
   (for mayhap (((~ acts next-state) (transit .get (~ state head))))
     {machine transit next-state (foldl perform tape acts)}))
 
