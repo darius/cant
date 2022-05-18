@@ -231,8 +231,7 @@
               ((__ . ps)
                ;; TODO fancier semantics that can bind variables? Requiring every branch to bind the same?
                ;; TODO for now just complain if a p binds anything?
-               `(? (given? ,@(map (lambda (p) `(be ,p))
-                                  ps))))))
+               `(? (be? ,@ps)))))
     (__ #f)))
 
 (define (up-to-n-optional n)
@@ -351,9 +350,6 @@
     ('may    (mlambda
               ((__ subject . clauses)
                `((given ,@clauses) ,subject))))
-    ('may?   (mlambda
-              ((__ subject . clauses)
-               `((given? ,@clauses) ,subject))))
     ('given  (mlambda                   ;TODO experiment; also, better name
               ((__ . clauses)
                `(make _
@@ -365,15 +361,11 @@
                           (clause
                            (error 'parse "Bad clause: 'be' or 'else' missing" clause)))
                          clauses)))))
-    ('given? (mlambda                   ;TODO experiment; also, better name
-              ((__ . clauses)
+    ('be?    (mlambda
+              ((__ . ps)
                `(make _
-                  ,@(map (mlambda
-                          (('be pat)
-                           `(to (~ ,pat) #t))
-                          (clause
-                           (error 'parse "Bad clause: 'be' expected" clause)))
-                         clauses)
+                  ,@(map (lambda (pat) `(to (~ ,pat) #t))
+                         ps)
                   (to (~ _) #f)))))
     ('to     (mlambda
               ((__ (head . params) . body)

@@ -659,10 +659,11 @@ above:
 
 - `(or pattern1 ... pattern_n)` tries each pattern in turn, and succeeds
   iff any pattern succeeds. There's an obvious issue: what if the
-  different patterns produce different bindings? Currently we just
-  drop any bindings from any subpattern. Ultimately I want to make this
-  require that all the subpatterns create the same bindings, or maybe
-  just that there are none created at all.
+  different patterns produce different bindings? The answer is that
+  just as conditional expressions put each branch in a subscope, so does
+  each subpattern of an or-pattern. Any bindings don't escape.
+  (TODO maybe warn if any of them does create a binding. Maybe ultimately
+  we should export the bindings, and require them to be consistent.)
 
 
 ## The callable-message idiom
@@ -1301,7 +1302,7 @@ name: it defaults to `loop`. I'm not sure I want this feature, but I
 guess other people might want it more.
 
 ```
-more syntax: may?, given?
+more syntax: be?
 
 more naming conventions:
 foo<-

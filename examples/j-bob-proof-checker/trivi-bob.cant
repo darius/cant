@@ -360,12 +360,10 @@
                       path.rest))))
 
 (to (has-direction? e dir)
-  (may? (~ dir e)
-    (be (~ 'Q       {if _ _ _}))
-    (be (~ 'A       {if _ _ _}))
-    (be (~ 'E       {if _ _ _}))
-    (be (~ (? nat?) {call _ (-- (? list? args)
-                                (when (<= 1 dir args.count)))}))))
+  (-> (~ dir e)
+      (be? (~ (or 'Q 'A 'E) {if _ _ _})
+           (~ (? nat?)      {call _ (-- (? list? args)
+                                        (when (<= 1 dir args.count)))}))))
 
 
 ;; Some expression helpers.
@@ -374,8 +372,8 @@
 (let yes-c {constant #yes})
 (let no-c  {constant #no})
 
-(let constant? (given? (be {constant _})))
-(let variable? (given? (be {variable _})))
+(let constant? (be? {constant _}))
+(let variable? (be? {variable _}))
 
 
 ;; Apply an operator to values.

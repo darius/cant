@@ -143,8 +143,7 @@
       ;; (begin f ((x a) (y b)) e) => (do (to (f a b) e) (f x y))  ;; TODO tighter scope for f
       (may operands
         (be `(,f ,pairs ,@body)
-          (for each! ((pair pairs))
-            (surely (may? pair (be `(,_ ,_)))))
+          (surely (every (be? `(,_ ,_)) pairs))
           `(do
              (to (,f ,@(each (~ 0) pairs))
                ,@body)
@@ -164,8 +163,7 @@
       ;; TODO code duplication with 'begin case
       (may operands
         (be `(,f ,pairs ,@body)
-          (for each! ((pair pairs))
-            (surely (may? pair (be `(,_ ,_)))))
+          (surely (every (be? `(,_ ,_)) pairs))
           `(,f (on ,(each (~ 0) pairs) ,@body)
                ,@(each (~ 1) pairs)))))
     (be 'or

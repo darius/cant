@@ -53,7 +53,7 @@
     (to ~.lhs lhs)
     (to ~.rhs rhs)
     (to (~ .starts-with? cat)
-      (may? rhs (be (link (= cat) _))))))
+      (-> rhs (be? (link (= cat) _))))))
 
 (to (tree<- lhs rhs)
   (make _

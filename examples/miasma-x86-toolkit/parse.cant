@@ -63,7 +63,7 @@
 ;; Parse instruction table entries.
 
 (to (parse-spec sexpr)
-  (surely (may? sexpr (be (link (? symbol?) _ _ _)))
+  (surely (-> sexpr (be? (link (? symbol?) _ _ _)))
           "Spec has the basics")
   (let stem sexpr.first.text)
   ;; We copy sexpr.rest until we hit the doc-text.
@@ -127,11 +127,8 @@
 
 (let extended-opcode-tags '[/0 /1 /2 /3 /4 /5 /6 /7])
 
-(to (operand? x)
-  (may? x (be (list<- (? symbol?) (or 'I 'U 'J 'O) (or 1 2 4)))))
-
-(to ((operand-of tag) x)                ;XXX duplicate code
-  (may? x (be (list<- (? symbol?) (= tag) (or 1 2 4)))))
+(let operand?        (be? (list<- (? symbol?) (or 'I 'U 'J 'O) (or 1 2 4))))
+(to (operand-of tag) (be? (list<- (? symbol?) (= tag)          (or 1 2 4))))
 
 (to (parse-operand `(,symbol ,tag ,size))
   (-> size (may tag
