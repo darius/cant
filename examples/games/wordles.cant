@@ -57,8 +57,7 @@ if this narrows it down enough, then which words.
               (out .say "Enter a 5-letter Wordle clue, as explained above. (Or <enter> to quit.)\n")
               (playing words)))))))
 
-(to (quit? input)
-  (or (zilch? input) input.trim.none?))
+(let quit? (be? (or (? zilch?) (-> ~.trim ""))))
 
 (to (parse-reply reply)
   (with-ejector
