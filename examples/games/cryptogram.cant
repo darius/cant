@@ -57,10 +57,11 @@
           (be 'backspace (pad .shift-by -1) (pad .jot #\space))
           (be 'del       (pad .jot #\space) (pad .shift-by 1))
           (be (-- (? rune?) (? ~.uppercase?))
-                         (pad .shift-to-code 1 key))
-          (else          (when (or (= key #\space) (alphabet .find? key))
-                           (pad .jot key)
-                           (pad .shift-by 1))))
+            (pad .shift-to-code 1 key))
+          (be (or #\space (when (alphabet .find? key)))
+            (pad .jot key)
+            (pad .shift-by 1))
+          (else))
         (playing)))))
 
 ;; The puzzle state.

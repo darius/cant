@@ -29,8 +29,7 @@
         (be #\W (~ hd (c+ p (r*c arg W))))
         (be #\L (~ (turn-left arg hd) p))
         (be #\R (~ (turn-right arg hd) p))
-        (be #\F (~ hd (c+ p (r*c arg hd))))
-        (else (surely #no)))))
+        (be #\F (~ hd (c+ p (r*c arg hd)))))))
   (let {complex x y} final-p)
   (+ x.magnitude y.magnitude))
 
@@ -52,7 +51,6 @@
         (be #\W (~  (c+ v (r*c arg W))  p))
         (be #\L (~  (turn-left arg v)   p))
         (be #\R (~  (turn-right arg v)  p))
-        (be #\F (~  v                   (c+ (r*c arg v) p)))
-        (else (surely #no)))))
+        (be #\F (~  v                   (c+ (r*c arg v) p))))))
   (let {complex x y} final-p)
   (+ x.magnitude y.magnitude))
