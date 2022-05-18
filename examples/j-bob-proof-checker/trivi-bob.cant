@@ -374,11 +374,8 @@
 (let yes-c {constant #yes})
 (let no-c  {constant #no})
 
-(to (constant? e)
-  (may? e (be {constant _})))
-
-(to (variable? e)
-  (may? e (be {variable _})))
+(let constant? (given? (be {constant _})))
+(let variable? (given? (be {variable _})))
 
 
 ;; Apply an operator to values.
