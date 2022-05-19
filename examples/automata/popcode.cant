@@ -18,18 +18,18 @@
         (be new-vm new-vm.run)))
 
     (to ~.step
-      (if reg.none?
-          (and cstack.some? (vm .break stack))
+      (hm (if reg.none?
+              (and cstack.some? (vm .break stack)))
           (may reg.first
+            (be (? self-evaluating? constant)
+              (vm .stack-step (link constant stack)))
+            (be `(quote ,constant)
+              (vm .stack-step (link constant stack)))
             (be (? symbol? name)
               (may (defs .get name)
                 (be (? list? new-block) (vm .nest new-block stack))
                 (be #no                 (oops "Undefined name" name))
-                (be prim                (prim vm))))
-            (be (? self-evaluating? constant)
-              (vm .stack-step (link constant stack)))
-            (be `(quote ,constant)
-              (vm .stack-step (link constant stack))))))
+                (be prim                (prim vm)))))))
       
     (to (~ .stack-step new-stack)
       (vm<- reg.rest block cstack new-stack defs store))
