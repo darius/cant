@@ -2,9 +2,9 @@
 
 (let input (with-input-file ~.read-all data-file))
 
-(to (alt<- @es) {alt es})
-(to (seq<- @es) {seq es})
-(to (dir<- str) {dir str.first})
+(to (Alt @es) {alt es})
+(to (Seq @es) {seq es})
+(to (Dir str) {dir str.first})
 
 (let grammar (grammar<- "
 main: '^' e '$'.
@@ -13,10 +13,8 @@ f:    g*     :Seq.
 g:    dir | '(' e ')'.
 dir:  {'N' | 'S' | 'E' | 'W'} :Dir.
 "))
-(let semantics (grammar (map<- (~ 'Alt (feed alt<-))
-                               (~ 'Seq (feed seq<-))
-                               (~ 'Dir (feed dir<-)))))
-(let parse-main (semantics 'main))
+(let semantics (each-value feed (export Alt Seq Dir)))
+(let parse-main ((grammar semantics) 'main))
 (to (parse text)
   (~.result (parse-main .parse-outcome text)))
 

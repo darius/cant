@@ -30,15 +30,8 @@ _: :whitespace*.
 (to (End rules text i)
   (if (= text.count i) `(,i) '()))
 
-(let semantics (map<-
-                (~ 'Lit (feed Lit))
-                (~ 'Alt (feed Alt))
-                (~ 'Seq (feed Seq))
-                (~ 'Ref (feed Ref))
-                ))
-(to (parser<- grammar)
-  (-> semantics grammar (~ 'start) ~.parse-it))
-(let parse (parser<- g1))
+(let semantics (each-value feed (export Lit Alt Seq Ref)))
+(let parse (-> semantics g1 (~ 'start) ~.parse-it))
 
 (to (part1)
   (let rules (map<-lists (each parse rule-text.split-lines)))

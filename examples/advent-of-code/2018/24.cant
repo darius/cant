@@ -126,8 +126,8 @@ quality_list: {'weak'|'immune'} ' to ' [word++', ' :hug] :hug.
 word: {:letter+}.
 separator: '\n'.
 "))
-(let parser (-> (map<- (~ 'Group (feed cook-group))) grammar (~ 'main)))
-(let matchup (parser .parse input))
+(let parse (-> (map<- (~ 'Group (feed cook-group))) grammar (~ 'main) ~.parse-it))
+(let matchup (parse input))
 
 
 (out .display "\nPart 1\n")

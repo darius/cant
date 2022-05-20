@@ -90,6 +90,11 @@
   (for gather (((~ i x) map.items))
     (if (ok? x) `(,i) '())))
 
+;; Make a map like `map` with each value transformed by f.
+(to (each-value f map)
+  (map<-items (for each (((~ k v) map.items))
+                (~ k (f v)))))
+
 ;; Make a map from k to (f k) for k in keys.
 (to (map-by f keys) ;TODO maybe name it map<-keys ? along with a map<-values ?
   (map<-items (for each ((key keys))
@@ -301,6 +306,7 @@
     link/lazier lazier<- 
     foldr/lazy gather chain/lazy 
     each/lazy gather/lazy link/lazy scanl/lazy iterate
+    each-value
     array-by map-by !map-by map<-values text-by method<- ->
     sum-by tally-by tally max min max-by min-by
     hey union intersect mayhap
