@@ -112,7 +112,7 @@
                                  (and (usable? tool q)
                                       {at t.+ {state q tool}})))
                     (let swap (equip effort (swap-tool p tool)))
-                    (continue `(,swap ,@moves))))))))
+                    (continue (link swap moves))))))))
 
 (to (swap-tool q tool)
   (let candidates (-> q type<- usables ~.keys))
