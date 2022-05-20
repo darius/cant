@@ -194,9 +194,7 @@
 
 ;; Like (f ?thing) but preserving #no-ness.
 (to (mayhap f ?thing)
-  (may ?thing
-    (be #no #no)
-    (else   (f ?thing))))
+  (and ?thing (f ?thing)))
 
 (to (with-input-file fn filename)
   (with-closing fn (open-input-file filename)))

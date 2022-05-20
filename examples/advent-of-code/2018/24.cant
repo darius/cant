@@ -55,9 +55,8 @@
 (to (attacking selections)
   (for each! ((group (sort-by (:: (- it.initiative)) selections.keys)))
     (when group.alive?
-      (may (selections .get group)
-        (be #no)
-        (be target (group .attack! target))))))
+      (when (let target (selections .get group))
+        (group .attack! target)))))
 
 (to (cook-group n-units hit-points qualities attack-damage attack-type initiative)
   (let immunities (set<-))
