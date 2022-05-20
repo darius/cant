@@ -98,7 +98,8 @@
     unit-pq pq-peek pq-merge pq<-list)
 
   (begin searching ((pq (unit-pq start-effort)))
-    (let {nonempty (and effort {at t state}) rest-pq} (pq-peek pq))
+    (let {nonempty (-- effort {at t state}) rest-pq}
+      (pq-peek pq))
     
     (to (continue new-efforts)
       (searching (pq-merge rest-pq (pq<-list (keep-early new-efforts)))))
