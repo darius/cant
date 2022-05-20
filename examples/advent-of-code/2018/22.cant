@@ -72,8 +72,8 @@
 
   (to (keep-early efforts)
     (for skip (({at t state} efforts))
-      (let late? (for mayhap ((t1 (bests .get state)))
-                   (<= t1 t)))
+      (let late? (for mayhap ((earliest (bests .get state)))
+                   (<= earliest t)))
       (unless late? (bests .set! state t))
       late?))
 
