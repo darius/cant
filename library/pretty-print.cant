@@ -45,11 +45,11 @@
 
 ;; (intercalate 'T '(a b c)) = '(a T b T c)
 ;; TODO unify with list .join method somehow?
-(to (intercalate between elements)
-  (hm (if elements.none? '())
-      (else (link elements.first
-                  (for foldr ((element elements.rest) (result '()))
-                    (link between element result))))))
+(to (intercalate between xs)
+  (hm (if xs.none? '())
+      (else (link xs.first
+                  (for foldr ((x xs.rest) (tail '()))
+                    (link between x tail))))))
 
 (export
   pp<- doc<-sx)

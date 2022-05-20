@@ -71,17 +71,11 @@
   (let start-effort {at 0 start-state})
 
   (to (keep-early efforts)
-    (for keep (({at t state} efforts))
-      ;; TODO un-duplicate this:
-      (may (bests .get state)
-        (be #no
-          (bests .set! state t)
-          #yes)
-        (be t1
-          (if (< t t1)
-              (do (bests .set! state t)
-                  #yes)
-              #no)))))
+    (for skip (({at t state} efforts))
+      (let late? (for mayhap ((t1 (bests .get state)))
+                   (<= t1 t)))
+      (unless late? (bests .set! state t))
+      late?))
 
   (to (equip {at t {state p tool}} new-tool)
 ;;    (surely (usable? new-tool p) "New tool usable" new-tool)

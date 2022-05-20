@@ -617,7 +617,7 @@
       (may clauses
         (be '()
           #no)
-        (be `(,(-- clause {clause p e}) ,@rest)
+        (be (link (-- clause {clause p e}) rest)
           !map.clear!
           (may (match-pat r !map p datum)
             (be #no  (matching rest))
