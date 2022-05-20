@@ -732,15 +732,12 @@
       write print display read
       ;; TODO see if I've changed the stdlib relevantly since collecting these
       ))
-
-  (let builtins-map
-    (map<-items
-     (link (~ 'apply {apply})
-           (~ 'eval  {eval})
-           (~ 'exit  {exit})
-           (~ 'throw {throw})
-           (for each (((~ name value) primitives-from-cant.items))
-             (~ name {primitive value})))))
+  (let builtins-map ((map<- (~ 'apply {apply})
+                            (~ 'eval  {eval})
+                            (~ 'exit  {exit})
+                            (~ 'throw {throw}))
+                     .override (each-value (:: {primitive it})
+                                           primitives-from-cant)))
 
   (let builtins-env {local-env builtins-map {empty-env}})
 
