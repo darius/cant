@@ -165,8 +165,8 @@
                  ctx))
        (('@ __)                      ;XXX make @vars be some disjoint type
         (error 'parse "An @-pattern must be at the end of a list" p))
-       ((: __ list?)
-        (error 'parse "Old-style list pattern" p)))))) ;TODO better plaint
+       (__
+        (error 'parse "Unknown pattern type" p))))))
 
 (define (parse-message-pat ps ctx)
   (mcase ps
