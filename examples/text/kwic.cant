@@ -13,7 +13,7 @@
 
 ;; Write a sorted keyword-in-context index.
 (to (kwic lines)
-  (each! show-group (sort (group (gather contextify lines)))))
+  (each! show-group (sort (collect (gather contextify lines)))))
 
 ;; (contextify "leaves of grass")
 ;; -> '({~ "leaves" {~ "leaves of grass" (0 6)}}  ;; where (0 6) is the span of the first word
@@ -31,12 +31,12 @@
 ;; TODO ugly: '\\''
 
 ;; Given a list of (~ key value), return a list of (~ key all-values).
-(to (group items)
+(to (collect items)
   (let map (!map<-))
   (for each! (((~ key value) items))
     ((map .get-set! key flexarray<-) .push! value))
-  (for each (((~ key accum) map.items))
-    (~ key accum.values)))
+  (for each (((~ key array) map.items))
+    (~ key array.values)))
 
 ;; Under a heading for `word`, show each of its occurrences.
 (to (show-group (~ word occurrences))
