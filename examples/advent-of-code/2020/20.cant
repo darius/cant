@@ -7,15 +7,12 @@
 (to (turn lines)                        ;right quarter-turn of a tile
   (for each ((t (transpose lines)))
     (~.text (reverse t))))
-(let orientations                       ;all the symmetry ops on a tile
-  (list<- (compose)
-          (compose turn)
-          (compose turn turn)
-          (compose turn turn turn)
-          (compose flip)
-          (compose turn flip) 
-          (compose turn turn flip) 
-          (compose turn turn turn flip)))
+(let orientations                       ;successive ops on a tile to go through all the symmetries
+  (list<- turn turn turn flip turn turn turn))
+
+(to (orienting lines)                   ;list all 8 reorientations of a tile
+  ;; TODO remove duplicates? (in the case of a symmetrical tile)
+  (scanl -> lines orientations))
 
 (to (interior<- lines)                  ;remove all the edge pixels from a tile
   (let ny lines.count)
@@ -86,8 +83,7 @@ The worklist scheme is less likely to need backtracking.
   (let oriented-edge-map
     (map<-items
      (collect (for gather (((~ tid {tile lines _}) tile-map.items))
-                (for gather ((orient orientations))
-                  (let oriented-lines (orient lines))
+                (for gather ((oriented-lines (orienting lines)))
                   (let edges (edges<- oriented-lines))
                   ;; TODO for each (dir,edge) of oriented-lines, (~ edge {oriented-tile tid XXX edge-map})
                   'XXX)))))
