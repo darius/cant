@@ -355,6 +355,8 @@
                `(make _
                   ,@(map (mlambda
                           (('be pat . body)
+                           (when (mcase pat (('@ __) #t) (__ #f))
+                             (error 'parse "Bad pattern: bare '@'" pat))
                            `(to (~ ,pat) ,@body))
                           (('else . body) ;TODO check that it's the last clause
                            `(to (~ _) ,@body))
