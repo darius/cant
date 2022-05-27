@@ -8,16 +8,23 @@
   (import powers out)
 
   (to (on-oops-traceback k evil)
-    (out .display "Oops! Traceback:\n")
-    (print-traceback k)
-    (complain evil))
+    ;; For now we're going to show the complaint first, and
+    ;; then the traceback with the current frame first. This
+    ;; is the opposite of the traditional order, but for now
+    ;; it's more important to put the most specific info first,
+    ;; in case a nested error occurs during this printing.
+    ;; TODO revisit this once error recovery is better
+    (out .display "Oops! ")
+    (complain evil)
+    (out .display "Traceback:\n")
+    (print-traceback k))
 
   (to (on-oops-complain k evil)
     (out .display "Oops!\n")
     (complain evil))
 
   (to (print-traceback k)
-    (for each! ((frame (reverse k)))
+    (for each! ((frame k)) ;;TODO (reverse k) once error recovery is better
       (out .display "  ")
       (-> out (bounded-writer<- (~ .write frame) 77))
       (out .display "\n")))
