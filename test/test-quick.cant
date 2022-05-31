@@ -17,6 +17,7 @@
 (loud-use "test-pattern-matching")
 (loud-use "test-use")
 
+(loud-use "test-catch")
 (loud-use "test-hashmap")
 (loud-use "test-hashset")
 (loud-use "test-format")

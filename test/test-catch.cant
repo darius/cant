@@ -1,0 +1,13 @@
+;; In these test cases we have catch-oops nested within some extra junk,
+;; plus more extra junk around the actual error. This is to verify that
+;;  * the junk on the stack in between catch-oops and the error is skipped
+;;  * the junk on the stack *above* catch-oops is not skipped.
+
+;; No-oops case
+(out .print (list<- (catch-oops (: (+ 1 (* 3 3))))))
+
+;; Oops case
+(out .print (list<- (catch-oops (: (+ 1 (* 3 'three))))))
+
+
+;; TODO test that unwind-protect thunks get called, ejectors get disabled, and such
