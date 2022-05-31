@@ -14,18 +14,6 @@
 
 (let the-last-oops (box<- #no))
 
-(to (push-signal-handler handler)
-  (let parent-handler the-signal-handler.^)
-  (to (handler/wrapped k evil)
-    ;; TODO might be cleaner with unwind-protect actions spelled out inline
-    (unwind-protect
-     (to (handler-thunk)
-       (the-signal-handler .^= parent-handler)
-       (handler k evil))
-     (to (unwind-thunk)
-       (the-signal-handler .^= handler/wrapped))))
-  (the-signal-handler .^= handler/wrapped))
-
 (to (with-signal-handler handler thunk)
   (let parent-handler the-signal-handler.^)
   (the-signal-handler .^= (on (k evil)

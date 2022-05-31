@@ -34,10 +34,7 @@
   (run-load "abcs/50-top.cant")
   (cant-interpret
    '(do
-                                        ;    (use "test/smoke-test")
-      ;; Let's default to traceback-on-oops:
-      ;; TODO: also stash the oops in the-last-oops for below
-                                        ;    (push-signal-handler ((use 'traceback) 'on-oops-traceback))
+      ;;   (use "test/smoke-test")
       (the-last-oops .^))))
 
 (setting-ensure-bound primordial-setting '(primordial-setting))

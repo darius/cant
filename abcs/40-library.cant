@@ -74,7 +74,7 @@
     open-binary-input-file open-binary-output-file
     system/must-succeed
     the-modules unuse load load-module
-    the-last-oops push-signal-handler with-signal-handler the-signal-handler
+    the-last-oops with-signal-handler the-signal-handler
     catch-oops ;; TODO move catch-oops to the computational setting?
     listener<- debug breakpoint))
 (let full-powered-setting
