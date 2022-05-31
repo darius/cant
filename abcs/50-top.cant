@@ -35,10 +35,9 @@
   result)
 
 (to (catch-oops thunk)
-  ;; XXX On oops, this doesn't eject back to the catch point.
-  ;; And there's seemingly no way to do this with the current primitives.
-  (with-signal-handler (on (cant-k evil) (cant-k .answer {oops evil}))
-                       thunk))
+  (with-ejector (on (ejector)
+                  (with-signal-handler (on (k evil) (k .eject-to ejector {oops evil}))
+                                       thunk))))
 
 (to (fallback-signal-handler k evil)
   ;; XXX for some reason, the panic handler doesn't seem to be set

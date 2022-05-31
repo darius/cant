@@ -604,9 +604,6 @@
     ;; primitive calls (mostly). We can wait to do things properly until
     ;; we're making a VM in C for real.
     (may (catch-oops (: (p @args)))
-            ;; XXX wrong if the oops occurs within a nested Cant call context.
-            ;;   TODO show it can go wrong
-            ;;   We need to use an ejector to get this right.
       (be {oops evil}
         (exit k evil))
       (be result

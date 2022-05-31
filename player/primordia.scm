@@ -133,6 +133,7 @@
            '(__raw-signal-handler-box
              __evaluate
              oops
+             ejector?
              with-ejector
              __eject
              ejector-protect

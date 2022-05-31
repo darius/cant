@@ -195,6 +195,9 @@
 ;; continuing back. Any reply from the thunk will be dropped, but if
 ;; it errors or ejects then that action takes precedence.
 
+(define (ejector? x)
+  (and (object? x) (eq? script/ejector (object-script x))))
+
 ;; Call the receiver with a new, enabled ejector.
 (define with-ejector-prim
   (cps-prim<-
@@ -222,34 +225,37 @@
                    (call thunk null-tuple
                          (cont<- k-call-unwind-thunk k unwind-thunk)))))))
 
-;; The method (ejector .eject result)
+;; (__eject ejector result) implements the method (ejector .eject result)
+;; (__eject ejector result k) implements the method (sequel .eject-to ejector result)
 (define eject-prim
   (cps-prim<-
    #f '__eject
    (lambda (datum arguments k)
-     (cps-unpack arguments k 2 '__eject
-                 (lambda (ejector result)
-                   (unless (and (object? ejector)
-                                (eq? (object-script ejector) script/ejector))
-                     (error 'bug "Not an ejector" ejector))
-                   (let* ((ejector-box (object-datum ejector))
-                          (state (unbox ejector-box)))
-                     (cond ((not state)
-                            (signal k "Tried to eject to a disabled ejector"
-                                    ejector))
-                           (else
-                             (insist (seems-to-be-a-raw-repr? state methods/cont)
-                                     "Ejector cont is a cont" state)
-                             (insist (= k-disable-ejector (vector-ref state 0))
-                                     "Ejector cont is legit" state)
-                             ;; TODO Is it wise to wait to disable
-                             ;; this ejector until the unwinding
-                             ;; reaches it? Or better disable it right
-                             ;; now? I'm choosing the former, so
-                             ;; unwind-thunks along the way can also
-                             ;; run this ejector, since I don't see
-                             ;; why to deny them. But I dunno, man.
-                             (ejector-unwinding k state result)))))))))
+     (define (do-eject ejector result unwinding-from-k)
+       (unless (ejector? ejector)
+         (error 'bug "Not an ejector" ejector))
+       (let* ((ejector-box (object-datum ejector))
+              (state (unbox ejector-box)))
+         (cond ((not state)
+                (signal k "Tried to eject to a disabled ejector"
+                        ejector))
+               (else
+                 (insist (seems-to-be-a-raw-repr? state methods/cont)
+                         "Ejector cont is a cont" state)
+                 (insist (= k-disable-ejector (vector-ref state 0))
+                         "Ejector cont is legit" state)
+                 ;; TODO Is it wise to wait to disable
+                 ;; this ejector until the unwinding
+                 ;; reaches it? Or better disable it right
+                 ;; now? I'm choosing the former, so
+                 ;; unwind-thunks along the way can also
+                 ;; run this ejector, since I don't see
+                 ;; why to deny them. But I dunno, man.
+                 (ejector-unwinding unwinding-from-k state result)))))
+     (case (length arguments)
+       ((2) (do-eject (car arguments) (cadr arguments) k))
+       ((3) (do-eject (car arguments) (cadr arguments) (caddr arguments)))
+       (else (signal k "Wrong #arguments to:" '__eject "got:" arguments))))))
 
 (define (cont-disable-ejector result k0)
   (unpack k0 (k state)
@@ -544,6 +550,7 @@
                     (__raw-signal-handler-box ,raw-signal-handler-box)
                     (__evaluate ,evaluate-prim)
                     (oops ,error-prim)
+                    (ejector? ,ejector?)
                     (with-ejector ,with-ejector-prim)
                     (__eject ,eject-prim)
                     (ejector-protect ,ejector-protect-prim)

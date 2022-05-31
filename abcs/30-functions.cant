@@ -311,7 +311,8 @@
     sum-by tally-by tally max min max-by min-by
     hey union intersect mayhap
     grid* sum = link link? list? number? integer? symbol? cue? ;TODO rename cue? or rm it
-    bool? rune? array? box? term? source? sink? zilch? box<-
+    bool? rune? array? box? term? source? sink? zilch? ejector?
+    box<-
     text? number<-text text<-number
     list<-text text-source<- text-sink<-
     text<-list text<- text<-writer
