@@ -40,6 +40,6 @@
 (let vert  (products 0 1))
 (let diag1 (products 1 1))
 (let diag2 (products -1 1))
-(let best (max @(chain horiz vert diag1 diag2)))
+(let best (max @horiz @vert @diag1 @diag2))
 
 (out .print best)

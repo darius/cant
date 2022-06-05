@@ -94,13 +94,28 @@
 
 (define (parse-term-e tag operands ctx)
   (if (has-spread-operator? operands)
-      (parse-e `(',make-term ',tag (',list* ,@(remove-spread-operator operands)))
-               ctx)
+      (parse-e `(',make-term ',tag ,(unspread-e operands)) ctx)
       (pack<- e-term tag (parse-es operands ctx))))
 
 (define (has-spread-operator? parts)
   (any (mlambda (('@ __) #t) (__ #f))
        parts))  ;XXX really only need to check the last one
+
+(define (unspread-e xs)
+  (mcase xs
+    ('() ''())
+    ((('@ last)) last)
+    ((('@ x) . tl) `(',append ,x ,(unspread-e tl)))
+    ((hd . tl) (cons-unspread-e hd (unspread-e tl)))))
+
+
+(define (cons-unspread-e hd tl)
+  (mcase tl
+    ((('quote f) . args)
+     (if (eq? f list*) ;; A minor optimization: turn ('#<list*> x ('#<list*> y z)) into ('#<list*> x y z)
+         `(',list* ,hd ,@args)
+         `(',list* ,hd ,tl)))
+    (_ `(',list* ,hd ,tl))))
 
 (define (remove-spread-operator xs)
   (let walking ((xs xs))

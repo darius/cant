@@ -41,7 +41,7 @@
             (loop)))))
 
 (to (ask @prompt)
-  (say (chain @prompt) " ") ;TODO oughta be (say @prompt " ")
+  (say @prompt " ")
   (may in.read-line
     (be (? zilch?) (os-exit 0))
     (be line line.trim)))

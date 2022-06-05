@@ -15,7 +15,7 @@
           (err .say "Available players: ~d\n"
                     (" " .join (sort player-registry.keys)))
           (os-exit 1))))
-  (console-tic-tac-toe @`(,@players ,empty-grid))) ;TODO allow @arguments in non-final position in expressions?
+  (console-tic-tac-toe @players empty-grid))
 
 (to (quick-test)
   (tty-tic-tac-toe spock-play spock-play {grid 0o610 0o061}))
