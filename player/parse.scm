@@ -108,7 +108,6 @@
     ((('@ x) . tl) `(',append ,x ,(unspread-e tl)))
     ((hd . tl) (cons-unspread-e hd (unspread-e tl)))))
 
-
 (define (cons-unspread-e hd tl)
   (mcase tl
     ((('quote f) . args)
