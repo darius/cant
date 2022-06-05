@@ -183,10 +183,7 @@
     (grid* @(`(,list) .repeat k)))
   (to ~.cycle
     (surely list.some?)
-    (begin cycling ((xs list))
-      (if xs.none?
-          (cycling list)
-          (link/lazy xs.first (: (cycling xs.rest))))))
+    (let result (chain/lazy list (: result))))
   (to (~ .maybe @(optional if-none))  ;; TODO an experiment TODO could be defined on maps in general too
     (hm (if list.none? if-none)
         (if list.rest.none? list.first)
