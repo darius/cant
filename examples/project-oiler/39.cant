@@ -4,15 +4,49 @@
   (let perimeters (bag<- (list-pythagorean-perimeters n)))
   (max-by perimeters perimeters.keys))
 
-(to (list-pythagorean-perimeters n)
-  ;; Naive approach
+
+;; Naive approach
+(to (list-pythagorean-perimeters/naive n)
   (for gather ((a (1 .till n.-))) ;; longest leg
     (let a^2 (* a a))
     (for yeahs ((b (1 .thru (min a (- n a)))))  ;; other leg
       (let c (~.sqrt (+ a^2 (* b b))))
       (and (integer? c)
            (<= (let p (+ a b c)) n)
-;;           (do (out .say "~w: ~w ~w ~w\n" p a b c) #yes)
            p))))
+
+
+;; Mathier approach
+
+(import (use 'complex) c-abs^2 c*)
+
+(to (list-pythagorean-perimeters perimeter-limit)
+  (let hypot-limit (* 3 perimeter-limit))
+  (for yeahs (({~ hypot a b} (list-pythagorean-triples hypot-limit)))
+    (let perimeter (+ hypot a b))
+    (and (<= perimeter perimeter-limit)
+         perimeter)))
+
+;; * Start with Euclid's formula for primitive Pythagorean triples
+;; * Adjoin their multiples
+(to (list-pythagorean-triples hypot-limit)
+  (for gather (({~ h a b} (list-primitive-pythagorean-triples hypot-limit)))
+    (for each ((k (keep-while (:: (<= (* h it) hypot-limit))
+                              (1 .and-up))))
+      {~ (* k h) (* k a) (* k b)})))
+
+(to (list-primitive-pythagorean-triples hypot-limit)
+  (for gather/lazy ((m (1 .till hypot-limit)))
+    (for keep-while (({~ h a b} (for yeahs/lazy ((n (1 .till m)))
+                                  (and (= 1 (gcd m n))
+                                       (or m.even? n.even?)
+                                       (do (let z {complex m n})
+                                           (let hypotenuse (c-abs^2 z))
+                                           (let {complex a b} (c* z z))
+                                           (if (< a b)
+                                               {~ hypotenuse b a}
+                                               {~ hypotenuse a b}))))))
+      (<= h hypot-limit))))
+
 
 (out .print (answer 1000)) ;; 840
