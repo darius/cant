@@ -142,15 +142,6 @@
   (for foldr/lazy ((x xs) (rest-thunk (: '())))
     (chain/lazy (f x) rest-thunk)))
 
-(to (chain/lazy xs ys-thunk)
-  (foldr/lazy link/lazy xs ys-thunk))
-
-(to (foldr/lazy f xs z-thunk)
-  (if xs.none?
-      (z-thunk)
-      (f xs.first
-         (: (foldr/lazy f xs.rest z-thunk)))))
-
 (to (yeahs/lazy maybe xs)
   (keep/lazy itself (each/lazy maybe xs)))
 
