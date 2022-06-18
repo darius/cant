@@ -58,10 +58,9 @@
   ;; TODO maybe name like <bool> etc.
 
   (to (a-bool g)
-    (may (g .natural 2)
-      (be 0 #no)
-      (be 1 #yes)))
-
+    (bools (g .natural 2)))
+  (let bools [#no #yes])
+  
   (to (a-count g)
     (g .natural g.size))
 
