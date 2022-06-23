@@ -125,9 +125,20 @@
     (else
       (out .display "No oops to debug.\n"))))
 
-(to (breakpoint @values)
-  ;; TODO automatically invoke the debugger
-  (oops "Breakpoint" @values))
+;; Commonly known as a "breakpoint", but I'd hate to type out such a long word.
+(to (avast @values)
+  (import ((use 'debugger)              ;TODO duped code
+           (export out in extract-datum extract-script main-interactive-setting))
+    inspect-sequel)
+  (out .say "\nAvast ~w\n" values)
+  (inspect-sequel
+   (with-ejector (on (ejector)
+                   (with-signal-handler
+                    (on (k evil)
+                      ;; Get the 'real' k, the parent of the inspect-sequel call above.
+                      ;; XXX omg this is awful
+                      (k .eject-to ejector k.rest.rest.rest.rest.rest.rest))
+                    (: (oops "Avast")))))))
 
 (full-powered-setting .resolve-each! primordial-setting full-powered-setting-extra-names)
 
