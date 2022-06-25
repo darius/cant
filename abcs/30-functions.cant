@@ -49,9 +49,9 @@
                 (zipping (each (~ .from 1) rows)))))))
 
 ;; XXX float contagion
-(make min {extending left-folding-operation}
+(make min {extending left-to-right-operation}
   (to (~ a b) (if (< a b) a b)))
-(make max {extending left-folding-operation}
+(make max {extending left-to-right-operation}
   (to (~ a b) (if (< a b) b a)))
 
 ;; `(min-by f xs)` = an `x` in `xs` giving the minimum value of `(f x)`.
@@ -155,7 +155,7 @@
   (as-list (scanl/lazy f z xs)))
 
 ;; ((compose f g) x) = (f (g x)), etc.
-(make compose {extending right-folding-operation}
+(make compose {extending right-to-left-operation}
   (to (~ f g)                   ;TODO support (to ((~ f g) @arguments)
     (on (@arguments)
       (f (g @arguments))))
@@ -184,7 +184,7 @@
 ;; (-> input f g h) = (h (g (f input)))
 ;; Hm, (-> x) is just x, so this could also replace 'itself'...
 ;; is there a name suggestive of both functions? Maybe 'pass'?
-(make -> {extending left-folding-operation}
+(make -> {extending left-to-right-operation}
   (to (~ input f)
     (f input)))
 
@@ -316,7 +316,7 @@
     miranda-trait array-trait list-trait map-trait sink-trait
     as-list array<-list array<- map<- map<-lists tuple<-list yeah?
     list<- !map<- !map<-items !map<-lists set<- set<-list
-    count? not= left-folding-operation right-folding-operation
+    count? not= left-to-right-operation right-to-left-operation
     + * - transitive-comparison < <= <=> >= > compare
     gcd lcm count<-digits
     chain reverse foldl foldl1 foldr foldr1 scanl transpose zipped-list-transducer

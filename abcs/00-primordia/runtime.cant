@@ -262,27 +262,27 @@
 (to (not= x y)
   (not (= x y)))
 
-(make-trait left-folding-operation operation
+(make-trait left-to-right-operation operation
   (to (~ a b @arguments)
     (foldl operation (operation a b) arguments))
   (to (~ a) ;; TODO leave this one-arg no-op out, because we'll generally want to typecheck `a` anyway?
     a))      ; Of course this no-op by default is overridable.
 
-(make-trait right-folding-operation operation
+(make-trait right-to-left-operation operation
   (to (~ @arguments)
     (foldr1 operation arguments)))
 
-(make + {extending left-folding-operation}
+(make + {extending left-to-right-operation}
   (to (~ a b) (a .+ b))
   (to (~ a) (surely (number? a) "+ of non-number" a) a)
   (to (~) 0))
 
-(make * {extending left-folding-operation}
+(make * {extending left-to-right-operation}
   (to (~ a b) (a .* b))
   (to (~ a) (surely (number? a) "* of non-number" a) a)
   (to (~) 1))
 
-(make - {extending left-folding-operation}
+(make - {extending left-to-right-operation}
   (to (~ a b) (a .- b))
   (to (~ a) (0 .- a)))
 
@@ -320,7 +320,7 @@
   a)
 
 
-(make chain {extending right-folding-operation}
+(make chain {extending right-to-left-operation}
   (to (~ xs ys) (xs .chain ys))
   (to (~) '()))
 

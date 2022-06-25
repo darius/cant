@@ -14,14 +14,14 @@
 (to (v/ {v x y} c)
   {v (/ x c) (/ y c)})
 
-(make v+ {extending left-folding-operation}
+(make v+ {extending left-to-right-operation}
   (to (~ {v x0 y0} {v x1 y1})
     {v (+ x0 x1)
        (+ y0 y1)})
   (to (~)
     {v 0 0}))
 
-(make v- {extending left-folding-operation} ; (fancier than we really need)
+(make v- {extending left-to-right-operation} ; (fancier than we really need)
   (to (~ {v x0 y0} {v x1 y1})
     {v (- x0 x1)
        (- y0 y1)})

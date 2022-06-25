@@ -2,11 +2,11 @@
 ;; Explained (in Python) at
 ;; https://codewords.recurse.com/issues/four/the-language-of-choice
 
-(make bdd-and {extending right-folding-operation}
+(make bdd-and {extending right-to-left-operation}
   (to (~ f g) (do-choose g lit0 f)) ;TODO rename do-choose
   (to (~) lit1))
 
-(make bdd-or {extending right-folding-operation}
+(make bdd-or {extending right-to-left-operation}
   (to (~ f g) (do-choose g f lit1))
   (to (~) lit0))
 
