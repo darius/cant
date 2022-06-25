@@ -151,7 +151,7 @@
                         '()
                         (scanning (f z xs.first) xs.rest))))))
 
-(to (amassing f z xs) ;; TODO better name
+(to (amassing f z xs)
   (as-list (amassing/lazy f z xs)))
 
 ;; ((compose f g) x) = (f (g x)), etc.
