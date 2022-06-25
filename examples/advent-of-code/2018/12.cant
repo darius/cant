@@ -24,7 +24,7 @@
   (sum state.keys))
 
 (to (after-generations n state0)
-  (for foldl ((state state0) (i n.till))
+  (for amass ((state state0) (i n.till))
     (out .say "~w: sum ~w\n" i (sum state.keys))
     (generate state)))
 

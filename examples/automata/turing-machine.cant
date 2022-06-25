@@ -14,7 +14,7 @@
 ;; Visited blank squares are symbolized as '-'.
 
 (to (run machine @(optional option))
-  (let history (keep-while yeah? (iterate step machine)))
+  (let history (keep-while yeah? (iterating step machine)))
   (when (= option 'loudly)
     (for each! ((machine history))
       (show-config machine)
@@ -34,7 +34,7 @@
 
 (to (step {machine transit state (-- tape {tape _ head _})})
   (for mayhap (((~ acts next-state) (transit .get (~ state head))))
-    {machine transit next-state (foldl perform tape acts)}))
+    {machine transit next-state (amass perform tape acts)}))
 
 (to (perform {tape L h R} act)
   (may act

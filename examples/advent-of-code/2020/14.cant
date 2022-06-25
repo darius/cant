@@ -16,7 +16,7 @@
   (sum memory.values))
 
 (to (run memory do-mem)
-  (for foldl ((mask void) (insn program))
+  (for amass ((mask void) (insn program))
     (may insn
       (be `(,new-mask) new-mask)
       (be `(,addr ,value)

@@ -264,13 +264,13 @@
 
 (make-trait left-to-right-operation operation
   (to (~ a b @arguments)
-    (foldl operation (operation a b) arguments))
+    (amass operation (operation a b) arguments))
   (to (~ a) ;; TODO leave this one-arg no-op out, because we'll generally want to typecheck `a` anyway?
     a))      ; Of course this no-op by default is overridable.
 
 (make-trait right-to-left-operation operation
   (to (~ @arguments)
-    (foldr1 operation arguments)))
+    (fold1 operation arguments)))
 
 (make + {extending left-to-right-operation}
   (to (~ a b) (a .+ b))
@@ -326,37 +326,37 @@
 
 ;; Using the optional suffix is like (chain (reverse xs) suffix).
 (to (reverse xs @(optional suffix))
-  (for foldl ((result (or suffix '()))
+  (for amass ((result (or suffix '()))
               (x xs))
     (link x result)))
 
-;; (foldl f z '(a b c)) = (f (f (f z 'a) 'b) 'c)
-(to (foldl f z xs)           ; 'z' connoting zero from f's perspective
+;; (amass f z '(a b c)) = (f (f (f z 'a) 'b) 'c)
+(to (amass f z xs)           ; 'z' connoting zero from f's perspective
   (if xs.none?
       z
-      (foldl f (f z xs.first) xs.rest)))
+      (amass f (f z xs.first) xs.rest)))
 
-;; (foldr f '(a b c) z) = (f 'a (f 'b (f 'c z)))
-(to (foldr f xs z) ;N.B. some other languages have a different argument order
+;; (fold f '(a b c) z) = (f 'a (f 'b (f 'c z)))
+(to (fold f xs z) ;N.B. some other languages have a different argument order
   (if xs.none?
       z
-      (f xs.first (foldr f xs.rest z))))
+      (f xs.first (fold f xs.rest z))))
 
-;; Like foldr but requiring xs to be nonempty.
-;; (foldr1 f '(a b c)) = (f 'a (f 'b 'c))
-(to (foldr1 f xs)
+;; Like fold but requiring xs to be nonempty.
+;; (fold1 f '(a b c)) = (f 'a (f 'b 'c))
+(to (fold1 f xs)
   (let tail xs.rest)
   (if tail.none?
       xs.first
-      (f xs.first (foldr1 f tail))))
+      (f xs.first (fold1 f tail))))
 
-;; Like foldl but requiring xs to be nonempty.
-;; (foldl1 f '(a b c)) = (f (f 'a 'b) 'c)
-(to (foldl1 f xs)
-  (foldl f xs.first xs.rest))
+;; Like amass but requiring xs to be nonempty.
+;; (amass1 f '(a b c)) = (f (f 'a 'b) 'c)
+(to (amass1 f xs)
+  (amass f xs.first xs.rest))
 
 (to (sum ns)
-  (foldl + 0 ns))
+  (amass + 0 ns))
 
 ;; (transpose '((a c e) (b d f)))   = '((a b) (c d) (e f)))
 ;; (transpose '((a b) (c d) (e f))) = '((a c e) (b d f))
@@ -380,7 +380,7 @@
 ;; and similar for (each f xs ys zs) and so on
 (make each {extending zipped-list-transducer}
   (to (~ f xs)
-    (for foldr ((x xs) (results '()))
+    (for fold ((x xs) (results '()))
       (link (f x) results))))
 
 ;; Call (f x) for each x in xs, in order, for the sake of any side effects.
@@ -410,7 +410,7 @@
 ;; (gather f '(a b c)) = (chain (f 'a) (f 'b) (f 'c))
 (make gather {extending zipped-list-transducer}
   (to (~ f xs)
-    (for foldr ((x xs) (gathered '()))
+    (for fold ((x xs) (gathered '()))
       (chain (f x) gathered))))
 
 ;; List every way to pick one element from each of the arguments.
@@ -473,22 +473,22 @@
 ;; x itself. I rather wish it were, but 1-tuples seem to need to be
 ;; distinct for the sake of message dispatch.
 (to (keep keep? xs)
-  (for foldr ((x xs) (kept '()))
+  (for fold ((x xs) (kept '()))
     (if (keep? x) (link x kept) kept)))
 
 ;; Short for (keep (compose not skip?) xs)
 (to (skip skip? xs)
-  (for foldr ((x xs) (kept '()))
+  (for fold ((x xs) (kept '()))
     (if (skip? x) kept (link x kept))))
 
 (to (chain/lazy xs ys-thunk)
-  (foldr/lazy link/lazy xs ys-thunk))
+  (fold/lazy link/lazy xs ys-thunk))
 
-(to (foldr/lazy f xs z-thunk)
+(to (fold/lazy f xs z-thunk)
   (if xs.none?
       (z-thunk)
       (f xs.first
-         (: (foldr/lazy f xs.rest z-thunk)))))
+         (: (fold/lazy f xs.rest z-thunk)))))
 
 ;; A march represents an arithmetic progression from a `first`, short of a
 ;; `limit`, successively by a `stride`.
@@ -561,8 +561,8 @@
           (to ~.rest  (enumerate xs.rest i.+))))))
 
 ;; TODO is this the most useful version of this idea?
-(to (iterate f x)
-  (link/lazy x (: (iterate f (f x)))))
+(to (iterating f x)
+  (link/lazy x (: (iterating f (f x)))))
 
 (to (text<- @runes)
   (text<-list runes))

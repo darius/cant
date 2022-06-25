@@ -18,7 +18,7 @@
 (out .display "\nPart 2\n")
 
 (to (transitive-fuel<- dry-mass)
-  (sum (keep-while ~.positive? (~.rest (iterate fuel<- dry-mass)))))
+  (sum (keep-while ~.positive? (~.rest (iterating fuel<- dry-mass)))))
 
 (to (part-2)
   (sum-by transitive-fuel<- inputs))

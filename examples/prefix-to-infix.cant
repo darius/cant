@@ -12,7 +12,7 @@
     (be `(,op ,@args)
       (surely (symbol? op) "Weird operator" e)
       (if (and (associative? op) (not= args.count 2))
-          (fmt p (foldl1 (on (x y) `(,op ,x ,y)) args))
+          (fmt p (amass1 (on (x y) `(,op ,x ,y)) args))
           (may args
             (be `(,x)    (fmt-unary p op x))
             (be `(,x ,y) (fmt-binary p op x y)))))

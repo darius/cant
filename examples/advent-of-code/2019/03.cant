@@ -17,9 +17,9 @@
   ;; Return a set of locations traced out by the path.
   (to (trace path)
     (let result (set<-))
-    (for foldl ((p '(0 0)) ((~ dir stride) path))
+    (for amass ((p '(0 0)) ((~ dir stride) path))
       (let dp (delta<- dir))
-      (for foldl ((p p) (_ stride.till))
+      (for amass ((p p) (_ stride.till))
         (hey (vector+ p dp) (:: (result .add! it)))))
     result)
 
@@ -40,9 +40,9 @@
   (to (trace path)
     (let result (!map<-))
     (let step (box<- 0))
-    (for foldl ((p '(0 0)) ((~ dir stride) path))
+    (for amass ((p '(0 0)) ((~ dir stride) path))
       (let dp (delta<- dir))
-      (for foldl ((p p) (_ stride.till))
+      (for amass ((p p) (_ stride.till))
         (hey (vector+ p dp) (:: (result .set! it (min (result .get it infinity)
                                                       step.+!))))))
     result)

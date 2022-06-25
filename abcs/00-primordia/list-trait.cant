@@ -85,7 +85,7 @@
   (to (~ .join segments)
     (hm (if segments.none? '())
         (else (chain segments.first.values
-                     (for foldr ((s segments.rest) (result '()))
+                     (for fold ((s segments.rest) (result '()))
                        (chain list (chain s.values result)))))))
   (to (~ .repeat n)
     ;;TODO a method to get an empty seq of my type; and then factor out duplicate code

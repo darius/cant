@@ -31,4 +31,4 @@
   
 (let fractions (for yeahs ((pair ((11 .thru 99) .k-sets 2)))
                  (canceling-fraction @pair)))
-(out .say "Product: ~d\n" (ratio-show (foldr r* fractions (ratio<- 1))))
+(out .say "Product: ~d\n" (ratio-show (fold r* fractions (ratio<- 1))))

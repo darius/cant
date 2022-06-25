@@ -74,8 +74,8 @@
 
   (let lines (each clean cryptogram.uppercase.split-lines))
   (let line-starts                ; Set of positions that start a line
-    (~.range (running-sum (for each ((line lines))
-                            (tally-by ~.letter? line)))))
+    (~.range (amassing + 0 (for each ((line lines))
+                             (tally-by ~.letter? line)))))
 
   (to (shift-by offset)
     (point .^= (code .ity (+ point.^ offset))))
@@ -163,8 +163,5 @@
         (else
           (r .push! rune))))
   r.values)
-
-(to (running-sum numbers)
-  (scanl + 0 numbers))
 
 (export main)

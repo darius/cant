@@ -13,7 +13,7 @@
 
 (to (roman<-number n)
   (surely (and (count? n) n.positive?))
-  (for foldl ((roman "") (digit n.digits))
+  (for amass ((roman "") (digit n.digits))
     (chain (text-by rune*10 roman) (roman<-digit digit))))  ;; TODO not quadratic
 
 (let roman<-digit (~.array (" I II III IV V VI VII VIII IX" .split " ")))

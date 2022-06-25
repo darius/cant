@@ -124,7 +124,7 @@
 ;;   while satisfy-first produces a map of variable -> bit
 ;;   Also naming: env vs. map
 (to (match-map map)
-  (for foldl ((tree lit1)
+  (for amass ((tree lit1)
               ((~ var value) (sort map.items {reverse})))
     (if value
         (build-choice var lit0 tree)

@@ -51,7 +51,7 @@
 ;; TODO should be in a library
 ;; TODO use .read-u8 on a *binary* source. Then cult-of-the-bound-variable could use this too.
 (to (read-u32 source)
-  (for foldl ((n 0) (_ (4 .till)))
+  (for amass ((n 0) (_ (4 .till)))
     (+ (n .<< 8) source.read-rune.code)))
 
 (export chaos<- chaos random-chaos<- random-seed<-)

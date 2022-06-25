@@ -4,7 +4,7 @@
 
 (to (part1)
   (let n-steps 6)
-  (let final-grid ((iterate update (grid<-picture input)) n-steps))
+  (let final-grid ((iterating update (grid<-picture input)) n-steps))
   final-grid.count)
 
 (to (grid<-picture lines)
@@ -34,7 +34,7 @@
 (to (part2)
   (let n-steps 6)
   (let initial-grid (grid<-picture-4d input))
-  (let final-grid ((iterate update-4d initial-grid) n-steps))
+  (let final-grid ((iterating update-4d initial-grid) n-steps))
   final-grid.count)
 
 (to (grid<-picture-4d lines)

@@ -11,7 +11,7 @@
   ;; a specialized implementation. Here, this impl using .nub seems
   ;; slower on my trivial test cases:
   ;; (sort xs.nub))
-  (for foldr ((x (sort xs)) (ss '()))
+  (for fold ((x (sort xs)) (ss '()))
     (sset-insert ss x)))
 
 (to (sset-elements xs)

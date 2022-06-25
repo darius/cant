@@ -72,7 +72,7 @@
   (to (~ .replace pattern replacement) ;TODO more efficient
     ;; TODO unify the cases?
     (hm (if pattern.none?
-            (for foldr ((rune me) (rest replacement))
+            (for fold ((rune me) (rest replacement))
               (chain replacement (text<- rune) rest)))
         (else
          (let limit me.count)

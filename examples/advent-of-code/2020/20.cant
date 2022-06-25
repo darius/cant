@@ -12,7 +12,7 @@
 
 (to (orienting lines)                   ;list all 8 reorientations of a tile
   ;; TODO remove duplicates? (in the case of a symmetrical tile)
-  (scanl -> lines orientations))
+  (amassing -> lines orientations))
 
 (to (interior<- lines)                  ;remove all the edge pixels from a tile
   (let ny lines.count)

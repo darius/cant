@@ -972,20 +972,20 @@ in order.
 `(where pass? map)` = a list of the keys of `map` whose corresponding
 values are approved by `pass?`.
 
-`(foldr f '(a b c) z)` = `(f 'a (f 'b (f 'c z)))`
+`(fold f '(a b c) z)` = `(f 'a (f 'b (f 'c z)))`
 
-`(foldl f z '(a b c))` = `(f (f (f z 'a) 'b) 'c)`
+`(amass f z '(a b c))` = `(f (f (f z 'a) 'b) 'c)`
 
-The meaning of `for` with the fold functions is initially less
+The meaning of `for` with the fold/amass functions is initially less
 obvious, but soon becomes familiar, e.g.
 ```
-(for foldl ((state initial-state) (input inputs))
+(for amass ((state initial-state) (input inputs))
   <compute the next state from the current state and input>)
 ;; => final state
 ```
 
-Like `foldr` but requiring `xs` to be nonempty:
-`(foldr1 f '(a b c))` = `(f 'a (f 'b 'c))`
+Like `fold` but requiring `xs` to be nonempty:
+`(fold1 f '(a b c))` = `(f 'a (f 'b 'c))`
 
 `(sum-by f '(a b))` = `(+ (f 'a) (f 'b))`
 

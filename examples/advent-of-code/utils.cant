@@ -8,7 +8,7 @@
   (/ (sum numbers) numbers.count))
 
 (to (all-mins-by fn xs)
-  (for foldl ((best (list<- xs.first))
+  (for amass ((best (list<- xs.first))
               (x xs.rest))
     (may ((fn best.first) .compare (fn x))
       (be '< best)

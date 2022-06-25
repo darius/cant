@@ -317,7 +317,7 @@
       e))
   
 (to (get-at-path e path)
-  (foldl get-at-direction e path))
+  (amass get-at-direction e path))
 
 (to (set-at-path e1 path e2)
   (begin walking ((e1 e1) (path path))

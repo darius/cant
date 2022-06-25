@@ -8,7 +8,7 @@
 (to (play line nsteps)
   (let numbers (each ~.number (line .split ",")))
   (let sightings numbers.but-last.inverse.copy)
-  (for foldl ((n numbers.last)
+  (for amass ((n numbers.last)
               (i (numbers.count.- .till nsteps.-)))
     (hey (- i (sightings .get n i))
          (:: (sightings .set! n i)))))

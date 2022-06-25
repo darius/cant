@@ -7,7 +7,7 @@
 ;; Trivial logic, but it'll be slow if we take this up to a million:
 
 (to (collatz-chain n)
-  (keep-until (:: (= it 1)) (iterate collatz-step n)))
+  (keep-until (:: (= it 1)) (iterating collatz-step n)))
 
 ;; So let's memoize.
 

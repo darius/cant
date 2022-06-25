@@ -64,10 +64,10 @@
           (else (oops "Bad base" base))))
     (if min-length (digits .pad-left min-length 0) digits))
   (to ~.and-up  ;; TODO better name?
-    (iterate ~.+ me)) ;; TODO march<- ought to support the infinite
+    (iterating ~.+ me)) ;; TODO march<- ought to support the infinite
   (to ~.! ;; factorial
     (surely (count? me))  ;; TODO gamma function
-    (foldl * 1 (1 .thru me)))
+    (amass * 1 (1 .thru me)))
   (to (~ .choose k)   ;; TODO how about (n .! k) as a name? or (n .count-k-sets k)
     (surely (count? me))
     (surely (count? k))

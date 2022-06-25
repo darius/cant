@@ -67,9 +67,7 @@
   (mayhap local<- (locals .find word #no)))
 
 (to (run xts)                 ; xt = 'execution token' in Forth jargon
-  (for foldl ((state {state '() '()})
-              (xt xts))
-    (xt state)))
+  (-> {state '() '()} @xts))
 
 (let eg1 '(4 3 * 2 /))
 (let eg2 '(5 3 << a b -- a a * b - >>))

@@ -90,7 +90,7 @@
     (pq-merge @(each unit-pq elems)))
 
   (to (pq-merge @pqs)
-    (foldr pq-merge2 pqs empty-pq))
+    (fold pq-merge2 pqs empty-pq))
   
   (to (pq-replace-min pq elem) ; TODO more-efficient impl
     (pq-insert (pq-remove-min pq) elem))

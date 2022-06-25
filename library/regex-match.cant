@@ -3,7 +3,7 @@
 ;; Does regex `re` match `runes`? (Anchored matching at both ends.)
 ;; Algorithm: Antimirov derivatives.
 (to (regex-match re runes)
-  (some nullable? (foldl step `(,re) runes)))
+  (some nullable? (amass step `(,re) runes)))
 
 (to (step res rune)
   (~.nub (gather (after rune) res)))
@@ -45,11 +45,11 @@
 (to (plus r)  (then r (star r)))
 
 (to (literal text)
-  (foldr then (each lit-rune text) empty))
+  (fold then (each lit-rune text) empty))
 
 (to (one-of text)
   (surely text.some?) ; since we don't currently have a {fail} regex type
-  (foldr1 either (each lit-rune text.nub)))
+  (fold1 either (each lit-rune text.nub)))
 
 ;; Concrete syntax
 

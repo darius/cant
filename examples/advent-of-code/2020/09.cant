@@ -21,7 +21,7 @@
                (+ (min @slice) (max @slice)))))))
 
 (to (running-sum xs)
-  (~.array (link 0 (scanl + 0 xs))))
+  (~.array (link 0 (amassing + 0 xs))))
 
 ;; Way faster, but I didn't think of it:
 (to (part2)

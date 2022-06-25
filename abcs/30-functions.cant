@@ -9,7 +9,7 @@
 (make yeahs {extending zipped-list-transducer}
   (to (~ maybe xs)
     ;; Inlining of (keep itself (each maybe xs))
-    (for foldr ((x xs) (kept '()))
+    (for fold ((x xs) (kept '()))
       (may (maybe x)
         (be #no  kept)
         (be yeah (link yeah kept))))))
@@ -56,11 +56,11 @@
 
 ;; `(min-by f xs)` = an `x` in `xs` giving the minimum value of `(f x)`.
 (to (min-by key<- xs)
-  ;; The simplest code (foldr1 (on (x y) (if (< (key<- x) (key<- y)) x y)) xs))
+  ;; The simplest code (fold1 (on (x y) (if (< (key<- x) (key<- y)) x y)) xs))
   ;; can be painfully slow, from repeated calls to key<- on the best x so far.
   (surely xs.some?)
   (let x0 xs.first)
-  (let (~ best-x _) (for foldl ((best-so-far (~ x0 (key<- x0)))
+  (let (~ best-x _) (for amass ((best-so-far (~ x0 (key<- x0)))
                                 (x xs.rest))
                       (let (~ _ bsf-key) best-so-far)
                       (let xkey (key<- x))
@@ -70,7 +70,7 @@
 (to (max-by key<- xs)
   (surely xs.some?)
   (let x0 xs.first)
-  (let (~ best-x _) (for foldl ((best-so-far (~ x0 (key<- x0)))
+  (let (~ best-x _) (for amass ((best-so-far (~ x0 (key<- x0)))
                                 (x xs.rest))
                       (let (~ _ bsf-key) best-so-far)
                       (let xkey (key<- x))
@@ -139,20 +139,20 @@
                        (: (each/lazy f xs.rest))))))
 
 (to (gather/lazy f xs)
-  (for foldr/lazy ((x xs) (rest-thunk (: '())))
+  (for fold/lazy ((x xs) (rest-thunk (: '())))
     (chain/lazy (f x) rest-thunk)))
 
 (to (yeahs/lazy maybe xs)
   (keep/lazy itself (each/lazy maybe xs)))
 
-(to (scanl/lazy f z xs)
+(to (amassing/lazy f z xs)
   (begin scanning ((z z) (xs xs))
     (link/lazy z (: (if xs.none?
                         '()
                         (scanning (f z xs.first) xs.rest))))))
 
-(to (scanl f z xs) ;; TODO better name
-  (as-list (scanl/lazy f z xs)))
+(to (amassing f z xs) ;; TODO better name
+  (as-list (amassing/lazy f z xs)))
 
 ;; ((compose f g) x) = (f (g x)), etc.
 (make compose {extending right-to-left-operation}
@@ -166,7 +166,7 @@
 ;;TODO overload 'sum' instead? (viz. other use of name below)
 (make sum-by {extending zipped-list-transducer}
   (to (~ f xs)
-    (for foldl ((total 0) (x xs))
+    (for amass ((total 0) (x xs))
       (+ total (f x)))))
 
 (to (tally xs)
@@ -228,7 +228,7 @@
 
 (to (intersect @sets)
   ;; TODO .intersect! like the above
-  (foldl1 (on (x y) (x .intersect y))
+  (amass1 (on (x y) (x .intersect y))
           sets))
 
 (to (keep-while prefix? xs)             ;TODO as list/text method?
@@ -274,7 +274,7 @@
 ;; TODO check that all digits are valid?
 (to (count<-digits digits @(optional base))
   (let b (or base 10))
-  (for foldl ((total 0) (digit digits))
+  (for amass ((total 0) (digit digits))
     (+ (* b total) digit)))
 
 ;; probably worthless
@@ -295,8 +295,8 @@
     compound-key<- yeahs where while until itself 
     compose zip setting<-map
     link/lazier lazier<- 
-    foldr/lazy gather chain/lazy 
-    each/lazy gather/lazy link/lazy scanl/lazy iterate
+    fold/lazy gather chain/lazy 
+    each/lazy gather/lazy link/lazy amassing/lazy iterating
     each-value
     array-by map-by !map-by map<-values text-by method<- ->
     sum-by tally-by tally max min max-by min-by
@@ -319,7 +319,7 @@
     count? not= left-to-right-operation right-to-left-operation
     + * - transitive-comparison < <= <=> >= > compare
     gcd lcm count<-digits
-    chain reverse foldl foldl1 foldr foldr1 scanl transpose zipped-list-transducer
+    chain reverse amass amass1 fold fold1 amassing transpose zipped-list-transducer
     each each! some every march<- yeahs/lazy grid*/lazy
     keep skip keep/lazy skip/lazy
     keep-while skip-while keep-while/lazy keep-until skip-until keep-until/lazy

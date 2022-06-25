@@ -54,7 +54,7 @@
 
 (to (match-brackets program)
   (let jump (!map<-))
-  (for foldl ((stack '())
+  (for amass ((stack '())
               ((~ i rune) program.items))
     (may rune
       (be #\[ (link i stack))
@@ -73,7 +73,7 @@
 
 (to (bf-compile program)
   (let expr-stack
-    (for foldl ((stack '(0)) (rune program))
+    (for amass ((stack '(0)) (rune program))
       (may rune
         (be #\[ (link 'd stack))
         (be #\] (let (link top next rest) stack)

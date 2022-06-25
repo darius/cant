@@ -15,7 +15,7 @@
   (out .display cursor-show))
 
 (to (run grid n-steps)
-  (-> n-steps (for iterate ((grid grid))
+  (-> n-steps (for iterating ((grid grid))
                 (out .display clear-screen)
                 (show grid)
                 (update grid))))

@@ -31,7 +31,7 @@
 ;; TODO hm, maybe make this a method on lists?
 (to (evaluate coeffs x)
   ;; Horner's method
-  (for foldl ((accum 0) (c coeffs))
+  (for amass ((accum 0) (c coeffs))
     (+ (* accum x) c)))
 
 ;; Derivative with respect to x.
@@ -49,7 +49,7 @@
 ;; as the starting guess.
 (to (newton poly x0)
   (let dpoly (derivative poly))
-  (for iterate ((x x0.inexact))
+  (for iterating ((x x0.inexact))
     (- x (/ (evaluate poly x)
             (evaluate dpoly x)))))
 
