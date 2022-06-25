@@ -1,6 +1,9 @@
 (make-trait ejector-primitive me
+
   (to (~ .eject value)
     (__eject me value))
+
   (to (~ .selfie sink)
     (sink .display "#<ejector>"))       ;TODO show enabledness
+
   )

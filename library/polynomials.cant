@@ -31,8 +31,8 @@
 ;; TODO hm, maybe make this a method on lists?
 (to (evaluate coeffs x)
   ;; Horner's method
-  (for amass ((accum 0) (c coeffs))
-    (+ (* accum x) c)))
+  (for amass ((total 0) (c coeffs))
+    (+ (* total x) c)))
 
 ;; Derivative with respect to x.
 (to (derivative coeffs)
@@ -85,14 +85,14 @@
   (poly<- (reverse (each (:: (call + it)) (zip .padded 0 (reverse p) (reverse q))))))
 
 (to (poly* p q)
-  (let accum (array<-count (+ (poly-degree p) (poly-degree q) 1)
-                           0))
+  (let totals (array<-count (+ (poly-degree p) (poly-degree q) 1)
+                            0))
   (let rp (reverse p))
   (let rq (reverse q))
   (for each! (((~ i pi) rp.items))
     (for each! (((~ j pj) rq.items))
-      (accum .update (+ i j) (:: (+ it (* pi pj))))))
-  (poly<- (reverse accum.values)))
+      (totals .update (+ i j) (:: (+ it (* pi pj))))))
+  (poly<- (reverse totals.values)))
   
 (export
   poly<- poly? show

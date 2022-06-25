@@ -1,8 +1,13 @@
 (make-trait sink-primitive me
+
   (to (~ .display a)   (unless (__display a me) (me .write a))) ; TODO is this dangerous? longer-term, design the whole display/write thing differently
+
   (to (~ .write-u8 u8) (__put-u8 me u8))
+
   (to ~.close          (__close-sink me))
+
   (to ~.output-text                 ;XXX for text-sink only
     (__get-output-string me))
+
   (to message
     (sink-trait me message)))

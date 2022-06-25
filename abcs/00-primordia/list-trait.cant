@@ -1,39 +1,50 @@
 (make-trait list-trait list
+
   (to (~ i)
     (may i
       (be 0 list.first)
       (else (list.rest i.-))))
+
   (to ~.none?
     (= 0 list.count)) ;N.B. these default implementations are circular
+
 ;  (to ~.first
 ;    (list 0))
+
   (to ~.rest
     (list .from 1)) ;XXX not good: should be an oops if .none?, but we'll get an empty list instead
+
   (to ~.count
     ;; TODO non-tail-recursive would be more OO in style. Go back to that?
     (begin counting ((remainder list) (count 0))
       (if remainder.none?
           count
           (counting remainder.rest count.+))))
+
   (to (~ .chain seq)                         ;TODO self if seq is ()
     (if list.none?
         seq
         (link list.first (list.rest .chain seq))))
+
   (to (~ .from i)
     (surely (<= 0 i))
     (hm (if (= i 0) list)
         (if list.none? list)
         (else (list.rest .from i.-))))
+
   (to (~ .from i bound)     ;XXX result is a link-list; be more generic?
     (surely (<= 0 i))
     (hm (if (<= bound i) '())
         (if list.none? '())
         (if (= i 0) (link list.first (list.rest .from 0 bound.-)))
         (else (list.rest .from i.- bound.-))))
+
   (to (~ .prefix n)  ; TODO better names?
     (list .from 0 n))
+
   (to (~ .suffix n)   ; TODO better names? might suggest an index instead of a length
     (list .from (- list.count n)))
+
   (to (~ .compare xs)
     ;; N.B. mutable arrays compare by this method, so it's really a comparison as of right now
     (hm (if list.none? (if xs.none? '= '<))
@@ -41,13 +52,18 @@
         (else (may (list.first .compare xs.first)
                 (be '= (list.rest .compare xs.rest))
                 (be d d)))))
+
   ;; A sequence is a kind of collection. Start implementing that:
+
   (to ~.keys
     (0 .till list.count)) ;TODO move this impl to array-trait; here, enum lazily.
+
   (to ~.values
     list)
+
   (to ~.items
     (enumerate list))
+
   (to (~ .get key default)
     (if (count? key)
         (begin walking ((k key) (xs list))
@@ -55,67 +71,85 @@
               (if (= k 0) xs.first)
               (else (walking k.- xs.rest))))
         default))
+
   (to (~ .maps? key)
     (and list.some?
          (or (= 0 key)
              (and (< 0 key)
                   (list.rest .maps? key.-)))))
+
   (to (~ .find value default)
     (begin looking ((i 0) (values list.values)) ;XXX .values called because list-trait is illegitimately used by arrays
       (hm (if values.none? default)
           (if (= value values.first) i)
           (else (looking i.+ values.rest)))))
+
   (to (~ .find value)
     (may (list .find value #no)
       (be #no (oops "Missing value" value))
       (be key key)))
+
   (to (~ .find? value)
     (may (list .find value #no)
       (be #no #no)
       (else   #yes)))
+
   (to (~ .last)
     (let rest list.rest)
     (if rest.none? list.first rest.last))
+
   (to (~ .but-last) ;; TODO better name?
     (let rest list.rest)
     (if rest.none? '() (link list.first rest.but-last)))
+
   (to (~ .prefix? p)
     ;; TODO return p.count on success?
     (= (list .from 0 p.count) p))   ;TODO more efficient
+
   (to (~ .join segments)
     (hm (if segments.none? '())
         (else (chain segments.first.values
                      (for fold ((s segments.rest) (result '()))
                        (chain list (chain s.values result)))))))
+
   (to (~ .repeat n)
     ;;TODO a method to get an empty seq of my type; and then factor out duplicate code
     (may n
       (be 0 '())             
       (else (chain @(for each ((_ n.till))
                       list)))))
+
   (to (~ .pad-right n padding)
     ;;TODO factor out duplicate code wrt text methods
     (let pad (- n list.count))
     (if (<= pad 0)
         list
         (chain list (`(,padding) .repeat pad))))
+
   (to (~ .pad-left n padding)
     (let pad (- n list.count))
     (if (<= pad 0)
         list
         (chain (`(,padding) .repeat pad) list)))
+
   (to ~.list
     (as-list list.values))
+
   (to ~.text
     (text<-list list.values))
+
   (to ~.array
     (array<-list list.values))
+
   (to ~.tuple
     (tuple<-list list.values))
+
   (to (~ .sample-key chaos)
     (chaos .sample-count list.count))
+
   (to (~ .alter alter!)                 ;; TODO an experiment
     (~.values (hey list.array alter!)))
+
   (to (~ .find-slice needle)            ;TODO better name .find-segment ?
     ;; Return the index of the first slice in `list` equal to `needle`, or #no.
     ;;TODO interface like .find/.find?
@@ -131,8 +165,10 @@
                      (checking i.+))
                  (else
                    (sliding j.+)))))))
+
   (to (~ .remove x)
     (skip (:: (= x it)) list))
+
   (to (~ .k-sets k)   ;; Ways to pick k of my elements. TODO lazy, map-trait version?
     ;; TODO k-sets and k-bags are lists, not sets or bags. How bad is this? Better ideas?
     ;; TODO document as a contract?: for all of these combinatorial .k-foo methods,
@@ -146,6 +182,7 @@
                              (for each ((ys (generating n.- nxs.- xs.rest)))
                                (link x ys)))
                        (generating n nxs.- xs.rest))))))
+
   (to (~ .k-bags k) ;; Ways to pick k of my elements w/ duplicates allowed. TODO experimental; name?
     (surely (count? k))
     (begin generating ((n k) (xs list))
@@ -155,6 +192,7 @@
                              (for each ((ys (generating n.- xs)))
                                (link x ys)))
                        (generating n xs.rest))))))
+
   (to ~.permutations
     (to (remove-nth xs n) ;; TODO a list method?
       (chain (xs .from 0 n) (xs .from n.+)))
@@ -164,6 +202,7 @@
           (for gather (((~ i x) xs.items))
             (for each ((perm (permuting (remove-nth xs i))))
               (link x perm))))))
+
   (to (~ .k-permutations k)
     ;; This could be just: (gather ~.permutations (list .k-sets k)))
     ;; except that would produce a different order of results.
@@ -174,27 +213,34 @@
           (else (for gather (((~ i x) xs.items))
                   (for each ((perm (permuting (remove-nth xs i) n.-)))
                     (link x perm)))))))
+
   (to (~ .k-slices k)   ;; better name .k-segments, .k-spans ?
     ;; TODO make k optional
     ;; TODO make it reasonably efficient without random access
     (for each ((i (0 .thru (- list.count k))))
       (list .from i (+ i k))))
+
   (to (~ .k-lists k)
     (grid* @(`(,list) .repeat k)))
+
   (to ~.cycle
     (surely list.some?)
     (let result (chain/lazy list (: result))))
+
   (to (~ .maybe @(optional if-none))  ;; TODO an experiment TODO could be defined on maps in general too
     (hm (if list.none? if-none)
         (if list.rest.none? list.first)
         (else (oops "Tried to convert to maybe from count >1" list))))
+
   (to ~.only  ;; TODO an experiment TODO could be defined on maps in general too, but then there's only-key vs. only-value
     (unless list.some?
       (oops "Tried to .only from empty" list))
     (unless list.rest.none?
       (oops "Tried to .only from count >1" list))
     list.first)
+
   (to (~ .ity i) ;; Wrap index i around into my domain
     (list.count .ity i))
+
   (to message
     (map-trait list message)))

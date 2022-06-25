@@ -99,14 +99,17 @@
               (vals.^ .set! j (old-vals i)))))
        
         (make !map {extending map-trait}
+
           (to (~ key)
             (may (place key)
               (be {at i} (vals.^ i))
               (else      (oops "Missing key" !map key))))
+
           (to (~ .get key @(optional default))
             (may (place key)
               (be {at i} (vals.^ i))
               (else      default)))
+
           (to (~ .set! key val)
             (may (place key)
               (be {at i}
@@ -116,12 +119,15 @@
                 (vals.^ .set! i val)
                 (count .^= count.^.+)
                 (maybe-grow))))
+
           (to (~ .maps? key)
             (may (place key)
               (be {at _} #yes)
               (else      #no)))
-          (to ~.none? (= count.^ 0))
+
+          (to ~.none?  (= count.^ 0))
           (to ~.count  count.^)
+
           (to ~.keys   (each keys.^ (occupants))) ;XXX lazy-map
           (to ~.values (each vals.^ (occupants)))
           (to ~.items
@@ -129,6 +135,7 @@
             (let vs vals.^)
             (for each ((i (occupants)))
               (~ (ks i) (vs i))))
+
           (to (~ .get-set! key value<-)
             (may (place key)
               (be {at i}
@@ -139,6 +146,7 @@
                 ;; might have changed things too:
                 (!map .set! key value)
                 value)))
+
           (to (~ .delete! key)
             (may (place key)
               (be {at i}
@@ -146,23 +154,28 @@
                 (count .^= count.^.-)
                 #no)
               (else #no)))   ;XXX oops instead? It is in Python.
+
           (to (~ .find value default)
             (let vs vals.^)
             (begin searching ((js (occupants)))  ;XXX should be lazy
               (hm (if js.none? default)
                   (if (= value (vs js.first)) (keys.^ js.first))
                   (else (searching js.rest)))))
+
           (to ~.clear!
             (count .^= 0)
             (keys .^= [none])
             (vals .^= [#no]))
+
           (to (~ .update key f)         ;TODO define in a mutable-map-trait ?
             (let value (f (!map key)))  ;TODO what about a (!map .get key) version? how to factor this?
             (!map .set! key value)
             value)
+
           (to (~ .merge! other-map)   ;TODO better name?
             (for each! (((~ k v) other-map.items))
               (!map .set! k v)))
+
           (to (~ .selfie sink)
             (sink .display "#<!map (")
             (sink .write count.^)
@@ -205,7 +218,9 @@
 
 (to (hash-set<-)                        ;XXX shouldn't be a global
   (let !map (!map<-)) ;TODO would be nice to avoid storing all the #yes values
+
   (make set {extending map-trait}
+
     (to ~.none?            !map.none?)
     (to ~.count            !map.count)
     (to ~.keys             !map.keys)
@@ -214,30 +229,36 @@
     (to (~ .add! key)      (!map .set! key 1))    ;N.B. matching the bag type here
     (to (~ .add-all! vals) (for each! ((v vals)) (set .add! v)))
     (to (~ .merge! other)  (set .add-all! other.keys))  ;N.B. overrides map-trait
+
     (to (~ .union other)
       (let result set.copy)
       (result .merge! other)
       result)
+
     (to (~ .intersect other)                 ;TODO rename to .and, etc., I guess
       (let result (set<-))
       (for each! ((x !map.keys))
         (when (other .maps? x)
           (result .add! x)))
       result)
+
     (to (~ .difference other)
       (let result (set<-))
       (for each! ((x !map.keys))
         (unless (other .maps? x)
           (result .add! x)))
       result)
+
     (to (~ .except other)               ;TODO add to map-trait?
       (let result (set<-))
       (for each! ((x !map.keys))
         (unless (= other x)
           (result .add! x)))
       result)
+
     (to (~ .intersects? map2)
       (!map .intersects? map2))
+
     (to ~.clear!         !map.clear!)
     ;; TODO missing: (~ .get key default)
     (to (~ .get key)     (!map .get key))
@@ -246,7 +267,9 @@
     (to ~.values         !map.values)
     (to (~ .delete! key) (!map .delete! key))
     (to ~.total          !map.count)        ;like bags again
+
     ;; XXX fill in rest of set interface (just the map interface, I guess)
+
     (to (~ .selfie sink)
       (sink .display "#<set")
       (sink .write !map.keys)

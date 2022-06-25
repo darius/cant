@@ -1,23 +1,29 @@
 ;; Interpreter
 
 (make cant
+
   (to (~ .play exp setting @(optional context))
     (__evaluate (__parse-exp exp (or context '()))
                 setting))
+
   (to (~ .parse-expression x @(optional context))
     (ast-exp<- (__parse-exp x (or context '()))))
+
   (to (~ .parse-pattern x)              ;TODO could use a context too
     (ast-pat<- (__parse-pat x)))
+
   )
 
 ;; Turn the Scheme-level parse into an object.
 
 (to (ast-exp<- raw)
   (make expr
+
     (to (~ .selfie sink)
       (sink .display "#<expr ")
       (sink .write expr.term)
       (sink .display ">"))
+
     (to ~.term
       (may (raw 0)
         (be 0 {constant (raw 1)})
@@ -31,6 +37,7 @@
         (be 5 {do (ast-exp<- (raw 1)) (ast-exp<- (raw 2))})
         (be 6 {let (ast-pat<- (raw 1)) (ast-exp<- (raw 2))})
         (be 7 {call (ast-exp<- (raw 1)) (ast-exp<- (raw 2))})))
+
     (to ~.unparse
       (unparse-exp expr))))
 
@@ -39,10 +46,12 @@
 
 (to (ast-pat<- raw)
   (make patt
+
     (to (~ .selfie sink)
       (sink .display "#<patt ")
       (sink .write patt.term)
       (sink .display ">"))
+
     (to ~.term
       (may (raw 0)
         (be 0 {constant-pat (raw 1)})
@@ -52,6 +61,7 @@
         (be 4 {list-pat (each ast-pat<- (raw 1))})
         (be 5 {and-pat (ast-pat<- (raw 1)) (ast-pat<- (raw 2))})
         (be 6 {view-pat (ast-exp<- (raw 1)) (ast-pat<- (raw 2))})))
+
     (to ~.unparse
       (unparse-pat patt))))
 

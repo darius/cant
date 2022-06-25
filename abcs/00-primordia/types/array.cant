@@ -1,4 +1,5 @@
 (make-trait array-primitive me
+
   (to ~.none?         (= 0 me.count))   ;redundant definition(s) for speed
   (to (~ .set! i val) (__vector-set! me i val))
   (to ~.count         (__vector-length me))
@@ -8,21 +9,26 @@
   (to ~.values        (__vector->list me))
   (to (~ .from i)     (__subvector me i me.count))
   (to (~ .from i j)   (__subvector me i j))
+
   (to (-- (~ .move! dst source lo bound)
           message)
     ;; Block-copy source[lo..bound) to me[dst..dst+(bound-lo)).
     (if (array? source)
         (__vector-move! me dst source lo bound)
         (array-trait me message)))
+
   (to ~.copy          (__vector-copy me))
+
   (to (~ .update key f)         ;TODO define in a mutable-map-trait ?
     (let value (f (me key)))
     (me .set! key value)
     value)
+
   (to (~ .shuffle! chaos)
     (let n me.count)
     (for each! ((i n.till))
       (me .swap! i ((i .till n) .sample-value chaos))))
+
   (to (~ .selfie sink)
     (sink .display "[")
     (when (< 0 me.count)
@@ -31,7 +37,9 @@
         (sink .display #\space)
         (sink .write x)))
     (sink .display "]"))
+
   (to ~.first         (oops "no .first on array" me))
   (to ~.rest          (oops "no .rest on array" me))
+
   (to message
     (array-trait me message))) ;XXX use trait syntax instead

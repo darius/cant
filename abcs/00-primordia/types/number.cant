@@ -1,49 +1,65 @@
 (make-trait number-primitive me
+
   (to (~ .+ a)         (__+ me a))
   (to (~ .- a)         (__- me a))
   (to (~ .* a)         (__* me a))
+
   (to (~ .compare a)   (__number-compare me a))
+
   (to (~ .quotient b)  (__quotient me b))
   (to (~ .remainder b) (__remainder me b))
   (to (~ .modulo b)    (__modulo me b))
   (to (~ .*/mod m d)   (__*/mod me m d))
   (to (~ ./mod d)      (__*/mod me 1 d))
+
   (to (~ .<< b)        (__bit-<<  me b))
   (to (~ .>> b)        (__bit->>  me b))
+
   (to ~.not            (__bit-not me))
   (to (~ .and b)       (__bit-and me b))
   (to (~ .or b)        (__bit-or  me b))
   (to (~ .xor b)       (__bit-xor me b))
+
   (to ~.till           (march<- 0 me))
   (to (~ .till @args)  (march<- me @args))
   (to (~ .thru b @r)   (march<- me b.+ @r))
   (to (~ .span n)      (march<- me (+ me n)))
   (to (~ .down-till n) (march<- me (+ n 1) -1))  ;; TODO just use .till with negative stride? or what?
   (to (~ .down-thru n) (march<- me n -1))        ;; TODO just use .till with negative stride? or what?
+
   (to ~.+              (__+ me 1))
   (to ~.-              (__- me 1))
+
   (to (~ .** b)        (expt me b))
+
   (to ~.even?          (surely (integer? me)) (= 0 (__modulo me 2)))
   (to (~ .even? b)     (surely (integer? me)) (= 0 (__modulo me b)))
   (to ~.odd?           (surely (integer? me)) (not= 0 (__modulo me 2)))
   (to (~ .odd? b)      (surely (integer? me)) (not= 0 (__modulo me b)))
+
   (to ~.sqrt           (sqrt me))
+
   (to ~.floor          (floor me))
   (to ~.ceiling        (ceiling me))
   (to ~.round          (round me))
   (to ~.exact          (exact<-inexact me))
   (to ~.inexact        (inexact<-exact me))
+
   (to ~.magnitude      (abs me))
   (to ~.sign           (may (__number-compare me 0)
                          (be '< -1)
                          (be '=  0)
                          (be '>  1)))
+
   (to ~.exp            (exp me))
   (to ~.ln             (log me))  ;; TODO better name?
   (to (~ .log base)    (log me base))
+
   (to ~.text           (text<-number me))
   (to ~.number         me)
+
   (to ~.digits         (me .digits 10))
+
   (to (~ .digits base @(optional min-length))  ;; N.B. big-endian
     (let digits
       (hm (if (and (integer? base) (< 1 base))
@@ -63,22 +79,30 @@
                           (converting q moduli.rest (link r result))))))
           (else (oops "Bad base" base))))
     (if min-length (digits .pad-left min-length 0) digits))
+
   (to ~.and-up  ;; TODO better name?
     (iterating ~.+ me)) ;; TODO march<- ought to support the infinite
+
   (to ~.! ;; factorial
     (surely (count? me))  ;; TODO gamma function
     (amass * 1 (1 .thru me)))
+
   (to (~ .choose k)   ;; TODO how about (n .! k) as a name? or (n .count-k-sets k)
     (surely (count? me))
     (surely (count? k))
     (me.! .quotient (* k.! ((- me k) .!))))  ;; TODO more efficient code
+
   (to ~.negative?      (< me 0))
   (to ~.positive?      (< 0 me))
+
   (to (~ .bit i)
     ((me .>> i) .and 1))
+
   (to (~ .ity b)       (surely (integer? me)) (__modulo b me))
+
   (to (~ .divides? b)  (surely (integer? me)) (= 0 (__modulo b me)))
   (to (~ .power-of b)  (expt b me))
+
   ;; XXX sketchy support for 32-bit word ops:
   (to (~ .u+ a)        (__u+ me a))
   (to (~ .u- a)        (__u- me a))
@@ -88,4 +112,5 @@
   (to (~ .u<< a)       (__u<< me a))
   (to (~ .s+ a)        (__s+ me a))
   (to (~ .s* a)        (__s* me a))
+
   )

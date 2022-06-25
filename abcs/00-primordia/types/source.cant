@@ -1,9 +1,13 @@
 (make-trait source-primitive me
+
   (to ~.read-rune   (__read-char me))
   (to ~.read-u8     (__get-u8 me))
   (to ~.read-all    (__read-all me))
+
   (to ~.close       (__close-source me))
+
   (to ~.ready?      (__char-ready? me))
+
   (to ~.read-line
     (let rune me.read-rune)
     (if (zilch? rune)
@@ -13,9 +17,11 @@
            (if (or (zilch? rune) (= rune #\newline))
                '()
                (link rune (reading me.read-rune)))))))
+
   (to ~.read-lines
     (begin reading ()
       (if (zilch? (let line me.read-line))
           '()
           (link line (reading)))))
+
   )

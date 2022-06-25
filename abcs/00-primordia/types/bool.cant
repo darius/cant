@@ -1,9 +1,13 @@
 (make-trait bool-primitive me
+
   (to ~.count          (if me 1 0))
+
   (to (~ .selfie sink) (sink .display (if me "#yes" "#no")))
+
   (to (~ .compare a)
     (may a
       (be #no  (if me '> '=))
       (be #yes (if me '= '<))
       (else #no)))
+
   )

@@ -1,19 +1,25 @@
 ;; TODO: should a box be a collection?
 (make-trait box-primitive me
+
   (to ~.^             (__box-value me))
   (to (~ .^= value)   (__box-value-set! me value))
+
   (to (~ .update f) ;TODO better name? I left out the '!' to emphasize it returns the value
     (let value (f me.^))
     (me .^= value)
     value)                              ;TODO return void instead?
+
   (to ~.+! (me .update ~.+)) ;; (questionably worth it; name inconsistent with the above note)
   (to ~.-! (me .update ~.-))
+
   (to (~ .+= n)   ;; XXX inconsistent in return value wrt ~.+!
     (me .^= (+ me.^ n)))
   (to (~ .-= n)
     (me .^= (- me.^ n)))
+
   (to (~ .selfie sink)
     (sink .display "<box ")
     (sink .write me.^)
     (sink .display ">"))
+
   )

@@ -8,8 +8,10 @@
 ;; use the script below.
 
 (make-trait cps-primitive me
+
   (to (~ .selfie sink)
     (sink .display "#<primitive ")
     (sink .display (__cps-primitive-name me))
     (sink .display ">"))
+
   )

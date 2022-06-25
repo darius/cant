@@ -1,4 +1,5 @@
 (make-trait sink-trait sink
+
   (to (~ .write a)
     (a .selfie sink))
 
@@ -13,15 +14,20 @@
   ;;    temporary
   (to (~ .say format-text @arguments)
     (format .to-sink sink format-text @arguments))
+
   (to (~ .newline)
     (sink .display #\newline))
+
   (to (~ .print a)                      ;TODO ugh the name
     (sink .write a)
     sink.newline)
+
   (to (~ .displayln a)                  ;TODO ugh the name
     (sink .display a)
     sink.newline)
+
   (to (~ .display-lines lines) ;; To go with source.read-lines
     (each! (:: (sink .displayln it)) lines))
+
   (to message
     (miranda-trait sink message)))

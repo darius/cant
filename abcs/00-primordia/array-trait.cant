@@ -1,12 +1,16 @@
 (make-trait array-trait me
+
   (to (~ .from i)
     (me .from i me.count))
+
   (to (~ .from i bound)
     (let v (array<-count (- bound i)))
     (v .move! 0 me i bound)
     v)
+
   (to (~ .copy! v)
     (me .move! 0 v 0 v.count))
+
   (to (~ .move! dst source lo bound)
     ;; TODO no-op if in range and (me,dst) == (source,lo)
     (let lo->dst (- dst lo))
@@ -15,27 +19,35 @@
                        (march<- bound.- lo -1))))
       (me .set! (+ i lo->dst)
           (source i))))
+
   (to ~.values
     (each me (march<- 0 me.count)))
+
   (to ~.items
     (for each ((i (march<- 0 me.count)))
       (~ i (me i))))
+
   (to (~ .get key default)
     (hm (unless (count? key) default)
         (if (<= me.count key) default)
         (else (me key))))
+
   (to (~ .swap! i j)
     (let t (me i))
     (me .set! i (me j))
     (me .set! j t))
+
   ;; TODO put methods like this and .from in an immutable-array-trait used by the text primitive type too
   (to ~.last
     (me me.count.-))
+
   (to (~ .but-last)
     (surely me.some?)
     (me .from 0 me.count.-))
+
 ;TODO
 ;  (to ~.first (oops "Mutable arrays don't do .first" me))
 ;  (to ~.rest  (oops "Mutable arrays don't do .rest" me))
+
   (to message
     (list-trait me message))) ;XXX use trait syntax instead

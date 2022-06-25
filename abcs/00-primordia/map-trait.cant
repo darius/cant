@@ -14,51 +14,69 @@
 ;; uglyish and kinda expensive.
 
 (make-trait map-trait map
+
   (to (~ key)
     (make missing)
     (let answer (map .get key missing))
     (if (= answer missing)
         (oops "Missing key" map key)
         answer))
+
   (to (~ .get key)
     (map .get key #no))
+
   (to (~ .maps? key)
     (make missing)
     (not= (map .get key missing) missing))
+
   (to ~.none?  (= map.count 0))  ; or map.items.none? - is that better? depends.
+
   (to ~.some?  (not map.none?))
+
   (to ~.count  map.items.count)
+
   (to ~.keys   (each (~ .part 0) map.items))
+
   (to ~.values (each (~ .part 1) map.items))
+
   (to (~ .find? value)
     (map.values .find? value))
+
   (to (~ .find value default)
     (begin searching ((items map.items))
       (hm (if items.none? default)
           (may items.first
             (be (~ k (= value)) k))
           (else (searching items.rest)))))
+
   (to (~ .find value)
     (make missing)
     (let key (map .find value missing))
     (when (= key missing)
       (oops "Missing value" value))
     key)
+
   (to ~.copy ;TODO rename .diverge; check that all uses want a !map result
     (!map<-items map.items))
+
   (to (~ .intersects? map2)
     ;; TODO: maybe iterate over the one with smaller .count ?
     (for some ((k map.keys))
       (map2 .maps? k)))
+
   (to (~ .disjoint? map2)                    ;too trivial?
     (not (map .intersects? map2)))
+
   (to (~ .subset-of? map2)  ;TODO be a stickler and make it a set method?
     (for every ((k map.keys))
       (map2 .maps? k)))
+
   (to ~.domain
     (set<-list map.keys))   ;TODO usually worth specializing
+
   (to ~.range
     (set<-list map.values))
+
   (to ~.inverse
     (let inverse (!map<-))
     (for each! (((~ k v) map.items))
@@ -66,21 +84,28 @@
         (oops ".inverse of noninvertible map" map))  ; or just allow it?
       (inverse .set! v k))
     inverse)
+
   (to ~.distinct? ;TODO better name? .invertible?
     (= map.count map.range.count))      ;TODO more efficient
+
   (to ~.list
     (each map map.count.till))
+
   (to ~.text
     (text<-list map.list))
+
   (to ~.array
     (array-by map map.count))
+
   (to ~.map
     (map<-items map.items.list))
 
   (to (~ .sample-key chaos)
     (map.keys .sample-value chaos))
+
   (to (~ .sample-value chaos)
     (map (map .sample-key chaos)))
+
   ;; Pick a random key, weighted by corresponding value.
   (to (~ .weighted-sample chaos)
     (begin ((n     (chaos .sample-count (sum map.values)))

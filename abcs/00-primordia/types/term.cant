@@ -1,8 +1,11 @@
 (make-trait term-primitive me
+
   (to (~ receiver)     (call receiver me))
+
   (to ~.tag            (__term-tag me))
   (to ~.parts          (__term-parts me))
   (to (~ .part n)      ((__term-parts me) n))
+
   (to (~ .selfie sink)
     (sink .display "{")
     (sink .write me.tag)
@@ -10,6 +13,8 @@
       (sink .display " ")
       (sink .write arg))
     (sink .display "}"))
+
   (to (~ .compare t)
     ((link me.tag me.parts) .compare (link t.tag t.parts)))
+
   )

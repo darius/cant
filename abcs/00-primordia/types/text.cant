@@ -1,4 +1,5 @@
 (make-trait text-primitive me
+
   (to ~.none?        (= 0 me.count))
   (to ~.first        (me 0))
   (to ~.rest         me.values.rest)
@@ -6,22 +7,29 @@
   (to (~ i)          (__string-ref me i))
   (to (~ .maps? i)   (__string-maps? me i))
   (to (~ .chain t)   (__string-append me t))
+
   (to (~ .from i)    (__substring me i me.count))
   (to (~ .from i j)  (__substring me i j))
+
   (to (-- (~ .compare t) message)
     (if (text? t)
         (__string-compare me t)    ; just a speedup
         (list-trait me message)))   ; TODO but is this what we really want? (<=> "a" '(#\a))
+
   (to (~ .join texts)
     (text<-list ((list<-text me) .join texts)))
+
   (to ~.values
     (list<-text me))
+
   (to (~ .get key)
     (me .get key #no)) ;TODO duplicated because delegation is slow
+
   (to (~ .get key default)      ;TODO could be shared with array-trait
     (if (me .maps? key)
         (me key)
         default))
+
   (to (~ .trim-left @(optional delim))
     ;; TODO should delim be text or rune (or either)?
     (let delim? (if delim (:: (= it delim)) ~.whitespace?))
@@ -30,14 +38,17 @@
       (hm (if (= i limit)       "")
           (if (delim? (me i))   (scanning i.+))
           (else                 (me .from i)))))
+
   (to (~ .trim-right @(optional delim))
     (let delim? (if delim (:: (= it delim)) ~.whitespace?))
     (begin scanning ((i me.count))
       (hm (if (= i 0)           "")
           (if (delim? (me i.-)) (scanning i.-))
           (else                 (me .from 0 i)))))
+
   (to (~ .trim @(optional delim))
     ((me .trim-left delim) .trim-right delim))
+
   (to ~.split
     ;; TODO dequadratify
     (begin splitting ((t me.trim-left))
@@ -50,6 +61,7 @@
                         (link (t .from 0 i)
                               (splitting ((t .from i.+) .trim-left))))
                     (else (scanning i.+))))))))
+
   (to (~ .split delimiter)
     ;; TODO deduplicate code
     ;; TODO define a strstr and use that
@@ -66,9 +78,11 @@
                             (link (t .from 0 i)
                                   (splitting (t .from (+ i delimiter.count)))))
                         (else (scanning i.+)))))))))
+
   (to ~.lowercase (text<-list (each ~.lowercase me)))
   (to ~.uppercase (text<-list (each ~.uppercase me)))
   (to ~.capitalize (chain ((me .from 0 1) .uppercase) (me .from 1)))
+
   (to (~ .replace pattern replacement) ;TODO more efficient
     ;; TODO unify the cases?
     (hm (if pattern.none?
@@ -84,24 +98,30 @@
                     (chain (list<-text replacement)
                            (scanning (+ i pattern.count))))
                 (else (link (me i) (scanning i.+)))))))))
+
   (to (~ .justify n pad)
     (if (< n 0)
         (me .pad-right (- n) pad)
         (me .pad-left n    pad)))
+
   (to (~ .pad-right n)
     (me .pad-right n #\space))
+
   (to (~ .pad-right n pad-rune)
     (let pad (- n me.count))
     (if (<= pad 0)
         me
         (chain me (pad-rune.text .repeat pad))))
+
   (to (~ .pad-left n)
     (me .pad-left n #\space))
+
   (to (~ .pad-left n pad-rune)
     (let pad (- n me.count))
     (if (<= pad 0)
         me
         (chain (pad-rune.text .repeat pad) me)))
+
   (to (~ .center n)
     (let pad (- n me.count))
     (if (<= pad 0)
@@ -110,10 +130,13 @@
             (chain (" " .repeat (- pad half))
                    me
                    (" " .repeat half)))))
+
   (to (~ .repeat n)
     ("" .join (each (:: me) (march<- 0 n))))
+
   (to (~ .format @arguments)
     (text<-writer (:: (format .to-sink it me @arguments))))
+
   (to ~.split-lines
     ;; TODO ugly. This 'if' is needed because we want a final "\n" to
     ;; yield the same output as a text with no final "\n". N.B. while
@@ -123,6 +146,7 @@
                      me))
     ;; TODO it'd be nice for efficiency if tweaked could be a view instead of a copy
     (tweaked .split "\n"))
+
   (to (~ .selfie sink)
     (sink .display #\")
     (for each! ((rune me))
@@ -135,18 +159,25 @@
                        ;; XXX escape the control runes
                        (else rune))))
     (sink .display #\"))
+
   (to ~.?number
     (number<-text me))
+
   (to ~.number
     (or (number<-text me) (oops "Not numeric" me)))
+
   (to ~.text
     me)
+
   (to ~.symbol
     (symbol<- me))
+
   (to ~.last                            ;TODO copied from array-trait
     (me me.count.-))
+
   (to (~ .but-last)                     ;TODO copied from array-trait
     (surely me.some?)
     (me .from 0 me.count.-))
+
   (to message
     (list-trait me message))) ;XXX use trait syntax instead

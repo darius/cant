@@ -9,33 +9,45 @@
 ;; For the kinds having an environment in the data, it's in the first data slot
 ;; (the slot after parent-raw-k).
 (make-trait __cont-trait me
+
   (to ~.none?         #no)
+
   (to ~.rest
     ;; The parent cont is another raw-k, in slot 1 (except __halt-cont which has no parent).
     (__wrap-cont (me.__raw-k 1)))
+
   (to (~ .selfie sink)   (sink .display "<cont>")) ;TODO at least give out the tag
+
   (to ~.setting
     ;; Commonly this, but needs to be overridden when there's no env.
     ;; When present, it's always in the same slot, mentioned above.
     (me.__raw-k 2))
+
   (to (~ .answer result)
     (__reply me.__raw-k result))
+
   (to (~ .eject-to ejector result)
     (surely (ejector? ejector) "Type error" ejector)
     (__eject ejector result me.__raw-k))
+
   (to message
     (list-trait me message))) ;XXX use trait syntax instead
 
 (make-trait __cont-halt me
+
   (to ~.none?          #yes)
   (to ~.first          (oops "No more frames" me))
   (to ~.rest           (oops "No more frames" me))
+
   (to (~ .selfie sink) (sink .display "<halt-cont>"))
+
   (to (~ .answer result)
     (__reply me.__raw-k result))
+
   (to (~ .eject-to ejector result)
     (surely (ejector? ejector) "Type error" ejector)
     (oops "No more frames" me))
+
   (to message (list-trait me message)))
 
 (make-trait __cont-match-clause me

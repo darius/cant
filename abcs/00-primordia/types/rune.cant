@@ -1,5 +1,7 @@
 (make-trait rune-primitive me
+
   (to ~.code          (__char->integer me))
+
   (to ~.letter?       (__char-letter? me))
   (to ~.digit?        (__char-digit? me))
   (to ~.whitespace?   (__char-whitespace? me))
@@ -9,24 +11,32 @@
   (to ~.lowercase     (__char-lowercase me))
   (to ~.uppercase     (__char-uppercase me))
   (to ~.printable?    (<= 32 (__char->integer me) 126))  ; TODO better name?
+
   (to (~ .compare c)  (__char-compare me c))
+
   (to ~.text          (text<- me))
+
   (to (~ .+ n)   ;; Is this a good idea?
     (surely (integer? n) "Bad arg type" n)
     (rune<- (+ me.code n)))
+
   (to (~ .- b)
     (may b
       (be (? integer?) (rune<- (- me.code b)))
       (be (? rune?)    (- me.code b.code))
       (else (oops "Bad arg type" b))))
+
   (to (~ .till @args) (march<- me @args))      ;These methods should be in a trait
   (to (~ .thru b @r)  (march<- me b.+ @r))     ;if they're a good idea at all...
   (to (~ .span n)     (march<- me (+ me n)))
   (to (~ .down-till n) (march<- me (+ n 1) -1))  ;; TODO just use .till with negative stride? or what?
   (to (~ .down-thru n) (march<- me n -1))        ;; TODO just use .till with negative stride? or what?
+
   (to ~.+             (me .+ 1))
   (to ~.-             (me .- 1))
+
   (to ~.number ;; TODO experimental. Worth it?
     (hm (if (__char-digit? me) (- me #\0))
         (else (oops "Not a number" me))))
+
   )
