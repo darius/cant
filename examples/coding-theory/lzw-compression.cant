@@ -12,15 +12,14 @@
 (to (encode text @(optional codebook))
   (let codes ((or codebook default-codebook) .inverse))
   (let result (flexarray<-))
-  (let chunk
-    (for amass ((chunk "") (rune text))
-      (let t1 rune.text)
-      (let chunk-1 (chain chunk t1))
-      (if (codes .maps? chunk-1)
-          chunk-1
-          (do (result .push! (codes chunk))
-              (codes .set! chunk-1 codes.count)
-              t1))))
+  (let chunk (for amass ((chunk "") (rune text))
+               (let t1 rune.text)
+               (let chunk-1 (chain chunk t1))
+               (if (codes .maps? chunk-1)
+                   chunk-1
+                   (do (result .push! (codes chunk))
+                       (codes .set! chunk-1 codes.count)
+                       t1))))
   (unless chunk.none?
     (result .push! (codes chunk)))
   result.values)
