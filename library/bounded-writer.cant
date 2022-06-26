@@ -24,7 +24,7 @@
              ts.close
              (ejector .eject void))))
 
-     (writer (make bounded-sink {extending sink-trait}
+     (writer (make bounded-sink {extend sink-trait}
                (to (~ .display a)   (ts .display a)   (cut-off))
                (to (~ .write-u8 u8) (ts .write-u8 u8) (cut-off))
                (to ~.close          ts.close))))))

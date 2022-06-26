@@ -121,7 +121,7 @@
     (to message
       (miranda-trait me message))))
 
-(make wumpus {extending (thing-trait<-)}
+(make wumpus {extend (thing-trait<-)}
   (to ~.describe "I smell a wumpus!")
   (to (~ .welcome thing)
     (may thing
@@ -140,15 +140,15 @@
         (:: (wumpus .go it)))))
 
 (to (pit<-)
-  (make pit {extending (thing-trait<-)}
+  (make pit {extend (thing-trait<-)}
     (to ~.describe "I feel a draft")
     (to (~ .welcome thing)
       (when (= thing hunter)
         (die "YYYYIIIIEEEE . . . Fell in pit")))))
 
-(make hunter {extending (thing-trait<-)}
+(make hunter {extend (thing-trait<-)}
   (to (~ .welcome thing)
     (when (= thing wumpus)
       (die "Tsk tsk tsk - wumpus got you!"))))
 
-(make arrow {extending (thing-trait<-)})
+(make arrow {extend (thing-trait<-)})

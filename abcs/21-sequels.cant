@@ -204,7 +204,7 @@
    __cont-replace-answer])
 
 (to (__wrap-cont raw-k)
-  (make wrapped-cont {extending (__cont-trait-array (raw-k 0))}
+  (make wrapped-cont {extend (__cont-trait-array (raw-k 0))}
     ;; TODO shouldn't need these methods
     (to ~.__raw-k
       raw-k)

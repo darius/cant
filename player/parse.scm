@@ -320,7 +320,7 @@
            (qualified-name (string-join ":" ctx)))
       (mcase stuff
         (((: decl term?) . clauses)
-         (insist (eq? (term-tag decl) 'extending) "bad syntax" decl)
+         (insist (eq? (term-tag decl) 'extend) "bad syntax" decl)
          (insist (= (length (term-parts decl)) 1) "bad syntax" decl)
          (pack<- e-make qualified-name
                  (parse-e (car (term-parts decl)) ctx)

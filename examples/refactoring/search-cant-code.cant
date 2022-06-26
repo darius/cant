@@ -16,8 +16,8 @@
     (may exp
       (be {constant c} #no)
       (be {variable v} #no)
-      (be {make name stamp-e extending-e clauses}
-        (or (some walk-exp `(,stamp-e ,extending-e))
+      (be {make name stamp-e extend-e clauses}
+        (or (some walk-exp `(,stamp-e ,extend-e))
             (walk-clauses clauses)))
       (be {do e1 e2}
         (or (walk-exp e1)

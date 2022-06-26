@@ -24,7 +24,7 @@
     (unless (< i count.^)               ;TODO check negative too
       (oops "Bad index" flexarray i)))
 
-  (make flexarray {extending array-trait}
+  (make flexarray {extend array-trait}
     (to (~ i)
       (count-check i)
       (A.^ i))

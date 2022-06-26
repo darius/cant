@@ -26,7 +26,7 @@
 
 (to (make-subparts tail)
   (may tail
-    (be `({extending ,e} ,@clauses)
+    (be `({extend ,e} ,@clauses)
       (let `(,es ,ps) (clauses-subparts clauses))
       `((,e ,@es) ,ps))
     (be clauses

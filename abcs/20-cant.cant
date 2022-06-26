@@ -107,7 +107,7 @@
   `(make ,name
      ,@(may trait-term.term
          (be {constant #no} '())
-         (be trait-e        `({extending ,(unparse-exp trait-e)})))
+         (be trait-e        `({extend ,(unparse-exp trait-e)})))
      ,@(each unparse-clause clauses)))
 
 (to (unparse-clause `(,p ,p-vars ,e-vars ,e))

@@ -98,7 +98,7 @@
               (keys.^ .set! j key)
               (vals.^ .set! j (old-vals i)))))
        
-        (make !map {extending map-trait}
+        (make !map {extend map-trait}
 
           (to (~ key)
             (may (place key)
@@ -219,7 +219,7 @@
 (to (hash-set<-)                        ;XXX shouldn't be a global
   (let !map (!map<-)) ;TODO would be nice to avoid storing all the #yes values
 
-  (make set {extending map-trait}
+  (make set {extend map-trait}
 
     (to ~.none?            !map.none?)
     (to ~.count            !map.count)
@@ -295,17 +295,17 @@
   (to (~ @arguments)
     (fold1 operation arguments)))
 
-(make + {extending left-to-right-operation}
+(make + {extend left-to-right-operation}
   (to (~ a b) (a .+ b))
   (to (~ a) (surely (number? a) "+ of non-number" a) a)
   (to (~) 0))
 
-(make * {extending left-to-right-operation}
+(make * {extend left-to-right-operation}
   (to (~ a b) (a .* b))
   (to (~ a) (surely (number? a) "* of non-number" a) a)
   (to (~) 1))
 
-(make - {extending left-to-right-operation}
+(make - {extend left-to-right-operation}
   (to (~ a b) (a .- b))
   (to (~ a) (0 .- a)))
 
@@ -319,11 +319,11 @@
   (to (~)
     #yes))
 
-(make <   {extending transitive-comparison} (to (~ a b)      (= (compare a b) '<)))
-(make <=  {extending transitive-comparison} (to (~ a b) (not (= (compare a b) '>))))
-(make <=> {extending transitive-comparison} (to (~ a b)      (= (compare a b) '=))) ; XXX better name?
-(make >=  {extending transitive-comparison} (to (~ a b) (not (= (compare a b) '<))))
-(make >   {extending transitive-comparison} (to (~ a b)      (= (compare a b) '>)))
+(make <   {extend transitive-comparison} (to (~ a b)      (= (compare a b) '<)))
+(make <=  {extend transitive-comparison} (to (~ a b) (not (= (compare a b) '>))))
+(make <=> {extend transitive-comparison} (to (~ a b)      (= (compare a b) '=))) ; XXX better name?
+(make >=  {extend transitive-comparison} (to (~ a b) (not (= (compare a b) '<))))
+(make >   {extend transitive-comparison} (to (~ a b)      (= (compare a b) '>)))
 
 (to (compare a b)
   (may (a .compare b)
@@ -333,9 +333,9 @@
     (else (oops "Incomparable" a b))))
 
 ;; XXX float contagion
-(make min {extending left-to-right-operation}
+(make min {extend left-to-right-operation}
   (to (~ a b) (if (< a b) a b)))
-(make max {extending left-to-right-operation}
+(make max {extend left-to-right-operation}
   (to (~ a b) (if (< a b) b a)))
 
 ;;XXX so should some of these be in list-trait?
@@ -349,7 +349,7 @@
   a)
 
 
-(make chain {extending right-to-left-operation}
+(make chain {extend right-to-left-operation}
   (to (~ xs ys) (xs .chain ys))
   (to (~) '()))
 
@@ -407,13 +407,13 @@
 
 ;; (each f '(a b c)) = (list<- (f 'a) (f 'b) (f 'c))
 ;; and similar for (each f xs ys zs) and so on
-(make each {extending zipped-list-transducer}
+(make each {extend zipped-list-transducer}
   (to (~ f xs)
     (for fold ((x xs) (results '()))
       (link (f x) results))))
 
 ;; Call (f x) for each x in xs, in order, for the sake of any side effects.
-(make each! {extending zipped-list-transducer}
+(make each! {extend zipped-list-transducer}
   (to (~ f xs)
     (unless xs.none?
       (f xs.first)
@@ -422,7 +422,7 @@
 ;; (some pass? xs) = does pass? approve any x in xs?
 ;; More precisely, the first non-#no result of (pass? x) for x in xs,
 ;; or else #no. Check the xs in order, short-circuited.
-(make some {extending zipped-list-transducer}
+(make some {extend zipped-list-transducer}
   (to (~ pass? xs)
     (and xs.some?
          (or (pass? xs.first)
@@ -430,14 +430,14 @@
 
 ;; (every pass? xs) = does pass? approve each x in xs?
 ;; More precisely, (not (some (compose not pass?) xs)).
-(make every {extending zipped-list-transducer}
+(make every {extend zipped-list-transducer}
   (to (~ pass? xs)
     (or xs.none?
         (and (pass? xs.first)
              (every pass? xs.rest)))))
 
 ;; (gather f '(a b c)) = (chain (f 'a) (f 'b) (f 'c))
-(make gather {extending zipped-list-transducer}
+(make gather {extend zipped-list-transducer}
   (to (~ f xs)
     (for fold ((x xs) (gathered '()))
       (chain (f x) gathered))))
@@ -455,7 +455,7 @@
 
 ;; TODO better as (link x (lazy-list<- thunk)) ?
 (to (link/lazy x thunk)
-  (make lazy-list {extending list-trait}
+  (make lazy-list {extend list-trait}
     (to ~.none? #no)
     (to ~.first x)
     (to ~.rest  (thunk))
@@ -472,7 +472,7 @@
 (make not-yet-forced)
 (to (link/lazier x thunk)      ;TODO just replace link/lazy with this?
   (let box (box<- not-yet-forced))
-  (make lazy-list {extending list-trait}
+  (make lazy-list {extend list-trait}
     (to ~.none? #no)
     (to ~.first x)
     (to ~.rest
@@ -496,7 +496,7 @@
         (else (link/lazier xs.first (: (copying xs.rest)))))))
 
 ;; (keep ~.even? '(3 1 4 1 5 9 2 6)) = '(4 2 6)
-;; No {extending zipped-list-transducer} for this one, because the
+;; No {extend zipped-list-transducer} for this one, because the
 ;; one-arg case is not substitutable for the n-arg: the n-arg version
 ;; would return a list of n-tuples, but a 1-tuple of x is not equal to
 ;; x itself. I rather wish it were, but 1-tuples seem to need to be
@@ -527,7 +527,7 @@
   (to (~ first limit)
     (if (<= limit first)
         '()
-        (make range {extending list-trait}
+        (make range {extend list-trait}
           (to ~.none? #no)
           (to ~.first first)
           (to ~.rest  (march<- first.+ limit))
@@ -553,7 +553,7 @@
     (hm (if (< 0 stride)
             (if (<= limit first)
                 '()
-                (make range {extending list-trait}
+                (make range {extend list-trait}
                   (to ~.none? #no)
                   (to ~.first first)
                   (to ~.rest  (march<- (+ first stride) limit stride))
@@ -565,7 +565,7 @@
         (if (< stride 0)
             (if (< first limit)
                 '()
-                (make range {extending list-trait}
+                (make range {extend list-trait}
                   (to ~.none? #no)
                   (to ~.first first)
                   (to ~.rest  (march<- (+ first stride) limit stride))
@@ -584,7 +584,7 @@
   (to (~ xs i)
     (if xs.none?
         '()
-        (make enumeration {extending list-trait}
+        (make enumeration {extend list-trait}
           (to ~.none? #no)
           (to ~.first (~ i xs.first))
           (to ~.rest  (enumerate xs.rest i.+))))))

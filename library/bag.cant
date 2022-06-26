@@ -3,7 +3,7 @@
 (make bag<-
   (to (~)
     (let !map (!map<-))
-    (make bag {extending map-trait} ;; XXX make sure map-trait methods are OK
+    (make bag {extend map-trait} ;; XXX make sure map-trait methods are OK
       (to ~.none?              !map.none?)
       (to ~.count              !map.count)
       (to ~.keys               !map.keys)

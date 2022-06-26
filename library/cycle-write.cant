@@ -58,7 +58,7 @@
   (let tags (!map<-))
   (let id-counter (box<- 0))    ; The highest unique id needed so far.
 
-  (make cycle-sink {extending sink-trait}
+  (make cycle-sink {extend sink-trait}
 
     (to (-- (~ .display atom) message)
       (buffer .push! message))

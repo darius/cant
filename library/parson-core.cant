@@ -48,7 +48,7 @@
 
 ;; The first, basic parsers just fail or succeed right away.
 
-(make fail {extending peg-trait}
+(make fail {extend peg-trait}
   (to (~ .parsing text far i vals)
     (make failure
       (to (~ .continue _)     failure)
@@ -66,7 +66,7 @@
         (let `(,left / ,right) failure.postmortem)
         ("failed: ~w/~w" .format left right)))))
 
-(make empty {extending peg-trait}
+(make empty {extend peg-trait}
   (to (~ .parsing text far i vals)
     (make success
       (to (~ .continue p)       (p .parsing text far i vals))
@@ -85,31 +85,31 @@
 ;; from the same state. Any parsing by p becomes mere lookahead; it
 ;; won't affect any of the result, not even the 'far' point.
 (to (nix p)
-  (make nix-p {extending peg-trait}
+  (make nix-p {extend peg-trait}
     (to (~ .parsing text far i vals)
       (((p .parsing text far i vals) .nix) .parsing text far i vals))))
 
 ;; Return a parser that acts like p, except it appends a value: the
 ;; text that p matched.
 (to (grab p)
-  (make grab-p {extending peg-trait}
+  (make grab-p {extend peg-trait}
     (to (~ .parsing text far i vals)
       ((p .parsing text far i vals) .grab-from i))))
 
 ;; (either p1 ... pn): a parser that succeeds just when one of its
 ;; arguments does, trying them in order.
-(make either {extending right-to-left-operation}
+(make either {extend right-to-left-operation}
   (to (~ p q)
-    (make either-p-q {extending peg-trait}
+    (make either-p-q {extend peg-trait}
       (to (~ .parsing text far i vals)
         ((p .parsing text far i vals) .else q i vals))))
   (to (~) fail))
 
 ;; (then p1 ... pn): a parser that succeeds just when all of p1..pn
 ;; do, each one starting where the last left off.
-(make then {extending right-to-left-operation}
+(make then {extend right-to-left-operation}
   (to (~ p q)
-    (make then-p-q {extending peg-trait}
+    (make then-p-q {extend peg-trait}
       (to (~ .parsing text far i vals)
         ((p .parsing text far i vals) .continue q))))
   (to (~) empty))
@@ -143,7 +143,7 @@
 ;; works together with `feed` to pipe results from producers to
 ;; consumers.
 (to (seclude p)
-  (make seclude-p {extending peg-trait}
+  (make seclude-p {extend peg-trait}
     (to (~ .parsing text far i vals)
       ((p .parsing text far i '()) .preface vals))))
 
@@ -157,13 +157,13 @@
                   ;; TODO detect left-recursion loops at parse time
                   (p .^= (thunk))
                   (p.^ .parsing text far i vals))))
-  (make delay-p {extending peg-trait}
+  (make delay-p {extend peg-trait}
     (to (~ .parsing text far i vals)
       (p.^ .parsing text far i vals))))
 
 ;; Succeed iff (?advance text i) is a yeah, the new i afterwards.
 (to (match ?advance)
-  (make match-p {extending peg-trait}
+  (make match-p {extend peg-trait}
     (to (~ .parsing text far i vals)
       (may (?advance text i)
         (be #no
@@ -173,7 +173,7 @@
           (empty .parsing text (max far i1) i1 vals))))))
 
 ;; Push our current position in the text.
-(make position {extending peg-trait}
+(make position {extend peg-trait}
   (to (~ .parsing text far i vals)
     (empty .parsing text far i `(,@vals ,i))))
 
@@ -181,13 +181,13 @@
 ;; This serves about the same purpose as monadic bind in other
 ;; parser-combinator libraries.
 (to (dynamic f)
-  (make dynamic-p {extending peg-trait}
+  (make dynamic-p {extend peg-trait}
     (to (~ .parsing text far i vals)
       ((f @vals) .parsing text far i '()))))
 
 ;; Update the values by 'f'.  TODO better name?
 (to (alter f)
-  (make alter-p {extending peg-trait}
+  (make alter-p {extend peg-trait}
     (to (~ .parsing text far i vals)
       (empty .parsing text far i (f vals)))))
 

@@ -6,7 +6,7 @@
 ;; in order.
 ;;TODO is this worth defining? good name?
 ;;TODO this n-ary case is usually an error, complain? -- (yeahs maybe)
-(make yeahs {extending zipped-list-transducer}
+(make yeahs {extend zipped-list-transducer}
   (to (~ maybe xs)
     ;; Inlining of (keep itself (each maybe xs))
     (for fold ((x xs) (kept '()))
@@ -149,7 +149,7 @@
   (as-list (amassing/lazy f z xs)))
 
 ;; ((compose f g) x) = (f (g x)), etc.
-(make compose {extending right-to-left-operation}
+(make compose {extend right-to-left-operation}
   (to (~ f g)                   ;TODO support (to ((~ f g) @arguments)
     (on (@arguments)
       (f (g @arguments))))
@@ -158,7 +158,7 @@
 
 ;; (sum-by f '(a b)) = (+ (f 'a) (f 'b))
 ;;TODO overload 'sum' instead? (viz. other use of name below)
-(make sum-by {extending zipped-list-transducer}
+(make sum-by {extend zipped-list-transducer}
   (to (~ f xs)
     (for amass ((total 0) (x xs))
       (+ total (f x)))))
@@ -167,7 +167,7 @@
   (sum-by ~.count xs))
 
 ;; (tally-by f '(a b)) = (+ (~.count (f 'a)) (~.count (f 'b)))
-(make tally-by {extending zipped-list-transducer}
+(make tally-by {extend zipped-list-transducer}
   (to (~ f xs)
     (sum-by (compose ~.count f) xs)))
 ;; TODO hm, I was thinking of f as returning a bool, but as written,
@@ -178,7 +178,7 @@
 ;; (-> input f g h) = (h (g (f input)))
 ;; Hm, (-> x) is just x, so this could also replace 'itself'...
 ;; is there a name suggestive of both functions? Maybe 'pass'?
-(make -> {extending left-to-right-operation}
+(make -> {extend left-to-right-operation}
   (to (~ input f)
     (f input)))
 

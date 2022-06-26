@@ -907,7 +907,7 @@ There's some moderately helpful syntax we could've used to define
 (make-trait delegatee receiver
   (to ~.bump receiver.thump))
 
-(make delegator {extending delegatee}
+(make delegator {extend delegatee}
   (to ~.thump "Ka-THUMP"))
 ```
 

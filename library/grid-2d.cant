@@ -43,7 +43,7 @@
         (for each! ((x (xl .thru xh)))
           (A .set! (at x y) (f (~ x y)))))))
 
-  (make grid-2d {extending map-trait}
+  (make grid-2d {extend map-trait}
     
     (to (~ (~ x y))
       (check x y)
