@@ -23,7 +23,7 @@
   (with-ejector (on (ejector)
                   (quitter .^= ejector)
                   (begin ()
-                      (play-turn)
+                    (play-turn)
                     (loop)))))
 
 (let quitter (box<-))

@@ -140,10 +140,10 @@
   (keep/lazy itself (each/lazy maybe xs)))
 
 (to (amassing/lazy f z xs)
-  (begin scanning ((z z) (xs xs))
+  (begin walking ((z z) (xs xs))
     (link/lazy z (: (if xs.none?
                         '()
-                        (scanning (f z xs.first) xs.rest))))))
+                        (walking (f z xs.first) xs.rest))))))
 
 (to (amassing f z xs)
   (as-list (amassing/lazy f z xs)))
@@ -176,8 +176,6 @@
 ;; total-count ? total ? sum-by ? count-by ?
 
 ;; (-> input f g h) = (h (g (f input)))
-;; Hm, (-> x) is just x, so this could also replace 'itself'...
-;; is there a name suggestive of both functions? Maybe 'pass'?
 (make -> {extend left-to-right-operation}
   (to (~ input f)
     (f input)))
