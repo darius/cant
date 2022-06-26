@@ -87,10 +87,14 @@
     (surely (count? me))  ;; TODO gamma function
     (amass * 1 (1 .thru me)))
 
-  (to (~ .choose k)   ;; TODO how about (n .! k) as a name? or (n .count-k-sets k)
+  ;; The binomial coefficients. TODO how about (n .! k) as a name? or (n .count-k-sets k)
+  (to (~ .choose k)   
     (surely (count? me))
     (surely (count? k))
-    (me.! .quotient (* k.! ((- me k) .!))))  ;; TODO more efficient code
+    (let k0 (min k (- me k)))
+    (let n-k (- me k0))
+    (for amass ((product 1) (i (1 .thru k0)))
+      ((* product (+ n-k i)) .quotient i)))
 
   (to ~.negative?      (< me 0))
   (to ~.positive?      (< 0 me))

@@ -332,6 +332,12 @@
     (be '> '>)
     (else (oops "Incomparable" a b))))
 
+;; XXX float contagion
+(make min {extending left-to-right-operation}
+  (to (~ a b) (if (< a b) a b)))
+(make max {extending left-to-right-operation}
+  (to (~ a b) (if (< a b) b a)))
+
 ;;XXX so should some of these be in list-trait?
 
 (to (text<-list runes) (__string<-list (as-list runes)))
