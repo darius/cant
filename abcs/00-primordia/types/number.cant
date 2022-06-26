@@ -91,6 +91,7 @@
   (to (~ .choose k)   
     (surely (count? me))
     (surely (integer? k))
+    (surely (<= 0 k me))  ;; TODO allow out-of-range integers, with result 0?
     (let k0 (min k (- me k)))
     (let n-k (- me k0))
     (for amass ((product 1) (i (1 .thru k0)))
