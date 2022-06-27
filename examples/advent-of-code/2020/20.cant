@@ -5,8 +5,7 @@
 (to (flip lines)                        ;vertical flip of a tile
   (reverse lines))
 (to (turn lines)                        ;right quarter-turn of a tile
-  (for each ((t (transpose lines)))
-    (~.text (reverse t))))
+  (each ~.text (transpose (reverse lines))))
 (let orientations                       ;successive ops on a tile to go through all the symmetries
   (list<- turn turn turn flip turn turn turn))
 
