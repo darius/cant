@@ -2,6 +2,58 @@
 
 (import (use 'grid-2d) grid-2d<-)
 
+(let inputs (data-file.read-all .split "\n\n"))
+
+;; Parse a tile into (~ tid {tile lines edges})
+(to (parse t)
+  (let `(,label-line ,@lines) t.split-lines)
+  (let `(,tid) (parse-label label-line))
+  (~ tid {tile lines (edges<- lines)}))
+
+(let parse-label (like "'Tile ' :count ':'"))
+
+(to (edges<- lines)
+  (list<- lines.first
+          (~.text (each ~.last lines))
+          lines.last
+          (~.text (each ~.first lines))))
+
+;; Map of tid -> {tile lines edges}
+(let tile-map (map<-items (each parse inputs)))
+
+;; Map of edge -> (list<- tid ...)
+;;  for both orientations of every edge of every tile,
+;;  listing all the tiles that have the given edge.
+(let edge-map
+  (map<-items (collect (for gather (((~ tid {tile _ edges}) tile-map.items))
+                         (for gather ((edge edges))
+                           (let flipped (~.text (reverse edge)))
+                           (list<- (~ edge tid) (~ flipped tid)))))))
+;;(for each! (((~ k v) edge-map.items))
+;;  (out .say "~w: ~w\n" k v))
+
+;; Map of tid -> set of other tids that share one of this tid's edges, in some orientation
+(let compat-map
+  (map<-items (for each (((~ tid {tile _ edges}) tile-map.items))
+                (~ tid (hey (~.range (gather edge-map edges))
+                            (~ .delete! tid))))))
+
+;; If we're lucky, the corner tiles will each have just two
+;; compatible-as-neighbor tiles, and no other tiles will:
+(let grid-corners (for where ((compats compat-map)) (= compats.count 2)))
+(surely (= grid-corners.count 4))
+
+(to (part1)
+  (* @grid-corners))
+
+
+;; With further luck, all the other tiles will have just the right number of
+;; compatible-as-neighbor tiles:
+;;(let grid-edges   (for where ((compats compat-map)) (= compats.count 3)))
+;;(let grid-inside  (for where ((compats compat-map)) (= compats.count 4)))
+(surely (for every ((compats compat-map.values))
+          (<= 2 compats.count 4)))
+
 (to (flip lines)                        ;vertical flip of a tile
   (reverse lines))
 (to (turn lines)                        ;right quarter-turn of a tile
@@ -17,39 +69,6 @@
   (let ny lines.count)
   (let nx lines.first.count)            ;surely all the same
   (each (~ .from 1 nx.-) (lines .from 1 ny.-)))
-
-(to (edges<- lines)
-  (list<- lines.first
-          (~.text (each ~.last lines))
-          lines.last
-          (~.text (each ~.first lines))))
-
-(let inputs (data-file.read-all .split "\n\n"))
-
-(to (parse t)
-  (let `(,label-line ,@lines) t.split-lines)
-  (let `(,tid) (parse-label label-line))
-  (~ tid {tile lines (edges<- lines)}))
-(let parse-label (like "'Tile ' :count ':'"))
-
-(let tile-map (map<-items (each parse inputs)))
-
-(let edge-map
-  (map<-items (collect (for gather (((~ tid {tile _ edges}) tile-map.items))
-                         (for gather ((edge edges))
-                           (let flipped (~.text (reverse edge)))
-                           (list<- (~ edge tid) (~ flipped tid)))))))
-(let compat-map
-  (map<-items (for each (((~ me {tile _ edges}) tile-map.items))
-                (let my-compats (~.range (gather edge-map edges)))
-                (my-compats .delete! me)
-                (~ me my-compats))))
-
-(let grid-corners (for where ((compats compat-map)) (= compats.count 2)))
-;;(let grid-edges   (for where ((compats compat-map)) (= compats.count 3)))
-;;(let grid-inside  (for where ((compats compat-map)) (= compats.count 4)))
-(surely (for every ((compats compat-map.values))
-          (<= 2 compats.count 4)))
 
 (to (complete-grid)
   "So here's the plan. Start by placing a corner at top left.
@@ -127,9 +146,6 @@ The worklist scheme is less likely to need backtracking.
 (to (abut interiors) ; From a list of row-lists abutting horizontally, make a list of lines.
   (for each ((rows (transpose interiors)))
     ("" .join rows)))
-
-(to (part1)
-  (* @grid-corners))
 
 (to (part2)
   (let grid (complete-grid))
