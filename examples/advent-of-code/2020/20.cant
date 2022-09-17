@@ -95,6 +95,20 @@ Data structures:
 
 Is there no simpler scheme that's likely to work?
 The worklist scheme is less likely to need backtracking.
+
+On second thought after sketching the code below, would this be simpler
+without any new data structures except the grid? Just compat-map?
+- Make the grid initially empty. It will hold (~ tid lines) pairs, with the
+  lines possibly reoriented from the input.
+  Assume the only guessing needed will be which corner tile goes in top left,
+  and its orientation. For each of those guesses:
+  - Raster-scan filling in the next spot of the grid:
+    - Get one neighbor edge, from either left or above.
+    - Find the unused compatible tid from edge-map.
+    - Try all the orientations of the new tile against its 1 or 2 already-filled neighbors.
+      - If none works, give up on this guess for top-left.
+      - Else fill this grid spot and continue.
+TODO try reworking the code below
 "
   (let remaining-tiles tile-map.domain) ; TODO dubious use of .domain: we're making a *mutable* copy of the keys here
   (let grid (grid-2d<- (~ 0 0) (~ 11 11) {constant #no})) ; N.B. assuming 12x12 grid
