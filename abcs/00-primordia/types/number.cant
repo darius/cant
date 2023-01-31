@@ -87,7 +87,7 @@
     (surely (count? me))  ;; TODO gamma function
     (amass * 1 (1 .thru me)))
 
-  ;; The binomial coefficients. TODO how about (n .! k) as a name? or (n .count-k-sets k)
+  ;; The binomial coefficients. TODO how about (n .! k) as a name? or (n .count-k-sets k). Also, a .count-k-bags method to go with this.
   (to (~ .choose k)   
     (surely (count? me))
     (surely (integer? k))
