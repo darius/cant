@@ -49,6 +49,7 @@
                 (zipping (each (~ .from 1) rows)))))))
 
 ;; `(min-by f xs)` = an `x` in `xs` giving the minimum value of `(f x)`.
+;; TODO names `least`, `most` from Arc?
 (to (min-by key<- xs)
   ;; The simplest code (fold1 (on (x y) (if (< (key<- x) (key<- y)) x y)) xs))
   ;; can be painfully slow, from repeated calls to key<- on the best x so far.
