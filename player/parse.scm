@@ -253,19 +253,19 @@
     ;; Return either #f (if arguments has length >n) or {ok values}
     ;; where values = (reverse (pad arguments)),
     ;; where (pad arguments) means arguments padded to length n with #f's.
-    (let eating ((xs arguments) (n n) (values '()))
-         ;; Invariant: xs is a suffix of arguments; (length values) <= n;
-         ;;            (append (reverse values) xs) = arguments.
+    (let eating ((xs arguments) (k n) (values '()))
+         ;; Invariant: arguments = (append (reverse values) xs);
+         ;;            0 <= k; (length values) + k = n
       (cond ((null? xs)
              ;; Prefix #f's until `values` has length n.
-             (let filling ((n n) (values values))
-               (if (= n 0)
+             (let filling ((k k) (values values))
+               (if (= k 0)
                    (make-term 'ok values)
-                   (filling (- n 1) (cons #f values)))))
-            ((= n 0)
+                   (filling (- k 1) (cons #f values)))))
+            ((= k 0)
              #f)
             (else
-             (eating (cdr xs) (- n 1) (cons (car xs) values)))))))
+             (eating (cdr xs) (- k 1) (cons (car xs) values)))))))
 
 (define (optional-match-exp<- n)
   `',(up-to-n-optional n))
