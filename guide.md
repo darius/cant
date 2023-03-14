@@ -129,6 +129,12 @@ For example,
 has terms like `{empty}` and `{extension n s}`. This example shows
 pattern-matching on terms, in a style like ML or Haskell code.
 
+Why have this 'term' type, when Lisp could already represent the same
+structures by lists and symbols? Because our lists expose a rich
+interface (the collections protocol above); I want this kind of
+richness only where it's meaningful. You can of course trivially get
+the arguments of a term as a list.
+
 The variation `(foo .bar baz)`, with a `.` starting the first
 argument, means `(call foo {.bar baz})`: that is, with `.bar` as the
 *term tag* instead of as an argument to a tuple. Think of `{.bar baz}`
