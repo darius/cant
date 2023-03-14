@@ -6,7 +6,7 @@
 ;;   (load-library "/path/to/cant/cant-mode.el")
 ;; You'll probably want to run this too:
 ;;   (add-to-list 'auto-mode-alist '(".*\\.cant\\'" . cant-mode))
-;; (I forget why it has that ' at the of the string.)
+;; (I forget why it has that ' at the end of the string.)
 ;; Yeah, this should just be an Emacs package, however that works.
 
 (defvar cant-mode-map
@@ -34,6 +34,10 @@
            scheme-font-lock-keywords-1
            cant-font-lock-keywords)
           ,@(cdr font-lock-defaults)))
+  ;; TODO maybe instead of the above crock, use font-lock-add-keywords ?
+  ;; No: "Warning: Major mode commands must not call
+  ;; font-lock-add-keywords under any circumstances, either directly
+  ;; or indirectly, except through their mode hooks."
   (cant-mode-set-indents))
 
 (defconst cant-font-lock-keywords 
@@ -54,7 +58,6 @@
   (put 'let 'scheme-indent-function 1)
   (put 'make 'scheme-indent-function 1)
   (put 'make-trait 'scheme-indent-function 2)
-  (put 'match 'scheme-indent-function 1)
   (put 'to 'scheme-indent-function 1)
   (put 'unless 'scheme-indent-function 1)
   (put 'when 'scheme-indent-function 1)
