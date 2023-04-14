@@ -9,10 +9,10 @@
 (make yeahs {extend zipped-list-transducer}
   (to (~ maybe xs)
     ;; Inlining of (keep itself (each maybe xs))
-    (for fold ((x xs) (kept '()))
-      (may (maybe x)
-        (be #no  kept)
-        (be yeah (link yeah kept))))))
+    (hm (if xs.none? '())
+        (may (maybe xs.first)
+          (be #no  (yeahs maybe xs.rest))
+          (be yeah (link yeah (yeahs maybe xs.rest)))))))
 
 ;; The identity function.
 (to (itself x)

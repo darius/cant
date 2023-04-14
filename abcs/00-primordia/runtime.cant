@@ -409,8 +409,8 @@
 ;; and similar for (each f xs ys zs) and so on
 (make each {extend zipped-list-transducer}
   (to (~ f xs)
-    (for fold ((x xs) (results '()))
-      (link (f x) results))))
+    (hm (if xs.none? '())
+        (else (link (f xs.first) (each f xs.rest))))))
 
 ;; Call (f x) for each x in xs, in order, for the sake of any side effects.
 (make each! {extend zipped-list-transducer}
@@ -439,8 +439,8 @@
 ;; (gather f '(a b c)) = (chain (f 'a) (f 'b) (f 'c))
 (make gather {extend zipped-list-transducer}
   (to (~ f xs)
-    (for fold ((x xs) (gathered '()))
-      (chain (f x) gathered))))
+    (hm (if xs.none? '())
+        (else (chain (f xs.first) (gather f xs.rest))))))
 
 ;; List every way to pick one element from each of the arguments.
 ;; For example, (grid* '(a b) '(0 1)) = ((a 0) (a 1) (b 0) (b 1))
@@ -502,13 +502,13 @@
 ;; x itself. I rather wish it were, but 1-tuples seem to need to be
 ;; distinct for the sake of message dispatch.
 (to (keep keep? xs)
-  (for fold ((x xs) (kept '()))
-    (if (keep? x) (link x kept) kept)))
+  (hm (if xs.none? '())
+      (let x xs.first)
+      (if (keep? x) (link x (keep keep? xs.rest)))
+      (else (keep keep? xs.rest))))
 
-;; Short for (keep (compose not skip?) xs)
 (to (skip skip? xs)
-  (for fold ((x xs) (kept '()))
-    (if (skip? x) kept (link x kept))))
+  (keep (:: (not (skip? it))) xs))
 
 (to (chain/lazy xs ys-thunk)
   (fold/lazy link/lazy xs ys-thunk))
