@@ -538,7 +538,7 @@ arguments. A term is data, not an object with identity; its equality
 test is structural. If the arguments can be ordered, then so can the
 term. Terms are distinct from all other data types.
 
-In cant, `(call receiver message)` is a special form. It evaluates
+In Cant, `(call receiver message)` is a special form. It evaluates
 the receiver, evaluates the message, and sends the latter to the
 former.
 
