@@ -82,8 +82,5 @@
                  (chain full-powered-setting-extra-names
                         computational-setting-library-imports
                         computational-setting-names)))
-(full-powered-setting .resolve-each! primordial-setting computational-setting-names)
-
 (let main-interactive-setting full-powered-setting.extend-mutable)
-(cant .play `(let main-interactive-setting ',main-interactive-setting)
-            full-powered-setting)
+(full-powered-setting .resolve-each! primordial-setting computational-setting-names)
