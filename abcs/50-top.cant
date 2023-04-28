@@ -102,6 +102,8 @@
   ;; A separate function just to make the top of tracebacks cleaner.
   (to (print-result value)
     (unless (= value void)
+      (when (= setting main-interactive-setting)  ;; TODO in a mutable setting, in general
+        (setting .resolve! '$$ value))
       (out .print value))
     (listener))
 

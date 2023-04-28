@@ -84,3 +84,6 @@
                         computational-setting-names)))
 (let main-interactive-setting full-powered-setting.extend-mutable)
 (full-powered-setting .resolve-each! primordial-setting computational-setting-names)
+
+(cant .play `(let $$ void) ;; The listener's last-result variable
+            main-interactive-setting)

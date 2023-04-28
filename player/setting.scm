@@ -65,7 +65,8 @@
              (if (and redef? (not (eq-hashtable? (setting-table s))))
                  "Multiple definition"
                  (begin
-                   (when redef?
+                   (when (and redef?
+                              (not (eq? variable '$$))) ; Hack: the listener's $$ gets redefined all the time, too noisy.
                      (display "\nWarning: redefined ") (write variable) (newline))
                    (vector-set! values offset value)
                    #f))))
