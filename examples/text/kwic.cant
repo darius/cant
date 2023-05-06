@@ -5,6 +5,7 @@
 ;;   reread Parnas
 ;;     y'know, the rotated outputs he describes are probably more useful
 
+(import (use 'binary-relations) collect)
 (import (use 'parson) like)
 
 ;; From stdin to stdout.
@@ -29,14 +30,6 @@
 (let word-spans
   (like "([:position :letter+ ('\\'' :letter+)? :position :hug] | :skip)*"))
 ;; TODO ugly: '\\''
-
-;; Given a list of (~ key value), return a list of (~ key all-values).
-(to (collect items)
-  (let map (!map<-))
-  (for each! [((~ key value) items)]
-    ((map .get-set! key flexarray<-) .push! value))
-  (for each [((~ key array) map.items)]
-    (~ key array.values)))
 
 ;; Under a heading for `word`, show each of its occurrences.
 (to (show-group (~ word occurrences))
