@@ -6,9 +6,9 @@
 (let nearby-ticket-text (input 2))
 
 (let rules
-  (for each ((line rules-text.split-lines))
+  (for each [(line rules-text.split-lines)]
     (let `(,lhs ,rhs) (line .split ": "))
-    {rule lhs (union @(for each ((dash (rhs .split " or ")))
+    {rule lhs (union @(for each [(dash (rhs .split " or "))]
                         (let `(,lo ,hi) (dash .split "-"))
                         (set<-list (lo.number .thru hi.number))))}))
 
@@ -25,7 +25,7 @@
   (sum (skip valid? fields)))
 
 (to (valid? field)
-  (for some (({rule _ ruleset} rules))
+  (for some [({rule _ ruleset} rules)]
     (ruleset .maps? field)))
 
 (to (part2)
@@ -34,12 +34,12 @@
 
   (let remaining-rules (set<- @rules))
   (let rule-map (!map<-))
-  (begin solving ()
+  (begin solving []
     (let progress? (box<- #no))
 
-    (for each! (((~ c column) columns.items))
-      (let viable-rules (for keep (({rule _ ruleset} remaining-rules.keys))
-                          (for every ((n column))
+    (for each! [((~ c column) columns.items)]
+      (let viable-rules (for keep [({rule _ ruleset} remaining-rules.keys)]
+                          (for every [(n column)]
                             (ruleset .maps? n))))
       (when viable-rules.one?
         (let rule viable-rules.only)
@@ -50,7 +50,7 @@
     (when (and progress?.^ remaining-rules.some?)
       (solving)))
 
-  (let departure-fields (for yeahs (((~ c {rule name _}) rule-map.items))
+  (let departure-fields (for yeahs [((~ c {rule name _}) rule-map.items)]
                           (and (name .prefix? "departure") c)))
   (* @(each your-ticket departure-fields)))
 

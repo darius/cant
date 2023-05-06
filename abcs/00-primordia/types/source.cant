@@ -9,17 +9,16 @@
   (to ~.ready?      (__char-ready? me))
 
   (to ~.read-line
-    (let rune me.read-rune)
-    (if (zilch? rune)
+    (if (zilch? (let rune me.read-rune))
         rune
         (text<-list
-         (begin reading (rune)
+         (begin reading [rune]
            (if (or (zilch? rune) (= rune #\newline))
                '()
                (link rune (reading me.read-rune)))))))
 
   (to ~.read-lines
-    (begin reading ()
+    (begin reading []
       (if (zilch? (let line me.read-line))
           '()
           (link line (reading)))))

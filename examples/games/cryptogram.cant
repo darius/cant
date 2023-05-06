@@ -18,7 +18,7 @@
         text)
       (else
         (oops ("Usage: ~d [cryptogram]" .format (args 0))))))
-  (for cbreak-mode ()
+  (for cbreak-mode []
     (puzzle cryptogram)))
 
 (to (encrypt code text)
@@ -40,7 +40,7 @@
 
 (to (puzzle cryptogram)
   (let pad (crypto-scratchpad<- cryptogram))
-  (begin playing ()
+  (begin playing []
     (render (pad .view #yes))
     (may (get-key)
       (be 'esc (render (pad .view #no)))
@@ -74,7 +74,7 @@
 
   (let lines (each clean cryptogram.uppercase.split-lines))
   (let line-starts                ; Set of positions that start a line
-    (~.range (amassing + 0 (for each ((line lines))
+    (~.range (amassing + 0 (for each [(line lines)]
                              (tally-by ~.letter? line)))))
 
   (to (shift-by offset)
@@ -114,9 +114,9 @@
     (to (~ .view show-cursor?)
       (let counts (hey (bag<- decoder.values) ; bag of decoded plaintext letters
                        (~ .delete! #\space)))
-      (let clashes (~.range (for where ((n counts)) ; set of letters with >1 preimage
+      (let clashes (~.range (for where [(n counts)] ; set of letters with >1 preimage
                               (< 1 n))))
-      (let letters-left (for each ((rune alphabet)) ; display of letters available to try
+      (let letters-left (for each [(rune alphabet)] ; display of letters available to try
                           (if (counts .maps? rune) #\space rune)))
 
       (let pos (box<- 0)) ; current index into `code`
@@ -125,10 +125,10 @@
       (to (emit x) (view .push! x))
 
       (emit (green ["Free: " letters-left "\n"]))
-      (for each! ((line lines))
+      (for each! [(line lines)]
         (emit #\newline)
         ;; a line of the tentative plaintext:
-        (for each! ((rune line))
+        (for each! [(rune line)]
           (when (and show-cursor? rune.letter?)
             (when (= pos.^ point.^)
               (emit cursor))
@@ -136,11 +136,11 @@
           (emit (decoder .get rune rune)))
         (emit #\newline)
         ;; separator line:
-        (for each! ((rune line))
+        (for each! [(rune line)]
           (emit (if rune.letter? #\- #\space)))
         (emit #\newline)
         ;; line of ciphertext:
-        (for each! ((rune line))
+        (for each! [(rune line)]
           (let color (hm (if (clashes .maps? (decoder .get rune)) red)
                          (if (= rune (code point.^))              green)
                          (else                                    unstyled)))
@@ -152,9 +152,9 @@
 ;; Expand tabs; blank out other control runes.
 (to (clean text)
   (let r (flexarray<-))
-  (for each! ((rune text))
+  (for each! [(rune text)]
     (hm (when (= rune #\tab)
-          (begin padding ()
+          (begin padding []
             (r .push! #\space)
             (unless (r.count .even? 8)
               (padding))))

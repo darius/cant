@@ -3,9 +3,9 @@
 (to (test regex should-match should-not)
   (let r (regex-parse regex))
   (out .say "~d\n~d\n" regex (text-by (:: "-") regex))
-  (for each! ((text should-match))
+  (for each! [(text should-match)]
     (test-1 r text #yes))
-  (for each! ((text should-not))
+  (for each! [(text should-not)]
     (test-1 r text #no))
   out.newline)
 

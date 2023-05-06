@@ -20,7 +20,7 @@
 (to (part-1)
   (let field (field<- input 3))
   (let n-rounds
-    (begin battling ((t 0))
+    (begin battling [(t 0)]
       (show t field)
       (if field.do-round!
           (battling t.+)
@@ -38,7 +38,7 @@
 (to (field<- field-text elf-attack-power)
 
   (let width field-text.split-lines.first.count.+)
-  (surely (for every ((line field-text.split-lines))
+  (surely (for every [(line field-text.split-lines)]
             (= width line.count.+)))
 
   (let area field-text.array)
@@ -50,11 +50,11 @@
   (let steps (list<- (- width) 1 width -1))
 
   (to (neighbors<- p)
-    (for each ((s steps))
+    (for each [(s steps)]
       (+ p s)))
 
   (to (open-neighbors<- p)
-    (for keep ((q (neighbors<- p)))
+    (for keep [(q (neighbors<- p))]
       (= (area q) #\.)))
 
   ;; A unit is a goblin or elf.
@@ -68,7 +68,7 @@
 
   ;; For each unit, do a turn. Return yes if the round completed.
   (to (do-round)
-    (for every (((~ p unit) (sort units.items)))
+    (for every [((~ p unit) (sort units.items))]
       ;; This unit may have been killed in a preceding unit's turn,
       ;; but it can't have moved yet.
       (or (not (units .maps? p)) ; (must've been killed)
@@ -93,12 +93,12 @@
     targets.some?)
 
   (to (find-targets species)
-    (for where ((q units))
+    (for where [(q units)]
       (not= species (area q))))
 
   (to (maybe-attack p)
     (let enemy (enemy<- (area p)))
-    (may (for keep ((q (neighbors<- p)))
+    (may (for keep [(q (neighbors<- p))]
            (= enemy (area q)))
       (be '() #no)
       (be targets
@@ -136,15 +136,15 @@
     (let already (set<-)) ; Spots not to enqueue again.
 
     (to (expand trail)
-      (for yeahs ((q (sort (open-neighbors<- trail.first))))
+      (for yeahs [(q (sort (open-neighbors<- trail.first)))]
         (and (not (already .maps? q))
              (do (already .add! q)
                  (link q trail)))))
 
-    (begin exploring ((queue
-                       (extend empty (for each ((trail (expand `(,start-pos))))
-                                       `(,trail.first)))))
-;;      (surely (sorted? (for each ((trail (list<-queue queue)))
+    (begin exploring [(queue
+                       (extend empty (for each [(trail (expand `(,start-pos)))]
+                                       `(,trail.first))))]
+;;      (surely (sorted? (for each [(trail (list<-queue queue))]
 ;;                         `(,trail.count ,(reverse trail)))))
       (may (peek queue)
         (be {empty}
@@ -161,7 +161,7 @@
 
   (to (show)
     (let notes (flexarray<-))
-    (for each! (((~ p rune) area.items))
+    (for each! [((~ p rune) area.items)]
       (may rune
         (be #\newline
           (out .say "   ~d\n" (", " .join notes.values))
@@ -188,7 +188,7 @@
 (to (part-2)
   (out .display "\nPart 2\n")
 
-  (begin trying ((power 4))
+  (begin trying [(power 4)]
     out.newline
     (out .say "Trying attack power ~w\n" power)
     (let field (field<- input power))
@@ -197,7 +197,7 @@
 
 (to (battle-sans-elf-casualties field power)
   (let n-elves (field.census #\E))
-  (begin battling ((t 0))
+  (begin battling [(t 0)]
     (show t field)
     (hm (unless (= n-elves (field.census #\E))
           (out .say "Elf casualties, aborting the battle\n\n")

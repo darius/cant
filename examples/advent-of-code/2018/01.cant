@@ -13,7 +13,7 @@
 (let freqs (amassing/lazy + 0 changes.cycle))
 (out .print (~.first (duplicates<- freqs)))
 ;;(let seen (set<-))
-;;(out .print (for detect ((freq freqs))
+;;(out .print (for detect [(freq freqs)]
 ;;              (or (seen freq)
 ;;                  (do (seen .add! freq)
 ;;                      #no))))

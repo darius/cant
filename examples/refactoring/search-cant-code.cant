@@ -55,7 +55,7 @@
   (to (~ filename)
     (grab filename '()))
   (to (~ filename ,context)
-    (let code (for with-input-file ((source filename))
+    (let code (for with-input-file [(source filename)]
                 `(hide ,@(read-all source))))
     (cant .parse-expression code context)))
 

@@ -16,7 +16,7 @@
 (to (search lo hi ok?)
   (if (ok? lo)
       lo
-      (begin searching ((L lo) (H hi))
+      (begin searching [(L lo) (H hi)]
         (if (<= H (+ L 1))
             H
             (do (let mid ((+ L H) .quotient 2))
@@ -106,7 +106,7 @@
       key-map)
 
     (to (~ .add-bindings! bindings)
-      (for each! ((`(,key ,binding) bindings)) ;TODO better choice of structure?
+      (for each! [(`(,key ,binding) bindings)] ;TODO better choice of structure?
         (key-map .set! key binding)))
 
     (to (~ .move-rune offset)
@@ -120,13 +120,13 @@
     (to ~.previous-page
       ;; (update-origin)
       ;; point .^= origin
-      (for each! ((_ rows.till))
+      (for each! [(_ rows.till)]
         (previous-line)))
 
     (to ~.next-page
       ;; (update-origin)
       ;; point .^= origin
-      (for each! ((_ rows.till))
+      (for each! [(_ rows.till)]
         (next-line)))
 
     (to ~.redisplay

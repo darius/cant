@@ -25,7 +25,7 @@
   (to (~ xs ys)   ;specialized for speed (TODO still worth bothering?)
     (to (mismatch)
       (oops "zip: mismatched arguments" xs ys))
-    (begin zipping (xs ys)
+    (begin zipping [xs ys]
       (hm (if xs.none? (if ys.none? '() (mismatch)))
           (if ys.none? (mismatch))
           (else (link (~ xs.first ys.first)
@@ -35,14 +35,14 @@
   ;; Like (zip @lists), but clipping the lists to the length of the shortest:
   ;; TODO move .ragged to zipped-list-transducer? and define zip in terms of it?
   (to (~ .ragged @lists) ;; TODO better name .clip ? nah...
-    (begin zipping (lists)
+    (begin zipping [lists]
       (if (some ~.none? lists)
           '()
           (link (tuple<-list (each ~.first lists))
                 (zipping (each ~.rest lists))))))
   ;; Like (zip @lists), but right-padding the lists to match the longest:
   (to (~ .padded padding @lists)
-    (begin zipping (lists)
+    (begin zipping [lists]
       (if (every ~.none? lists)
           '()
           (link (tuple<-list (each (~ .get 0 padding) lists))
@@ -55,8 +55,8 @@
   ;; can be painfully slow, from repeated calls to key<- on the best x so far.
   (surely xs.some?)
   (let x0 xs.first)
-  (let (~ best-x _) (for amass ((best-so-far (~ x0 (key<- x0)))
-                                (x xs.rest))
+  (let (~ best-x _) (for amass [(best-so-far (~ x0 (key<- x0)))
+                                (x xs.rest)]
                       (let (~ _ bsf-key) best-so-far)
                       (let xkey (key<- x))
                       (if (< xkey bsf-key) (~ x xkey) best-so-far)))
@@ -65,8 +65,8 @@
 (to (max-by key<- xs)
   (surely xs.some?)
   (let x0 xs.first)
-  (let (~ best-x _) (for amass ((best-so-far (~ x0 (key<- x0)))
-                                (x xs.rest))
+  (let (~ best-x _) (for amass [(best-so-far (~ x0 (key<- x0)))
+                                (x xs.rest)]
                       (let (~ _ bsf-key) best-so-far)
                       (let xkey (key<- x))
                       (if (> xkey bsf-key) (~ x xkey) best-so-far)))
@@ -82,26 +82,26 @@
 ;;  - Sometimes it's *almost* applicable, but ok? needs to take `(,i ,x) as the argument.
 ;;    But if we make that change, then it's barely different from yeahs.
 (to (where ok? map)
-  (for gather (((~ i x) map.items))
+  (for gather [((~ i x) map.items)]
     (if (ok? x) `(,i) '())))
 
 ;; Make a map like `map` with each value transformed by f.
 (to (each-value f map)
-  (map<-items (for each (((~ k v) map.items))
+  (map<-items (for each [((~ k v) map.items)]
                 (~ k (f v)))))
 
 ;; Make a map from k to (f k) for k in keys.
 (to (map-by f keys) ;TODO maybe name it map<-keys ? along with a map<-values ?
-  (map<-items (for each ((key keys))
+  (map<-items (for each [(key keys)]
                 (~ key (f key)))))
 
 (to (!map-by f keys) ;TODO ugly duplication
-  (!map<-items (for each ((key keys))
+  (!map<-items (for each [(key keys)]
                  (~ key (f key)))))
 
 ;; Make a map from (f v) to v for v in values.
 (to (map<-values f values)
-  (map<-items (for each ((value values))
+  (map<-items (for each [(value values)]
                 (~ (f value) value))))
 
 (to (text-by f xs)
@@ -113,8 +113,8 @@
 
 (make grid*/lazy
   (to (~)           '(()))
-  (to (~ xs @lists) (for gather/lazy ((x xs))
-                      (for each/lazy ((picks (grid*/lazy @lists)))
+  (to (~ xs @lists) (for gather/lazy [(x xs)]
+                      (for each/lazy [(picks (grid*/lazy @lists))]
                         (link x picks)))))
 
 ;; TODO zipped-list-transducer for the below?
@@ -134,14 +134,14 @@
                        (: (each/lazy f xs.rest))))))
 
 (to (gather/lazy f xs)
-  (for fold/lazy ((x xs) (rest-thunk (: '())))
+  (for fold/lazy [(x xs) (rest-thunk (: '()))]
     (chain/lazy (f x) rest-thunk)))
 
 (to (yeahs/lazy maybe xs)
   (keep/lazy itself (each/lazy maybe xs)))
 
 (to (amassing/lazy f z xs)
-  (begin walking (z xs)
+  (begin walking [z xs]
     (link/lazy z (: (if xs.none?
                         '()
                         (walking (f z xs.first) xs.rest))))))
@@ -161,7 +161,7 @@
 ;;TODO overload 'sum' instead? (viz. other use of name below)
 (make sum-by {extend zipped-list-transducer}
   (to (~ f xs)
-    (for amass ((total 0) (x xs))
+    (for amass [(total 0) (x xs)]
       (+ total (f x)))))
 
 (to (tally xs)
@@ -197,7 +197,7 @@
   result)
 
 (to (read-all source) ;XXX confusing name, since source.read-all returns a text
-  (begin reading ()
+  (begin reading []
     (may (read source)
       (be (? zilch?) '())
       (be thing      (link thing (reading))))))
@@ -253,7 +253,7 @@
 ;; and either tail is () or (suffix? tail.first) is true at the first
 ;; possible place.
 (to (until suffix? xs)
-  (begin scanning ((r-head '()) xs)
+  (begin scanning [(r-head '()) xs]
     (if (or xs.none? (suffix? xs.first))
         (~ (reverse r-head) xs)
         (scanning (link xs.first r-head) xs.rest))))
@@ -267,7 +267,7 @@
 ;; TODO check that all digits are valid?
 (to (count<-digits digits @(optional base))
   (let b (or base 10))
-  (for amass ((total 0) (digit digits))
+  (for amass [(total 0) (digit digits)]
     (+ (* b total) digit)))
 
 ;; probably worthless

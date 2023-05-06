@@ -19,7 +19,7 @@
 
 (to (star r)
   (let r1 (nonempty r))
-  (begin r1* ()
+  (begin r1* []
     (on (Ns) ((either empty (then r1 (r1*)))
               Ns))))
 
@@ -40,11 +40,11 @@
        ;; TODO still kinda ugly
        (let r-matches (~.keys (r (~.range (0 .thru (max @Ns.keys))))))
        (let r-lengths (~.nub (each ~.count r-matches)))
-       (let Ns-s (~.range (for gather ((n Ns.keys))
+       (let Ns-s (~.range (for gather [(n Ns.keys)]
                             (keep count? (each (:: (- n it)) r-lengths)))))
        (let s-matches (~.keys (s Ns-s)))
-       (~.range (for gather ((m1 r-matches))
-                  (for yeahs ((m2 s-matches))
+       (~.range (for gather [(m1 r-matches)]
+                  (for yeahs [(m2 s-matches)]
                     (and (Ns .maps? (+ m1.count m2.count))
                          (chain m1 m2))))))))
 

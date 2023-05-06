@@ -7,14 +7,14 @@
 (to (lex-permutation n i)
   (let result (flexarray<-))
   (let digit-supply (flexarray<-list n.till))
-  (for each! ((pos (i .digits (n .down-thru 1) n)))
+  (for each! [(pos (i .digits (n .down-thru 1) n))]
     (result .push! (digit-supply .pop! pos)))
   result.values)
 
 (hide ;; Quickie test
   (let N 4)
   (let lex-perm-naive (sort N.till.permutations))
-  (for each! ((i N.!.till))
+  (for each! [(i N.!.till)]
     (surely (= (lex-perm-naive i) (lex-permutation N i)))))
 
 "Here's how it should go for N=3:

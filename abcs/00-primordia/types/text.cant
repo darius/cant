@@ -34,14 +34,14 @@
     ;; TODO should delim be text or rune (or either)?
     (let delim? (if delim (:: (= it delim)) ~.whitespace?))
     (let limit me.count)
-    (begin scanning ((i 0))
+    (begin scanning [(i 0)]
       (hm (if (= i limit)       "")
           (if (delim? (me i))   (scanning i.+))
           (else                 (me .from i)))))
 
   (to (~ .trim-right @(optional delim))
     (let delim? (if delim (:: (= it delim)) ~.whitespace?))
-    (begin scanning ((i me.count))
+    (begin scanning [(i me.count)]
       (hm (if (= i 0)           "")
           (if (delim? (me i.-)) (scanning i.-))
           (else                 (me .from 0 i)))))
@@ -51,11 +51,11 @@
 
   (to ~.split
     ;; TODO dequadratify
-    (begin splitting ((t me.trim-left))
+    (begin splitting [(t me.trim-left)]
       (if t.none?
           '()
           (do (let limit t.count)
-              (begin scanning ((i 1))
+              (begin scanning [(i 1)]
                 (hm (if (= i limit) `(,t))
                     (if ((t i) .whitespace?)
                         (link (t .from 0 i)
@@ -68,11 +68,11 @@
     (surely delimiter.some?)
     (if me.none?
         '()
-        (begin splitting ((t me))
+        (begin splitting [(t me)]
           (if t.none?
               '("")
               (do (let limit t.count)
-                  (begin scanning ((i 0))
+                  (begin scanning [(i 0)]
                     (hm (if (= i limit) `(,t))
                         (if (= delimiter (t .from i (+ i delimiter.count)))
                             (link (t .from 0 i)
@@ -86,13 +86,13 @@
   (to (~ .replace pattern replacement) ;TODO more efficient
     ;; TODO unify the cases?
     (hm (if pattern.none?
-            (for fold ((rune me) (rest replacement))
+            (for fold [(rune me) (rest replacement)]
               (chain replacement (text<- rune) rest)))
         (else
          (let limit me.count)
          (text<-list
           ;; TODO define a strstr and use that
-          (begin scanning ((i 0))
+          (begin scanning [(i 0)]
             (hm (if (= i limit) '())
                 (if (= pattern (me .from i (+ i pattern.count)))
                     (chain (list<-text replacement)
@@ -149,7 +149,7 @@
 
   (to (~ .selfie sink)
     (sink .display #\")
-    (for each! ((rune me))
+    (for each! [(rune me)]
       (sink .display (may rune    ;XXX super slow. We might prefer to use the Scheme built-in.
                        (be #\\ "\\\\")
                        (be #\" "\\\"")

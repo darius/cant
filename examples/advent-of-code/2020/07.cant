@@ -18,12 +18,12 @@ _: :whitespace.
 (to (part1)
   (let deep-gold?
     (memoize (on (bag)
-               (for some ((`(,_ ,sub-bag) (holdings bag)))
+               (for some [(`(,_ ,sub-bag) (holdings bag))]
                  (or (= sub-bag "shiny gold")
                      (deep-gold? sub-bag))))))
   (tally-by deep-gold? holdings.keys))
 
 (to (part2)
-  (begin deep-counting ((bag "shiny gold"))
-    (for sum-by ((`(,n ,sub-bag) (holdings bag)))
+  (begin deep-counting [(bag "shiny gold")]
+    (for sum-by [(`(,n ,sub-bag) (holdings bag))]
       (* n (+ 1 (deep-counting sub-bag))))))

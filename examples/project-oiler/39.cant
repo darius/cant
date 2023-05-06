@@ -7,9 +7,9 @@
 
 ;; Naive approach
 (to (list-pythagorean-perimeters/naive n)
-  (for gather ((a (1 .till n.-))) ;; longest leg
+  (for gather [(a (1 .till n.-))] ;; longest leg
     (let a^2 (* a a))
-    (for yeahs ((b (1 .thru (min a (- n a)))))  ;; other leg
+    (for yeahs [(b (1 .thru (min a (- n a))))]  ;; other leg
       (let c (~.sqrt (+ a^2 (* b b))))
       (and (integer? c)
            (<= (let p (+ a b c)) n)
@@ -22,7 +22,7 @@
 
 (to (list-pythagorean-perimeters perimeter-limit)
   (let hypot-limit (* 3 perimeter-limit))
-  (for yeahs (({~ hypot a b} (list-pythagorean-triples hypot-limit)))
+  (for yeahs [({~ hypot a b} (list-pythagorean-triples hypot-limit))]
     (let perimeter (+ hypot a b))
     (and (<= perimeter perimeter-limit)
          perimeter)))
@@ -30,14 +30,14 @@
 ;; * Start with Euclid's formula for primitive Pythagorean triples
 ;; * Adjoin their multiples
 (to (list-pythagorean-triples hypot-limit)
-  (for gather (({~ h a b} (list-primitive-pythagorean-triples hypot-limit)))
-    (for each ((k (keep-while (:: (<= (* h it) hypot-limit))
-                              (1 .and-up)))) ;TODO only keep square-free k's (to avoid generating duplicate triples)
+  (for gather [({~ h a b} (list-primitive-pythagorean-triples hypot-limit))]
+    (for each [(k (keep-while (:: (<= (* h it) hypot-limit))
+                              (1 .and-up)))] ;TODO only keep square-free k's (to avoid generating duplicate triples)
       {~ (* k h) (* k a) (* k b)})))
 
 (to (list-primitive-pythagorean-triples hypot-limit)
-  (for gather/lazy ((m (1 .till hypot-limit)))
-    (for keep-while (({~ h a b} (for yeahs/lazy ((n (1 .till m)))
+  (for gather/lazy [(m (1 .till hypot-limit))]
+    (for keep-while [({~ h a b} (for yeahs/lazy [(n (1 .till m))]
                                   (and (= 1 (gcd m n))
                                        (or m.even? n.even?)
                                        (do (let z {complex m n})
@@ -45,7 +45,7 @@
                                            (let {complex a b} (c* z z))
                                            (if (< a b)
                                                {~ hypotenuse b a}
-                                               {~ hypotenuse a b}))))))
+                                               {~ hypotenuse a b})))))]
       (<= h hypot-limit))))
 
 

@@ -11,7 +11,7 @@
 
 (to (constellate ps)
   (let sets (partitioning<- ps))
-  (for each! ((pair (ps .k-sets 2)))
+  (for each! [(pair (ps .k-sets 2))]
     (when (<= (manhattan-distance<- @pair) 3)
       (sets .join! @pair)))
   sets)
@@ -25,7 +25,7 @@
   (let index elements.inverse)
   (let next (array<-count elements.count #no))
   (to (chase element)
-    (begin chasing ((i (index element)))
+    (begin chasing [(i (index element))]
       (may (next i)
         (be #no i)
         (be j   (chasing j)))))

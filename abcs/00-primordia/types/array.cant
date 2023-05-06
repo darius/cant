@@ -26,14 +26,14 @@
 
   (to (~ .shuffle! chaos)
     (let n me.count)
-    (for each! ((i n.till))
+    (for each! [(i n.till)]
       (me .swap! i ((i .till n) .sample-value chaos))))
 
   (to (~ .selfie sink)
     (sink .display "[")
     (when (< 0 me.count)
       (sink .write (me 0))
-      (for each! ((x ((__vector->list me) .rest)))
+      (for each! [(x ((__vector->list me) .rest))]
         (sink .display #\space)
         (sink .write x)))
     (sink .display "]"))

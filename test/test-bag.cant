@@ -26,14 +26,14 @@
 (let chaos (chaos<- 1234567))
 
 (to (random-tests n-trials)            ;TODO use squickcheck
-  (for each! ((_ n-trials.till))
-    (exercise-em (for each ((value (50 .till))) ;TODO did I mean to use the value?
+  (for each! [(_ n-trials.till)]
+    (exercise-em (for each [(value (50 .till))] ;TODO did I mean to use the value?
                    (chaos .sample-count 5)))))
 
 (to (exercise-em keys)
   (let m (bag<-))     ;; The bag under test.
   (let a (box<- '())) ;; A list of keys seen so far.
-  (for each! ((key keys))
+  (for each! [(key keys)]
     (let m-val (m .get key 0))
     (let a-val (tally-by (:: (= key it)) a.^))
     (surely (= m-val a-val) "mismatch" key m-val a-val)

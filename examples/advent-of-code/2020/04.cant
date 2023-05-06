@@ -1,7 +1,7 @@
 ;; (Use run.cant to run this.)
 
 (let input data-file.read-all)
-(let inputs (for each ((chunk (input .split "\n\n")))
+(let inputs (for each [(chunk (input .split "\n\n"))]
               (each (~ .split ":") chunk.split)))
 
 (to (part1)
@@ -18,7 +18,7 @@
 
 (to (valid2? passport)
   (and (valid1? passport)
-       (for every ((`(,k ,v) passport))
+       (for every [(`(,k ,v) passport)]
          (may k
            (be "byr" (<= 1920 v.number 2002))
            (be "iyr" (<= 2010 v.number 2020))

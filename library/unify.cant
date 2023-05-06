@@ -39,7 +39,7 @@
   (let val1 (s .subst val))
   (or (= var val1)
       (and (list? val1)
-           (for some ((item val1))
+           (for some [(item val1)]
              (occurs? s var item)))))
 
 (to (unify s val1 val2)
@@ -52,17 +52,17 @@
       (if (variable? v)
           (extend s u v))
       (if (and (list? u) (list? v) (= u.count v.count))
-          (begin unifying (s u v)
+          (begin unifying [s u v]
             (if u.none?
                 s
-                (for mayhap ((s1 (unify s u.first v.first)))
+                (for mayhap [(s1 (unify s u.first v.first))]
                   (unifying s1 u.rest v.rest)))))
       (else
           (and (= u v) s))))
 
 (to (reify s val)
   (let free-vars (!map<-))
-  (begin reifying ((val-in val))
+  (begin reifying [(val-in val)]
     (let val (apply s val-in))
     (hm (when (variable? val)
           (unless (free-vars .maps? val)

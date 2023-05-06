@@ -11,18 +11,18 @@
 ;; E.g. (a a b b b c) => (2 3 1)
 (to (run-lengths xs)
   (hm (if xs.none? '())
-      (else (begin scanning ((n 1) (x xs.first) (xs xs.rest))
+      (else (begin scanning [(n 1) (x xs.first) (xs xs.rest)]
               (may xs
                 (be '() `(,n))
                 (be `(,(= x) ,@rest) (scanning n.+ x rest))
                 (else (link n (scanning 1 xs.first xs.rest))))))))
 
-(for each! ((n (1 .thru 42)))  ;; Quickie test of count-divisors
+(for each! [(n (1 .thru 42))]  ;; Quickie test of count-divisors
   (surely (= (count-divisors n)
              (~.count (list-divisors n)))))
 
 (let triangle-numbers (amassing/lazy + 1 (2 .and-up)))
 
-(let highly-divisibles (for keep/lazy ((n triangle-numbers))
+(let highly-divisibles (for keep/lazy [(n triangle-numbers)]
                          (< 500 (count-divisors n))))
 (out .print highly-divisibles.first)

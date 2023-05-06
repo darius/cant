@@ -10,7 +10,7 @@
   (to (add-cart! i dir)
     (tracks .push! (erase-cart dir))
     (carts .set! i {cart dir 0}))
-  (for each! (((~ i rune) world-text.items))
+  (for each! [((~ i rune) world-text.items)]
     (may rune
       (be #\> (add-cart! i E))
       (be #\< (add-cart! i W))
@@ -72,7 +72,7 @@
 (let world0 (parse inputs))
 
 (to (show {world tracks w carts})
-  (for each! (((~ i rune) tracks.items))
+  (for each! [((~ i rune) tracks.items)]
     (out .display (may (carts .get i)
                     (be #no  rune)
                     (be cart (show-cart cart)))))
@@ -80,7 +80,7 @@
 
 (to (part1)
 ;  (show world0)
-  (begin ticking ((state world0) (t 0))
+  (begin ticking [(state world0) (t 0)]
     (when (< t 20000)
 ;      (out .say "time ~w\n" t)
       (let (~ state1 crashes) (tick state))
@@ -95,7 +95,7 @@
 (to (tick {world tracks width carts})
   (let carts1 carts.copy)
   (let crashes (flexarray<-))
-  (for each! ((pos (sort carts.keys)))
+  (for each! [(pos (sort carts.keys))]
     (unless (crashes .find? pos)
       (move! pos carts tracks width carts1 crashes)))
   (~ {world tracks width carts1} crashes.values))
@@ -119,7 +119,7 @@
 (out .display "\nPart 2\n")
 
 (to (part2)
-  (begin ticking ((state world0) (t 0))
+  (begin ticking [(state world0) (t 0)]
     (when (< t 200000000)
       (let {world _ _ pre-carts} state)
       (when (t .even? 1000)
@@ -128,7 +128,7 @@
           (xy-coords state pre-carts.keys.first)
           (do (let (~ state1 crashes) (tick state))
               (let {world tracks width carts} state1)
-              (for each! ((pos crashes))
+              (for each! [(pos crashes)]
                 (carts .delete! pos))
               (ticking state1 t.+))))))
 

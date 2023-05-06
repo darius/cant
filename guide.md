@@ -286,7 +286,7 @@ Let's start with the equivalents of familiar Scheme syntax:
 | `(cond (p a) (else b))`         | `(hm (when p a) (else b))`  |  Explained below. |
 | `#t`                            | `#yes`  |   |
 | `#f`                            | `#no`  |   |
-| `(let looping ((v init)) body)` | `(begin looping ((v init)) body)` |  The 'ing' is a convention. |
+| `(let looping ((v init)) body)` | `(begin looping [(v init)] body)` |  The 'ing' is a convention. |
 | `(lambda () e)`                 | `(: e)`     |   |
 | `(lambda (it) (turn it 90))`    | `(:: (turn it 90))`     |   |
 
@@ -323,7 +323,7 @@ besides `if`: (from
 
 ```
 (to ~.trim-right
-  (begin scanning ((i me.count))
+  (begin scanning [(i me.count)]
     (hm (when (= i 0)
           "")
         (let c (me i.-))
@@ -939,11 +939,11 @@ that example does, but that's how it worked out.)
 
 The `for` form is syntactic sugar primarily for iterating over
 sequences, though it has other uses as well. For instance, `(for each
-((x xs)) (foo x))` is equivalent to `(each (on (x) (foo x)) xs)`
+[(x xs)] (foo x))` is equivalent to `(each (on (x) (foo x)) xs)`
 which is mostly equivalent to `(each foo xs)`, which is Cant's name
 for Scheme's `(map foo xs)`.
 
-The `for` form, `(for fn ((x e) ...) body ...)`, just rearranges its
+The `for` form, `(for fn [(x e) ...] body ...)`, just rearranges its
 parts in the same way that Scheme's `let` rearranges `(let ((x e) ...)
 body ...)`, but with `fn` stuck in front.
 
@@ -985,7 +985,7 @@ values are approved by `pass?`.
 The meaning of `for` with the fold/amass functions is initially less
 obvious, but soon becomes familiar, e.g.
 ```
-(for amass ((state initial-state) (input inputs))
+(for amass [(state initial-state) (input inputs)]
   <compute the next state from the current state and input>)
 ;; => final state
 ```
@@ -1303,12 +1303,12 @@ might've been a dumb idea.
 
 ## Miscellany
 
-In a `begin` form like `(begin looping (...) ...)` you can omit the
+In a `begin` form like `(begin looping [...] ...)` you can omit the
 name: it defaults to `loop`. I'm not sure I want this feature, but I
 guess other people might want it more.
 
-Another convenience of `begin`: `(begin foo (x ...) ...)` is short for
-`(begin foo ((x x) ...) ...)`.
+Another convenience of `begin`: `(begin foo [x ...] ...)` is short for
+`(begin foo [(x x) ...] ...)`.
 
 ```
 more syntax: be?

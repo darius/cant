@@ -13,15 +13,15 @@
 (out .print (sset-difference s1 s2))
 (out .print (sset-difference s2 s1))
 
-(for all ((x (a-list-of a-count)))
+(for all [(x (a-list-of a-count))]
   (let sx (sset<-list x))
   (let mx (set<-list x))
   (should = (sset-elements sx) (sort mx.keys)))
 
 ;; TODO failures won't be as easy to decipher as I'd like
 (to (test-binary-ops-correspond sset-op set-op)
-  (for all ((x (a-list-of a-count))
-            (y (a-list-of a-count)))
+  (for all [(x (a-list-of a-count))
+            (y (a-list-of a-count))]
     (let sx (sset<-list x)) (let sy (sset<-list y)) (let sr (sset-op sx sy))
     (let mx (set<-list x))  (let my (set<-list y))  (let mr (set-op mx my))
     (should = (sset-elements sr) (sort mr.keys))))

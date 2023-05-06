@@ -9,12 +9,12 @@
    (let buffer (fundamental-mode<-))
    (when ?filename
      (buffer .visit ?filename))
-   (for raw-mode ()
+   (for raw-mode []
      (edit buffer))
    out.newline)
 
 (to (edit buffer)
-  (begin editing ()
+  (begin editing []
     buffer.redisplay
     (let key (read-key))
     (may (buffer.key-map key)

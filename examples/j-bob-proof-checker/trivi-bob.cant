@@ -132,7 +132,7 @@
   result)
 
 (to (express-variables names)              ;TODO this is clumsy
-  (for each ((name names))
+  (for each [(name names)]
     {variable name}))
 
 ;; If thm after premise-snipping is an equality applying to e at path,
@@ -178,7 +178,7 @@
 ;; equal to premise. If found, return the dir of the path's next step
 ;; from there -- i.e. the A or E of the if having that premise.
 (to (find-premise e path premise)
-  (begin matching (e path)
+  (begin matching [e path]
     (and path.some?
          (or (and ('(A E) .find? path.first)
                   (may e
@@ -203,7 +203,7 @@
 
 (to (sub-e vars args e)
   (let subst (map<-items (zip vars args)))
-  (begin subbing (e)
+  (begin subbing [e]
     (may e
       (be {constant _}    e)
       (be {variable name} (subst .get name e))
@@ -253,7 +253,7 @@
 ;; else they must be okay expressions.
 
 (to (steps? defs steps)
-  (for every ((step steps))
+  (for every [(step steps)]
     (let {step _ {call name args}} step)
     (let {def _ formals meaning} (lookup name defs))
     (and (arity? formals args)
@@ -275,7 +275,7 @@
                              (exprs? defs vars es)))))
 
 (to (exprs? defs vars es)
-  (for every ((e es))
+  (for every [(e es)]
     (expr? defs vars e)))
 
 (to (call-arity? defs {call name args})
@@ -320,7 +320,7 @@
   (amass get-at-direction e path))
 
 (to (set-at-path e1 path e2)
-  (begin walking ((e1 e1) path)
+  (begin walking [e1 path]
     (if path.none?
         e2
         (set-at-direction e1 path.first
@@ -379,7 +379,7 @@
 ;; Apply an operator to values.
 
 (to (eval-op fn args)
-  {constant (fn @(for each (({constant value} args))
+  {constant (fn @(for each [({constant value} args)]
                    value))})
 
 

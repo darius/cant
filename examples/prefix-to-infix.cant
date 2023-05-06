@@ -20,7 +20,7 @@
       ("~w" .format e))))
 
 (to (associative? op)
-  (for mayhap (({binary _ _ assoc} (binaries .get op)))
+  (for mayhap [({binary _ _ assoc} (binaries .get op))]
     (= assoc 'associative)))
 
 (to (fmt-unary p op x)

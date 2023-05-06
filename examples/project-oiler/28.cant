@@ -10,7 +10,7 @@
 ;; 37 36 35 34 33 32 31
 
 (to (diagonals-sum n)
-  (+ 1 (for sum-by ((k (3 .thru n 2)))
+  (+ 1 (for sum-by [(k (3 .thru n 2))]
          ;; For the square with k^2 at upper right, the other three
          ;; diagonal values are almost the same, minus a deficit
          ;; that's a multiple of k-1: an increasing multiple as you

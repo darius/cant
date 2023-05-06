@@ -70,7 +70,7 @@
       (be {pq}
         (oops "pq-remove-min of empty-pq"))
       (be {pq _ pqs}
-        (begin merging (pqs)
+        (begin merging [pqs]
           (may pqs
             (be '()
               empty-pq)

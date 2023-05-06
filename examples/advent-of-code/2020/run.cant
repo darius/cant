@@ -33,7 +33,7 @@
 
   (may args
     (be `(,_ ,filename ,@parameters)
-      (begin parsing ((ps parameters))
+      (begin parsing [(ps parameters)]
         (may ps
           (be '()
             (run filename))

@@ -9,7 +9,7 @@
   (to (~ .selfie sink)
     (sink .display "{")
     (sink .write me.tag)
-    (for each! ((arg me.parts))
+    (for each! [(arg me.parts)]
       (sink .display " ")
       (sink .write arg))
     (sink .display "}"))

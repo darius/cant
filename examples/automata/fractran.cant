@@ -14,7 +14,7 @@
   ;; The input is a positive integer.
   (surely (and (integer? input) (< 0 input)))
 
-  (begin ((subject (ratio<- input)))
+  (begin [(subject (ratio<- input))]
     ;; Look for a whole-number product, from left to right:
     (may (keep/lazy r-integer? (each/lazy (:: (r* subject it)) fractions))
       (be (? ~.none?) (integer<-ratio subject))  ; None, so we're done.

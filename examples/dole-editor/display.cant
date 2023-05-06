@@ -32,7 +32,7 @@
     (let lines (display-buffer<-))
     (let point-x (box<- #no))
     (let point-y (box<- #no))
-    (begin rendering ((p start) (x 0) (y 0))
+    (begin rendering [(p start) (x 0) (y 0)]
       (when (< y rows)
         (when (= p point)
           (point-x .^= x)
@@ -41,9 +41,9 @@
         (let pp p.+)
         (if (or (= text "") (= text "\n"))
             (rendering pp 0 y.+)  ;; TODO flexarray to text, i guess
-            (begin appending ((glyphs (render-rune text.first x))
+            (begin appending [(glyphs (render-rune text.first x))
                               x
-                              y)
+                              y]
               (hm (if glyphs.none? (rendering pp x y))
                   (do (lines .set! y
                              (chain (lines y) glyphs.first.text))) ;XXX quadratic
@@ -57,7 +57,7 @@
       (to ~.show
         (out .display cursor-hide)
         (out .display home)
-        (for each! (((~ i line) lines.items))
+        (for each! [((~ i line) lines.items)]
           (unless (= line (showing i))
             (out .display (goto 0 i))
             (out .display line)
@@ -65,7 +65,7 @@
             (showing .set! i line)))
         ;; TODO: styling for the logs
         (out .display (goto 0 rows))
-        (for each! ((message (logs.^ .from 0 console-rows)))
+        (for each! [(message (logs.^ .from 0 console-rows))]
           (out .display (message .from 0 cols))
           (out .display clear-to-right)
           (out .display "\r\n"))

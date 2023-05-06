@@ -39,7 +39,7 @@
 ;; Console-mode interface
 
 (to (console-tic-tac-toe player opponent grid)
-  (for cbreak-mode ()
+  (for cbreak-mode []
     (console-playing player opponent grid)))
 
 (to (console-playing player opponent grid)
@@ -75,7 +75,7 @@
 (make human-play
   (to ~.name "Human")
   (to (~ grid) 
-    (begin asking ((plaint #no))
+    (begin asking [(plaint #no)]
       (ttt-render (-> grid (if plaint show-with-moves show))
                   [(whose-move grid) " move? [1-9; Q to quit] " cursor]
                   plaint)
@@ -125,11 +125,11 @@
   (/ (sum numbers) numbers.count))
 
 (let player-registry
-  (for map<-values ((player `(,human-play
+  (for map<-values [(player `(,human-play
                               ,spock-play
                               ,(ai<- "Drunk" drunk-evaluate)
                               ,(ai<- "Max" (compound-key<- spock-evaluate
-                                                           drunk-evaluate)))))
+                                                           drunk-evaluate))))]
     player.name.lowercase))
 
 (to (parse-player name)
@@ -148,7 +148,7 @@
   (p .digits 2 9)) ;; base-2 expansion, length 9
 
 (to (won? {grid p q})
-  (for some ((way ways-to-win))
+  (for some [(way ways-to-win)]
     (= way (way .and q))))
 
 (let ways-to-win '(0o700 0o070 0o007 0o444 0o222 0o111 0o421 0o124))
@@ -157,7 +157,7 @@
   ((successors grid) .none?))
 
 (to (successors grid)
-  (for yeahs ((move (9 .till)))
+  (for yeahs [(move (9 .till))]
     (update grid move)))
 
 (to (update {grid p q} move)
@@ -184,9 +184,9 @@
 
 (to (show {grid p q} @(optional ?spaces))
   (let marks (player-marks {grid p q}))
-  (let squares (for each ((mover (mask (marks 0) (player-bits p)))
+  (let squares (for each [(mover (mask (marks 0) (player-bits p)))
                           (other (mask (marks 1) (player-bits q)))
-                          (empty (or ?spaces ("." .repeat 9))))
+                          (empty (or ?spaces ("." .repeat 9)))]
                  (or mover other empty)))
   (grid-format .format @squares))
 

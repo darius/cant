@@ -24,8 +24,8 @@
 (to (list-decimal-palindromes ndigits)
   ;; N.B. some results are 'palindromes' only if you count leading
   ;; 0's, so the above caller still checks for genuine palindromes.
-  (for gather ((mid (decimals .k-lists (ndigits .remainder 2))))
-    (for each ((low (decimals .k-lists (ndigits .quotient 2))))
+  (for gather [(mid (decimals .k-lists (ndigits .remainder 2)))]
+    (for each [(low (decimals .k-lists (ndigits .quotient 2)))]
       (count<-digits (reverse low (chain mid low))))))
 
 (let decimals (0 .thru 9))

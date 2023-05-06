@@ -19,7 +19,7 @@
 ;;    ...                  (length d*9*10^(d-1))
 (to (v2-champ index)
   (surely (< 0 index))
-  (begin skipping ((d 1) (i index))
+  (begin skipping [(d 1) (i index)]
     (let power (10 .** d.-))         ;; The number starting this chunk
     (let chunk-length (* d 9 power)) ;; How many digits in this chunk
     (hm (when (<= i chunk-length)

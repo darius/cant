@@ -24,7 +24,7 @@
     (complain evil))
 
   (to (print-traceback k)
-    (for each! ((frame k)) ;;TODO (reverse k) once error recovery is better
+    (for each! [(frame k)] ;;TODO (reverse k) once error recovery is better
       (out .display "  ")
       (-> out (bounded-writer<- (~ .write frame) 77))
       (out .display "\n")))

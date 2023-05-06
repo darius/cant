@@ -12,7 +12,7 @@
   (line .split ","))                    ;TODO quoting
 
 (to (table<- header rows)
-  (let columns (~.inverse (for each ((column header))
+  (let columns (~.inverse (for each [(column header)]
                             (~.symbol (chain "." column)))))
   (to (column? x) (columns .maps? x))
   (to (row<- entries)

@@ -7,7 +7,7 @@
 
 ;; Return yes if Immune System wins.
 (to (battle armies)
-  (begin battling ()
+  (begin battling []
     (let immune-system (armies "Immune System"))
     (let infection     (armies "Infection"))
     (out .say "Round: ~w vs. ~w\n" 
@@ -23,7 +23,7 @@
         (else
           ;; Fight a round.
           (attacking (map<-items (chain a1 a2)))
-          (for each! (((~ army groups) armies.items))
+          (for each! [((~ army groups) armies.items)]
             (armies .set! army (keep ~.alive? groups)))
           
           (let counts-after (each tally armies.values))
@@ -35,15 +35,15 @@
   (let result (flexarray<-))
   (let enemies (flexarray<-list enemy-groups)) ;; clumsy? probably ought to be a set
   (let enemy-nums (flexarray<-list (1 .thru enemy-groups.count)))  ;; just for the messages
-  (for each! (((~ i group) (sort-by (on ((~ _ group)) group.target-selection-key)
-                                    my-groups.items)))
+  (for each! [((~ i group) (sort-by (on ((~ _ group)) group.target-selection-key)
+                                    my-groups.items))]
     (when enemies.some?
-      (let damages (for each ((enemy enemies.values))
+      (let damages (for each [(enemy enemies.values)]
                      (group .would-damage enemy)))
-;;      (for each! (((~ j damage) damages.items))
+;;      (for each! [((~ j damage) damages.items)]
 ;;        (out .say "~d group ~w would deal defending group ~w ~w damage\n"
 ;;                my-name (+ i 1) (enemy-nums j) damage))
-      (let j (for max-by ((j enemies.keys))
+      (let j (for max-by [(j enemies.keys)]
                (let enemy (enemies j))
                (~ (damages j) enemy.effective-power enemy.initiative)))
       (when (< 0 (damages j))
@@ -53,7 +53,7 @@
   result.values)
 
 (to (attacking selections)
-  (for each! ((group (sort-by (:: (- it.initiative)) selections.keys)))
+  (for each! [(group (sort-by (:: (- it.initiative)) selections.keys))]
     (when group.alive?
       (when (let target (selections .get group))
         (group .attack! target)))))
@@ -61,7 +61,7 @@
 (to (cook-group n-units hit-points qualities attack-damage attack-type initiative)
   (let immunities (set<-))
   (let weaknesses (set<-))
-  (for each! ((`(,type ,attack-texts) qualities)) ;TODO could use a group-by or map-reduce again
+  (for each! [(`(,type ,attack-texts) qualities)] ;TODO could use a group-by or map-reduce again
     (let set (may type
                (be "immune" immunities)
                (be "weak"   weaknesses)))
@@ -76,8 +76,8 @@
   (to (effective-power) (* n-units.^ attack-damage))
   (surely (immunities .disjoint? weaknesses))
   (let qualities
-    (map<-items (chain (for each ((key immunities.keys)) (~ key 'immunity))
-                       (for each ((key weaknesses.keys)) (~ key 'weakness)))))
+    (map<-items (chain (for each [(key immunities.keys)] (~ key 'immunity))
+                       (for each [(key weaknesses.keys)] (~ key 'weakness)))))
   (make group
     (to ~.count
       n-units.^)
@@ -133,13 +133,13 @@ separator: '\n'.
 (out .display "\nPart 1\n")
 
 (to (show-count armies)
-  (for each! (((~ army groups) (sort armies.items)))
+  (for each! [((~ army groups) (sort armies.items))]
     (out .say "~d:\n" army)
-    (for each! (((~ i group) groups.items))
+    (for each! [((~ i group) groups.items)]
       (out .say "Group ~w contains ~w units\n" i.+ group.count))))
 
 (to (part-1)
-  (let armies (!map<-items (for each ((`(,name ,group-makers) matchup))
+  (let armies (!map<-items (for each [(`(,name ,group-makers) matchup)]
                              (~ name (each (~ 0) group-makers)))))
   (show-count armies)
   (battle armies)
@@ -151,14 +151,14 @@ separator: '\n'.
 (out .display "\nPart 2\n")
 
 (to (part-2)
-  (begin bounding ((low 0))
+  (begin bounding [(low 0)]
     (let high (max 1 (* low 2)))
     (if (enough-boost? high)
         (binary-search enough-boost? low high)
         (bounding high))))
 
 (to (enough-boost? boost)
-  (let armies (!map<-items (for each ((`(,name ,group-makers) matchup))
+  (let armies (!map<-items (for each [(`(,name ,group-makers) matchup)]
                              (~ name (do (let my-boost (may name
                                                          (be "Immune System" boost)
                                                          (else               0)))
@@ -176,7 +176,7 @@ separator: '\n'.
 ;; Pre: there's just one cross-over point.
 ;; TODO redesign, extract to lib -- see also examples/dole/buffer.cant
 (to (binary-search ok? low high)
-  (begin searching ((L low) (H high))
+  (begin searching [(L low) (H high)]
     (surely (< L H))
     (if (= L.+ H)
         H

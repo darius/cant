@@ -6,7 +6,7 @@
   (play out (initial-chess-board<-) `(,white-strategy ,black-strategy)))
 
 (to (play out board players)
-  (begin playing (board)
+  (begin playing [board]
     (out .print board)
     (unless board.outcome
       (out .display "\n\n")
@@ -16,7 +16,7 @@
   (make human-player
     (to ~.interactive? #yes)
     (to (~ .pick-move board)
-      (begin asking ()
+      (begin asking []
         (console.out .say "~d, your move? " (side-name board.mover))
         (may console.in.read-line
           (be (? zilch?) {resign})
@@ -33,14 +33,14 @@
 (make greedy-player
   (to ~.interactive? #no)
   (to (~ .pick-move board)
-    (for min-by ((move board.gen-legal-moves))
+    (for min-by [(move board.gen-legal-moves)]
       (greedy-evaluate (update move board)))))
 
 (to (minimax-player<- depth)
   (make minimax-player
     (to ~.interactive? #no)
     (to (~ .pick-move board)
-      (for min-by ((move board.gen-legal-moves))
+      (for min-by [(move board.gen-legal-moves)]
         (minimax-evaluate (update move board) depth)))))
 
 ;; Return the mover's weighted piece advantage.
@@ -59,15 +59,15 @@
     (be 0 (greedy-evaluate board))
     (else (may board.get-piece-moves
             (be '() 0)
-            (be moves (- (min @(for each ((move moves))
+            (be moves (- (min @(for each [(move moves)]
                                  (minimax-evaluate (update move board)
                                                    depth.-)))))))))
 
 (let piece-values
   (!map<- (~ #\space 0)                 ;TODO immutable after init
           (~ #\-     0)))
-(for each! ((p "pnbrqk")
-            (v '(10 31 33 50 90 10000)))
+(for each! [(p "pnbrqk")
+            (v '(10 31 33 50 90 10000))]
   (piece-values .set! p.lowercase v)
   (piece-values .set! p.uppercase (- v)))
 
@@ -95,9 +95,9 @@
     (to (~ .selfie sink)
       (let lines (each (~ .from 1 9)
                        (squares .from 1 9)))
-      (for each! (((~ i line) lines.items))
+      (for each! [((~ i line) lines.items)]
         (sink .say "~w|" (- 8 i))
-        (for each! (((~ j piece) line.items))
+        (for each! [((~ j piece) line.items)]
           (sink .say " ~d" (if (and (= piece #\space) ((+ i j) .odd?))
                                #\. ; An empty black square.
                                piece)))
@@ -126,7 +126,7 @@
                        (be 'black #\k)))
         (let swap-players (board<- (opponent mover)
                                    squares castling en-passant-target outcome-param))
-        (not (for every ((succ swap-players.gen-successors))
+        (not (for every [(succ swap-players.gen-successors)]
                (succ.squares .find? my-king))))
       (and (in-check?)
            (every ~.checking? board.gen-successors)))
@@ -137,12 +137,12 @@
       (let opposing-king (may mover
                            (be 'white #\k)
                            (be 'black #\K)))
-      (not (for every ((succ board.gen-successors))
+      (not (for every [(succ board.gen-successors)]
              (succ.squares .find? opposing-king))))
 
     ;; The boards that can result from a move (other than resigning).
     (to ~.gen-successors
-      (for each ((move board.get-piece-moves))
+      (for each [(move board.get-piece-moves)]
         (update move board)))
 
     (to ~.resign
@@ -189,7 +189,7 @@
       ((map<-values unparse-move board.get-moves) .get text))
 
     (to ~.gen-legal-moves
-      (for skip ((move board.gen-piece-moves))
+      (for skip [(move board.gen-piece-moves)]
         (~.checking? (update move board))))
 
     (to ~.get-moves
@@ -200,8 +200,8 @@
 
     (to ~.gen-piece-moves
       (let white? (= mover 'white))
-      (for gather (((~ r row) squares.items))
-        (for gather (((~ c piece) row.items))
+      (for gather [((~ r row) squares.items)]
+        (for gather [((~ c piece) row.items)]
           (if (and piece.letter? (= piece.uppercase? white?))
               (board .gen-moves-from r c piece.uppercase white?)
               '()))))
@@ -228,8 +228,8 @@
             (move-to r1 c1 en-passant-target)))
 
       (to (move-freely dirs)
-        (for gather ((`(,dr ,dc) dirs))
-          (begin stepping ((i 1))
+        (for gather [(`(,dr ,dc) dirs)]
+          (begin stepping [(i 1)]
             (hm (if (= i 9)
                     '())
                 (let r1 (+ r (* dr i)))
@@ -262,7 +262,7 @@
                      '())))
 
         (be #\K
-          (for yeahs ((`(,dr ,dc) queen-dirs))
+          (for yeahs [(`(,dr ,dc) queen-dirs)]
             (let r1 (+ r dr))
             (let c1 (+ c dc))
             ;; XXX also castling
@@ -270,7 +270,7 @@
                  (move-to r1 c1))))
 
         (be #\N
-          (for yeahs ((`(,dr ,dc) knight-jumps))
+          (for yeahs [(`(,dr ,dc) knight-jumps)]
             (let r1 (+ r dr))
             (let c1 (+ c dc))
             (and (<= 1 r1 8)

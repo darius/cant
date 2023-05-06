@@ -18,7 +18,7 @@
              (to (~ 1) 0)
              (to (~ n) (+ 1 (collatz-length (collatz-step n)))))))
 
-(for each! ((n (1 .till 10)))  ;; Test it.
+(for each! [(n (1 .till 10))]  ;; Test it.
   (surely (= (collatz-length n) ((collatz-chain n) .count))))
 
 (out .print (max-by collatz-length (1 .till 1000000)))

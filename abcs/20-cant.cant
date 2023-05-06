@@ -96,7 +96,7 @@
 
 (to (unparse-do e1 e2)
   (let es
-    (begin unparsing ((tail e2))
+    (begin unparsing [(tail e2)]
       (may tail.term
         (be {do e3 e4} (link e3 (unparsing e4)))
         (else          `(,tail)))))

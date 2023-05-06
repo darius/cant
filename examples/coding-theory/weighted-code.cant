@@ -12,7 +12,7 @@
   (surely (prime? modulus))
 
   (to (well-formed? ns)
-    (for every ((n ns))
+    (for every [(n ns)]
       (<= 0 n modulus.-)))
   
   (let normalize (~ .modulo modulus))
@@ -46,7 +46,7 @@
 
 ;; Equivalent, in a loop:
 (to (weighted-sum-loop ns)
-  (begin ((ns (reverse ns)) (total-1 0) (total-2 0))
+  (begin [(ns (reverse ns)) (total-1 0) (total-2 0)]
     (may ns
       (be '() total-2)
       (be `(,n ,@rest)
@@ -86,14 +86,14 @@
 
 ;; - Are the different ways of computing the weighted sum equal?
 
-(for all ((ns (a-list-of a-count)))
+(for all [(ns (a-list-of a-count))]
   (should = (weighted-sum ns) (weighted-sum-sans-* ns)))
 
-(for all ((ns (a-list-of a-count)))
+(for all [(ns (a-list-of a-count))]
   (should = (weighted-sum ns) (weighted-sum-loop ns)))
 
 ;; - Round-trip encode/decode = identity
-(for all ((message (a-list-of a-count))) ;TODO no way currently to ask for a number in range test-M.till
+(for all [(message (a-list-of a-count))] ;TODO no way currently to ask for a number in range test-M.till
   (hm (unless (every (:: (< it test-M)) message)
         (out .say "?")
         #yes)
@@ -103,7 +103,7 @@
                               (:: (test-code .decode it)))))))
 
 ;; - Digits other than the check digit are encoded as-is
-(for all ((message (a-list-of a-count)))
+(for all [(message (a-list-of a-count))]
   (hm (unless (every (:: (< it test-M)) message)
         (out .say "?")
         #yes)
@@ -112,7 +112,7 @@
         (should = message encoded.rest))))
 
 ;; - Detect error: alter single symbol
-(for all ((message (a-list-of a-count)) (i a-count))
+(for all [(message (a-list-of a-count)) (i a-count)]
   (let length message.count)
   (hm (unless (and (every (:: (< it test-M)) message)
                    (<= i length))
@@ -125,7 +125,7 @@
         (should not decoded))))
 
 ;; - Detect error: swap nonequal symbols at non-modulus distance
-(for all ((message (a-list-of a-count)) (i a-count) (j a-count))
+(for all [(message (a-list-of a-count)) (i a-count) (j a-count)]
   (let length message.count)
   (hm (unless (and (every (:: (< it test-M)) message)
                    (<= i length) (<= j length) (not= i j))

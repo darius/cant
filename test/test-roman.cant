@@ -1,7 +1,7 @@
 (import (use 'roman) number<-roman roman<-number)
 
 (to (main args)
-  (for each! ((x args.rest))
+  (for each! [(x args.rest)]
     (let converted (may x.?number
                      (be #no (number<-roman x))
                      (be n   (roman<-number n))))

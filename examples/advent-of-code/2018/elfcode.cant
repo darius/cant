@@ -7,7 +7,7 @@
 (to (parse lines)
   (let ip-reg (~.number (lines.first.split 1)))
   (let program (array<-list
-                (for each ((line lines.rest))
+                (for each [(line lines.rest)]
                   (let v line.split)
                   `(,v.first.symbol ,@(each ~.number v.rest)))))
   {elfcode ip-reg program})

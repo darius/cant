@@ -12,7 +12,7 @@
 ;;  (let roots (places.domain .difference (~.range (each (~ 1) inputs))))
 ;;  (out .print roots) ; Turned out to be just "COM".
   (to (count-orbits depth x)
-    (+ depth (for sum-by ((y (places .get x '())))
+    (+ depth (for sum-by [(y (places .get x '()))]
                (count-orbits depth.+ y))))
   (count-orbits 0 "COM"))
 
@@ -25,16 +25,16 @@
   
   ;; Map from each place to its path to COM (not including the place itself).
   (let paths (!map<-))
-  (begin walking ((path '()) (here "COM"))
+  (begin walking [(path '()) (here "COM")]
     (paths .set! here path)
-    (for each! ((next (places .get here '())))
+    (for each! [(next (places .get here '()))]
       (walking (link here path) next)))
   
   (let santa-set ((paths "SAN") .range))
 
   ;; Walk from YOU towards COM until also on the SAN path.
   ;; Then sum the steps just walked plus the steps from SAN to here.
-  (let (~ i here) (for detect (((~ _ here) ((paths "YOU") .items)))
+  (let (~ i here) (for detect [((~ _ here) ((paths "YOU") .items))]
                     (santa-set .maps? here)))
   (+ i ((paths "SAN") .find here)))
 

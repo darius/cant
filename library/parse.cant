@@ -7,7 +7,7 @@
 
   ;; Return a list of those rules with word on the rhs.
   (let lexical-rules
-    (memoize (on (word) (for keep ((rule rules))
+    (memoize (on (word) (for keep [(rule rules)]
                           (= rule.rhs word)))))
 
   ;; Return a list of those rules where cat starts the rhs.
@@ -20,12 +20,12 @@
           ;; Return parse and upward extensions.
           (let tree (tree<- lhs rhs))
           (link (parse<- tree rest)
-                (for gather ((rule (rules-starting-with lhs)))
+                (for gather [(rule (rules-starting-with lhs))]
                   (extend-parse rule.lhs `(,tree)
                                 rest rule.rhs.rest))))
         (else
           ;; Try to extend rightward.
-          (for gather ((p (grammar .parse-prefixes rest)))
+          (for gather [(p (grammar .parse-prefixes rest))]
             (if (= p.lhs needed.first)
                 (extend-parse lhs `(,@rhs ,p.tree)
                               p.remainder needed.rest)
@@ -41,11 +41,11 @@
     (to (~ .parse-prefixes words)
       (if words.none?
           '()
-          (for gather ((rule (lexical-rules words.first)))
+          (for gather [(rule (lexical-rules words.first))]
             (extend-parse rule.lhs `(,words.first) words.rest '()))))))
 
 (to (grammar<- sexprs)
-  (grammar<-rules (for each ((`(,lhs -> ,rhs) sexprs))
+  (grammar<-rules (for each [(`(,lhs -> ,rhs) sexprs)]
                     (rule<- lhs rhs))))
 
 (to (rule<- lhs rhs)

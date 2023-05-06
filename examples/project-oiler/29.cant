@@ -4,7 +4,7 @@
 ;; materializing huge numbers, but I'll just materialize them.
 
 (to (answer n)
-  (let terms (for each ((`(,a ,b) ((2 .thru n) .k-lists 2)))
+  (let terms (for each [(`(,a ,b) ((2 .thru n) .k-lists 2))]
                (a .** b)))
   terms.range.count)
 

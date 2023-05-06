@@ -30,8 +30,8 @@
 ;; direction (up, down, left, right, or diagonally) in the 20×20 grid?
 
 (to (products dx dy)
-  (for each (((~ x y) grid.keys))
-    (* @(for each ((d '(0 1 2 3)))
+  (for each [((~ x y) grid.keys)]
+    (* @(for each [(d '(0 1 2 3))]
           (let pt (~ (+ x (* d dx))
                      (+ y (* d dy))))
           (grid .get pt 0)))))

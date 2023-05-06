@@ -15,7 +15,7 @@
 
 (let covered-area (bag<- (gather area<- claims)))
 
-(let n-conflicts (for tally-by ((n covered-area.values))
+(let n-conflicts (for tally-by [(n covered-area.values)]
                    (< 1 n)))
 (out .print `(the area is ,n-conflicts))
 
@@ -23,7 +23,7 @@
 (out .display "Part 2\n")
 
 (to (undisputed? claim)
-  (for every ((point (area<- claim)))
+  (for every [(point (area<- claim))]
     (= 1 (covered-area point))))
 
 (out .print `(the undisputed claims are ,(keep undisputed? claims)))

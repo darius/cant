@@ -15,21 +15,21 @@
   (out .display cursor-show))
 
 (to (run grid n-steps)
-  (-> n-steps (for iterating ((grid grid))
+  (-> n-steps (for iterating [grid]
                 (out .display clear-screen)
                 (show grid)
                 (update grid))))
 
 (to (update grid)
   (let active (bag<- (gather neighbors grid.keys)))
-  (~.range (for yeahs (((~ key n-neighbors) active.items))
+  (~.range (for yeahs [((~ key n-neighbors) active.items)]
              (may n-neighbors
                (be 3 key)
                (be 2 (and (grid .maps? key) key))
                (else #no)))))
 
 (to (neighbors `(,x ,y))
-  (for each ((`(,dx ,dy) neighborhood))
+  (for each [(`(,dx ,dy) neighborhood)]
     `(,(+ x dx) ,(+ y dy))))
 
 (let neighborhood (('(-1 0 1) .k-lists 2) .remove '(0 0)))
@@ -38,8 +38,8 @@
   (when grid.some?
     (let `((,x-lo ,x-hi) (,y-lo ,y-hi))
       (each bounds<- (transpose grid.keys)))
-    (for each! ((y (y-lo .thru y-hi)))
-      (for each! ((x (x-lo .thru x-hi)))
+    (for each! [(y (y-lo .thru y-hi))]
+      (for each! [(x (x-lo .thru x-hi))]
         (out .display (if (grid .maps? `(,x ,y)) "O " "  ")))
       out.newline)))
 
@@ -48,12 +48,12 @@
     ,(max @numbers)))
 
 (to (grid<-picture lines)
-  (~.range (for where ((rune (map<-lines lines)))
+  (~.range (for where [(rune (map<-lines lines))]
              (not rune.whitespace?))))
 
 (to (map<-lines lines)
-  (map<-items (for gather (((~ row line) lines.items))
-                (for each (((~ col rune) line.items))
+  (map<-items (for gather [((~ row line) lines.items)]
+                (for each [((~ col rune) line.items)]
                   (~ `(,col ,(- row)) ; minus so y-coordinates increase upwards
                      rune)))))
 

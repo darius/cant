@@ -1,6 +1,6 @@
 (to (intcode-run core pc @(optional interface))
   (let face (or interface (i/o-interface<- in out)))
-  (begin (pc)
+  (begin [pc]
     (may (step core pc face)
       (be #no    face)
       (be new-pc (loop new-pc)))))
@@ -61,7 +61,7 @@
   (let modes [a-mode b-mode c-mode])
   (let {op name nargs} (ops opcode))
   (out .say "~w ~d" pc name)
-  (for each! ((i (1 .thru nargs)))
+  (for each! [(i (1 .thru nargs))]
     (out .say " ~d~w" (mode-names (modes i.-)) (core (+ pc i))))
   out.newline)
 

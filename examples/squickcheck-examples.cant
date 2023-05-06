@@ -3,12 +3,12 @@
   all should  ;; I dunno what to call it yet
   )
 
-(for all ((a an-int) (b an-int))
+(for all [(a an-int) (b an-int)]
   ;; Ints are commutative.
   (should = (+ a b) (+ b a)))
 
 ;; A deliberately failing property:
 
-(for all ((L (a-list-of a-count)))
+(for all [(L (a-list-of a-count))]
   ;; Lists are palindromic (not!)
   (should = L (reverse L)))

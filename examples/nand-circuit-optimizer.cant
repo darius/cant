@@ -19,7 +19,7 @@
   (to (print-formula L-input R-input)
     (let v-name (chain ("ABCDEF" .from 0 n-inputs)
                        ("abcdefghijklmnopqrstuvwxyz" .from n-inputs)))
-    (for each! ((i L-input.keys))
+    (for each! [(i L-input.keys)]
       (let g (v-name (+ i n-inputs)))
       (let L (v-name (L-input i)))
       (let R (v-name (R-input i)))
@@ -33,11 +33,11 @@
     (let R-input (array<-count n-gates #no))
     (let found?  (box<- #no))
     (let wire    (chain inputs L-input))
-    (begin sweeping ((gate 0))
-      (for each! ((L (0 .till (+ n-inputs gate))))
+    (begin sweeping [(gate 0)]
+      (for each! [(L (0 .till (+ n-inputs gate)))]
         (let L-wire (wire L))
         (L-input .set! gate L)          ;XXX how about .:= or .<- or something?
-        (for each! ((R (0 .thru L)))
+        (for each! [(R (0 .thru L))]
           (let value (nand L-wire (wire R)))
           (R-input .set! gate R)
           (wire .set! (+ n-inputs gate) value)
@@ -64,7 +64,7 @@
   (hm (if (= n 0) '())
       (else (let shift (1 .<< n.-))
             (link (- (1 .<< shift) 1)
-                  (for each ((iv (tabulate-inputs n.-)))
+                  (for each [(iv (tabulate-inputs n.-))]
                     (iv .or (iv .<< shift)))))))
 
 

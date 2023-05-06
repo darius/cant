@@ -32,7 +32,7 @@
 
   (to (~ .selfie sink)
     (sink .display "#<map")
-    (for each! ((item map.items))
+    (for each! [(item map.items)]
       (sink .display #\space)
       (sink .write item))
     (sink .display ">"))

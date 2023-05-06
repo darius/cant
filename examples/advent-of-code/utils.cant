@@ -8,15 +8,15 @@
   (/ (sum numbers) numbers.count))
 
 (to (all-mins-by fn xs)
-  (for amass ((best (list<- xs.first))
-              (x xs.rest))
+  (for amass [(best (list<- xs.first))
+              (x xs.rest)]
     (may ((fn best.first) .compare (fn x))
       (be '< best)
       (be '= (link x best))
       (be '> (list<- x)))))
          
 (to (fill! array value)                 ;TODO should be a mutable-map-trait method
-  (for each! ((i array.keys))
+  (for each! [(i array.keys)]
     (array .set! i value)))
 
 ;; (detect ~.even? '(3 1 4 1 5 9 2 6)) = 4
@@ -27,7 +27,7 @@
 
 (to (duplicates<- xs)
   (let seen (set<-))
-  (begin looking (xs)
+  (begin looking [xs]
     (hm (if xs.none?
           '())
         (let x xs.first)
@@ -38,24 +38,24 @@
           (looking xs.rest)))))
 
 (to (deletions<- t)
-  (for each ((i t.count.-.till))
+  (for each [(i t.count.-.till)]
     `(,(t .from 0 i) ,(t .from i.+))))
 
 (to (chain-lines lines)
-  (chain @(for each ((line lines))
+  (chain @(for each [(line lines)]
             (chain line "\n"))))
 
 ;; TODO how much slower is this? Doesn't matter since it's no longer used!
 ;; (to (neighbors<- p)
-;;   (for each ((d neighborhood-8))
+;;   (for each [(d neighborhood-8)]
 ;;     (vector+ p d))))
 (to (neighbors-8<- `(,x ,y))
-  (for each ((`(,dx ,dy) neighborhood-8))
+  (for each [(`(,dx ,dy) neighborhood-8)]
     `(,(+ x dx) ,(+ y dy))))
 
 (let neighborhood-8 (('(-1 0 1) .k-lists 2) .remove '(0 0)))
 
-(to (vector* c p) (for each ((coord p)) (* c coord)))
+(to (vector* c p) (for each [(coord p)] (* c coord)))
 (to (vector+ p q) (each + p q))
 (to (vector- p q) (each - p q))
 
@@ -71,7 +71,7 @@
 ;; TODO name, generalize?
 (to (collect items)
   (let map (!map<-))
-  (for each! (((~ key value) items))
+  (for each! [((~ key value) items)]
     ((map .get-set! key flexarray<-) .push! value))
-  (for each (((~ key array) map.items))
+  (for each [((~ key array) map.items)]
     (~ key array.values)))

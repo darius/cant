@@ -4,7 +4,7 @@
 
 (to (xmas-tree n)
   (let center (~ .center (+ n.- 1 n.-)))
-  ("\n" .join (for each ((w (chain n.till '(0))))
+  ("\n" .join (for each [(w (chain n.till '(0)))]
                 (center ("*" .repeat (+ w 1 w))))))
 
 (out .displayln ("\n\n" .join (each xmas-tree (3 .thru 9))))

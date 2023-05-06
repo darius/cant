@@ -43,7 +43,7 @@ if this narrows it down enough, then which words.
 
 (to (play dictionary)
   (out .displayln instructions)
-  (begin playing ((words dictionary))
+  (begin playing [(words dictionary)]
     (out .say "~w left" words.count)
     (when (<= words.count 12) (out .say ": ~d" (" " .join words)))
     out.newline
@@ -62,7 +62,7 @@ if this narrows it down enough, then which words.
 (to (parse-reply reply)
   (with-ejector
    (on (ejector)
-     (let cluelets (begin parsing ((runes reply.list))
+     (let cluelets (begin parsing [(runes reply.list)]
                      (may runes
                        (be '() '())
                        (be (link #\. (? ~.letter? r) rest)
@@ -76,7 +76,7 @@ if this narrows it down enough, then which words.
                        (else
                          (out .say "I don't understand ~w\n" runes.text)
                          (ejector .eject '())))))
-     (for each (((~ i clue<-) cluelets.items))
+     (for each [((~ i clue<-) cluelets.items)]
        (clue<- i)))))
 
 
@@ -84,7 +84,7 @@ if this narrows it down enough, then which words.
 
 ;; Return those of the words that match the clues.
 (to (filter clues words)
-  (for keep ((word words))
+  (for keep [(word words)]
     (every (~ word) clues)))
 
 (to (((found<- letter) i) word)

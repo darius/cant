@@ -24,7 +24,7 @@ _: :whitespace*.
   (chain (p rules text i) (q rules text i)))
 
 (to ((Seq p q) rules text i)
-  (for gather ((j (p rules text i)))
+  (for gather [(j (p rules text i))]
     (q rules text j)))
 
 (to (End rules text i)

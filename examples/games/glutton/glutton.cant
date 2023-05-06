@@ -24,7 +24,7 @@
 
 (let power-pill-interval 12000)  ;; in msec
 
-(let maze (for with-input-file ((source "examples/games/glutton/glutton.maze"))
+(let maze (for with-input-file [(source "examples/games/glutton/glutton.maze")]
             source.read-lines.rest))
 
 (to (main _)
@@ -41,18 +41,18 @@
   ;; TODO cleaner to eject, I guess
   (to (caught-by-ghost?)
     ;; TODO overcompressed logic here
-    (for mayhap ((ghost (-> (keep/lazy (:: (= glutton.p it.p)) ghosts.keys)
-                            (~ .get 0))))
+    (for mayhap [(ghost (-> (keep/lazy (:: (= glutton.p it.p)) ghosts.keys)
+                            (~ .get 0)))]
       (hey (not eating-ghosts-deadline.^)
            (:: (if it
                    (render (view grid ghosts.keys eating-ghosts-deadline.^))
                    (ghosts .delete! ghost))))))
 
   (let start (nano-now))
-  (begin playing ()
+  (begin playing []
     (let now (/ (- (nano-now) start)   ;; in msec
                 1000000))
-    (unless (for mayhap ((deadline eating-ghosts-deadline.^))
+    (unless (for mayhap [(deadline eating-ghosts-deadline.^)]
               (<= now deadline))
       (eating-ghosts-deadline .^= #no))
     (render (view grid ghosts.keys eating-ghosts-deadline.^))
@@ -159,8 +159,8 @@
   (~.first (find maze #\P)))
 
 (to (find grid ch)
-  (for gather (((~ y row) grid.items))
-    (for yeahs (((~ x c) row.items))
+  (for gather [((~ y row) grid.items)]
+    (for yeahs [((~ x c) row.items)]
       (and (= ch c) `(,x ,y)))))
 
 ;; TODO blinky colors when eating-ghosts-deadline approaches
@@ -173,11 +173,11 @@
         (else rune)))
 
   (let rows (~.array (each ~.array grid.values)))
-  (for each! ((ghost ghosts))
+  (for each! [(ghost ghosts)]
     (let `(,x ,y) ghost.p)
     ((rows y) .set! x #\G))
-  (for each ((row rows.values))
-    (list<- (for each (((~ x rune) row.items))
+  (for each [(row rows.values)]
+    (list<- (for each [((~ x rune) row.items)]
               (let sep? (and (wall? rune)
                              (wall? (row .get x.+)))) ;TODO why this?
               (let sep (" -" sep?.count))

@@ -16,7 +16,7 @@
 (to (run machine @(optional option))
   (let history (keep-while yeah? (iterating step machine)))
   (when (= option 'loudly)
-    (for each! ((machine history))
+    (for each! [(machine history)]
       (show-config machine)
       out.newline))
   history.last)
@@ -33,7 +33,7 @@
   (" " .join (each ~.text squares)))
 
 (to (step {machine transit state (-- tape {tape _ head _})})
-  (for mayhap (((~ acts next-state) (transit .get (~ state head))))
+  (for mayhap [((~ acts next-state) (transit .get (~ state head)))]
     {machine transit next-state (amass perform tape acts)}))
 
 (to (perform {tape L h R} act)
@@ -50,7 +50,7 @@
 
 ;; Make a transit map from a list of (state mark actions next-state)
 (to (transit<- entries)
-  (map<-items (for each ((`(,state ,mark ,acts ,next-state) entries))
+  (map<-items (for each [(`(,state ,mark ,acts ,next-state) entries)]
                 (~ (~ state mark) (~ acts next-state)))))
 
 

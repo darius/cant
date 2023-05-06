@@ -7,7 +7,7 @@
        (not= c d)))
 
 (to (reduce polymer)
-  (for fold ((c polymer) (r '()))
+  (for fold [(c polymer) (r '())]
     (if (and r.some? (reacts? c r.first))
         r.rest
         (link c r))))
@@ -16,7 +16,7 @@
 (out .say "part 1 ~w\n" reduced.count)
 
 (to (scour atom)
-  (for skip ((c reduced))
+  (for skip [(c reduced)]
     (= atom c.uppercase)))
 
 (to (try atom)

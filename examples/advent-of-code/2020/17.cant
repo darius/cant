@@ -8,24 +8,24 @@
   final-grid.count)
 
 (to (grid<-picture lines)
-  (~.range (for where ((rune (map<-lines lines)))
+  (~.range (for where [(rune (map<-lines lines))]
              (= rune #\#))))
 
 (to (map<-lines lines)
-  (map<-items (for gather (((~ row line) lines.items))
-                (for each (((~ col rune) line.items))
+  (map<-items (for gather [((~ row line) lines.items)]
+                (for each [((~ col rune) line.items)]
                   (~ `(,col ,row 0)
                      rune)))))
 
 (to (neighbors `(,x ,y ,z))
-  (for each ((`(,dx ,dy ,dz) neighborhood))
+  (for each [(`(,dx ,dy ,dz) neighborhood)]
     `(,(+ x dx) ,(+ y dy) ,(+ z dz))))
 
 (let neighborhood (('(-1 0 1) .k-lists 3) .remove '(0 0 0)))
 
 (to (update grid)
   (let active (bag<- (gather neighbors grid.keys)))
-  (~.range (for yeahs (((~ key n-neighbors) active.items))
+  (~.range (for yeahs [((~ key n-neighbors) active.items)]
              (may n-neighbors
                (be 3 key)
                (be 2 (and (grid .maps? key) key))
@@ -38,25 +38,25 @@
   final-grid.count)
 
 (to (grid<-picture-4d lines)
-  (~.range (for where ((rune (map<-lines-4d lines)))
+  (~.range (for where [(rune (map<-lines-4d lines))]
              (= rune #\#))))
 
 (to (map<-lines-4d lines)
-  (map<-items (for gather (((~ row line) lines.items))
-                (for each (((~ col rune) line.items))
+  (map<-items (for gather [((~ row line) lines.items)]
+                (for each [((~ col rune) line.items)]
                   (~ `(,col ,row 0 0)
                      rune)))))
 
 (to (update-4d grid)
   (let active (bag<- (gather neighbors-4d grid.keys)))
-  (~.range (for yeahs (((~ key n-neighbors) active.items))
+  (~.range (for yeahs [((~ key n-neighbors) active.items)]
              (may n-neighbors
                (be 3 key)
                (be 2 (and (grid .maps? key) key))
                (else #no)))))
 
 (to (neighbors-4d `(,x ,y ,z ,a))
-  (for each ((`(,dx ,dy ,dz ,da) neighborhood-4d))
+  (for each [(`(,dx ,dy ,dz ,da) neighborhood-4d)]
     `(,(+ x dx) ,(+ y dy) ,(+ z dz) ,(+ a da))))
 
 (let neighborhood-4d (('(-1 0 1) .k-lists 4) .remove '(0 0 0 0)))

@@ -42,7 +42,7 @@
      (let top (min-by ~.rank (link node branches)))
      (let rank top.rank)
      (make-node rank
-                (for each ((c top.branches.keys))
+                (for each [(c top.branches.keys)]
                   ((subst rank c node) @(subst-each rank c branches)))))))
 
 (to (make-node rank branches)
@@ -51,7 +51,8 @@
       (memo-node rank branches)))
 
 (to (subst-each rank value nodes)
-  (for each ((e nodes)) (subst rank value e)))
+  (for each [(e nodes)]
+    (subst rank value e)))
 
 (to (subst rank value node)
   (may (rank .compare node.rank)
@@ -65,12 +66,12 @@
 
 (to (satisfy node goal)
   (let env (!map<-))
-  (begin walking (node)
+  (begin walking [node]
     (if (not= nil node.constant-value)
         (and (= goal node.constant-value)
              env)
-        (for fold/lazy (((~ value branch) node.branches.items)
-                        (try-remaining-branches (: #no)))
+        (for fold/lazy [((~ value branch) node.branches.items)
+                        (try-remaining-branches (: #no))]
           (hm (when (`(,nil ,goal) .find? branch.constant-value)
                 (env .set! node.rank value)
                 (walking branch))

@@ -19,12 +19,12 @@
     (every bit? bits))
 
   (let taps
-    (~.array (transpose (for each ((place (0 .till (2 .** n-check-bits))))
+    (~.array (transpose (for each [(place (0 .till (2 .** n-check-bits)))]
                           (reverse (place .digits 2 n-check-bits))))))
 
   (to (parity message place)
-    (-> (for each ((place-bit (taps place))
-                   (message-bit message.values)) 
+    (-> (for each [(place-bit (taps place))
+                   (message-bit message.values)]
           (place-bit .and message-bit))
         sum (~ .modulo 2)))
 
@@ -37,11 +37,11 @@
       (surely (= bits.count n-message-bits))
       (let m (~.array
               ;; TODO write this as a fold or something?
-              (link 0 (begin inserting ((p 1) (rest bits))
+              (link 0 (begin inserting [(p 1) (rest bits)]
                         (hm (if rest.none? '())
                             (if (power-of-2? p) (link 0 (inserting p.+ rest)))
                             (else (link rest.first (inserting p.+ rest.rest))))))))
-      (for each! ((place n-check-bits.till))
+      (for each! [(place n-check-bits.till)]
         ;; TODO is this mutability safe? I should be very suspicious:
         (m .set! (1 .<< place) (parity m place)))
       m.values.rest)
@@ -51,11 +51,11 @@
       (surely (= encoded-bits.count n-encoded-bits))
       (let m (~.array (link 0 encoded-bits)))
       (let encoded-n (count<-digits (reverse m.values) 2))
-      (let syndrome (for each ((place n-check-bits.till))
+      (let syndrome (for each [(place n-check-bits.till)]
                       (parity m place)))
       (let correction (1 .<< (count<-digits (reverse syndrome) 2)))
       (let corrected (encoded-n .xor correction)) ;; N.B. place 0 (meaning 'correct') is skipped below
-      (for yeahs (((~ power bit) (-> (corrected .digits 2 n-encoded-bits.+) reverse ~.items ~.rest)))
+      (for yeahs [((~ power bit) (-> (corrected .digits 2 n-encoded-bits.+) reverse ~.items ~.rest))]
         (and (not (power-of-2? power))
              bit)))))
 
@@ -92,7 +92,7 @@
   (let c (basic-hamming-code<- 3))
   (let m-length c.n-message-bits)
   (let e-length (+ m-length 3))
-  (for each! ((m (0 .till (1 .<< m-length))))   ;; TODO itertools-style generator for subsets?
+  (for each! [(m (0 .till (1 .<< m-length)))]   ;; TODO itertools-style generator for subsets?
     (let message (reverse (m .digits 2 m-length)))
 
     (let cm (c .encode message))
@@ -104,8 +104,8 @@
     (surely (= message dcm))
 
     ;; Should correct all 1-bit errors.
-    (for each! ((place e-length.till))
-      (let corrupt (for each (((~ b bit) cm.items))
+    (for each! [(place e-length.till)]
+      (let corrupt (for each [((~ b bit) cm.items)]
                      (bit .xor ((= place b) .count))))
       (let dcc (c .decode corrupt))
       (surely (= dcc message)))

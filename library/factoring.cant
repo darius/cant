@@ -38,7 +38,7 @@
 (to (sieving n)
   (hm (when (let factors (sieve .get n))
         (sieve .delete! n)
-        (for each! ((step factors))
+        (for each! [(step factors)]
           (next-sieve! step (+ n step))) 
         (sieving (+ n 2)))
       (else
@@ -59,7 +59,7 @@
   (surely (< 0 n))
   (if (= n 1)
       '()
-      (begin trying (n (p the-primes.first) (primes the-primes.rest))
+      (begin trying [n (p the-primes.first) (primes the-primes.rest)]
         (if (n .even? p)
             (link p (if (= p n)
                         '()
@@ -72,7 +72,7 @@
   (and (< 1 n)
        (if (<= n last-known-prime.^)
            (known-primes .maps? n)
-           (begin trying ((primes the-primes))
+           (begin trying [(primes the-primes)]
              (let p primes.first)
              (hm (if (n .even? p) #no)
                  (if (< (p .** 2) n) (trying primes.rest))
@@ -84,15 +84,15 @@
   ;; (keep (~ .divides? n) (1 .thru n))
   (hm (if (= n 1) '(1))
       (else
-        (let powers (for each (((~ prime power) (run-encode (factor n))))
+        (let powers (for each [((~ prime power) (run-encode (factor n)))]
                       (each (~ .power-of prime) (0 .thru power))))
-        (for each ((factors (grid* @powers)))
+        (for each [(factors (grid* @powers))]
           (* @factors)))))
 
 ;; E.g. (a a b b b c) => ((~ a 2) (~ b 3) (~ c 1))
 (to (run-encode xs)
   (surely xs.some?)
-  (begin scanning ((n 1) (x xs.first) (xs xs.rest))
+  (begin scanning [(n 1) (x xs.first) (xs xs.rest)]
     (may xs
       (be '() `(,(~ x n)))
       (be `(,(= x) ,@rest) (scanning n.+ x rest))
@@ -108,13 +108,13 @@
     (surely (< 0 n))
     (if (= n 1)
         '()
-        (begin trying ((d 2) n)
+        (begin trying [(d 2) n]
           (if (n .even? d)
               (link d (if (= d n) '() (trying d (n .quotient d))))
               (trying d.+ n)))))
 
   (let primes (~.range (list-primes-till limit)))
-  (for each! ((n (1 .till limit)))
+  (for each! [(n (1 .till limit))]
     (let factors (naive-factor n))
     (surely (= factors (factor n)))
     (hm (when (primes .maps? n)

@@ -14,7 +14,7 @@
   (memoize (on (goal denoms)
              (hm (if (< goal 0) 0)
                  (if (= goal 0) 1)
-                 (else (for sum-by ((coin denoms))
+                 (else (for sum-by [(coin denoms)]
                          (count-ways (- goal coin)
                                      (keep (:: (<= it coin)) denoms))))))))
 

@@ -22,13 +22,13 @@
   (to (grow (~ new-door new-room))
     (open-doors .add! new-door)
     (visited-rooms .add! new-room)
-    (for each! (((~ edge neighbor) (graph .neighbors new-room)))
+    (for each! [((~ edge neighbor) (graph .neighbors new-room))]
       (if (visited-rooms .maps? neighbor)
           (frontier .delete! (~ edge new-room))
           (frontier .add! (~ edge neighbor)))))
 
   (grow graph.entry)
-  (begin ()
+  (begin []
     (when frontier.some?
       (grow (frontier .sample-key chaos))
       (loop)))
@@ -77,7 +77,7 @@
              (each (:: (~ it.+ nc)) ((nr .quotient 2) .till nr 2))))
 
     (to (~ .neighbors room)
-      (for yeahs ((d directions))
+      (for yeahs [(d directions)]
         (let edge (v+ room d))          ; wall or door
         (let neighbor (v+ edge d))
         (and (room-in-bounds? neighbor)
@@ -87,13 +87,13 @@
       (to (edge r c if-door if-wall)
         (if (doors .maps? (~ r c)) if-door if-wall))
       (to (E/W-edges r)
-        ("  " .join (for each ((c (0 .thru nc 2)))
+        ("  " .join (for each [(c (0 .thru nc 2))]
                       (edge r c " " "|"))))
       (to (N/S-edges r)
-        (chain "+" ("+" .join (for each ((c (1 .till nc 2)))
+        (chain "+" ("+" .join (for each [(c (1 .till nc 2))]
                                 (edge r c "  " "--")))
                "+"))
-      ("\n" .join (for each ((r (0 .thru nr)))
+      ("\n" .join (for each [(r (0 .thru nr))]
                     (-> r (if r.even? N/S-edges E/W-edges)))))))
       
 (let directions (list<- (~ -1 0) (~ 1 0) (~ 0 -1) (~ 0 1)))

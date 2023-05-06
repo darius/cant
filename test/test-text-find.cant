@@ -7,7 +7,7 @@
   
 (to (check match cases)
 ;;  (out .say "checking ~w\n" match)
-  (for each! (((~ expected dat) cases))
+  (for each! [((~ expected dat) cases)]
     (let result (match dat))
     (surely (= expected result) "Bad match" match dat)))
 
@@ -35,14 +35,14 @@
 (to (a-letter g)
   (g .interval #\a #\c))
 
-(for all ((pat a-babble))
+(for all [(pat a-babble)]
   (should = 0 ((text-finder<- pat) pat)))
 
 (to (no-match-through? pat dat k)
-  (not (for some ((i (0 .thru k)))
+  (not (for some [(i (0 .thru k))]
          (= pat (dat .from 0 i)))))
 
-(for all ((pat a-babble) (dat a-babble))
+(for all [(pat a-babble) (dat a-babble)]
   (may (dat .find-slice pat)
     (be #no (should no-match-through? pat dat (- dat.count pat.count)))
     (be i (and (should no-match-through? pat dat i.-) ;TODO rethink this `should` function
@@ -50,6 +50,6 @@
 
 ;; TODO some text method for (= pat (dat .from i (+ i pat.count)))
 
-(for all ((pat a-babble) (dat a-babble))
+(for all [(pat a-babble) (dat a-babble)]
   (let i (dat .find-slice pat))
   (should = i ((text-finder<- pat) dat)))

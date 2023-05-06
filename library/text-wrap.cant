@@ -20,14 +20,14 @@
           (oops "I don't know how to fill whitespace like" rune))
         (be rune
           (let word (flexarray<- rune))
-          (begin eating ((text text.rest))
+          (begin eating [(text text.rest)]
             (if (or text.none? text.first.whitespace?)
                 (link {word word.text} (parse-tokens text))
                 (do (word .push! text.first)
                     (eating text.rest))))))))
 
 (to (wrap-into line tokens width)
-  (begin scanning ((spaces 0) tokens)
+  (begin scanning [(spaces 0) tokens]
     (hm (if tokens.none?
             (if line.none? '() `(,line.text)))
         (may tokens.first

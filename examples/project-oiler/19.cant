@@ -6,7 +6,7 @@
 ;; twentieth century (1 Jan 1901 to 31 Dec 2000)?
 
 ;; XXX 0-based for month and day are surprising
-(let n-sundays (for sum-by ((y (1901 .thru 2000)))
-                 (for tally-by ((m (0 .thru 11)))
+(let n-sundays (for sum-by [(y (1901 .thru 2000))]
+                 (for tally-by [(m (0 .thru 11))]
                    (= 0 (weekday<-day (day<-date {date y m 0}))))))
 (out .print n-sundays)

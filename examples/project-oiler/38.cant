@@ -9,9 +9,9 @@
   (detect pandigital-multiple? (each/lazy descending-perm ((9 .!) .till))))
 
 (to (pandigital-multiple? digits)
-  (for some ((i '(1 2 3 4)))
+  (for some [(i '(1 2 3 4))]
     (let n (count<-digits (digits .from 0 i)))
-    (begin checking ((target (* 2 n)) (rest (digits .from i)))
+    (begin checking [(target (* 2 n)) (rest (digits .from i))]
       (or rest.none?
           (and (rest .prefix? (let td target.digits))
                (checking (+ target n) (rest .from td.count)))))))
@@ -19,12 +19,12 @@
 ;; Not so brute-force. For each possible base-prefix length, find the
 ;; first base prefix that works, trying prefixes in descending order.
 (to (v2-answer)
-  (max @(for yeahs ((length (1 .thru 4)))
+  (max @(for yeahs [(length (1 .thru 4))]
           (some ?build-pandigital ((9 .down-thru 1) .k-permutations length)))))
 
 (to (?build-pandigital base-digits)
   (let base (count<-digits base-digits))
-  (begin building ((i 2) (prefix base-digits))
+  (begin building [(i 2) (prefix base-digits)]
     (and (not (prefix .find? 0))
          prefix.distinct?
          (may (compare prefix.count 9)

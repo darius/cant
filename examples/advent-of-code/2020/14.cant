@@ -16,7 +16,7 @@
   (sum memory.values))
 
 (to (run memory do-mem)
-  (for amass ((mask void) (insn program))
+  (for amass [(mask void) (insn program)]
     (may insn
       (be `(,new-mask) new-mask)
       (be `(,addr ,value)
@@ -27,21 +27,21 @@
   (list<- (~ .set! addr (enmask1 mask value))))
 
 (to (enmask1 mask value)
-  (let masked (for each ((m mask) (b ("~036b" .format value)))
+  (let masked (for each [(m mask) (b ("~036b" .format value))]
                 (may m
                   (be #\X b)
                   (else   m))))
   (number<-text masked.text 2))
 
 (to (part2-do-mem mask addr value)
-  (for each ((a (enmask2 mask addr)))
+  (for each [(a (enmask2 mask addr))]
     (~ .set! a value)))
 
 (to (enmask2 mask addr)
-  (let bit-values (for each ((m mask) (rune ("~036b" .format addr)))
+  (let bit-values (for each [(m mask) (rune ("~036b" .format addr))]
                     (may m
                       (be #\0 `(,rune))
                       (be #\1 '(#\1))
                       (be #\X '(#\0 #\1)))))
-  (for each ((bits (grid* @bit-values)))
+  (for each [(bits (grid* @bit-values))]
     (number<-text bits.text 2)))

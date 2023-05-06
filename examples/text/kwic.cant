@@ -20,7 +20,7 @@
 ;;      {~ "of"     {~ "leaves of grass" (7 9)}}
 ;;      {~ "grass"  {~ "leaves of grass" (10 15)}})
 (to (contextify line)
-  (for each ((span (word-spans line)))
+  (for each [(span (word-spans line))]
     (let word (line .from @span))
     (~ word.lowercase (~ line span))))
 
@@ -33,15 +33,15 @@
 ;; Given a list of (~ key value), return a list of (~ key all-values).
 (to (collect items)
   (let map (!map<-))
-  (for each! (((~ key value) items))
+  (for each! [((~ key value) items)]
     ((map .get-set! key flexarray<-) .push! value))
-  (for each (((~ key array) map.items))
+  (for each [((~ key array) map.items)]
     (~ key array.values)))
 
 ;; Under a heading for `word`, show each of its occurrences.
 (to (show-group (~ word occurrences))
   (out .say "~d:\n" word)
-  (for each! (((~ line `(,start ,end)) (sort occurrences)))
+  (for each! [((~ line `(,start ,end)) (sort occurrences))]
     (out .say "  ~d**~d**~d\n"
          (line .from 0 start)
          (line .from start end)

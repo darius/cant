@@ -8,21 +8,21 @@
 ;; from the leftward neighbors, but that was actually a bit slower.
 
 (let triples ((0 .thru 9) .k-permutations 3))
-(let tiles (~.array (for each ((p (link 1 (the-primes .prefix 7))))
+(let tiles (~.array (for each [(p (link 1 (the-primes .prefix 7)))]
                       (keep (compose (~ .even? p) count<-digits) triples))))
 
 (let solutions
-  (for gather ((last-tile tiles.last))
-    (begin extending ((place (- tiles.count 2))
-                      (suffix last-tile)) ;; a partial solution from place+1 rightward
+  (for gather [(last-tile tiles.last)]
+    (begin extending [(place (- tiles.count 2))
+                      (suffix last-tile)] ;; a partial solution from place+1 rightward
       (hm (when (< place 0)
             (out .say "found ~w\n" suffix)
             `(,suffix))
-          (else (for gather ((next-digit
-                              (~.nub (for yeahs ((t (tiles place)))
+          (else (for gather [(next-digit
+                              (~.nub (for yeahs [(t (tiles place))]
                                        (and (suffix .prefix? t.rest)
                                             (not (suffix .find? t.first))
-                                            t.first)))))
+                                            t.first))))]
                   (extending place.- (link next-digit suffix))))))))
 
 (out .say "sum: ~w\n" (sum-by count<-digits solutions)) ;; 16695334890

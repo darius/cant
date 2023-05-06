@@ -14,9 +14,9 @@
   (paint grid 10 18 '(" **"             ;TODO: read in a pattern
                       "** "
                       " * "))
-  (for cbreak-mode ()
+  (for cbreak-mode []
     (out .display cursor-hide)
-    (begin running (grid (step 0))
+    (begin running [grid (step 0)]
       (out .display clear-screen)
       (out .display home)
       grid.show
@@ -36,8 +36,8 @@
 
 (to (paint grid top left lines)
   (let bottom (+ top lines.count -1))
-  (for each! (((~ i line) lines.items))
-    (for each! (((~ j rune) line.items))
+  (for each! [((~ i line) lines.items)]
+    (for each! [((~ j rune) line.items)]
       (grid .set! (- bottom i) (+ left j)
             (if rune.whitespace? 0 1)))))
 
@@ -68,7 +68,7 @@
     (+ (* C r) c))
 
   (to (update i)
-    (may (for sum-by ((dir neighbor-dirs))
+    (may (for sum-by [(dir neighbor-dirs)]
            (G (+ i dir)))
       (be 2 (G i))
       (be 3 1)
@@ -78,7 +78,7 @@
   ;; row #1 effectively neighbors row #n-rows, and likewise for the
   ;; columns.
   (to (copy-edges)
-    (for each! ((r (1 .thru n-rows)))
+    (for each! [(r (1 .thru n-rows))]
       (G .set! (at r 0)   (G (at r n-cols)))
       (G .set! (at r C.-) (G (at r 1))))
     (copy! (at 0 0)   (at n-rows 0) C)
@@ -97,8 +97,8 @@
       (G .set! (at r c) value))
 
     (to ~.show
-      (for each! ((r (1 .thru n-rows)))
-        (for each! ((c (1 .thru n-cols)))
+      (for each! [(r (1 .thru n-rows))]
+        (for each! [(c (1 .thru n-cols))]
           (out .display (" O" (G (at r c))))
           (out .display " "))
         out.newline))
@@ -106,8 +106,8 @@
     (to ~.next
       (copy-edges)
       (let new-G (array<-count (* R C) 0))
-      (for each! ((r (1 .thru n-rows)))
-        (for each! ((i ((at r 1) .span n-cols)))
+      (for each! [(r (1 .thru n-rows))]
+        (for each! [(i ((at r 1) .span n-cols))]
           (new-G .set! i (update i))))
       (grid<-array n-rows n-cols new-G))
     ))

@@ -7,12 +7,12 @@
     print-traceback)
 
   (to (help vocab)
-    (for each! ((`(,short ,full ,text) vocab))
+    (for each! [(`(,short ,full ,text) vocab)]
       (out .say "~d ~-9w - ~d\n"
            short full text)))
 
   (to (collect-abbrevs vocab)
-    (map<-items (for each ((`(,short ,full ,_) vocab))
+    (map<-items (for each [(`(,short ,full ,_) vocab)]
                   (~ short full))))
 
   ;; TODO unify with inspect-sequel
@@ -28,8 +28,8 @@
     (let abbrevs (collect-abbrevs vocab))
 
     (out .display "Enter ? for help.\n")
-    (begin interacting ((focus initial-focus)
-                        (trail '()))
+    (begin interacting [(focus initial-focus)
+                        (trail '())]
 
       (to (continue @messages)
         (each! (:: (out .display it)) messages)
@@ -85,7 +85,7 @@
     (let abbrevs (collect-abbrevs vocab))
 
     (out .display "Enter ? for help.\n")
-    (begin interacting ((frame k) (callees '()))
+    (begin interacting [(frame k) (callees '())]
 
       (to (continue @messages)
         (each! (:: (out .display it)) messages)

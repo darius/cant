@@ -26,10 +26,10 @@
     (be {call e1 e2}
       (call (play e1 r) (play e2 r)))
     (be {term tag es}
-      (term<- tag (for each ((e1 es))
+      (term<- tag (for each [(e1 es)]
                     (play e1 r))))
     (be {list es}
-      (for each ((e1 es))
+      (for each [(e1 es)]
         (play e1 r)))))
 
 (to (actor<- script r)
@@ -39,7 +39,7 @@
 
 (to (script<- trait clauses)
   (to (script .receive message actor parent-r)
-    (begin matching (clauses)
+    (begin matching [clauses]
       (may clauses
         (be '()
           (trait actor message))

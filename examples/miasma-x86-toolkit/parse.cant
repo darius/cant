@@ -50,7 +50,7 @@
   (load-table (with-input-file read-all "examples/miasma-x86-toolkit/tables/i386.scm")))
 
 (to (load-table sexprs)
-  (for each! ((sexpr sexprs))
+  (for each! [(sexpr sexprs)]
     (let spec (parse-spec sexpr))
     (surely (not (the-specs .maps? spec.mnemonic)))
     (the-specs .set! spec.mnemonic spec)))
@@ -116,8 +116,8 @@
 
 ;;XXX finish porting
 (let abbrevs
-  (for each ((`(,a ,b) (grid* '(E G I U M R J O S) '(b w v d)))
-             (`(,x ,y) (grid* '(E G I U E E J O S) '(1 2 4 4))))
+  (for each [(`(,a ,b) (grid* '(E G I U M R J O S) '(b w v d)))
+             (`(,x ,y) (grid* '(E G I U E E J O S) '(1 2 4 4)))]
     `(,(concat-symbol a b) ,x ,y)))
 
 ; XXX: preserve semantics of M, R, v

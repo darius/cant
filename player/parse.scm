@@ -404,7 +404,7 @@
               ((__ e)
                `(on (it) ,e))))
     ('for    (mlambda
-              ((__ fn bindings . body)
+              ((__ fn (: bindings vector?) . body)
                (let ((name-for (if (symbol? fn)
                                    (string-append "for_" (symbol->string fn))
                                    "for:_")))
@@ -416,12 +416,12 @@
                              (to (~ ,@ps) ,@body))
                            ,@es)))))))
     ('begin  (mlambda
-              ((__ (: proc symbol?) bindings . body)
+              ((__ (: proc symbol?) (: bindings vector?) . body)
                (parse-bindings bindings
                  (lambda (ps es)
                    `((hide (make ,proc (to (~ ,@ps) ,@body)))
                      ,@es))))
-              ((__ (: bindings list?) . body)
+              ((__ (: bindings vector?) . body)
                `(begin loop ,bindings ,@body))))
     ('if     (mlambda
               ((__ test if-so if-not)
@@ -493,19 +493,22 @@
                  ,msg ,e))))
     (__ #f)))
 
-(define (parse-bindings bindings receiver)
+(define (parse-bindings bindings-vector receiver)
   (define (binding-get getter)
     (lambda (binding)
       (if (symbol? binding) binding (getter binding))))
-  (for-each (lambda (binding)
-              (mcase binding
-                ((__ __)   ; (used to check here for a variable, but now can be any pattern)
-                 'ok)
-                ((: __ symbol?)  ; A convenience: (begin (x y) ...) = (begin ((x x) (y y)) ...)
-                 'ok)))
-            bindings)
-  (receiver (map (binding-get car) bindings)
-            (map (binding-get cadr) bindings)))
+  (let ((bindings (if (vector? bindings-vector)
+                      (vector->list bindings-vector)
+                      (error 'parse "A bindings-list must be a vector" bindings-vector))))
+    (for-each (lambda (binding)
+                (mcase binding
+                  ((__ __)   ; (used to check here for a variable, but now can be any pattern)
+                   'ok)
+                  ((: __ symbol?)  ; A convenience: (begin (x y) ...) = (begin ((x x) (y y)) ...)
+                   'ok)))
+              bindings)
+    (receiver (map (binding-get car) bindings)
+              (map (binding-get cadr) bindings))))
 
 (define (expand-quasiquote-pat qq)
   (mcase qq

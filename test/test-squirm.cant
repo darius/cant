@@ -22,6 +22,6 @@
                   "test/timeout-test.squirm"
                   ))
 
-(for each! ((test test-names))
+(for each! [(test test-names)]
   (out .say "\nTesting ~d\n" test)
   (run-file (chain "examples/squirm/" test)))

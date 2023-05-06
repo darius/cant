@@ -29,10 +29,10 @@ The last step of #1 seems more of a pain than #2. So let's try #2.
   (let products (set<-))
 
   (let all-digits ((1 .thru 9) .list))
-  (for each! ((a-b-combos (all-digits .k-sets 5)))
+  (for each! [(a-b-combos (all-digits .k-sets 5))]
     (let p-digits (skip (:: (a-b-combos .find? it)) all-digits))
-    (for each! ((a-b-digits a-b-combos.permutations))
-      (for each! ((split '(1 2)))
+    (for each! [(a-b-digits a-b-combos.permutations)]
+      (for each! [(split '(1 2))]
         (let a (count<-digits (a-b-digits .from 0 split)))
         (let b (count<-digits (a-b-digits .from split)))
         (let product (* a b))
@@ -47,9 +47,9 @@ The last step of #1 seems more of a pain than #2. So let's try #2.
 ;; elaborated to be faster than the above:
 (to (answer-1)
   (let all-digits ((1 .thru 9) .list))
-  (for sum-by ((p-digits (all-digits .k-permutations 4))) ;; (5-digit products can't come up)
+  (for sum-by [(p-digits (all-digits .k-permutations 4))] ;; (5-digit products can't come up)
     (let p (count<-digits p-digits))
-    (or (for some ((a (list-divisors p)))
+    (or (for some [(a (list-divisors p))]
           (and (< a 100) ;; redundant quick filter
                (do (let b (p .quotient a))
                    (and (= all-digits (sort (chain a.digits b.digits p-digits)))

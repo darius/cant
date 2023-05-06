@@ -40,8 +40,8 @@
   (chaos<- (random-seed<- randomness-source<-)))
 
 (to (random-seed<- randomness-source<-)
-  (for with-closing ((source (randomness-source<-)))
-    (begin trying ()
+  (for with-closing [(source (randomness-source<-))]
+    (begin trying []
       (let seed (read-u32 source))
       (if (< 0 seed D)
           seed
@@ -51,7 +51,7 @@
 ;; TODO should be in a library
 ;; TODO use .read-u8 on a *binary* source. Then cult-of-the-bound-variable could use this too.
 (to (read-u32 source)
-  (for amass ((n 0) (_ (4 .till)))
+  (for amass [(n 0) (_ (4 .till))]
     (+ (n .<< 8) source.read-rune.code)))
 
 (export chaos<- chaos random-chaos<- random-seed<-)

@@ -31,9 +31,9 @@
 ;; imply that we determined all of the variables, note. If
 ;; inconsistent, we still try to determine what we can of the rest.
 (to (solve equations)
-  (begin solving ((inconsistent? #no) ; Noticed a contradiction yet?
+  (begin solving [(inconsistent? #no) ; Noticed a contradiction yet?
                   (progress? #no)     ; Any progress in this pass?
-                  (agenda (push (extend empty equations) 'finish-pass)))
+                  (agenda (push (extend empty equations) 'finish-pass))]
     (may (peek agenda)
       (be {nonempty task pending}
         (may task

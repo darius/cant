@@ -39,7 +39,7 @@ dir:  {'N' | 'S' | 'E' | 'W'} :Dir.
                d.+
                {seq '()}))
       (be {alt es}
-        (merge-best (for each ((e es))
+        (merge-best (for each [(e es)]
                       (visit p d e))))
       (be {seq es}
         ;; Here's where we need the return value.
@@ -49,13 +49,13 @@ dir:  {'N' | 'S' | 'E' | 'W'} :Dir.
     (if es.none?
         (!map<- (~ p d))                ;TODO immutable?
         (do (let map1 (visit p d es.first))
-            (merge-best (for each (((~ p1 d1) map1.items))
+            (merge-best (for each [((~ p1 d1) map1.items)]
                           (visit-seq p1 d1 es.rest))))))
 
   (let visit (memoize really-visit))
   (let visit-seq (memoize really-visit-seq))
   (visit '(0 0) 0 exp)
-  (let how-many (for tally-by ((dist rooms.values))
+  (let how-many (for tally-by [(dist rooms.values)]
                   (<= 1000 dist)))
   (out .say "count for >= 1000 distance: ~w\n" how-many)
   (max @rooms.values))
@@ -72,7 +72,7 @@ dir:  {'N' | 'S' | 'E' | 'W'} :Dir.
 (to (merge2 map1 map2)
   ;; TODO maps should have a merge-with-combiner method
   (let result map1.copy)
-  (for each! (((~ k2 v2) map2.items))
+  (for each! [((~ k2 v2) map2.items)]
     (result .set! k2 (may (map1 .get k2)
                        (be #no v2)
                        (be v1 (min v1 v2)))))

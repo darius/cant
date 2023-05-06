@@ -19,7 +19,7 @@
 
 (to (digitize n base render-term)
   (let digits (reverse (n .digits base)))
-  (reverse (for yeahs (((~ power digit) digits.items))
+  (reverse (for yeahs [((~ power digit) digits.items)]
              (and (not= 0 digit) (render-term power digit)))))
 
 ;; Ways to render a term in a base**power expansion.
@@ -69,7 +69,7 @@
   (surely (count? n))
   (ordinal-suffixes (if (< n 20) n (n .remainder 10))))
 
-(let ordinal-suffixes (~.array (for each ((n (20 .till)))
+(let ordinal-suffixes (~.array (for each [(n (20 .till))]
                                  ((ordinalize n) .suffix 2))))
 
 

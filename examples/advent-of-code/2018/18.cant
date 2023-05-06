@@ -25,7 +25,7 @@
 (out .display "\nPart 1\n")
 
 (to (part-1)
-  (result-code (for amass ((grid input-grid) (_ (10 .till)))
+  (result-code (for amass [(grid input-grid) (_ (10 .till))]
                  (show grid)
                  (step grid))))
 
@@ -71,7 +71,7 @@
 (out .display "\nPart 2\n")
 
 (to (part-2)
-  (begin stepping ((t 0) (grid input-grid))
+  (begin stepping [(t 0) (grid input-grid)]
     (let bag (bag<- grid.values))
     (out .say "After ~w minutes: ~w trees, ~w lumber\n" t (bag #\|) (bag #\#))
     (stepping t.+ (step grid))))

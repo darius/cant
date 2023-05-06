@@ -16,7 +16,7 @@
 (to (part1)
   (let `(,ps0 ,vs) (transpose states))
   (show ps0)
-  (begin stepping ((t 1) (ps ps0))
+  (begin stepping [(t 1) (ps ps0)]
     (when (t .even? 100)
       (out .say "time ~w\n" t))
     (let next (each vector+ ps vs))
@@ -41,8 +41,8 @@
   (out .say "spread: ~w ~w\n" dx dy)
   (when (< dx 100)
     (let set (set<-list points))
-    (for each! ((y (yl .thru yh)))
-      (for each! ((x (xl .thru xh)))
+    (for each! [(y (yl .thru yh))]
+      (for each! [(x (xl .thru xh))]
         (out .display (if (set .maps? `(,x ,y)) #\# #\.)))
       out.newline)
     out.newline))

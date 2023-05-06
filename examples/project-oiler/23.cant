@@ -17,7 +17,7 @@
   (let abundants (keep abundant? (1 .till limit)))
   (let abundants-set abundants.range)
   (to (abundants-sum? k) ;; Can k (<= limit) be written as the sum of two abundant numbers?
-    (for some ((a abundants))
+    (for some [(a abundants)]
       (abundants-set .maps? (- k a))))
   (sum (skip abundants-sum? (1 .thru limit))))
 

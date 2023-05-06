@@ -7,12 +7,12 @@
 
 (let neighborhood (('(-1 0 1) .k-lists 2) .remove '(0 0)))
 (to (neighbors `(,x ,y))
-  (for each ((`(,dx ,dy) neighborhood))
+  (for each [(`(,dx ,dy) neighborhood)]
     `(,(+ x dx) ,(+ y dy))))
 
 (to (set<-lines lines desired-rune)
-  (~.range (for gather (((~ row line) lines.items))
-             (for yeahs (((~ col rune) line.items))
+  (~.range (for gather [((~ row line) lines.items)]
+             (for yeahs [((~ col rune) line.items)]
                (and (= rune desired-rune)
                     `(,col ,row))))))
 
@@ -20,8 +20,8 @@
               (set<-lines inputs #\#)))
 
 (to (show (~ e o))
-  (for each! ((y nrows.till))
-    (for each! ((x ncols.till))
+  (for each! [(y nrows.till)]
+    (for each! [(x ncols.till)]
       (let p `(,x ,y))
       (out .display (if (e .maps? p) #\L (if (o .maps? p) #\# #\.))))
     out.newline)
@@ -34,7 +34,7 @@
        (o1 .subset-of? o2)))
 
 (to (part1)
-  (begin stepping ((grid grid0) (n 1))
+  (begin stepping [(grid grid0) (n 1)]
     (out .say "~w:\n" n)
     (let next (update1 grid))
     (show next)
@@ -47,10 +47,10 @@
   (let n-neighbors (bag<- (gather neighbors occupied.keys)))
   (let new-empties (set<-))
   (let new-occupied (set<-))
-  (for each! ((p occupied.keys))
+  (for each! [(p occupied.keys)]
     ((if (<= 4 (n-neighbors p)) new-empties new-occupied)
      .add! p))
-  (for each! ((p empties.keys))
+  (for each! [(p empties.keys)]
     ((if (= 0 (n-neighbors p)) new-occupied new-empties)
      .add! p))
   (~ new-empties new-occupied))
@@ -58,7 +58,7 @@
 (to (part2)
     (out .say "0:\n")
     (show grid0)
-  (begin stepping ((grid grid0) (n 1))
+  (begin stepping [(grid grid0) (n 1)]
     (out .say "~w:\n" n)
     (let next (update2 grid))
     (show next)
@@ -71,18 +71,18 @@
   (let n-neighbors (bag<- (gather (neighbors2 empties occupied) occupied.keys)))
   (let new-empties (set<-))
   (let new-occupied (set<-))
-  (for each! ((p occupied.keys))
+  (for each! [(p occupied.keys)]
     ((if (<= 5 (n-neighbors p)) new-empties new-occupied)
      .add! p))
-  (for each! ((p empties.keys))
+  (for each! [(p empties.keys)]
     ((if (= 0 (n-neighbors p)) new-occupied new-empties)
      .add! p))
   (~ new-empties new-occupied))
 
 ;; Return a list of the seats that can see x,y
 (to ((neighbors2 empties occupied) p)
-  (for gather ((dp neighborhood))
-    (begin stepping ((q (vector+ p dp)) (places '()))
+  (for gather [(dp neighborhood)]
+    (begin stepping [(q (vector+ p dp)) (places '())]
       (hm (if (empties .maps? q) (link q places))
           (if (occupied .maps? q) (link q places))
           (let `(,x ,y) q)

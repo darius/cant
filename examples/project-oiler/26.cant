@@ -11,7 +11,7 @@
 ;; Compute the infinite decimal reciprocal of denom by long division.
 ;; List the states we go through in doing this.
 (to (long-reciprocal-states denom)
-  (begin dividing ((numer 1))
+  (begin dividing [(numer 1)]
     (let (~ digit remainder) (numer ./mod denom))
     (link/lazy remainder
                (: (dividing (* remainder 10))))))
@@ -19,7 +19,7 @@
 ;; Find the first repeated state and return the length of the state cycle.
 (to (find-repeat-length states)
   (let index (!map<-)) ;; Map from state to the last index where it previously occurred
-  (begin scanning ((pairs states.items))
+  (begin scanning [(pairs states.items)]
     (let (~ i state) pairs.first)
     (may (index .get state)
       (be #no

@@ -42,7 +42,7 @@
 (to (break e r k)
   (out .say "At ~w\n" (unparse-e e))
   (out .say "\\> ") 
-  (begin listening ()
+  (begin listening []
     (may (read in)
       (be 's (step-in e r k))
       (be 'h (hop-in e r k))
@@ -66,7 +66,7 @@
   (out .say "Result ~w\n" (unparse-val val))
   (out .say "At ~w\n" (unparse-k k))
   (out .say "\\> ") 
-  (begin listening ()
+  (begin listening []
     (may (read in)
       (be 's (step-out k val))
       (be 'h (hop-out k val))
@@ -128,7 +128,7 @@
 ;; Main
 
 (to (main args)
-  (for each! ((filename args.rest))
+  (for each! [(filename args.rest)]
     (out .say "\n~d:\n" filename)
     (out .print (run-file filename))))
 

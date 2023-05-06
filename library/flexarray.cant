@@ -71,7 +71,7 @@
         (count-check (+ dst (- bound lo) -1))
         (A.^ .move! dst source lo bound)))
     (to (~ .extend! values)
-      (for each! ((v values))
+      (for each! [(v values)]
         (flexarray .push! v)))
     (to (~ .selfie sink)
       (sink .display "#<flexarray (")

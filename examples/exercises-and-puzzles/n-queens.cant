@@ -15,14 +15,14 @@
     (be map (print-board n map))))
 
 (to (print-board n map)
-  (for each! ((row (board<- n)))
-    (for each! ((var row))
+  (for each! [(row (board<- n))]
+    (for each! [(var row)]
       (out .say "~d " (".Q" (map var))))
     out.newline))
 
 (to (queens-problem n)
-  (bdd-and @(for each ((r n.till))
-              (bdd-or @(for each ((c n.till))
+  (bdd-and @(for each [(r n.till)]
+              (bdd-or @(for each [(c n.till)]
                          (place-queen n r c))))))
 
 (to (place-queen n r c)
@@ -33,11 +33,11 @@
     (when (and (<= 0 rr n.-) (<= 0 cc n.-))
       (map .set! (queen n rr cc) #no)))
 
-  (for each! ((cc n.till))
+  (for each! [(cc n.till)]
     (exclude r cc))
-  (for each! ((rr n.till))
+  (for each! [(rr n.till)]
     (exclude rr c))
-  (for each! ((dd ((- n.-) .till n))) ; diagonals
+  (for each! [(dd ((- n.-) .till n))] ; diagonals
     (exclude (+ r dd) (+ c dd))
     (exclude (+ r dd) (- c dd))
     (exclude (- r dd) (+ c dd))
@@ -53,7 +53,7 @@
 ;; Return a 2-d array of distinct variables: each means there's a
 ;; queen at its position. Row/column numbers start from 0.
 (to (board<- n)
-  (for each ((r n.till))
+  (for each [(r n.till)]
     ((queen n r 0) .till (queen n r.+ 0))))
 
 (export queens queens-problem print-board)

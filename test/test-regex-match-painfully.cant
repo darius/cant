@@ -15,8 +15,8 @@
                (when (<= 2 size)
                  (res .extend! (each (tag 'star) (gen size.-))))
                (when (<= 3 size)
-                 (for each! ((i (1 .till size.-)))
-                   (for each! ((`(,re1 ,re2) (grid* (gen i) (gen (- size i 1)))))
+                 (for each! [(i (1 .till size.-))]
+                   (for each! [(`(,re1 ,re2) (grid* (gen i) (gen (- size i 1))))]
                      (res .push! ((tag 'either) re1 re2))
                      (res .push! ((tag 'then) re1 re2)))))
                res.values))))
@@ -35,7 +35,7 @@
 ;; (disabled)
 (to (tabulate alphabet)
   (let g (re-generator<- alphabet))
-  (for each! ((size (1 .thru 8)))
+  (for each! [(size (1 .thru 8))]
     (out .say "~w ~w ~w\n" alphabet.count size (-> size g ~.count))))
 '(do
   (tabulate "01")  out.newline
@@ -52,19 +52,19 @@
 (to (test-exhaustively alphabet re-limit input-limit)
   (let gen-setting   (computational-setting .extend-map (use 'regex-gen)))
   (let match-setting (computational-setting .extend-map (use 'regex-match)))
-  (for each! ((re (gather (re-generator<- alphabet) (1 .thru re-limit))))
+  (for each! [(re (gather (re-generator<- alphabet) (1 .thru re-limit)))]
     (out .say "~w\n" re)
     (let rg (cant .play re gen-setting))
     (let rm (cant .play re match-setting))
-    (for each! ((length (0 .thru input-limit)))
+    (for each! [(length (0 .thru input-limit))]
       (let all-inputs (each ~.text (alphabet .k-lists length)))
       (let should-match (regex-generate rg (set<- length)))
       (let should-not (-> (all-inputs.range .difference should-match.range)
                           ~.keys sort))
       (out .say "~w Y: ~w N: ~w\n" length should-match should-not)
-      (for each! ((inputs  `(,should-match ,should-not))
-                  (should? '(#yes          #no)))
-        (for each! ((input inputs))
+      (for each! [(inputs  `(,should-match ,should-not))
+                  (should? '(#yes          #no))]
+        (for each! [(input inputs)]
           (unless (= should? (regex-match rm input))
             (out .say "  FAIL: ~w should~d match ~w\n" re (if should? "" " not") input)))))
     out.newline))

@@ -38,7 +38,7 @@
       (? (['signal (: pid)]
           (free))))
      ('stop
-      (begin killing ()
+      (begin killing []
         (? (['wait pid]
             (exit pid 'kill)
             (killing))

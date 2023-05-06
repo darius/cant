@@ -40,7 +40,7 @@
 
 (to (compile tokens)
   (let code (flexarray<-))
-  (begin compiling ((frames '()) tokens)
+  (begin compiling [(frames '()) tokens]
     (hm (when tokens.none?
           (surely frames.none?))      ;XXX require
         (may tokens.first

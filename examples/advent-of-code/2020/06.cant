@@ -4,9 +4,9 @@
 (let inputs (each ~.split (input .split "\n\n")))
 
 (to (part1)
-  (for tally-by ((group inputs))
+  (for tally-by [(group inputs)]
     (~.range (chain @group))))
 
 (to (part2)
-  (for tally-by ((group inputs))
+  (for tally-by [(group inputs)]
     (intersect @(each ~.range group))))

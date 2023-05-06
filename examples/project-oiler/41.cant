@@ -5,7 +5,7 @@
 
 (to (answer)
   (some find-largest-prime
-        (for skip ((nd (9 .down-thru 1))) ;; n digits
+        (for skip [(nd (9 .down-thru 1))] ;; n digits
           ((sum (1 .thru nd)) .even? 3)))) ;; Skip 'obvious' multiples of 3
   
 (to (find-largest-prime nd)

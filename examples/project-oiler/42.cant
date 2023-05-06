@@ -7,7 +7,7 @@
   (tally-by triangle-word? words))
 
 (to (triangle-word? text)
-  (triangle-number? (for sum-by ((rune text))
+  (triangle-number? (for sum-by [(rune text)]
                       (surely rune.uppercase?)
                       (- rune (- #\A 1)))))
 

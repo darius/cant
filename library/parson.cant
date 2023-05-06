@@ -31,10 +31,10 @@
 (to (lift peg-op)
   (feed-list
    (on (lifted)
-     {lifted (union @(for each (({lifted refs _} lifted))
+     {lifted (union @(for each [({lifted refs _} lifted)]
                        refs))
              (on (builder rules subs)
-               (peg-op @(for each (({lifted _ p<-} lifted))
+               (peg-op @(for each [({lifted _ p<-} lifted)]
                           (p<- builder rules subs))))})))
 
 (to (literal<- text)
@@ -158,9 +158,9 @@
   (let builder default-builder)         ;TODO parameterize
   (on (subs)
     (let full-subs (union-map<- subs default-subs))
-    (let rules (for !map-by ((name (each ~.first skeletons)))
+    (let rules (for !map-by [(name (each ~.first skeletons))]
                  (delay (: (rules name)))))
-    (for each! ((`(,name ,{lifted _ p<-}) skeletons))
+    (for each! [(`(,name ,{lifted _ p<-}) skeletons)]
       (rules .set! name (p<- builder rules full-subs)))
     rules))
 
@@ -202,11 +202,11 @@
     (oops "Ungrammatical grammar" outcome.display))
 
   (let lhses (bag<- (each ~.first skeletons)))
-  (let duplicates (for where ((count lhses)) (< 1 count)))
+  (let duplicates (for where [(count lhses)] (< 1 count)))
   (when duplicates.some?
     (oops "Multiply-defined rules" (sort duplicates)))
 
-  (let all-refs (union @(for each ((`(,_ ,{lifted refs _}) skeletons))
+  (let all-refs (union @(for each [(`(,_ ,{lifted refs _}) skeletons)]
                           refs)))
   (let undefined (all-refs .difference lhses))
   (when undefined.some?

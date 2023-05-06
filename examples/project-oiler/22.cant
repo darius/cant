@@ -4,9 +4,9 @@
 (let line (with-input-file ~.read-line "examples/project-oiler/p022_names.comma.txt"))
 (let names (sort (line .split ",")))
 
-(for each! ((name names))
+(for each! [(name names)]
   (surely (every ~.uppercase? name)))
 
-(out .print (for sum-by (((~ rank name) names.items))
-              (* rank.+ (for sum-by ((rune name.values))
+(out .print (for sum-by [((~ rank name) names.items)]
+              (* rank.+ (for sum-by [(rune name.values)]
                           (- rune (- #\A 1))))))

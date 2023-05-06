@@ -16,20 +16,20 @@
   (and (lexicon .maps? best) best))
 
 (to (edits1 word)
-  (let splits     (for each ((i (0 .thru word.count)))
+  (let splits     (for each [(i (0 .thru word.count))]
                     (~ (word .from 0 i)
                        (word .from i))))
-  (let inserts    (for gather (((~ a b) splits))
-                    (for each ((c alphabet))
+  (let inserts    (for gather [((~ a b) splits)]
+                    (for each [(c alphabet)]
                       (chain a c b))))
-  (let del-splits (for keep (((~ a b) splits))
+  (let del-splits (for keep [((~ a b) splits)]
                     b.some?))
-  (let deletes    (for each (((~ a b) del-splits))
+  (let deletes    (for each [((~ a b) del-splits)]
                     (chain a (b .from 1))))
-  (let replaces   (for gather (((~ a b) del-splits))
-                    (for each ((c alphabet))
+  (let replaces   (for gather [((~ a b) del-splits)]
+                    (for each [(c alphabet)]
                       (chain a c (b .from 1)))))
-  (let swaps      (for yeahs (((~ a b) del-splits))
+  (let swaps      (for yeahs [((~ a b) del-splits)]
                     (and b.plural?
                          (chain a (text<- (b 1) (b 0)) (b .from 2)))))
   (~.nub (chain inserts deletes replaces swaps)))
@@ -43,5 +43,5 @@
   (bag<- (words<-text (with-input-file ~.read-all "examples/text/spelling.train.text"))))
 
 (to (main _)
-  (for each! ((word (words<-text "a lowsy spelur zzz")))
+  (for each! [(word (words<-text "a lowsy spelur zzz"))]
     (out .print (correct word))))

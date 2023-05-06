@@ -110,9 +110,9 @@
       (seq-parse es))
     (be `(? ,@clauses)
       ;; TODO less clumsy way to code this?
-      (begin collecting ((cs (each clause-parse clauses))
+      (begin collecting [(cs (each clause-parse clauses))
                          (pattern-cs '())
-                         (after-c #no))
+                         (after-c #no)]
         (may cs
           (be '()
             {receive (reverse pattern-cs) after-c})
@@ -140,9 +140,10 @@
         (be `(,e) e)
         (be `(,e ,@es) `(if ,e (and ,@es) #no))))
     (be 'begin
-      ;; (begin f ((x a) (y b)) e) => (do (to (f a b) e) (f x y))  ;; TODO tighter scope for f
+      ;; (begin f [(x a) (y b)] e) => (do (to (f a b) e) (f x y))  ;; TODO tighter scope for f
       (may operands
-        (be `(,f ,pairs ,@body)
+        (be `(,f ,pairs-vector ,@body)
+          (let pairs pairs-vector.list)
           (surely (every (be? `(,_ ,_)) pairs))
           `(do
              (to (,f ,@(each (~ 0) pairs))
@@ -159,10 +160,11 @@
                (do ,@seq)
                (case ,@clauses)))))
     (be 'for
-      ;;(for f ((x a) (y b)) e) => (f (on (a b) e) x y)
+      ;;(for f [(x a) (y b)] e) => (f (on (a b) e) x y)
       ;; TODO code duplication with 'begin case
       (may operands
-        (be `(,f ,pairs ,@body)
+        (be `(,f ,pairs-vector ,@body)
+          (let pairs pairs-vector.list)
           (surely (every (be? `(,_ ,_)) pairs))
           `(,f (on ,(each (~ 0) pairs) ,@body)
                ,@(each (~ 1) pairs)))))
@@ -333,7 +335,7 @@
 
   (to (check-timeouts)
     (let now (nano-now))
-    (for each! (((~ process time) waiting-timeouts.items))
+    (for each! [((~ process time) waiting-timeouts.items)]
       ;;    (out .say "time ~w: checking ~w\n" (msecs now) (msecs time))
       (when (<= time now)
         (waiting-timeouts .delete! process)
@@ -352,10 +354,10 @@
     ;; TODO: just one set of a sum type of watchers and partners?
 
     (to (on-death outcome)
-      (for each! ((watcher watchers.keys))
+      (for each! [(watcher watchers.keys)]
         (watchers .delete! watcher)
         (watcher .receive-signal process outcome)) ;TODO pass more info
-      (for each! ((partner partners.keys))
+      (for each! [(partner partners.keys)]
         (partners .delete! partner)
         (partner .partner-died process outcome))) ;TODO pass more info or what?
 
@@ -400,7 +402,7 @@
           (else)))
 
       (to (~ .receive deadline after-e clauses r k)
-        (begin checking ()  ;; TODO finer time-slicing?
+        (begin checking []  ;; TODO finer time-slicing?
           (may (peek inbox-unchecked.^)
             (be {empty}
               (hm (unless deadline
@@ -610,7 +612,7 @@
         {go k result})))
 
   (to (match-clauses r !map clauses datum)
-    (begin matching (clauses)
+    (begin matching [clauses]
       (may clauses
         (be '()
           #no)
@@ -621,7 +623,7 @@
             (be #yes clause))))))
 
   (to (match-pats r !map ps vals)
-    (for every ((p ps) (val vals)) ;TODO ensure left-to-right order
+    (for every [(p ps) (val vals)] ;TODO ensure left-to-right order
       (match-pat r !map p val)))
 
   (to (match-pat r !map p val)

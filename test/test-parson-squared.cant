@@ -4,7 +4,7 @@
   (let parser ((grammar<- grammar-text) subs))
   (let start (parser start-symbol))
   (out .say "trying ~w: ~w\n" start-symbol start)
-  (for each! ((input inputs))
+  (for each! [(input inputs)]
     (out .print input)
     (let outcome (start .parse-outcome input))
     (out .say "~d\n\n" outcome.display)))

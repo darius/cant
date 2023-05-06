@@ -49,13 +49,13 @@
   ;; N.B. cruder code and cruder output because we're trying to use
   ;; only primitives as far as possible:
   (out .display "Oops within oops! Evils:\n")
-  (begin printing ((xs evil))
+  (begin printing [(xs evil)]
     (unless xs.none?
       (out .write xs.first)
       (out .display #\newline)
       (printing xs.rest)))
   (out .display "\nTraceback in reverse (deepest frame first):\n")
-  (begin printing ((frames k))
+  (begin printing [(frames k)]
     (unless frames.none?
       (out .display "  ")
       (out .write frames.first)

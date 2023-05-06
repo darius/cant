@@ -8,7 +8,7 @@
 (to (turn-left degrees heading)
   (let (~ turns 0) (degrees ./mod 90))
   (surely (<= 0 turns))
-  (-> turns (for iterating ((z heading))
+  (-> turns (for iterating [(z heading)]
               (c* ci z))))
 
 (to (turn-right degrees heading)
@@ -18,8 +18,8 @@
 
 (to (part1)
   (let (~ final-heading final-p)
-    (for amass (((~ hd p) (~ E c0))
-                (move input))
+    (for amass [((~ hd p) (~ E c0))
+                (move input)]
       (let act (move 0))
       (let arg ((move .from 1) .number))
       (may act
@@ -40,8 +40,8 @@
 
 (to (part2)
   (let (~ final-v final-p)   ;; waypoint, ship position
-    (for amass (((~ v p) (~ {complex 10 1} c0))
-                (move input))
+    (for amass [((~ v p) (~ {complex 10 1} c0))
+                (move input)]
       (let act (move 0))
       (let arg ((move .from 1) .number))
       (may act

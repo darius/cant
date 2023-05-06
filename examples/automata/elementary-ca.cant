@@ -9,7 +9,7 @@
           `(0 ,@bits 0)
           `(,@bits 0 0)))
   (-> n-steps
-      (for iterating ((state start-bits))
+      (for iterating [(state start-bits)]
         (show state)
         (step state))
       show))

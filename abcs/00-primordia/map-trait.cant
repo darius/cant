@@ -43,7 +43,7 @@
     (map.values .find? value))
 
   (to (~ .find value default)
-    (begin searching ((items map.items))
+    (begin searching [(items map.items)]
       (hm (if items.none? default)
           (may items.first
             (be (~ k (= value)) k))
@@ -61,14 +61,14 @@
 
   (to (~ .intersects? map2)
     ;; TODO: maybe iterate over the one with smaller .count ?
-    (for some ((k map.keys))
+    (for some [(k map.keys)]
       (map2 .maps? k)))
 
   (to (~ .disjoint? map2)                    ;too trivial?
     (not (map .intersects? map2)))
 
   (to (~ .subset-of? map2)  ;TODO be a stickler and make it a set method?
-    (for every ((k map.keys))
+    (for every [(k map.keys)]
       (map2 .maps? k)))
 
   (to ~.domain
@@ -79,7 +79,7 @@
 
   (to ~.inverse
     (let inverse (!map<-))
-    (for each! (((~ k v) map.items))
+    (for each! [((~ k v) map.items)]
       (when (inverse .maps? v)
         (oops ".inverse of noninvertible map" map))  ; or just allow it?
       (inverse .set! v k))
@@ -108,8 +108,8 @@
 
   ;; Pick a random key, weighted by corresponding value.
   (to (~ .weighted-sample chaos)
-    (begin ((n     (chaos .sample-count (sum map.values)))
-            (items map.items))
+    (begin [(n     (chaos .sample-count (sum map.values)))
+            (items map.items)]
       (let (~ key count) items.first)
       (if (< n count)
           key

@@ -2,17 +2,17 @@
 
 ;; TODO: use parson instead? semantic feedback is awkward
 (to (read-tree source)
-  (begin parsing ()
+  (begin parsing []
     (let (-- nc (-> zilch? #no)) (read source))
     (let (-- nm (-> zilch? #no)) (read source))
-    {node (for each/seq ((_ nc.till))
+    {node (for each/seq [(_ nc.till)]
             (parsing))
-          (for each/seq ((_ nm.till))
+          (for each/seq [(_ nm.till)]
             (read source))}))
 
 (to (each/seq f xs) ;force calls in left-to-right order. kinda embarrassing.
   (let results (flexarray<-))
-  (for each! ((x xs)) (results .push! (f x)))
+  (for each! [(x xs)] (results .push! (f x)))
   results.values)
 
 (let input (with-input-file read-tree data-file))
@@ -31,7 +31,7 @@
 (to (value<- {node children metadata})
   (sum (if children.none?
            metadata
-           (for yeahs ((n metadata))
+           (for yeahs [(n metadata)]
              (mayhap value<- (children .get n.-))))))
 
 (out .say "result 2: ~w\n" (value<- input))

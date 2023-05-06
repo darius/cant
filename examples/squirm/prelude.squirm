@@ -22,11 +22,11 @@
     (each! f (rest xs))))
 
 (to (gather f xs)
-  (for foldr ((x xs) (ys '()))
+  (for foldr [(x xs) (ys '())]
     (chain (f x) ys)))
 
 (to (keep ok? xs)
-  (for foldr ((x xs) (ys '()))
+  (for foldr [(x xs) (ys '())]
     (if (ok? x) (link x ys) ys)))
 
 (to (yeahs f xs)             ;TODO better name?
@@ -49,7 +49,7 @@
       (f (first xs) (foldr1 f tail))))
 
 (to (each f xs)
-  (for foldr ((x xs) (ys '()))
+  (for foldr [(x xs) (ys '())]
     (link (f x) ys)))
 
 (to (surely ok? msg)

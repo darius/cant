@@ -10,9 +10,9 @@
   (let spacer  (or ?spacer  " "))
   (let justify (or ?justify ('.pad-right .method)))
   (surely (rows .unique? ~.count) "Rows must be the same length" rows)
-  (let widths (for each ((column (transpose rows)))
+  (let widths (for each [(column (transpose rows))]
                 (max @(each ~.count column))))
-  (for each ((row rows))
+  (for each [(row rows)]
     (spacer .join (each justify row widths))))
 
 (to (text-display thing)
@@ -26,7 +26,7 @@
   (let n-cols (max 1 (min texts.count (width .quotient max-width))))
   (let n-rows (max 1 ((+ texts.count n-cols -1) .quotient n-cols)))
   (let padded (texts .pad-right (* n-rows n-cols) ""))
-  (transpose (for each ((i (0 .till texts.count n-rows))) ;TODO `chunk` function?
+  (transpose (for each [(i (0 .till texts.count n-rows))] ;TODO `chunk` function?
                (padded .from i (+ i n-rows)))))
 
 (export format-table tabulate)

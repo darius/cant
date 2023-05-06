@@ -68,7 +68,7 @@
         (to (capacity) keys.^.count)
 
         (to (occupants)
-          (begin walking ((i (- (capacity) 1)))
+          (begin walking [(i (- (capacity) 1))]
             (hm (if (< i 0)       '())
                 (let k (keys.^ i))
                 (if (= k none)    (walking i.-))
@@ -92,7 +92,7 @@
           (let old-vals vals.^)
           (keys .^= (array<-count new-capacity none))
           (vals .^= (array<-count new-capacity))
-          (for each! (((~ i key) old-keys.items))
+          (for each! [((~ i key) old-keys.items)]
             (unless (or (= key none) (= key deleted))
               (let {missing-at j} (place key))
               (keys.^ .set! j key)
@@ -133,7 +133,7 @@
           (to ~.items
             (let ks keys.^)
             (let vs vals.^)
-            (for each ((i (occupants)))
+            (for each [(i (occupants))]
               (~ (ks i) (vs i))))
 
           (to (~ .get-set! key value<-)
@@ -157,7 +157,7 @@
 
           (to (~ .find value default)
             (let vs vals.^)
-            (begin searching ((js (occupants)))  ;XXX should be lazy
+            (begin searching [(js (occupants))]  ;XXX should be lazy
               (hm (if js.none? default)
                   (if (= value (vs js.first)) (keys.^ js.first))
                   (else (searching js.rest)))))
@@ -173,7 +173,7 @@
             value)
 
           (to (~ .merge! other-map)   ;TODO better name?
-            (for each! (((~ k v) other-map.items))
+            (for each! [((~ k v) other-map.items)]
               (!map .set! k v)))
 
           (to (~ .selfie sink)
@@ -185,20 +185,20 @@
       (to (~ @items)
 ;;        (!map<-items items))
         (let m (!map<-))
-        (for each! (((~ k v) items))
+        (for each! [((~ k v) items)]
           (m .set! k v))
         m)
       )))
 
 (to (!map<-items items)
   (let m (!map<-))
-  (for each! (((~ k v) items))
+  (for each! [((~ k v) items)]
     (m .set! k v))
   m)
 
 (to (!map<-lists lists)
   (let m (!map<-))
-  (for each! ((`(,k ,v) lists))
+  (for each! [(`(,k ,v) lists)]
     (m .set! k v))
   m)
 
@@ -227,7 +227,7 @@
     (to (~ .maps? key)     (!map .maps? key))
     (to ~.copy             (set<-list !map.keys)) ;TODO tune
     (to (~ .add! key)      (!map .set! key 1))    ;N.B. matching the bag type here
-    (to (~ .add-all! vals) (for each! ((v vals)) (set .add! v)))
+    (to (~ .add-all! vals) (for each! [(v vals)] (set .add! v)))
     (to (~ .merge! other)  (set .add-all! other.keys))  ;N.B. overrides map-trait
 
     (to (~ .union other)
@@ -237,21 +237,21 @@
 
     (to (~ .intersect other)                 ;TODO rename to .and, etc., I guess
       (let result (set<-))
-      (for each! ((x !map.keys))
+      (for each! [(x !map.keys)]
         (when (other .maps? x)
           (result .add! x)))
       result)
 
     (to (~ .difference other)
       (let result (set<-))
-      (for each! ((x !map.keys))
+      (for each! [(x !map.keys)]
         (unless (other .maps? x)
           (result .add! x)))
       result)
 
     (to (~ .except other)               ;TODO add to map-trait?
       (let result (set<-))
-      (for each! ((x !map.keys))
+      (for each! [(x !map.keys)]
         (unless (= other x)
           (result .add! x)))
       result)
@@ -311,7 +311,7 @@
 
 (make-trait transitive-comparison compare?
   (to (~ x @xs)
-    (begin comparing ((x0 x) xs)
+    (begin comparing [(x0 x) xs]
       (may xs
         (be `()           #yes)
         (be `(,x1 ,@rest) (and (compare? x0 x1)
@@ -344,7 +344,7 @@
 
 (to (array-by f n)
   (let a (array<-count n))
-  (for each! ((i n.till))
+  (for each! [(i n.till)]
     (a .set! i (f i)))
   a)
 
@@ -355,8 +355,8 @@
 
 ;; Using the optional suffix is like (chain (reverse xs) suffix).
 (to (reverse xs @(optional suffix))
-  (for amass ((result (or suffix '()))
-              (x xs))
+  (for amass [(result (or suffix '()))
+              (x xs)]
     (link x result)))
 
 ;; (amass f z '(a b c)) = (f (f (f z 'a) 'b) 'c)
@@ -400,7 +400,7 @@
 ;; E.g. (each f xs ys) = (each (on (x y) (f x y)) (zip xs ys))
 (make-trait zipped-list-transducer transducer
   (to (~ f @lists)
-    (for transducer ((args (transpose lists)))
+    (for transducer [(args (transpose lists))]
       (f @args)))
   (to message
     (miranda-trait transducer message)))
@@ -449,8 +449,8 @@
 ;; 'combinations<-' maybe?
 (make grid*
   (to (~)           '(()))
-  (to (~ xs @lists) (for gather ((x xs))
-                      (for each ((picks (grid* @lists)))
+  (to (~ xs @lists) (for gather [(x xs)]
+                      (for each [(picks (grid* @lists))]
                         (link x picks)))))
 
 ;; TODO better as (link x (lazy-list<- thunk)) ?
@@ -463,7 +463,7 @@
       (surely (<= 0 i))
       (hm (if (<= bound i) '())  ;; TODO do i-1 .rest's here too for consistency?
           (else (let n (- bound i))
-                (begin copying ((j 0) (ll (lazy-list .from i)))
+                (begin copying [(j 0) (ll (lazy-list .from i))]
                   (link/lazy ll.first (: (let j1 j.+)
                                          (if (< j1 n) (copying j1 ll.rest) '())))))))
     ;; TODO any more parts of list-trait that need overriding for laziness? Plausibly: .chain 
@@ -484,14 +484,14 @@
       (surely (<= 0 i))
       (hm (if (<= bound i) '())  ;; TODO do i-1 .rest's here too for consistency?
           (else (let n (- bound i))
-                (begin copying ((j 0) (ll (lazy-list .from i)))
+                (begin copying [(j 0) (ll (lazy-list .from i))]
                   (link/lazier ll.first (: (let j1 j.+)
                                            (if (< j1 n) (copying j1 ll.rest) '())))))))
     ;; TODO any more parts of list-trait that need overriding for laziness? Plausibly: .chain 
     ))
 
 (to (lazier<- xs) ;; Convert from '/lazy' to '/lazier'. TODO we shouldn't need this
-  (begin copying (xs)
+  (begin copying [xs]
     (hm (if xs.none? '())
         (else (link/lazier xs.first (: (copying xs.rest)))))))
 

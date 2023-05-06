@@ -15,7 +15,7 @@
       (to (~ .get key)         (!map .get key))
       (to (~ .add! key)        (!map .set! key
                                      (+ (!map .get key 0) 1)))
-      (to (~ .add-all! vals)   (for each! ((v vals))
+      (to (~ .add-all! vals)   (for each! [(v vals)]
                                  (bag .add! v)))
       (to (~ .delete! key)     (!map .delete! key))  ; TODO should this decrement the value instead? Or should that be a different method?
       (to ~.clear!             !map.clear!)

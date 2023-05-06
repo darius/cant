@@ -48,7 +48,7 @@
 (to (intercalate between xs)
   (hm (if xs.none? '())
       (else (link xs.first
-                  (for fold ((x xs.rest) (tail '()))
+                  (for fold [(x xs.rest) (tail '())]
                     (link between x tail))))))
 
 (export

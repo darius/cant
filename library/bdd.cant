@@ -104,7 +104,7 @@
 (to (satisfy-first node goal)
   (let goal-node (constant<- goal))
   (let env (!map<-))
-  (begin walking (node)
+  (begin walking [node]
     (hm (when (<= node lit1)
           (and (= node goal-node) env))
         (let if0 (if0s node))
@@ -124,8 +124,8 @@
 ;;   while satisfy-first produces a map of variable -> bit
 ;;   Also naming: env vs. map
 (to (match-map map)
-  (for amass ((tree lit1)
-              ((~ var value) (sort map.items {reverse})))
+  (for amass [(tree lit1)
+              ((~ var value) (sort map.items {reverse}))]
     (if value
         (build-choice var lit0 tree)
         (build-choice var tree lit0))))

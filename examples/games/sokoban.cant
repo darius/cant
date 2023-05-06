@@ -38,12 +38,12 @@
 
 (to (read-collection source)
   (let name source.read-line)
-  (let grids (for each ((floor-plan (source.read-all .split "\n\n")))
+  (let grids (for each [(floor-plan (source.read-all .split "\n\n"))]
                (sokoban-grid<- (parse floor-plan))))
   (~ grids name))
 
 (to (start grids name)
-  (for cbreak-mode ()
+  (for cbreak-mode []
     (play grids name 0)))
 
 (let directions (map<-lists '((#\h  left) (#\j up) (#\k  down) (#\l   right)
@@ -59,12 +59,12 @@ N/P for next/previous level; Q to quit.
 
 Level ~w ~d Move ~w")
 
-  (begin playing (level)
+  (begin playing [level]
     (let trail (trails level))
     (let grid  trail.last)
 
     (to (view-grid)
-      (for each ((rune grid.unparse))
+      (for each [(rune grid.unparse)]
         (-> rune
             (if ("iI" .find? rune) green itself)
             (if (".I@" .find? rune) bold itself))))

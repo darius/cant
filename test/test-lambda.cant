@@ -1,7 +1,7 @@
 (to (test-lambda filename test-names)
   (import (use (chain "../examples/lambda-calculus/" filename))
     run-file)
-  (for each! ((test test-names))
+  (for each! [(test test-names)]
     (out .say "\nTesting ~d (w/ ~d)\n" test filename)
     (out .print (run-file (chain "examples/lambda-calculus/examples/" test)))))
 

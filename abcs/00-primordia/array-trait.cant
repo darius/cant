@@ -14,9 +14,9 @@
   (to (~ .move! dst source lo bound)
     ;; TODO no-op if in range and (me,dst) == (source,lo)
     (let lo->dst (- dst lo))
-    (for each! ((i (if (<= dst lo)
+    (for each! [(i (if (<= dst lo)
                        (march<- lo bound)
-                       (march<- bound.- lo -1))))
+                       (march<- bound.- lo -1)))]
       (me .set! (+ i lo->dst)
           (source i))))
 
@@ -24,7 +24,7 @@
     (each me (march<- 0 me.count)))
 
   (to ~.items
-    (for each ((i (march<- 0 me.count)))
+    (for each [(i (march<- 0 me.count))]
       (~ i (me i))))
 
   (to (~ .get key default)

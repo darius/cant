@@ -4,12 +4,12 @@
 (to (answer5)
   (to (sum-of-digit5s n)
     (sum-by (~ .** 5) n.digits))
-  (for keep ((n (2 .till 400000))) ;; We need to go somewhat higher than 10^5
+  (for keep [(n (2 .till 400000))] ;; We need to go somewhat higher than 10^5
     (= n (sum-of-digit5s n))))
 
 ;; Smarter approach from toddmowen's discussion post.
 (to (smarter)
-  (for yeahs ((digits ((0 .thru 9) .k-bags 6)))
+  (for yeahs [(digits ((0 .thru 9) .k-bags 6))]
     (let n (sum-by (~ .** 5) digits))
     (and (= n (sum-by (~ .** 5) n.digits))
          (< 1 n) ;; 1 is excluded by the problem statement

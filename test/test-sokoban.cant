@@ -16,7 +16,7 @@ Microban, by David Skinner (just #2)
 (out .say "~d\n" g.unparse)
 
 (let afterward
-  (for amass ((g g) (dir '(down down right)))
+  (for amass [(g g) (dir '(down down right))]
     (hey (g .move dir)
          (:: (out .displayln it.unparse)))))
 

@@ -25,22 +25,23 @@
 ;;  for both orientations of every edge of every tile,
 ;;  listing all the tiles that have the given edge.
 (let edge-map
-  (map<-items (collect (for gather (((~ tid {tile _ edges}) tile-map.items))
-                         (for gather ((edge edges))
+  (map<-items (collect (for gather [((~ tid {tile _ edges}) tile-map.items)]
+                         (for gather [(edge edges)]
                            (let flipped (~.text (reverse edge)))
                            (list<- (~ edge tid) (~ flipped tid)))))))
-;;(for each! (((~ k v) edge-map.items))
+;;(for each! [((~ k v) edge-map.items)]
 ;;  (out .say "~w: ~w\n" k v))
 
 ;; Map of tid -> set of other tids that share one of this tid's edges, in some orientation
 (let compat-map
-  (map<-items (for each (((~ tid {tile _ edges}) tile-map.items))
+  (map<-items (for each [((~ tid {tile _ edges}) tile-map.items)]
                 (~ tid (hey (~.range (gather edge-map edges))
                             (~ .delete! tid))))))
 
 ;; If we're lucky, the corner tiles will each have just two
 ;; compatible-as-neighbor tiles, and no other tiles will:
-(let grid-corners (for where ((compats compat-map)) (= compats.count 2)))
+(let grid-corners (for where [(compats compat-map)]
+                    (= compats.count 2)))
 (surely (= grid-corners.count 4))
 
 (to (part1)
@@ -49,9 +50,9 @@
 
 ;; With further luck, all the other tiles will have just the right number of
 ;; compatible-as-neighbor tiles:
-;;(let grid-edges   (for where ((compats compat-map)) (= compats.count 3)))
-;;(let grid-inside  (for where ((compats compat-map)) (= compats.count 4)))
-(surely (for every ((compats compat-map.values))
+;;(let grid-edges   (for where [(compats compat-map)] (= compats.count 3)))
+;;(let grid-inside  (for where [(compats compat-map)] (= compats.count 4)))
+(surely (for every [(compats compat-map.values)]
           (<= 2 compats.count 4)))
 
 (to (flip lines)                        ;vertical flip of a tile
@@ -114,8 +115,8 @@ TODO try reworking the code below
   (let grid (grid-2d<- (~ 0 0) (~ 11 11) {constant #no})) ; N.B. assuming 12x12 grid
   (let oriented-edge-map
     (map<-items
-     (collect (for gather (((~ tid {tile lines _}) tile-map.items))
-                (for gather ((oriented-lines (orienting lines)))
+     (collect (for gather [((~ tid {tile lines _}) tile-map.items)]
+                (for gather [(oriented-lines (orienting lines))]
                   (let edges (edges<- oriented-lines))
                   ;; TODO for each (dir,edge) of oriented-lines, (~ edge {oriented-tile tid XXX edge-map})
                   'XXX)))))
@@ -128,12 +129,12 @@ TODO try reworking the code below
     (let dir (tuple- new-pos already-pos)) ;TODO consider from which pov to define dir
     (let {oriented-tile _ _ edge-map} (grid already-pos))
     (let edge (edge-map dir))
-    (let candidates (for keep (({oriented-tile tid _ _} (oriented-edge-map edge)))
+    (let candidates (for keep [({oriented-tile tid _ _} (oriented-edge-map edge))]
                       (remaining-tiles .maps? tid)))
     (place! new-pos candidates.only))
 
   (to (place-rest-of-line! y)
-    (for each! ((x (1 .thru 11)))
+    (for each! [(x (1 .thru 11))]
       (place-neighbor! (~ x.- y) (~ x y))))
   
   (hide
@@ -141,7 +142,7 @@ TODO try reworking the code below
     (let oriented-corner 'XXX)
     (place! (~ 0 0) oriented-corner))
   (place-rest-of-line! 0)
-  (for each! ((y (1 .thru 11)))
+  (for each! [(y (1 .thru 11))]
     (place-neighbor! (~ 0 y.-) (~ 0 y))
     (place-rest-of-line! y))
 
@@ -152,13 +153,13 @@ TODO try reworking the code below
 
 (to (extract-image grid) ; Extract the tile interiors into a list of text lines
   (let interior-rows
-    (for each ((row grid.rows))
-      (for each (({oriented-tile _ interior _} row))
+    (for each [(row grid.rows)]
+      (for each [({oriented-tile _ interior _} row)]
         interior)))
   (chain @(each abut interior-rows)))
 
 (to (abut interiors) ; From a list of row-lists abutting horizontally, make a list of lines.
-  (for each ((rows (transpose interiors)))
+  (for each [(rows (transpose interiors))]
     ("" .join rows)))
 
 (to (part2)

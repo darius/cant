@@ -23,7 +23,7 @@
       (all .run (context<- default-chaos) 40 property gens))
     (to (~ .run g n-times property gens)
       (let failures (flexarray<-))
-      (for each! ((_ n-times.till))
+      (for each! [(_ n-times.till)]
         (let inputs (each (~ g) gens))
         (may (property @inputs)
           (be #yes    (out .display "."))
@@ -31,7 +31,7 @@
       out.newline
       (when failures.some?
         (out .say "Failures for ~w:\n" property)
-        (for each! (((~ outcome inputs) failures.values))
+        (for each! [((~ outcome inputs) failures.values)]
           (out .say "~w: ~w\n" outcome inputs)))
       failures.none?))
 

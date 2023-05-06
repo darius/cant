@@ -7,14 +7,14 @@
 (to (show-move dir board)
   (show board)
   (out .say " ------- ~w:\n" dir)
-  (for each! ((moved (dir board)))
+  (for each! [(moved (dir board))]
     (show moved)
     out.newline)
   out.newline)
 
 (to (show rows)
-  (for each! ((row rows))
-    (for each! ((v row))
+  (for each! [(row rows)]
+    (for each! [(v row)]
       (out .say " ~d" (if (= v 0) "." v)))
     out.newline))
 

@@ -22,7 +22,7 @@
   ((pit<-) .go D)
   (with-ejector (on (ejector)
                   (quitter .^= ejector)
-                  (begin ()
+                  (begin []
                     (play-turn)
                     (loop)))))
 
@@ -42,7 +42,7 @@
 
 (to (play-turn)
   (describe)
-  (begin asking ()
+  (begin asking []
     (may (ask "Shoot, Move, or Quit (S-M-Q)?")
       (be "S" (shoot))
       (be "M" (move))

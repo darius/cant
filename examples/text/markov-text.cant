@@ -11,7 +11,7 @@
 
 (to (main argv)
   (let model (!map<-))
-  (for each! ((filename argv.rest))
+  (for each! [(filename argv.rest)]
     (train model (tokenize (with-input-file ~.read-all filename))))
   (when model.some?
     (let tokens (spew (random-chaos<- system-randomness-source<-) model start))
@@ -28,12 +28,12 @@
 
 (to (train model input)
   (let data (chain start input '("END"))) ;TODO as array?
-  (for each! ((datum (data .k-slices order.+)))
+  (for each! [(datum (data .k-slices order.+))]
     (let context (datum .from 0 order))
     ((model .get-set! context bag<-) .add! (datum order))))
 
 (to (spew chaos model state)
-  (begin spewing (state)
+  (begin spewing [state]
     (may ((model state) .weighted-sample chaos)
       (be "END"
         '())

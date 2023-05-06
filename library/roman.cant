@@ -3,7 +3,7 @@
 
 (to (number<-roman text)
   (let values (each value<-rune text.uppercase))
-  (for sum-by ((value `(0 ,@values)) (next-value `(,@values 0)))
+  (for sum-by [(value `(0 ,@values)) (next-value `(,@values 0))]
     ;; Each letter goes into the sum either negatively or positively,
     ;; depending on the next letter. E.g. X in "XC" means -10, not 10.
     ((if (< value next-value) - +) value)))
@@ -13,7 +13,7 @@
 
 (to (roman<-number n)
   (surely (and (count? n) n.positive?))
-  (for amass ((roman "") (digit n.digits))
+  (for amass [(roman "") (digit n.digits)]
     (chain (text-by rune*10 roman) (roman<-digit digit))))  ;; TODO not quadratic
 
 (let roman<-digit (~.array (" I II III IV V VI VII VIII IX" .split " ")))

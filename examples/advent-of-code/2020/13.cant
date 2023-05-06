@@ -5,15 +5,15 @@
 
 (to (part1)
   (let buses (yeahs ~.?number second-line))
-  (for some ((n id.and-up))
+  (for some [(n id.and-up)]
     (let good-buses (keep/lazy (~ .divides? n) buses))
     (and good-buses.some?
          (* good-buses.first (- n id)))))
 
 (to (part2)
   ;; We need a solution t to the congruences (t + minutes_i) = 0 (modulo bus_i)
-  (chinese-remainder (for yeahs (((~ minutes entry) second-line.items))
-                       (for mayhap ((bus entry.?number))
+  (chinese-remainder (for yeahs [((~ minutes entry) second-line.items)]
+                       (for mayhap [(bus entry.?number)]
                          (~ bus (- minutes))))))
 
 ;; TODO extract the below to factoring.cant (and rename that module?)
@@ -25,7 +25,7 @@
 ;; Return the smallest nonnegative x such that for every congruence, x = a_i (mod n_i)
 (to (chinese-remainder congruences)
   (let N (* @(each (~ .part 0) congruences)))
-  (let x (for sum-by (((~ n_i a_i) congruences))
+  (let x (for sum-by [((~ n_i a_i) congruences)]
            (let y_i (N .quotient n_i))
            (let z_i (modular-inverse n_i y_i))
            (* a_i y_i z_i)))

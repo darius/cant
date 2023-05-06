@@ -22,8 +22,8 @@
 (import (use 'chaos) chaos)
 
 (to (random-tests n-trials)            ;TODO use squickcheck
-  (for each! ((_ n-trials.till))
-    (exercise-em (for each ((value (50 .till)))
+  (for each! [(_ n-trials.till)]
+    (exercise-em (for each [(value (50 .till))]
                    (let key (chaos .sample-count 16))
                    (let op (may (chaos .sample-count 10)
                              (be 0 'delete)
@@ -36,11 +36,11 @@
 (to (exercise-em pairs)
   (let m (!map<-))     ;; The hashmap under test.
   (let a (box<- '())) ;; An a-list that should be equivalent.
-  (for each! ((`(,key ,op) pairs))
+  (for each! [(`(,key ,op) pairs)]
     (may op
       (be 'fetch
         (let m-val (m .get key))
-        (let a-val (for mayhap ((`(,k ,v) (assoc key a.^)))
+        (let a-val (for mayhap [(`(,k ,v) (assoc key a.^))]
                      v))
         (surely (= m-val a-val))
                                         ;        (out .print `(,key ,m-val))
@@ -58,7 +58,7 @@
   (surely (= r1 r2) "Final maps diverge" r1 r2))
 
 (to (a-list-remove key a-list)
-  (for skip ((`(,k ,_) a-list))
+  (for skip [(`(,k ,_) a-list)]
     (= k key)))
 
 (random-tests 18)

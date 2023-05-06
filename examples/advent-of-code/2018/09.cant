@@ -14,7 +14,7 @@
   (let circle (circle<- m.+))
   (let p (box<- 0))                     ; current marble position
   (let scores (array<-count n)) ;XXX it's mere luck that this initializes the elements to 0
-  (begin playing ((elf 0) (marble 1))
+  (begin playing [(elf 0) (marble 1)]
     (hm (when (marble .even? 23)
           (out .print marble)
           (scores .set! elf (+ (scores elf) marble))

@@ -54,11 +54,11 @@
   '())
 
 (to ((segments<- segments) frame)       ;XXX confusing name
-  (for each ((s segments))
+  (for each [(s segments)]
     (map-segment frame s)))
 
 (to (grid<- m n segments)
-  (segments<- (for each (({segment {v x0 y0} {v x1 y1}} segments))
+  (segments<- (for each [({segment {v x0 y0} {v x1 y1}} segments)]
                 {segment {v (/ x0 m) (/ y0 n)}
                          {v (/ x1 m) (/ y1 n)}})))
 
@@ -101,7 +101,7 @@
   (let frame {frame {v 0 0} {v 500 0} {v 0 500}})
   ;;(sink .displayln "500 500 scale  .1 .1 translate  0 setlinewidth")
   (sink .displayln "500 500 scale  0 setlinewidth")
-  (for each! (({segment {v x0 y0} {v x1 y1}} (p frame)))
+  (for each! [({segment {v x0 y0} {v x1 y1}} (p frame))]
     (sink .say "~d ~d moveto ~d ~d lineto\n"
           x0.inexact y0.inexact x1.inexact y1.inexact))
   (sink .displayln "stroke showpage"))

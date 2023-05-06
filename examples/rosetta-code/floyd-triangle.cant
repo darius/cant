@@ -7,13 +7,13 @@
 
 (to (floyd-triangle n-rows)
   (let rows (flexarray<-))
-  (begin ((r 1) (i 1))
+  (begin [(r 1) (i 1)]
     (when (<= r n-rows)
       (rows .push! (each ~.text (i .span r)))
       (loop r.+ (+ i r))))
   (let widths (each ~.count rows.last))
-  (for each! ((row rows.values))
-    (out .displayln (" " .join (for each (((~ text width) (zip .ragged row widths)))
+  (for each! [(row rows.values)]
+    (out .displayln (" " .join (for each [((~ text width) (zip .ragged row widths))]
                                  (text .pad-left width))))))
     
 (floyd-triangle 5)

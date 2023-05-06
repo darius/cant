@@ -32,8 +32,8 @@
 (to (bf-interpret program)
   (let data (!map<-))                   ; run-time data store
   (let jump (match-brackets program))   ; jump targets
-  (begin running ((i 0)                 ; instruction pointer
-                  (d 0))                ; data pointer
+  (begin running [(i 0)                 ; instruction pointer
+                  (d 0)]                ; data pointer
     (may (program .get i)
       (be #\[ (running (if (= 0 (data .get d 0)) (jump i) i.+)
                        d))
@@ -54,8 +54,8 @@
 
 (to (match-brackets program)
   (let jump (!map<-))
-  (for amass ((stack '())
-              ((~ i rune) program.items))
+  (for amass [(stack '())
+              ((~ i rune) program.items)]
     (may rune
       (be #\[ (link i stack))
       (be #\] (jump .set! stack.first i.+)
@@ -73,11 +73,11 @@
 
 (to (bf-compile program)
   (let expr-stack
-    (for amass ((stack '(0)) (rune program))
+    (for amass [(stack '(0)) (rune program)]
       (may rune
         (be #\[ (link 'd stack))
         (be #\] (let (link top next rest) stack)
-                (link `(begin ((d ,next))
+                (link `(begin [(d ,next)]
                          (if (= 0 (data d))
                              d
                              (loop ,top)))

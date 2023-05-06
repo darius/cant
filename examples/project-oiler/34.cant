@@ -6,7 +6,7 @@
   (= n (sum-by ~.! n.digits)))
 
 ;; What's an upper bound on these?
-;; -> (for each! ((d (2 .thru 10)))
+;; -> (for each! [(d (2 .thru 10))]
 ;;      (out .say "~2w: ~w\n    ~w\n" d (- (10 .** d) 1) (* d (9 .!))))
 ;;  2: 99
 ;;     725760
@@ -36,8 +36,8 @@
 
 ;; A faster search, over unordered bags of factorial terms instead of over numbers:
 (let digit-factorials (each ~.! (1 .thru 9))) ;; 0! = 1!, so 0 would be redundant in this list
-(let answers (~.nub (for gather ((n-digits (2 .thru 5)))
-                      (for yeahs ((terms (digit-factorials .k-bags n-digits)))
+(let answers (~.nub (for gather [(n-digits (2 .thru 5))]
+                      (for yeahs [(terms (digit-factorials .k-bags n-digits))]
                         (let n (sum terms))
                         (and (<= 10 n)
                              (curious? n)

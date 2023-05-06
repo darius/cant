@@ -27,7 +27,7 @@
 (to (run code)
   (let seen (set<-))
   (let end code.count)
-  (begin running ((pc 0) (acc 0))
+  (begin running [(pc 0) (acc 0)]
     (hm (if (= pc end)       {finished acc})
         (if (seen .maps? pc) {looped acc})
         (do (seen .add! pc))

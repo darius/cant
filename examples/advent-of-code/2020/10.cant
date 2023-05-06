@@ -13,7 +13,7 @@
 (to (part2)
   (let count-ways
     (memoize (on (joltage)
-               (for sum-by ((decr '(1 2 3)))
+               (for sum-by [(decr '(1 2 3))]
                  (let j (- joltage decr))
                  (hm (if (= j 0) 1)
                      (if (< j 0) 0)

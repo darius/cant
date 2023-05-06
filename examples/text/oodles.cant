@@ -10,7 +10,7 @@
   (out .displayln (fill expanded 72)))
 
 (to (expand-text text probability)
-  (for text-by ((token (scan text)))
+  (for text-by [(token (scan text))]
     (if (and (menu .maps? token) (chaos .probability probability))
         (expand-text (menu token) (* shrink probability))
         token)))

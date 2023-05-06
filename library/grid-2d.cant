@@ -39,8 +39,8 @@
   (may initializer
     (be {constant _})
     (be {map f}
-      (for each! ((y (yl .thru yh)))
-        (for each! ((x (xl .thru xh)))
+      (for each! [(y (yl .thru yh))]
+        (for each! [(x (xl .thru xh))]
           (A .set! (at x y) (f (~ x y)))))))
 
   (make grid-2d {extend map-trait}
@@ -72,21 +72,21 @@
     (to ~.keys
       ;; Could be a one-liner: (grid* (xl .thru xh) (yl .thru yh))
       ;; except that'd be column-major order. Hm, hm.
-      (for gather ((y (yl .thru yh)))
-        (for each ((x (xl .thru xh)))
+      (for gather [(y (yl .thru yh))]
+        (for each [(x (xl .thru xh))]
           (~ x y))))
 
     (to ~.values
       A.values)
 
     (to ~.rows
-      (for each ((y (yl .thru yh)))
-        (for each ((x (xl .thru xh)))
+      (for each [(y (yl .thru yh))]
+        (for each [(x (xl .thru xh))]
           (A (at x y)))))
 
     (to (~ .show sink)
-      (for each! ((y (yl .thru yh)))
-        (sink .print (for each ((x (xl .thru xh)))
+      (for each! [(y (yl .thru yh))]
+        (sink .print (for each [(x (xl .thru xh))]
                        (A (at x y))))))
     (to ~.show  ;; TODO different name?
       (text<-writer (:: (grid-2d .show it))))

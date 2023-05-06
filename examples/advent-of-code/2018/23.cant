@@ -11,7 +11,7 @@
 (let `(,strongest-p ,strongest-r) (max-by (on (`(,p ,r)) r)
                                           inputs))
 
-(let n-near-strongest (for tally-by ((`(,p ,_) inputs))
+(let n-near-strongest (for tally-by [(`(,p ,_) inputs)]
                         (<= (manhattan-distance<- p strongest-p)
                             strongest-r)))
                         

@@ -63,16 +63,16 @@
   (to (~ .digits base @(optional min-length))  ;; N.B. big-endian
     (let digits
       (hm (if (and (integer? base) (< 1 base))
-              (begin converting ((n (abs me)) (result '()))
+              (begin converting [(n (abs me)) (result '())]
                 (hm (if (= n 0) result)
                     (else (let (~ q r) (n ./mod base))
                           (converting q (link r result))))))
           (if (and ;; (list? base)  TODO less-crude types
-                   (for every ((r base)) ;; Mixed-radix digits
+                   (for every [(r base)] ;; Mixed-radix digits
                      (and (integer? r) (< 0 r))))
-              (begin converting ((n (abs me))
+              (begin converting [(n      (abs me))
                                  (moduli (reverse base))
-                                 (result '()))
+                                 (result '())]
                 (hm (if (= n 0) result)
                     (if moduli.none? (link n result))
                     (else (let (~ q r) (n ./mod moduli.first))
@@ -94,7 +94,7 @@
     (surely (<= 0 k me))  ;; TODO allow out-of-range integers, with result 0?
     (let k0 (min k (- me k)))
     (let n-k (- me k0))
-    (for amass ((product 1) (i (1 .thru k0)))
+    (for amass [(product 1) (i (1 .thru k0))]
       ((* product (+ n-k i)) .quotient i)))
 
   (to ~.negative?      (< me 0))

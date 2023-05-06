@@ -104,7 +104,7 @@
 
 ;;XXX 
 ;;(to (show assembly)
-;;  (for each! ((insn insns))
+;;  (for each! [(insn insns)]
 ;;    (out .say "~2w ~w\n" insn.label insn)))
 
 
@@ -130,7 +130,7 @@
     (to (~ .gen s then)
      (let cvs ;; closure variables
        (sset-elements (sset-difference fvs (sset<-list s.known.keys))))
-     (let fetches (for each (((-> s {fetch f}) cvs))
+     (let fetches (for each [((-> s {fetch f}) cvs)]
                     f))
      (prepend {enclose then.label fetches src}
               (body .gen
@@ -182,7 +182,7 @@
 ;; Main
 
 (to (main argv)
-  (for each! ((filename argv.rest))
+  (for each! [(filename argv.rest)]
     (out .say "\n~d:\n" filename)
     (out .print (run-file filename))))
 

@@ -18,10 +18,10 @@
 (let all-steps (~.range (chain @ordering)))
 (let nodes all-steps.keys)
 (let succs-set (map-by (:: (set<-)) nodes))
-(for each! ((`(,pre ,post) ordering))   ;TODO use a mapreduce
+(for each! [(`(,pre ,post) ordering)]   ;TODO use a mapreduce
   ((succs-set pre) .add! post))             ;TODO maybe use .get-set!
 
-(let succs (for map-by ((node nodes))
+(let succs (for map-by [(node nodes)]
              (-> node succs-set ~.keys sort)))
 
 (to (delay<- node)                ;maybe go back to calling them steps
@@ -34,8 +34,8 @@
 
 (to (schedule)
   (let pred-count (!map-by (:: 0) nodes))
-  (for each! ((ss succs.values))
-    (for each! ((s ss))
+  (for each! [(ss succs.values)]
+    (for each! [(s ss)]
       (pred-count .update s ~.+)))
 
   (let outbox (flexarray<-))
@@ -44,7 +44,7 @@
     ;; TODO can be simpler for initial assignment
 ;    (out .say "assign ~w\n" arg)
     (let {state workers jobs} arg)
-    (begin assigning ((ws1 workers) (ws2 '()) jobs)
+    (begin assigning [(ws1 workers) (ws2 '()) jobs]
 ;      (out .say "ws1 = ~w\n" ws1)
       (may ws1
         (be '()
@@ -62,7 +62,7 @@
   (to (work {state workers jobs})
     ;; Decrement one time tick on each worker,
     ;; and retire the nodes that reach 0.
-    (begin working ((ws1 workers) (ws2 '()) jobs)
+    (begin working [(ws1 workers) (ws2 '()) jobs]
 ;      (out .say "a: ws1 = ~w\n" ws1)
       (may ws1
         (be '()
@@ -76,24 +76,24 @@
           (if (= n 0)
               (do (outbox .push! node)
                   (let new-nodes
-                    (sort (for keep ((s (succs node)))
+                    (sort (for keep [(s (succs node))]
                             (surely (< 0 (pred-count s)))
                             (= 0 (pred-count .update s ~.-)))))
                   ;; let's assume assigning happens elsewhere for now
                   (working rest `(#no ,@ws2) (merge new-nodes jobs)))
               (working rest `((,node ,n) ,@ws2) jobs))))))
 
-  (let first-steps (sort (for keep ((node nodes))
+  (let first-steps (sort (for keep [(node nodes)]
                            (= 0 (pred-count node)))))
 
   (out .say "Second Workers Pending Done\n")
-  (begin ticking ((t 0)
+  (begin ticking [(t 0)
                   ({state workers jobs}
                    (assign {state ('(#no) .repeat n-workers)
-                                  first-steps})))
+                                  first-steps}))]
     (out .say "~6w ~7w ~7w ~w\n"
               t
-              (for each ((w workers))
+              (for each [(w workers)]
                 (if w (w 0) '-))
               jobs
               (text-by -> outbox))

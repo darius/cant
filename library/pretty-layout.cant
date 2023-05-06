@@ -26,7 +26,7 @@
     (be {text t}    doc)
     (be {line j}    {line (+ i j)})
     (be {union x y} {union (nest i x) (nest i y)})
-    (be `(,@docs)   (for each ((d docs))
+    (be `(,@docs)   (for each [(d docs)]
                       (nest i d)))))
 
 (to (group doc)

@@ -17,14 +17,14 @@
   ;; Return a set of locations traced out by the path.
   (to (trace path)
     (let result (set<-))
-    (for amass ((p '(0 0)) ((~ dir stride) path))
+    (for amass [(p '(0 0)) ((~ dir stride) path)]
       (let dp (delta<- dir))
-      (for amass ((p p) (_ stride.till))
+      (for amass [(p p) (_ stride.till)]
         (hey (vector+ p dp) (:: (result .add! it)))))
     result)
 
   (let crossings ((trace (inputs 0)) .intersect (trace (inputs 1))))
-  (min @(for each ((p crossings.keys))
+  (min @(for each [(p crossings.keys)]
           (manhattan-distance<- p '(0 0)))))
 
 (out .say "~w\n" (part-1))
@@ -40,9 +40,9 @@
   (to (trace path)
     (let result (!map<-))
     (let step (box<- 0))
-    (for amass ((p '(0 0)) ((~ dir stride) path))
+    (for amass [(p '(0 0)) ((~ dir stride) path)]
       (let dp (delta<- dir))
-      (for amass ((p p) (_ stride.till))
+      (for amass [(p p) (_ stride.till)]
         (hey (vector+ p dp) (:: (result .set! it (min (result .get it infinity)
                                                       step.+!))))))
     result)
@@ -50,7 +50,7 @@
   ;; TODO map .intersect
   (let (list<- path0 path1) (each trace inputs))
   (let crossings (path0.domain .intersect path1.domain))
-  (min @(for each ((p crossings.keys))
+  (min @(for each [(p crossings.keys)]
           (+ (path0 p) (path1 p)))))
 
 (out .say "~w\n" (part-2))

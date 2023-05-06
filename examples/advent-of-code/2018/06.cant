@@ -23,8 +23,8 @@
 (out .say "bounds ~w\n" (bounds<- centers))
 
 (to (show-map)
-  (for each! ((y (yl .thru yh)))
-    (for each! ((x (xl .thru xh)))
+  (for each! [(y (yl .thru yh))]
+    (for each! [(x (xl .thru xh))]
       (let p `(,x ,y))
       (out .display (or (names .get p)
                         (if (included? p) #\# #\.))))
@@ -34,7 +34,7 @@
   (< (total-distance p) margin))
 
 (to (total-distance p)
-  (for sum-by ((c centers))
+  (for sum-by [(c centers)]
     (manhattan-distance<- c p)))
 
 
@@ -59,7 +59,7 @@
 
 (to (grow-from seed)
   (let already (set<-))
-  (begin growing ((queue (extend empty `(,seed))))
+  (begin growing [(queue (extend empty `(,seed)))]
     (may (peek queue)
       (be {empty})
       (be {nonempty p queue-1}
@@ -69,7 +69,7 @@
 ;;               (out .say "add ~w distance ~w count ~w\n" p (total-distance p) region.count)
                 ))
         (growing (extend queue-1 
-                         (for keep ((p1 (neighbors<- p)))
+                         (for keep [(p1 (neighbors<- p))]
                            (and (not (already .maps? p1))
                                 (do (already .add! p1)
                                     (included? p1))))))))))
@@ -85,7 +85,7 @@
 ;; Detritus from the bug-hunt
 
 ;; (let seed
-;;   (begin seeking ((p centroid))
+;;   (begin seeking [(p centroid)]
 ;;     (let d (total-distance p))
 ;;     (out .say "seeking at ~w, distance ~w\n" p d)
 ;;     (if (< d margin)
@@ -101,9 +101,9 @@
 ;; Hm, no, I guess the slowdown was from using the more generic manhattan-distance<-.
 ;; Change one thing at a time.
 
-;;(let area-2 (for sum-by ((y ((- (seed 1) margin) .thru (+ (seed 1) margin))))
+;;(let area-2 (for sum-by [(y ((- (seed 1) margin) .thru (+ (seed 1) margin)))]
 ;;              (out .say "y ~w of ~w\n" y (+ (seed 1) margin))
-;;              (for tally-by ((x ((- (seed 0) margin) .thru (+ (seed 0) margin))))
+;;              (for tally-by [(x ((- (seed 0) margin) .thru (+ (seed 0) margin)))]
 ;;                (included? `(,x ,y)))))
 
 ;(out .say "result 2 (slow): ~w\n" (area-1))

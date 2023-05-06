@@ -12,12 +12,12 @@
 
 (to (main _)
   (let chaos (chaos<- (random-seed<- system-randomness-source<-)))
-  (for cbreak-mode ()
+  (for cbreak-mode []
     (play (starting-board<- chaos) chaos)))
 
 (to (play board chaos)
   (let history (flexarray<-))
-  (begin playing (board (forfeit? #no))
+  (begin playing [board (forfeit? #no)]
     (to (continue)
       (playing board forfeit?))
     (let score (hm (if (lost? board) "You lose!")
@@ -48,7 +48,7 @@
   (render [heading (view board) score]))
 
 (to (animate boards score)
-  (for each! ((board boards))
+  (for each! [(board boards)]
     (frame board score)
     (nanosleep 40000000)))
 
@@ -59,8 +59,8 @@
   (update board (random-empty-square chaos board) value))
 
 (to (view rows)
-  (for each ((row rows))
-    [(for each ((v row))
+  (for each [(row rows)]
+    [(for each [(v row)]
        [" " (or (tiles .get v)
                 (bold ("~w" .format v)))])
      "\n\n"]))
@@ -80,33 +80,33 @@
          (~ 2048  (underlined (bold (yellow (on-black "2048")))))))
 
 (to (won? rows)
-  (for some ((row rows))
-    (for some ((v row))
+  (for some [(row rows)]
+    (for some [(v row)]
       (<= 2048 v))))
 
 (to (lost? rows)
-  (for every ((move arrows.values))
+  (for every [(move arrows.values)]
     ((move rows) .none?)))
 
 (to (random-empty-square chaos rows)
-  (-> (for gather (((~ r row) rows.items))
-        (for yeahs (((~ c v) row.items))
+  (-> (for gather [((~ r row) rows.items)]
+        (for yeahs [((~ c v) row.items)]
           (and (= v 0) (~ r c))))
       (~ .sample-value chaos)))
 
 (to (update rows at new-value)
-  (for each (((~ r row) rows.items))
-    (for each (((~ c v) row.items))
+  (for each [((~ r row) rows.items)]
+    (for each [((~ c v) row.items)]
       (if (= at (~ r c)) new-value v))))
 
 ;; Try to slide the board leftward; return a list of boards to
 ;; animate the move -- an empty list if there's no move leftward.
 (to (left rows)
-  (begin sliding ((states (for each ((row rows))
-                            (slide (~ 0 row)))))
+  (begin sliding [(states (for each [(row rows)]
+                            (slide (~ 0 row))))]
     (let lows (each (~ .part 0) states))
     (let board (each (~ .part 1) states))
-    (if (for every ((lo lows))
+    (if (for every [(lo lows)]
           (<= 4 lo))
         '()
         (link board (sliding (each slide states))))))
@@ -115,7 +115,7 @@
 ;; position at `low`. Advance low past merging or completion. Return
 ;; the updated (~ low row) state.
 (to (slide (~ low row))
-  (begin checking ((i low))
+  (begin checking [(i low)]
     ;; Find the first suffix matching either (0 nonzero-n ...)
     ;;                                    or (nonzero-n same-n ...)
     ;; then collapse these two neighboring values into their sum,

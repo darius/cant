@@ -23,7 +23,7 @@
     (04 62 98 27 23 09 70 98 73 93 38 53 60 04 23)))
 
 (to (max-path-sum triangle)
-  (~.first (for fold ((steps triangle.but-last) (so-far triangle.last))
+  (~.first (for fold [(steps triangle.but-last) (so-far triangle.last)]
              (each + steps (each max so-far.rest so-far.but-last)))))
 
 (out .print (max-path-sum small-example))

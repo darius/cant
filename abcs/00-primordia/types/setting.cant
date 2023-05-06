@@ -24,7 +24,7 @@
     (__setting-variables setting))
 
   (to (~ .resolve-each! resolve variables)
-    (for each! ((name variables))
+    (for each! [(name variables)]
       (setting .resolve! name (resolve name))))
 
   (to (~ .extend-map map) ;TODO just call this one .extend, and drop the other?

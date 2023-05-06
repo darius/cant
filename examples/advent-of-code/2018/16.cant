@@ -22,7 +22,7 @@ insn:    :count ' ' :count ' ' :count ' ' :count '\n' :hug.
 (to (run program assignments)
   (let regs (array<-count 4 0))
   (let vm (vm<- regs))
-  (for each! ((`(,opcode ,a ,b ,c) program))
+  (for each! [(`(,opcode ,a ,b ,c) program)]
     (vm .do (assignments opcode) a b c))
   regs)
 
@@ -68,10 +68,10 @@ insn:    :count ' ' :count ' ' :count ' ' :count '\n' :hug.
     gtir gtri gtrr eqir eqri eqrr))
 
 (let constraints
-  (for each ((sample observations))
+  (for each [(sample observations)]
     (let `(,regs-pre (,op ,a ,b ,c) ,regs-post) sample)
     (let compatible-ops
-      (for keep ((op-name all-op-names))
+      (for keep [(op-name all-op-names)]
         (let vm (vm<- regs-pre.array))
         (vm .do op-name a b c)
         (<=> regs-post vm.get-regs.values)))
@@ -79,7 +79,7 @@ insn:    :count ' ' :count ' ' :count ' ' :count '\n' :hug.
     `(,op ,compatible-ops)))
 
 (to (part-1)
-  (for tally-by ((`(,_ ,compatible-ops) constraints))
+  (for tally-by [(`(,_ ,compatible-ops) constraints)]
     (<= 3 compatible-ops.count)))
 
 (out .say "~w\n" (part-1))
@@ -92,19 +92,19 @@ insn:    :count ' ' :count ' ' :count ' ' :count '\n' :hug.
   (let op-name-set all-op-names.range)
   (let opcodes ((each ~.first constraints) .range))
   (let candidates (!map-by (:: op-name-set) opcodes.keys))
-  (for each! ((`(,opcode ,op-names) constraints))
+  (for each! [(`(,opcode ,op-names) constraints)]
     (candidates .update opcode (~ .intersect op-names.range)))
 
 ;; It turns out the above could've been just
 ;;  (let candidates
-;;    (!map<-lists (for each ((`(,opcode ,op-names) constraints))
+;;    (!map<-lists (for each [(`(,opcode ,op-names) constraints)]
 ;;                   `(,opcode ,op-names.range))))
 ;; even though `constraints` has multiple entries per opcode, sometimes
 ;; different ones. But the above could've been needed, depending on the data.
 
   ;; Trivial constraint satisfaction turns out to be good enough:
   (let assignments (!map<-))
-  (begin pruning ()
+  (begin pruning []
     (let opcode (min-by (compose ~.count candidates)
                         candidates.keys))
     (when (~.one? (candidates opcode))

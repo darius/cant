@@ -6,7 +6,7 @@
 (out .print the-ip)
 
 (let the-program (array<-list
-                  (for each ((line input.rest))
+                  (for each [(line input.rest)]
                     (let v line.split)
                     `(,v.first.symbol ,@(each ~.number v.rest)))))
 (each! (:: (out .print it)) the-program.values)
@@ -18,7 +18,7 @@
   (make vm
 
     (to ~.run
-      (begin ()
+      (begin []
         (when vm.step (loop))))
 ;       (when (program .maps? (regs ip))
 ;         (out .say "ip=~w ~w ~d " (regs ip) regs (show (program (regs ip))))
@@ -28,7 +28,7 @@
 
     (to ~.step
       (let here (regs ip))
-      (for mayhap ((`(,op ,a ,b ,c) (program .get here)))
+      (for mayhap [(`(,op ,a ,b ,c) (program .get here))]
         (vm .do op a b c)
         (regs .update ip ~.+)
         (when (= here 7)

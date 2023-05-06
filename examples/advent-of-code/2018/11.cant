@@ -21,7 +21,7 @@
   (max-by patch-level<- (patches)))
 
 (to (patch-level<- `(,x ,y))
-  (for sum-by ((`(,x ,y) (grid* (x .span 3) (y .span 3))))
+  (for sum-by [(`(,x ,y) (grid* (x .span 3) (y .span 3)))]
     (level<- x y)))
 
 (to (patches)
@@ -44,8 +44,8 @@
   (let S (array<-count (* N1 N1) 0))
   ;; (S (at x y)) = sum of (A i j) for i,j above and left of x,y.
 
-  (for each! ((y (1 .thru N)))
-    (for each! ((x (1 .thru N)))
+  (for each! [(y (1 .thru N))]
+    (for each! [(x (1 .thru N))]
       (S .set! (at x y)
          (+ (S (at x y.-))          ; rect above
             (- (S (at x.- y))       ; strip to left
@@ -64,9 +64,9 @@
   (let side N.till)
 
   (to (subsquares)
-    (for gather ((i side))
-      (for gather ((j side))
-        (for each ((d (1 .thru (min (- N i) (- N j)))))
+    (for gather [(i side)]
+      (for gather [(j side)]
+        (for each [(d (1 .thru (min (- N i) (- N j))))]
           `(,i ,j ,d)))))
 
   (to (cvt-coords `(,x ,y ,d))
@@ -79,8 +79,8 @@
     (grid* side side))
 
   (let `(,power ,triple)
-    (max @(for each ((`(,x ,y) (corners)))
-            (max @(for each ((d (1 .thru (min (- N x) (- N y)))))
+    (max @(for each [(`(,x ,y) (corners))]
+            (max @(for each [(d (1 .thru (min (- N x) (- N y))))]
                     (let triple `(,x ,y ,d))
                     `(,(power<- triple) ,triple))))))
 
