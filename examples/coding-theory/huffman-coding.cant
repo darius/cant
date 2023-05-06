@@ -32,7 +32,7 @@
             (loop (pq-insert pq2 (~ (+ f1 f2) {branch t1 t2})))))))))
 
 (to (tabulate tree)
-  (begin listing ((tree tree) (path '()) (tail '()))
+  (begin listing (tree (path '()) (tail '()))
     (may tree
       (be {leaf symbol}      (link (~ symbol path) tail))
       (be {branch on-0 on-1} (listing on-0 `(,@path 0)
@@ -40,7 +40,7 @@
                                                tail))))))
 
 (to (decode root bits)
-  (begin stepping ((tree root) (bits bits))
+  (begin stepping ((tree root) bits)
     (hm (if bits.none? '())
         (let {branch @subtrees} tree)
         (may (subtrees bits.first)

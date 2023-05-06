@@ -52,7 +52,7 @@
       (if (variable? v)
           (extend s u v))
       (if (and (list? u) (list? v) (= u.count v.count))
-          (begin unifying ((s s) (u u) (v v))
+          (begin unifying (s u v)
             (if u.none?
                 s
                 (for mayhap ((s1 (unify s u.first v.first)))

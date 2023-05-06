@@ -27,7 +27,7 @@
 
 (to (duplicates<- xs)
   (let seen (set<-))
-  (begin looking ((xs xs))
+  (begin looking (xs)
     (hm (if xs.none?
           '())
         (let x xs.first)

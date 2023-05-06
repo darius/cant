@@ -42,8 +42,8 @@
         (if (or (= text "") (= text "\n"))
             (rendering pp 0 y.+)  ;; TODO flexarray to text, i guess
             (begin appending ((glyphs (render-rune text.first x))
-                              (x x)
-                              (y y))
+                              x
+                              y)
               (hm (if glyphs.none? (rendering pp x y))
                   (do (lines .set! y
                              (chain (lines y) glyphs.first.text))) ;XXX quadratic

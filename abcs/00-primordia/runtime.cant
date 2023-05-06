@@ -311,7 +311,7 @@
 
 (make-trait transitive-comparison compare?
   (to (~ x @xs)
-    (begin comparing ((x0 x) (xs xs))
+    (begin comparing ((x0 x) xs)
       (may xs
         (be `()           #yes)
         (be `(,x1 ,@rest) (and (compare? x0 x1)
@@ -491,7 +491,7 @@
     ))
 
 (to (lazier<- xs) ;; Convert from '/lazy' to '/lazier'. TODO we shouldn't need this
-  (begin copying ((xs xs))
+  (begin copying (xs)
     (hm (if xs.none? '())
         (else (link/lazier xs.first (: (copying xs.rest)))))))
 

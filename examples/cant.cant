@@ -39,7 +39,7 @@
 
 (to (script<- trait clauses)
   (to (script .receive message actor parent-r)
-    (begin matching ((clauses clauses))
+    (begin matching (clauses)
       (may clauses
         (be '()
           (trait actor message))

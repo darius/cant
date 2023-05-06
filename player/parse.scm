@@ -408,6 +408,8 @@
                (let ((name-for (if (symbol? fn)
                                    (string-append "for_" (symbol->string fn))
                                    "for:_")))
+                 ;; TODO don't call the same parse-bindings as for 'begin,
+                 ;; because default (x) meaning ((x x)) is not worth the confusion here
                  (parse-bindings bindings
                    (lambda (ps es)
                      `(,fn (make ,name-for
@@ -492,12 +494,18 @@
     (__ #f)))
 
 (define (parse-bindings bindings receiver)
+  (define (binding-get getter)
+    (lambda (binding)
+      (if (symbol? binding) binding (getter binding))))
   (for-each (lambda (binding)
               (mcase binding
                 ((__ __)   ; (used to check here for a variable, but now can be any pattern)
+                 'ok)
+                ((: __ symbol?)  ; A convenience: (begin (x y) ...) = (begin ((x x) (y y)) ...)
                  'ok)))
             bindings)
-  (receiver (map car bindings) (map cadr bindings)))
+  (receiver (map (binding-get car) bindings)
+            (map (binding-get cadr) bindings)))
 
 (define (expand-quasiquote-pat qq)
   (mcase qq

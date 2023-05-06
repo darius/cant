@@ -3,7 +3,7 @@
 (to (as-list seq)            ;XXX naming convention for coercions?
   (if (list? seq)            ;XXX doesn't check the whole list, only the first link
       seq
-      (begin copying ((seq seq))
+      (begin copying (seq)
         (if seq.none?
             '()
             (link seq.first (copying seq.rest))))))

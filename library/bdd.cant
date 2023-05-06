@@ -104,7 +104,7 @@
 (to (satisfy-first node goal)
   (let goal-node (constant<- goal))
   (let env (!map<-))
-  (begin walking ((node node))
+  (begin walking (node)
     (hm (when (<= node lit1)
           (and (= node goal-node) env))
         (let if0 (if0s node))

@@ -25,7 +25,7 @@
   (to (~ xs ys)   ;specialized for speed (TODO still worth bothering?)
     (to (mismatch)
       (oops "zip: mismatched arguments" xs ys))
-    (begin zipping ((xs xs) (ys ys))
+    (begin zipping (xs ys)
       (hm (if xs.none? (if ys.none? '() (mismatch)))
           (if ys.none? (mismatch))
           (else (link (~ xs.first ys.first)
@@ -35,18 +35,18 @@
   ;; Like (zip @lists), but clipping the lists to the length of the shortest:
   ;; TODO move .ragged to zipped-list-transducer? and define zip in terms of it?
   (to (~ .ragged @lists) ;; TODO better name .clip ? nah...
-    (begin zipping ((rows lists))
-      (if (some ~.none? rows)
+    (begin zipping (lists)
+      (if (some ~.none? lists)
           '()
-          (link (tuple<-list (each ~.first rows))
-                (zipping (each ~.rest rows))))))
+          (link (tuple<-list (each ~.first lists))
+                (zipping (each ~.rest lists))))))
   ;; Like (zip @lists), but right-padding the lists to match the longest:
   (to (~ .padded padding @lists)
-    (begin zipping ((rows lists))
-      (if (every ~.none? rows)
+    (begin zipping (lists)
+      (if (every ~.none? lists)
           '()
-          (link (tuple<-list (each (~ .get 0 padding) rows))
-                (zipping (each (~ .from 1) rows)))))))
+          (link (tuple<-list (each (~ .get 0 padding) lists))
+                (zipping (each (~ .from 1) lists)))))))
 
 ;; `(min-by f xs)` = an `x` in `xs` giving the minimum value of `(f x)`.
 ;; TODO names `least`, `most` from Arc?
@@ -141,7 +141,7 @@
   (keep/lazy itself (each/lazy maybe xs)))
 
 (to (amassing/lazy f z xs)
-  (begin walking ((z z) (xs xs))
+  (begin walking (z xs)
     (link/lazy z (: (if xs.none?
                         '()
                         (walking (f z xs.first) xs.rest))))))
@@ -253,7 +253,7 @@
 ;; and either tail is () or (suffix? tail.first) is true at the first
 ;; possible place.
 (to (until suffix? xs)
-  (begin scanning ((r-head '()) (xs xs))
+  (begin scanning ((r-head '()) xs)
     (if (or xs.none? (suffix? xs.first))
         (~ (reverse r-head) xs)
         (scanning (link xs.first r-head) xs.rest))))

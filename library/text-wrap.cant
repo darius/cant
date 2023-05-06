@@ -27,7 +27,7 @@
                     (eating text.rest))))))))
 
 (to (wrap-into line tokens width)
-  (begin scanning ((spaces 0) (tokens tokens))
+  (begin scanning ((spaces 0) tokens)
     (hm (if tokens.none?
             (if line.none? '() `(,line.text)))
         (may tokens.first

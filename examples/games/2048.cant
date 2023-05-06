@@ -17,8 +17,7 @@
 
 (to (play board chaos)
   (let history (flexarray<-))
-  (begin playing ((board board)
-                  (forfeit? #no))
+  (begin playing (board (forfeit? #no))
     (to (continue)
       (playing board forfeit?))
     (let score (hm (if (lost? board) "You lose!")

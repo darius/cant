@@ -68,7 +68,7 @@
 
   (to (find-rune-set-forward p rune-set)
     (let H head.^)
-    (begin searching ((p p))
+    (begin searching (p)
       (if (< p H)
           (if (rune-set .maps? (t p))
               p.+
@@ -76,7 +76,7 @@
           (do
             (let G gap.^)
             (let S size.^)
-            (begin persevering ((p p))
+            (begin persevering (p)
               (if (< p S)
                   (if (rune-set .maps? (t (+ G p)))
                       p.+
@@ -86,12 +86,12 @@
   (to (find-rune-set-backward p rune-set)
     (let H head.^)
     (let G gap.^)
-    (begin searching ((p p))
+    (begin searching (p)
       (if (< H p)
           (if (rune-set .maps? (t (+ G p.-)))
               p
               (searching p.-))
-          (begin persevering ((p p))
+          (begin persevering (p)
             (if (< 0 p)
                 (if (rune-set .maps? (t p.-))
                     p

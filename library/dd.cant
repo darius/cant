@@ -65,7 +65,7 @@
 
 (to (satisfy node goal)
   (let env (!map<-))
-  (begin walking ((node node))
+  (begin walking (node)
     (if (not= nil node.constant-value)
         (and (= goal node.constant-value)
              env)

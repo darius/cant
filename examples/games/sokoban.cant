@@ -59,7 +59,7 @@ N/P for next/previous level; Q to quit.
 
 Level ~w ~d Move ~w")
 
-  (begin playing ((level level))
+  (begin playing (level)
     (let trail (trails level))
     (let grid  trail.last)
 

@@ -6,7 +6,7 @@
   (play out (initial-chess-board<-) `(,white-strategy ,black-strategy)))
 
 (to (play out board players)
-  (begin playing ((board board))
+  (begin playing (board)
     (out .print board)
     (unless board.outcome
       (out .display "\n\n")

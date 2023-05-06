@@ -1307,6 +1307,9 @@ In a `begin` form like `(begin looping (...) ...)` you can omit the
 name: it defaults to `loop`. I'm not sure I want this feature, but I
 guess other people might want it more.
 
+Another convenience of `begin`: `(begin foo (x ...) ...)` is short for
+`(begin foo ((x x) ...) ...)`.
+
 ```
 more syntax: be?
 

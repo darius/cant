@@ -12,7 +12,7 @@
   (let free-list (flexarray<-))
   (let reg (array<-count 8 0))
 
-  (begin running ((program program) (pc 0))
+  (begin running (program (pc 0))
     
     (to (next)
       (running program (pc .u+ 1)))

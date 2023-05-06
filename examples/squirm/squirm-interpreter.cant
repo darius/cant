@@ -610,7 +610,7 @@
         {go k result})))
 
   (to (match-clauses r !map clauses datum)
-    (begin matching ((clauses clauses))
+    (begin matching (clauses)
       (may clauses
         (be '()
           #no)
