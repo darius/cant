@@ -1,0 +1,22 @@
+;; Find all anagram equivalence classes among the dictionary words.
+
+(import (use 'binary-relations) collect)
+
+(to (collect-anagrams words)
+  (keep ~.plural? (group-by sort words)))
+
+;; (It's ugly that collect wraps and then group-by unwraps. But collect
+;; does seem more generally useful. What to do?
+;; Maybe rename to group-by and group-items? As list methods instead of functions?
+;; Make this stuff part of a broader support for relational algebra?)
+(to (group-by key<- xs)
+  (each (~ .part 1) (collect (for each [(x xs)]
+                               (~ (key<- x) x)))))
+
+(let anagrams
+  (collect-anagrams (with-input-file ~.read-lines "/usr/share/dict/words")))
+
+;; Sort order: how many anagrams, length of each word, then alphabetical.
+(for each! [(group (sort-by (:: `(,it.count ,it.first.count ,it))
+                            anagrams))]
+  (out .say "~d\n" (" " .join group)))

@@ -1,0 +1,11 @@
+;; Making this into a silly one-function library for now.
+
+;; Given a list of (~ key value), return a list of (~ key all-values).
+(to (collect items)
+  (let map (!map<-))
+  (for each! [((~ key value) items)]
+    ((map .get-set! key flexarray<-) .push! value))
+  (for each [((~ key array) map.items)]
+    (~ key array.values)))
+
+(export collect)
