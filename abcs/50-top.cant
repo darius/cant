@@ -96,7 +96,7 @@
 
   (to (listener-handler k evil)
     (signal-handler k evil)
-    (out .display "Enter (debug) for more.\n")
+    (out .display "Enter ,d to debug.\n")
     (listener))
 
   ;; A separate function just to make the top of tracebacks cleaner.
@@ -115,6 +115,8 @@
       (out .display "-> ")
       (may (read in)
         (be (? zilch?) out.newline)
+        (be ',d   (print-result (debug)))
+        (be ',l   (print-result (load in.read-line.trim)))
         (be sexpr (print-result (cant .play sexpr setting)))))))
 
 (to (debug)

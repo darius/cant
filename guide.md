@@ -195,7 +195,7 @@ Error! Traceback:
   {~ ^^^}
   (^)
 Match failure: (#<I-am> {~ but human})
-Enter (debug) for more.
+Enter ,d to debug.
 ```
 
 That is, `I-am` was called with the message `{~ but human}` but it
@@ -206,7 +206,7 @@ structures.)
 This debugger is almost useless, but it's there as a last resort:
 
 ```
--> (debug)
+-> ,d
 Enter ? for help.
 debug-> ?
 ? help      - this message
@@ -234,11 +234,12 @@ $ ./incant examples/fizzbuzz.cant
 ```
 
 You can also say `incant -i filename.cant` to load the file and then
-start the listener. If you're already in the listener, use `load`:
+start the listener. If you're already in the listener, use `(load "filename")`
+or `,l filename` for short:
 
 ```
 $ ./incant
--> (load "examples/fizzbuzz.cant")
+-> ,l examples/fizzbuzz.cant
 1
 2
 Fizz
@@ -1163,7 +1164,7 @@ Error! Traceback:
   {~ ^^^}
   (^)
 Tried to eject to a disabled ejector: (#<ejector>)
-Enter (debug) for more.
+Enter ,d to debug.
 -> 
 ```
 
@@ -1189,14 +1190,14 @@ Oops! Traceback:
   {~ ^^^}
   (^)
 This is bad: (bad hombre)
-Enter (debug) for more.
+Enter ,d to debug.
 -> 
 ```
 
 Either way, Cant gets its current 'signal handler' and calls it with
 two arguments: the 'sequel' and the 'evil'. In the transcript above,
 the default signal handler responded by printing the traceback of the
-sequel, followed by the evil, then stashed them where `(debug)` can
+sequel, followed by the evil, then stashed them where the debugger can
 retrieve them, then finally went back into a listener loop -- an
 ordinary top-level one.
 
