@@ -96,10 +96,10 @@
         (else
           ;; (r choose k) for real r = the kth "falling power" of r, over k factorial
           ;; TODO use log gamma for better precision for large floats
-          (begin [(r me) k (product 1)]
+          (begin [k (r me) (product 1)]
             (if (= k 0)
                 product
-                (loop r.- k.- (* product (/ r k))))))))
+                (loop k.- r.- (* product (/ r k))))))))
 
   (to ~.negative?      (< me 0))
   (to ~.positive?      (< 0 me))
