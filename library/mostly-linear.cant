@@ -12,6 +12,8 @@
   push extend
   peek)
 
+;; For now, assume we're working with rational numbers.
+;; (Of course we want an open generic arithmetic system for Cant later.)
 (let ratio-m (use 'ratio))
 (import ratio-m ratio<- ratio?)
 
@@ -24,6 +26,17 @@
 
 (to (e= defaulty? e1 e2)
   {equation defaulty? (e- e1 e2)})
+
+;; (Not using this yet.)
+(to (get-value e ejector)
+  (may (eval-expr e)
+    (be 'nonlinear
+      (ejector .eject {not-fixed e}))
+    (be combo
+      (let terms (expand combo))
+      (when (varies? terms)
+        (ejector .eject {not-fixed e}))
+      (get-constant terms))))
 
 ;; Try to determine as many variables as we can by elimination.
 ;; Return 'inconsistent if we noticed a contradiction, 'done if we
@@ -66,16 +79,6 @@
 (to (e- e1 e2) {combine e1 neg-one e2})
 (to (e* e1 e2) {* e1 e2})
 (to (e/ e1 e2) {/ e1 e2})
-
-(to (get-value e ejector)
-  (may (eval-expr e)
-    (be 'nonlinear
-      (ejector .eject {not-fixed e}))
-    (be combo
-      (let terms (expand combo))
-      (when (varies? terms)
-        (ejector .eject {not-fixed e}))
-      (get-constant terms))))
 
 (to (eval-expr e)
   (may e
@@ -132,7 +135,8 @@
   terms)                               ;since we're using exact ratios
 
 (to (varies? terms)
-  (not (terms .maps? 'const-term)))
+  (for some [(k terms.keys)]
+    (not= k 'const-term)))
 
 (to (get-constant terms)
   (surely (not (varies? terms)))
