@@ -3,6 +3,7 @@
   (to (~ .+ a)         (__+ me a))
   (to (~ .- a)         (__- me a))
   (to (~ .* a)         (__* me a))
+  ;; TODO add a ./ op since we gave up on only supporting ints
 
   (to (~ .compare a)   (__number-compare me a))
 
@@ -87,15 +88,18 @@
     (surely (count? me))  ;; TODO gamma function
     (amass * 1 (1 .thru me)))
 
-  ;; The binomial coefficients. TODO how about (n .! k) as a name? or (n .count-k-sets k). Also, a .count-k-bags method to go with this.
-  (to (~ .choose k)   
-    (surely (count? me))
-    (surely (integer? k))
-    (surely (<= 0 k me))  ;; TODO allow out-of-range integers, with result 0?
-    (let k0 (min k (- me k)))
-    (let n-k (- me k0))
-    (for amass [(product 1) (i (1 .thru k0))]
-      ((* product (+ n-k i)) .quotient i)))
+  ;; The binomial coefficients.
+  ;; TODO how about (n .! k) as a name? or (n .count-k-sets k). Also, a .count-k-bags method to go with this.
+  (to (~ .choose k)
+    (surely (integer? k)) ; TODO support other types of k using the gamma function
+    (hm (if (< k 0) 0)
+        (else
+          ;; (r choose k) for real r = the kth "falling power" of r, over k factorial
+          ;; TODO use log gamma for better precision for large floats
+          (begin [(r me) k (product 1)]
+            (if (= k 0)
+                product
+                (loop r.- k.- (* product (/ r k))))))))
 
   (to ~.negative?      (< me 0))
   (to ~.positive?      (< 0 me))
