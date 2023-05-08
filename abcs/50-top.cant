@@ -107,6 +107,10 @@
       (out .print value))
     (listener))
 
+  ;; Like print-result, except we treat value as void.
+  (to (for-effect value)
+    (listener))
+  
   (make listener
     (to ~.signal-handler
       listener-handler)
@@ -117,6 +121,7 @@
         (be (? zilch?) out.newline)
         (be ',d   (print-result (debug)))
         (be ',l   (print-result (load in.read-line.trim)))
+        (be ',!   (for-effect (cant .play (read in) setting)))
         (be sexpr (print-result (cant .play sexpr setting)))))))
 
 (to (debug)
