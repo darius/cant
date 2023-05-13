@@ -65,7 +65,7 @@
     (let digits
       (hm (if (and (integer? base) (< 1 base))
               (begin converting [(n (abs me)) (result '())]
-                (hm (if (= n 0) result)
+                (hm (if (= n 0) result) ;TODO prefix the sign?
                     (else (let (~ q r) (n ./mod base))
                           (converting q (link r result))))))
           (if (and ;; (list? base)  TODO less-crude types
@@ -86,7 +86,7 @@
 
   (to ~.! ;; factorial
     (surely (count? me))  ;; TODO gamma function
-    (amass * 1 (1 .thru me)))
+    (amass * 1 (2 .thru me)))
 
   ;; The binomial coefficients.
   ;; TODO how about (n .! k) as a name? or (n .count-k-sets k). Also, a .count-k-bags method to go with this.
