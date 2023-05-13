@@ -71,6 +71,7 @@
           (if (and ;; (list? base)  TODO less-crude types
                    (for every [(r base)] ;; Mixed-radix digits
                      (and (integer? r) (< 0 r))))
+              ;; N.B. base=(1) converts a float to its integer and fractional parts. Do we want this?
               (begin converting [(n      (abs me))
                                  (moduli (reverse base))
                                  (result '())]
