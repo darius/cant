@@ -27,18 +27,18 @@
                     (eating text.rest))))))))
 
 (to (wrap-into line tokens width)
-  (begin scanning [(spaces 0) tokens]
+  (begin scanning [tokens (spaces 0)]
     (hm (if tokens.none?
             (if line.none? '() `(,line.text)))
         (may tokens.first
           (be {space}
-            (scanning spaces.+ tokens.rest))
+            (scanning tokens.rest spaces.+))
           (be {break}
             (link line.text (wrap-into (flexarray<-) tokens.rest width)))
           (be {word w}
             (hm (when (<= (+ line.count spaces w.count) width)
                   (line .extend! (chain (" " .repeat spaces) w))
-                  (scanning 0 tokens.rest))
+                  (scanning tokens.rest 0))
                 (else
                   (link line.text
                         (wrap-into (flexarray<-list w) tokens.rest width)))))))))

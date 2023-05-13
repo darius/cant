@@ -310,12 +310,11 @@
   (to (~ a) (0 .- a)))
 
 (make-trait transitive-comparison compare?
-  (to (~ x @xs)
-    (begin comparing [(x0 x) xs]
-      (may xs
-        (be `()           #yes)
-        (be `(,x1 ,@rest) (and (compare? x0 x1)
-                               (comparing x1 rest))))))
+  (to (~ x0 x1 @xs)
+    (and (compare? x0 x1)
+         (may xs
+           (be `(,x2 ,@rest) 
+             (compare? x1 x2 @rest)))))
   (to (~)
     #yes))
 

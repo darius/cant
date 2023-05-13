@@ -40,26 +40,25 @@
 
 (to (compile tokens)
   (let code (flexarray<-))
-  (begin compiling [(frames '()) tokens]
+  (begin compiling [tokens (frames '())]
     (hm (when tokens.none?
           (surely frames.none?))      ;XXX require
         (may tokens.first
           (be (? number? n)
             (code .push! (push<- n))
-            (compiling frames tokens.rest))
+            (compiling tokens.rest frames))
           (be '<<
             (let (~ locals tail) (until (:: (= it '--)) tokens.rest))
             (code .push! (grab<- locals.count))
-            (compiling (link (reverse locals) frames)
-                       tail.rest))
+            (compiling tail.rest (link (reverse locals) frames)))
           (be '>>
             (surely frames.some?) ;XXX require
             (code .push! (ungrab<- frames.first.count))
-            (compiling frames.rest tokens.rest))
+            (compiling tokens.rest frames.rest))
           (be (? symbol? word)
             (code .push! (or (compile-local frames word)
                              (dictionary word)))
-            (compiling frames tokens.rest)))))
+            (compiling tokens.rest frames)))))
   code.values)
 
 (to (compile-local frames word)

@@ -32,13 +32,13 @@
     (each (:: (B .gen-variable it)) (1 .thru n)))
   
   (to (gen-body vars params)
-    (begin walking [(stmts '()) vars params]
+    (begin walking [vars params (stmts '())]
       (if params.none?
           stmts
           ((walk-code params.first gen-code gen-exp)
            vars
            (on (vars2 cv) 
-             (walking (link cv stmts) vars2 params.rest))))))
+             (walking vars2 params.rest (link cv stmts)))))))
 
   (to (gen-code code)
     (may code

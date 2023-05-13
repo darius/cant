@@ -249,10 +249,10 @@
 ;; and either tail is () or (suffix? tail.first) is true at the first
 ;; possible place.
 (to (until suffix? xs)
-  (begin scanning [(r-head '()) xs]
+  (begin scanning [xs (r-head '())]
     (if (or xs.none? (suffix? xs.first))
         (~ (reverse r-head) xs)
-        (scanning (link xs.first r-head) xs.rest))))
+        (scanning xs.rest (link xs.first r-head)))))
 
 (to (while prefix? xs)
   (until (compose not prefix?) xs))

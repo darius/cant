@@ -9,13 +9,13 @@
 
 (let eg2
   '(to (walk tree visit)
-     (begin walking [(path '()) tree]
+     (begin walking [tree (path '())]
        (match tree
          ({leaf symbol}
           (visit symbol (reverse path)))
          ({branch on-0 on-1}
-          (walking `(0 ,@path) on-0)
-          (walking `(1 ,@path) on-1))))))
+          (walking on-0 `(0 ,@path))
+          (walking on-1 `(1 ,@path)))))))
 
 (pp eg2 50)
 
