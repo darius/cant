@@ -263,9 +263,9 @@
 ;; TODO check that all digits are valid?
 (to (count<-digits digits @(optional base))
   (may (or base 10)
-    (be (? number? b)
+    (be (? number? radix)
       (for amass [(total 0) (digit digits)]
-        (+ (* b total) digit)))
+        (+ (* radix total) digit)))
     (be (? list? mixed-radix)
       (let bases (may (- digits.count mixed-radix.count)
                    (be 0 mixed-radix)
