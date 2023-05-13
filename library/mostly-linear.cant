@@ -141,3 +141,7 @@
 (to (get-constant terms)
   (surely (not (varies? terms)))
   (terms .get 'const-term zero))
+
+(export
+  constant<- variable<- e= e+ e- e* e/
+  solve get-value)
