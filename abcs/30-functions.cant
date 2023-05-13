@@ -258,13 +258,23 @@
   (until (compose not prefix?) xs))
 
 ;; Inverse to number.digits method.
-;; TODO mirror all the number.digits features
 ;; TODO what about signed numbers, non-integers...? Is this whole thing misconceived?
+;;      (this could also evaluate polynomials, if designed and named right)
 ;; TODO check that all digits are valid?
 (to (count<-digits digits @(optional base))
-  (let b (or base 10))
-  (for amass [(total 0) (digit digits)]
-    (+ (* b total) digit)))
+  (may (or base 10)
+    (be (? number? b)
+      (for amass [(total 0) (digit digits)]
+        (+ (* b total) digit)))
+    (be (? list? mixed-radix)
+      (let bases (may (- digits.count mixed-radix.count)
+                   (be 0 mixed-radix)
+                   (be 1 (link 0 mixed-radix))
+                   (else (oops "Digits don't match base" digits base))))
+      (begin [digits bases (total 0)]
+        (hm (if digits.none? total)
+            (else (loop digits.rest bases.rest
+                        (+ (* total bases.first) digits.first))))))))
 
 ;; ((compound-key<- f g h) x) = (list<- (f x) (g x) (h x))
 (to ((compound-key<- @key-fns) x)   ;; TODO shorter name? combo-key? call-each?
