@@ -1,10 +1,8 @@
 ;; https://en.wikipedia.org/wiki/FRACTRAN
 ;; A Turing-complete esoteric language based on factoring of natural numbers.
 
-;; TODO once again, renaming imports is clumsy
-(import (let ratio-m (use 'ratio))
-  ratio? ratio<- r-integer? integer<-ratio ratio-parse)
-(let (list<- r* r-compare) (each ratio-m '(* compare)))
+(import (use 'ratio)
+  ratio? ratio<- r-integer? integer<-ratio ratio-parse r* ratio-compare)
 
 ;; Run a FRACTRAN program.
 (to (fractran fractions input)
@@ -21,7 +19,7 @@
       (be products    (loop products.first)))))  ; Repeat with the first one found.
 
 (to (r-positive? r)
-  (= '> (r-compare r (ratio<- 0))))
+  (= '> (ratio-compare r (ratio<- 0))))
 
 (to (fractran-parse text)
   (each ratio-parse text.split))

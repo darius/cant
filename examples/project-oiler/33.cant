@@ -1,7 +1,6 @@
 ;; Digit cancelling fractions
 
-(import (use 'ratio) ratio<- ratio-show)
-(let r* ((use 'ratio) '*))  ;; man this is a pain
+(import (use 'ratio) ratio<- ratio-show r*)
 
 ;; There are exactly four non-trivial examples of this type of
 ;; fraction, less than one in value, and containing two digits in the

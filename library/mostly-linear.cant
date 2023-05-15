@@ -14,11 +14,7 @@
 
 ;; For now, assume we're working with rational numbers.
 ;; (Of course we want an open generic arithmetic system for Cant later.)
-(let ratio-m (use 'ratio))
-(import ratio-m ratio<- ratio?)
-
-(let `(,r+ ,r- ,r* ,r/) (each ratio-m '(+ - * /)))
-(let r-cmp (ratio-m 'compare))
+(import (use 'ratio) ratio<- ratio? r+ r- r* r/)
 
 (let zero    (ratio<- 0))
 (let one     (ratio<- 1))

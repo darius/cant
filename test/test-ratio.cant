@@ -1,7 +1,4 @@
-(let ratio (use 'ratio))
-
-(import ratio ratio<- float<-ratio ratio-parse)
-(let `(,r+ ,r- ,r* ,r/ ,r-compare) (each ratio '(+ - * / compare)))
+(import (use 'ratio) ratio<- float<-ratio ratio-parse r+ r- r* r/ ratio-compare)
 
 ;; Generate good rational approximations of float in order of
 ;; increasing denominator.

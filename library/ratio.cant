@@ -49,7 +49,7 @@
   (lowest-terms (- (* n1 d2) (* n2 d1))
                 (* d1 d2)))
 
-(to (compare {ratio n1 d1} {ratio n2 d2})
+(to (ratio-compare {ratio n1 d1} {ratio n2 d2})
   ((* n1 d2) .compare (* n2 d1)))
 
 (to (r-integer? {ratio n d})
@@ -66,13 +66,11 @@
   ("~w/~w" .format n d))
 
 (import (use 'parson) like)
-(let ratio-syntax (like ":count '/' :count"))
+(let ratio-syntax (like ":integer '/' :count"))
 (to (ratio-parse text)
   (ratio<- @(ratio-syntax text)))
 
 ;; TODO just export r-names instead of renaming
-((export ratio? ratio<- compare r-integer? integer<-ratio float<-ratio ratio-show ratio-parse)
- .override (map<- (~ '+ r+)
-                  (~ '- r-)
-                  (~ '* r*)
-                  (~ '/ r/)))
+(export ratio? ratio<- ratio-compare r-integer? integer<-ratio float<-ratio
+        ratio-show ratio-parse
+        r+ r- r* r/)
