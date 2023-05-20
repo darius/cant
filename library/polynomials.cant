@@ -13,7 +13,8 @@
   (surely (poly? coeffs))
   (if coeffs.none?
       "0"
-      (" + " .join (for yeahs [(c coeffs) (k (coeffs.count.- .down-thru 0))]
+      (" + " .join (for yeahs [(c coeffs)
+                               (k (coeffs.count.- .down-thru 0))]
                      (and (not= 0 c)
                           (do (let x (may k
                                        (be 0 "")
