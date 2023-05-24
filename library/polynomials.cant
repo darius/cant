@@ -2,6 +2,8 @@
 ;; Representation: list of coefficients in decreasing order of degree
 ;; TODO tests
 ;; TODO lots of things
+;;  - parse, inverse to show
+;;  - divide
 
 ;; TODO always keep the constant term?
 (to (poly<- coeffs)
