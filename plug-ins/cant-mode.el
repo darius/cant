@@ -48,7 +48,7 @@
   ;; Based on http://community.schemewiki.org/?emacs-syntax-hilight
   ;; TODO can't we do this without stepping on scheme-mode's toes?
   (put 'be 'scheme-indent-function 1)
-  (put 'begin 'scheme-indent-function 2)
+  (put 'begin 'scheme-indent-function 'cant-begin-indent)
   (put 'do 'scheme-indent-function 0)
   (put 'else 'scheme-indent-function 0)
   (put 'export 'scheme-indent-function 0)
@@ -70,6 +70,13 @@
   (put ':: 'scheme-indent-function 0)
   (put 'on 'scheme-indent-function 1)
   )
+
+;; Based on scheme-let-indent from scheme-mode
+(defun cant-begin-indent (state indent-point normal-indent)
+  (skip-chars-forward " \t")
+  (if (looking-at "[-a-zA-Z0-9+*/?!@$%^&_:~]")
+      (lisp-indent-specform 2 state indent-point normal-indent)
+    (lisp-indent-specform 1 state indent-point normal-indent)))
 
 
 ;; A really crude goto-def and create-def:
