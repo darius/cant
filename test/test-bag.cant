@@ -27,7 +27,7 @@
 
 (to (random-tests n-trials)            ;TODO use squickcheck
   (for each! [(_ n-trials.till)]
-    (exercise-em (for each [(value (50 .till))] ;TODO did I mean to use the value?
+    (exercise-em (for each [(value 50.till)] ;TODO did I mean to use the value?
                    (chaos .sample-count 5)))))
 
 (to (exercise-em keys)

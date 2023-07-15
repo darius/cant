@@ -3,7 +3,7 @@
 (let chaos (chaos<- 1234567))
 
 ; (out .say "seed: ~w\n" (random-seed<-))
-(for each! [(_ (10 .till))]
+(for each! [(_ 10.till)]
   (out .say "~w " (chaos .sample-count 4)))
 out.newline
 

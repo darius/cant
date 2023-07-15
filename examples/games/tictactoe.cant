@@ -157,7 +157,7 @@
   ((successors grid) .none?))
 
 (to (successors grid)
-  (for yeahs [(move (9 .till))]
+  (for yeahs [(move 9.till)]
     (update grid move)))
 
 (to (update {grid p q} move)

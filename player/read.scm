@@ -62,12 +62,16 @@
                            radix))))
 
   (define (combine prefix atom)
-    (cond (prefix
-           (if (not (symbol? atom))
-               (error 'read "Floating-point literals unimplemented" prefix atom))
+    (cond ((not prefix) atom)
+          ((and (integer? prefix) (integer? atom))  ;; XXX plays wrong with radix prefixes
+           ;;ugh. This whole idea of reading atoms and then combining them was a hack I've gotta back out of.
+           (string->number (string-append (number->string prefix)
+                                          "."
+                                          (number->string atom))))
+          ((symbol? atom)
            (list prefix (cue<- atom)))
           (else
-           atom)))
+            (error 'read "Floating-point suffix after a non-number prefix" prefix atom))))
 
   (let loop ((prefix #f) (L (list c)) (len 1))
     (let ((c (peek-char port)))
@@ -207,7 +211,7 @@
           (if (symbol-constituent? c)
               (let ((atom (read-atom port (read-char port))))
                 (cond ((number? atom)
-                       (read-error port "Floating-point literals unimplemented"))
+                       (read-error port "Floating-point literals require an int part"))
                       ((symbol? atom)
                        (cue<- atom))
                       (else

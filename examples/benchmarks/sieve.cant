@@ -7,7 +7,7 @@
 (to (main _)
   (out .say "10 iterations\n")
   (let count (box<- 0))
-  (for each! [(_ (10 .till))]
+  (for each! [(_ 10.till)]
     (count .^= 0)
     (for each! [(i SIZE.till)]     ;TODO .fill! method
       (flags .set! i #yes))

@@ -36,7 +36,7 @@
   (glutton .place-on! grid)
 
   (let eating-ghosts-deadline (box<- #no))
-  (let ghosts (~.range (each (:: (ghost<- grid)) (4 .till))))
+  (let ghosts (~.range (each (:: (ghost<- grid)) 4.till)))
   
   ;; TODO cleaner to eject, I guess
   (to (caught-by-ghost?)

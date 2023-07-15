@@ -60,6 +60,6 @@
       rate.^)))
 
 ;; Discount events older than about `timescale` seconds ago.
-(let timescale (2 .inexact))
+(let timescale 2.0)
 (to (decay-factor interval)
   (~.exp (- (/ interval timescale))))

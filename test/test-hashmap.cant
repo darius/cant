@@ -23,7 +23,7 @@
 
 (to (random-tests n-trials)            ;TODO use squickcheck
   (for each! [(_ n-trials.till)]
-    (exercise-em (for each [(value (50 .till))]
+    (exercise-em (for each [(value 50.till)]
                    (let key (chaos .sample-count 16))
                    (let op (may (chaos .sample-count 10)
                              (be 0 'delete)
