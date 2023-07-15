@@ -13,9 +13,9 @@
                            {map (on ((~ x y)) ((input y) x))}))
 
 (to (show grid)
-  (grid .show (on (row)
-                (each! (:: (out .display it)) row)
-                out.newline))
+  (for each! [(row grid.rows)]
+    (each! (:: (out .display it)) row)
+    out.newline)
   out.newline)
 
 (show input-grid)
@@ -25,7 +25,7 @@
 (out .display "\nPart 1\n")
 
 (to (part-1)
-  (result-code (for amass [(grid input-grid) (_ (10 .till))]
+  (result-code (for amass [(grid input-grid) (_ 10.till)]
                  (show grid)
                  (step grid))))
 

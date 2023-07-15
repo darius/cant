@@ -43,10 +43,10 @@
       (let p (~ x y))
       (out .display (if (= spring p) #\+ #\.)))
     out.newline)
-  (grid .show (on (runes)
-                (for each! [(rune runes)]
-                  (out .display (or rune #\.)))
-                out.newline))
+  (for each! [(row grid.rows)]
+    (for each! [(rune row)]
+      (out .display (or rune #\.)))
+    out.newline)
   out.newline)
 
 ;; (show-map)
