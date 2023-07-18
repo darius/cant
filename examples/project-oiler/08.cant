@@ -20,7 +20,7 @@
 05886116467109405077541002256983155200055935729725
 71636269561882670428252483600823257530420752963450" .replace "\n" ""))
 
-(let digits (~.array (each ~.number input.values)))
+(let digits (~.array (each ~.number input)))
 
 (to (oiler8 n)
   (max @(each (:: (* @it.list)) (digits .k-slices n))))
