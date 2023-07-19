@@ -11,7 +11,7 @@
     (memoize (on (size)
                (let res (flexarray<-))
                (when (= 1 size)
-                 (res .extend! (link 'empty (each (tag 'lit-rune) alphabet.values))))
+                 (res .extend! (link 'empty (each (tag 'lit-rune) alphabet))))
                (when (<= 2 size)
                  (res .extend! (each (tag 'star) (gen size.-))))
                (when (<= 3 size)

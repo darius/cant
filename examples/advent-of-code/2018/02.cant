@@ -7,10 +7,8 @@
 
 (to (checksum ids)
   (let bags (each bag<- ids))
-  (to ((having n) bag)
-    (bag.values .find? n))
-  (* (tally-by (having 2) bags)
-     (tally-by (having 3) bags)))
+  (* (tally-by (~ .find? 2) bags)
+     (tally-by (~ .find? 3) bags)))
 
 (out .print (checksum input))
 
