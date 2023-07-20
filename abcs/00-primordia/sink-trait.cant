@@ -15,7 +15,7 @@
   (to (~ .say format-text @arguments)
     (format .to-sink sink format-text @arguments))
 
-  (to (~ .newline)
+  (to ~.newline
     (sink .display #\newline))
 
   (to (~ .print a)                      ;TODO ugh the name

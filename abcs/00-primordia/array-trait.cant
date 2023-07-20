@@ -41,7 +41,7 @@
   (to ~.last
     (me me.count.-))
 
-  (to (~ .but-last)
+  (to ~.but-last
     (surely me.some?)
     (me .from 0 me.count.-))
 

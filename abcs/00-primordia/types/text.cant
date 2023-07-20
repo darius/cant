@@ -175,7 +175,7 @@
   (to ~.last                            ;TODO copied from array-trait
     (me me.count.-))
 
-  (to (~ .but-last)                     ;TODO copied from array-trait
+  (to ~.but-last                        ;TODO copied from array-trait
     (surely me.some?)
     (me .from 0 me.count.-))
 
