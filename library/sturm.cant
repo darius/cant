@@ -103,7 +103,7 @@
       (be (? rune?)
         (screen-state .establish! wanted-state)
         (out .display (if (= scene #\newline) cr-lf scene)))
-      (be (? (: (or (list? it) (array? it))))
+      (be (or (? list?) (? array?))
         (for each! [(subscene scene.values)]
           (paint cursor-seen? wanted-state subscene)))
       (else
