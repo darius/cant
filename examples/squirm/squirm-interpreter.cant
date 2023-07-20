@@ -605,7 +605,7 @@
     ;; I'm not going to try to handle oopses everywhere; only in these
     ;; primitive calls (mostly). We can wait to do things properly until
     ;; we're making a VM in C for real.
-    (may (catch-oops (: (p @args)))
+    (may (catch-oops ($ (p @args)))
       (be {oops evil}
         (exit k evil))
       (be result
@@ -735,7 +735,7 @@
                             (~ 'eval  {eval})
                             (~ 'exit  {exit})
                             (~ 'throw {throw}))
-                     .override (each-value (:: {primitive it})
+                     .override (each-value (: {primitive it})
                                            primitives-from-cant)))
 
   (let builtins-env {local-env builtins-map {empty-env}})

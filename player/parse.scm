@@ -397,10 +397,10 @@
     ('on     (mlambda
               ((__ dp . body)
                `(to (_ ,@dp) ,@body))))
-    (':      (mlambda
+    ('$      (mlambda
               ((__ . body)
                `(to (_) ,@body))))
-    ('::     (mlambda
+    (':      (mlambda
               ((__ e)
                `(on (it) ,e))))
     ('for    (mlambda

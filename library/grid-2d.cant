@@ -89,7 +89,7 @@
         (sink .print (for each [(x (xl .thru xh))]
                        (A (at x y))))))
     (to ~.show  ;; TODO different name?
-      (text<-writer (:: (grid-2d .show it))))
+      (text<-writer (: (grid-2d .show it))))
 
     (to (~ .selfie sink)
       (sink .display ("#<grid-2d (~w,~w)..(~w,~w)>"

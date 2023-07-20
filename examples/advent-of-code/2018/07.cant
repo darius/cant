@@ -17,7 +17,7 @@
 
 (let all-steps (~.range (chain @ordering)))
 (let nodes all-steps.keys)
-(let succs-set (map-by (:: (set<-)) nodes))
+(let succs-set (map-by (: (set<-)) nodes))
 (for each! [(`(,pre ,post) ordering)]   ;TODO use a mapreduce
   ((succs-set pre) .add! post))             ;TODO maybe use .get-set!
 
@@ -33,7 +33,7 @@
 ;; then fill workers from available jobs, and send retirement notices
 
 (to (schedule)
-  (let pred-count (!map-by (:: 0) nodes))
+  (let pred-count (!map-by (: 0) nodes))
   (for each! [(ss succs.values)]
     (for each! [(s ss)]
       (pred-count .update s ~.+)))

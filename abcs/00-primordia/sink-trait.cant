@@ -27,7 +27,7 @@
     sink.newline)
 
   (to (~ .display-lines lines) ;; To go with source.read-lines
-    (each! (:: (sink .displayln it)) lines))
+    (each! (: (sink .displayln it)) lines))
 
   (to message
     (miranda-trait sink message)))

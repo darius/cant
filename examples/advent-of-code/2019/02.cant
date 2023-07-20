@@ -30,7 +30,7 @@
        (+ (* 100 noun) verb)))
 
 (to (part-2)
-  (~.first (yeahs/lazy (:: (check @it))
+  (~.first (yeahs/lazy (: (check @it))
                        (grid*/lazy 100.till 100.till))))
 
 (out .say "~w\n" (part-2))

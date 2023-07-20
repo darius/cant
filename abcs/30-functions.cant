@@ -105,7 +105,7 @@
   ;; TODO also delete when (f x) = #no?
   ;;      (or make (#no .text) = ""? that's a bit much...)
   ;; TODO inconsistent to auto-.values here and not elsewhere, isn't it?
-  ("" .join (each (:: ((f it) .text)) xs.values)))
+  ("" .join (each (: ((f it) .text)) xs.values)))
 
 (make grid*/lazy
   (to (~)           '(()))
@@ -118,7 +118,7 @@
 (to (keep/lazy keep? xs)
   (hm (if xs.none? '())
       (if (keep? xs.first)
-          (link/lazy xs.first (: (keep/lazy keep? xs.rest))))
+          (link/lazy xs.first ($ (keep/lazy keep? xs.rest))))
       (else (keep/lazy keep? xs.rest))))
 
 (to (skip/lazy skip? xs)
@@ -127,10 +127,10 @@
 (to (each/lazy f xs)
   (hm (if xs.none? '())
       (else (link/lazy (f xs.first)
-                       (: (each/lazy f xs.rest))))))
+                       ($ (each/lazy f xs.rest))))))
 
 (to (gather/lazy f xs)
-  (for fold/lazy [(x xs) (rest-thunk (: '()))]
+  (for fold/lazy [(x xs) (rest-thunk ($ '()))]
     (chain/lazy (f x) rest-thunk)))
 
 (to (yeahs/lazy maybe xs)
@@ -138,7 +138,7 @@
 
 (to (amassing/lazy f z xs)
   (begin walking [z xs]
-    (link/lazy z (: (if xs.none?
+    (link/lazy z ($ (if xs.none?
                         '()
                         (walking (f z xs.first) xs.rest))))))
 
@@ -213,7 +213,7 @@
 
 ;; TODO too specialized for the stdlib
 (to (union @sets)
-  (hey (set<-) @(each (:: (~ .merge! it)) sets)))
+  (hey (set<-) @(each (: (~ .merge! it)) sets)))
 
 (to (intersect @sets)
   ;; TODO .intersect! like the above
@@ -231,7 +231,7 @@
   (hm (if xs.none? '())
       (let x xs.first)
       (if (prefix? x)
-          (link/lazy x (: (keep-while/lazy prefix? xs.rest))))
+          (link/lazy x ($ (keep-while/lazy prefix? xs.rest))))
       (else '())))
   
 (to (skip-while prefix? xs)             ;TODO as list/text method?

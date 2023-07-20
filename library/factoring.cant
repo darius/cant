@@ -3,7 +3,7 @@
 
 ;; Return a lazy list of all primes < limit.
 (to (list-primes-till limit)
-  (keep-while (:: (< it limit)) the-primes))
+  (keep-while (: (< it limit)) the-primes))
 
 ;; An incremental Sieve of Eratosthenes, implicitly leaving out the
 ;; even numbers. (Incremental because we don't know how high we're
@@ -45,12 +45,12 @@
         (known-primes .add! n)
         (last-known-prime .^= n)
         (next-sieve! (* 2 n) (n .** 2)) ;; Schedule the prime n into the sieving
-        (link/lazier n (: (sieving (+ n 2)))))))
+        (link/lazier n ($ (sieving (+ n 2)))))))
 
 ;; XXX used to be just (link 2 3 (sieving 5))... but some uses hit the
 ;; primitive list-ref since this started as a nonlazy list. Then list-ref barfed.
 ;; I knew that could happen but sort of hoped I wouldn't have to deal with it yet.
-(let the-primes (link/lazier 2 (: (link/lazier 3 (: (sieving 5))))))
+(let the-primes (link/lazier 2 ($ (link/lazier 3 ($ (sieving 5))))))
 
 ;; Return a list of the prime factors of a positive integer.
 ;; TODO return a lazy list?
@@ -123,7 +123,7 @@
           (surely (not factors.one?))
           (surely (= n (* @factors)))
           (surely (<= @factors))
-          (each! (:: (surely (primes .maps? it))) factors)))))
+          (each! (: (surely (primes .maps? it))) factors)))))
 
 ;;(test-me-till 5000)
 ;;(out .print (as-list (list-primes-till 2000000)))

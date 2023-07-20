@@ -2,7 +2,7 @@
 
 ;; copied from ./02.cant
 (let fibs (begin [(a 1) (b 1)]
-            (link/lazy a (: (loop b (+ a b))))))
+            (link/lazy a ($ (loop b (+ a b))))))
 
 (let (~ i fib-i) (~.first (for skip-until [((~ index value) fibs.items)]
                             (<= 999 (value .log 10))))) ;; 999 digits after the leftmost

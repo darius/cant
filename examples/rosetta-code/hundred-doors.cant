@@ -3,7 +3,7 @@
 ;; Return the numbers of the doors that are open at the end.
 (to (doors-puzzle)
   (let doors (1 .thru 100))
-  (let open? (!map-by (:: #no) doors))
+  (let open? (!map-by (: #no) doors))
   (for each! [(stride doors)]
     (for each! [(door (stride .thru 100 stride))]
       (open? .update door not)))

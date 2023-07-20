@@ -15,4 +15,4 @@
   (sequel .answer 10))
 
 (with-signal-handler complain-and-resume
-                     (: (out .print (factorial 5))))
+                     ($ (out .print (factorial 5))))

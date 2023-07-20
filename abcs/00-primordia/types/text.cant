@@ -32,7 +32,7 @@
 
   (to (~ .trim-left @(optional delim))
     ;; TODO should delim be text or rune (or either)?
-    (let delim? (if delim (:: (= it delim)) ~.whitespace?))
+    (let delim? (if delim (: (= it delim)) ~.whitespace?))
     (let limit me.count)
     (begin scanning [(i 0)]
       (hm (if (= i limit)       "")
@@ -40,7 +40,7 @@
           (else                 (me .from i)))))
 
   (to (~ .trim-right @(optional delim))
-    (let delim? (if delim (:: (= it delim)) ~.whitespace?))
+    (let delim? (if delim (: (= it delim)) ~.whitespace?))
     (begin scanning [(i me.count)]
       (hm (if (= i 0)           "")
           (if (delim? (me i.-)) (scanning i.-))
@@ -132,10 +132,10 @@
                    (" " .repeat half)))))
 
   (to (~ .repeat n)
-    ("" .join (each (:: me) (march<- 0 n))))
+    ("" .join (each (: me) (march<- 0 n))))
 
   (to (~ .format @arguments)
-    (text<-writer (:: (format .to-sink it me @arguments))))
+    (text<-writer (: (format .to-sink it me @arguments))))
 
   (to ~.split-lines
     ;; TODO ugly. This 'if' is needed because we want a final "\n" to

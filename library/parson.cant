@@ -22,7 +22,7 @@
 (to (rule-ref<- name)
   {lifted (set<- name)
           (on (_ rules _)
-            (delay (: (rules name))))})
+            (delay ($ (rules name))))})
 
 (to (constant<- p)
   {lifted (set<-)
@@ -91,22 +91,22 @@
           any-1))
   (seclude
    (then q (many quoted-rune) q __
-         (feed-list (:: ("" .join it))))))
+         (feed-list (: ("" .join it))))))
 
 (let qtext  (text-quoted-by #\'))
 (let dqtext (text-quoted-by #\"))
 
 (let pe
-  (delay (: (seclude
+  (delay ($ (seclude
              (either (then term (maybe (then (lit "|") __ pe (lift either))))
-                     (lift (: empty)))))))
+                     (lift ($ empty)))))))
 
 (let term
-  (delay (: (seclude
+  (delay ($ (seclude
              (then factor (maybe (then term (lift then))))))))
 
 (let factor
-  (delay (: (seclude
+  (delay ($ (seclude
              (either (then (lit "!") __ factor (lift nix))
                      (then primary
                            (either (then (lit "**") __ primary (lift many))
@@ -159,7 +159,7 @@
   (on (subs)
     (let full-subs (union-map<- subs default-subs))
     (let rules (for !map-by [(name (each ~.first skeletons))]
-                 (delay (: (rules name)))))
+                 (delay ($ (rules name)))))
     (for each! [(`(,name ,{lifted _ p<-}) skeletons)]
       (rules .set! name (p<- builder rules full-subs)))
     rules))

@@ -64,7 +64,7 @@
   ;; Map from each remaining unit's position to its hit points,
   ;; initially 200. (A unit's species is known by its G or E on the
   ;; map.)
-  (let units (!map-by (:: 200) (where unit? area)))
+  (let units (!map-by (: 200) (where unit? area)))
 
   ;; For each unit, do a turn. Return yes if the round completed.
   (to (do-round)
@@ -83,7 +83,7 @@
       (may (find-shortest-paths p goals)
         (be '())
         (be paths
-          (let chosen-path (min-by (:: `(,it.last ,it.first)) paths))
+          (let chosen-path (min-by (: `(,it.last ,it.first)) paths))
           (let spot chosen-path.first)
           (move! p spot)
           (unless (maybe-attack spot)
@@ -103,7 +103,7 @@
       (be targets
         (let target
           ;; The least remaining hit points, then the first in reading order.
-          (min-by (:: `(,(units it) ,it)) targets))
+          (min-by (: `(,(units it) ,it)) targets))
         ;;     (out .say "target ~w\n" target)
         (attack p target)
         #yes)))

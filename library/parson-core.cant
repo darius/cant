@@ -203,7 +203,7 @@
   (alter (on (vals) `(,(f @vals)))))
 
 ;; Succeed, clearing away any vals.
-(let drop (alter (:: '())))
+(let drop (alter (: '())))
 
 ;; Succeed, appending `constant` to the vals.
 (to (push constant)
@@ -220,7 +220,7 @@
 
 ;; Match p in the first position possible after skipping forward 0 or more places.
 (to (seek p)
-  (let seek-p (either p (then skip-any-1 (delay (: seek-p))))))
+  (let seek-p (either p (then skip-any-1 (delay ($ seek-p))))))
 
 ;; Advance one place if possible -- i.e. we're short of the end, and
 ;; ok? is true of the element at the current place (normally, the rune
@@ -243,7 +243,7 @@
 
 ;; E.g. (lit-1 #\x) advances past exactly "x", or fails.
 (to (lit-1 my-rune)
-  (skip-1 (:: (= my-rune it)))) ;TODO I think <=> in place of = would catch some bugs in client code
+  (skip-1 (: (= my-rune it)))) ;TODO I think <=> in place of = would catch some bugs in client code
 
 ;; E.g. (lit "hello") advances past exactly "hello", or fails.
 (to (lit literal)
@@ -262,7 +262,7 @@
 (make many
   ;; Parse as 0 or more p's in sequence, i.e. Kleene star.
   (to (~ p)
-    (let p* (maybe (then p (delay (: p*))))))
+    (let p* (maybe (then p (delay ($ p*))))))
   ;; 0 or more p's, with separator in between each.
   (to (~ p separator)
     (maybe (then p (many (then separator p))))))
@@ -270,7 +270,7 @@
 (make at-least-1
   ;; Parse as 1 or more p's in sequence, i.e. Kleene plus.
   (to (~ p)
-    (let p+ (then p (maybe (delay (: p+))))))
+    (let p+ (then p (maybe (delay ($ p+))))))
   ;; 1 or more p's, with separator in between each.
   (to (~ p separator)
     (then p (many (then separator p)))))

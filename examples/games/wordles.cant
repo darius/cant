@@ -23,7 +23,7 @@ if this narrows it down enough, then which words.
 (let wordle-words-filename "examples/games/wordle-words.text") ;;TODO paths relative to this source file
 
 (to (load-dictionary)
-  (may (catch-oops (: (open-input-file wordle-words-filename)))
+  (may (catch-oops ($ (open-input-file wordle-words-filename)))
     (be {oops _} ;;TODO some reasonable way to match just file I/O errors, etc.
       (make-dictionary wordle-words-filename))
     (be sink

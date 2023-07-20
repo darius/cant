@@ -36,7 +36,7 @@ _: :whitespace*.
 (to (part1)
   (let rules (map<-lists (each parse rule-text.split-lines)))
   (let rule0 (Seq (rules 0) End))
-  (tally-by (:: (~.some? (rule0 rules it 0))) data.split-lines))
+  (tally-by (: (~.some? (rule0 rules it 0))) data.split-lines))
 
 (to (part2)
   (let rules1 (map<-lists (each parse rule-text.split-lines)))
@@ -46,4 +46,4 @@ _: :whitespace*.
   (let new-rules (map<-lists (each parse new-rule-text.split-lines)))
   (let rules2 (new-rules .override rules1))
   (let rule0 (Seq (rules2 0) End))
-  (tally-by (:: (~.some? (rule0 rules2 it 0))) data.split-lines))
+  (tally-by (: (~.some? (rule0 rules2 it 0))) data.split-lines))

@@ -16,6 +16,6 @@
                  (if (= goal 0) 1)
                  (else (for sum-by [(coin denoms)]
                          (count-ways (- goal coin)
-                                     (keep (:: (<= it coin)) denoms))))))))
+                                     (keep (: (<= it coin)) denoms))))))))
 
 (out .print (count-ways 200 all-denominations))

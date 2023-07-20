@@ -33,7 +33,7 @@
           '())
         (let x xs.first)
         (if (seen .maps? x)
-          (link/lazy x (: (looking xs.rest))))
+          (link/lazy x ($ (looking xs.rest))))
         (else
           (seen .add! x)
           (looking xs.rest)))))

@@ -288,8 +288,8 @@ Let's start with the equivalents of familiar Scheme syntax:
 | `#t`                            | `#yes`  |   |
 | `#f`                            | `#no`  |   |
 | `(let looping ((v init)) body)` | `(begin looping [(v init)] body)` |  The 'ing' is a convention. |
-| `(lambda () e)`                 | `(: e)`     |   |
-| `(lambda (it) (turn it 90))`    | `(:: (turn it 90))`     |   |
+| `(lambda () e)`                 | `($ e)`     |   |
+| `(lambda (it) (turn it 90))`    | `(: (turn it 90))`     |   |
 
 The `hm` form, like Scheme's `cond`, is complex enough to need
 explanation. It typically goes like (from
@@ -703,7 +703,7 @@ messages](https://github.com/darius/cant/blob/master/examples/automata/text-regi
 element, or `padding` if empty. But in general you still may have to
 [fall back to function
 syntax](https://github.com/darius/cant/blob/master/examples/automata/turing-machine.cant#L34):
-``` (each (:: ("~w" .format it)) squares) ```
+``` (each (: ("~w" .format it)) squares) ```
 
 
 ## Input and output
@@ -1131,7 +1131,7 @@ after sending it to each of the actions. [For
 example](https://github.com/darius/cant/blob/master/library/sturm.cant#L197-L198),
 ```
 (hey in.read-rune
-     (:: (surely (not (zilch? it)))))
+     (: (surely (not (zilch? it)))))
 ```
 returns the next rune from standard input, but raises an
 assertion error if it's the end-of-file. (I know, using an assertion

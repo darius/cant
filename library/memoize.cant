@@ -3,6 +3,6 @@
 (to (memoize f)
   (let memos (!map<-))
   (to (memoized @arguments)
-    (memos .get-set! arguments (: (f @arguments)))))
+    (memos .get-set! arguments ($ (f @arguments)))))
 
 (export memoize)

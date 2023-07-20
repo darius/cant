@@ -463,7 +463,7 @@
       (hm (if (<= bound i) '())  ;; TODO do i-1 .rest's here too for consistency?
           (else (let n (- bound i))
                 (begin copying [(j 0) (ll (lazy-list .from i))]
-                  (link/lazy ll.first (: (let j1 j.+)
+                  (link/lazy ll.first ($ (let j1 j.+)
                                          (if (< j1 n) (copying j1 ll.rest) '())))))))
     ;; TODO any more parts of list-trait that need overriding for laziness? Plausibly: .chain 
     ))
@@ -484,7 +484,7 @@
       (hm (if (<= bound i) '())  ;; TODO do i-1 .rest's here too for consistency?
           (else (let n (- bound i))
                 (begin copying [(j 0) (ll (lazy-list .from i))]
-                  (link/lazier ll.first (: (let j1 j.+)
+                  (link/lazier ll.first ($ (let j1 j.+)
                                            (if (< j1 n) (copying j1 ll.rest) '())))))))
     ;; TODO any more parts of list-trait that need overriding for laziness? Plausibly: .chain 
     ))
@@ -492,7 +492,7 @@
 (to (lazier<- xs) ;; Convert from '/lazy' to '/lazier'. TODO we shouldn't need this
   (begin copying [xs]
     (hm (if xs.none? '())
-        (else (link/lazier xs.first (: (copying xs.rest)))))))
+        (else (link/lazier xs.first ($ (copying xs.rest)))))))
 
 ;; (keep ~.even? '(3 1 4 1 5 9 2 6)) = '(4 2 6)
 ;; No {extend zipped-list-transducer} for this one, because the
@@ -507,7 +507,7 @@
       (else (keep keep? xs.rest))))
 
 (to (skip skip? xs)
-  (keep (:: (not (skip? it))) xs))
+  (keep (: (not (skip? it))) xs))
 
 (to (chain/lazy xs ys-thunk)
   (fold/lazy link/lazy xs ys-thunk))
@@ -516,7 +516,7 @@
   (if xs.none?
       (z-thunk)
       (f xs.first
-         (: (fold/lazy f xs.rest z-thunk)))))
+         ($ (fold/lazy f xs.rest z-thunk)))))
 
 ;; A march represents an arithmetic progression from a `first`, short of a
 ;; `limit`, successively by a `stride`.
@@ -590,7 +590,7 @@
 
 ;; TODO is this the most useful version of this idea?
 (to (iterating f x)
-  (link/lazy x (: (iterating f (f x)))))
+  (link/lazy x ($ (iterating f (f x)))))
 
 (to (text<- @runes)
   (text<-list runes))

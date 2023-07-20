@@ -8,5 +8,5 @@
    (on-oops-traceback k evil)
    (out .display "Now continuing with 42\n")
    (k .answer 42))
- (:
+ ($
    (out .print (+ 1 (oops "I wish to complain" 'life 'is 'terrible)))))

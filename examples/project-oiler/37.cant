@@ -29,12 +29,12 @@
       (if ys.none? '())
       (may (xs.first .compare ys.first)
         (be '< (intersect/lazy xs.rest ys))
-        (be '= (link/lazy xs.first (: (intersect/lazy xs.rest ys.rest))))
+        (be '= (link/lazy xs.first ($ (intersect/lazy xs.rest ys.rest))))
         (be '> (intersect/lazy xs ys.rest)))))
 
 (to (list-truncatables extend)
   (to (grow seeds)
-    (keep prime? (each (:: (extend @it)) (grid* seeds (1 .thru 9)))))
+    (keep prime? (each (: (extend @it)) (grid* seeds (1 .thru 9)))))
   (let batches (keep-while/lazy ~.some? (iterating grow '(2 3 5 7))))
   ;; (The keep-while isn't needed for our final answer, but helpful in
   ;; development so we don't hang once the truncatables run out.)

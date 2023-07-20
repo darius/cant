@@ -22,7 +22,7 @@
     (puzzle cryptogram)))
 
 (to (encrypt code text)
-  (text-by (:: (code .get it it)) text.lowercase))
+  (text-by (: (code .get it it)) text.lowercase))
 
 (to (random-code<- chaos)
   (map<-items (zip alphabet (alphabet .alter (~ .shuffle! chaos)))))
@@ -69,7 +69,7 @@
 
   (let code (keep ~.letter? cryptogram.uppercase))
   (surely code.some?)
-  (let decoder (!map-by (:: #\space) code.nub))
+  (let decoder (!map-by (: #\space) code.nub))
   (let point (box<- 0))           ; Index in `code` of the cursor
 
   (let lines (each clean cryptogram.uppercase.split-lines))
@@ -100,15 +100,15 @@
       (shift-by offset))
 
     (to (~ .shift-line offset)
-      (shift-till offset (: (line-starts .maps? point.^))))
+      (shift-till offset ($ (line-starts .maps? point.^))))
 
     (to (~ .shift-to-space offset)
       (when (decoder .find? #\space)
-        (shift-till offset (: (= #\space (decoder (code point.^)))))))
+        (shift-till offset ($ (= #\space (decoder (code point.^)))))))
 
     (to (~ .shift-to-code offset letter)
       (when (code .find? letter)
-        (shift-till offset (: (= letter (code point.^))))))
+        (shift-till offset ($ (= letter (code point.^))))))
 
     ;; Return a Sturm view of the decoding-in-progress.
     (to (~ .view show-cursor?)

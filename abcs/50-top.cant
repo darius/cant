@@ -7,7 +7,7 @@
     (system/must-succeed ("stty ~d -echo" .format name))
     (unwind-protect
      fn
-     (: (system/must-succeed "stty sane")))))    ;TODO save & restore instead
+     ($ (system/must-succeed "stty sane")))))    ;TODO save & restore instead
 
 
 ;; Top level: listener and command line
@@ -147,7 +147,7 @@
                       ;; Get the 'real' k, the parent of the inspect-sequel call above.
                       ;; XXX omg this is awful
                       (k .eject-to ejector k.rest.rest.rest.rest.rest.rest))
-                    (: (oops "Avast")))))))
+                    ($ (oops "Avast")))))))
 
 (full-powered-setting .resolve-each! primordial-setting full-powered-setting-extra-names)
 

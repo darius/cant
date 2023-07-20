@@ -3,10 +3,10 @@
 ;; TODO move this (main) somewhere meaningful, or rm it.
 (to (main `(,_ ,width-text ,@words))
   (let lines (wrap (" " .join words) width-text.number))
-  (each! (:: (out .print it)) lines))
+  (each! (: (out .print it)) lines))
 
 (let text "
   How to explain?  How to describe?  Even the omniscient viewpoint quails.
 ")
 
-(each! (:: (out .print it)) (wrap text 30))
+(each! (: (out .print it)) (wrap text 30))

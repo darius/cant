@@ -25,11 +25,11 @@
 ;; (disabled)
 '(hide
   (let g (re-generator<- "ab"))
-  (each! (:: (out .print it)) (g 1))
+  (each! (: (out .print it)) (g 1))
   out.newline
-  (each! (:: (out .print it)) (g 2))
+  (each! (: (out .print it)) (g 2))
   out.newline
-  (each! (:: (out .print it)) (g 3)))
+  (each! (: (out .print it)) (g 3)))
 
 ;; How many regexes of each size?
 ;; (disabled)
