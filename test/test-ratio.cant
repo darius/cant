@@ -5,7 +5,7 @@
 ;; TODO move to ratio.cant
 (to (rationalize float)
   (if (< float 0)
-      (each/lazy - (rationalize (- float)))
+      (each$ - (rationalize (- float)))
       (oops "XXX unimplemented")))
 
 (let pi (r/ (ratio<- 355) (ratio<- 113)))

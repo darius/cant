@@ -22,10 +22,10 @@
 (to (interleave xs ys)
   (if xs.none?
       ys
-      (link/lazy xs.first
-                 ($ (interleave ys xs.rest)))))
+      (link$ xs.first
+             ($ (interleave ys xs.rest)))))
 
 (to ((both goal1 goal2) s)
-  (gather/lazy goal2 (goal1 s)))        ;XXX add interleaving here too?
+  (gather$ goal2 (goal1 s)))        ;XXX add interleaving here too?
 
 (export fail succeed == either both)

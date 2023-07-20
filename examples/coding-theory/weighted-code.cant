@@ -42,7 +42,7 @@
       (else (-> ns reverse running-sum running-sum ~.last))))
 
 (to (running-sum numbers)
-  (~.rest (amassing/lazy + 0 numbers)))
+  (~.rest (amassing$ + 0 numbers)))
 
 ;; Equivalent, in a loop:
 (to (weighted-sum-loop ns)

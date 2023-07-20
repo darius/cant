@@ -225,7 +225,7 @@
 
   (to ~.cycle
     (surely list.some?)
-    (let result (chain/lazy list ($ result))))
+    (let result (chain$ list ($ result))))
 
   (to (~ .maybe @(optional if-none))  ;; TODO an experiment TODO could be defined on maps in general too
     (hm (if list.none? if-none)

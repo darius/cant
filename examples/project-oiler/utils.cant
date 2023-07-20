@@ -34,6 +34,6 @@ i   out       mixradix
 ;; TODO is this worth it? sometimes what you want is the yeahs equivalent
 ;; TODO #no if not found?
 (to (detect keep? xs)
-  ((keep/lazy keep? xs) .first))
+  ((keep$ keep? xs) .first))
 
 (export permuter<- lex-permutation detect)

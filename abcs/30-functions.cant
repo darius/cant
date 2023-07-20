@@ -107,43 +107,43 @@
   ;; TODO inconsistent to auto-.values here and not elsewhere, isn't it?
   ("" .join (each (: ((f it) .text)) xs.values)))
 
-(make grid*/lazy
+(make grid*$
   (to (~)           '(()))
-  (to (~ xs @lists) (for gather/lazy [(x xs)]
-                      (for each/lazy [(picks (grid*/lazy @lists))]
+  (to (~ xs @lists) (for gather$ [(x xs)]
+                      (for each$ [(picks (grid*$ @lists))]
                         (link x picks)))))
 
 ;; TODO zipped-list-transducer for the below?
 
-(to (keep/lazy keep? xs)
+(to (keep$ keep? xs)
   (hm (if xs.none? '())
       (if (keep? xs.first)
-          (link/lazy xs.first ($ (keep/lazy keep? xs.rest))))
-      (else (keep/lazy keep? xs.rest))))
+          (link$ xs.first ($ (keep$ keep? xs.rest))))
+      (else (keep$ keep? xs.rest))))
 
-(to (skip/lazy skip? xs)
-  (keep/lazy (compose not skip?) xs))
+(to (skip$ skip? xs)
+  (keep$ (compose not skip?) xs))
 
-(to (each/lazy f xs)
+(to (each$ f xs)
   (hm (if xs.none? '())
-      (else (link/lazy (f xs.first)
-                       ($ (each/lazy f xs.rest))))))
+      (else (link$ (f xs.first)
+                   ($ (each$ f xs.rest))))))
 
-(to (gather/lazy f xs)
-  (for fold/lazy [(x xs) (rest-thunk ($ '()))]
-    (chain/lazy (f x) rest-thunk)))
+(to (gather$ f xs)
+  (for fold$ [(x xs) (rest-thunk ($ '()))]
+    (chain$ (f x) rest-thunk)))
 
-(to (yeahs/lazy maybe xs)
-  (keep/lazy itself (each/lazy maybe xs)))
+(to (yeahs$ maybe xs)
+  (keep$ itself (each$ maybe xs)))
 
-(to (amassing/lazy f z xs)
+(to (amassing$ f z xs)
   (begin walking [z xs]
-    (link/lazy z ($ (if xs.none?
-                        '()
-                        (walking (f z xs.first) xs.rest))))))
+    (link$ z ($ (if xs.none?
+                    '()
+                    (walking (f z xs.first) xs.rest))))))
 
 (to (amassing f z xs)
-  (as-list (amassing/lazy f z xs)))
+  (as-list (amassing$ f z xs)))
 
 ;; ((compose f g) x) = (f (g x)), etc.
 (make compose {extend right-to-left-operation}
@@ -227,11 +227,11 @@
           (link x (keep-while prefix? xs.rest)))
       (else '())))
   
-(to (keep-while/lazy prefix? xs)
+(to (keep-while$ prefix? xs)
   (hm (if xs.none? '())
       (let x xs.first)
       (if (prefix? x)
-          (link/lazy x ($ (keep-while/lazy prefix? xs.rest))))
+          (link$ x ($ (keep-while$ prefix? xs.rest))))
       (else '())))
   
 (to (skip-while prefix? xs)             ;TODO as list/text method?
@@ -241,7 +241,7 @@
 
 (to (keep-until stop? xs) (keep-while (compose not stop?) xs))
 (to (skip-until stop? xs) (skip-while (compose not stop?) xs))
-(to (keep-until/lazy stop? xs) (keep-while/lazy (compose not stop?) xs))
+(to (keep-until$ stop? xs) (keep-while$ (compose not stop?) xs))
 
 ;; Combined keep-until and skip-until: split xs at its first element
 ;; where suffix? is true.
@@ -298,8 +298,8 @@
     compound-key<- yeahs where while until itself 
     compose zip setting<-map
     link/lazier lazier<- 
-    fold/lazy gather chain/lazy 
-    each/lazy gather/lazy link/lazy amassing/lazy iterating
+    fold$ gather chain$ 
+    each$ gather$ link$ amassing$ iterating
     each-value
     array-by map-by !map-by map<-values text-by method<- ->
     sum-by tally-by tally max min max-by min-by
@@ -323,9 +323,9 @@
     + * - transitive-comparison < <= <=> >= > compare
     gcd lcm count<-digits
     chain reverse amass amass1 fold fold1 amassing transpose zipped-list-transducer
-    each each! some every march<- yeahs/lazy grid*/lazy
-    keep skip keep/lazy skip/lazy
-    keep-while skip-while keep-while/lazy keep-until skip-until keep-until/lazy
+    each each! some every march<- yeahs$ grid*$
+    keep skip keep$ skip$
+    keep-while skip-while keep-while$ keep-until skip-until keep-until$
     read
     assoc  ;; TODO remove
     __as-link __array<-list ;; used implicitly by parse expansion

@@ -2,7 +2,7 @@
   (sum (keep ~.even? (keep-while (: (<= it n)) fibs))))
 
 (let fibs (begin [(a 1) (b 1)]
-            (link/lazy a ($ (loop b (+ a b))))))
+            (link$ a ($ (loop b (+ a b))))))
 
 ;(out .print (oiler2 10))
 (out .print (oiler2 4000000))

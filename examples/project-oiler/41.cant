@@ -12,6 +12,6 @@
   ;; List permutations of 1..nd in decreasing order; return the first good one.
   ;; TODO we could just use the list.permutations method if it were lazy
   (let perm (permuter<- (nd .down-thru 1)))
-  ((~ .get 0) (keep/lazy prime? (each/lazy (compose count<-digits perm) ((nd .!) .till)))))
+  ((~ .get 0) (keep$ prime? (each$ (compose count<-digits perm) nd.!.till))))
 
 (out .print (answer)) ;; 7652413

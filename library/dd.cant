@@ -70,8 +70,8 @@
     (if (not= nil node.constant-value)
         (and (= goal node.constant-value)
              env)
-        (for fold/lazy [((~ value branch) node.branches.items)
-                        (try-remaining-branches ($ #no))]
+        (for fold$ [((~ value branch) node.branches.items)
+                    (try-remaining-branches ($ #no))]
           (hm (when (`(,nil ,goal) .find? branch.constant-value)
                 (env .set! node.rank value)
                 (walking branch))

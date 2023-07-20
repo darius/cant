@@ -501,7 +501,7 @@ calls a natural number a 'count', in its ridiculous stamp-out-jargon
 reform campaign.) There are a few extra operations like chaining two
 sequences.
 
-You can make lazy sequences with `link/lazy`, like `cons-stream` in
+You can make lazy sequences with `link$`, like `cons-stream` in
 SICP. (It doesn't memoize, so 'lazy' is a bit of a misnomer -- sorry,
 I should change the name or the behavior.)
 
@@ -518,7 +518,7 @@ like classical Lisp's `(cons 'thing 'not-a-list)` producing `(thing
 `.count`, on it. I think I want to make it an error to construct the
 improper list in the first place; it's allowed for now because it can
 be useful when you replace this `not-a-list` with an object that acts
-like a list. That's how `link/lazy` above is implemented, in fact. For
+like a list. That's how `link$` above is implemented, in fact. For
 `link` to complain about non-lists at construction time, we'll need a
 way to certify new objects as legitimate lists.
 
@@ -1006,7 +1006,7 @@ Like `fold` but requiring `xs` to be nonempty:
 preserving no-ness.
 
 There are lazy-list versions of many of these, with names like
-`each/lazy`.
+`each$`.
 
 
 ## Traversing sequences

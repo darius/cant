@@ -10,7 +10,7 @@
 
 (out .display "\nPart 2\n")
 
-(let freqs (amassing/lazy + 0 changes.cycle))
+(let freqs (amassing$ + 0 changes.cycle))
 (out .print (~.first (duplicates<- freqs)))
 ;;(let seen (set<-))
 ;;(out .print (for detect [(freq freqs)]

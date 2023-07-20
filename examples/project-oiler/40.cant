@@ -9,7 +9,7 @@
             (each (~ .power-of 10) (0 .thru 6)))))
 
 ;; Super dumb but works.
-(let champ-digits (gather/lazy ~.digits 1.and-up))
+(let champ-digits (gather$ ~.digits 1.and-up))
 (to (v1-champ i) (champ-digits i.-))
 
 ;; Should be faster: champs are in a series of chunks:

@@ -36,8 +36,8 @@
       {~ (* k h) (* k a) (* k b)})))
 
 (to (list-primitive-pythagorean-triples hypot-limit)
-  (for gather/lazy [(m (1 .till hypot-limit))]
-    (for keep-while [({~ h a b} (for yeahs/lazy [(n (1 .till m))]
+  (for gather$ [(m (1 .till hypot-limit))]
+    (for keep-while [({~ h a b} (for yeahs$ [(n (1 .till m))]
                                   (and (= 1 (gcd m n))
                                        (or m.even? n.even?)
                                        (do (let z {complex m n})

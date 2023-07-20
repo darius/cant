@@ -6,7 +6,7 @@
 (to (v1-answer)
   ;; TODO we could just use the list.permutations method if it were lazy
   (let descending-perm (permuter<- (9 .down-thru 1)))
-  (detect pandigital-multiple? (each/lazy descending-perm 9.!.till)))
+  (detect pandigital-multiple? (each$ descending-perm 9.!.till)))
 
 (to (pandigital-multiple? digits)
   (for some [(i '(1 2 3 4))]

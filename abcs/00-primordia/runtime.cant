@@ -453,7 +453,7 @@
                         (link x picks)))))
 
 ;; TODO better as (link x (lazy-list<- thunk)) ?
-(to (link/lazy x thunk)
+(to (link$ x thunk)
   (make lazy-list {extend list-trait}
     (to ~.none? #no)
     (to ~.first x)
@@ -463,13 +463,13 @@
       (hm (if (<= bound i) '())  ;; TODO do i-1 .rest's here too for consistency?
           (else (let n (- bound i))
                 (begin copying [(j 0) (ll (lazy-list .from i))]
-                  (link/lazy ll.first ($ (let j1 j.+)
-                                         (if (< j1 n) (copying j1 ll.rest) '())))))))
+                  (link$ ll.first ($ (let j1 j.+)
+                                     (if (< j1 n) (copying j1 ll.rest) '())))))))
     ;; TODO any more parts of list-trait that need overriding for laziness? Plausibly: .chain 
     ))
 
 (make not-yet-forced)
-(to (link/lazier x thunk)      ;TODO just replace link/lazy with this?
+(to (link/lazier x thunk)      ;TODO just replace link$ with this?
   (let box (box<- not-yet-forced))
   (make lazy-list {extend list-trait}
     (to ~.none? #no)
@@ -489,7 +489,7 @@
     ;; TODO any more parts of list-trait that need overriding for laziness? Plausibly: .chain 
     ))
 
-(to (lazier<- xs) ;; Convert from '/lazy' to '/lazier'. TODO we shouldn't need this
+(to (lazier<- xs) ;; Convert from a 'link$' list to a 'link/lazier' one. TODO we shouldn't need this
   (begin copying [xs]
     (hm (if xs.none? '())
         (else (link/lazier xs.first ($ (copying xs.rest)))))))
@@ -509,14 +509,14 @@
 (to (skip skip? xs)
   (keep (: (not (skip? it))) xs))
 
-(to (chain/lazy xs ys-thunk)
-  (fold/lazy link/lazy xs ys-thunk))
+(to (chain$ xs ys-thunk)
+  (fold$ link$ xs ys-thunk))
 
-(to (fold/lazy f xs z-thunk)
+(to (fold$ f xs z-thunk)
   (if xs.none?
       (z-thunk)
       (f xs.first
-         ($ (fold/lazy f xs.rest z-thunk)))))
+         ($ (fold$ f xs.rest z-thunk)))))
 
 ;; A march represents an arithmetic progression from a `first`, short of a
 ;; `limit`, successively by a `stride`.
@@ -590,7 +590,7 @@
 
 ;; TODO is this the most useful version of this idea?
 (to (iterating f x)
-  (link/lazy x ($ (iterating f (f x)))))
+  (link$ x ($ (iterating f (f x)))))
 
 (to (text<- @runes)
   (text<-list runes))

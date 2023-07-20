@@ -15,6 +15,6 @@
   ((~ .find? n) (keep-while (: (<= it n))
                             triangle-numbers)))
 
-(let triangle-numbers (amassing/lazy + 1 2.and-up))
+(let triangle-numbers (amassing$ + 1 2.and-up))
 
 (out .print (answer)) ;; 162

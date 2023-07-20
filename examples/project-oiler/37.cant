@@ -10,7 +10,7 @@
   (sum prefix))
 
 (to (v1-list)
-  (keep/lazy doubly-truncatable? the-primes))
+  (keep$ doubly-truncatable? the-primes))
 
 (to (doubly-truncatable? p)
   (and (<= 10 p)
@@ -21,24 +21,24 @@
 
 ;; Faster to grow truncatables separately in each direction, and intersect them.
 (to (v2-list)
-  (intersect/lazy left-truncatables right-truncatables))
+  (intersect$ left-truncatables right-truncatables))
 
 ;; Lazification of sset-intersect from sset.cant
-(to (intersect/lazy xs ys)
+(to (intersect$ xs ys)
   (hm (if xs.none? '())
       (if ys.none? '())
       (may (xs.first .compare ys.first)
-        (be '< (intersect/lazy xs.rest ys))
-        (be '= (link/lazy xs.first ($ (intersect/lazy xs.rest ys.rest))))
-        (be '> (intersect/lazy xs ys.rest)))))
+        (be '< (intersect$ xs.rest ys))
+        (be '= (link$ xs.first ($ (intersect$ xs.rest ys.rest))))
+        (be '> (intersect$ xs ys.rest)))))
 
 (to (list-truncatables extend)
   (to (grow seeds)
     (keep prime? (each (: (extend @it)) (grid* seeds (1 .thru 9)))))
-  (let batches (keep-while/lazy ~.some? (iterating grow '(2 3 5 7))))
+  (let batches (keep-while$ ~.some? (iterating grow '(2 3 5 7))))
   ;; (The keep-while isn't needed for our final answer, but helpful in
   ;; development so we don't hang once the truncatables run out.)
-  (gather/lazy sort batches.rest))
+  (gather$ sort batches.rest))
 
 (to (extend-left seed digit)  (~.number (chain digit.text seed.text)))
 (to (extend-right seed digit) (+ (* 10 seed) digit))

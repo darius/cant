@@ -24,7 +24,7 @@
 ;; TODO is this worth it? sometimes what you want is the yeahs equivalent
 ;; TODO #no if not found?
 (to (detect keep? xs)
-  ((keep/lazy keep? xs) .first))
+  ((keep$ keep? xs) .first))
 
 (to (duplicates<- xs)
   (let seen (set<-))
@@ -33,7 +33,7 @@
           '())
         (let x xs.first)
         (if (seen .maps? x)
-          (link/lazy x ($ (looking xs.rest))))
+          (link$ x ($ (looking xs.rest))))
         (else
           (seen .add! x)
           (looking xs.rest)))))
