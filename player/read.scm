@@ -226,7 +226,7 @@
       (lambda (port c)
         (let ((next (read-char port)))
           (case next
-            (( #\( )	; new term notation
+            (( #\( )	; new term notation -- TODO unused, just drop it?
              (let* ((tag (must-read port))
                     (parts (read-seq #\) port c)))
                (make-term tag parts)))
