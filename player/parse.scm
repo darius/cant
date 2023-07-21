@@ -400,9 +400,6 @@
     ('$      (mlambda
               ((__ . body)
                `(to (_) ,@body))))
-    (':      (mlambda
-              ((__ e)
-               `(on (it) ,e))))
     ('for    (mlambda
               ((__ fn (: bindings vector?) . body)
                (let ((name-for (if (symbol? fn)

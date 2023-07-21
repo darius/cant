@@ -94,17 +94,17 @@
 
 ;; - Round-trip encode/decode = identity
 (for all [(message (a-list-of a-count))] ;TODO no way currently to ask for a number in range test-M.till
-  (hm (unless (every (: (< it test-M)) message)
+  (hm (unless (every ||(< it test-M) message)
         (out .say "?")
         #yes)
       (else
         (should = message (-> message
-                              (: (test-code .encode it))
-                              (: (test-code .decode it)))))))
+                              ||(test-code .encode it)
+                              ||(test-code .decode it))))))
 
 ;; - Digits other than the check digit are encoded as-is
 (for all [(message (a-list-of a-count))]
-  (hm (unless (every (: (< it test-M)) message)
+  (hm (unless (every ||(< it test-M) message)
         (out .say "?")
         #yes)
       (else
@@ -114,20 +114,20 @@
 ;; - Detect error: alter single symbol
 (for all [(message (a-list-of a-count)) (i a-count)]
   (let length message.count)
-  (hm (unless (and (every (: (< it test-M)) message)
+  (hm (unless (and (every ||(< it test-M) message)
                    (<= i length))
         (out .say "?")
         #yes)
       (else
         (let encoded (test-code .encode message))
-        (let altered (encoded .alter (~ .update i (: (it.+ .modulo test-M)))))
+        (let altered (encoded .alter (~ .update i ||(it.+ .modulo test-M))))
         (let decoded (test-code .decode altered))
         (should not decoded))))
 
 ;; - Detect error: swap nonequal symbols at non-modulus distance
 (for all [(message (a-list-of a-count)) (i a-count) (j a-count)]
   (let length message.count)
-  (hm (unless (and (every (: (< it test-M)) message)
+  (hm (unless (and (every ||(< it test-M) message)
                    (<= i length) (<= j length) (not= i j))
         (out .say "?")
         #yes)

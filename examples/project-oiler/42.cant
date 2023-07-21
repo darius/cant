@@ -12,8 +12,8 @@
                       (- rune (- #\A 1)))))
 
 (to (triangle-number? n)
-  ((~ .find? n) (keep-while (: (<= it n))
-                            triangle-numbers)))
+  ((keep-while ||(<= it n) triangle-numbers)
+   .find? n))
 
 (let triangle-numbers (amassing$ + 1 2.and-up))
 

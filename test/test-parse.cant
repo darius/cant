@@ -43,7 +43,7 @@
 (hide
  (to (try grammar sentence)
    (out .say "~w:\n" sentence)
-   (each! (: (out .print it)) (grammar .parse sentence))
+   (each! ||(out .print it) (grammar .parse sentence))
    out.newline)
 
  (try grammar3 '(the table))

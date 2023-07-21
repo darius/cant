@@ -11,7 +11,7 @@
   (for amass [(n numbers.last)
               (i (numbers.count.- .till nsteps.-))]
     (hey (- i (sightings .get n i))
-         (: (sightings .set! n i)))))
+         ||(sightings .set! n i))))
 
 (to (part2)
   (play input 30000000))

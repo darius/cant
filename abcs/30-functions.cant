@@ -105,7 +105,7 @@
   ;; TODO also delete when (f x) = #no?
   ;;      (or make (#no .text) = ""? that's a bit much...)
   ;; TODO inconsistent to auto-.values here and not elsewhere, isn't it?
-  ("" .join (each (: ((f it) .text)) xs.values)))
+  ("" .join (each ||((f it) .text) xs.values)))
 
 (make grid*$
   (to (~)           '(()))
@@ -213,7 +213,7 @@
 
 ;; TODO too specialized for the stdlib
 (to (union @sets)
-  (hey (set<-) @(each (: (~ .merge! it)) sets)))
+  (hey (set<-) @(each ||(~ .merge! it) sets)))
 
 (to (intersect @sets)
   ;; TODO .intersect! like the above

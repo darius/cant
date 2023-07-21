@@ -3,7 +3,7 @@
 
 ;; Return a lazy list of all primes < limit.
 (to (list-primes-till limit)
-  (keep-while (: (< it limit)) the-primes))
+  (keep-while ||(< it limit) the-primes))
 
 ;; An incremental Sieve of Eratosthenes, implicitly leaving out the
 ;; even numbers. (Incremental because we don't know how high we're
@@ -123,7 +123,7 @@
           (surely (not factors.one?))
           (surely (= n (* @factors)))
           (surely (<= @factors))
-          (each! (: (surely (primes .maps? it))) factors)))))
+          (each! ||(surely (primes .maps? it)) factors)))))
 
 ;;(test-me-till 5000)
 ;;(out .print (as-list (list-primes-till 2000000)))

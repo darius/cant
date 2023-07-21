@@ -10,7 +10,7 @@
 
 (to (valid? `(,lo ,hi ,policy ,password))
   (let p (policy 0))
-  (let n (tally-by (: (= it p)) password))
+  (let n (tally-by ||(= it p) password))
   (<= lo n hi))
 
 (to (part2)

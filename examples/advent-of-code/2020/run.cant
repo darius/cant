@@ -21,10 +21,10 @@
 
   (to (run-part part)
     (hey (main-interactive-setting .binds? part)
-         (: (when it
-              (out .say "\nStarting ~d...\n" part)
-              (let answer ((main-interactive-setting part)))
-              (out .say "~d: ~w\n" part answer)))))
+         ||(when it
+             (out .say "\nStarting ~d...\n" part)
+             (let answer ((main-interactive-setting part)))
+             (out .say "~d: ~w\n" part answer))))
 
   (to (bad-command-line)
     (err .say "Usage: cant ~d day [-data data] [-part1] [-part2]\n" (args 0))

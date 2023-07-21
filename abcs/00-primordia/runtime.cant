@@ -507,7 +507,7 @@
       (else (keep keep? xs.rest))))
 
 (to (skip skip? xs)
-  (keep (: (not (skip? it))) xs))
+  (keep ||(not (skip? it)) xs))
 
 (to (chain$ xs ys-thunk)
   (fold$ link$ xs ys-thunk))

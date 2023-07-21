@@ -47,8 +47,8 @@ Press Tab to cycle to the next game, Esc to quit.")
                          (~ ((text<-number i.+ 36) 0) var))))
   (let names     (map<-items variables))
   (let last-flip (box<- #no))
-  (let marked    (!map-by (: #no) problem.variables))
-  (let settings  (!map-by (: #no) problem.variables))
+  (let marked    (!map-by ||#no problem.variables))
+  (let settings  (!map-by ||#no problem.variables))
 
   (make game
 
@@ -104,7 +104,7 @@ Press Tab to cycle to the next game, Esc to quit.")
   (make problem
     (to ~.clauses clauses)
     (to ~.variables
-      (-> (gather (: (each ~.magnitude it)) clauses)
+      (-> (gather ||(each ~.magnitude it) clauses)
           ~.nub
           sort))
     (to (~ .satisfied? settings)

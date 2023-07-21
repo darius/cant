@@ -7,7 +7,7 @@
 
 ;; TODO always keep the constant term?
 (to (poly<- coeffs)
-  (skip-while (: (= it 0)) coeffs))
+  (skip-while (be? 0) coeffs))
 
 ;; Readable text for a poly, like "2x^2 + 42".
 ;; TODO like " - 5x" instead of " + -5x"
@@ -85,7 +85,7 @@
   (max 0 coeffs.count.-))
 
 (to (poly+ p q)
-  (poly<- (reverse (each (: (call + it)) (zip .padded 0 (reverse p) (reverse q))))))
+  (poly<- (reverse (each ||(call + it) (zip .padded 0 (reverse p) (reverse q))))))
 
 (to (poly* p q)
   (let totals (array<-count (+ (poly-degree p) (poly-degree q) 1)
@@ -94,7 +94,7 @@
   (let rq (reverse q))
   (for each! [((~ i pi) rp.items)]
     (for each! [((~ j pj) rq.items)]
-      (totals .update (+ i j) (: (+ it (* pi pj))))))
+      (totals .update (+ i j) ||(+ it (* pi pj)))))
   (poly<- (reverse totals.values)))
   
 (export

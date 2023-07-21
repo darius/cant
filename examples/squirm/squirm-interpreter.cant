@@ -735,8 +735,7 @@
                             (~ 'eval  {eval})
                             (~ 'exit  {exit})
                             (~ 'throw {throw}))
-                     .override (each-value (: {primitive it})
-                                           primitives-from-cant)))
+                     .override (each-value ||{primitive it} primitives-from-cant)))
 
   (let builtins-env {local-env builtins-map {empty-env}})
 

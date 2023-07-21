@@ -91,7 +91,7 @@ insn:    :count ' ' :count ' ' :count ' ' :count '\n' :hug.
   ;; TODO: map-reduce with intersection
   (let op-name-set all-op-names.range)
   (let opcodes ((each ~.first constraints) .range))
-  (let candidates (!map-by (: op-name-set) opcodes.keys))
+  (let candidates (!map-by ||op-name-set opcodes.keys))
   (for each! [(`(,opcode ,op-names) constraints)]
     (candidates .update opcode (~ .intersect op-names.range)))
 
@@ -116,7 +116,7 @@ insn:    :count ' ' :count ' ' :count ' ' :count '\n' :hug.
         (pruning))))
   (surely candidates.none?)
 
-  (each! (: (out .print it)) assignments.items)
+  (each! ||(out .print it) assignments.items)
   out.newline
 
   (let post-regs (run program assignments))

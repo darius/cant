@@ -24,12 +24,12 @@
     ;; that the C backend happens to generate macros. It doesn't
     ;; logically belong at this point in the code, but rather in the
     ;; backend. TODO
-    (let body (gen-body (each (: (B .parenthesize it)) vars)
+    (let body (gen-body (each ||(B .parenthesize it) vars)
                         spec.params))
     (B .gen-definition spec.mnemonic.text vars body))
 
   (to (make-variable-list n)
-    (each (: (B .gen-variable it)) (1 .thru n)))
+    (each ||(B .gen-variable it) (1 .thru n)))
   
   (to (gen-body vars params)
     (begin walking [vars params (stmts '())]
@@ -170,7 +170,7 @@
         (else                  rune))))
 
 (to (indent lines)
-  (each (: (chain "    " it)) lines))
+  (each ||(chain "    " it) lines))
 
 
 ;; C backend

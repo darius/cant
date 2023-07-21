@@ -31,7 +31,7 @@
 ;; * Adjoin their multiples
 (to (list-pythagorean-triples hypot-limit)
   (for gather [({~ h a b} (list-primitive-pythagorean-triples hypot-limit))]
-    (for each [(k (keep-while (: (<= (* h it) hypot-limit))
+    (for each [(k (keep-while ||(<= (* h it) hypot-limit)
                               1.and-up))] ;TODO only keep square-free k's (to avoid generating duplicate triples)
       {~ (* k h) (* k a) (* k b)})))
 

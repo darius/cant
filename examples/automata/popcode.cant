@@ -145,8 +145,8 @@
                  (vm .stack-step new-stack)))
 
 (to ((sop-0 n f) vm) (vm .sop-0 n f))
-(def-prim 'write   (sop-0 1 (: (out .display it))))
-(def-prim 'writeln (sop-0 1 (: (out .displayln it))))
+(def-prim 'write   (sop-0 1 ||(out .display it)))
+(def-prim 'writeln (sop-0 1 ||(out .displayln it)))
 
 (to ((sop-1 n f) vm) (vm .sop-1 n f))
 (def-prim '+ (sop-1 2 +))

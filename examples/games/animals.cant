@@ -47,4 +47,4 @@
     (be line line.trim)))
 
 (to (say @texts)
-  (each! (: (out .display it)) texts))
+  (each! ||(out .display it) texts))

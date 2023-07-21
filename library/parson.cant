@@ -91,7 +91,7 @@
           any-1))
   (seclude
    (then q (many quoted-rune) q __
-         (feed-list (: ("" .join it))))))
+         (feed-list ||("" .join it)))))
 
 (let qtext  (text-quoted-by #\'))
 (let dqtext (text-quoted-by #\"))

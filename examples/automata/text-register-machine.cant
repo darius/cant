@@ -10,7 +10,7 @@
 (import (use 'parson) like)
 
 (to (trm-parse program)
-  (-> program parse-program (: (each insn<- it)) ~.array))
+  (-> program parse-program ||(each insn<- it) ~.array))
 
 (let parse-program (like "[{'1'+} {'#' '#'? '#'? '#'? '#'?} :tuple]*"))
 
@@ -85,7 +85,7 @@
                (flip lines2))))
 
 (to (flip texts)
-  (each (: it.parts.text) (zip .padded #\space @texts)))
+  (each ||it.parts.text (zip .padded #\space @texts)))
 
 ;; Smoke test
 (to (main _)

@@ -48,7 +48,7 @@
             (code .push! (push<- n))
             (compiling tokens.rest frames))
           (be '<<
-            (let (~ locals tail) (until (: (= it '--)) tokens.rest))
+            (let (~ locals tail) (until (be? '--) tokens.rest))
             (code .push! (grab<- locals.count))
             (compiling tail.rest (link (reverse locals) frames)))
           (be '>>

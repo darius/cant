@@ -14,7 +14,7 @@
 
 (to (show grid)
   (for each! [(row grid.rows)]
-    (each! (: (out .display it)) row)
+    (each! ||(out .display it) row)
     out.newline)
   out.newline)
 

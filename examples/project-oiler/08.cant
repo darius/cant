@@ -23,7 +23,7 @@
 (let digits (~.array (each ~.number input)))
 
 (to (oiler8 n)
-  (max @(each (: (* @it.list)) (digits .k-slices n))))
+  (max @(each ||(* @it.list) (digits .k-slices n))))
 
 (out .print (oiler8 4)) ;; 5832
 ;(out .print (oiler8 13))

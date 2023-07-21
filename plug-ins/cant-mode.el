@@ -25,7 +25,7 @@
                     '("call" "export" "for" "hide" "import" "make"
                       "make-trait" "to" "unless" "when"
                       ;; more experiments:
-                      ":" "$"
+                      "$"
                       "be" "be?" "given" "hm" "may" "on")
                     'symbols)
                    ))))

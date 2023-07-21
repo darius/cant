@@ -137,7 +137,7 @@
     (let here wumpus.where)
     (-> (link here here.neighbors)
         (~ .sample-value chaos)
-        (: (wumpus .go it)))))
+        ||(wumpus .go it))))
 
 (to (pit<-)
   (make pit {extend (thing-trait<-)}

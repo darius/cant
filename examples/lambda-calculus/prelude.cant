@@ -51,10 +51,10 @@
             (~ 'make-church<-count {primitive make-church<-count})
 
             (~ 'cant-link {primitive (on (h)
-                                       {primitive (: (link h it))})})
+                                       {primitive ||(link h it)})})
             (~ 'make-church<-list {primitive make-church<-list})
 
-            (~ 'display {primitive (: (out .display it))})
+            (~ 'display {primitive ||(out .display it)})
             (~ 'oops {primitive (to (lambda-oops _)
                                    (oops "Oops in lambda-calculus program"))})
             )})

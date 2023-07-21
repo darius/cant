@@ -17,6 +17,6 @@
   (collect-anagrams (with-input-file ~.read-lines "/usr/share/dict/words")))
 
 ;; Sort order: how many anagrams, length of each word, then alphabetical.
-(for each! [(group (sort-by (: `(,it.count ,it.first.count ,it))
+(for each! [(group (sort-by ||`(,it.count ,it.first.count ,it)
                             anagrams))]
   (out .say "~d\n" (" " .join group)))

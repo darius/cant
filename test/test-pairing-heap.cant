@@ -48,7 +48,7 @@
                      empty-pq pq-empty? pq-min pq-insert pq-remove-min))
   (let history-2
     (grow-and-shrink numbers 
-                     '() (: (= '() it)) ~.first insert-sorted ~.rest))
+                     '() (be? '()) ~.first insert-sorted ~.rest))
   (if (= history-1 history-2)
       history-1
       (oops "Test failed" `(,history-1 ,history-2))))

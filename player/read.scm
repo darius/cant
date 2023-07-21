@@ -179,19 +179,6 @@
 	(flush-input-line port)
 	(read port)))
 
-    (install-read-macro #\|
-      (lambda (port c)
-        (let ((start (like-port-position-or-whatever port)))
-          (flush-input-line port)
-          (let scanning ((end (like-port-position-or-whatever port)))
-            (skip-blanks port)
-            (cond ((equal? #\| (peek-char port))
-                   (read-char port)
-                   (flush-input-line port)
-                   (scanning (port-position port)))
-                  (else
-                   `(XXX-halp-spot ,start ,end)))))))
-
     (install-read-macro #\( read-list)
 
     (install-read-macro #\)
@@ -307,6 +294,15 @@
     (install-read-macro #\@
       (lambda (port c)
         (list '@ (must-read port))))    ;XXX for now
+
+    (install-read-macro #\|
+      (lambda (port c)
+        (let ((next (read-char port)))
+          (case next
+            ((#\|)                      ; ||foo --> (on (it) foo)
+             `(on (it) ,(must-read port)))
+            (else
+              (read-error port "Unknown '|' read macro" next))))))
 
     read))
 

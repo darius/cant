@@ -13,7 +13,7 @@
 
   (to (compile prelude {module builtins})
     (let expanded (fill (exp-parse prelude)))
-    (let scope (module-scope<- (each-value (: {const it}) builtins)))
+    (let scope (module-scope<- (each-value ||{const it} builtins)))
     (expanded .gen scope (prepend {reply} nil-seq)))
 
   (to (fill e)

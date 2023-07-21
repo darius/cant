@@ -20,7 +20,7 @@
     (for amass [(p '(0 0)) ((~ dir stride) path)]
       (let dp (delta<- dir))
       (for amass [(p p) (_ stride.till)]
-        (hey (vector+ p dp) (: (result .add! it)))))
+        (hey (vector+ p dp) ||(result .add! it))))
     result)
 
   (let crossings ((trace (inputs 0)) .intersect (trace (inputs 1))))
@@ -44,8 +44,8 @@
       (let dp (delta<- dir))
       (for amass [p (_ stride.till)]
         (hey (vector+ p dp)
-             (: (result .set! it (min (result .get it infinity)
-                                      step.+!))))))
+             ||(result .set! it (min (result .get it infinity)
+                                     step.+!)))))
     result)
 
   ;; TODO map .intersect

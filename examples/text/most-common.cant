@@ -13,8 +13,8 @@
                  (os-exit 1))))
 
   (-> in.read-all.lowercase scan-words bag<- (~ .most-common N)
-      (: (format-table (each ~.parts it)))
-      (: (out .display-lines it))))
+      ||(format-table (each ~.parts it))
+      ||(out .display-lines it)))
 
 (import (use 'parson) like)
 (let scan-words (like "({:letter+} | :skip)*"))

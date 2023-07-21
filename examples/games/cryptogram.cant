@@ -22,7 +22,7 @@
     (puzzle cryptogram)))
 
 (to (encrypt code text)
-  (text-by (: (code .get it it)) text.lowercase))
+  (text-by ||(code .get it it) text.lowercase))
 
 (to (random-code<- chaos)
   (map<-items (zip alphabet (alphabet .alter (~ .shuffle! chaos)))))
@@ -69,7 +69,7 @@
 
   (let code (keep ~.letter? cryptogram.uppercase))
   (surely code.some?)
-  (let decoder (!map-by (: #\space) code.nub))
+  (let decoder (!map-by ||#\space code.nub))
   (let point (box<- 0))           ; Index in `code` of the cursor
 
   (let lines (each clean cryptogram.uppercase.split-lines))

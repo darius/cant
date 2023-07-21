@@ -1,5 +1,5 @@
 (to (oiler2 n)
-  (sum (keep ~.even? (keep-while (: (<= it n)) fibs))))
+  (sum (keep ~.even? (keep-while ||(<= it n) fibs))))
 
 (let fibs (begin [(a 1) (b 1)]
             (link$ a ($ (loop b (+ a b))))))

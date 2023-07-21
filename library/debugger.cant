@@ -32,7 +32,7 @@
                         (trail '())]
 
       (to (continue @messages)
-        (each! (: (out .display it)) messages)
+        (each! ||(out .display it) messages)
         (interacting focus trail))
 
       (to (push new-focus)
@@ -88,7 +88,7 @@
     (begin interacting [(frame k) (callees '())]
 
       (to (continue @messages)
-        (each! (: (out .display it)) messages)
+        (each! ||(out .display it) messages)
         (interacting frame callees))
 
       (to (read-eval)

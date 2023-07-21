@@ -36,17 +36,17 @@
   (glutton .place-on! grid)
 
   (let eating-ghosts-deadline (box<- #no))
-  (let ghosts (~.range (each (: (ghost<- grid)) 4.till)))
+  (let ghosts (~.range (each ||(ghost<- grid) 4.till)))
   
   ;; TODO cleaner to eject, I guess
   (to (caught-by-ghost?)
     ;; TODO overcompressed logic here
-    (for mayhap [(ghost (-> (keep$ (: (= glutton.p it.p)) ghosts.keys)
+    (for mayhap [(ghost (-> (keep$ ||(= glutton.p it.p) ghosts.keys)
                             (~ .get 0)))]
       (hey (not eating-ghosts-deadline.^)
-           (: (if it
-                  (render (view grid ghosts.keys eating-ghosts-deadline.^))
-                  (ghosts .delete! ghost))))))
+           ||(if it
+                 (render (view grid ghosts.keys eating-ghosts-deadline.^))
+                 (ghosts .delete! ghost)))))
 
   (let start (nano-now))
   (begin playing []

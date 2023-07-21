@@ -4,7 +4,7 @@
   (to (champ index)
 ;;    (hey (v1-champ index)
     (hey (v2-champ index)
-         (: (out .say "~w: ~w\n" index it))))
+         ||(out .say "~w: ~w\n" index it)))
   (* @(each champ
             (each (~ .power-of 10) (0 .thru 6)))))
 
