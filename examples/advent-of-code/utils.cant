@@ -28,15 +28,12 @@
 
 (to (duplicates<- xs)
   (let seen (set<-))
-  (begin looking [xs]
-    (hm (if xs.none?
-          '())
-        (let x xs.first)
-        (if (seen .maps? x)
-          (link$ x ($ (looking xs.rest))))
+  (for fold$ [(x xs) (rest ($ '()))]
+    (hm (if (seen .maps? x)
+          (link$ x rest))
         (else
           (seen .add! x)
-          (looking xs.rest)))))
+          (rest)))))
 
 (to (deletions<- t)
   (for each [(i t.count.-.till)]
