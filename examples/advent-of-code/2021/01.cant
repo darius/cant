@@ -9,4 +9,4 @@
   (count-increases input))
 
 (to (part2)
-  (count-increases (each ||(+ @it) (input .k-slices 3))))
+  (count-increases (each sum (input .k-slices 3))))
