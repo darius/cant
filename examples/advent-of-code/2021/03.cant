@@ -1,0 +1,59 @@
+;; (Use run.cant to run this.)
+
+(let input data-file.read-lines)
+
+(let sample "\
+00100
+11110
+10110
+10111
+10101
+01111
+00111
+11100
+10000
+11001
+00010
+01010")
+;;(let input sample.split-lines)
+
+;; We hold off on converting the input lines to numbers, because it's
+;; especially trivial to get at the columns from uniform-length text
+;; lines.
+
+(to (part1)
+  (let bit-columns (transpose input))
+  (let gamma-digits (each ||((majority it) .number) bit-columns))
+  (let epsilon-digits (each ||(- 1 it) gamma-digits))
+  (let gamma   (count<-digits gamma-digits 2))
+  (let epsilon (count<-digits epsilon-digits 2))
+  (* gamma epsilon))
+
+(to (majority xs)
+  (max-by (bag<- xs) "01"))
+
+(to (part2)
+  (let oxygen-rating (number<-text (winnow most-common input) 2))
+  (let co2-rating    (number<-text (winnow least-common input) 2))
+  (* oxygen-rating co2-rating))
+
+(to (most-common xs)
+  ;; Like majority above, but with a definite tiebreaker value of 1.
+  (let count (bag<- xs))
+  (if (<= (count #\0) (count #\1)) #\1 #\0))
+
+(to (least-common xs)
+  (-> xs most-common ~.number "10")) ;; i.e., take most-common and swap 1<->0 
+
+;; Filter lines down according to successive columns until only one line left.
+(to (winnow criterion lines)
+  (begin [(column 0) lines]
+    (if lines.one?
+        lines.first
+        (loop column.+ (filter column criterion lines)))))
+
+;; Given a current list of binary strings, choose some to keep.
+(to (filter column criterion lines)
+  (let chosen-bit (criterion (each (~ column) lines)))
+  (keep ||(= (it column) chosen-bit)
+        lines))
