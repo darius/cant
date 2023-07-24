@@ -1,0 +1,27 @@
+;; (Use run.cant to run this.)
+
+(let input data-file.read-lines)
+(let commands (for each [(line input)]
+                (read (text-source<- (chain "{" line "}")))))
+
+(to (update-1 (~ pos depth) command)
+  (may command
+    (be {forward n} (~ (+ pos n) depth))
+    (be {up n}      (~ pos (- depth n)))
+    (be {down n}    (~ pos (+ depth n)))))
+
+(to (part1)
+  (let (~ pos depth) (amass update-1 (~ 0 0) commands))
+  (* pos depth))
+
+(to (update-2 (~ pos depth aim) command)
+  (may command
+    (be {forward n} (~ (+ pos n)
+                       (+ depth (* aim n))
+                       aim))
+    (be {up n}      (~ pos depth (- aim n)))
+    (be {down n}    (~ pos depth (+ aim n)))))
+
+(to (part2)
+  (let (~ pos depth aim) (amass update-2 (~ 0 0 0) commands))
+  (* pos depth))
