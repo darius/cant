@@ -45,6 +45,10 @@
     (surely me.some?)
     (me .from 0 me.count.-))
 
+  (to (~ .k-slices k)
+    (for each [(i (0 .thru (- me.count k)))]
+      (me .from i (+ i k))))
+
 ;TODO
 ;  (to ~.first (oops "Mutable arrays don't do .first" me))
 ;  (to ~.rest  (oops "Mutable arrays don't do .rest" me))

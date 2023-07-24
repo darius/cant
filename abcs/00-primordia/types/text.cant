@@ -179,5 +179,9 @@
     (surely me.some?)
     (me .from 0 me.count.-))
 
+  (to (~ .k-slices k)                   ;TODO copied from array-trait yet again
+    (for each [(i (0 .thru (- me.count k)))]
+      (me .from i (+ i k))))
+
   (to message
     (list-trait me message))) ;XXX use trait syntax instead

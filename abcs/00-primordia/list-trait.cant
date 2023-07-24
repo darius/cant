@@ -215,10 +215,12 @@
                     (link x perm)))))))
 
   (to (~ .k-slices k)   ;; better name .k-segments, .k-spans ?
+    ;; TODO make lazy?
     ;; TODO make k optional
-    ;; TODO make it reasonably efficient without random access
-    (for each [(i (0 .thru (- list.count k)))]
-      (list .from i (+ i k))))
+    (let prefix (list .prefix k))
+    (if (< prefix.count k)
+        '()
+        (link prefix (list.rest .k-slices k))))
 
   (to (~ .k-lists k)
     (grid* @(`(,list) .repeat k)))
