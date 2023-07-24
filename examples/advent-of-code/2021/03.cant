@@ -29,21 +29,21 @@
   (let epsilon (count<-digits epsilon-digits 2))
   (* gamma epsilon))
 
-(to (majority xs)
-  (max-by (bag<- xs) "01"))
+(to (majority runes)
+  (max-by (bag<- runes) "01"))
 
 (to (part2)
   (let oxygen-rating (number<-text (winnow most-common input) 2))
   (let co2-rating    (number<-text (winnow least-common input) 2))
   (* oxygen-rating co2-rating))
 
-(to (most-common xs)
+(to (most-common runes)
   ;; Like majority above, but with a definite tiebreaker value of 1.
-  (let count (bag<- xs))
+  (let count (bag<- runes))
   (if (<= (count #\0) (count #\1)) #\1 #\0))
 
-(to (least-common xs)
-  (-> xs most-common ~.number "10")) ;; i.e., take most-common and swap 1<->0 
+(to (least-common runes)
+  (-> runes most-common ~.number "10")) ;; i.e., take most-common and swap 1<->0 
 
 ;; Filter lines down according to successive columns until only one line left.
 (to (winnow criterion lines)
