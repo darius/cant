@@ -2,8 +2,8 @@
 
 (let input (each ~.number data-file.read-lines))
 
-(to (count-increases seq)
-  (tally-by ||(< @it) (seq .k-slices 2)))
+(to (count-increases nums)
+  (tally-by ||(< @it) (nums .k-slices 2)))
 
 (to (part1)
   (count-increases input))
