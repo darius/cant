@@ -1,0 +1,12 @@
+;; (Use run.cant to run this.)
+
+(let input (each ~.number data-file.read-lines))
+
+(to (count-increases seq)
+  (tally-by ||(< @it) (seq .k-slices 2)))
+
+(to (part1)
+  (count-increases input))
+
+(to (part2)
+  (count-increases (each ||(+ @it) (input .k-slices 3))))

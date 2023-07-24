@@ -1,0 +1,15 @@
+;; (Use run.cant to run this.)
+
+;(let input data-file.read-lines)
+;(let input data-file.read-all)
+
+;(let parse (like "(:count | :skip)*"))
+;(let parse (like "[{:letter} :count :tuple] ** ','"))
+;(let parse ~.number)
+
+;(let inputs (each parse input))
+
+(to (part1)
+  1)
+
+;;(to (part2)
