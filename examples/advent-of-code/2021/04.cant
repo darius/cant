@@ -56,8 +56,7 @@
 
 (to (answer just-drew board drawn-set)
   (let score (for sum-by [(row board)]
-               (let row-sum (sum (skip ||(drawn-set .maps? it) row)))
-               row-sum))
+               (sum (skip ||(drawn-set .maps? it) row))))
   (* score just-drew))
 
 (to ((bingo? drawn-set) board)
