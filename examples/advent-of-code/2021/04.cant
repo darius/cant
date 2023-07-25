@@ -69,10 +69,10 @@
 ;; Partition xs by test?. Faster than separate calls to skip and
 ;; keep. I guess this does belong in the stdlib.
 (to (skip/keep test? xs)
-  (let s (flexarray<-))
-  (let k (flexarray<-))
+  (let skipped (flexarray<-))
+  (let kept    (flexarray<-))
   (for each! [(x xs)]
-    ((if (test? x) k s) .push! x))
-  (~ s.values k.values))
+    ((if (test? x) kept skipped) .push! x))
+  (~ skipped.values kept.values))
       
 (let the-winners (list-winners))
