@@ -69,13 +69,10 @@
 ;; Partition xs by test?. Faster than separate calls to skip and
 ;; keep. I guess this does belong in the stdlib.
 (to (skip/keep test? xs)
-  (let (~ rev-s rev-k) ;; s,k for skipped,kept
-    (for amass [((~ s k)
-                 (~ '() '()))
-                (x xs)]
-      (if (test? x)
-          (~ s (link x k))
-          (~ (link x s) k))))
-  (~ (reverse rev-s) (reverse rev-k)))
+  (let s (flexarray<-))
+  (let k (flexarray<-))
+  (for each! [(x xs)]
+    ((if (test? x) k s) .push! x))
+  (~ s.values k.values))
       
 (let the-winners (list-winners))
