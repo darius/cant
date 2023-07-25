@@ -23,18 +23,22 @@
 
 (to (part1)
   (let bit-columns (transpose input))
-  (let gamma-digits (each ||((majority it) .number) bit-columns))
-  (let epsilon-digits (each ||(- 1 it) gamma-digits))
-  (let gamma   (count<-digits gamma-digits 2))
-  (let epsilon (count<-digits epsilon-digits 2))
-  (* gamma epsilon))
+  (let gamma-digits (each majority bit-columns))
+  (let epsilon-digits (each flip gamma-digits))
+  (* (binary<- gamma-digits) (binary<- epsilon-digits)))
 
 (to (majority runes)
   (max-by (bag<- runes) "01"))
 
+(to (flip bit-rune)
+  ("10" bit-rune.number))  ;; swap 0<->1
+
+(to (binary<- bit-runes)
+  (number<-text bit-runes.text 2))
+
 (to (part2)
-  (let oxygen-rating (number<-text (winnow most-common input) 2))
-  (let co2-rating    (number<-text (winnow least-common input) 2))
+  (let oxygen-rating (binary<- (winnow most-common input)))
+  (let co2-rating    (binary<- (winnow least-common input)))
   (* oxygen-rating co2-rating))
 
 (to (most-common runes)
@@ -43,7 +47,7 @@
   (if (<= (count #\0) (count #\1)) #\1 #\0))
 
 (to (least-common runes)
-  (-> runes most-common ~.number "10")) ;; i.e., take most-common and swap 1<->0 
+  (-> runes most-common flip))
 
 ;; Filter lines down according to successive columns until only one line left.
 (to (winnow criterion lines)
