@@ -121,9 +121,7 @@
                 (maybe-grow))))
 
           (to (~ .maps? key)
-            (may (place key)
-              (be {at _} #yes)
-              (else      #no)))
+            ((be? {at _}) (place key)))
 
           (to ~.none?  (= count.^ 0))
           (to ~.count  count.^)
