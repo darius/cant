@@ -48,7 +48,7 @@
   (for amass [(boards input-boards) (just-drew input-numbers)]
     (drawn-set .add! just-drew)
     (let (~ remaining-boards new-winners)
-      (separate (bingo? drawn-set) boards))
+      (skip/keep (bingo? drawn-set) boards))
     (winners .extend! (each ||(~ just-drew it drawn-set.copy)
                             new-winners))
     remaining-boards)
@@ -66,10 +66,16 @@
   (or (some complete? board)
       (some complete? (transpose board))))
 
-;; Partition list xs by test. I guess something like this does belong
-;; in the stdlib (in a one-pass implementation).
-(to (separate test? xs)
-  (~ (skip test? xs)
-     (keep test? xs)))
-
+;; Partition xs by test?. Faster than separate calls to skip and
+;; keep. I guess this does belong in the stdlib.
+(to (skip/keep test? xs)
+  (let (~ rev-s rev-k) ;; s,k for skipped,kept
+    (for amass [((~ s k)
+                 (~ '() '()))
+                (x xs)]
+      (if (test? x)
+          (~ s (link x k))
+          (~ (link x s) k))))
+  (~ (reverse rev-s) (reverse rev-k)))
+      
 (let the-winners (list-winners))
