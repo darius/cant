@@ -1,0 +1,53 @@
+;; (Use run.cant to run this.)
+
+(let parse (like "(:count | :skip)*"))
+
+(let sample-lines ("\
+0,9 -> 5,9
+8,0 -> 0,8
+9,4 -> 3,4
+2,2 -> 2,1
+7,0 -> 7,4
+6,4 -> 2,0
+0,9 -> 2,9
+3,4 -> 1,4
+0,0 -> 8,8
+5,5 -> 8,2" .split-lines))
+
+(let lines data-file.read-lines)
+(let entries (each parse lines))
+;;(let entries (each parse sample-lines))
+
+(to (part1)
+  (let bag (bag<- (gather draw-1 entries)))
+  (tally-by ||(< 1 it) bag.values))
+
+(to (draw-1 `(,x1 ,y1 ,x2 ,y2))
+  (hm (if (= x1 x2) (each ||(~ x1 it) ((min y1 y2) .thru (max y1 y2))))
+      (if (= y1 y2) (each ||(~ it y1) ((min x1 x2) .thru (max x1 x2))))
+      (else         '())))
+
+(to (part2)
+  (let bag (bag<- (gather draw-2 entries)))
+  (tally-by ||(< 1 it) bag.values))
+
+;; TODO:
+;; - the above bag stuff is too slow
+;; - the below is too wordy, too many cases
+
+(to (draw-2 `(,x1 ,y1 ,x2 ,y2))
+  (hm (if (= x1 x2) (each ||(~ x1 it) ((min y1 y2) .thru (max y1 y2))))
+      (if (= y1 y2) (each ||(~ it y1) ((min x1 x2) .thru (max x1 x2))))
+      (else
+        (let dx (- x2 x1))
+        (let dy (- y2 y1))
+        (surely (or (= dx dy) (= dx (- dy))))
+        (hm (when (<= 0 dx)
+              (let y-step dy.sign)
+              (for each [(i (0 .thru dx))]
+                (~ (+ x1 i) (+ y1 (* y-step i)))))
+            (else
+              (let y-step (- dy.sign))
+              (for each [(i (0 .thru (- dx)))]
+                (~ (+ x2 i) (+ y2 (* y-step i)))))))))
+        
