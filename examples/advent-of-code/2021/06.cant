@@ -1,0 +1,26 @@
+;; (Use run.cant to run this.)
+
+(let parse (like "(:count | :skip)*"))
+
+(let example "3,4,3,1,2")
+(let input data-file.read-all)
+
+;;(let data (parse example))
+(let data (parse input))
+
+(to (part1) ((simulating data) 80))
+(to (part2) ((simulating data) 256))
+
+(to (simulating list-of-timers)
+  (each$ ~.total (iterating update (bag<- list-of-timers))))
+
+(to (update state)
+  (let next (bag<-))
+  (for each! [((~ t n) state.items)]
+    (may t
+      (be 0
+        (next .add! 8 n)
+        (next .add! 6 n))
+      (else
+        (next .add! t.- n))))
+  next)
