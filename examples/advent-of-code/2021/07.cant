@@ -1,0 +1,30 @@
+;; (Use run.cant to run this.)
+
+(let parse (like "(:count | :skip)*"))
+
+(let input data-file.read-all)
+(let sample "16,1,2,0,4,2,7,1,2,14")
+
+(let inputs (parse input))
+;;(let inputs (parse sample))
+
+(to (part1)
+  (let targets ((min @inputs) .thru (max @inputs)))
+  (min @(each cost-1<- targets)))
+
+(to (cost-1<- target)
+  (sum-by ||(distance<- it target) inputs))
+
+(to (distance<- i j)
+  ((- j i) .magnitude))
+
+(to (part2)
+  (let targets ((min @inputs) .thru (max @inputs)))
+  (min @(each cost-2<- targets)))
+
+(to (cost-2<- target)
+  (sum-by ||(sum-thru (distance<- it target))
+          inputs))
+
+(to (sum-thru d)
+  (/ (* d d.+) 2))
