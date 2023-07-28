@@ -99,10 +99,6 @@
 	    ((char=? c #\newline))
 	    (else (loop))))))
 
-(define (like-port-position-or-whatever port)
-  (and (port-has-port-position? port)
-       (port-position port)))
-
 (define (optional-arg arg-list default-value)
   (cond ((null? arg-list) default-value)
         ((null? (cdr arg-list)) (car arg-list))
