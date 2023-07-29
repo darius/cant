@@ -238,7 +238,7 @@
 	     ((eof-object? c)
 	      (read-error port "Unexpected EOF in string constant"))
 	     ((char=? c #\")
-	      (list->string (reverse prev-chars)))
+	      (read-after-atom (list->string (reverse prev-chars)) port))
 	     ((char=? c #\\)
 	      (let ((c (read-char port)))
 		(cond

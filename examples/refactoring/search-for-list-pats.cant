@@ -34,7 +34,7 @@
       #yes)
     (be p (bad-part? (patt-subparts p)))))
 
-(let patt-keywords (link ("@" .symbol)  ; XXX ugh c'mon there must be a better way
+(let patt-keywords (link "@".symbol  ; XXX ugh c'mon there must be a better way
                          '(~ list<- link quote -- -> when unless quasiquote)))
 
 (export main bad-expr? bad-patt?)

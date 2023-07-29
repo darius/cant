@@ -62,10 +62,8 @@
 
 (let month-days [31 28 31 30 31 30 31 31 30 31 30 31])
 (let month-names
-  (("January February March April May June July August September October November December" .split)
-   .array))
+  "January February March April May June July August September October November December".split.array)
 (let weekday-names
-  (("Sunday Monday Tuesday Wednesday Thursday Friday Saturday" .split)
-   .array))
+  "Sunday Monday Tuesday Wednesday Thursday Friday Saturday".split.array)
 
 (export leap-year? day<-date date<-day weekday<-day)
