@@ -82,8 +82,7 @@
          (string->number (substring s pn sn) radix))))
 
 (define (combine-dotted prefix atom)
-  (cond ((not prefix) atom)
-        ((and (integer? prefix) (integer? atom))  ;; XXX plays wrong with radix prefixes
+  (cond ((and (integer? prefix) (integer? atom))  ;; XXX plays wrong with radix prefixes
          ;;ugh. This whole idea of reading atoms and then combining them was a hack I've gotta back out of.
          (string->number (string-append (number->string prefix)
                                         "."
