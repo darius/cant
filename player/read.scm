@@ -18,6 +18,13 @@
 ;; XXX error reporting could be a lot better
 ;; XXX symbol as anything that doesn't parse as a number, that's error-prone
 
+(define (flush-input-line port)
+  (let loop ()
+    (let ((c (read-char port)))
+      (cond ((eof-object? c))
+	    ((char=? c #\newline))
+	    (else (loop))))))
+
 (define (skip-blanks port)
   (let loop ()
     (let ((c (peek-char port)))
@@ -29,17 +36,18 @@
 	     (flush-input-line port)
 	     (loop))))))
 
-(define (blank? c)
+(define (symbol-constituent? c)
+  (or (char-alphabetic? c)
+      (char-numeric? c)
+      (memv c '(#\~ #\! #\$ #\% #\^ #\& #\* #\/ #\? #\= #\+ #\- #\_ #\< #\> #\:))))
+
+(define (symbol-terminator? c)
   (or (eof-object? c)
       (char-whitespace? c)
-      (char=? c #\;)))
+      (memv c '(#\. #\| #\( #\) #\; #\" #\' #\` #\, #\@ #\{ #\} #\[ #\]))))
 
+;; Here 'atom' means symbol or number. TODO just separate those cases
 (define (read-atom port c)
-
-  (define (symbol-terminator? c)
-    (or (eof-object? c)
-	(char-whitespace? c)
-	(memv c '(#\| #\( #\) #\; #\" #\' #\` #\, #\@ #\{ #\} #\[ #\]))))
 
   (define (atomize L len)
     (let ((s (make-string len #\space)))
@@ -56,53 +64,33 @@
   (define (prefixed-string->number prefix radix s)
     (let ((pn (string-length prefix))
           (sn (string-length s)))
-      (and (string=? (substring s 0 (min pn sn))
-                     prefix)
-           (string->number (substring s pn sn)
-                           radix))))
-
-  (define (combine prefix atom)
-    (cond ((not prefix) atom)
-          ((and (integer? prefix) (integer? atom))  ;; XXX plays wrong with radix prefixes
-           ;;ugh. This whole idea of reading atoms and then combining them was a hack I've gotta back out of.
-           (string->number (string-append (number->string prefix)
-                                          "."
-                                          (number->string atom))))
-          ((symbol? atom)
-           (list prefix (cue<- atom)))
-          (else
-            (error 'read "Floating-point suffix after a non-number prefix" prefix atom))))
+      (and (string=? prefix (substring s 0 (min pn sn)))
+           (string->number (substring s pn sn) radix))))
 
   (let loop ((prefix #f) (L (list c)) (len 1))
     (let ((c (peek-char port)))
-      (cond ((eq? c #\.)
-             (let ((prefix (combine prefix (atomize L len))))
-               (read-char port)
-               (let ((c (peek-char port)))
-                 (if (not (symbol-constituent? c))
-                     (error 'read "Symbol ending in '.'"))
-                 (loop prefix (list (read-char port)) 1))))
-            ((symbol-terminator? c)
-             (combine prefix (atomize L len)))
-            (else
-             (loop prefix (cons (read-char port) L) (+ len 1)))))))
+      (if (symbol-terminator? c)
+          (let ((new-prefix (combine-dotted prefix (atomize L len))))
+            (cond ((eqv? c #\.)
+                   (read-char port)
+                   (let ((c (peek-char port)))
+                     (if (not (symbol-constituent? c))
+                         (error 'read "Symbol ending in '.'"))
+                     (loop new-prefix (list (read-char port)) 1)))
+                  (else new-prefix)))
+          (loop prefix (cons (read-char port) L) (+ len 1))))))
 
-(define (symbol-constituent? c)
-  (or (char-alphabetic? c)
-      (char-numeric? c)
-      (memv c '(#\~ #\! #\$ #\% #\^ #\& #\* #\/ #\? #\= #\+ #\- #\_ #\< #\> #\:))))
-
-(define (flush-input-line port)
-  (let loop ()
-    (let ((c (read-char port)))
-      (cond ((eof-object? c))
-	    ((char=? c #\newline))
-	    (else (loop))))))
-
-(define (optional-arg arg-list default-value)
-  (cond ((null? arg-list) default-value)
-        ((null? (cdr arg-list)) (car arg-list))
-        (else (error 'optional-arg "Too many arguments to procedure" arg-list))))
+(define (combine-dotted prefix atom)
+  (cond ((not prefix) atom)
+        ((and (integer? prefix) (integer? atom))  ;; XXX plays wrong with radix prefixes
+         ;;ugh. This whole idea of reading atoms and then combining them was a hack I've gotta back out of.
+         (string->number (string-append (number->string prefix)
+                                        "."
+                                        (number->string atom))))
+        ((symbol? atom)
+         (list prefix (cue<- atom)))
+        (else
+          (error 'read "Floating-point suffix after a non-number prefix" prefix atom))))
 
 (define cant-read
   (let ()
@@ -155,20 +143,18 @@
             (read-error port "Missing tag in {} term")
             (term<-list enclosed))))
 
-    ;; White space
-    (let initializing ((i 33))
+    (let initializing ((i 33)) ;; Symbol/number characters
       (cond ((< i 127)
              (if (symbol-constituent? (integer->char i))
                  (vector-set! the-readtable i read-atom))
              (initializing (+ i 1)))))
 
-    (for-each 
-     (lambda (white) 
-       (install-read-macro white 
-	 (lambda (port c) 
-	   (skip-blanks port)
-	   (read port))))
-     '(#\space #\tab #\newline #\return))
+    (for-each (lambda (white) ;; Whitespace characters
+                (install-read-macro white 
+                                    (lambda (port c) 
+                                      (skip-blanks port)
+                                      (read port))))
+              '(#\space #\tab #\newline #\return))
 
     (install-read-macro #\;
       (lambda (port c)
