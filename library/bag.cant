@@ -20,6 +20,9 @@
       (to (~ .delete! key)     (!map .delete! key))  ; TODO should this decrement the value instead? Or should that be a different method?
       (to ~.clear!             !map.clear!)
       (to ~.total              (sum !map.values))
+      (to ~.multikeys
+        (for gather [((~ k n) !map.items)]
+          (each ||k n.till)))           ; TODO if we support negative counts, this will be nonsense
       (to (~ .most-common @(optional n))
         ;; TODO heap-based n-largest function
         (-> (sort-by (~ .part 1) !map.items)
