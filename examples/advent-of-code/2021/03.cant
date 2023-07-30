@@ -50,14 +50,14 @@
   (-> runes most-common flip))
 
 ;; Filter lines down according to successive columns until only one line left.
-(to (winnow criterion lines)
+(to (winnow favorite lines)
   (begin [(column 0) lines]
     (if lines.one?
         lines.first
-        (loop column.+ (filter column criterion lines)))))
+        (loop column.+ (filter column favorite lines)))))
 
 ;; Given a current list of binary strings, choose some to keep.
-(to (filter column criterion lines)
-  (let chosen-bit (criterion (each (~ column) lines)))
+(to (filter column favorite lines)
+  (let chosen-bit (favorite (each (~ column) lines)))
   (for keep [(line lines)]
     (= chosen-bit (line column))))
