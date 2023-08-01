@@ -6,6 +6,7 @@
 
 (to (play filename)
   (let data (with-input-file read filename))
+  (say "Think of an animal, and I'll try to guess it.\n\n")
   (let new-data (playing data))
   (unless (= new-data data)
     (with-output-file (~ .write new-data) filename)))
