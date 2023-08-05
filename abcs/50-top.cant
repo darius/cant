@@ -122,7 +122,7 @@
         (be ',d   (print-result (debug)))
         (be ',l   (print-result (load in.read-line.trim)))
         (be ',!   (for-effect (cant .play (read in) setting)))
-        (be ',time (print-result (timex (cant .play `($ ,(read in)) setting))))
+        (be ',time (for-effect (timex (cant .play `($ ,(read in)) setting))))
         (be sexpr (print-result (cant .play sexpr setting)))))))
 
 (to (debug)
