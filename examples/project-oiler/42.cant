@@ -9,7 +9,8 @@
 (to (triangle-word? text)
   (triangle-number? (for sum-by [(rune text)]
                       (surely rune.uppercase?)
-                      (- rune (- #\A 1)))))
+                      (- rune #\A.-1))))
+
 
 (to (triangle-number? n)
   ((keep-while ||(<= it n) triangle-numbers)

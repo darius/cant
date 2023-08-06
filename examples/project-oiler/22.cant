@@ -8,5 +8,4 @@
   (surely (every ~.uppercase? name)))
 
 (out .print (for sum-by [((~ rank name) names.items)]
-              (* rank.+1 (for sum-by [(rune name)]
-                           (- rune (- #\A 1))))))
+              (* rank.+1 (sum-by (~ .- #\A.-1) name))))

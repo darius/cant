@@ -58,7 +58,7 @@
 
 (define (read-symbol port c)
   (assert (not (char-numeric? c)))
-  (read-after-atom (read-raw-symbol port (list c)) port))
+  (read-after-atom port (read-raw-symbol port (list c))))
 
 (define (read-raw-symbol port L)
   (let ((c (peek-char port)))
@@ -85,16 +85,14 @@
       (error 'read "Lone '.'"))
     sym))
 
-(define (read-after-atom prefix port)
+(define (read-after-atom port prefix)
   (let ((c (peek-char port)))
     (if (eqv? c #\.)
-        (read-after-atom (list prefix (read-cue port (read-char port)))
-                         port)
+        (read-after-atom port (list prefix (read-cue port (read-char port))))
         prefix)))
 
-(define (read-after-atom-dot prefix port)
-  (read-after-atom (list prefix (read-cue-symbol port))
-                   port))
+(define (read-after-atom-dot port prefix)
+  (read-after-atom port (list prefix (read-cue-symbol port))))
 
 ;; number:	('+'|'-')? (radix[R] digit[R]+ | decimal) afteratom
 ;; decimal:	digit[10]+ ('.' digit[10]+)?
@@ -106,7 +104,7 @@
 (define (read-signed-or-symbol port sign-char)
   (let ((pc (peek-char port)))
     (if (char-numeric? pc)
-        (apply-sign sign-char
+        (apply-sign sign-char ;XXX oops, doesn't work with the read-after-atom
                     (begin (read-char port) (read-unsigned port pc)))
         (read-symbol port sign-char))))
 
@@ -130,7 +128,7 @@
   (cook-number radix (read-digits radix port) port))
 
 (define (cook-number radix literal-chars port)
-  (read-after-atom (just-cook-number radix literal-chars) port))
+  (read-after-atom port (just-cook-number radix literal-chars)))
   
 (define (just-cook-number radix literal-chars)
   (let* ((literal (list->string literal-chars))
@@ -152,7 +150,7 @@
         (cook-number 10
                      (append int-digits (cons #\. (read-digits 10 port)))
                      port)
-        (read-after-atom-dot (just-cook-number 10 int-digits) port))))
+        (read-after-atom-dot port (just-cook-number 10 int-digits)))))
 
 (define (read-digits radix port)
   ;; TODO skip _ for readable grouping of digits
@@ -259,41 +257,43 @@
       (lambda (port c)
         (list->vector (read-seq #\] port c))))
 
-    ;; hashliteral: '#\' (!!letter symbol | character) | '#yes' | '#no'
+    ;; hashliteral: ('#\' (!!letter symbol | character) | '#yes' | '#no') afteratom
     (install-read-macro #\#
       (lambda (port c)
-        (let ((next (read-char port)))
-          (case next
-            ((#\\)
-             (let ((next (read-char port)))
-               (if (and (char-alphabetic? next)
-                        (char-alphabetic? (peek-char port)))
-                   (let ((symbol (read-symbol port next)))
-                     (let ((table '(; (backspace . #\backspace)
-				    ; (escape . #\escape)
-				    ; (page . #\page)
-                                    (newline . #\newline)
-                                    (return . #\return)
-                                    (space . #\space)
-                                    (tab . #\tab)
-                                    )))
-                       (let ((pair (assq symbol table)))
-                         (if (pair? pair)
-                             (cdr pair)
-                             (read-error port 
-                                         "Unknown character constant - #\\"
-                                         symbol)))))
-                   next)))
-            (else
-             (cond ((char-alphabetic? next)
-                    (let ((sym (read-symbol port next)))
-                      (case sym
-                        ((yes) #t)
-                        ((no) #f)
-                        (else
-                         (read-error port "Unknown '#' read macro" sym)))))
-                   (else
-                    (read-error port "Unknown '#' read macro" next))))))))
+        (read-after-atom
+         port
+         (let ((next (read-char port)))
+           (case next
+             ((#\\)
+              (let ((next (read-char port)))
+                (if (and (char-alphabetic? next)
+                         (char-alphabetic? (peek-char port)))
+                    (let ((symbol (read-raw-symbol port (list next))))
+                      (let ((table '(; (backspace . #\backspace)
+                                     ; (escape . #\escape)
+                                     ; (page . #\page)
+                                     (newline . #\newline)
+                                     (return . #\return)
+                                     (space . #\space)
+                                     (tab . #\tab)
+                                     )))
+                        (let ((pair (assq symbol table)))
+                          (if (pair? pair)
+                              (cdr pair)
+                              (read-error port 
+                                          "Unknown character constant - #\\"
+                                          symbol)))))
+                    next)))
+             (else
+               (cond ((char-alphabetic? next)
+                      (let ((sym (read-raw-symbol port (list next))))
+                        (case sym
+                          ((yes) #t)
+                          ((no) #f)
+                          (else
+                            (read-error port "Unknown '#' read macro" sym)))))
+                     (else
+                       (read-error port "Unknown '#' read macro" next)))))))))
 
     ;; stringliteral: '"' stringchar* '"' afteratom
     ;; stringchar: '\' escapeseq | character
@@ -305,7 +305,7 @@
 	     ((eof-object? c)
 	      (read-error port "Unexpected EOF in string constant"))
 	     ((char=? c #\")
-	      (read-after-atom (list->string (reverse prev-chars)) port))
+	      (read-after-atom port (list->string (reverse prev-chars))))
 	     ((char=? c #\\)
 	      (let ((c (read-char port)))
 		(cond
