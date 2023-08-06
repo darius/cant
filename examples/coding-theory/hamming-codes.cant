@@ -39,8 +39,8 @@
               ;; TODO write this as a fold or something?
               (link 0 (begin inserting [(p 1) (rest bits)]
                         (hm (if rest.none? '())
-                            (if (power-of-2? p) (link 0 (inserting p.+ rest)))
-                            (else (link rest.first (inserting p.+ rest.rest))))))))
+                            (if (power-of-2? p) (link 0 (inserting p.+1 rest)))
+                            (else (link rest.first (inserting p.+1 rest.rest))))))))
       (for each! [(place n-check-bits.till)]
         ;; TODO is this mutability safe? I should be very suspicious:
         (m .set! (1 .<< place) (parity m place)))
@@ -55,7 +55,7 @@
                       (parity m place)))
       (let correction (1 .<< (count<-digits (reverse syndrome) 2)))
       (let corrected (encoded-n .xor correction)) ;; N.B. place 0 (meaning 'correct') is skipped below
-      (for yeahs [((~ power bit) (-> (corrected .digits 2 n-encoded-bits.+) reverse ~.items ~.rest))]
+      (for yeahs [((~ power bit) (-> (corrected .digits 2 n-encoded-bits.+1) reverse ~.items ~.rest))]
         (and (not (power-of-2? power))
              bit)))))
 

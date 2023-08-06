@@ -17,7 +17,7 @@
 (let cursor-hide        (seq "?25l"))
 
 (to (goto x y)
-  (chain prefix y.+.text ";" x.+.text "H"))
+  (chain prefix y.+1.text ";" x.+1.text "H"))
 
 (let [black red green yellow blue magenta cyan white]
   ((0 .thru 7) .array))        ;TODO wish we didn't have to convert

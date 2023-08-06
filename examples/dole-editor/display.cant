@@ -38,17 +38,17 @@
           (point-x .^= x)
           (point-y .^= y))
         (let text (flextext .get p 1))
-        (let pp p.+)
+        (let pp p.+1)
         (if (or (= text "") (= text "\n"))
-            (rendering pp 0 y.+)  ;; TODO flexarray to text, i guess
+            (rendering pp 0 y.+1)  ;; TODO flexarray to text, i guess
             (begin appending [(glyphs (render-rune text.first x))
                               x
                               y]
               (hm (if glyphs.none? (rendering pp x y))
                   (do (lines .set! y
                              (chain (lines y) glyphs.first.text))) ;XXX quadratic
-                  (if (< x.+ cols) (appending glyphs.rest x.+ y))
-                  (if (< y.+ rows) (appending glyphs.rest 0 y.+))
+                  (if (< x.+1 cols) (appending glyphs.rest x.+1 y))
+                  (if (< y.+1 rows) (appending glyphs.rest 0 y.+1))
                   (else            'done))))))
     (make _
       (to ~.point-visible?  (yeah? point-y.^))

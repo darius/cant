@@ -37,10 +37,10 @@
       (let i count.^)
       (when (= i A.^.count) (grow))
       (A.^ .set! i value)
-      (count .^= i.+)
+      (count .^= i.+1)
       i)                              ; (should we be returning this?)
     (to ~.pop!
-      (let i count.^.-)
+      (let i count.^.-1)
       (when (< i 0)
         (oops "Underflow" flexarray))
       (count .^= i)
@@ -50,15 +50,15 @@
         (oops "Out of range" flexarray))
       (count-check i)
       (let popped (A.^ i))
-      (A.^ .move! i A.^ i.+ count.^)
-      count.-!
+      (A.^ .move! i A.^ i.+1 count.^)
+      count.-1!
       popped)
     (to (~ .insert! i value)                 ;TODO code duplication .push!
       (let c count.^)
       (unless (<= i c)
         (oops "Bad index" flexarray i))
       (when (= c A.^.count) (grow))
-      (A.^ .move! i.+ A.^ i c)
+      (A.^ .move! i.+1 A.^ i c)
       (A.^ .set! i value)
       (count .^= c.+)
       i)                                 ;TODO what's a good return value?

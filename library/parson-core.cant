@@ -227,9 +227,9 @@
 ;; we're looking at).
 (to (skip-1 ok?)
   (match (on (text i)
-           (and (text .maps? i) (ok? (text i)) i.+))))
+           (and (text .maps? i) (ok? (text i)) i.+1))))
 
-(let skip-any-1 (match (on (text i) (and (text .maps? i) i.+))))
+(let skip-any-1 (match (on (text i) (and (text .maps? i) i.+1))))
 
 ;; Succeed just at the end of the input.
 (let end (nix skip-any-1))

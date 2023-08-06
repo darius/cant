@@ -75,10 +75,10 @@
                                     (included? p1))))))))))
 
 (to (neighbors<- `(,x ,y))
-  `((,x.- ,y)
-    (,x.+ ,y)
-    (,x ,y.-)
-    (,x ,y.+)))
+  `((,x.-1 ,y)
+    (,x.+1 ,y)
+    (,x ,y.-1)
+    (,x ,y.+1)))
 
 (grow-from centroid)
 

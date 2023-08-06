@@ -13,7 +13,7 @@
 ;;  (out .print roots) ; Turned out to be just "COM".
   (to (count-orbits depth x)
     (+ depth (for sum-by [(y (places .get x '()))]
-               (count-orbits depth.+ y))))
+               (count-orbits depth.+1 y))))
   (count-orbits 0 "COM"))
 
 (out .say "~w\n" (part-1))

@@ -71,9 +71,9 @@
           (begin walking [(i (- (capacity) 1))]
             (hm (if (< i 0)       '())
                 (let k (keys.^ i))
-                (if (= k none)    (walking i.-))
-                (if (= k deleted) (walking i.-))
-                (else             (link i (walking i.-))))))
+                (if (= k none)    (walking i.-1))
+                (if (= k deleted) (walking i.-1))
+                (else             (link i (walking i.-1))))))
 
         (to (place key)
           (__place key keys.^ none deleted))
@@ -117,7 +117,7 @@
               (be {missing-at i}
                 (keys.^ .set! i key)
                 (vals.^ .set! i val)
-                (count .^= count.^.+)
+                (count .^= count.^.+1)
                 (maybe-grow))))
 
           (to (~ .maps? key)
@@ -149,7 +149,7 @@
             (may (place key)
               (be {at i}
                 (keys.^ .set! i deleted)
-                (count .^= count.^.-)
+                (count .^= count.^.-1)
                 #no)
               (else #no)))   ;XXX oops instead? It is in Python.
 
@@ -461,7 +461,7 @@
       (hm (if (<= bound i) '())  ;; TODO do i-1 .rest's here too for consistency?
           (else (let n (- bound i))
                 (begin copying [(j 0) (ll (lazy-list .from i))]
-                  (link$ ll.first ($ (let j1 j.+)
+                  (link$ ll.first ($ (let j1 j.+1)
                                      (if (< j1 n) (copying j1 ll.rest) '())))))))
     ;; TODO any more parts of list-trait that need overriding for laziness? Plausibly: .chain 
     ))
@@ -482,7 +482,7 @@
       (hm (if (<= bound i) '())  ;; TODO do i-1 .rest's here too for consistency?
           (else (let n (- bound i))
                 (begin copying [(j 0) (ll (lazy-list .from i))]
-                  (link/lazier ll.first ($ (let j1 j.+)
+                  (link/lazier ll.first ($ (let j1 j.+1)
                                            (if (< j1 n) (copying j1 ll.rest) '())))))))
     ;; TODO any more parts of list-trait that need overriding for laziness? Plausibly: .chain 
     ))
@@ -527,7 +527,7 @@
         (make range {extend list-trait}
           (to ~.none? #no)
           (to ~.first first)
-          (to ~.rest  (march<- first.+ limit))
+          (to ~.rest  (march<- first.+1 limit))
           (to ~.count (- limit first))
           (to (~ i)
             (if (not (integer? i))
@@ -584,7 +584,7 @@
         (make enumeration {extend list-trait}
           (to ~.none? #no)
           (to ~.first (~ i xs.first))
-          (to ~.rest  (enumerate xs.rest i.+))))))
+          (to ~.rest  (enumerate xs.rest i.+1))))))
 
 ;; TODO is this the most useful version of this idea?
 (to (iterating f x)

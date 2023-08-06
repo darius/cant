@@ -35,7 +35,7 @@
 (to (show t recent-rate body)
   (let cps (if (or (= t 0) body.none?)
                0
-               (/ body.count.- t)))
+               (/ body.count.-1 t)))
   (let wpm        (* wpm/cps cps))
   (let wpm-recent (* wpm/cps recent-rate))
   (render [("Words/minute        ~3w seconds        (Hit control-X to quit.)\n"

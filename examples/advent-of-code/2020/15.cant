@@ -9,7 +9,7 @@
   (let numbers (each ~.number (line .split ",")))
   (let sightings numbers.but-last.inverse.copy)
   (for amass [(n numbers.last)
-              (i (numbers.count.- .till nsteps.-))]
+              (i (numbers.count.-1 .till nsteps.-1))]
     (hey (- i (sightings .get n i))
          ||(sightings .set! n i))))
 

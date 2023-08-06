@@ -27,4 +27,4 @@
           inputs))
 
 (to (sum-thru d)
-  (/ (* d d.+) 2))
+  (/ (* d d.+1) 2))

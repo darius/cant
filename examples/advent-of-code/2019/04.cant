@@ -14,7 +14,7 @@
   (to (doubled? xs n)
     (and (<= 2 n)
          (or (= (xs 0) (xs 1))
-             (doubled? xs.rest n.-))))
+             (doubled? xs.rest n.-1))))
   (tally-by valid? (march<- @inputs)))
 
 (out .say "~w\n" (part-1))
@@ -32,7 +32,7 @@
              (or (not= (xs 0) (xs .get 2))
                  (do (let rest (skip-while ||(= it xs.first) xs.rest))
                      (only-doubled? rest rest.count)))
-             (only-doubled? xs.rest n.-))))
+             (only-doubled? xs.rest n.-1))))
   (tally-by valid? (march<- @inputs)))
 
 (out .say "~w\n" (part-2))

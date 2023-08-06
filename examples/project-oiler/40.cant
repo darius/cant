@@ -10,7 +10,7 @@
 
 ;; Super dumb but works.
 (let champ-digits (gather$ ~.digits 1.and-up))
-(to (v1-champ i) (champ-digits i.-))
+(to (v1-champ i) (champ-digits i.-1))
 
 ;; Should be faster: champs are in a series of chunks:
 ;;    1 2 3 4 5 6 7 8 9    (length 1*9)
@@ -20,13 +20,13 @@
 (to (v2-champ index)
   (surely (< 0 index))
   (begin skipping [(d 1) (i index)]
-    (let power (10 .** d.-))         ;; The number starting this chunk
+    (let power (10 .** d.-1))         ;; The number starting this chunk
     (let chunk-length (* d 9 power)) ;; How many digits in this chunk
     (hm (when (<= i chunk-length)
-          (let (~ q r) (i.- ./mod d))
+          (let (~ q r) (i.-1 ./mod d))
           (let qth-number (+ power q))
           (qth-number.digits r))
         (else
-          (skipping d.+ (- i chunk-length))))))
+          (skipping d.+1 (- i chunk-length))))))
 
 (out .print (answer)) ;; 210

@@ -13,7 +13,7 @@
 
   (to (well-formed? ns)
     (for every [(n ns)]
-      (<= 0 n modulus.-)))
+      (<= 0 n modulus.-1)))
   
   (let normalize (~ .modulo modulus))
 
@@ -120,7 +120,7 @@
         #yes)
       (else
         (let encoded (test-code .encode message))
-        (let altered (encoded .alter (~ .update i ||(it.+ .modulo test-M))))
+        (let altered (encoded .alter (~ .update i ||(it.+1 .modulo test-M))))
         (let decoded (test-code .decode altered))
         (should not decoded))))
 

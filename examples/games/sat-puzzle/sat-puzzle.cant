@@ -33,7 +33,7 @@ Press Tab to cycle to the next game, Esc to quit.")
     (may key
       (be 'esc)
       (be #\tab
-        (playing (games .ity level.+)))
+        (playing (games .ity level.+1)))
       (be #\space
         game.toggle-mark!
         (playing level))
@@ -44,7 +44,7 @@ Press Tab to cycle to the next game, Esc to quit.")
 
 (to (game<- problem)
   (let variables (sort (for each [((~ i var) problem.variables.items)]
-                         (~ ((text<-number i.+ 36) 0) var))))
+                         (~ ((text<-number i.+1 36) 0) var))))
   (let names     (map<-items variables))
   (let last-flip (box<- #no))
   (let marked    (!map-by ||#no problem.variables))

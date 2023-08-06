@@ -94,7 +94,7 @@
       (point .^= 0))
 
     (to ~.go-to-end
-      (point .^= code.count.-))
+      (point .^= code.count.-1))
 
     (to (~ .shift-by offset)
       (shift-by offset))
@@ -132,7 +132,7 @@
           (when (and show-cursor? rune.letter?)
             (when (= pos.^ point.^)
               (emit cursor))
-            pos.+!)
+            pos.+1!)
           (emit (decoder .get rune rune)))
         (emit #\newline)
         ;; separator line:

@@ -53,7 +53,7 @@
 (to (winnow favorite lines)
   (begin [(column 0) lines]
     (hm (if lines.one? lines.first)
-        (else (loop column.+ (filter column favorite lines))))))
+        (else (loop column.+1 (filter column favorite lines))))))
 
 ;; Given a current list of binary strings, choose some to keep.
 (to (filter column favorite lines)

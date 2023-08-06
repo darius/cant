@@ -23,13 +23,13 @@
 
   (to ~.till           (march<- 0 me))
   (to (~ .till @args)  (march<- me @args))
-  (to (~ .thru b @r)   (march<- me b.+ @r))
+  (to (~ .thru b @r)   (march<- me b.+1 @r))
   (to (~ .span n)      (march<- me (+ me n)))
   (to (~ .down-till n) (march<- me (+ n 1) -1))  ;; TODO just use .till with negative stride? or what?
   (to (~ .down-thru n) (march<- me n -1))        ;; TODO just use .till with negative stride? or what?
 
-  (to ~.+              (__+ me 1))
-  (to ~.-              (__- me 1))
+  (to ~.+1             (__+ me 1))
+  (to ~.-1             (__- me 1))
 
   (to (~ .** b)        (expt me b))
 
@@ -83,7 +83,7 @@
     (if min-length (digits .pad-left min-length 0) digits))
 
   (to ~.and-up  ;; TODO better name?
-    (iterating ~.+ me)) ;; TODO march<- ought to support the infinite
+    (iterating ~.+1 me)) ;; TODO march<- ought to support the infinite
 
   (to ~.! ;; factorial
     (surely (count? me))  ;; TODO gamma function
@@ -100,7 +100,7 @@
           (begin [k (r me) (product 1)]
             (if (= k 0)
                 product
-                (loop k.- r.- (* product (/ r k))))))))
+                (loop k.-1 r.-1 (* product (/ r k))))))))
 
   (to ~.negative?      (< me 0))
   (to ~.positive?      (< 0 me))

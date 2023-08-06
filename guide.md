@@ -327,10 +327,10 @@ besides `if`: (from
   (begin scanning [(i me.count)]
     (hm (when (= i 0)
           "")
-        (let c (me i.-))
+        (let c (me i.-1))
         (unless c.whitespace?
           (me .from 0 i))
-        (else (scanning i.-)))))
+        (else (scanning i.-1)))))
 ```
 corresponding to Scheme
 ```
@@ -352,8 +352,8 @@ there's no `else` clause, then running off the end will cause a
 runtime error: so you'll occasionally see code like (from
 [examples/nand-circuit-optimizer.cant](https://github.com/darius/cant/blob/master/examples/nand-circuit-optimizer.cant))
 ```
-(hm (when (< gate.+ n-gates)
-      (sweeping gate.+))
+(hm (when (< gate.+1 n-gates)
+      (sweeping gate.+1))
     (when (= wanted (mask .and value))
       (found? .^= #yes)
       (print-formula L-input R-input))
@@ -820,7 +820,7 @@ There's a fairly awkward substitute for mutable variables, the box type:
 -> (c .^= (+ c.^ 1))
 -> c.^
 1
--> c.+!     ;; just a convenience
+-> c.+1!     ;; just a convenience
 2
 -> c.^
 2
@@ -831,10 +831,10 @@ Notice that the listener didn't show any value for `(c .^= (+ c.^
 which is the conventional result of an operation done for its
 effect. The listener omits printing `void`.
 
-(On the other hand, the `.+!` method did return a meaningful
+(On the other hand, the `.+1!` method did return a meaningful
 value. What gives? I guess I haven't settled on a coherent design. The
 principle of least authority justifies returning `void` from `.^=`,
-while `.+!` is unlikely to hurt, since a number is just data, not a
+while `.+1!` is unlikely to hurt, since a number is just data, not a
 capability.)
 
 

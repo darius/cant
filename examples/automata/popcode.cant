@@ -64,7 +64,7 @@
       (surely (count? n))
       (surely (block? new-block))
       (hm (if (= 0 n) (vm .stack-step new-stack))
-          (else (let new-cstack (link (link (Q new-block) n.- reg) block cstack))
+          (else (let new-cstack (link (link (Q new-block) n.-1 reg) block cstack))
                 (vm<- new-block new-block new-cstack new-stack defs store))))
 
     (to ~.for-step
@@ -115,7 +115,7 @@
   (begin popping [n stack (args '())]
     (if (= n 0)
         (~ args stack)
-        (popping n.- stack.rest (link stack.first args)))))
+        (popping n.-1 stack.rest (link stack.first args)))))
 
 
 ;; Primitives
@@ -168,7 +168,7 @@
 
 ;; TODO a list method?
 (to (remove-nth xs n)
-  (chain (xs .from 0 n) (xs .from n.+)))
+  (chain (xs .from 0 n) (xs .from n.+1)))
 
 
 ;; Let's try it out

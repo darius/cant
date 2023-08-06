@@ -22,5 +22,5 @@
         (next .add! 8 n)
         (next .add! 6 n))
       (else
-        (next .add! t.- n))))
+        (next .add! t.-1 n))))
   next)

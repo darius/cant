@@ -23,7 +23,7 @@
     (begin battling [(t 0)]
       (show t field)
       (if field.do-round!
-          (battling t.+)
+          (battling t.+1)
           t)))
   (let hp field.total-hit-points)
   (out .say "Done after ~w rounds with ~w hit points left.\n"
@@ -37,9 +37,9 @@
 
 (to (field<- field-text elf-attack-power)
 
-  (let width field-text.split-lines.first.count.+)
+  (let width field-text.split-lines.first.count.+1)
   (surely (for every [(line field-text.split-lines)]
-            (= width line.count.+)))
+            (= width line.count.+1)))
 
   (let area field-text.array)
 
@@ -192,7 +192,7 @@
     (out .say "Trying attack power ~w\n" power)
     (let field (field<- input power))
     (or (battle-sans-elf-casualties field power)
-        (trying power.+))))
+        (trying power.+1))))
 
 (to (battle-sans-elf-casualties field power)
   (let n-elves (field.census #\E))
@@ -202,7 +202,7 @@
           (out .say "Elf casualties, aborting the battle\n\n")
           #no)
         (when field.do-round!
-          (battling t.+))
+          (battling t.+1))
         (else
           (let hp field.total-hit-points)
           (out .say "Done after ~w rounds with ~w hit points left.\n"

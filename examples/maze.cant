@@ -73,8 +73,8 @@
       (~ (~ 1 0) (~ 1 1)))   ; top-left corner: wall and room
 
     (to ~.exit-candidates    ; a range of walls around the bottom right
-      (chain (each ||(~ nr it.+) ((nc .quotient 2) .till nc 2))
-             (each ||(~ it.+ nc) ((nr .quotient 2) .till nr 2))))
+      (chain (each ||(~ nr it.+1) ((nc .quotient 2) .till nc 2))
+             (each ||(~ it.+1 nc) ((nr .quotient 2) .till nr 2))))
 
     (to (~ .neighbors room)
       (for yeahs [(d directions)]

@@ -179,7 +179,7 @@
   (for each [(row rows.values)]
     (list<- (for each [((~ x rune) row.items)]
               (let sep? (and (wall? rune)
-                             (wall? (row .get x.+)))) ;TODO why this?
+                             (wall? (row .get x.+1)))) ;TODO why this?
               (let sep (" -" sep?.count))
               `(,(color rune) ,(color sep)))
             #\newline)))

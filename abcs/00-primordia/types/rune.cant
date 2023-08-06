@@ -27,13 +27,13 @@
       (else (oops "Bad arg type" b))))
 
   (to (~ .till @args) (march<- me @args))      ;These methods should be in a trait
-  (to (~ .thru b @r)  (march<- me b.+ @r))     ;if they're a good idea at all...
+  (to (~ .thru b @r)  (march<- me b.+1 @r))     ;if they're a good idea at all...
   (to (~ .span n)     (march<- me (+ me n)))
   (to (~ .down-till n) (march<- me (+ n 1) -1))  ;; TODO just use .till with negative stride? or what?
   (to (~ .down-thru n) (march<- me n -1))        ;; TODO just use .till with negative stride? or what?
 
-  (to ~.+             (me .+ 1))
-  (to ~.-             (me .- 1))
+  (to ~.+1            (me .+ 1))
+  (to ~.-1            (me .- 1))
 
   (to ~.number ;; TODO experimental. Worth it?
     (hm (if (__char-digit? me) (- me #\0))

@@ -9,10 +9,10 @@
     (me .^= value)
     value)                              ;TODO return void instead?
 
-  (to ~.+! (me .update ~.+)) ;; (questionably worth it; name inconsistent with the above note)
-  (to ~.-! (me .update ~.-))
+  (to ~.+1! (me .update ~.+1)) ;; (questionably worth it; name inconsistent with the above note)
+  (to ~.-1! (me .update ~.-1))
 
-  (to (~ .+= n)   ;; XXX inconsistent in return value wrt ~.+!
+  (to (~ .+= n)   ;; XXX inconsistent in return value wrt ~.+1!
     (me .^= (+ me.^ n)))
   (to (~ .-= n)
     (me .^= (- me.^ n)))

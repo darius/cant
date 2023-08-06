@@ -16,8 +16,8 @@ _: :whitespace*.
   ((rules n) rules text i))
 
 (to ((Lit t) rules text i)
-  (if (= t (text .from i i.+))
-      `(,i.+)
+  (if (= t (text .from i i.+1))
+      `(,i.+1)
       '()))
 
 (to ((Alt p q) rules text i)

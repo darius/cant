@@ -3,7 +3,7 @@
   (to (~ i)
     (may i
       (be 0 list.first)
-      (else (list.rest i.-))))
+      (else (list.rest i.-1))))
 
   (to ~.none?
     (= 0 list.count)) ;N.B. these default implementations are circular
@@ -19,7 +19,7 @@
     (begin counting [(remainder list) (count 0)]
       (if remainder.none?
           count
-          (counting remainder.rest count.+))))
+          (counting remainder.rest count.+1))))
 
   (to (~ .chain seq)                         ;TODO self if seq is ()
     (if list.none?
@@ -30,14 +30,14 @@
     (surely (<= 0 i))
     (hm (if (= i 0) list)
         (if list.none? list)
-        (else (list.rest .from i.-))))
+        (else (list.rest .from i.-1))))
 
   (to (~ .from i bound)     ;XXX result is a link-list; be more generic?
     (surely (<= 0 i))
     (hm (if (<= bound i) '())
         (if list.none? '())
-        (if (= i 0) (link list.first (list.rest .from 0 bound.-)))
-        (else (list.rest .from i.- bound.-))))
+        (if (= i 0) (link list.first (list.rest .from 0 bound.-1)))
+        (else (list.rest .from i.-1 bound.-1))))
 
   (to (~ .prefix n)  ; TODO better names?
     (list .from 0 n))
@@ -69,20 +69,20 @@
         (begin walking [(k key) (xs list)]
           (hm (if xs.none? default)
               (if (= k 0) xs.first)
-              (else (walking k.- xs.rest))))
+              (else (walking k.-1 xs.rest))))
         default))
 
   (to (~ .maps? key)
     (and list.some?
          (or (= 0 key)
              (and (< 0 key)
-                  (list.rest .maps? key.-)))))
+                  (list.rest .maps? key.-1)))))
 
   (to (~ .find value default)
     (begin looking [(i 0) (values list.values)] ;XXX .values called because list-trait is illegitimately used by arrays
       (hm (if values.none? default)
           (if (= value values.first) i)
-          (else (looking i.+ values.rest)))))
+          (else (looking i.+1 values.rest)))))
 
   (to (~ .find value)
     (may (list .find value #no)
@@ -162,9 +162,9 @@
              (hm (if (= i P)
                      j)
                  (if (= (needle i) (list (+ i j)))   ;; TODO random access may be slow, quadratic
-                     (checking i.+))
+                     (checking i.+1))
                  (else
-                   (sliding j.+)))))))
+                   (sliding j.+1)))))))
 
   (to (~ .remove x)
     (skip ||(= x it) list))
@@ -179,9 +179,9 @@
           (if (= n 0)   '(()))
           ;; (if (= nxs n) (list<- xs))   ;; an optimization, but does it actually help?
           (else (chain (hide (let x xs.first)
-                             (for each [(ys (generating n.- nxs.- xs.rest))]
+                             (for each [(ys (generating n.-1 nxs.-1 xs.rest))]
                                (link x ys)))
-                       (generating n nxs.- xs.rest))))))
+                       (generating n nxs.-1 xs.rest))))))
 
   (to (~ .k-bags k) ;; Ways to pick k of my elements w/ duplicates allowed. TODO experimental; name?
     (surely (count? k))
@@ -189,13 +189,13 @@
       (hm (if (= n 0) '(()))
           (if xs.none? '())
           (else (chain (hide (let x xs.first)
-                             (for each [(ys (generating n.- xs))]
+                             (for each [(ys (generating n.-1 xs))]
                                (link x ys)))
                        (generating n xs.rest))))))
 
   (to ~.permutations
     (to (remove-nth xs n) ;; TODO a list method?
-      (chain (xs .from 0 n) (xs .from n.+)))
+      (chain (xs .from 0 n) (xs .from n.+1)))
     (begin permuting [(xs list)]  ;; TODO lazy instead?
       (if xs.none?
           '(())
@@ -207,11 +207,11 @@
     ;; This could be just: (gather ~.permutations (list .k-sets k)))
     ;; except that would produce a different order of results.
     (to (remove-nth xs n) ;; TODO duplication
-      (chain (xs .from 0 n) (xs .from n.+)))
+      (chain (xs .from 0 n) (xs .from n.+1)))
     (begin permuting [(xs list) (n k)]  ;; TODO lazy instead?
       (hm (if (= n 0) '(()))
           (else (for gather [((~ i x) xs.items)]
-                  (for each [(perm (permuting (remove-nth xs i) n.-))]
+                  (for each [(perm (permuting (remove-nth xs i) n.-1))]
                     (link x perm)))))))
 
   (to (~ .k-slices k)   ;; better name .k-segments, .k-spans ?

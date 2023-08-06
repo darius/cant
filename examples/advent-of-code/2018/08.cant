@@ -32,7 +32,7 @@
   (sum (if children.none?
            metadata
            (for yeahs [(n metadata)]
-             (mayhap value<- (children .get n.-))))))
+             (mayhap value<- (children .get n.-1))))))
 
 (out .say "result 2: ~w\n" (value<- input))
 

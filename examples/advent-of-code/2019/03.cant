@@ -45,7 +45,7 @@
       (for amass [p (_ stride.till)]
         (hey (vector+ p dp)
              ||(result .set! it (min (result .get it infinity)
-                                     step.+!)))))
+                                     step.+1!)))))
     result)
 
   ;; TODO map .intersect

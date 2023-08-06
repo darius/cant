@@ -62,7 +62,7 @@
   (let {op name nargs} (ops opcode))
   (out .say "~w ~d" pc name)
   (for each! [(i (1 .thru nargs))]
-    (out .say " ~d~w" (mode-names (modes i.-)) (core (+ pc i))))
+    (out .say " ~d~w" (mode-names (modes i.-1)) (core (+ pc i))))
   out.newline)
 
 (let ops (map<-lists '((1 {op add 3})

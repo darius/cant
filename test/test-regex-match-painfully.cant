@@ -13,9 +13,9 @@
                (when (= 1 size)
                  (res .extend! (link 'empty (each (tag 'lit-rune) alphabet))))
                (when (<= 2 size)
-                 (res .extend! (each (tag 'star) (gen size.-))))
+                 (res .extend! (each (tag 'star) (gen size.-1))))
                (when (<= 3 size)
-                 (for each! [(i (1 .till size.-))]
+                 (for each! [(i (1 .till size.-1))]
                    (for each! [(`(,re1 ,re2) (grid* (gen i) (gen (- size i 1))))]
                      (res .push! ((tag 'either) re1 re2))
                      (res .push! ((tag 'then) re1 re2)))))

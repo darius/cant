@@ -24,7 +24,7 @@
 
 (to (ok-day? y m d)
   (let nd (+ (month-days m) (~.count (and (leap-year? y) (= m 1)))))
-  (<= 0 d nd.-))
+  (<= 0 d nd.-1))
 
 (to (leap-year? y)
   (surely (ok-year? y))
@@ -53,7 +53,7 @@
     (let md (+ (month-days m) (~.count (and (leap-year? y) (= m 1))))) ;TODO ugly
     (if (< d md)
         {date y m d}
-        (loop m.+ (- d md)))))
+        (loop m.+1 (- d md)))))
 
 (let days/4-years (+ (* 4 365) 1))
 

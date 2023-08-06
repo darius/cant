@@ -11,7 +11,7 @@
 ;; https://en.wikipedia.org/wiki/Boyer%E2%80%93Moore%E2%80%93Horspool_algorithm
 ;; -- is it worse?
 (to (text-finder<- pat)
-  (let m pat.count.-)
+  (let m pat.count.-1)
   (if (< m 0)
       (on (dat) 0)
       (do (let skip (array<-count alphabet-size pat.count))
@@ -36,6 +36,6 @@
                          (if (= j 0)
                            k)
                          (else
-                           (checking k.- j.-))))))))))
+                           (checking k.-1 j.-1))))))))))
 
 (export text-finder<-)

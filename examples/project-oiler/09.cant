@@ -5,7 +5,7 @@
 (to (triplets<- total)
   (for gather [(c ((- total 2) .down-till (total .quotient 3)))]
     (let c^2 (* c c))
-    (for yeahs [(b (c.- .down-till (c .quotient 2)))]
+    (for yeahs [(b (c.-1 .down-till (c .quotient 2)))]
       (and (< 0 (let a (- total c b)))
            (< a b c)
            (= c^2 (+ (* a a) (* b b)))

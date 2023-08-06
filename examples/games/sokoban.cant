@@ -69,15 +69,15 @@ Level ~w ~d Move ~w")
             (if ("iI" .find? rune) green itself)
             (if (".I@" .find? rune) bold itself))))
 
-    (render [(heading .format level.+ (name .center 50) trail.count)
+    (render [(heading .format level.+1 (name .center 50) trail.count)
              "\n\n"
              (view-grid)
              (if grid.won? "\n\nDone!" '())])
 
     (may get-key.lowercase
       (be #\q 'done)
-      (be #\n (playing (trails .ity level.+)))
-      (be #\p (playing (trails .ity level.-)))
+      (be #\n (playing (trails .ity level.+1)))
+      (be #\p (playing (trails .ity level.-1)))
       (be #\u
         (when trail.plural?
           trail.pop!)

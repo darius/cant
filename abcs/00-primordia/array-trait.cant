@@ -16,7 +16,7 @@
     (let lo->dst (- dst lo))
     (for each! [(i (if (<= dst lo)
                        (march<- lo bound)
-                       (march<- bound.- lo -1)))]
+                       (march<- bound.-1 lo -1)))]
       (me .set! (+ i lo->dst)
           (source i))))
 
@@ -39,11 +39,11 @@
 
   ;; TODO put methods like this and .from in an immutable-array-trait used by the text primitive type too
   (to ~.last
-    (me me.count.-))
+    (me me.count.-1))
 
   (to ~.but-last
     (surely me.some?)
-    (me .from 0 me.count.-))
+    (me .from 0 me.count.-1))
 
   (to (~ .k-slices k)
     (for each [(i (0 .thru (- me.count k)))]

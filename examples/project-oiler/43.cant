@@ -23,6 +23,6 @@
                                        (and (suffix .prefix? t.rest)
                                             (not (suffix .find? t.first))
                                             t.first))))]
-                  (extending place.- (link next-digit suffix))))))))
+                  (extending place.-1 (link next-digit suffix))))))))
 
 (out .say "sum: ~w\n" (sum-by count<-digits solutions)) ;; 16695334890

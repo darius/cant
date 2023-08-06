@@ -7,7 +7,7 @@
 
 ;; Naive approach
 (to (list-pythagorean-perimeters/naive n)
-  (for gather [(a (1 .till n.-))] ;; longest leg
+  (for gather [(a (1 .till n.-1))] ;; longest leg
     (let a^2 (* a a))
     (for yeahs [(b (1 .thru (min a (- n a))))]  ;; other leg
       (let c (~.sqrt (+ a^2 (* b b))))

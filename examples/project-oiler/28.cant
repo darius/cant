@@ -17,7 +17,7 @@
          ;; wind back counterclockwise. So these four corners add up
          ;; to 4k^2 minus that deficit.
          (- (* 4 (k .** 2))
-            (* (+ 1 2 3) k.-)))))
+            (* (+ 1 2 3) k.-1)))))
   
 (out .print (diagonals-sum 5))
 (out .print (diagonals-sum 1001))

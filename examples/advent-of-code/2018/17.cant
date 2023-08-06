@@ -24,8 +24,8 @@
 (let `((,xl0 ,yl) (,xh0 ,yh)) (bounds<- clay-spots))
 
 ;; Extend the x-bounds by 1 each way to allow for flow off the sides.
-(let xl xl0.-)
-(let xh xh0.+)
+(let xl xl0.-1)
+(let xh xh0.+1)
 
 (let grid (grid-2d<- (~ xl yl) (~ xh yh) {constant #no}))
 (for each! [(p clay-spots)]
@@ -55,7 +55,7 @@
 ;;(to (under p)
 ;;  (vector+ p '(0 1)))
 (to (under (~ x y))
-  (~ x y.+))
+  (~ x y.+1))
 
 (to (flood)
   (let under-spring (~ spring-x yl))
@@ -96,8 +96,8 @@
       (let span (for each [(x (x-min .thru x-max))]
                   (~ x y0)))
       (when (and (every (compose blocked? under) span)  ;; TODO I think this logic is now performed above
-                 (blocked? (~ x-min.- y0))
-                 (blocked? (~ x-max.+ y0)))
+                 (blocked? (~ x-min.-1 y0))
+                 (blocked? (~ x-max.+1 y0)))
         (for each! [(spot span)]
           (surely (= #\| (grid .get spot)) "Converting flowing to still water")
           (grid .set! spot #\~))))))

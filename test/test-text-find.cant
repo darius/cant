@@ -45,7 +45,7 @@
 (for all [(pat a-babble) (dat a-babble)]
   (may (dat .find-slice pat)
     (be #no (should no-match-through? pat dat (- dat.count pat.count)))
-    (be i (and (should no-match-through? pat dat i.-) ;TODO rethink this `should` function
+    (be i (and (should no-match-through? pat dat i.-1) ;TODO rethink this `should` function
                (should = pat (dat .from i (+ i pat.count)))))))
 
 ;; TODO some text method for (= pat (dat .from i (+ i pat.count)))

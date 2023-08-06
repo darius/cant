@@ -16,7 +16,7 @@
   (if coeffs.none?
       "0"
       (" + " .join (for yeahs [(c coeffs)
-                               (k (coeffs.count.- .down-thru 0))]
+                               (k (coeffs.count.-1 .down-thru 0))]
                      (and (not= 0 c)
                           (do (let x (may k
                                        (be 0 "")
@@ -40,7 +40,7 @@
 ;; Derivative with respect to x.
 (to (derivative coeffs)
   (hm (if coeffs.none? '())
-      (else (let n coeffs.count.-)
+      (else (let n coeffs.count.-1)
             (each * (coeffs .prefix n) (n .down-thru 1)))))
 
 ;; TODO: needs complex numbers, and some way to make it converge generally
@@ -82,7 +82,7 @@
 ;;   where d = (floatDigits x + 1) `div` 2
 
 (to (poly-degree coeffs)
-  (max 0 coeffs.count.-))
+  (max 0 coeffs.count.-1))
 
 (to (poly+ p q)
   (poly<- (reverse (each ||(call + it) (zip .padded 0 (reverse p) (reverse q))))))

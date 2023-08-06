@@ -12,8 +12,8 @@
   (out .print (* @ab-pair)))
 
 (to (best-pair-within limit)
-  (let b-candidates (list-primes-till limit.+)) ; b must be prime because for n=0 the quadratic's value =b
-  (for max-by [(ab-pair (grid* ((- limit.-) .till limit) b-candidates))]
+  (let b-candidates (list-primes-till limit.+1)) ; b must be prime because for n=0 the quadratic's value =b
+  (for max-by [(ab-pair (grid* ((- limit.-1) .till limit) b-candidates))]
     (~.count (quadratic-primes ab-pair))))
 
 (to (quadratic-primes ab-pair)

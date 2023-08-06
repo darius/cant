@@ -28,7 +28,7 @@
 
 (to (train model input)
   (let data (chain start input '("END"))) ;TODO as array?
-  (for each! [(datum (data .k-slices order.+))]
+  (for each! [(datum (data .k-slices order.+1))]
     (let context (datum .from 0 order))
     ((model .get-set! context bag<-) .add! (datum order))))
 

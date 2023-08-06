@@ -69,7 +69,7 @@
 (to (interior<- lines)                  ;remove all the edge pixels from a tile
   (let ny lines.count)
   (let nx lines.first.count)            ;surely all the same
-  (each (~ .from 1 nx.-) (lines .from 1 ny.-)))
+  (each (~ .from 1 nx.-1) (lines .from 1 ny.-1)))
 
 (to (complete-grid)
   "So here's the plan. Start by placing a corner at top left.
@@ -135,7 +135,7 @@ TODO try reworking the code below
 
   (to (place-rest-of-line! y)
     (for each! [(x (1 .thru 11))]
-      (place-neighbor! (~ x.- y) (~ x y))))
+      (place-neighbor! (~ x.-1 y) (~ x y))))
   
   (hide
     (let corner-tid grid-corners.first)
@@ -143,7 +143,7 @@ TODO try reworking the code below
     (place! (~ 0 0) oriented-corner))
   (place-rest-of-line! 0)
   (for each! [(y (1 .thru 11))]
-    (place-neighbor! (~ 0 y.-) (~ 0 y))
+    (place-neighbor! (~ 0 y.-1) (~ 0 y))
     (place-rest-of-line! y))
 
   grid)

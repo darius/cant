@@ -136,7 +136,7 @@ separator: '\n'.
   (for each! [((~ army groups) (sort armies.items))]
     (out .say "~d:\n" army)
     (for each! [((~ i group) groups.items)]
-      (out .say "Group ~w contains ~w units\n" i.+ group.count))))
+      (out .say "Group ~w contains ~w units\n" i.+1 group.count))))
 
 (to (part-1)
   (let armies (!map<-items (for each [(`(,name ,group-makers) matchup)]
@@ -178,7 +178,7 @@ separator: '\n'.
 (to (binary-search ok? low high)
   (begin searching [(L low) (H high)]
     (surely (< L H))
-    (if (= L.+ H)
+    (if (= L.+1 H)
         H
         (do (let M ((+ L H) .quotient 2))
             (surely (< M H))

@@ -5,7 +5,7 @@
 ;; So no, we're no longer quite *that* slow, if we ever were.
 
 (let w 500)
-(let f (array<-count w.+ 0))
+(let f (array<-count w.+1 0))
 
 (to (square n)
   (* n n))
@@ -18,11 +18,11 @@
       (begin L40 [(x 1)]
         (if (a .even? (f x))
             (L30 a)
-            (do (let x1 x.+)
+            (do (let x1 x.+1)
                 (if (and (<= x1 p)
                          (<= (square (f x1)) a))
                     (L40 x1)
-                    (L20 a p.+))))))))
+                    (L20 a p.+1))))))))
 
 (when #no
   (for each! [((~ i fi) f.items)]

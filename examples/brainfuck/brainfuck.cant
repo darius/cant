@@ -35,15 +35,15 @@
   (begin running [(i 0)                 ; instruction pointer
                   (d 0)]                ; data pointer
     (may (program .get i)
-      (be #\[ (running (if (= 0 (data .get d 0)) (jump i) i.+)
+      (be #\[ (running (if (= 0 (data .get d 0)) (jump i) i.+1)
                        d))
-      (be #\] (running (if (= 0 (data .get d 0)) i.+ (jump i))
+      (be #\] (running (if (= 0 (data .get d 0)) i.+1 (jump i))
                        d))
       (be #no 'done)
-      (be rune (running i.+
+      (be rune (running i.+1
                         (may rune
-                          (be #\< d.-)
-                          (be #\> d.+)
+                          (be #\< d.-1)
+                          (be #\> d.+1)
                           (else (may rune
                                   (be #\- (data .set! d (- (data .get d 0) 1)))
                                   (be #\+ (data .set! d (+ (data .get d 0) 1)))
@@ -58,8 +58,8 @@
               ((~ i rune) program.items)]
     (may rune
       (be #\[ (link i stack))
-      (be #\] (jump .set! stack.first i.+)
-              (jump .set! i stack.first.+)
+      (be #\] (jump .set! stack.first i.+1)
+              (jump .set! i stack.first.+1)
               stack.rest)
       (else   stack)))
   jump)
@@ -84,8 +84,8 @@
                       rest))
         (else (let (link top rest) stack)
               (link (may rune
-                      (be #\< `(~.- ,top))
-                      (be #\> `(~.+ ,top))
+                      (be #\< `(~.-1 ,top))
+                      (be #\> `(~.+1 ,top))
                       (be #\- `(decr ,top))
                       (be #\+ `(incr ,top))
                       (be #\. `(emit ,top))
@@ -97,8 +97,8 @@
 
 (let bf-prelude
   '((let data (array<-count 30000 0))
-    (to (decr d)   (data .update d ~.-)     d)
-    (to (incr d)   (data .update d ~.+)     d)
+    (to (decr d)   (data .update d ~.-1)    d)
+    (to (incr d)   (data .update d ~.+1)    d)
     (to (emit d)   (out-byte (data d))      d)
     (to (absorb d) (data .set! d (in-byte)) d)))
 

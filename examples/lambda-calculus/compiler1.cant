@@ -55,17 +55,17 @@
         (be 'local     argument)
         (be (? count?) (vals f))))
 
-;;        (out .say "at ~w: ~w\n" pc (code pc.-))
-    (may (code pc.-)
+;;        (out .say "at ~w: ~w\n" pc (code pc.-1))
+    (may (code pc.-1)
       (be {const c}
-        (running pc.- r (link c st) k))
+        (running pc.-1 r (link c st) k))
       (be {fetch f}
-        (running pc.- r (link (fetch f) st) k))
+        (running pc.-1 r (link (fetch f) st) k))
       (be {enclose addr fs _}
-        (let closure {compiled-closure pc.- (each fetch fs)}) ;TODO link to src annotation somewhere
+        (let closure {compiled-closure pc.-1 (each fetch fs)}) ;TODO link to src annotation somewhere
         (running addr r (link closure st) k))
       (be {push-cont addr}
-        (running pc.- r st {frame addr r st k}))
+        (running pc.-1 r st {frame addr r st k}))
       (be {reply}
         (reply k st.first))
       (be {invoke _}
@@ -94,7 +94,7 @@
   (to ~.insns '()))
 
 (to (prepend insn rest)
-  (let label rest.label.+)
+  (let label rest.label.+1)
   (let insns (link insn rest.insns))
   (make link-seq
     (to ~.label label)

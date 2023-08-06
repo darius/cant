@@ -36,7 +36,7 @@
 
 (to (part2)
   ;; I'm gonna use 0-based coords and then convert up at the end.
-  (let N1 N.+)
+  (let N1 N.+1)
   (to (at x y)
     (+ (* y N1) x))
 
@@ -47,9 +47,9 @@
   (for each! [(y (1 .thru N))]
     (for each! [(x (1 .thru N))]
       (S .set! (at x y)
-         (+ (S (at x y.-))          ; rect above
-            (- (S (at x.- y))       ; strip to left
-               (S (at x.- y.-)))
+         (+ (S (at x y.-1))         ; rect above
+            (- (S (at x.-1 y))      ; strip to left
+               (S (at x.-1 y.-1)))
             (level<- x y)))))       ; this spot
   (out .say "S initialized\n")
 
@@ -70,7 +70,7 @@
           `(,i ,j ,d)))))
 
   (to (cvt-coords `(,x ,y ,d))
-    `(,x.+ ,y.+ ,d))
+    `(,x.+1 ,y.+1 ,d))
 
 ;  (cvt-coords (max-by power<- (subsquares))))
 ; out of memory

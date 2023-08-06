@@ -28,8 +28,8 @@
             #no))))
 
 (to (deletions<- t)
-  (for each [(i t.count.-.till)]
-    `(,(t .from 0 i) ,(t .from i.+))))
+  (for each [(i t.count.-1.till)]
+    `(,(t .from 0 i) ,(t .from i.+1))))
 
 (to (chain-lines lines)
   (chain @(for each [(line lines)]

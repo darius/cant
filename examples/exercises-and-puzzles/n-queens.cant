@@ -30,14 +30,14 @@
   (let map (!map<-))
 
   (to (exclude rr cc)
-    (when (and (<= 0 rr n.-) (<= 0 cc n.-))
+    (when (and (<= 0 rr n.-1) (<= 0 cc n.-1))
       (map .set! (queen n rr cc) #no)))
 
   (for each! [(cc n.till)]
     (exclude r cc))
   (for each! [(rr n.till)]
     (exclude rr c))
-  (for each! [(dd ((- n.-) .till n))] ; diagonals
+  (for each! [(dd ((- n.-1) .till n))] ; diagonals
     (exclude (+ r dd) (+ c dd))
     (exclude (+ r dd) (- c dd))
     (exclude (- r dd) (+ c dd))
@@ -54,6 +54,6 @@
 ;; queen at its position. Row/column numbers start from 0.
 (to (board<- n)
   (for each [(r n.till)]
-    ((queen n r 0) .till (queen n r.+ 0))))
+    ((queen n r 0) .till (queen n r.+1 0))))
 
 (export queens queens-problem print-board)

@@ -4,7 +4,7 @@
 
 (to (count-divisors n)
   (let powers (run-lengths (factor n)))
-  (* @(each ~.+ powers)))
+  (* @(each ~.+1 powers)))
   ;; eg 12 = 2^2 * 3^1; 1 2 3 4 6 12 
   ;; So it's 6 divisors, the product of the incremented powers, (2+1)*(1+1)
 
@@ -14,7 +14,7 @@
       (else (begin scanning [(n 1) (x xs.first) (xs xs.rest)]
               (may xs
                 (be '() `(,n))
-                (be `(,(= x) ,@rest) (scanning n.+ x rest))
+                (be `(,(= x) ,@rest) (scanning n.+1 x rest))
                 (else (link n (scanning 1 xs.first xs.rest))))))))
 
 (for each! [(n (1 .thru 42))]  ;; Quickie test of count-divisors

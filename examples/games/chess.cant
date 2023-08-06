@@ -61,7 +61,7 @@
             (be '() 0)
             (be moves (- (min @(for each [(move moves)]
                                  (minimax-evaluate (update move board)
-                                                   depth.-)))))))))
+                                                   depth.-1)))))))))
 
 (let piece-values
   (!map<- (~ #\space 0)                 ;TODO immutable after init
@@ -235,7 +235,7 @@
                 (let r1 (+ r (* dr i)))
                 (let c1 (+ c (* dc i)))
                 (if (empty? r1 c1)
-                    (link (move-to r1 c1) (stepping i.+)))
+                    (link (move-to r1 c1) (stepping i.+1)))
                 (if (has-opponent? r1 c1)
                     (link (move-to r1 c1) '()))
                 (else
@@ -254,11 +254,11 @@
                                (link (move-to (+ r1 dr) c) '())
                                '()))
                      '())
-                 (if (has-opponent? r1 c.-)
-                     `(,(move-to r1 c.-))
+                 (if (has-opponent? r1 c.-1)
+                     `(,(move-to r1 c.-1))
                      '())
-                 (if (has-opponent? r1 c.+)
-                     `(,(move-to r1 c.+))
+                 (if (has-opponent? r1 c.+1)
+                     `(,(move-to r1 c.+1))
                      '())))
 
         (be #\K
@@ -325,7 +325,7 @@
       (chain (unparse-pos from-pos) (unparse-pos to-pos)))))
 
 (to (unparse-pos `(,r ,c))
-  ("~d~w" .format ("abcdefgh" c.-) (- 9 r)))
+  ("~d~w" .format ("abcdefgh" c.-1) (- 9 r)))
 
 (to (chess-main powers args)
   (import powers console chaos)

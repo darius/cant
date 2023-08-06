@@ -7,7 +7,7 @@
 
 (let width input.first.count)
 (let height input.count)
-(let bottom-right (~ width.- height.-))
+(let bottom-right (~ width.-1 height.-1))
 
 (let input-grid (grid-2d<- (~ 0 0) bottom-right
                            {map (on ((~ x y)) ((input y) x))}))
@@ -43,19 +43,19 @@
   (to (count-at x1 y1)
     (may (grid .get (~ x1 y1))
       (be #\.)
-      (be #\| wood.+!)
-      (be #\# lumber.+!)
+      (be #\| wood.+1!)
+      (be #\# lumber.+1!)
       (else)))
   (let (~ x y) p)
-  (count-at x.- y.-)
-  (count-at x   y.-)
-  (count-at x.+ y.-)
-  (count-at x.- y)
+  (count-at x.-1 y.-1)
+  (count-at x    y.-1)
+  (count-at x.+1 y.-1)
+  (count-at x.-1 y)
   ;; leaving out (count-at x y)
-  (count-at x.+ y)
-  (count-at x.- y.+)
-  (count-at x   y.+)
-  (count-at x.+ y.+)
+  (count-at x.+1 y)
+  (count-at x.-1 y.+1)
+  (count-at x    y.+1)
+  (count-at x.+1 y.+1)
 
   (may (grid p)
     (be #\. (if (<= 3 wood.^) #\| #\.))
@@ -74,6 +74,6 @@
   (begin stepping [(t 0) (grid input-grid)]
     (let bag (bag<- grid.values))
     (out .say "After ~w minutes: ~w trees, ~w lumber\n" t (bag #\|) (bag #\#))
-    (stepping t.+ (step grid))))
+    (stepping t.+1 (step grid))))
 
 (out .say "~w\n" (part-2))

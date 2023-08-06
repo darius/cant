@@ -41,8 +41,8 @@
           (let value (nand L-wire (wire R)))
           (R-input .set! gate R)
           (wire .set! (+ n-inputs gate) value)
-          (hm (when (< gate.+ n-gates)
-                (sweeping gate.+))
+          (hm (when (< gate.+1 n-gates)
+                (sweeping gate.+1))
               (when (= wanted (mask .and value))
                 (found? .^= #yes)
                 (print-formula L-input R-input))
@@ -62,9 +62,9 @@
   ;; because we can compute all test cases in parallel with bitwise
   ;; operators.
   (hm (if (= n 0) '())
-      (else (let shift (1 .<< n.-))
+      (else (let shift (1 .<< n.-1))
             (link (- (1 .<< shift) 1)
-                  (for each [(iv (tabulate-inputs n.-))]
+                  (for each [(iv (tabulate-inputs n.-1))]
                     (iv .or (iv .<< shift)))))))
 
 

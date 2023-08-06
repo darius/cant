@@ -120,7 +120,7 @@
     ;;                                    or (nonzero-n same-n ...)
     ;; then collapse these two neighboring values into their sum,
     ;; and pad out the row with a 0 at far right.
-    (let j i.+)
+    (let j i.+1)
     (hm (when (<= 4 j)
           (~ 4 row)) ; No such suffix found.
         (let same? (= (row i) (row j)))
@@ -128,7 +128,7 @@
           (checking j))
         (else ; Found one, let's collapse and pad:
           (let sum (+ (row i) (row j)))
-          (let slid `(,@(row .from 0 i) ,sum ,@(row .from j.+) 0))
+          (let slid `(,@(row .from 0 i) ,sum ,@(row .from j.+1) 0))
           (~ (if same? j low) slid)))))
 
 (to (right rows) (each flip-h (left (flip-h rows))))

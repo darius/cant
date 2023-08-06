@@ -41,7 +41,7 @@
     (hm (when (same? next grid)
           (let (~ e o) grid)
           o.count)
-        (else (stepping next n.+)))))
+        (else (stepping next n.+1)))))
 
 (to (update1 (~ empties occupied))
   (let n-neighbors (bag<- (gather neighbors occupied.keys)))
@@ -65,7 +65,7 @@
     (hm (when (same? next grid)
           (let (~ e o) grid)
           o.count)
-        (else (stepping next n.+)))))
+        (else (stepping next n.+1)))))
 
 (to (update2 (~ empties occupied))
   (let n-neighbors (bag<- (gather (neighbors2 empties occupied) occupied.keys)))

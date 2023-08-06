@@ -50,9 +50,9 @@
 (to (def-infix name left-p @(optional associativity))
   (let assoc (or associativity 'left-to-right))
   (let right-p (may assoc
-                 (be 'left-to-right left-p.+)
+                 (be 'left-to-right left-p.+1)
                  (be 'right-to-left left-p)
-                 (be 'associative   left-p.+)))
+                 (be 'associative   left-p.+1)))
   (binaries .set! name {binary left-p right-p assoc}))
 
 (def-prefix '- 99)

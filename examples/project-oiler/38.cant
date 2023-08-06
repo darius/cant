@@ -30,7 +30,7 @@
          (may (compare prefix.count 9)
            (be '> #no)
            (be '= prefix)
-           (be '< (building i.+ (chain prefix ((* i base) .digits))))))))
+           (be '< (building i.+1 (chain prefix ((* i base) .digits))))))))
 
 ;;(let result (v1-answer))
 (let result (v2-answer))

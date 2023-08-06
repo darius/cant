@@ -3,7 +3,7 @@
 ;; ranging from size 3 to size 9, each tree separated by a blank line.
 
 (to (xmas-tree n)
-  (let center (~ .center (+ n.- 1 n.-)))
+  (let center (~ .center (+ n.-1 1 n.-1)))
   ("\n" .join (for each [(w (chain n.till '(0)))]
                 (center ("*" .repeat (+ w 1 w))))))
 

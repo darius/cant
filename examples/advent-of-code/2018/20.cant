@@ -36,7 +36,7 @@ dir:  {'N' | 'S' | 'E' | 'W'} :Dir.
     (may exp
       (be {dir rune}
         (visit (vector+ p (step rune))
-               d.+
+               d.+1
                {seq '()}))
       (be {alt es}
         (merge-best (for each [(e es)]

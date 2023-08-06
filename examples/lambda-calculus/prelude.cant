@@ -20,7 +20,7 @@
               (be 0
                 (reply sequel lc-zero))
               (be (? count? n)
-                (invoke counting n.-
+                (invoke counting n.-1
                         {cps-sequel
                          (on (ch-n-)
                            (invoke lc-succ ch-n- sequel))}))))}))})
@@ -47,7 +47,7 @@
     {module
      (map<- (~ 'make-church<-bool {primitive make-church<-bool})
 
-            (~ 'add1 {primitive ~.+})
+            (~ 'add1 {primitive ~.+1})
             (~ 'make-church<-count {primitive make-church<-count})
 
             (~ 'cant-link {primitive (on (h)
