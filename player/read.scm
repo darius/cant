@@ -351,6 +351,14 @@
             (else
               (read-error port "Unknown '|' read macro" next))))))
 
-    read))
+    (lambda (port)
+      (with-exception-handler (lambda (exc)
+                                ;; If any exception occurs, clear the
+                                ;; rest of the currently pending
+                                ;; input, to avoid cascading errors.
+                                (clear-input-port port)
+                                (raise exc))
+                              (lambda ()
+                                (read port))))))
 
 )
