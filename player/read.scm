@@ -7,16 +7,24 @@
 (export cant-read)
 (import (chezscheme) (player util))
 
-;; Adapted from my UTS Scheme reader.
-;; This relies on char->integer returning a number in [0..255].
+;; This relies on char->integer returning a number in [0..255],
+;; ASCII where that applies.
+
+;; The grammar is succinct in the comments, in an ad-hoc PEG form.
+;; The code is wordier, thanks to this conjunction of wishes:
+;; - No backtracking, and one-character lookahead.
+;; - Number syntax with decimal points, like 12.34
+;; - Method-call shorthand syntax like 12.even?
 
 ;; Conventions:
-;;   port   an input port
-;;   c      a character (or possibly an EOF object)
+;;   port   An input port
+;;   c      A character (or possibly an EOF object).
+;;          When c is a parameter to a read-foo function, it's
+;;          ordinarily the last char read; you can use peek-char
+;;          for lookahead.
 
+;; TODO error reporting could be a lot better
 ;; TODO support Unicode
-;; XXX error reporting could be a lot better
-;; XXX symbol as anything that doesn't parse as a number, that's error-prone
 
 (define (flush-input-line port)
   (let loop ()
@@ -46,51 +54,118 @@
       (char-whitespace? c)
       (memv c '(#\. #\| #\( #\) #\; #\" #\' #\` #\, #\@ #\{ #\} #\[ #\]))))
 
-;; Here 'atom' means symbol or number. TODO just separate those cases
-(define (read-atom port c)
-  (read-after-atom (read-raw-atom port (list c)) port))
+;; symbol: !digit[10] symbolconstituent+ !!symbolterminator afteratom
 
-(define (read-raw-atom port L)
+(define (read-symbol port c)
+  (assert (not (char-numeric? c)))
+  (read-after-atom (read-raw-symbol port (list c)) port))
+
+(define (read-raw-symbol port L)
   (let ((c (peek-char port)))
-    (if (symbol-terminator? c)
-        (atomize L)
-        (read-raw-atom port (cons (read-char port) L)))))
+    (cond ((symbol-terminator? c)
+           (string->symbol (list->string (reverse L))))
+          ((symbol-constituent? c)
+           (read-raw-symbol port (cons (read-char port) L)))
+          (else
+            (error 'read "Weird character in symbol" c)))))
+
+;; afteratom: cue*
+;; cue:       '.' !digit[10] symbolconstituent+ !!symbolterminator
+;; (This differs slightly from '.' followed by a symbol, because
+;; we allow cues like '.+1' where '+1' on its own would be a number.)
+
+(define (read-cue port dot-c)
+  (when (char-numeric? (peek-char port))
+    (error 'read "Illegal decimal-number syntax: integer part needed"))
+  (read-cue-symbol port))
+
+(define (read-cue-symbol port)
+  (let ((sym (read-raw-symbol port (list #\.))))
+    (when (eq? sym '|.|)
+      (error 'read "Lone '.'"))
+    sym))
 
 (define (read-after-atom prefix port)
   (let ((c (peek-char port)))
-    (cond ((eqv? c #\.)
-           (read-char port)
-           (let ((c (peek-char port)))
-             (if (not (symbol-constituent? c))
-                 (error 'read "Symbol ending in '.'"))
-             (read-after-atom (combine-dotted prefix (read-raw-atom port (list (read-char port))))
-                              port)))
-          (else prefix))))
+    (if (eqv? c #\.)
+        (read-after-atom (list prefix (read-cue port (read-char port)))
+                         port)
+        prefix)))
+
+(define (read-after-atom-dot prefix port)
+  (read-after-atom (list prefix (read-cue-symbol port))
+                   port))
+
+;; number:	('+'|'-')? (radix[R] digit[R]+ | decimal) afteratom
+;; decimal:	digit[10]+ ('.' digit[10]+)?
+;; digit[R]:	<digit of radix R>
+;; radix[2]:	'0b'
+;; radix[8]:	'0o'
+;; radix[16]:	'0x'
+
+(define (read-signed-or-symbol port sign-char)
+  (let ((pc (peek-char port)))
+    (if (char-numeric? pc)
+        (apply-sign sign-char
+                    (begin (read-char port) (read-unsigned port pc)))
+        (read-symbol port sign-char))))
+
+(define (apply-sign c number)
+  (case c
+    ((#\+) number)
+    ((#\-) (- number))
+    (else (error 'read "Bug: strange sign" c))))
+    
+(define (read-unsigned port c)
+  (case c
+    ((#\0) (case (peek-char port)
+             ((#\b) (read-char port) (read-radix-unsigned 2 port))
+             ((#\o) (read-char port) (read-radix-unsigned 8 port))
+             ((#\x) (read-char port) (read-radix-unsigned 16 port))
+             ((#\.) (read-decimal-fraction '(#\0) port))
+             (else (read-unsigned-decimal port c))))
+    (else (read-unsigned-decimal port c))))
+
+(define (read-radix-unsigned radix port)
+  (cook-number radix (read-digits radix port) port))
+
+(define (cook-number radix literal-chars port)
+  (read-after-atom (just-cook-number radix literal-chars) port))
   
-(define (atomize L)
-  (let ((s (list->string (reverse L))))
-    (or (string->number s)
-        (prefixed-string->number "0x" 16 s)
-        (prefixed-string->number "0o"  8 s)
-        (prefixed-string->number "0b"  2 s)
-        (string->symbol s))))
+(define (just-cook-number radix literal-chars)
+  (let* ((literal (list->string literal-chars))
+         (result (string->number literal radix)))
+    (unless result
+      (error 'read "Non-numeric number literal" literal))
+    result))
+  
+(define (read-unsigned-decimal port c)
+  (let* ((int-digits (cons c (read-digits 10 port))))
+    (if (eqv? #\. (peek-char port))
+        (read-decimal-fraction int-digits port)
+        (cook-number 10 int-digits port))))
 
-(define (prefixed-string->number prefix radix s)
-  (let ((pn (string-length prefix))
-        (sn (string-length s)))
-    (and (string=? prefix (substring s 0 (min pn sn)))
-         (string->number (substring s pn sn) radix))))
+(define (read-decimal-fraction int-digits port)
+  (read-char port) ;; TODO assert it's a '.'
+  (let ((c (peek-char port)))
+    (if (char-numeric? c)
+        (cook-number 10
+                     (append int-digits (cons #\. (read-digits 10 port)))
+                     port)
+        (read-after-atom-dot (just-cook-number 10 int-digits) port))))
 
-(define (combine-dotted prefix atom)
-  (cond ((and (integer? prefix) (integer? atom))  ;; XXX plays wrong with radix prefixes
-         ;;ugh. This whole idea of reading atoms and then combining them was a hack I've gotta back out of.
-         (string->number (string-append (number->string prefix)
-                                        "."
-                                        (number->string atom))))
-        ((symbol? atom)
-         (list prefix (cue<- atom)))
-        (else
-          (error 'read "Floating-point suffix after a non-number prefix" prefix atom))))
+(define (read-digits radix port)
+  ;; TODO skip _ for readable grouping of digits
+  (let loop ((rev-digits '()))
+    (let ((c (peek-char port)))
+      (cond ((or (char-numeric? c)
+                 (and (= radix 16) (char-ci<=? #\a c #\f)))
+             (read-char port)
+             (loop (cons c rev-digits)))
+            ((symbol-terminator? c)
+             (reverse rev-digits))
+            (else
+              (error 'read "Non-numeric character in a number after" (reverse rev-digits)))))))
 
 (define cant-read
   (let ()
@@ -120,7 +195,7 @@
             (read-error port "Unexpected EOF"))
         result))
 
-    ;; list ::= '(' expr* ')'
+    ;; list: '(' expr* ')'
     (define (read-list port c)
       (read-seq #\) port c))
 
@@ -145,9 +220,14 @@
 
     (let initializing ((i 33)) ;; Symbol/number characters
       (cond ((< i 127)
-             (if (symbol-constituent? (integer->char i))
-                 (vector-set! the-readtable i read-atom))
-             (initializing (+ i 1)))))
+             (let* ((c (integer->char i))
+                    (read-macro (cond ((char-numeric? c) read-unsigned)
+                                      ((memv c '(#\+ #\-)) read-signed-or-symbol)
+                                      ((symbol-constituent? c) read-symbol)
+                                      (else #f))))
+               (when read-macro
+                 (vector-set! the-readtable i read-macro))
+               (initializing (+ i 1))))))
 
     (for-each (lambda (white) ;; Whitespace characters
                 (install-read-macro white 
@@ -173,37 +253,22 @@
       (lambda (port c)
 	(read-error port "Too many '}'")))
 
-    (install-read-macro #\.
-      (lambda (port c)
-        (skip-blanks port)
-        (let ((c (peek-char port)))
-          (if (symbol-constituent? c)
-              (let ((atom (read-atom port (read-char port))))
-                (cond ((number? atom)
-                       (read-error port "Floating-point literals require an int part"))
-                      ((symbol? atom)
-                       (cue<- atom))
-                      (else
-                       (read-error port "Bad syntax after '.'" atom))))
-              (read-error port "Lone '.'" c)))))
+    (install-read-macro #\. read-cue)
 
     (install-read-macro #\[
       (lambda (port c)
         (list->vector (read-seq #\] port c))))
 
+    ;; hashliteral: '#\' (!!letter symbol | character) | '#yes' | '#no'
     (install-read-macro #\#
       (lambda (port c)
         (let ((next (read-char port)))
           (case next
-            (( #\( )	; new term notation -- TODO unused, just drop it?
-             (let* ((tag (must-read port))
-                    (parts (read-seq #\) port c)))
-               (make-term tag parts)))
             ((#\\)
              (let ((next (read-char port)))
                (if (and (char-alphabetic? next)
                         (char-alphabetic? (peek-char port)))
-                   (let ((symbol (read-atom port next)))
+                   (let ((symbol (read-symbol port next)))
                      (let ((table '(; (backspace . #\backspace)
 				    ; (escape . #\escape)
 				    ; (page . #\page)
@@ -221,7 +286,7 @@
                    next)))
             (else
              (cond ((char-alphabetic? next)
-                    (let ((sym (read-atom port next)))
+                    (let ((sym (read-symbol port next)))
                       (case sym
                         ((yes) #t)
                         ((no) #f)
@@ -230,6 +295,8 @@
                    (else
                     (read-error port "Unknown '#' read macro" next))))))))
 
+    ;; stringliteral: '"' stringchar* '"' afteratom
+    ;; stringchar: '\' escapeseq | character
     (install-read-macro #\"
       (lambda (port c)
 	(let loop ((prev-chars '()))
