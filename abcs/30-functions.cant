@@ -103,7 +103,7 @@
 (to (text-by f xs)
   ;; TODO zipped-list-transducer? (also for map-by etc.)
   ;; TODO also delete when (f x) = #no?
-  ;;      (or make (#no .text) = ""? that's a bit much...)
+  ;;      (or make #no.text = ""? that's a bit much...)
   ;; TODO inconsistent to auto-.values here and not elsewhere, isn't it?
   ("" .join (each ||((f it) .text) xs.values)))
 

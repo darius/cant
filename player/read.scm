@@ -104,53 +104,51 @@
 (define (read-signed-or-symbol port sign-char)
   (let ((pc (peek-char port)))
     (if (char-numeric? pc)
-        (apply-sign sign-char ;XXX oops, doesn't work with the read-after-atom
-                    (begin (read-char port) (read-unsigned port pc)))
+        (let ((sign (case sign-char (#\+ 1) (#\- -1) (else (error 'read "Bug")))))
+          (read-char port)
+          (read-num sign port pc))
         (read-symbol port sign-char))))
 
-(define (apply-sign c number)
-  (case c
-    ((#\+) number)
-    ((#\-) (- number))
-    (else (error 'read "Bug: strange sign" c))))
-    
 (define (read-unsigned port c)
+  (read-num 1 port c))
+
+(define (read-num sign port c)
   (case c
     ((#\0) (case (peek-char port)
-             ((#\b) (read-char port) (read-radix-unsigned 2 port))
-             ((#\o) (read-char port) (read-radix-unsigned 8 port))
-             ((#\x) (read-char port) (read-radix-unsigned 16 port))
-             ((#\.) (read-decimal-fraction '(#\0) port))
-             (else (read-unsigned-decimal port c))))
-    (else (read-unsigned-decimal port c))))
+             ((#\b) (read-char port) (read-radix sign 2 port))
+             ((#\o) (read-char port) (read-radix sign 8 port))
+             ((#\x) (read-char port) (read-radix sign 16 port))
+             ((#\.) (read-decimal-fraction sign '(#\0) port))
+             (else (read-num-decimal sign port c))))
+    (else (read-num-decimal sign port c))))
 
-(define (read-radix-unsigned radix port)
-  (cook-number radix (read-digits radix port) port))
+(define (read-radix sign radix port)
+  (cook-number sign radix (read-digits radix port) port))
 
-(define (cook-number radix literal-chars port)
-  (read-after-atom port (just-cook-number radix literal-chars)))
-  
-(define (just-cook-number radix literal-chars)
+(define (cook-number sign radix literal-chars port)
+  (read-after-atom port (just-cook-number sign radix literal-chars)))
+
+(define (just-cook-number sign radix literal-chars)
   (let* ((literal (list->string literal-chars))
          (result (string->number literal radix)))
     (unless result
       (error 'read "Non-numeric number literal" literal))
-    result))
+    (* sign result)))
   
-(define (read-unsigned-decimal port c)
+(define (read-num-decimal sign port c)
   (let* ((int-digits (cons c (read-digits 10 port))))
     (if (eqv? #\. (peek-char port))
-        (read-decimal-fraction int-digits port)
-        (cook-number 10 int-digits port))))
+        (read-decimal-fraction sign int-digits port)
+        (cook-number sign 10 int-digits port))))
 
-(define (read-decimal-fraction int-digits port)
+(define (read-decimal-fraction sign int-digits port)
   (read-char port) ;; TODO assert it's a '.'
   (let ((c (peek-char port)))
     (if (char-numeric? c)
-        (cook-number 10
+        (cook-number sign 10
                      (append int-digits (cons #\. (read-digits 10 port)))
                      port)
-        (read-after-atom-dot port (just-cook-number 10 int-digits)))))
+        (read-after-atom-dot port (just-cook-number sign 10 int-digits)))))
 
 (define (read-digits radix port)
   ;; TODO skip _ for readable grouping of digits
