@@ -1,0 +1,61 @@
+;; Adapted from *Land of Lisp* by Conrad Barski, p. 234
+
+;; TODO
+;; - use terminal cap
+;; - realtime
+;; - draw playfield borders?
+;; - write a little Robotron?
+;; - consider using (sum-by ~.magnitude (each - point1 point2))
+
+;; Hm, did I change gameplay?
+;; His game loop goes: player moves, robots move, check for win, redisplay while checking for lose
+;; My game loop goes:  redisplay, check for win or lose, player moves, robots move
+;;    equiv to:        player moves, robots move, loop, redisplay, check for win or lose, 
+
+(let directions (map<-items (zip '(#\q #\w #\e #\a #\d #\z #\x #\c)
+                                 '(-65 -64 -63  -1   1  63  64  65))))
+
+(to (play-robots terminal chaos)
+  (begin playing [(old-pos 544)
+                  (robots (bag<- (each ||(chaos .sample-count 1024)
+                                       10.till)))]
+    (for each! [(p 1024.till)]
+      (when (p .even? 64)
+        out.newline)
+      (out .display (may (robots p)
+                      (be 0 (if (= p old-pos) #\@ #\space)) ;; Player or empty
+                      (be 1 #\A)    ;; Live robot
+                      (else #\#)))) ;; Dead robots
+    (hm (unless (robots .find? 1)
+          "You win")  ;; No robots left living
+        (when (robots .maps? old-pos)
+          "You lose") ;; A robot caught you
+        (else
+          (out .display "\nqwe/asd/zxc to move, (t)eleport, (l)eave: ")
+          (when (let new-pos (hide (let c (in.read-line .get 0))
+                                   (hm (when (let d (directions .get c))
+                                         (+ old-pos d))
+                                       (may c
+                                         (be #\t (chaos .sample-count 1024))
+                                         (be #\l #no)
+                                         (else   old-pos)))))
+            (playing new-pos
+                     (bag<- (for each [(rpos robots.multikeys)]
+                              (hm (when (< 1 (robots rpos)) ;; Dead robots don't move
+                                    rpos)
+                                  (else ;; Living robots step towards the player
+                                    (let steps (each ||(+ rpos it) directions.values))
+                                    (let (~ row col) (new-pos ./mod 64))
+                                    (for min-by [(s steps)]
+                                      (let (~ mrow mcol) (s ./mod 64))
+                                      (+ ((- row mrow) .magnitude)
+                                         ((- col mcol) .magnitude)))))))))))))
+
+(import (use 'chaos) random-chaos<-)
+(let my-chaos (random-chaos<- system-randomness-source<-))
+
+(let terminal ((use 'sturm) (export console)))
+
+(to (go)
+  (play-robots terminal my-chaos))
+(go)
