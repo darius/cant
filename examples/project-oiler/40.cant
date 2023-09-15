@@ -21,7 +21,7 @@
   (surely (< 0 index))
   (begin skipping [(d 1) (i index)]
     (let power (10 .** d.-1))         ;; The number starting this chunk
-    (let chunk-length (* d 9 power)) ;; How many digits in this chunk
+    (let chunk-length (* d 9 power))  ;; How many digits in this chunk
     (hm (when (<= i chunk-length)
           (let (~ q r) (i.-1 ./mod d))
           (let qth-number (+ power q))
