@@ -42,7 +42,12 @@
 
   (to ~.floor          (floor me))
   (to ~.ceiling        (ceiling me))
+
   (to ~.round          (round me))
+  (to (~ .round ndigs)
+    (let m (10 .** ndigs))
+    (/ (round (* me m)) m))
+
   (to ~.exact          (exact<-inexact me))
   (to ~.inexact        (inexact<-exact me))
 
