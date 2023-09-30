@@ -18,11 +18,12 @@
       (hm (when (< place 0)
             (out .say "found ~w\n" suffix)
             `(,suffix))
-          (else (for gather [(next-digit
-                              (~.nub (for yeahs [(t (tiles place))]
-                                       (and (suffix .prefix? t.rest)
-                                            (not (suffix .find? t.first))
-                                            t.first))))]
-                  (extending place.-1 (link next-digit suffix))))))))
+          (else
+            (let candidates (for yeahs [(t (tiles place))]
+                              (and (suffix .prefix? t.rest)
+                                   (not (suffix .find? t.first))
+                                   t.first)))
+            (for gather [(next-digit candidates.nub)]
+              (extending place.-1 (link next-digit suffix))))))))
 
 (out .say "sum: ~w\n" (sum-by count<-digits solutions)) ;; 16695334890
