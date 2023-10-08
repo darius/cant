@@ -17,7 +17,9 @@
   (to (grow)
     (let old A.^)
     (let n old.count)
-    (A .^= (array<-count (if (= 0 n) 1 (* 2 n))))
+    (A .^= (array<-count (may n
+                           (be 0 2)
+                           (else (- (* 2 n) (n .>> 1))))))  ;; = about n*1.5. TODO is n*2 better?
     (A.^ .copy! old))
 
   (to (count-check i)

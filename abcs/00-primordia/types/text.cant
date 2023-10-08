@@ -81,7 +81,8 @@
 
   (to ~.lowercase (text<-list (each ~.lowercase me)))
   (to ~.uppercase (text<-list (each ~.uppercase me)))
-  (to ~.capitalize (chain ((me .from 0 1) .uppercase) (me .from 1)))
+  (to ~.capitalize (chain ((me .from 0 1) .uppercase)
+                          (me .from 1))) ;TODO lowercase this part?
 
   (to (~ .replace pattern replacement) ;TODO more efficient
     ;; TODO unify the cases?
