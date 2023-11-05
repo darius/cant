@@ -1,0 +1,20 @@
+;; Problem from Miller & Wu, Daily Coding Problem, p. 238
+
+;; In the game of Ghost, players alternate appending a letter to a
+;; word-prefix. A move loses if it creates either a dictionary word
+;; or a non-prefix of any dictionary word.
+
+(let lexicon "cat coat dog bear".split.range)
+(let alphabet ((chain @lexicon.keys) .nub))
+(let prefixes ((gather ~.prefixes lexicon.keys) .range))
+
+;; List all winning moves from this prefix
+(to (win prefix)
+  (for yeahs [(letter alphabet)]
+    (let next (chain prefix letter.text))
+    (and (not (lexicon .maps? next))
+         (prefixes .maps? next)
+         ((win next) .none?)
+         letter)))
+
+(out .print (win ""))
