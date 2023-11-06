@@ -225,6 +225,15 @@
   (to (~ .k-lists k)
     (grid* @(`(,list) .repeat k)))
 
+  (to ~.prefixes
+    (for each [(i (0 .thru list.count))]
+      (list .prefix i)))
+  
+  (to ~.suffixes
+    (if list.none?
+        '(())
+        (link list list.rest.suffixes)))
+
   (to ~.cycle
     (surely list.some?)
     (let result (chain$ list ($ result))))

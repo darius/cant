@@ -16,9 +16,7 @@
   (and (lexicon .maps? best) best))
 
 (to (edits1 word)
-  (let splits     (for each [(i (0 .thru word.count))]
-                    (~ (word .from 0 i)
-                       (word .from i))))
+  (let splits     (zip word.prefixes word.suffixes))
   (let inserts    (for gather [((~ a b) splits)]
                     (for each [(c alphabet)]
                       (chain a c b))))
