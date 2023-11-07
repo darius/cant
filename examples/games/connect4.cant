@@ -1,0 +1,98 @@
+;; Connect Four
+
+;; Two players, X and O. X goes first.
+;; Players alternately drop one of their marks into a rectangular grid.
+;; To win: complete a line segment of length 4 of your mark -- horizontal,
+;;   vertical, or diagonal.
+;; Draw: the grid is full.
+
+;; Console UI for two human players. Ensure valid moves and detect end-of-game.
+
+(to (main args)
+  (out .display instructions)
+  (play))
+
+(let instructions "
+Try to connect 4 of your markers in a horizontal, vertical, or diagonal line.
+The two players alternately move by dropping a marker into a column.
+On your move, enter the column number or 'quit' ('q' for short).
+")
+
+(to (play)
+  (let grid (grid<-))
+  (begin playing [(mover #\x)
+                  (opponent #\o)]
+    (out .displayln grid.show)
+    (begin prompting []
+      (out .say "~d to move: " mover)
+      (let input in.read-line)
+      (hm (when (or (zilch? input)
+                    (and input.some? ("quit" .prefix? input.lowercase)))
+            (out .say "~d resigns.\n" mover))
+          (let move input.?number)
+          (unless (and move (<= 1 move n-columns))
+            (out .say "Pick a column number between 1 and ~d.\n" n-columns)
+            (prompting))
+          (may (grid .drop! mover move)
+            (be 'overflow
+              (out .say "That column is full; pick another.\n")
+              (prompting))
+            (be 'drop
+              (playing opponent mover))
+            (be 'draw
+              (out .displayln grid.show)
+              (out .say "A draw.\n"))
+            (be 'win
+              (out .displayln grid.show)
+              (out .say "~d wins!\n" mover)))))))
+
+;; Grid size.
+(let n-rows 6)
+(let n-columns 7)
+
+;; Height and width are padded by 2 for sentinel #no values around the boundary.
+(let height (+ n-rows 2))
+(let width (+ n-columns 2))
+
+;; Grid-coordinate deltas for horizontal, vertical, and rising and falling diagonals.
+(let directions (list<- 1 width width.-1 width.+1))
+
+(to (grid<-)
+  (let spots (~.array (for each [(`(,r ,c) (grid* height.till width.till))]
+                        (and (<= 1 r n-rows)
+                             (<= 1 c n-columns)
+                             #\.))))
+  
+  ;; Is the (nonempty) grid square at i part of a winning line?
+  (to (complete-at? i)
+    (let mark (spots i))
+    (to (count-run j d)
+      (if (= mark (spots j))
+          ((count-run (+ j d) d) .+1)
+          0))
+    (to (complete? dir)
+      (<= 3 (+ (count-run (+ i dir) dir)
+               (count-run (- i dir) (- dir)))))
+    (some complete? directions))
+
+  (make grid
+
+    (to ~.show
+      (grid-format .format @(keep itself spots.values)))
+
+    (to (~ .drop! mark column)
+      (surely (<= 1 column n-columns))
+      (begin dropping [(i column)]
+        (let under (+ i width))
+        (hm (if (= #\. (spots under)) (dropping under))
+            (unless (spots i)          'overflow)
+            (do (spots .set! i mark))
+            (if (complete-at? i)       'win)
+            (unless (spots .find? #\.) 'draw)
+            (else                      'drop))))))
+
+;; We assume n-columns is no greater than 9 (for aligned single-digit column numbers).
+(let row-format (" |~d|\n" .format (" " .join ('("~d") .repeat n-columns))))
+(let grid-format (chain "\n" (row-format .repeat n-rows)
+                        (" +~d+\n" .format ("-" .repeat (+ n-columns n-columns.-1)))
+                        ("  ~d\n" .format (" " .join (each ~.text (1 .thru n-columns))))))
