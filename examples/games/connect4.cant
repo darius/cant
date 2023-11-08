@@ -65,14 +65,11 @@ On your move, enter the column number or 'quit' ('q' for short).
   
   ;; Is the (nonempty) grid square at i part of a winning line?
   (to (complete-at? i)
-    (let mark (spots i))
-    (to (count-run j d)
-      (if (= mark (spots j))
-          ((count-run (+ j d) d) .+1)
-          0))
+    (to (count-run d)
+      (~.count (keep-while$ ||(= (spots i) (spots it))
+                            (iterating (~ .+ d) (+ i d)))))
     (to (complete? dir)
-      (<= 3 (+ (count-run (+ i dir) dir)
-               (count-run (- i dir) (- dir)))))
+      (<= 4 (+ (count-run dir) 1 (count-run (- dir)))))
     (some complete? directions))
 
   (make grid
