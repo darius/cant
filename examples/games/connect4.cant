@@ -12,8 +12,7 @@ On your move, enter the column number or 'quit' ('q' for short).
 
 (to (play)
   (let grid (grid<-))
-  (begin playing [(mover #\x)
-                  (opponent #\o)]
+  (begin playing [(mover #\x) (opponent #\o)]
     grid.show
     (begin prompting []
       (out .say "~d to move: " mover)
