@@ -1,12 +1,4 @@
-;; Connect Four
-
-;; Two players, X and O. X goes first.
-;; Players alternately drop one of their marks into a rectangular grid.
-;; To win: complete a line segment of length 4 of your mark -- horizontal,
-;;   vertical, or diagonal.
-;; Draw: the grid is full.
-
-;; Console UI for two human players. Ensure valid moves and detect end-of-game.
+;; Connect 4: console UI for two human players.
 
 (to (main args)
   (out .display instructions)
@@ -22,7 +14,7 @@ On your move, enter the column number or 'quit' ('q' for short).
   (let grid (grid<-))
   (begin playing [(mover #\x)
                   (opponent #\o)]
-    (out .displayln grid.show)
+    grid.show
     (begin prompting []
       (out .say "~d to move: " mover)
       (let input in.read-line)
@@ -40,10 +32,10 @@ On your move, enter the column number or 'quit' ('q' for short).
             (be 'drop
               (playing opponent mover))
             (be 'draw
-              (out .displayln grid.show)
+              grid.show
               (out .say "A draw.\n"))
             (be 'win
-              (out .displayln grid.show)
+              grid.show
               (out .say "~d wins!\n" mover)))))))
 
 ;; Grid size.
@@ -75,7 +67,7 @@ On your move, enter the column number or 'quit' ('q' for short).
   (make grid
 
     (to ~.show
-      (grid-format .format @(keep itself spots.values)))
+      (out .say grid-format @(keep itself spots.values)))
 
     (to (~ .drop! mark column)
       (surely (<= 1 column n-columns))
@@ -92,4 +84,4 @@ On your move, enter the column number or 'quit' ('q' for short).
 (let row-format (" |~d|\n" .format (" " .join ('("~d") .repeat n-columns))))
 (let grid-format (chain "\n" (row-format .repeat n-rows)
                         (" +~d+\n" .format ("-" .repeat (+ n-columns n-columns.-1)))
-                        ("  ~d\n" .format (" " .join (each ~.text (1 .thru n-columns))))))
+                        ("  ~d\n\n" .format (" " .join (each ~.text (1 .thru n-columns))))))
