@@ -1,4 +1,4 @@
-;; Connect 4: console UI for two human players.
+;; Connect 4: a tty UI for two human players.
 
 (to (main args)
   (out .display instructions)
