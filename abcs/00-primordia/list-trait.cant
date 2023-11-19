@@ -16,7 +16,7 @@
 
   (to ~.count
     ;; TODO non-tail-recursive would be more OO in style. Go back to that?
-    (begin counting [(remainder list) (count 0)]
+    (do counting [(remainder list) (count 0)]
       (if remainder.none?
           count
           (counting remainder.rest count.+1))))
@@ -66,7 +66,7 @@
 
   (to (~ .get key default)
     (if (count? key)
-        (begin walking [(k key) (xs list)]
+        (do walking [(k key) (xs list)]
           (hm (if xs.none? default)
               (if (= k 0) xs.first)
               (else (walking k.-1 xs.rest))))
@@ -79,7 +79,7 @@
                   (list.rest .maps? key.-1)))))
 
   (to (~ .find value default)
-    (begin looking [(i 0) (values list.values)] ;XXX .values called because list-trait is illegitimately used by arrays
+    (do looking [(i 0) (values list.values)] ;XXX .values called because list-trait is illegitimately used by arrays
       (hm (if values.none? default)
           (if (= value values.first) i)
           (else (looking i.+1 values.rest)))))
@@ -156,9 +156,9 @@
     ;;TODO also a variant to start at a nonzero index
     (let P needle.count)
     (let j-limit (+ (- list.count P) 1))
-    (begin sliding [(j 0)]
+    (do sliding [(j 0)]
       (and (< j j-limit)
-           (begin checking [(i 0)]
+           (do checking [(i 0)]
              (hm (if (= i P)
                      j)
                  (if (= (needle i) (list (+ i j)))   ;; TODO random access may be slow, quadratic
@@ -174,29 +174,29 @@
     ;; TODO document as a contract?: for all of these combinatorial .k-foo methods,
     ;;   if list is sorted, then so is the output.
     (surely (count? k))
-    (begin generating [(n k) (nxs list.count) (xs list)]
+    (do generating [(n k) (nxs list.count) (xs list)]
       (hm (if (< nxs n) '())
           (if (= n 0)   '(()))
           ;; (if (= nxs n) (list<- xs))   ;; an optimization, but does it actually help?
-          (else (chain (hide (let x xs.first)
-                             (for each [(ys (generating n.-1 nxs.-1 xs.rest))]
-                               (link x ys)))
+          (else (chain (do [(x xs.first)]
+                         (for each [(ys (generating n.-1 nxs.-1 xs.rest))]
+                           (link x ys)))
                        (generating n nxs.-1 xs.rest))))))
 
   (to (~ .k-bags k) ;; Ways to pick k of my elements w/ duplicates allowed. TODO experimental; name?
     (surely (count? k))
-    (begin generating [(n k) (xs list)]
+    (do generating [(n k) (xs list)]
       (hm (if (= n 0) '(()))
           (if xs.none? '())
-          (else (chain (hide (let x xs.first)
-                             (for each [(ys (generating n.-1 xs))]
-                               (link x ys)))
+          (else (chain (do [(x xs.first)]
+                         (for each [(ys (generating n.-1 xs))]
+                           (link x ys)))
                        (generating n xs.rest))))))
 
   (to ~.permutations
     (to (remove-nth xs n) ;; TODO a list method?
       (chain (xs .from 0 n) (xs .from n.+1)))
-    (begin permuting [(xs list)]  ;; TODO lazy instead?
+    (do permuting [(xs list)]  ;; TODO lazy instead?
       (if xs.none?
           '(())
           (for gather [((~ i x) xs.items)]
@@ -208,7 +208,7 @@
     ;; except that would produce a different order of results.
     (to (remove-nth xs n) ;; TODO duplication
       (chain (xs .from 0 n) (xs .from n.+1)))
-    (begin permuting [(xs list) (n k)]  ;; TODO lazy instead?
+    (do permuting [(xs list) (n k)]  ;; TODO lazy instead?
       (hm (if (= n 0) '(()))
           (else (for gather [((~ i x) xs.items)]
                   (for each [(perm (permuting (remove-nth xs i) n.-1))]

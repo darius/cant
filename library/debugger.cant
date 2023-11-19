@@ -28,8 +28,8 @@
     (let abbrevs (collect-abbrevs vocab))
 
     (out .display "Enter ? for help.\n")
-    (begin interacting [(focus initial-focus)
-                        (trail '())]
+    (do interacting [(focus initial-focus)
+                     (trail '())]
 
       (to (continue @messages)
         (each! ||(out .display it) messages)
@@ -85,7 +85,7 @@
     (let abbrevs (collect-abbrevs vocab))
 
     (out .display "Enter ? for help.\n")
-    (begin interacting [(frame k) (callees '())]
+    (do interacting [(frame k) (callees '())]
 
       (to (continue @messages)
         (each! ||(out .display it) messages)

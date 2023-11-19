@@ -51,7 +51,7 @@
 
 ;; Filter lines down according to successive columns until only one line left.
 (to (winnow favorite lines)
-  (begin [(column 0) lines]
+  (do loop [(column 0) lines]
     (hm (if lines.one? lines.first)
         (else (loop column.+1 (filter column favorite lines))))))
 

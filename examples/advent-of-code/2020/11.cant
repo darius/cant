@@ -34,7 +34,7 @@
        (o1 .subset-of? o2)))
 
 (to (part1)
-  (begin stepping [(grid grid0) (n 1)]
+  (do stepping [(grid grid0) (n 1)]
     (out .say "~w:\n" n)
     (let next (update1 grid))
     (show next)
@@ -58,7 +58,7 @@
 (to (part2)
     (out .say "0:\n")
     (show grid0)
-  (begin stepping [(grid grid0) (n 1)]
+  (do stepping [(grid grid0) (n 1)]
     (out .say "~w:\n" n)
     (let next (update2 grid))
     (show next)
@@ -82,7 +82,7 @@
 ;; Return a list of the seats that can see x,y
 (to ((neighbors2 empties occupied) p)
   (for gather [(dp neighborhood)]
-    (begin stepping [(q (vector+ p dp)) (places '())]
+    (do stepping [(q (vector+ p dp)) (places '())]
       (hm (if (empties .maps? q) (link q places))
           (if (occupied .maps? q) (link q places))
           (let `(,x ,y) q)

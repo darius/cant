@@ -27,10 +27,10 @@
 (to (run code)
   (let seen (set<-))
   (let end code.count)
-  (begin running [(pc 0) (acc 0)]
+  (do running [(pc 0) (acc 0)]
     (hm (if (= pc end)       {finished acc})
         (if (seen .maps? pc) {looped acc})
-        (do (seen .add! pc))
+        (so (seen .add! pc))
         (may (code pc)
           (be `("acc" ,n) (running pc.+1 (+ acc n)))
           (be `("nop" ,n) (running pc.+1 acc))

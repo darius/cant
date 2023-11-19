@@ -46,7 +46,7 @@
 
 ;; Equivalent, in a loop:
 (to (weighted-sum-loop ns)
-  (begin [(ns (reverse ns)) (total-1 0) (total-2 0)]
+  (do loop [(ns (reverse ns)) (total-1 0) (total-2 0)]
     (may ns
       (be '() total-2)
       (be `(,n ,@rest)
@@ -56,7 +56,7 @@
 
 ;; Smoke test
 
-(hide
+(do []
   (let c (weighted-code<- 7))
 
   (let m '(3 1 4))
@@ -135,7 +135,7 @@
         (let encoded (test-code .encode message))
         (or (= (encoded i) (encoded j))
             (test-M .even? (- i j))
-            (do (let altered (encoded .alter (~ .swap! i j)))
+            (so (let altered (encoded .alter (~ .swap! i j)))
                 (let decoded (test-code .decode altered))
                 (should not decoded))))))
 

@@ -16,13 +16,11 @@
 (to (search lo hi ok?)
   (if (ok? lo)
       lo
-      (begin searching [(L lo) (H hi)]
-        (if (<= H (+ L 1))
-            H
-            (do (let mid ((+ L H) .quotient 2))
-                (if (ok? mid)
-                    (searching L mid)
-                    (searching mid H)))))))
+      (do searching [(L lo) (H hi)]
+        (hm (if (<= H (+ L 1))  H)
+            (let mid ((+ L H) .quotient 2))
+            (if (ok? mid)       (searching L mid))
+            (else               (searching mid H)))))))
 
 (let newline (rune-set<- #\newline))
 

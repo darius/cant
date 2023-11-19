@@ -110,9 +110,9 @@
       (seq-parse es))
     (be `(? ,@clauses)
       ;; TODO less clumsy way to code this?
-      (begin collecting [(cs (each clause-parse clauses))
-                         (pattern-cs '())
-                         (after-c #no)]
+      (do collecting [(cs (each clause-parse clauses))
+                      (pattern-cs '())
+                      (after-c #no)]
         (may cs
           (be '()
             {receive (reverse pattern-cs) after-c})
@@ -402,7 +402,7 @@
           (else)))
 
       (to (~ .receive deadline after-e clauses r k)
-        (begin checking []  ;; TODO finer time-slicing?
+        (do checking []  ;; TODO finer time-slicing?
           (may (peek inbox-unchecked.^)
             (be {empty}
               (hm (unless deadline
@@ -459,9 +459,9 @@
   (to (module-ref mod-name var-name)
     (let mod-env
       (or (modules .get mod-name)
-          (do (let filename (chain autoload-base mod-name.text ".cant"))
-              (module-load mod-name filename)
-              (modules mod-name))))
+          (do [(filename (chain autoload-base mod-name.text ".cant"))]
+            (module-load mod-name filename)
+            (modules mod-name))))
     (env-get mod-env var-name))
 
   (to (module-load mod-name filename)
@@ -612,7 +612,7 @@
         {go k result})))
 
   (to (match-clauses r !map clauses datum)
-    (begin matching [clauses]
+    (do matching [clauses]
       (may clauses
         (be '()
           #no)

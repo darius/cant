@@ -14,7 +14,7 @@
   (let circle (circle<- m.+1))
   (let p (box<- 0))                     ; current marble position
   (let scores (array<-count n)) ;XXX it's mere luck that this initializes the elements to 0
-  (begin playing [(elf 0) (marble 1)]
+  (do playing [(elf 0) (marble 1)]
     (hm (when (marble .even? 23)
           (out .print marble)
           (scores .set! elf (+ (scores elf) marble))
@@ -56,48 +56,49 @@
     (to (~ .pop! i)
       (let lo L.^)
       (let hi H.^)
-      (if (< i lo)
-          (do (let popped (V i))
-              (let j i.+1)
-              (let k (- hi (- lo j)))
-              ;; 0..i j..lo / hi..N
-              (V .move! k V j lo)
-              ;; 0..i / hi-(lo-j)..hi..N
-              ;;        gap+j..hi..N equivalently
-              (L .^= i)
-              (H .^= k)
-              popped)
-          (do (let k (+ hi (- i lo)))
-              (let popped (V k))
-              ;; 0..lo / hi..k..N
-              (V .move! lo V hi k)
-              ;; 0..lo..i / k+1..N
-              ;; 0..lo..i / gap+i+1..N equivalently
-              (L .^= i)
-              (H .^= k.+1)
-              popped)))
+      (hm (when (< i lo)
+            (let popped (V i))
+            (let j i.+1)
+            (let k (- hi (- lo j)))
+            ;; 0..i j..lo / hi..N
+            (V .move! k V j lo)
+            ;; 0..i / hi-(lo-j)..hi..N
+            ;;        gap+j..hi..N equivalently
+            (L .^= i)
+            (H .^= k)
+            popped)
+          (else
+            (let k (+ hi (- i lo)))
+            (let popped (V k))
+            ;; 0..lo / hi..k..N
+            (V .move! lo V hi k)
+            ;; 0..lo..i / k+1..N
+            ;; 0..lo..i / gap+i+1..N equivalently
+            (L .^= i)
+            (H .^= k.+1)
+            popped)))
 
     (to (~ .insert! i value)
       (let lo L.^)
       (let hi H.^)
-      (if (<= i lo)
-          (do (let k (- hi (- lo i)))
-              ;; 0..i..lo /        hi..N
-              (V .move! k V i lo)
-              ;; 0..i / hi-(lo-i)..hi..N
-              (V .set! i value)
-              ;; 0....j / hi-(lo-i)..hi..N
-              (L .^= i.+1)
-              (H .^= k))
-          (do (let k (+ hi (- i lo)))
-              ;; 0..lo / hi..k..N
-              (V .move! lo V hi k)
-              ;; 0..lo..i / k..N
-              ;; 0..lo..i / gap+i..N equivalently
-              (V .set! i value)
-              (L .^= i.+1)
-              (H .^= k)
-              )))
+      (hm (when (<= i lo)
+            (let k (- hi (- lo i)))
+            ;; 0..i..lo /        hi..N
+            (V .move! k V i lo)
+            ;; 0..i / hi-(lo-i)..hi..N
+            (V .set! i value)
+            ;; 0....j / hi-(lo-i)..hi..N
+            (L .^= i.+1)
+            (H .^= k))
+          (else
+            (let k (+ hi (- i lo)))
+            ;; 0..lo / hi..k..N
+            (V .move! lo V hi k)
+            ;; 0..lo..i / k..N
+            ;; 0..lo..i / gap+i..N equivalently
+            (V .set! i value)
+            (L .^= i.+1)
+            (H .^= k))))
 
     (to ~.array                        ;XXX unused?
       (chain (V .from 0 L.^)

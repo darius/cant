@@ -19,16 +19,6 @@
 
   (to ~.copy          (__vector-copy me))
 
-  (to (~ .update key f)         ;TODO define in a mutable-map-trait ?
-    (let value (f (me key)))
-    (me .set! key value)
-    value)
-
-  (to (~ .shuffle! chaos)
-    (let n me.count)
-    (for each! [(i n.till)]
-      (me .swap! i ((i .till n) .sample-value chaos))))
-
   (to (~ .selfie sink)
     (sink .display "[")
     (when (< 0 me.count)

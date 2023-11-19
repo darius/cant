@@ -103,7 +103,7 @@
           (grid .set! spot #\~))))))
 
 
-(do
+(so
   (flood)
   (let bag (bag<- grid.values))
   (out .say "Total water (part 1): ~w\n" (+ (bag #\~) (bag #\|)))

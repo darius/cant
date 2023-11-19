@@ -32,8 +32,8 @@
 (to (bf-interpret program)
   (let data (!map<-))                   ; run-time data store
   (let jump (match-brackets program))   ; jump targets
-  (begin running [(i 0)                 ; instruction pointer
-                  (d 0)]                ; data pointer
+  (do running [(i 0)                    ; instruction pointer
+               (d 0)]                   ; data pointer
     (may (program .get i)
       (be #\[ (running (if (= 0 (data .get d 0)) (jump i) i.+1)
                        d))
@@ -77,7 +77,7 @@
       (may rune
         (be #\[ (link 'd stack))
         (be #\] (let (link top next rest) stack)
-                (link `(begin [(d ,next)]
+                (link `(do loop [(d ,next)]
                          (if (= 0 (data d))
                              d
                              (loop ,top)))

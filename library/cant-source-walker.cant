@@ -17,7 +17,7 @@
     (be `(make ,(? symbol?) ,@clauses) (make-subparts clauses))
     (be `(make ,(? text?) ,@clauses)   (make-subparts clauses))
     (be `(make ,@clauses)              (make-subparts clauses))
-    (be `(do ,@es)                     `(,es ()))
+    (be `(so ,@es)                     `(,es ()))
     (be `(call ,e1 ,e2)                `((,e1 ,e2) ()))
     (be `(,e1 ,(? cue?) ,@es)          `((,e1 ,@es) ()))
     (be `(,e1 ,@es)                    `((,e1 ,@es) ()))

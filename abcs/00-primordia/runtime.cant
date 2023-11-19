@@ -49,7 +49,7 @@
 ;;   etc.
 
 (let !map<-
-  (hide
+  (do []
 
     (make none)
     (make deleted)
@@ -68,7 +68,7 @@
         (to (capacity) keys.^.count)
 
         (to (occupants)
-          (begin walking [(i (- (capacity) 1))]
+          (do walking [(i (- (capacity) 1))]
             (hm (if (< i 0)       '())
                 (let k (keys.^ i))
                 (if (= k none)    (walking i.-1))
@@ -155,7 +155,7 @@
 
           (to (~ .find value default)
             (let vs vals.^)
-            (begin searching [(js (occupants))]  ;XXX should be lazy
+            (do searching [(js (occupants))]  ;XXX should be lazy
               (hm (if js.none? default)
                   (if (= value (vs js.first)) (keys.^ js.first))
                   (else (searching js.rest)))))
@@ -460,7 +460,7 @@
       (surely (<= 0 i))
       (hm (if (<= bound i) '())  ;; TODO do i-1 .rest's here too for consistency?
           (else (let n (- bound i))
-                (begin copying [(j 0) (ll (lazy-list .from i))]
+                (do copying [(j 0) (ll (lazy-list .from i))]
                   (link$ ll.first ($ (let j1 j.+1)
                                      (if (< j1 n) (copying j1 ll.rest) '())))))))
     ;; TODO any more parts of list-trait that need overriding for laziness? Plausibly: .chain 
@@ -481,14 +481,14 @@
       (surely (<= 0 i))
       (hm (if (<= bound i) '())  ;; TODO do i-1 .rest's here too for consistency?
           (else (let n (- bound i))
-                (begin copying [(j 0) (ll (lazy-list .from i))]
+                (do copying [(j 0) (ll (lazy-list .from i))]
                   (link/lazier ll.first ($ (let j1 j.+1)
                                            (if (< j1 n) (copying j1 ll.rest) '())))))))
     ;; TODO any more parts of list-trait that need overriding for laziness? Plausibly: .chain 
     ))
 
 (to (lazier<- xs) ;; Convert from a 'link$' list to a 'link/lazier' one. TODO we shouldn't need this
-  (begin copying [xs]
+  (do copying [xs]
     (hm (if xs.none? '())
         (else (link/lazier xs.first ($ (copying xs.rest)))))))
 
@@ -530,15 +530,15 @@
           (to ~.rest  (march<- first.+1 limit))
           (to ~.count (- limit first))
           (to (~ i)
-            (if (not (integer? i))
-                (oops "Key error" range i)
-                (do (let j (+ first i))
-                    (if (and (<= first j) (< j limit))
-                        j
-                        (oops "Out of range" range i)))))
+            (unless (integer? i)
+              (oops "Key error" range i))
+            (let j (+ first i))
+            (if (and (<= first j) (< j limit))
+                j
+                (oops "Out of range" range i)))
           (to (~ .maps? i)
             (and (integer? i)
-                 (do (let j (+ first i))
+                 (so (let j (+ first i))
                      (and (<= first j) (< j limit)))))
           ;; TODO: .compare
           )))
@@ -607,7 +607,7 @@
 
 ;; printf-ish thing. TODO do something completely different?
 (let format
-  (hide
+  (do []
 
     (make format
       (to (~ .to-sink sink format-text @arguments)

@@ -12,13 +12,13 @@
     (if (zilch? (let rune me.read-rune))
         rune
         (text<-list
-         (begin reading [rune]
+         (do reading [rune]
            (if (or (zilch? rune) (= rune #\newline))
                '()
                (link rune (reading me.read-rune)))))))
 
   (to ~.read-lines
-    (begin reading []
+    (do reading []
       (if (zilch? (let line me.read-line))
           '()
           (link line (reading)))))

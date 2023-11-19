@@ -40,16 +40,16 @@
 
 ;; Smoke test
 
-(hide
- (to (try grammar sentence)
-   (out .say "~w:\n" sentence)
-   (each! ||(out .print it) (grammar .parse sentence))
-   out.newline)
+(do []
+  (to (try grammar sentence)
+    (out .say "~w:\n" sentence)
+    (each! ||(out .print it) (grammar .parse sentence))
+    out.newline)
 
- (try grammar3 '(the table))
- (try grammar3 '(the ball hit the table))
- (try grammar3 '(the noun took the verb))
+  (try grammar3 '(the table))
+  (try grammar3 '(the ball hit the table))
+  (try grammar3 '(the noun took the verb))
 
- (try grammar4 '(the man hit the table with the ball))
- (try grammar4 '(the orange saw))
+  (try grammar4 '(the man hit the table with the ball))
+  (try grammar4 '(the orange saw))
 )

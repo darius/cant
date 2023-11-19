@@ -53,13 +53,13 @@
             (level<- x y)))))       ; this spot
   (out .say "S initialized\n")
 
-  (to (power<- `(,x0 ,y0 ,d))
-    (let x1 (+ x0 d))
-    (let y1 (+ y0 d))
-    (+ (S (at x1 y1))
-       (- (S (at x0 y1)))
-       (- (S (at x1 y0)))
-       (S (at x0 y0))))
+  (to (power<- `(,x ,y ,d))
+    (let x+ (+ x d))
+    (let y+ (+ y d))
+    (+ (S (at x+ y+))
+       (- (S (at x y+)))
+       (- (S (at x+ y)))
+       (S (at x y))))
 
   (let side N.till)
 

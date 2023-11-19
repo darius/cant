@@ -46,11 +46,11 @@ dir:  {'N' | 'S' | 'E' | 'W'} :Dir.
         (visit-seq p d es))))
 
   (to (really-visit-seq p d es)
-    (if es.none?
-        (!map<- (~ p d))                ;TODO immutable?
-        (do (let map1 (visit p d es.first))
-            (merge-best (for each [((~ p1 d1) map1.items)]
-                          (visit-seq p1 d1 es.rest))))))
+    (hm (if es.none?
+            (!map<- (~ p d)))           ;TODO immutable?
+        (else (let map1 (visit p d es.first))
+              (merge-best (for each [((~ p1 d1) map1.items)]
+                            (visit-seq p1 d1 es.rest))))))
 
   (let visit (memoize really-visit))
   (let visit-seq (memoize really-visit-seq))

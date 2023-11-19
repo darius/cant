@@ -23,7 +23,7 @@
   (make vm
 
     (to ~.run
-      (begin running []
+      (do running []
 ;       (when vm.step (running))))
         (when (program .maps? (regs ip))
           (out .say "ip=~w ~w ~d " (regs ip) regs (show (program (regs ip))))

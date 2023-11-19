@@ -23,13 +23,13 @@
 
 ;; Smoke test for the above generator:
 ;; (disabled)
-'(hide
-  (let g (re-generator<- "ab"))
-  (each! ||(out .print it) (g 1))
-  out.newline
-  (each! ||(out .print it) (g 2))
-  out.newline
-  (each! ||(out .print it) (g 3)))
+'(do []
+   (let g (re-generator<- "ab"))
+   (each! ||(out .print it) (g 1))
+   out.newline
+   (each! ||(out .print it) (g 2))
+   out.newline
+   (each! ||(out .print it) (g 3)))
 
 ;; How many regexes of each size?
 ;; (disabled)
@@ -37,7 +37,7 @@
   (let g (re-generator<- alphabet))
   (for each! [(size (1 .thru 8))]
     (out .say "~w ~w ~w\n" alphabet.count size (-> size g ~.count))))
-'(do
+'(so
   (tabulate "01")  out.newline
   (tabulate "012") out.newline)
 

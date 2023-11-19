@@ -22,11 +22,11 @@
                 (eval-when-compile
                   (list
                    (regexp-opt
-                    '("call" "export" "for" "hide" "import" "make"
+                    '("call" "export" "for" "import" "make"
                       "make-trait" "to" "unless" "when"
                       ;; more experiments:
                       "$"
-                      "be" "be?" "given" "hm" "may" "on")
+                      "be" "be?" "given" "hm" "may" "on" "so")
                     'symbols)
                    ))))
   (setq font-lock-defaults
@@ -48,24 +48,22 @@
   ;; Based on http://community.schemewiki.org/?emacs-syntax-hilight
   ;; TODO can't we do this without stepping on scheme-mode's toes?
   (put 'be 'scheme-indent-function 1)
-  (put 'begin 'scheme-indent-function 'cant-begin-indent)
-  (put 'do 'scheme-indent-function 0)
+  (put 'do 'scheme-indent-function 'cant-begin-indent)
   (put 'else 'scheme-indent-function 0)
   (put 'export 'scheme-indent-function 0)
   (put 'for 'scheme-indent-function 2)
   (put 'given 'scheme-indent-function 0)
-  (put 'hide 'scheme-indent-function 0)  ; or nil)
   (put 'hm 'scheme-indent-function 0)
   (put 'import 'scheme-indent-function 1)
   (put 'let 'scheme-indent-function 1)
   (put 'make 'scheme-indent-function 1)
   (put 'make-trait 'scheme-indent-function 2)
   (put 'may 'scheme-indent-function 1)
+  (put 'so 'scheme-indent-function 0)
   (put 'to 'scheme-indent-function 1)
   (put 'unless 'scheme-indent-function 1)
   (put 'when 'scheme-indent-function 1)
 
-  (put ': 'scheme-indent-function 0)
   (put '$ 'scheme-indent-function 0)
   (put 'on 'scheme-indent-function 1)
   )

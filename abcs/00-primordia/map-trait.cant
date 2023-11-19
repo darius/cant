@@ -43,7 +43,7 @@
     (map.values .find? value))
 
   (to (~ .find value default)
-    (begin searching [(items map.items)]
+    (do searching [(items map.items)]
       (hm (if items.none? default)
           (may items.first
             (be (~ k (= value)) k))
@@ -108,8 +108,8 @@
 
   ;; Pick a random key, weighted by corresponding value.
   (to (~ .weighted-sample chaos)
-    (begin [(n     (chaos .sample-count (sum map.values)))
-            (items map.items)]
+    (do loop [(n     (chaos .sample-count (sum map.values)))
+              (items map.items)]
       (let (~ key count) items.first)
       (if (< n count)
           key

@@ -104,7 +104,7 @@ insn:    :count ' ' :count ' ' :count ' ' :count '\n' :hug.
 
   ;; Trivial constraint satisfaction turns out to be good enough:
   (let assignments (!map<-))
-  (begin pruning []
+  (do pruning []
     (let opcode (min-by (compose ~.count candidates)
                         candidates.keys))
     (when (~.one? (candidates opcode))

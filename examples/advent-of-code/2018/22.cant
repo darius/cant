@@ -91,7 +91,7 @@
   (import (priority-queues<- time-bound<=?)
     unit-pq pq-peek pq-merge pq<-list)
 
-  (begin searching [(pq (unit-pq start-effort))]
+  (do searching [(pq (unit-pq start-effort))]
     (let {nonempty (-- effort {at t state}) rest-pq}
       (pq-peek pq))
     
@@ -99,20 +99,21 @@
       (searching (pq-merge rest-pq (pq<-list (keep-early new-efforts)))))
 
     (let t0 (bests state))
-    (if (< t0 t)
-        (do (out .say "at ~3w skip\n" t)
-            (continue '()))
-        (do (let {state p tool} state)
-            (out .say "at ~3w ~3w ~w size ~w\n"
-                      t (manhattan-distance p target) state bests.count)
-;;            (surely (usable? tool p) "Tool is still usable after move")
-            (if (and (= p target) (= tool 'torch))
-                t ; Final result: time to reach the target with torch equipped.
-                (do (let moves (for yeahs [(q (neighbors<- p))]
-                                 (and (usable? tool q)
-                                      {at t.+1 {state q tool}})))
-                    (let swap (equip effort (swap-tool p tool)))
-                    (continue (link swap moves))))))))
+    (hm (when (< t0 t)
+          (out .say "at ~3w skip\n" t)
+          (continue '()))
+        (let {state p tool} state)
+        (so (out .say "at ~3w ~3w ~w size ~w\n"
+                 t (manhattan-distance p target) state bests.count))
+;;               (surely (usable? tool p) "Tool is still usable after move")
+        (when (and (= p target) (= tool 'torch))
+          t) ; Final result: time to reach the target with torch equipped.
+        (else
+          (let moves (for yeahs [(q (neighbors<- p))]
+                       (and (usable? tool q)
+                            {at t.+1 {state q tool}})))
+          (let swap (equip effort (swap-tool p tool)))
+          (continue (link swap moves))))))
 
 (to (swap-tool q tool)
   (let candidates (-> q type<- usables ~.keys))

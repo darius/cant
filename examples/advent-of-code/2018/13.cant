@@ -80,7 +80,7 @@
 
 (to (part1)
 ;  (show world0)
-  (begin ticking [(state world0) (t 0)]
+  (do ticking [(state world0) (t 0)]
     (when (< t 20000)
 ;      (out .say "time ~w\n" t)
       (let (~ state1 crashes) (tick state))
@@ -119,17 +119,16 @@
 (out .display "\nPart 2\n")
 
 (to (part2)
-  (begin ticking [(state world0) (t 0)]
+  (do ticking [(state world0) (t 0)]
     (when (< t 200000000)
       (let {world _ _ pre-carts} state)
       (when (t .even? 1000)
         (out .say "time ~w pop ~w\n" t pre-carts.count))
-      (if pre-carts.one?
-          (xy-coords state pre-carts.keys.first)
-          (do (let (~ state1 crashes) (tick state))
-              (let {world tracks width carts} state1)
-              (for each! [(pos crashes)]
-                (carts .delete! pos))
-              (ticking state1 t.+1))))))
+      (hm (if pre-carts.one?
+              (xy-coords state pre-carts.keys.first))
+          (else (let (~ (and state1 {world _ _ carts}) crashes)
+                  (tick state))
+                (each! ||(carts .delete! it) crashes)
+                (ticking state1 t.+1)))))))
 
 (out .say "~w\n" (part2))

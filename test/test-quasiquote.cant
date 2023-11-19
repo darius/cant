@@ -1,17 +1,17 @@
 ;; Test use of quasiquote on term data.
 ;; (Already exercised sufficiently on plain old Lisp lists.)
 
-(hide
+(do []
 
- (let a '(yo there))
- (let b 'gee)
+  (let a '(yo there))
+  (let b 'gee)
 
- (out .print `(ok {,b its cool ,@a b c} yay))
- (out .print `(ok {t its cool ,@a b c} yay))
- (out .print `(ok {t ,@a b c} yay))
- (out .print `(ok {t ,a b c} yay))
- (out .print `(ok {t a b c} yay))
- (out .print `(ok {t} yay))
+  (out .print `(ok {,b its cool ,@a b c} yay))
+  (out .print `(ok {t its cool ,@a b c} yay))
+  (out .print `(ok {t ,@a b c} yay))
+  (out .print `(ok {t ,a b c} yay))
+  (out .print `(ok {t a b c} yay))
+  (out .print `(ok {t} yay))
 
 )
 ;; TODO add hygiene test

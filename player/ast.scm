@@ -11,7 +11,7 @@
         e-term
         e-list
         e-make
-        e-do
+        e-so
         e-let
         e-call
         p-constant
@@ -39,7 +39,7 @@
   e-term
   e-list
   e-make
-  e-do
+  e-so
   e-let
   e-call)
 
@@ -72,7 +72,7 @@
        (flatmap exp-vars-defined args)))
    (lambda (e)                              ;e-make
      '())
-   (lambda (e)                              ;e-do
+   (lambda (e)                              ;e-so
      (unpack e (e1 e2)
        (append (exp-vars-defined e1)
                (exp-vars-defined e2))))

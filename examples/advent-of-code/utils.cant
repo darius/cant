@@ -24,7 +24,7 @@
   (let seen (set<-))
   (for keep$ [(x xs)]
     (or (seen .maps? x)
-        (do (seen .add! x)
+        (so (seen .add! x)
             #no))))
 
 (to (deletions<- t)

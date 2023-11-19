@@ -43,7 +43,7 @@ if this narrows it down enough, then which words.
 
 (to (play dictionary)
   (out .displayln instructions)
-  (begin playing [(words dictionary)]
+  (do playing [(words dictionary)]
     (out .say "~w left" words.count)
     (when (<= words.count 12) (out .say ": ~d" (" " .join words)))
     out.newline
@@ -62,7 +62,7 @@ if this narrows it down enough, then which words.
 (to (parse-reply reply)
   (with-ejector
    (on (ejector)
-     (let cluelets (begin parsing [(runes reply.list)]
+     (let cluelets (do parsing [(runes reply.list)]
                      (may runes
                        (be '() '())
                        (be (link #\. (? ~.letter? r) rest)

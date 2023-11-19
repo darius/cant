@@ -59,19 +59,19 @@
 
 (to (grow-from seed)
   (let already (set<-))
-  (begin growing [(queue (extend empty `(,seed)))]
+  (do growing [(queue (extend empty `(,seed)))]
     (may (peek queue)
       (be {empty})
       (be {nonempty p queue-1}
         (if (region .maps? p)
             (out .say "dupe ~w\n" p)
-            (do (region .add! p)
+            (so (region .add! p)
 ;;               (out .say "add ~w distance ~w count ~w\n" p (total-distance p) region.count)
                 ))
         (growing (extend queue-1 
                          (for keep [(p1 (neighbors<- p))]
                            (and (not (already .maps? p1))
-                                (do (already .add! p1)
+                                (so (already .add! p1)
                                     (included? p1))))))))))
 
 (to (neighbors<- `(,x ,y))
@@ -85,7 +85,7 @@
 ;; Detritus from the bug-hunt
 
 ;; (let seed
-;;   (begin seeking [(p centroid)]
+;;   (do seeking [(p centroid)]
 ;;     (let d (total-distance p))
 ;;     (out .say "seeking at ~w, distance ~w\n" p d)
 ;;     (if (< d margin)

@@ -25,7 +25,7 @@
   (let index elements.inverse)
   (let next (array<-count elements.count #no))
   (to (chase element)
-    (begin chasing [(i (index element))]
+    (do chasing [(i (index element))]
       (may (next i)
         (be #no i)
         (be j   (chasing j)))))

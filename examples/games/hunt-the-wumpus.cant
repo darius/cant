@@ -22,7 +22,7 @@
   ((pit<-) .go D)
   (with-ejector (on (ejector)
                   (quitter .^= ejector)
-                  (begin []
+                  (do loop []
                     (play-turn)
                     (loop)))))
 
@@ -42,7 +42,7 @@
 
 (to (play-turn)
   (describe)
-  (begin asking []
+  (do asking []
     (may (ask "Shoot, Move, or Quit (S-M-Q)?")
       (be "S" (shoot))
       (be "M" (move))
@@ -68,7 +68,7 @@
 (to (ask-where prompt)
   (let candidates (map<-values ~.name hunter.where.neighbors))
   (or (candidates .get (ask prompt))
-      (do (out .say "Not possible - ")
+      (so (out .say "Not possible - ")
           (ask-where prompt))))
 
 (to (ask question)

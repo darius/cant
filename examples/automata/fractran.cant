@@ -12,7 +12,7 @@
   ;; The input is a positive integer.
   (surely (and (integer? input) (< 0 input)))
 
-  (begin [(subject (ratio<- input))]
+  (do loop [(subject (ratio<- input))]
     ;; Look for a whole-number product, from left to right:
     (may (keep$ r-integer? (each$ ||(r* subject it) fractions))
       (be (? ~.none?) (integer<-ratio subject))  ; None, so we're done.

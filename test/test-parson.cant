@@ -12,10 +12,10 @@
 (try any-1.seclude "a")
 (try any-1.many "abc")
 
-(let bal (hide
-          (let sub-bal (delay ($ bal)))
-          (~.maybe
-           (then (lit "(") sub-bal (lit ")") sub-bal))))
+(let bal (do []
+           (let sub-bal (delay ($ bal)))
+           (~.maybe
+            (then (lit "(") sub-bal (lit ")") sub-bal))))
 
 (try bal "(abc")
 (try bal "()xyz")
@@ -27,18 +27,18 @@
 (let hug (feed-list itself))
 
 (let sexpr
-  (hide
-   (let subexpr (delay ($ sexpr)))
-   (let comment (then (lit-1 #\;) (~.many (then (~.nix (lit-1 #\newline))
-                                                skip-any-1))))
-   (let __ (~.many (either (skip-1 ~.whitespace?)
-                           comment)))
-   (~.seclude
-    (then __
-          (either (then (lit-1 #\() __ subexpr.many (lit-1 #\)) __
-                        hug)
-                  (then (keep-1 ~.letter?) (~.many (keep-1 ~.alphanumeric?)) __
-                        (feed (compose ~.symbol chain))))))))
+  (do []
+    (let subexpr (delay ($ sexpr)))
+    (let comment (then (lit-1 #\;) (~.many (then (~.nix (lit-1 #\newline))
+                                                 skip-any-1))))
+    (let __ (~.many (either (skip-1 ~.whitespace?)
+                            comment)))
+    (~.seclude
+     (then __
+           (either (then (lit-1 #\() __ subexpr.many (lit-1 #\)) __
+                         hug)
+                   (then (keep-1 ~.letter?) (~.many (keep-1 ~.alphanumeric?)) __
+                         (feed (compose ~.symbol chain))))))))
 
 (try sexpr "")
 (try sexpr "yo")

@@ -34,7 +34,7 @@
 
   (let remaining-rules (set<- @rules))
   (let rule-map (!map<-))
-  (begin solving []
+  (do solving []
     (let progress? (box<- #no))
 
     (for each! [((~ c column) columns.items)]

@@ -112,7 +112,7 @@
 (to (block? x) (list? x))
 
 (to (pop-n n stack)
-  (begin popping [n stack (args '())]
+  (do popping [n stack (args '())]
     (if (= n 0)
         (~ args stack)
         (popping n.-1 stack.rest (link stack.first args)))))

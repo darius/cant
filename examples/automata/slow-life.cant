@@ -16,7 +16,7 @@
                       " * "))
   (for cbreak-mode []
     (out .display cursor-hide)
-    (begin running [grid (step 0)]
+    (do running [grid (step 0)]
       (out .display clear-screen)
       (out .display home)
       grid.show

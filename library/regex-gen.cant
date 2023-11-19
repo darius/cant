@@ -19,7 +19,7 @@
 
 (to (star r)
   (let r1 (nonempty r))
-  (begin r1* []
+  (do r1* []
     (on (Ns) ((either empty (then r1 (r1*)))
               Ns))))
 

@@ -18,13 +18,13 @@
       (" + " .join (for yeahs [(c coeffs)
                                (k (coeffs.count.-1 .down-thru 0))]
                      (and (not= 0 c)
-                          (do (let x (may k
-                                       (be 0 "")
-                                       (be 1 "x")
-                                       (else ("x^~w" .format k))))
-                              (if (and (not= 0 k) (= 1 c))  ;; TODO less ugly
-                                  x
-                                  ("~w~d" .format c x))))))))
+                          (do [(x (may k
+                                    (be 0 "")
+                                    (be 1 "x")
+                                    (else ("x^~w" .format k))))]
+                            (if (and (not= 0 k) (= 1 c))  ;; TODO less ugly
+                                x
+                                ("~w~d" .format c x))))))))
 
 (to (poly? coeffs)
   (and (list? coeffs)

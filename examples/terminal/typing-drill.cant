@@ -11,7 +11,7 @@
   (let strokes (flexarray<- (get-key)))
   (let smoother (smoother<- 0))
   (let start (nano-now))
-  (begin typing []
+  (do typing []
     (let now (/ (- (nano-now) start)
                 1000000000))
     (show now (smoother .rate-at now) strokes.text)

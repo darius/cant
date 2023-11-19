@@ -1,6 +1,6 @@
 (to (intcode-run core pc @(optional interface))
   (let face (or interface (i/o-interface<- in out)))
-  (begin [pc]
+  (do loop [pc]
     (may (step core pc face)
       (be #no    face)
       (be new-pc (loop new-pc)))))

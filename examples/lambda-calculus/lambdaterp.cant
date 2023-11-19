@@ -231,7 +231,7 @@
 
 ;; Smoke test
 
-(hide
+(do []
 
  (to (try lexp @commands)
    (command-queue .^= commands)

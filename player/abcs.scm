@@ -20,7 +20,7 @@
   (unless base-path
     (error 'run-load "CANT_DIR not set"))
   (let ((forms (snarf (string-append base-path "/" filename) cant-read)))
-    (cant-interpret `(do ,@forms))))
+    (cant-interpret `(so ,@forms))))
 
 ;; TODO add setting & optional context
 (define (cant-interpret e)
@@ -33,7 +33,7 @@
   (run-load "abcs/40-library.cant")
   (run-load "abcs/50-top.cant")
   (cant-interpret
-   '(do
+   '(so
       ;;   (use "test/smoke-test")
       (the-last-oops .^))))
 

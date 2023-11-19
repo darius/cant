@@ -11,7 +11,7 @@
 ;; E.g. (a a b b b c) => (2 3 1)
 (to (run-lengths xs)
   (hm (if xs.none? '())
-      (else (begin scanning [(n 1) (x xs.first) (xs xs.rest)]
+      (else (do scanning [(n 1) (x xs.first) (xs xs.rest)]
               (may xs
                 (be '() `(,n))
                 (be `(,(= x) ,@rest) (scanning n.+1 x rest))

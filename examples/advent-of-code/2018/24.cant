@@ -7,7 +7,7 @@
 
 ;; Return yes if Immune System wins.
 (to (battle armies)
-  (begin battling []
+  (do battling []
     (let immune-system (armies "Immune System"))
     (let infection     (armies "Infection"))
     (out .say "Round: ~w vs. ~w\n" 
@@ -151,7 +151,7 @@ separator: '\n'.
 (out .display "\nPart 2\n")
 
 (to (part-2)
-  (begin bounding [(low 0)]
+  (do bounding [(low 0)]
     (let high (max 1 (* low 2)))
     (if (enough-boost? high)
         (binary-search enough-boost? low high)
@@ -159,10 +159,10 @@ separator: '\n'.
 
 (to (enough-boost? boost)
   (let armies (!map<-items (for each [(`(,name ,group-makers) matchup)]
-                             (~ name (do (let my-boost (may name
-                                                         (be "Immune System" boost)
-                                                         (else               0)))
-                                         (each (~ my-boost) group-makers))))))
+                             (let my-boost (may name
+                                             (be "Immune System" boost)
+                                             (else               0)))
+                             (~ name (each (~ my-boost) group-makers)))))
   (out .say "Trying immune boost of ~w\n" boost)
   (let win? (battle armies))
   (out .say "Immune boost of ~w ~d\n" boost (if win? "WORKED!" "failed"))
@@ -176,14 +176,12 @@ separator: '\n'.
 ;; Pre: there's just one cross-over point.
 ;; TODO redesign, extract to lib -- see also examples/dole/buffer.cant
 (to (binary-search ok? low high)
-  (begin searching [(L low) (H high)]
+  (do searching [(L low) (H high)]
     (surely (< L H))
-    (if (= L.+1 H)
-        H
-        (do (let M ((+ L H) .quotient 2))
-            (surely (< M H))
-            (if (ok? M)
-                (searching L M)
-                (searching M H))))))
+    (hm (if (= L.+1 H) H)
+        (so (let M ((+ L H) .quotient 2))
+            (surely (< M H)))
+        (if (ok? M)    (searching L M))
+        (else          (searching M H))))))
 
 (out .say "Part 2: ~w\n" (part-2))

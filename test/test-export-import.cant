@@ -1,19 +1,19 @@
 ;; Try out sugar for import and export.
 
-(hide
+(do []
 
- (let a-module
-   (hide
-    (let f 'howdy)
-    (let g 'doody)
-    (let a (export f g))
-    (out .print a)
-    (out .print (a 'g))
-    (out .print (a 'f))
-    a))
+  (let a-module
+    (do []
+      (let f 'howdy)
+      (let g 'doody)
+      (let a (export f g))
+      (out .print a)
+      (out .print (a 'g))
+      (out .print (a 'f))
+      a))
 
- (import a-module f g)
- (out .display "f and g\n")
- (out .print f)
- (out .print g)
+  (import a-module f g)
+  (out .display "f and g\n")
+  (out .print f)
+  (out .print g)
 )

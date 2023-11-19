@@ -33,7 +33,7 @@
     (let R-input (array<-count n-gates #no))
     (let found?  (box<- #no))
     (let wire    (chain inputs L-input))
-    (begin sweeping [(gate 0)]
+    (do sweeping [(gate 0)]
       (for each! [(L (0 .till (+ n-inputs gate)))]
         (let L-wire (wire L))
         (L-input .set! gate L)          ;XXX how about .:= or .<- or something?

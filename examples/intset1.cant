@@ -26,10 +26,8 @@
 
 ;; Smoke test
 
-(hide
- (let eg ((empty-set .adjoin 6) .adjoin 5))
-
- (out .print (eg .has? 5))
- (out .print (eg .has? 6))
- (out .print (eg .has? 7))
+(do [(eg ((empty-set .adjoin 6) .adjoin 5))]
+  (out .print (eg .has? 5))
+  (out .print (eg .has? 6))
+  (out .print (eg .has? 7))
 )

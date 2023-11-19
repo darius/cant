@@ -34,7 +34,7 @@
                 (ast-exp<- '[0 #no])  ;for the ignored make stamp field. TODO used where?
                 (ast-exp<- (raw 2))
                 (each ast-clause<- (raw 3))})
-        (be 5 {do (ast-exp<- (raw 1)) (ast-exp<- (raw 2))})
+        (be 5 {so (ast-exp<- (raw 1)) (ast-exp<- (raw 2))})
         (be 6 {let (ast-pat<- (raw 1)) (ast-exp<- (raw 2))})
         (be 7 {call (ast-exp<- (raw 1)) (ast-exp<- (raw 2))})))
 
@@ -77,8 +77,8 @@
       v)
     (be {make name stamp trait clauses}
       (unparse-make name stamp trait clauses))
-    (be {do e1 e2}
-      (unparse-do e1 e2))
+    (be {so e1 e2}
+      (unparse-so e1 e2))
     (be {let p e}
       `(let ,(unparse-pat p) ,(unparse-exp e)))
     (be {call e1 e2}
@@ -94,13 +94,13 @@
     (be {list es}
       `(list<- ,@(each unparse-exp es))))) ;XXX unhygienic
 
-(to (unparse-do e1 e2)
+(to (unparse-so e1 e2)
   (let es
-    (begin unparsing [(tail e2)]
+    (do unparsing [(tail e2)]
       (may tail.term
-        (be {do e3 e4} (link e3 (unparsing e4)))
+        (be {so e3 e4} (link e3 (unparsing e4)))
         (else          `(,tail)))))
-  `(do ,@(each unparse-exp (link e1 es))))
+  `(so ,@(each unparse-exp (link e1 es))))
 
 (to (unparse-make name stamp trait-term clauses)
   (surely (= {constant #no} stamp.term)) ;XXX

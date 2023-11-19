@@ -44,7 +44,7 @@
     ;; TODO can be simpler for initial assignment
 ;    (out .say "assign ~w\n" arg)
     (let {state workers jobs} arg)
-    (begin assigning [(ws1 workers) (ws2 '()) jobs]
+    (do assigning [(ws1 workers) (ws2 '()) jobs]
 ;      (out .say "ws1 = ~w\n" ws1)
       (may ws1
         (be '()
@@ -62,7 +62,7 @@
   (to (work {state workers jobs})
     ;; Decrement one time tick on each worker,
     ;; and retire the nodes that reach 0.
-    (begin working [(ws1 workers) (ws2 '()) jobs]
+    (do working [(ws1 workers) (ws2 '()) jobs]
 ;      (out .say "a: ws1 = ~w\n" ws1)
       (may ws1
         (be '()
@@ -73,24 +73,25 @@
         (be `((,node ,ticks-left) ,@rest)
 ;          (out .print 'c)
           (let n ticks-left.-1)
-          (if (= n 0)
-              (do (outbox .push! node)
-                  (let new-nodes
-                    (sort (for keep [(s (succs node))]
-                            (surely (< 0 (pred-count s)))
-                            (= 0 (pred-count .update s ~.-1)))))
-                  ;; let's assume assigning happens elsewhere for now
-                  (working rest `(#no ,@ws2) (merge new-nodes jobs)))
-              (working rest `((,node ,n) ,@ws2) jobs))))))
+          (hm (when (= n 0)
+                (outbox .push! node)
+                (let new-nodes
+                  (sort (for keep [(s (succs node))]
+                          (surely (< 0 (pred-count s)))
+                          (= 0 (pred-count .update s ~.-1)))))
+                ;; let's assume assigning happens elsewhere for now
+                (working rest `(#no ,@ws2) (merge new-nodes jobs)))
+              (else
+                (working rest `((,node ,n) ,@ws2) jobs)))))))
 
   (let first-steps (sort (for keep [(node nodes)]
                            (= 0 (pred-count node)))))
 
   (out .say "Second Workers Pending Done\n")
-  (begin ticking [(t 0)
-                  ({state workers jobs}
-                   (assign {state ('(#no) .repeat n-workers)
-                                  first-steps}))]
+  (do ticking [(t 0)
+               ({state workers jobs}
+                (assign {state ('(#no) .repeat n-workers)
+                               first-steps}))]
     (out .say "~6w ~7w ~7w ~w\n"
               t
               (for each [(w workers)]

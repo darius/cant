@@ -136,8 +136,8 @@ TODO try reworking the code below
   (to (place-rest-of-line! y)
     (for each! [(x (1 .thru 11))]
       (place-neighbor! (~ x.-1 y) (~ x y))))
-  
-  (hide
+
+  (do []
     (let corner-tid grid-corners.first)
     (let oriented-corner 'XXX)
     (place! (~ 0 0) oriented-corner))

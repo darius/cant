@@ -41,7 +41,7 @@
 
 (to (random-seed<- randomness-source<-)
   (for with-closing [(source (randomness-source<-))]
-    (begin trying []
+    (do trying []
       (let seed (read-u32 source))
       (if (< 0 seed D)
           seed

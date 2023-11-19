@@ -69,7 +69,7 @@
   (to (~ .digits base @(optional min-length))  ;; N.B. big-endian
     (let digits
       (hm (if (and (integer? base) (< 1 base))
-              (begin converting [(n (abs me)) (result '())]
+              (do converting [(n (abs me)) (result '())]
                 (hm (if (= n 0) result) ;TODO prefix the sign?
                     (else (let (~ q r) (n ./mod base))
                           (converting q (link r result))))))
@@ -77,9 +77,9 @@
                    (for every [(r base)] ;; Mixed-radix digits
                      (and (integer? r) (< 0 r))))
               ;; N.B. base=(1) converts a float to its integer and fractional parts. Do we want this?
-              (begin converting [(n      (abs me))
-                                 (moduli (reverse base))
-                                 (result '())]
+              (do converting [(n      (abs me))
+                              (moduli (reverse base))
+                              (result '())]
                 (hm (if (= n 0) result)
                     (if moduli.none? (link n result))
                     (else (let (~ q r) (n ./mod moduli.first))
@@ -102,7 +102,7 @@
         (else
           ;; (r choose k) for real r = the kth "falling power" of r, over k factorial
           ;; TODO use log gamma for better precision for large floats
-          (begin [k (r me) (product 1)]
+          (do loop [k (r me) (product 1)]
             (if (= k 0)
                 product
                 (loop k.-1 r.-1 (* product (/ r k))))))))

@@ -14,7 +14,7 @@
 
 (to (doubly-truncatable? p)
   (and (<= 10 p)
-       (do (let pt p.text)
+       (so (let pt p.text)
            (for every [(n (1 .till pt.count))]
              (and (-> pt (~ .prefix n) ~.number prime?)
                   (-> pt (~ .suffix n) ~.number prime?))))))

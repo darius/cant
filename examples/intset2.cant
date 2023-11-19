@@ -31,7 +31,7 @@
 
 ;; Smoke test
 
-(hide
+(do []
   (let eg (adjoin<- 5 (adjoin<- 6 empty-set)))
   (out .print (has? eg 5))
   (out .print (has? eg 6))

@@ -9,7 +9,7 @@
   (let stem "examples/advent-of-code/2020")
   (to (run code-name)
     (let data-name (or (switches .get 'data) ("~d.in" .format code-name)))
-    (cant .play `(do (let data-name ',data-name)
+    (cant .play `(so (let data-name ',data-name)
                      (let data-file (open-input-file ,("~d/data/~d" .format stem data-name))))
                 main-interactive-setting)
     (load ("~d/~d.cant" .format stem code-name))
@@ -33,7 +33,7 @@
 
   (may args
     (be `(,_ ,filename ,@parameters)
-      (begin parsing [(ps parameters)]
+      (do parsing [(ps parameters)]
         (may ps
           (be '()
             (run filename))

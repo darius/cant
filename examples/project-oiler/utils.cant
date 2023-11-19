@@ -11,7 +11,7 @@
     (result .push! (digit-supply .pop! pos)))
   result.values)
 
-(hide ;; Quickie test
+(do [] ;; Quickie test
   (let N 4)
   (let lex-perm-naive (sort N.till.permutations))
   (for each! [(i N.!.till)]

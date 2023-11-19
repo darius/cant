@@ -45,9 +45,9 @@
        (pack<- e-make name (elaborate-e trait s)
                (map (lambda (clause) (elaborate-clause clause s))
                     clauses))))
-   (lambda (e s)                        ;e-do
+   (lambda (e s)                        ;e-so
      (unpack e (e1 e2)
-       (pack<- e-do (elaborate-e e1 s)
+       (pack<- e-so (elaborate-e e1 s)
                     (elaborate-e e2 s))))
    (lambda (e s)                        ;e-let
      (unpack e (p1 e1)

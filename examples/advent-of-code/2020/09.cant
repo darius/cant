@@ -17,8 +17,8 @@
   (for some [(i inputs.keys)]
     (for some [(j ((+ i 2) .thru inputs.count))]
       (and (= target (- (sum-to j) (sum-to i)))
-           (do (let slice (inputs .from i j))
-               (+ (min @slice) (max @slice)))))))
+           (do [(slice (inputs .from i j))]
+             (+ (min @slice) (max @slice)))))))
 
 (to (running-sum xs)
   (~.array (link 0 (amassing + 0 xs))))
@@ -26,7 +26,7 @@
 ;; Way faster, but I didn't think of it:
 (to (part2)
   (let target 258585477)                ;from part1
-  (begin searching [(i 0) (j 0) (total 0)]
+  (do searching [(i 0) (j 0) (total 0)]
     ;; Loop invariant (assuming all the inputs are nonnegative):
     ;;   total = sum(inputs[i:j])
     ;;   Either total < target or it's the smallest sum,

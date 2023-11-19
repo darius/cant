@@ -277,8 +277,8 @@ Let's start with the equivalents of familiar Scheme syntax:
 | `(define (f x) e)`              | `(to (f x) e)`     |   |
 | `(define (f x) (lambda (y) x))` | `(to ((f x) y) x)` |   |
 | `(lambda (x y) e)`              | `(on (x y) e)`     |   |
-| `(begin a b c)`                 | `(do a b c)`       |   |
-| `(let () a b c)`                | `(hide a b c)`     |   |
+| `(begin a b c)`                 | `(so a b c)`       |   |
+| `(let () a b c)`                | `(do [] a b c)`     |   |
 | `(if t p q)`                    | `(if t p q)`       | `p` and `q` are in nested scopes, as if in `hide` blocks. |
 | `(and x y)`                     | `(and x y)`        | Similarly, `y` is in a nested scope. |
 | `(or x y)`                      | `(or x y)`         | Ditto. |
@@ -287,7 +287,7 @@ Let's start with the equivalents of familiar Scheme syntax:
 | `(cond (p a) (else b))`         | `(hm (when p a) (else b))`  |  Explained below. |
 | `#t`                            | `#yes`  |   |
 | `#f`                            | `#no`  |   |
-| `(let looping ((v init)) body)` | `(begin looping [(v init)] body)` |  The 'ing' is a convention. |
+| `(let looping ((v init)) body)` | `(do looping [(v init)] body)` |  The 'ing' is a convention. |
 | `(lambda () e)`                 | `($ e)`     |   |
 | `(lambda (it) (turn it 90))`    | `||(turn it 90)`     |   |
 
@@ -324,7 +324,7 @@ besides `if`: (from
 
 ```
 (to ~.trim-right
-  (begin scanning [(i me.count)]
+  (do scanning [(i me.count)]
     (hm (when (= i 0)
           "")
         (let c (me i.-1))
@@ -461,7 +461,7 @@ You can create a mutable map with `(!map<-)` (initially empty), or
 immutable with `(map<-)`. These constructors can take arguments, like
 `(map<- (~ 'first-name 'kermit) (~ 'last-name 'frog))`. There's
 shorthand `(export x y z)` for `(map<- (~ 'x x) (~ 'y y) (~ 'z z))`;
-dually `(import m x y)` is like `(do (let x (m 'x)) (let y (m 'y)))`.
+dually `(import m x y)` is like `(so (let x (m 'x)) (let y (m 'y)))`.
 
 (Warning: the current implementation in Chez Scheme can't hash
 consistently with the equality test, in general. You're safe using
@@ -791,7 +791,7 @@ that goal is a reasonable wish, and doable.
 `(use 'library-name)` interprets the Cant source code from
 `<this-Cant-directory>/library/<library-name>.cant` in a new extension
 of `computational-setting`. The result is the value of the whole file,
-as if wrapped in `(do ...)`. (The result is then globally cached for
+as if wrapped in `(so ...)`. (The result is then globally cached for
 subsequent calls of the same `(use 'library-name)`.).
 
 `(use "filename")` -- similar but getting the source code from the
@@ -1304,12 +1304,10 @@ might've been a dumb idea.
 
 ## Miscellany
 
-In a `begin` form like `(begin looping [...] ...)` you can omit the
-name: it defaults to `loop`. I'm not sure I want this feature, but I
-guess other people might want it more.
-
-Another convenience of `begin`: `(begin foo [x ...] ...)` is short for
-`(begin foo [(x x) ...] ...)`.
+Another convenience of `do`: `(do foo [x ...] ...)` is short for `(do
+foo [(x x) ...] ...)`. Also, if you leave out the `foo`, `(do [...] ...)`
+acts like Scheme's `let` (creates a nested scope with a sequence of
+forms for its body).
 
 ```
 more syntax: be?

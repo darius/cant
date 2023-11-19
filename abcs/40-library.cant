@@ -25,13 +25,13 @@
                 (normalize-path use-base-path.^ file-stem)))
   (or (the-modules .get stem)
       (with-use-path (path-parent stem)
-                     ($ (hey (do (let loader (if (or (symbol? file-stem)
-                                                     (sandboxed-files .find? file-stem))
-                                                 new-load-module
-                                                 load-module))
-                                 ;; XXX the above is scaffolding until we can
-                                 ;; fully ditch load-module for new-load-module
-                                 (loader (chain stem ".cant") `(,stem)))
+                     ($ (hey (do [(loader (if (or (symbol? file-stem)
+                                                  (sandboxed-files .find? file-stem))
+                                              new-load-module
+                                              load-module))]
+                               ;; XXX the above is scaffolding until we can
+                               ;; fully ditch load-module for new-load-module
+                               (loader (chain stem ".cant") `(,stem)))
                              ||(the-modules .set! stem it))))))
 
 (let sandboxed-files
@@ -46,7 +46,7 @@
 
 ;; TODO relative loading like (use filename), I guess
 (to (load filename @(optional context))
-  (let exp `(do ,@(with-input-file read-all filename)))
+  (let exp `(so ,@(with-input-file read-all filename)))
   (with-use-path (path-parent
                   ;; A hack to make sure filename *has* a path-parent:
                   (if (path-absolute? filename)
@@ -55,13 +55,13 @@
                  ($ (cant .play exp main-interactive-setting context))))
 
 (to (load-module filename @(optional context))
-  (let exp `(hide ,@(with-input-file read-all filename)))
+  (let exp `(do [] ,@(with-input-file read-all filename)))
   (let setting full-powered-setting)
 ;;  (let setting computational-setting)  ;TODO
   (cant .play exp setting context))
 
 (to (new-load-module filename @(optional context))
-  (let exp `(hide ,@(with-input-file read-all filename)))
+  (let exp `(do [] ,@(with-input-file read-all filename)))
   (let setting computational-setting)
   (cant .play exp setting context))
 

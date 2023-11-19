@@ -13,9 +13,9 @@
 (expect 'yes         ((make ('(#no) 'no) (~ 'yes)) #yes))
 (expect '(hello yes) `(hello ,(if #yes 'yes 'no)))
 (expect 5            (2 .+ 3))
-(expect 55           (hide (let x 55)))
-(expect 136          (hide (to (f) 136) (f)))
-(expect 120          (hide
+(expect 55           (do [] (let x 55)))
+(expect 136          (do [] (to (f) 136) (f)))
+(expect 120          (do []
                        (to (factorial n)
                          (may n
                            (0 1)

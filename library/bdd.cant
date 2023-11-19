@@ -37,7 +37,7 @@
 (to (build-choice rank if0 if1)
   (let `(,already ,memo-table) (dedup choice-memo rank if0 if1))
   (or already
-      (do (surely (< rank infinite-rank))
+      (so (surely (< rank infinite-rank))
           (let index (ranks .push! rank))
           (if0s .push! if0)
           (if1s .push! if1)
@@ -53,8 +53,9 @@
 (to (bdd-evaluate node env)
   (if (<= node lit1)
       node
-      (do (let value (env (ranks node)))
-          (bdd-evaluate ((ifs value) node) env))))
+      (-> node ranks env
+          ifs (~ node) (~ env)
+          bdd-evaluate)))
 
 (to (do-choose node if0 if1)
   (hm (if (<= node lit1)
@@ -77,7 +78,7 @@
 (to (choose node if0 if1)
   (let `(,already ,memo-table) (dedup choose-memo node if0 if1))
   (or already
-      (do (surely (< lit1 node))
+      (so (surely (< lit1 node))
           (let top (min (ranks node) (ranks if0) (ranks if1)))
           (let on0 (do-choose (subst top lit0 node)
                               (subst top lit0 if0)
@@ -104,7 +105,7 @@
 (to (satisfy-first node goal)
   (let goal-node (constant<- goal))
   (let env (!map<-))
-  (begin walking [node]
+  (do walking [node]
     (hm (when (<= node lit1)
           (and (= node goal-node) env))
         (let if0 (if0s node))

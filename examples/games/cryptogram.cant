@@ -40,7 +40,7 @@
 
 (to (puzzle cryptogram)
   (let pad (crypto-scratchpad<- cryptogram))
-  (begin playing []
+  (do playing []
     (render (pad .view #yes))
     (may (get-key)
       (be 'esc (render (pad .view #no)))
@@ -154,7 +154,7 @@
   (let r (flexarray<-))
   (for each! [(rune text)]
     (hm (when (= rune #\tab)
-          (begin padding []
+          (do padding []
             (r .push! #\space)
             (unless (r.count .even? 8)
               (padding))))

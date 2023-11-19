@@ -28,7 +28,7 @@
           (frontier .add! (~ edge neighbor)))))
 
   (grow graph.entry)
-  (begin []
+  (do loop []
     (when frontier.some?
       (grow (frontier .sample-key chaos))
       (loop)))

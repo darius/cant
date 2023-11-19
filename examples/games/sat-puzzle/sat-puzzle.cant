@@ -24,7 +24,7 @@ Press the spacebar to mark/unmark the last row you flipped (as a memory aid).
 Press Tab to cycle to the next game, Esc to quit.")
 
 (to (play games)
-  (begin playing [(level 0)]
+  (do playing [(level 0)]
     (let game (games level))
     (render (bg (white [instructions "\n\n"
                         game.view "\n"
@@ -120,8 +120,8 @@ Press Tab to cycle to the next game, Esc to quit.")
   (with-input-file dimacs-read filename))
 
 (to (dimacs-read source)
-  (problem<- (begin reading []
-               (let clause (begin reading-clause []
+  (problem<- (do reading []
+               (let clause (do reading-clause []
                              (may (read source)
                                (be (or 0 (? zilch?))
                                  '())

@@ -15,7 +15,7 @@
       (actor<- (script<- (if trait (play trait r) miranda-trait)
                          clauses)
                r))
-    (be {do e1 e2}
+    (be {so e1 e2}
       (play e1 r)
       (play e2 r))
     (be {let p e1}
@@ -39,7 +39,7 @@
 
 (to (script<- trait clauses)
   (to (script .receive message actor parent-r)
-    (begin matching [clauses]
+    (do matching [clauses]
       (may clauses
         (be '()
           (trait actor message))

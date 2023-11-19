@@ -12,9 +12,9 @@ On your move, enter the column number or 'quit' ('q' for short).
 
 (to (play)
   (let grid (grid<-))
-  (begin playing [(mover #\x) (opponent #\o)]
+  (do playing [(mover #\x) (opponent #\o)]
     grid.show
-    (begin prompting []
+    (do prompting []
       (out .say "~d to move: " mover)
       (let input in.read-line)
       (hm (when (or (zilch? input)
@@ -70,11 +70,11 @@ On your move, enter the column number or 'quit' ('q' for short).
 
     (to (~ .drop! mark column)
       (surely (<= 1 column n-columns))
-      (begin dropping [(i column)]
+      (do dropping [(i column)]
         (let under (+ i width))
         (hm (if (= #\. (spots under)) (dropping under))
             (unless (spots i)          'overflow)
-            (do (spots .set! i mark))
+            (so (spots .set! i mark))
             (if (complete-at? i)       'win)
             (unless (spots .find? #\.) 'draw)
             (else                      'drop))))))

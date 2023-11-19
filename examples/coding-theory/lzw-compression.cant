@@ -15,11 +15,12 @@
   (let chunk (for amass [(chunk "") (rune text)]
                (let t1 rune.text)
                (let chunk-1 (chain chunk t1))
-               (if (codes .maps? chunk-1)
-                   chunk-1
-                   (do (result .push! (codes chunk))
-                       (codes .set! chunk-1 codes.count)
-                       t1))))
+               (hm (when (codes .maps? chunk-1)
+                     chunk-1)
+                   (else
+                     (result .push! (codes chunk))
+                     (codes .set! chunk-1 codes.count)
+                     t1))))
   (unless chunk.none?
     (result .push! (codes chunk)))
   result.values)
@@ -31,8 +32,8 @@
   (hm (if codes.none? '())
       (else (let chunks (flexarray<-list codebook))
             (let output (flexarray<-))
-            (begin decoding [(chunk (chunks codes.first))
-                             (codes codes.rest)]
+            (do decoding [(chunk (chunks codes.first))
+                          (codes codes.rest)]
               (output .push! chunk)
               (when codes.some?
                 (let code codes.first)

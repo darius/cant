@@ -19,7 +19,7 @@
       (be {make name stamp-e extend-e clauses}
         (or (some walk-exp `(,stamp-e ,extend-e))
             (walk-clauses clauses)))
-      (be {do e1 e2}
+      (be {so e1 e2}
         (or (walk-exp e1)
             (walk-exp e2)))
       (be {let p e}
@@ -56,7 +56,7 @@
     (grab filename '()))
   (to (~ filename ,context)
     (let code (for with-input-file [(source filename)]
-                `(hide ,@(read-all source))))
+                `(do [] ,@(read-all source))))
     (cant .parse-expression code context)))
 
 (export search)

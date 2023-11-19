@@ -16,7 +16,7 @@
 (to (part1)
   (let `(,ps0 ,vs) (transpose states))
   (show ps0)
-  (begin stepping [(t 1) (ps ps0)]
+  (do stepping [(t 1) (ps ps0)]
     (when (t .even? 100)
       (out .say "time ~w\n" t))
     (let next (each vector+ ps vs))

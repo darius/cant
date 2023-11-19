@@ -58,7 +58,7 @@
   (let ((filename (string-append
                    (string-join "/" (list* base-path "abcs" "00-primordia" parts))
                    ".cant")))
-    (parse-exp `(do ,@(snarf filename cant-read)))))
+    (parse-exp `(so ,@(snarf filename cant-read)))))
 
 (define code-a-list
   (map (lambda (name)
@@ -88,7 +88,7 @@
            (object<- (script<- name #f clauses)
                                r)
            (ev-unsupported e r))))
-   (lambda (e r)                        ;e-do
+   (lambda (e r)                        ;e-so
      (unpack e (e1 e2)
        (ev-primordia e1 r)
        (ev-primordia e2 r)))

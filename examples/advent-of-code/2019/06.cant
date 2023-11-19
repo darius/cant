@@ -25,7 +25,7 @@
   
   ;; Map from each place to its path to COM (not including the place itself).
   (let paths (!map<-))
-  (begin walking [(path '()) (here "COM")]
+  (do walking [(path '()) (here "COM")]
     (paths .set! here path)
     (for each! [(next (places .get here '()))]
       (walking (link here path) next)))

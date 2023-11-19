@@ -6,7 +6,7 @@
 
 (cp '(a b c))
 
-(hide
+(do []
   (let box (box<- 42))
   (let root `(a ,box c))
   (box .^= root)

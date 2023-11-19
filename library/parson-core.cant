@@ -251,7 +251,7 @@
       (then @(each lit-1 literal))
       (match (on (text i)
                (and (text .maps? i)
-                    (do (let j (+ i literal.count))
+                    (so (let j (+ i literal.count))
                         (and (= literal (text .from i j)) ; (see above about <=>)
                              j)))))))
 

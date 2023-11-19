@@ -34,14 +34,14 @@
     ;; TODO should delim be text or rune (or either)?
     (let delim? (if delim ||(= it delim) ~.whitespace?))
     (let limit me.count)
-    (begin scanning [(i 0)]
+    (do scanning [(i 0)]
       (hm (if (= i limit)       "")
           (if (delim? (me i))   (scanning i.+1))
           (else                 (me .from i)))))
 
   (to (~ .trim-right @(optional delim))
     (let delim? (if delim ||(= it delim) ~.whitespace?))
-    (begin scanning [(i me.count)]
+    (do scanning [(i me.count)]
       (hm (if (= i 0)            "")
           (if (delim? (me i.-1)) (scanning i.-1))
           (else                  (me .from 0 i)))))
@@ -51,16 +51,16 @@
 
   (to ~.split
     ;; TODO dequadratify
-    (begin splitting [(t me.trim-left)]
+    (do splitting [(t me.trim-left)]
       (if t.none?
           '()
-          (do (let limit t.count)
-              (begin scanning [(i 1)]
-                (hm (if (= i limit) `(,t))
-                    (if ((t i) .whitespace?)
-                        (link (t .from 0 i)
-                              (splitting ((t .from i.+1) .trim-left))))
-                    (else (scanning i.+1))))))))
+          (do [(limit t.count)]
+            (do scanning [(i 1)]
+              (hm (if (= i limit) `(,t))
+                  (if ((t i) .whitespace?)
+                      (link (t .from 0 i)
+                            (splitting ((t .from i.+1) .trim-left))))
+                  (else (scanning i.+1))))))))
 
   (to (~ .split delimiter)
     ;; TODO deduplicate code
@@ -68,16 +68,16 @@
     (surely delimiter.some?)
     (if me.none?
         '()
-        (begin splitting [(t me)]
+        (do splitting [(t me)]
           (if t.none?
               '("")
-              (do (let limit t.count)
-                  (begin scanning [(i 0)]
-                    (hm (if (= i limit) `(,t))
-                        (if (= delimiter (t .from i (+ i delimiter.count)))
-                            (link (t .from 0 i)
-                                  (splitting (t .from (+ i delimiter.count)))))
-                        (else (scanning i.+1)))))))))
+              (do [(limit t.count)]
+                (do scanning [(i 0)]
+                  (hm (if (= i limit) `(,t))
+                      (if (= delimiter (t .from i (+ i delimiter.count)))
+                          (link (t .from 0 i)
+                                (splitting (t .from (+ i delimiter.count)))))
+                      (else (scanning i.+1)))))))))
 
   (to ~.lowercase (text<-list (each ~.lowercase me)))
   (to ~.uppercase (text<-list (each ~.uppercase me)))
@@ -93,7 +93,7 @@
          (let limit me.count)
          (text<-list
           ;; TODO define a strstr and use that
-          (begin scanning [(i 0)]
+          (do scanning [(i 0)]
             (hm (if (= i limit) '())
                 (if (= pattern (me .from i (+ i pattern.count)))
                     (chain (list<-text replacement)
@@ -127,7 +127,7 @@
     (let pad (- n me.count))
     (if (<= pad 0)
         me
-        (do (let half (pad .quotient 2))
+        (so (let half (pad .quotient 2))
             (chain (" " .repeat (- pad half))
                    me
                    (" " .repeat half)))))

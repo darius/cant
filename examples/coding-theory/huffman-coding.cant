@@ -22,8 +22,8 @@
 
 (to (build-tree frequency-items)
   (surely frequency-items.some?)
-  (begin [(pq (pq<-list (for each [((~ symbol frequency) frequency-items)]
-                          (~ frequency {leaf symbol}))))]
+  (do loop [(pq (pq<-list (for each [((~ symbol frequency) frequency-items)]
+                            (~ frequency {leaf symbol}))))]
     (may (pq-peek pq)
       (be {nonempty (~ f1 t1) pq1}
         (may (pq-peek pq1)
@@ -32,7 +32,7 @@
             (loop (pq-insert pq2 (~ (+ f1 f2) {branch t1 t2})))))))))
 
 (to (tabulate tree)
-  (begin listing [tree (path '()) (tail '())]
+  (do listing [tree (path '()) (tail '())]
     (may tree
       (be {leaf symbol}      (link (~ symbol path) tail))
       (be {branch on-0 on-1} (listing on-0 `(,@path 0)
@@ -40,7 +40,7 @@
                                                tail))))))
 
 (to (decode root bits)
-  (begin stepping [(tree root) bits]
+  (do stepping [(tree root) bits]
     (hm (if bits.none? '())
         (let {branch @subtrees} tree)
         (may (subtrees bits.first)

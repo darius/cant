@@ -1,6 +1,6 @@
 (import (use 'flextext) flextext<- backward)
 
-(hide
+(do []
   (let t (flextext<-))
   (out .print (t .get 0 10))
   (t .replace 0 0 "hello")
@@ -11,7 +11,7 @@
   )
 
 out.newline
-(hide
+(do []
   (let t (flextext<-))
   (t .replace 0 0 "aXbXc")
   (let X (set<- #\X))

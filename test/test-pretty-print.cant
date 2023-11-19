@@ -9,7 +9,7 @@
 
 (let eg2
   '(to (walk tree visit)
-     (begin walking [tree (path '())]
+     (do walking [tree (path '())]
        (match tree
          ({leaf symbol}
           (visit symbol (reverse path)))

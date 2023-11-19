@@ -49,7 +49,7 @@
   (let dy (+ (* y4 4) y1))
   (let y (+ 1901 dy))
   ;; TODO use precomputed running sums
-  (begin [(m 0) (d d1)]
+  (do loop [(m 0) (d d1)]
     (let md (+ (month-days m) (~.count (and (leap-year? y) (= m 1))))) ;TODO ugly
     (if (< d md)
         {date y m d}

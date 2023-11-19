@@ -37,6 +37,16 @@
     (me .set! i (me j))
     (me .set! j t))
 
+  (to (~ .update key f)         ;TODO define in a mutable-map-trait ?
+    (let value (f (me key)))
+    (me .set! key value)
+    value)
+
+  (to (~ .shuffle! chaos)
+    (let n me.count)
+    (for each! [(i n.till)]
+      (me .swap! i ((i .till n) .sample-value chaos))))
+
   ;; TODO put methods like this and .from in an immutable-array-trait used by the text primitive type too
   (to ~.last
     (me me.count.-1))

@@ -178,7 +178,7 @@
 ;; equal to premise. If found, return the dir of the path's next step
 ;; from there -- i.e. the A or E of the if having that premise.
 (to (find-premise e path premise)
-  (begin matching [e path]
+  (do matching [e path]
     (and path.some?
          (or (and ('(A E) .find? path.first)
                   (may e
@@ -203,7 +203,7 @@
 
 (to (sub-e vars args e)
   (let subst (map<-items (zip vars args)))
-  (begin subbing [e]
+  (do subbing [e]
     (may e
       (be {constant _}    e)
       (be {variable name} (subst .get name e))
@@ -221,7 +221,7 @@
 (to (proofs? defs proofs)
   (or proofs.none?
       (and (proof? defs proofs.first)
-           (do (let {proof def _} proofs.first)
+           (so (let {proof def _} proofs.first)
                (proofs? (append defs def) proofs.rest)))))
 
 (to (proof? defs {proof def steps})
@@ -320,7 +320,7 @@
   (amass get-at-direction e path))
 
 (to (set-at-path e1 path e2)
-  (begin walking [e1 path]
+  (do walking [e1 path]
     (if path.none?
         e2
         (set-at-direction e1 path.first

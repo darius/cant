@@ -28,8 +28,8 @@
         (growing (remove-min (insert (insert pq n1) n2))
                  rest))))
 
-  (begin shrinking [(pq (growing empty numbers))
-                    (ns numbers)]
+  (do shrinking [(pq (growing empty numbers))
+                 (ns numbers)]
     (if (empty? pq)
         history.values
         (shrinking (remove-min (remove-min (insert pq ns.first)))
@@ -54,7 +54,7 @@
       (oops "Test failed" `(,history-1 ,history-2))))
 
 (to (test-each-tail numbers)
-  (begin testing [(ns numbers)]
+  (do testing [(ns numbers)]
     (test-with ns)
     (when #no
       (test-with (reverse ns))

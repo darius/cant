@@ -15,7 +15,7 @@
       (else
        (sink .display "(")
        (sink .write me.first)
-       (begin printing [(r me.rest)]
+       (do printing [(r me.rest)]
          (hm (when (link? r)
                (sink .display " ")
                (sink .write r.first)

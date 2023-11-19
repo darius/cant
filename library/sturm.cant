@@ -200,7 +200,7 @@
   (make get-key
     (to (~)
       (let keys (flexarray<- (get-key-unmapped)))
-      (begin matching []
+      (do matching []
         (let t keys.text)
         (hm (or (key-map .get t))
             (when (key-map-prefixes .maps? t)

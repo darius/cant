@@ -29,11 +29,10 @@
     (generate state)))
 
 (to (generate state)
-  (if state.none?
-      state
-      (do (let `(,lo ,hi) (bounds-1d<- state.keys))
-          (~.range (for keep [(pot ((- lo 2) .thru (+ hi 2)))]
-                     (generate-1 state pot))))))
+  (hm (if state.none? state)
+      (else (let `(,lo ,hi) (bounds-1d<- state.keys))
+            (~.range (for keep [(pot ((- lo 2) .thru (+ hi 2)))]
+                       (generate-1 state pot))))))
 
 (to (generate-1 state pot)
   (let key (text<- (at state (- pot 2))

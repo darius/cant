@@ -49,7 +49,7 @@
                  (ghosts .delete! ghost)))))
 
   (let start (nano-now))
-  (begin playing []
+  (do playing []
     (let now (/ (- (nano-now) start)   ;; in msec
                 1000000))
     (unless (for mayhap [(deadline eating-ghosts-deadline.^)]

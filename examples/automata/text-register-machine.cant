@@ -21,7 +21,7 @@
   (array<- #no @texts))
 
 (to (run insns regs @(optional loud?))
-  (begin stepping [(pc 0)]
+  (do stepping [(pc 0)]
     (when (insns .maps? pc)
       (when loud?
         (show insns pc regs)

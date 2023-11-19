@@ -40,7 +40,7 @@
     (for keep-while [({~ h a b} (for yeahs$ [(n (1 .till m))]
                                   (and (= 1 (gcd m n))
                                        (or m.even? n.even?)
-                                       (do (let z {complex m n})
+                                       (so (let z {complex m n})
                                            (let hypotenuse (c-abs^2 z))
                                            (let {complex a b} (c* z z))
                                            (if (< a b)

@@ -51,7 +51,7 @@ The last step of #1 seems more of a pain than #2. So let's try #2.
     (let p (count<-digits p-digits))
     (or (for some [(a (list-divisors p))]
           (and (< a 100) ;; redundant quick filter
-               (do (let b (p .quotient a))
+               (so (let b (p .quotient a))
                    (and (= all-digits (sort (chain a.digits b.digits p-digits)))
                         p))))
         0)))

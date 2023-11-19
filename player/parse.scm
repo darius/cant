@@ -63,14 +63,14 @@
         (parse-make name clauses ctx))
        (('make . clauses)
         (parse-make '_ clauses ctx))
-       (('do e1)
+       (('so e1)
         (parse-e e1 ctx))
-;;       (('do e1 ('XXX-halp-spot start end) . es)
-;;        (pack<- e-do (parse-e `(__halp-log ,start ,end ,e1) ctx)  ;XXX hygiene
-;;                (parse-e `(do ,@es) ctx)))
-       (('do e1 . es)
-        (pack<- e-do (parse-e e1 ctx) (parse-e `(do ,@es) ctx)))
-       (('do)
+;;       (('so e1 ('XXX-halp-spot start end) . es)
+;;        (pack<- e-so (parse-e `(__halp-log ,start ,end ,e1) ctx)  ;XXX hygiene
+;;                (parse-e `(so ,@es) ctx)))
+       (('so e1 . es)
+        (pack<- e-so (parse-e e1 ctx) (parse-e `(so ,@es) ctx)))
+       (('so)
         (pack<- e-constant (void)))          ;I guess
        (('call e1 e2)
         (pack<- e-call (parse-e e1 ctx) (parse-e e2 ctx)))
@@ -235,11 +235,11 @@
                    (expand-quasiquote-pat quoted))))
     ('unless (mlambda
               ((__ e1 . es)
-               `(-> (on (_) (do ,e1 ,@es))
+               `(-> (on (_) (so ,e1 ,@es))
                     #f))))
     ('when   (mlambda
               ((__ e1 . es)
-               `(-> (on (_) (not (do ,e1 ,@es))) ;XXX hygiene
+               `(-> (on (_) (not (so ,e1 ,@es))) ;XXX hygiene
                     #f))))
     ('or     (mlambda
               ((__ . ps)
@@ -349,14 +349,11 @@
                       ctx))
        (__
         (let ((p (parse-p pat ctx))
-              (e (parse-e `(do ,@body) ctx)))
+              (e (parse-e `(so ,@body) ctx)))
           (list p (pat-vars-defined p) (exp-vars-defined e) e)))))))
 
 (define (look-up-macro key)
   (mcase key
-    ('hide   (mlambda
-              ((__ . es)
-               `((on () ,@es)))))
     ('make-trait
              (mlambda
               ((__ (: v symbol?) (: self symbol?) . clauses) ;XXX allow other patterns?
@@ -412,14 +409,16 @@
                      `(,fn (make ,name-for
                              (to (~ ,@ps) ,@body))
                            ,@es)))))))
-    ('begin  (mlambda
+    ('do     (mlambda
               ((__ (: proc symbol?) (: bindings vector?) . body)
                (parse-bindings bindings
                  (lambda (ps es)
-                   `((hide (make ,proc (to (~ ,@ps) ,@body)))
+                   `(((on () (make ,proc (to (~ ,@ps) ,@body))))
                      ,@es))))
               ((__ (: bindings vector?) . body)
-               `(begin loop ,bindings ,@body))))
+               (parse-bindings bindings
+                 (lambda (ps es)
+                   `((on ,ps ,@body) ,@es))))))
     ('if     (mlambda
               ((__ test if-so if-not)
                `(may ,test
@@ -427,21 +426,21 @@
                   (else ,if-so)))))
     ('when   (mlambda
               ((__ test . body)
-               `(if ,test (do ,@body) ',(void)))))
+               `(if ,test (so ,@body) ',(void)))))
     ('unless (mlambda
               ((__ test . body)
-               `(if ,test ',(void) (do ,@body)))))
+               `(if ,test ',(void) (so ,@body)))))
     ('hm     (mlambda
               ((__)
                '(oops "Fell off the end of 'hm'")) ;XXX hygiene
-              ((__ ('else . es))          `(do ,@es))
-              ((__ ('do . es) . clauses)  `(do ,@es (hm ,@clauses)))
-              ((__ ('let . es) . clauses) `(do (let ,@es) (hm ,@clauses)))
+              ((__ ('else . es))          `(so ,@es))
+              ((__ ('so . es) . clauses)  `(so ,@es (hm ,@clauses)))
+              ((__ ('let . es) . clauses) `(so (let ,@es) (hm ,@clauses)))
               ((__ ('and . es) . clauses) `(and ,@es (hm ,@clauses)))
               ((__ ('or . es) . clauses)  `(or ,@es (hm ,@clauses)))
               ((__ ('if e e1) . clauses)  `(if ,e ,e1 (hm ,@clauses)))
-              ((__ ('when e . es) . clauses)   `(if ,e (do ,@es) (hm ,@clauses)))
-              ((__ ('unless e . es) . clauses) `(if ,e (hm ,@clauses) (do ,@es)))
+              ((__ ('when e . es) . clauses)   `(if ,e (so ,@es) (hm ,@clauses)))
+              ((__ ('unless e . es) . clauses) `(if ,e (hm ,@clauses) (so ,@es)))
               ((__ ('may e . bes) . clauses)   `(may ,e ,@bes (else (hm ,@clauses))))))
     ('and    (mlambda
               ((__) #t)
@@ -501,7 +500,7 @@
                 (mcase binding
                   ((__ __)   ; (used to check here for a variable, but now can be any pattern)
                    'ok)
-                  ((: __ symbol?)  ; A convenience: (begin (x y) ...) = (begin ((x x) (y y)) ...)
+                  ((: __ symbol?)  ; A convenience: (do loop (x y) ...) = (do loop ((x x) (y y)) ...)
                    'ok)))
               bindings)
     (receiver (map (binding-get car) bindings)

@@ -17,7 +17,7 @@
 
 (to (play board chaos)
   (let history (flexarray<-))
-  (begin playing [board (forfeit? #no)]
+  (do playing [board (forfeit? #no)]
     (to (continue)
       (playing board forfeit?))
     (let score (hm (if (lost? board) "You lose!")
@@ -102,8 +102,8 @@
 ;; Try to slide the board leftward; return a list of boards to
 ;; animate the move -- an empty list if there's no move leftward.
 (to (left rows)
-  (begin sliding [(states (for each [(row rows)]
-                            (slide (~ 0 row))))]
+  (do sliding [(states (for each [(row rows)]
+                         (slide (~ 0 row))))]
     (let lows (each (~ .part 0) states))
     (let board (each (~ .part 1) states))
     (if (for every [(lo lows)]
@@ -115,7 +115,7 @@
 ;; position at `low`. Advance low past merging or completion. Return
 ;; the updated (~ low row) state.
 (to (slide (~ low row))
-  (begin checking [(i low)]
+  (do checking [(i low)]
     ;; Find the first suffix matching either (0 nonzero-n ...)
     ;;                                    or (nonzero-n same-n ...)
     ;; then collapse these two neighboring values into their sum,

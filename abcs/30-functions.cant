@@ -25,7 +25,7 @@
   (to (~ xs ys)   ;specialized for speed (TODO still worth bothering?)
     (to (mismatch)
       (oops "zip: mismatched arguments" xs ys))
-    (begin zipping [xs ys]
+    (do zipping [xs ys]
       (hm (if xs.none? (if ys.none? '() (mismatch)))
           (if ys.none? (mismatch))
           (else (link (~ xs.first ys.first)
@@ -35,14 +35,14 @@
   ;; Like (zip @lists), but clipping the lists to the length of the shortest:
   ;; TODO move .ragged to zipped-list-transducer? and define zip in terms of it?
   (to (~ .ragged @lists) ;; TODO better name .clip ? nah...
-    (begin zipping [lists]
+    (do zipping [lists]
       (if (some ~.none? lists)
           '()
           (link (tuple<-list (each ~.first lists))
                 (zipping (each ~.rest lists))))))
   ;; Like (zip @lists), but right-padding the lists to match the longest:
   (to (~ .padded padding @lists)
-    (begin zipping [lists]
+    (do zipping [lists]
       (if (every ~.none? lists)
           '()
           (link (tuple<-list (each (~ .get 0 padding) lists))
@@ -137,7 +137,7 @@
   (keep$ itself (each$ maybe xs)))
 
 (to (amassing$ f z xs)
-  (begin walking [z xs]
+  (do walking [z xs]
     (link$ z ($ (if xs.none?
                     '()
                     (walking (f z xs.first) xs.rest))))))
@@ -193,7 +193,7 @@
   result)
 
 (to (read-all source) ;XXX confusing name, since source.read-all returns a text
-  (begin reading []
+  (do reading []
     (may (read source)
       (be (? zilch?) '())
       (be thing      (link thing (reading))))))
@@ -249,7 +249,7 @@
 ;; and either tail is () or (suffix? tail.first) is true at the first
 ;; possible place.
 (to (until suffix? xs)
-  (begin scanning [xs (r-head '())]
+  (do scanning [xs (r-head '())]
     (if (or xs.none? (suffix? xs.first))
         (~ (reverse r-head) xs)
         (scanning xs.rest (link xs.first r-head)))))
@@ -271,7 +271,7 @@
                    (be 0 mixed-radix)
                    (be 1 (link 0 mixed-radix))
                    (else (oops "Digits don't match base" digits base))))
-      (begin [digits bases (total 0)]
+      (do loop [digits bases (total 0)]
         (hm (if digits.none? total)
             (else (loop digits.rest bases.rest
                         (+ (* total bases.first) digits.first))))))))

@@ -37,7 +37,7 @@
       (surely (= bits.count n-message-bits))
       (let m (~.array
               ;; TODO write this as a fold or something?
-              (link 0 (begin inserting [(p 1) (rest bits)]
+              (link 0 (do inserting [(p 1) (rest bits)]
                         (hm (if rest.none? '())
                             (if (power-of-2? p) (link 0 (inserting p.+1 rest)))
                             (else (link rest.first (inserting p.+1 rest.rest))))))))
@@ -68,7 +68,7 @@
 
 ;; Smoke test
 
-(hide
+(do []
   (let c (basic-hamming-code<- 3))
 
   (let m '(1 0 0 1))

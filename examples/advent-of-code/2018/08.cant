@@ -2,7 +2,7 @@
 
 ;; TODO: use parson instead? semantic feedback is awkward
 (to (read-tree source)
-  (begin parsing []
+  (do parsing []
     (let (-- nc (-> zilch? #no)) (read source))
     (let (-- nm (-> zilch? #no)) (read source))
     {node (for each/seq [(_ nc.till)]

@@ -33,7 +33,7 @@
       {choose question mistake new}))
 
 (to (yes-answer? @prompt)
-  (begin []
+  (do loop []
     (may ((ask @prompt) .get 0)
       (be #\y #yes)
       (be #\n #no)

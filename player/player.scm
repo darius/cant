@@ -354,7 +354,7 @@
                                r))
            (ev-exp trait r
                    (cont<- k-ev-trait-make k r name clauses)))))
-   (lambda (e r k)                          ;e-do
+   (lambda (e r k)                          ;e-so
      (unpack e (e1 e2)
        (ev-exp e1 r (cont<- k-ev-do-rest k r e2))))
    (lambda (e r k)                          ;e-let

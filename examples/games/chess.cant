@@ -6,7 +6,7 @@
   (play out (initial-chess-board<-) `(,white-strategy ,black-strategy)))
 
 (to (play out board players)
-  (begin playing [board]
+  (do playing [board]
     (out .print board)
     (unless board.outcome
       (out .display "\n\n")
@@ -16,12 +16,12 @@
   (make human-player
     (to ~.interactive? #yes)
     (to (~ .pick-move board)
-      (begin asking []
+      (do asking []
         (console.out .say "~d, your move? " (side-name board.mover))
         (may console.in.read-line
           (be (? zilch?) {resign})
           (be answer (or (board .parse-move answer)
-                         (do (console.out .display "Illegal move\n")
+                         (so (console.out .display "Illegal move\n")
                              (asking)))))))))
 
 (to (random-player<- chaos)
@@ -229,7 +229,7 @@
 
       (to (move-freely dirs)
         (for gather [(`(,dr ,dc) dirs)]
-          (begin stepping [(i 1)]
+          (do stepping [(i 1)]
             (hm (if (= i 9)
                     '())
                 (let r1 (+ r (* dr i)))

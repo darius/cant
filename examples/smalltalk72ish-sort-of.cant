@@ -174,7 +174,7 @@
                            (return k #no)))))
 
 (to (extract-message k take-message)
-  (begin walking [k (replace itself)]
+  (do walking [k (replace itself)]
     (may k
       (be `(message ,e2 ,r2 ,k2)
         (take-message replace e2 r2 k2))

@@ -16,9 +16,9 @@
                                  '(-65 -64 -63  -1   1  63  64  65))))
 
 (to (play-robots terminal chaos)
-  (begin playing [(old-pos 544)
-                  (robots (bag<- (each ||(chaos .sample-count 1024)
-                                       10.till)))]
+  (do playing [(old-pos 544)
+               (robots (bag<- (each ||(chaos .sample-count 1024)
+                                    10.till)))]
     (for each! [(p 1024.till)]
       (when (p .even? 64)
         out.newline)
@@ -32,13 +32,13 @@
           "You lose") ;; A robot caught you
         (else
           (out .display "\nqwe/asd/zxc to move, (t)eleport, (l)eave: ")
-          (when (let new-pos (hide (let c (in.read-line .get 0))
-                                   (hm (when (let d (directions .get c))
-                                         (+ old-pos d))
-                                       (may c
-                                         (be #\t (chaos .sample-count 1024))
-                                         (be #\l #no)
-                                         (else   old-pos)))))
+          (when (let new-pos (do [(c (in.read-line .get 0))]
+                               (hm (when (let d (directions .get c))
+                                     (+ old-pos d))
+                                   (may c
+                                     (be #\t (chaos .sample-count 1024))
+                                     (be #\l #no)
+                                     (else   old-pos)))))
             (playing new-pos
                      (bag<- (for each [(rpos robots.multikeys)]
                               (hm (when (< 1 (robots rpos)) ;; Dead robots don't move

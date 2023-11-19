@@ -20,7 +20,7 @@
 (to (part-1)
   (let field (field<- input 3))
   (let n-rounds
-    (begin battling [(t 0)]
+    (do battling [(t 0)]
       (show t field)
       (if field.do-round!
           (battling t.+1)
@@ -137,12 +137,12 @@
     (to (expand trail)
       (for yeahs [(q (sort (open-neighbors<- trail.first)))]
         (and (not (already .maps? q))
-             (do (already .add! q)
+             (so (already .add! q)
                  (link q trail)))))
 
-    (begin exploring [(queue
-                       (extend empty (for each [(trail (expand `(,start-pos)))]
-                                       `(,trail.first))))]
+    (do exploring [(queue
+                    (extend empty (for each [(trail (expand `(,start-pos)))]
+                                    `(,trail.first))))]
 ;;      (surely (sorted? (for each [(trail (list<-queue queue))]
 ;;                         `(,trail.count ,(reverse trail)))))
       (may (peek queue)
@@ -154,7 +154,7 @@
               (if (and successes.some?
                        (< ((successes 0) .count) trail.count))
                   (each reverse successes.values)
-                  (do (successes .push! trail)
+                  (so (successes .push! trail)
                       (exploring (extend queue-1 (expand trail)))))
               (exploring (extend queue-1 (expand trail))))))))
 
@@ -171,7 +171,7 @@
           (out .display rune)))))
 
   (make field
-    (to ~.do-round!        (do-round))
+    (to ~.do-round!        (so-round))
     (to ~.show             (show))
     (to ~.total-hit-points (sum units.values))
     (to ~.census           (bag<- area.values))
@@ -187,7 +187,7 @@
 (to (part-2)
   (out .display "\nPart 2\n")
 
-  (begin trying [(power 4)]
+  (do trying [(power 4)]
     out.newline
     (out .say "Trying attack power ~w\n" power)
     (let field (field<- input power))
@@ -196,7 +196,7 @@
 
 (to (battle-sans-elf-casualties field power)
   (let n-elves (field.census #\E))
-  (begin battling [(t 0)]
+  (do battling [(t 0)]
     (show t field)
     (hm (unless (= n-elves (field.census #\E))
           (out .say "Elf casualties, aborting the battle\n\n")

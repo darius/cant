@@ -11,7 +11,7 @@
 (to (pandigital-multiple? digits)
   (for some [(i '(1 2 3 4))]
     (let n (count<-digits (digits .from 0 i)))
-    (begin checking [(target (* 2 n)) (rest (digits .from i))]
+    (do checking [(target (* 2 n)) (rest (digits .from i))]
       (or rest.none?
           (and (rest .prefix? (let td target.digits))
                (checking (+ target n) (rest .from td.count)))))))
@@ -24,7 +24,7 @@
 
 (to (?build-pandigital base-digits)
   (let base (count<-digits base-digits))
-  (begin building [(i 2) (prefix base-digits)]
+  (do building [(i 2) (prefix base-digits)]
     (and (not (prefix .find? 0))
          prefix.distinct?
          (may (compare prefix.count 9)

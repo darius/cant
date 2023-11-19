@@ -14,7 +14,7 @@
    out.newline)
 
 (to (edit buffer)
-  (begin editing []
+  (do editing []
     buffer.redisplay
     (let key (read-key))
     (may (buffer.key-map key)

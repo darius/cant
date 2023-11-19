@@ -32,7 +32,7 @@
     (let lines (display-buffer<-))
     (let point-x (box<- #no))
     (let point-y (box<- #no))
-    (begin rendering [(p start) (x 0) (y 0)]
+    (do rendering [(p start) (x 0) (y 0)]
       (when (< y rows)
         (when (= p point)
           (point-x .^= x)
@@ -41,11 +41,11 @@
         (let pp p.+1)
         (if (or (= text "") (= text "\n"))
             (rendering pp 0 y.+1)  ;; TODO flexarray to text, i guess
-            (begin appending [(glyphs (render-rune text.first x))
-                              x
-                              y]
+            (do appending [(glyphs (render-rune text.first x))
+                           x
+                           y]
               (hm (if glyphs.none? (rendering pp x y))
-                  (do (lines .set! y
+                  (so (lines .set! y
                              (chain (lines y) glyphs.first.text))) ;XXX quadratic
                   (if (< x.+1 cols) (appending glyphs.rest x.+1 y))
                   (if (< y.+1 rows) (appending glyphs.rest 0 y.+1))
