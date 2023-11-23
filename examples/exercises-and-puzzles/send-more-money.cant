@@ -1,0 +1,20 @@
+;; A cryptarithmetic puzzle:
+;; Find distinct digits that make "SEND+MORE=MONEY" a correct decimal sum.
+;; (A leading 0 is not allowed.)
+
+;; Brute-force, but quick-to-code: just try every assignment of
+;; distinct digits. One improvement: notice the leading digit must be
+;; 1.
+
+(let m 1)
+(let digits ((0 .thru 9) .remove 1))
+(for each! [((list<- d e n o r s y) (digits .k-permutations 7))]
+  (let send (count<-digits (list<- s e n d)))
+  (let more (count<-digits (list<- m o r e)))
+  (let money (count<-digits (list<- m o n e y)))
+  (when (= (+ send more) money)
+    (out .say " ~w   SEND\n" send)
+    (out .say "+~w  +MORE\n" more)
+    (out .say "-----  -----\n")
+    (out .say "~w  MONEY\n" money)
+    out.newline))
