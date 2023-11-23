@@ -1,0 +1,34 @@
+;; Sort-of-generic cryptarithmetic solver.
+
+;; Assign distinct digits to letters to make "word1+word2=word3" a
+;; correct decimal sum. (Leading zeros not allowed.)
+
+;; Example: "send+more=money"
+
+(import (use 'parson) like)
+(import (use 'format-tables) format-table)
+
+(let parse-puzzle (like "{:letter+} '+' {:letter+} '=' {:letter+}"))
+
+;; Brute-force method: just try every assignment of distinct digits.
+
+(to (main `(,me ,puzzle-text))
+  (let (-- words `(,word1 ,word2 ,total))
+    (parse-puzzle puzzle-text))
+  (let variables ((chain @words) .nub))
+  (let indices variables.inverse)
+  (let nonzeros ((each ~.first words) .nub))
+  (to (realize word values)
+    (count<-digits (each (compose values indices) word)))
+  (for each! [(values ((0 .thru 9) .k-permutations variables.count))]
+    (when (for every [(v nonzeros)]
+            (not= 0 (values (indices v))))
+      (when (= (+ (realize word1 values) (realize word2 values))
+               (realize total values))
+        (let line (text-by ||"-" total))
+        (let table `((,(realize word1 values) ,word1)
+                     (,(realize word2 values) ,word2)
+                     (,line ,line)
+                     (,(realize total values) ,total)))
+        (out .display-lines (format-table table "  " ('.pad-left .method)))
+        out.newline))))
