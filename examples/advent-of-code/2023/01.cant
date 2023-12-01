@@ -1,0 +1,62 @@
+;; (Use run.cant to run this.)
+
+(import (use 'english-numbers) numeralize)
+
+(let eg1 "1abc2
+pqr3stu8vwx
+a1b2c3d4e5f
+treb7uchet".split-lines)
+
+(let eg2 "two1nine
+eightwothree
+abcone2threexyz
+xtwone3four
+4nineeightseven2
+zoneight234
+7pqrstsixteen".split-lines)
+
+(let data
+  data-file.read-lines)
+  ;;eg2)
+
+(to (part1)
+  (for sum-by [(line data)]
+    (let digits (keep ~.digit? line))
+    (~.number (text<- digits.first digits.last))))
+
+;; TODO it should be easier to construct a Parson grammar like this
+;; using code, rather than writing this out
+(let parse2 (like "
+( 'one' :'1'
+| 'two' :'2'
+| 'three' :'3'
+| 'four' :'4'
+| 'five' :'5'
+| 'six' :'6'
+| 'seven' :'7'
+| 'eight' :'8'
+| 'nine' :'9'
+| {:digit}
+| :skip
+)*"))
+
+(to (broken-part2)
+  (for sum-by [(line data)]
+    (let digits (parse2 line))
+    (~.number (chain digits.first digits.last))))
+
+;; Annoying: it turns out you need to process overlapping words, even
+;; though neither the text nor the example make this requirement
+;; clear. Starting over:
+
+(let numeral-patterns (map<-values numeralize (1 .thru 9)))
+(let digit-patterns   (map<-values ~.text (1 .thru 9)))
+(let patterns (digit-patterns .override numeral-patterns))
+
+(to (part2)
+  (for sum-by [(line data)]
+    (let digits (for yeahs [(i line.keys)]
+                  (for some [((~ k v) patterns.items)]
+                    (and ((line .from i) .prefix? k)
+                         v))))
+    (count<-digits (list<- digits.first digits.last))))

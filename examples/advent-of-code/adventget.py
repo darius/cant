@@ -26,7 +26,7 @@ def fetch(day, year):
 
 if __name__ == '__main__':
     import sys
-    year = 2020                 # default
+    year = 2023                 # default
     if sys.argv[1:2] == ['-y'] and 3 <= len(sys.argv):
         year = int(sys.argv[2])
         del sys.argv[1:3]
