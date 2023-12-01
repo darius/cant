@@ -38,5 +38,7 @@
   (to ~.number ;; TODO experimental. Worth it?
     (hm (if (__char-digit? me) (- me #\0))
         (else (oops "Not a number" me))))
+  (to ~.?number
+    (and (__char-digit? me) (- me #\0)))
 
   )
