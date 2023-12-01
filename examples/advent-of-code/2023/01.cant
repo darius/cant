@@ -47,7 +47,8 @@ zoneight234
 
 ;; Annoying: it turns out you need to process overlapping words, even
 ;; though neither the text nor the example make this requirement
-;; clear. Starting over:
+;; clear. Could've adapted using !!lookahead, but I didn't think of
+;; that. Instead started over:
 
 (let numeral-patterns (map<-values numeralize (1 .thru 9)))
 (let digit-patterns   (map<-values ~.text (1 .thru 9)))
