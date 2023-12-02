@@ -1,7 +1,5 @@
 ;; (Use run.cant to run this.)
 
-(import (use 'english-numbers) numeralize)
-
 (let eg1 "1abc2
 pqr3stu8vwx
 a1b2c3d4e5f
@@ -49,6 +47,8 @@ zoneight234
 ;; though neither the text nor the example make this requirement
 ;; clear. Could've adapted using !!lookahead, but I didn't think of
 ;; that. Instead started over:
+
+(import (use 'english-numbers) numeralize)
 
 (let numeral-patterns (map<-values numeralize (1 .thru 9)))
 (let digit-patterns   (map<-values ~.text (1 .thru 9)))
