@@ -40,7 +40,7 @@ zoneight234
 | :skip
 )*"))
 
-(to (broken-part2)
+(to (part2-wrong)
   (for sum-by [(line data)]
     (let digits (parse2 line))
     (~.number (chain digits.first digits.last))))
