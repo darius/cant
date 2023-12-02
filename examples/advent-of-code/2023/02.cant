@@ -13,14 +13,14 @@ Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green".split-lines)
 (let parse (like "'Game ' :count ': ' [[:count ' ' {:letter+} :hug]**', ' :hug]**'; '"))
 (let inputs (each parse data))
 
-(to ((possible? limits) counts)
+(to ((fits? limits) counts)
   (for every [(`(,n ,color) counts)]
     (<= n (limits .get color 0))))
 
 (to (part1)
-  (let p? (possible? (map<- (~ "red" 12) (~ "green" 13) (~ "blue" 14))))
+  (let possible? (fits? (map<- (~ "red" 12) (~ "green" 13) (~ "blue" 14))))
   (sum (for yeahs [((link game cube-sets) inputs)]
-         (and (every p? cube-sets) game))))
+         (and (every possible? cube-sets) game))))
 
 (import (use 'binary-relations) collect)
 

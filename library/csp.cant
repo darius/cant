@@ -1,5 +1,16 @@
 ;; Discrete constraint satisfaction problems
 
+;; A csp problem is represented by {problem v-domains constraints}
+;;   v-domains: a map from variable to list of possible values
+;;     (a variable is any datum, used as a key in maps of assignments)
+;;   constraints: a list of {constraint vs ok?}
+;;     where vs: a list of variables (all in v-domains)
+;;           ok?: a predicate with the same arity as vs.count
+;;     A constraint is satisfied by a v-map (a map from variables to values)
+;;     when all its vs have values, and (ok? @corresponding-values) is yeah.
+;; A csp problem is satisfied when all of its constraints are satisfied
+;; by the same v-map.
+
 ;; Simple solve-by-search.
 ;; Return a list of v-maps.
 ;; TODO make it lazy
@@ -16,6 +27,17 @@
              extension)))))
 
 (to (csp-infer problem v-map dirty-vs)
+  ;; For each neighbor of any of dirty-vs, try to prune its possibles
+  ;; using the constraints mentioning it and a dirty-v. If you do, the
+  ;; neighbor becomes dirty in the next round. Repeat till quiescent.
+  ;; (A neighbor of v is another variable mentioned in a constraint
+  ;; together with v.)
+
+  ;; TODO the v-map is actually a map from var to its current possibles
+  ;; so call it something different from the v-maps in csp-search
+  
+  ;; I guess this isn't the best way to describe this scheme, come
+  ;; back to it.
   'todo)
 
 (export csp-search)

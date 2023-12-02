@@ -98,7 +98,6 @@
       (let b2 source.read-u8)
       (let b1 source.read-u8)
       (let b0 source.read-u8)
-      ;; TODO: a syntax for int-guard coercion instead?
       (program .push! (u32<-bytes b3 b2 b1 b0))
       (reading)))
   program)
