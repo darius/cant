@@ -56,8 +56,7 @@ zoneight234
 
 (to (part2)
   (for sum-by [(line data)]
-    (let digits (for yeahs [(i line.keys)]
-                  (for some [((~ k v) patterns.items)]
-                    (and ((line .from i) .prefix? k)
-                         v))))
+    (let digits (for yeahs [(suffix line.suffixes)]
+                  (for some [((~ key val) patterns.items)]
+                    (and (suffix .prefix? key) val))))
     (count<-digits (list<- digits.first digits.last))))
