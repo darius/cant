@@ -1,0 +1,21 @@
+;; Discrete constraint satisfaction problems
+
+;; Simple solve-by-search.
+;; Return a list of v-maps.
+;; TODO make it lazy
+;; N.B. it leaves variables unassigned, when unmentioned by any constraints
+(to (csp-search {problem v-domains constraints})
+  (for fold [({constraint vs ok?} constraints)
+             (v-maps (list<- (map<-)))]
+    (for gather [(v-map v-maps)]
+      (let new-vs (skip ||(v-map .maps? it) vs.nub))
+      (let new-possibles (each v-domains new-vs))
+      (for yeahs [(new-values (grid* @new-possibles))]
+        (let extension ((map<- @(zip new-vs new-values)) .override v-map))
+        (and (ok? @(each extension vs))
+             extension)))))
+
+(to (csp-infer problem v-map dirty-vs)
+  'todo)
+
+(export csp-search)

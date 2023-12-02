@@ -1,0 +1,60 @@
+;; Sort-of-generic cryptarithmetic solver.
+
+;; Assign distinct digits to letters to make "word1+word2=word3" a
+;; correct decimal sum. (Leading zeros not allowed.)
+
+;; Example: "send+more=money"
+
+(import (use 'csp) csp-search)
+(import (use 'format-tables) format-table)
+(import (use 'parson) like)
+
+(let parse-puzzle (like "{:letter+} '+' {:letter+} '=' {:letter+}"))
+
+;; Generate and then solve a discrete constraint-satisfaction problem.
+
+(to (main `(,me ,puzzle-text))
+  (let words (parse-puzzle puzzle-text))
+  (each! (print-solution words) (csp-search (cryptarith-sum-problem<- words))))
+
+(to ((print-solution `(,word1 ,word2 ,total)) map)
+  (to (realize word) (count<-digits (each map word)))
+  (let line (text-by ||"-" total))
+  (let table `((,(realize word1) ,word1)
+               (,(realize word2) ,word2)
+               (,line ,line)
+               (,(realize total) ,total)))
+  (out .display-lines (format-table table "  " ('.pad-left .method)))
+  out.newline)
+
+(to (cryptarith-sum-problem<- (-- words `(,word1 ,word2 ,total)))
+  (surely (= total.count (max @(each ~.count words))))
+  (let digit-variables ((chain @words) .nub))
+  (let carry-variables (total.count .down-till 1))
+  (let v-domains (map<- (~ 'zero '(0))
+                        (~ #\space '(0))
+                        @(chain (each ||(~ it '(0 1)) carry-variables)
+                                (each ||(~ it ((0 .thru 9) .list)) digit-variables))))
+  (let constraints (chain (each constrain-nonzero (each ~.first words))
+                          (constrain-distinct digit-variables)
+                          (constrain-decimal-sum word1 word2 total carry-variables)))
+  {problem v-domains constraints})
+
+(to (constrain-nonzero variable)
+  {constraint `(,variable) ||(not= it 0)})
+
+(to (constrain-distinct variables)
+  (each ||{constraint it not=} (variables .k-sets 2)))
+
+(to (constrain-decimal-sum word1 word2 total carries)
+  (for each [(cin (chain carries '(zero)))
+             (d1 (word1 .pad-left total.count))     ;; TODO cleaner to move the padding to above fn?
+             (d2 (word2 .pad-left total.count))
+             (dt total)
+             (cout (link 'zero carries))]
+    (constrain-digit-sum cin d1 d2 dt cout)))
+
+(to (constrain-digit-sum cin ad bd sd cout)
+  {constraint (list<- cin ad bd sd cout)
+              (on (vcin vad vbd vsd vcout)
+                (= `(,vcout ,vsd) ((+ vcin vad vbd) .digits 10 2)))})
