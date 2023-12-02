@@ -15,14 +15,12 @@ Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green".split-lines)
 
 (to ((fits? limits) counts)
   (for every [(`(,n ,color) counts)]
-    (<= n (limits .get color 0))))
+    (<= n (limits color))))
 
 (to (part1)
   (let possible? (fits? (map<- (~ "red" 12) (~ "green" 13) (~ "blue" 14))))
   (sum (for yeahs [((link game cube-sets) inputs)]
          (and (every possible? cube-sets) game))))
-
-(import (use 'binary-relations) collect)
 
 (to (part2)
   (for sum-by [((link game cube-sets) inputs)]
