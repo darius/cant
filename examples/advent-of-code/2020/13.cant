@@ -13,8 +13,8 @@
 (to (part2)
   ;; We need a solution t to the congruences (t + minutes_i) = 0 (modulo bus_i)
   (chinese-remainder (for yeahs [((~ minutes entry) second-line.items)]
-                       (for mayhap [(bus entry.?number)]
-                         (~ bus (- minutes))))))
+                       (and (let bus entry.?number)
+                            (~ bus (- minutes))))))
 
 ;; TODO extract the below to factoring.cant (and rename that module?)
                      

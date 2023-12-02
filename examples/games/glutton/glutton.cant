@@ -41,19 +41,19 @@
   ;; TODO cleaner to eject, I guess
   (to (caught-by-ghost?)
     ;; TODO overcompressed logic here
-    (for mayhap [(ghost (-> (keep$ ||(= glutton.p it.p) ghosts.keys)
-                            (~ .get 0)))]
-      (hey (not eating-ghosts-deadline.^)
-           ||(if it
-                 (render (view grid ghosts.keys eating-ghosts-deadline.^))
-                 (ghosts .delete! ghost)))))
+    (and (let ghost (-> (keep$ ||(= glutton.p it.p) ghosts.keys)
+                        (~ .get 0)))
+         (hey (not eating-ghosts-deadline.^)
+              ||(if it
+                    (render (view grid ghosts.keys eating-ghosts-deadline.^))
+                    (ghosts .delete! ghost)))))
 
   (let start (nano-now))
   (do playing []
     (let now (/ (- (nano-now) start)   ;; in msec
                 1000000))
-    (unless (for mayhap [(deadline eating-ghosts-deadline.^)]
-              (<= now deadline))
+    (unless (and (let deadline eating-ghosts-deadline.^)
+                 (<= now deadline))
       (eating-ghosts-deadline .^= #no))
     (render (view grid ghosts.keys eating-ghosts-deadline.^))
     (may (and in.ready? (get-key))

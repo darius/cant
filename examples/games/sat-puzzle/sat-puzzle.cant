@@ -38,8 +38,7 @@ Press Tab to cycle to the next game, Esc to quit.")
         game.toggle-mark!
         (playing level))
       (else
-        (for mayhap [(v (game .variable-named key.uppercase))]
-          (game .flip! v))
+        (mayhap ||(game .flip! it) (game .variable-named key.uppercase))
         (playing level)))))
 
 (to (game<- problem)
