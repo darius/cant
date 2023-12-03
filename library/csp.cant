@@ -48,20 +48,18 @@
 
   ;; dirty-vs: a set of variables
   
-  ;; For each neighbor of any of dirty-vs, try to prune its choices
-  ;; further, using the constraints mentioning it and a dirty-v. (A
-  ;; neighbor of v is another variable mentioned in a constraint
-  ;; together with v.)
+  ;; For each constraint mentioning any of dirty-vs, try to prune the
+  ;; choices further by checking the constraint for all of the choices
+  ;; for its variables, pruning any value that fails to appear in any
+  ;; satisfying combination.
 
-  ;; Hm, this seems inefficient because dirty-vs doesn't track which
+  ;; (Seems inefficient because dirty-vs doesn't track which
   ;; constraint caused the last pruning of a dirty variable, and it's
-  ;; pointless to check that same constraint again.
+  ;; pointless to check that same constraint again?)
   
-  ;; Prune by mutating choices, and return a new dirty-vs of the
+  ;; Mutate choices when we prune, and return a new dirty-vs of the
   ;; variables that got pruned.
-  
-  ;; I guess this isn't the best way to describe this scheme; come
-  ;; back to it.
+
   (let {problem _ constraints} problem)
   (let new-dirty-vs (set<-))
   
@@ -71,9 +69,9 @@
       (let index ps.inverse)
       (let consistent-ps (for keep [(p-vals (grid* @(each ||((choices it) .keys) ps)))]
                            (ok? @(each ||(p-vals (index it)) params))))
-      (let satisfying (may (transpose consistent-ps)
-                        (be '() (each ||'() ps))
-                        (be xs xs)))
+      (let satisfying (if consistent-ps.none?
+                          (each ||'() ps)
+                          (transpose consistent-ps)))
       (surely (= ps.count satisfying.count))
       ;; Now keep the choices, for each variable in ps, which ever appear in consistent-ps at its position
       (for each! [(p ps) (p-vals satisfying)]
