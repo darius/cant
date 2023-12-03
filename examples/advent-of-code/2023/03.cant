@@ -1,0 +1,61 @@
+;; (Use run.cant to run this.)
+
+;(import (use 'foo))
+
+(let eg1 "\
+467..114..
+...*......
+..35..633.
+......#...
+617*......
+.....+.58.
+..592.....
+......755.
+...$.*....
+.664.598..")
+
+(let input
+  data-file.read-all)
+;;eg1)
+
+(let n input.count)
+(let width ((input .find #\newline) .+1))
+(let dirs (list<- (- width.+1) (- width) (- width.-1) -1 1 width.-1 width width.+1))
+
+(to (part1)
+  (let adjacent-digit-positions
+    (~.range (for yeahs [((~ i rune) input.items)]
+               (and rune.digit?
+                    (for some [(d dirs)]
+                      (let j (+ i d))
+                      (symbol-rune? (input .get j #\.)))
+                    i))))
+  (to (add run runs)
+    (if (some ||(adjacent-digit-positions .maps? it) run)
+        (link (~.number (text<- @(each input (reverse run))))
+              runs)
+        runs))
+  (let numbers
+    (do running [(i 0) (run '()) (runs '())]
+      (hm (if (= i n) (add run runs))
+          (let c (input i))
+          (if c.digit? (running i.+1 (link i run) runs))
+          (else        (running i.+1 '() (add run runs))))))
+  (sum numbers))
+
+(to (symbol-rune? rune)
+  (not (or (= rune #\.) (= rune #\newline) rune.digit?)))
+
+(to (part2)
+  (let numbers-where (-> input (like "([:position :count :position :hug] | :skip)*")))
+  (let number-values (map<- @(for each [(`(,start ,n ,end) numbers-where)]
+                               (~ start n))))
+  (let number-starts (map<- @(for gather [(`(,start ,n ,end) numbers-where)]
+                               (each ||(~ it start) (start .till end)))))
+  (let symbols-at (for keep [(i input.keys)] (symbol-rune? (input i))))
+  (let gears (for yeahs [(gi symbols-at)]
+               (let ns-near (~.nub (for yeahs [(d dirs)]
+                                     (number-starts .get (+ gi d)))))
+               (and (= 2 ns-near.count)
+                    (each number-values ns-near))))
+  (sum (each ||(* @it) gears)))
