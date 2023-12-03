@@ -76,7 +76,7 @@
     the-modules unuse load load-module
     the-last-oops with-signal-handler the-signal-handler
     catch-oops ;; TODO move catch-oops to the computational setting?
-    listener<- debug avast))
+    listener<- debug))
 (let full-powered-setting
   (empty-setting .extend-promises
                  (chain full-powered-setting-extra-names

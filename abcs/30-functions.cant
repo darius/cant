@@ -331,7 +331,7 @@
     __as-link __array<-list ;; used implicitly by parse expansion
     ))
 (let computational-setting-library-imports
-  '(use
+  '(use avast
     unwind-protect ;;TODO not exactly safe as currently defined
     sort-by sort flexarray<- flexarray<-list bag<-))
 (let computational-setting
