@@ -5,7 +5,7 @@
 
 ;; Example: "send+more=money"
 
-(import (use 'csp) csp-search)
+(import (use 'csp) csp-search csp-solve)
 (import (use 'format-tables) format-table)
 (import (use 'parson) like)
 
@@ -15,7 +15,8 @@
 
 (to (main `(,me ,puzzle-text))
   (let words (parse-puzzle puzzle-text))
-  (each! (print-solution words) (csp-search (cryptarith-sum-problem<- words))))
+;;  (each! (print-solution words) (csp-search (cryptarith-sum-problem<- words))))
+  (each! (print-solution words) (csp-solve (cryptarith-sum-problem<- words))))
 
 (to ((print-solution `(,word1 ,word2 ,total)) map)
   (to (realize word) (count<-digits (each map word)))

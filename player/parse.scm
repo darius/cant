@@ -484,7 +484,7 @@
               ((__ e)
                `((on (v) (out .say "yo ~w: ~w\n" ',e v) v) ;XXX hygiene
                  ,e))
-              ((__ msg e)
+              ((__ msg e)  ;; TODO I've never used this variant. Considering defining multi-arg behavior differently.
                `((on (u v) (out .say "yo ~d ~w: ~w\n" u ',e v) v) ;XXX hygiene
                  ,msg ,e))))
     (__ #f)))
