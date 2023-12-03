@@ -1,0 +1,17 @@
+;; "Maximum subsegment sum" problem:
+;; Given a list of numbers, find the greatest sum of any slice of it.
+;; (Since an empty slice has sum 0, the max can't be any less.)
+
+;; Brute force method:
+(to (mss-naive ns)
+  (max @(each sum ns.slices)))
+
+;; Kadane's O(n) algorithm:
+(to (mss ns)
+  (max @(for amassing [(ss 0) (n ns)]
+          (max 0 (+ ss n)))))
+
+;; Test case from Rosetta code
+(for each! [(example '((-1 -2 3 5 6 -2 -1 4 -4 2 -1)))]
+  (yo (mss-naive example))
+  (yo (mss example)))
