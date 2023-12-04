@@ -239,6 +239,13 @@
         '(())
         (link list list.rest.suffixes)))
 
+  (to ~.slices             ;; TODO unsure this is worthwhile
+    ;; also TODO better way to code it
+    (link (list .from 0 0) ;; the empty slice just once
+          (for gather [(start list.keys)]
+            (for each [(end (start.+1 .thru list.count))]
+              (list .from start end)))))
+
   (to ~.cycle
     (surely list.some?)
     (let result (chain$ list ($ result))))
