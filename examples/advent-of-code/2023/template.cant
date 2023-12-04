@@ -6,8 +6,8 @@
 ")
 
 (let input
-;;  data-file.read-all)
   eg1)
+;;  data-file.read-all)
 
 ;(let parse (like "(:count | :skip)*"))
 ;(let parse (like "[{:letter} :count :tuple] ** ','"))
