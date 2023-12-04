@@ -21,7 +21,7 @@ Card 6: 31 18 13 56 72 | 74 77 10 23 35 67 36 11")
     (if matches.none? 0 (2 .** matches.count.-1))))
       
 (to (part2)
-  (let copy-counter (array<-count inputs.count 1))
+  (let copy-counter ((each ||1 inputs) .array))
   (for each! [((~ i (list<- card-id winning-ns my-ns)) inputs.items)]
     (let this-card-n-copies (copy-counter i))
     (let n-cards-won (~.count (winning-ns.range .intersect my-ns.range)))
