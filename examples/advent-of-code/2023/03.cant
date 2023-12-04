@@ -40,8 +40,8 @@
   (-> (gather neighbors<- symbols-at) ~.nub ||(sum-by number-values it)))
 
 (to (part2)
-  (let gears (for yeahs [(i symbols-at)]
-               (let neighbors (neighbors<- i))
+  (let gears (for yeahs [(pos symbols-at)]
+               (let neighbors (neighbors<- pos))
                (and (= 2 neighbors.count) neighbors)))
   (sum-by ||(* @(each number-values it))
           gears))
