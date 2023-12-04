@@ -1,0 +1,19 @@
+;; (Use run.cant to run this.)
+
+;;(import (use 'x) y)
+
+(let eg1 "\
+")
+
+(let input
+;;  data-file.read-all)
+  eg1)
+
+;(let parse (like "(:count | :skip)*"))
+;(let parse (like "[{:letter} :count :tuple] ** ','"))
+;(let parse ~.number)
+
+;(let inputs (each parse input.split-lines))
+
+(to (part1)
+  1)
