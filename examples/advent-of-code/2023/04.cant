@@ -13,23 +13,18 @@ Card 6: 31 18 13 56 72 | 74 77 10 23 35 67 36 11")
 ;;  eg1)
 
 (let parse (like "'Card'_ :count ':'_ [:count**_ :hug] _'|'_ [:count**_ :hug]"))
-
 (let inputs (each parse input.split-lines))
 
 (to (part1)
   (for sum-by [((list<- card-id winning-ns ns) inputs)]
-    (let wn winning-ns.range)
-    (let matches (keep ||(wn .maps? it) ns))
+    (let matches (winning-ns.range .intersect ns.range))
     (if matches.none? 0 (2 .** matches.count.-1))))
       
 (to (part2)
   (let copy-counter (array<-count inputs.count 1))
   (for each! [((~ i (list<- card-id winning-ns numbers)) inputs.items)]
     (let this-card-n-copies (copy-counter i))
-    (let wn winning-ns.range)
-    (let matches (keep ||(wn .maps? it) numbers))
-    (let n-cards-won matches.count)
-    (for each! [(j (each (~ .+ i) (1 .thru n-cards-won)))]
-      (when (< j inputs.count)
-        (copy-counter .update j (~ .+ this-card-n-copies)))))
+    (let n-cards-won (~.count (winning-ns.range .intersect numbers.range)))
+    (for each! [(j (i.+1 .thru (min inputs.count.-1 (+ i n-cards-won))))]
+      (copy-counter .update j (~ .+ this-card-n-copies))))
   (sum copy-counter.values))
