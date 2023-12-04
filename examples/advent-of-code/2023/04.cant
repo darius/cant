@@ -30,10 +30,10 @@ Card 6: 31 18 13 56 72 | 74 77 10 23 35 67 36 11")
 
 ;; This approach seemed easier to work out in the moment:
 (to (part2-first-approach)
-  (let copy-counter ((each ||1 inputs) .array))
+  (let n-copies ((each ||1 inputs) .array))
   (for each! [((~ i score) scores.items)]
     (for each! [(j (i.+1 .thru (min inputs.count.-1 (+ i score))))]
-      (copy-counter .update j (~ .+ (copy-counter i)))))
-  (sum copy-counter.values))
+      (n-copies .update j (~ .+ (n-copies i)))))
+  (sum n-copies.values))
 
 ;;(out .print (part2-first-approach))
