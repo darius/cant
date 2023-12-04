@@ -30,6 +30,7 @@ Card 6: 31 18 13 56 72 | 74 77 10 23 35 67 36 11")
   (sum copy-counter.values))
 
 
+;; A different approach which I couldn't work out in the moment:
 (to (part2-cute)
   (let scores (~.array (for each [((list<- card-id winning-ns my-ns) inputs)]
                          (~.count (winning-ns.range .intersect my-ns.range)))))
