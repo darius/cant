@@ -92,7 +92,7 @@ humidity-to-location map:
     (gather ||(range-transform range-map it) ranges)))
 
 (to (range-transform segments (-- input-range `(,from ,till)))
-  (surely (< from till) from till) ;; i.e., nonempty
+  (surely (< from till)) ;; i.e., nonempty
   (or (for some [({segment dst src} segments)]
         (let src-from src.first)
         (let src-till (+ src.first src.count))
