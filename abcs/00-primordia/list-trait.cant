@@ -90,9 +90,7 @@
       (be key key)))
 
   (to (~ .find? value)
-    (may (list .find value #no)
-      (be #no #no)
-      (else   #yes)))
+    (yeah? (list .find value #no)))
 
   (to ~.last
     (let rest list.rest)

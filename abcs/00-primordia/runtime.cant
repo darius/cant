@@ -539,6 +539,10 @@
             (and (integer? i)
                  (so (let j (+ first i))
                      (and (<= first j) (< j limit)))))
+          (to (~ .find i default)
+            (if (and (integer? i) (<= first i) (< i limit))
+                (- i first)
+                default))
           ;; TODO: .compare
           )))
   (to (~ limit)
