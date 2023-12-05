@@ -85,7 +85,7 @@
   (max 0 coeffs.count.-1))
 
 (to (poly+ p q)
-  (poly<- (reverse (each ||(call + it) (zip .padded 0 (reverse p) (reverse q))))))
+  (poly<- (each ||(call + it) (zip .pad-left 0 p q))))
 
 (to (poly* p q)
   (let totals (array<-count (+ (poly-degree p) (poly-degree q) 1)

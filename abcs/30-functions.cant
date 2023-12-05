@@ -33,7 +33,7 @@
   (to (~ @lists)
     (each tuple<-list (transpose lists)))
   ;; Like (zip @lists), but clipping the lists to the length of the shortest:
-  ;; TODO move .ragged to zipped-list-transducer? and define zip in terms of it?
+  ;; TODO move .ragged and pad methods to zipped-list-transducer? and define zip in terms of it?
   (to (~ .ragged @lists) ;; TODO better name .clip ? nah...
     (do zipping [lists]
       (if (some ~.none? lists)
@@ -41,12 +41,14 @@
           (link (tuple<-list (each ~.first lists))
                 (zipping (each ~.rest lists))))))
   ;; Like (zip @lists), but right-padding the lists to match the longest:
-  (to (~ .padded padding @lists)
+  (to (~ .pad-right padding @lists)
     (do zipping [lists]
       (if (every ~.none? lists)
           '()
           (link (tuple<-list (each (~ .get 0 padding) lists))
-                (zipping (each (~ .from 1) lists)))))))
+                (zipping (each (~ .from 1) lists))))))
+  (to (~ .pad-left padding @lists)
+    (reverse (zip .pad-right padding @(each reverse lists)))))
 
 ;; `(min-by f xs)` = an `x` in `xs` giving the minimum value of `(f x)`.
 ;; TODO names `least`, `most` from Arc?
