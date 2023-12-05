@@ -740,11 +740,12 @@ Input and output are our first examples of powers that require
 *capabilities*. Code in a module does *not* have capabilities by
 default.
 
-(It's planned that modules will be provided something like
-Javascript's 'console.log', which in strict terms is a power, but
-should 'not matter' insofar as you don't delegate these debug
-capabilities, because no ordinary code, including the modules
-themselves, will have read access to the logs.)
+(Modules will get something like Javascript's 'console.log', which in
+strict terms is a power, but should 'not matter' insofar as you don't
+delegate these debug capabilities, because no ordinary code, including
+the modules themselves, will have read access to the logs. For now,
+this is just a sink named `btw`, identical to `out` but provided in
+library settings.)
 
 'Text sinks' implement the sink protocol but just produce a text
 out of the runes (characters) they are given. The constructor `text-sink<-`
