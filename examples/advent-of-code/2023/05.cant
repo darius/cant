@@ -1,0 +1,122 @@
+;; (Use run.cant to run this.)
+
+(let eg1 "\
+seeds: 79 14 55 13
+
+seed-to-soil map:
+50 98 2
+52 50 48
+
+soil-to-fertilizer map:
+0 15 37
+37 52 2
+39 0 15
+
+fertilizer-to-water map:
+49 53 8
+0 11 42
+42 0 7
+57 7 4
+
+water-to-light map:
+88 18 7
+18 25 70
+
+light-to-temperature map:
+45 77 23
+81 45 19
+68 64 13
+
+temperature-to-humidity map:
+0 69 1
+1 0 69
+
+humidity-to-location map:
+60 56 37
+56 93 4")
+
+(let input
+  data-file.read-all)
+;;  eg1)
+
+(let sections (input .split "\n\n"))
+
+(let seeds-spec
+  (-> sections.first (like "'seeds:'_ :count**_")))
+
+(to (range-map<- segments)
+  (for each [(`(,dst-start ,src-start ,length) segments)]
+    {segment (dst-start .span length)
+             (src-start .span length)}))
+
+(to (range-map-lookup segments key)
+  (or (for some [({segment dst src} segments)]
+        (mayhap dst (src .find key #no)))
+      key))
+
+(let property-maps
+  (for each [(section sections.rest)]
+    (let lines section.split-lines)
+    (let `(,source ,dest) (-> lines.first (like "{:letter+} '-to-' {:letter+} ' map:'")))
+    ;; Never mind, we don't need the property names -- just follow the sequence.
+    (range-map<- (for each [(line lines.rest)]
+                   (each ~.number line.split)))))
+
+(to (location<-seed seed)
+  (for amass [(key seed) (range-map property-maps)]
+    (range-map-lookup range-map key)))
+
+(to (part1)
+  (min @(each location<-seed seeds-spec)))
+
+(to (part2-too-slow)
+  (let seed-spans (seeds-spec .batched 2))
+  (let seeds (chain @(for each [(`(,start ,length) seed-spans)]
+                       (start .span length))))
+  (min @(each location<-seed seeds)))
+
+;; OK, that worked but it'll be too inefficient, >9 billion seeds.
+;; What we can do is map a segment to a sequence of segments.
+;; Then the min of a segment is its first element.
+
+(to (part2)
+  (let seed-spans (seeds-spec .batched 2))
+  (min @(each min-location<-seed-span seed-spans)))
+
+(to (min-location<-seed-span seed-span)
+  (min @(each ~.first (location-ranges<-seed-span seed-span))))
+
+(to (location-ranges<-seed-span `(,from ,count))
+  (for amass [(ranges `((,from ,(+ from count))))
+              (range-map property-maps)]
+    (gather ||(range-transform range-map it) ranges)))
+
+(to (range-transform segments (-- input-range `(,from ,till)))
+  (surely (< from till) from till) ;; i.e., nonempty
+  (or (for some [({segment dst src} segments)]
+        (let src-from src.first)
+        (let src-till (+ src.first src.count))
+        ;; Intersect the ranges.
+        ;; Think of them as intersections of rays, so we're intersecting 4 rays in all.
+        ;; In some order: (>= src-from) (>= from) ... (< src-till) (< till)
+        (let out-from (max src-from from))
+        (let out-till (min src-till till))
+        (and (< out-from out-till)
+             (link `(,(dst (src .find out-from))           ;; transformed `from`
+                     ,((dst (src .find out-till.-1)) .+1)) ;; and `till` (ugh with the +/-1)
+                   (gather ||(range-transform segments it)
+                           (range-remove input-range `(,out-from ,out-till))))))
+      (list<- input-range)))
+
+;; Return ranges whose union is the difference (from..till) \ (rm-from..rm-till)
+(to (range-remove `(,from ,till) `(,rm-from ,rm-till))
+  (surely ((from .till till) .find? rm-from))
+  (surely ((from .thru till) .find? rm-till))
+  (link-range `(,from ,rm-from)
+              (link-range `(,rm-till ,till)
+                          '())))
+
+(to (link-range (-- range `(,from ,till)) rest)
+  (if (< from till)
+      (link range rest)
+      rest))
