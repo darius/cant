@@ -1236,6 +1236,25 @@ must not offer raw access to the sequel. As we'll see next, the sequel
 has dangerous powers.
 
 
+## More fancy debugging features
+
+There's a special form `yo`, as in `(yo (dawg))`, which does `(dawg)`
+and has the same value, but also prints a labeled message to the `btw`
+sink, which looks like
+```
+yo (dawg): ...result...
+```
+
+You can also break into the debugger at any point in your code by
+calling `avast`, as in `(avast (dawg))` or just `(avast)`. In the
+former case it displays the value of `(dawg)` before the debugger
+prompt.
+
+The listener has a few other frills you can find in its code in
+[abcs/50-top.cant](https://github.com/darius/cant/blob/master/abcs/50-top.cant).
+E.g. `$$` holds the last result printed out.
+
+
 ## Introspection
 
 The error handlers above printed out a traceback of the sequel. They
