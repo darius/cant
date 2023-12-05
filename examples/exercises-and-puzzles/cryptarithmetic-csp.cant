@@ -20,10 +20,10 @@
 (to ((print-solution `(,word1 ,word2 ,total)) map)
   (to (realize word) (count<-digits (each map word)))
   (let line (text-by ||"-" total))
-  (let table `((,(realize word1) ,word1)
-               (,(realize word2) ,word2)
-               (,line ,line)
-               (,(realize total) ,total)))
+  (let table [[(realize word1) word1]
+              [(realize word2) word2]
+              [line            line]
+              [(realize total) total]])
   (out .display-lines (format-table table "  " ('.pad-left .method)))
   out.newline)
 

@@ -26,9 +26,9 @@
       (when (= (+ (realize word1 values) (realize word2 values))
                (realize total values))
         (let line (text-by ||"-" total))
-        (let table `((,(realize word1 values) ,word1)
-                     (,(realize word2 values) ,word2)
-                     (,line ,line)
-                     (,(realize total values) ,total)))
+        (let table [[(realize word1 values) word1]
+                    [(realize word2 values) word2]
+                    [line                   line]
+                    [(realize total values) total]])
         (out .display-lines (format-table table "  " ('.pad-left .method)))
         out.newline))))
