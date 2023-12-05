@@ -223,10 +223,10 @@
   (to (~ .k-lists k)
     (grid* @(`(,list) .repeat k)))
 
-  (to (~ .batched k)
+  (to (~ .segments k)
     (hm (if list.none? '())
         (else (link (list .from 0 k)
-                    ((list .from k) .batched k)))))
+                    ((list .from k) .segments k)))))
 
   (to ~.prefixes
     (for each [(i (0 .thru list.count))]

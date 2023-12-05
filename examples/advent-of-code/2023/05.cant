@@ -70,7 +70,7 @@ humidity-to-location map:
   (min @(each location<-seed seeds-spec)))
 
 (to (part2-too-slow)
-  (let seed-spans (seeds-spec .batched 2))
+  (let seed-spans (seeds-spec .segments 2))
   (let seeds (chain @(for each [(`(,start ,length) seed-spans)]
                        (start .span length))))
   (min @(each location<-seed seeds)))
@@ -80,7 +80,7 @@ humidity-to-location map:
 ;; Then the min of a segment is its first element.
 
 (to (part2)
-  (let seed-spans (seeds-spec .batched 2))
+  (let seed-spans (seeds-spec .segments 2))
   (min @(each min-location<-seed-span seed-spans)))
 
 (to (min-location<-seed-span seed-span)
