@@ -82,4 +82,15 @@
           (new-dirty-vs .add! p)))))
   new-dirty-vs)
 
-(export csp-search csp-solve csp-propagating csp-propagate-step)
+;; Constraint builder for convenience
+(make need
+  (to (~ .nonzero v)
+    (list<- {constraint `(,v) ||(not= it 0)}))
+  (to (~ .distinct vs)
+    (each ||{constraint it not=} (vs .k-sets 2)))
+  )
+
+(export
+  csp-search csp-solve
+  csp-propagating csp-propagate-step
+  need)

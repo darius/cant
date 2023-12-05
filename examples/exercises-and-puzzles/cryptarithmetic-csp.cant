@@ -5,7 +5,7 @@
 
 ;; Example: "send+more=money"
 
-(import (use 'csp) csp-solve)
+(import (use 'csp) csp-solve need)
 (import (use 'format-tables) format-table)
 (import (use 'parson) like)
 
@@ -35,26 +35,20 @@
                         (~ #\space '(0))
                         @(chain (each ||(~ it '(0 1)) carry-variables)
                                 (each ||(~ it ((0 .thru 9) .list)) digit-variables))))
-  (let constraints (chain (each constrain-nonzero (each ~.first words))
-                          (constrain-distinct digit-variables)
-                          (constrain-decimal-sum word1 word2 total carry-variables)))
+  (let constraints (chain (gather ||(need .nonzero it.first) words)
+                          (need .distinct digit-variables)
+                          (need-decimal-sum word1 word2 total carry-variables)))
   {problem v-domains constraints})
 
-(to (constrain-nonzero variable)
-  {constraint `(,variable) ||(not= it 0)})
-
-(to (constrain-distinct variables)
-  (each ||{constraint it not=} (variables .k-sets 2)))
-
-(to (constrain-decimal-sum word1 word2 total carries)
+(to (need-decimal-sum word1 word2 total carries)
   (for each [(cin (chain carries '(zero)))
              (d1 (word1 .pad-left total.count))     ;; TODO cleaner to move the padding to above fn?
              (d2 (word2 .pad-left total.count))
              (dt total)
              (cout (link 'zero carries))]
-    (constrain-digit-sum cin d1 d2 dt cout)))
+    (need-digit-sum cin d1 d2 dt cout)))
 
-(to (constrain-digit-sum cin ad bd sd cout)
+(to (need-digit-sum cin ad bd sd cout)
   {constraint (list<- cin ad bd sd cout)
               (on (vcin vad vbd vsd vcout)
                 (= `(,vcout ,vsd) ((+ vcin vad vbd) .digits 10 2)))})
