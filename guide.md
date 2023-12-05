@@ -1245,7 +1245,7 @@ sink, which looks like
 yo (dawg): ...result...
 ```
 
-You can also break into the debugger at any point in your code by
+You can also break into the debugger from any point in your code by
 calling `avast`, as in `(avast (dawg))` or just `(avast)`. In the
 former case it displays the value of `(dawg)` before the debugger
 prompt.
