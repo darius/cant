@@ -290,8 +290,9 @@
 
 ;; Package it all up
 
-;; TODO design a trace-log feature
-;;(let trace-sink out)
+;; The debug/trace logger. TODO design a trace-log feature
+;; Making it identical to the out capability is just a stopgap!
+(let btw out) 
 
 (let computational-setting-names
      ;; TODO: nonrandom order
@@ -331,6 +332,7 @@
     read
     assoc  ;; TODO remove
     __as-link __array<-list ;; used implicitly by parse expansion
+    btw
     ))
 (let computational-setting-library-imports
   '(use avast
