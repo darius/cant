@@ -22,7 +22,7 @@
       (let new-vs (skip ||(v-map .maps? it) vs.nub))
       (let new-possibles (each v-domains new-vs))
       (for yeahs [(new-values (grid* @new-possibles))]
-        (let extension ((map<- @(zip new-vs new-values)) .override v-map))
+        (let extension ((map<-items (zip new-vs new-values)) .override v-map))
         (and (ok? @(each extension vs))
              extension)))))
 

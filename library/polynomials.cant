@@ -71,7 +71,7 @@
   (let d (- x1 x0))
   (< d.magnitude epsilon))  ;; XXX super crude
 
-(let epsilon 1e-4)  ;; XXX also crude
+(let epsilon 0.0001)  ;; XXX also crude
 
 ;; import Numeric.IEEE
 ;; approxEqIEEE x y =
@@ -85,7 +85,7 @@
   (max 0 coeffs.count.-1))
 
 (to (poly+ p q)
-  (poly<- (each ||(call + it) (zip .pad-left 0 p q))))
+  (poly<- (each (~ +) (zip .pad-left 0 p q))))
 
 (to (poly* p q)
   (let totals (array<-count (+ (poly-degree p) (poly-degree q) 1)

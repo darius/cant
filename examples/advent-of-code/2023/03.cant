@@ -17,10 +17,10 @@
 ;;  eg1)
 
 (let number-values ;; map from each number's position to its numeric value
-  (-> input (like "([:position :count :tuple] | :skip)*") ||(map<- @it)))
+  (-> input (like "([:position :count :tuple] | :skip)*") map<-items))
 (let number-starts ;; map from each position of a digit to the position of its number
-  (map<- @(for gather [((~ pos n) number-values.items)]
-            (each ||(~ it pos) (pos .span n.text.count)))))
+  (map<-items (for gather [((~ pos n) number-values.items)]
+                (each ||(~ it pos) (pos .span n.text.count)))))
 
 (to (symbol-rune? rune)
   (not (".\n0123456789" .find? rune)))
