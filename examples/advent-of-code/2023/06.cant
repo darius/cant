@@ -1,0 +1,52 @@
+;; (Use run.cant to run this.)
+
+(let eg1 "\
+Time:      7  15   30
+Distance:  9  40  200")
+
+(let input
+  eg1)
+;;  data-file.read-all)
+
+(to (part1)
+  (let rows (each ~.split input.split-lines))
+  (let races (transpose (for each [(row rows)]
+                          (each ~.number row.rest))))
+  (let n-ways-to-beat
+    (for each [(race races)]
+      (count-ways-to-beat/brute @race)))
+  (* @n-ways-to-beat))
+
+;; Your move: choose v, 0 <= v <= t.
+;; Your distance v(t - v) must exceed d.
+(to (count-ways-to-beat/brute t d)
+  (for tally-by [(v (1 .till t))]
+    (< d (* v (- t v)))))
+
+(to (part2)
+  (let numbers (for each [(line input.split-lines)]
+                 (-> (keep ~.digit? line) ~.text ~.number)))
+  (count-ways-to-beat/fast @numbers))
+
+;; We could solve the equation v(t-v)-d = 0 for v
+;; and use the sign of d/dv v(t-v) at those two points
+;; to point to the range of solutions.
+
+;; -v^2 + tv - d = 0
+;;  a     b    c
+;; -1     t   -d
+;; v = -t/2 +/- sqrt(t^2-4d)
+;; Hope the numerics are OK.
+
+(to (count-ways-to-beat/fast t d)
+  (yo t) (yo d)
+  (let a -1)
+  (let b t)
+  (let c (- d))
+  (let discr (- (* t t) (* 4 d)))
+  (yo discr.sqrt)
+  (let v0 (+ (- (/ t 2)) discr.sqrt))
+  (let v1 (- (- (/ t 2)) discr.sqrt))
+  (yo v0) (yo v1)
+  ;; TODO
+  1)
