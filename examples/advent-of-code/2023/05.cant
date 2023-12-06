@@ -57,8 +57,7 @@ humidity-to-location map:
 (let property-maps
   (for each [(section sections.rest)]
     (let lines section.split-lines)
-    (let `(,source ,dest) (-> lines.first (like "{:letter+} '-to-' {:letter+} ' map:'")))
-    ;; Never mind, we don't need the property names -- just follow the sequence.
+    ;; We don't need the property names -- just follow the sequence.
     (range-map<- (for each [(line lines.rest)]
                    (each ~.number line.split)))))
 

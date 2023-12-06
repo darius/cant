@@ -29,7 +29,7 @@
 
 (let grid (grid-2d<- (~ xl yl) (~ xh yh) {constant #no}))
 (for each! [(p clay-spots)]
-  (grid .set! (tuple<-list p) #\#))
+  (grid .set! p.tuple #\#))
 
 (to (escaped? (~ _ y))
   (< yh y))
