@@ -1250,6 +1250,13 @@ calling `avast`, as in `(avast (dawg))` or just `(avast)`. In the
 former case it displays the value of `(dawg)` before the debugger
 prompt.
 
+You can trace a function's execution by editing its definition
+from:  (to (foo x) ...)
+to:    (to/trace (foo x) ...)
+and reloading. See `cant-tracer` in
+[abcs/30-functions.cant](https://github.com/darius/cant/blob/master/abcs/30-functions.cant).
+for the code to mess with if you want it even fancier.
+
 The listener has a few other frills you can find in its code in
 [abcs/50-top.cant](https://github.com/darius/cant/blob/master/abcs/50-top.cant).
 E.g. `$$` holds the last result printed out.

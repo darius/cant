@@ -287,17 +287,35 @@
   (on (@arguments)
     (call actor (term<- cue arguments))))
 
-
-;; Package it all up
-
 ;; The debug/trace logger. TODO design a trace-log feature
 ;; Making it identical to the out capability is just a stopgap!
 (let btw out) 
 
+;; Function tracing (mvp version)
+
+(let cant-tracer
+  (do [(depth (box<- 0))]
+    (make cant-tracer
+
+      (to (~ .wrap name fn)
+        (to (traced-fn @arguments)
+          (let dent ("|" .repeat depth.^))
+          (btw .say "~d> ~d: ~w\n" dent name arguments)
+          (depth .update ~.+1)
+          (let result (fn @arguments))
+          (depth .update ~.-1)
+          (btw .say "~d| ~d= ~w\n" dent name result)
+          result))
+      
+      (to ~.reset!
+        (depth .^= 0)))))
+
+
+;; Package it all up
+
 (let computational-setting-names
      ;; TODO: nonrandom order
   '(computational-setting read-all cant
-;;    trace-sink
     compound-key<- yeahs where while until itself 
     compose zip setting<-map
     link/lazier lazier<- 
@@ -332,7 +350,7 @@
     read
     assoc  ;; TODO remove
     __as-link __array<-list ;; used implicitly by parse expansion
-    btw
+    btw cant-tracer
     ))
 (let computational-setting-library-imports
   '(use avast

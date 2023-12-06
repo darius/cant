@@ -479,7 +479,7 @@
                  `(unless ,ok?
                     (oops "Assertion failed" ;XXX hygiene
                           ,@failure-args))))))
-    ;; Crude debugging aid. TODO make a better one
+    ;; Crude debugging aids. TODO make better ones
     ('yo     (mlambda
               ((__ e)
                `((on (v) (btw .say "yo ~w: ~w\n" ',e v) v) ;XXX hygiene
@@ -487,6 +487,9 @@
               ((__ msg e)  ;; TODO I've never used this variant. Considering defining multi-arg behavior differently.
                `((on (u v) (btw .say "yo ~d ~w: ~w\n" u ',e v) v) ;XXX hygiene
                  ,msg ,e))))
+    ('to/trace (mlambda
+                ((__ ((: head symbol?) . params) . body)
+                 `(let ,head (cant-tracer .wrap ',head (on ,params ,@body)))))) ;XXX hygiene
     (__ #f)))
 
 (define (parse-bindings bindings-vector receiver)
