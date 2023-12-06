@@ -1246,8 +1246,8 @@ yo (dawg): ...result...
 ```
 
 You can also break into the debugger from any point in your code by
-calling `avast`, as in `(avast (dawg))` or just `(avast)`. In the
-former case it displays the value of `(dawg)` before the debugger
+calling `avast`, as in `(avast (matey))` or just `(avast)`. In the
+former case it displays the value of `(matey)` before the debugger
 prompt.
 
 You can trace a function's execution by editing its definition
