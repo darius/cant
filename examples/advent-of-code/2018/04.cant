@@ -4,11 +4,11 @@
 
 (let grammar (grammar<- "
 shifts:    shift* :end.
-shift:     start [nap* :hug] :hug.
+shift:     start [nap* :list] :list.
 start:     timestamp :drop 'Guard #' :count ' begins shift\n'.
 
 nap:       timestamp 'falls asleep\n'
-           timestamp 'wakes up\n'    :hug.
+           timestamp 'wakes up\n'    :list.
 
 timestamp: '[' date _ time ']' _.
 date:      (!_ :skip)+.

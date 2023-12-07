@@ -4,7 +4,7 @@
 
 (let parse
   (like
-   "'position=<'_ :integer ','_ :integer :hug ['> velocity=<'_ :integer ','_ :integer '>' :hug]"))
+   "'position=<'_ :integer ','_ :integer :list ['> velocity=<'_ :integer ','_ :integer '>' :list]"))
 
 (let states (each parse input))
 

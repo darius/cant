@@ -204,7 +204,7 @@
          (~ 'digit (skip-1 ~.digit?))
          (~ 'end end)
          (~ 'endline end-line)
-         (~ 'hug hug)
+         (~ 'list hug)
          (~ 'join (feed chain))
          (~ 'tuple (feed-list tuple<-list))
          (~ 'drop drop)

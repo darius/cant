@@ -12,7 +12,7 @@ Card 6: 31 18 13 56 72 | 74 77 10 23 35 67 36 11")
   data-file.read-all)
 ;;  eg1)
 
-(let parse (like "'Card'_ :count ':'_ [:count**_ :hug]_ '|'_ [:count**_ :hug]"))
+(let parse (like "'Card'_ :count ':'_ [:count**_ :list]_ '|'_ [:count**_ :list]"))
 (let inputs (each parse input.split-lines))
 
 (let scores (for each [((list<- card-id winning-ns my-ns) inputs)]

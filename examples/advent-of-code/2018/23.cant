@@ -4,7 +4,7 @@
 
 (let parse
   (like
-   "'pos=<' [:integer ',' :integer ',' :integer :hug] '>, r=' :integer"))
+   "'pos=<' [:integer ',' :integer ',' :integer :list] '>, r=' :integer"))
 
 (let inputs (each parse input))
 

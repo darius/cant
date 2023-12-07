@@ -115,14 +115,14 @@
 
 (let grammar (grammar<- "
 main: army**separator :end.
-army: army_name ':\n' [group* :hug] :hug.
+army: army_name ':\n' [group* :list] :list.
 army_name: { (!':' :skip)* }.
 group: :count ' units each with ' :count ' hit points ' opt_qualities 
        'with an attack that does ' :count ' ' word 
        ' damage at initiative ' :count '\n' :Group.
-opt_qualities: '(' qualities ') ' | :hug.
-qualities: quality_list++'; ' :hug.
-quality_list: {'weak'|'immune'} ' to ' [word++', ' :hug] :hug.
+opt_qualities: '(' qualities ') ' | :list.
+qualities: quality_list++'; ' :list.
+quality_list: {'weak'|'immune'} ' to ' [word++', ' :list] :list.
 word: {:letter+}.
 separator: '\n'.
 "))

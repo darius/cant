@@ -28,7 +28,7 @@
 ;; A crude notion of a word: a string of letters with an optional
 ;; apostrophized suffix. Yield the positions (start end) for each word.
 (let word-spans
-  (like "([:position :letter+ ('\\'' :letter+)? :position :hug] | :skip)*"))
+  (like "([:position :letter+ ('\\'' :letter+)? :position :list] | :skip)*"))
 ;; TODO ugly: '\\''
 
 ;; Under a heading for `word`, show each of its occurrences.

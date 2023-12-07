@@ -3,9 +3,9 @@
 (let input data-file.read-lines)
 
 (let g (grammar<- "
-rule: bag _ 'contain' _ [bags :hug] '.' :end.
+rule: bag _ 'contain' _ [bags :list] '.' :end.
 bag: {word _ word} _ ('bags'|'bag').
-bags: 'no' _ 'other' _ 'bags' | [:count _ bag :hug] ++ (','_).
+bags: 'no' _ 'other' _ 'bags' | [:count _ bag :list] ++ (','_).
 word: :letter+.
 _: :whitespace.
 "))

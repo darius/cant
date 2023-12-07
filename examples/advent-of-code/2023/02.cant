@@ -10,7 +10,7 @@ Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green".split-lines)
   data-file.read-lines)
 ;;eg1)
 
-(let parse (like "'Game ' :count ': ' [[:count ' ' {:letter+} :hug]**', ' :hug]**'; '"))
+(let parse (like "'Game ' :count ': ' [[:count ' ' {:letter+} :list]**', ' :list]**'; '"))
 (let inputs (each parse data))
 
 (to ((fits? limits) counts)

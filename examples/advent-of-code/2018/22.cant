@@ -7,7 +7,7 @@
 (let input (with-input-file ~.read-all data-file))
 
 (let parse
-  (like "'depth: ' :count '\ntarget: ' [:count ',' :count :hug] '\n'"))
+  (like "'depth: ' :count '\ntarget: ' [:count ',' :count :list] '\n'"))
 
 (let `(,depth ,target) (parse input))
 (out .print depth)

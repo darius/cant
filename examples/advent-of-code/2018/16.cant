@@ -3,13 +3,13 @@
 (let input (with-input-file ~.read-all data-file))
 
 (let grammar (grammar<- "
-main: clause* :hug '\n\n' program.  # N.B. no :end
-clause: 'Before: [' [:count ', ' :count ', ' :count ', ' :count :hug] ']\n'
-        [:count ' ' :count ' ' :count ' ' :count :hug] '\n'
-        'After:  [' [:count ', ' :count ', ' :count ', ' :count :hug] ']\n\n' :hug.
+main: clause* :list '\n\n' program.  # N.B. no :end
+clause: 'Before: [' [:count ', ' :count ', ' :count ', ' :count :list] ']\n'
+        [:count ' ' :count ' ' :count ' ' :count :list] '\n'
+        'After:  [' [:count ', ' :count ', ' :count ', ' :count :list] ']\n\n' :list.
 
-program: insn* :hug.
-insn:    :count ' ' :count ' ' :count ' ' :count '\n' :hug.
+program: insn* :list.
+insn:    :count ' ' :count ' ' :count ' ' :count '\n' :list.
 "))
 (let parser (-> (map<-) grammar (~ 'main)))
 
