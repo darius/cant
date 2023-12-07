@@ -22,32 +22,6 @@ zoneight234
     (let digits (keep ~.digit? line))
     (~.number (text<- digits.first digits.last))))
 
-;; TODO it should be easier to construct a Parson grammar like this
-;; using code, rather than writing this out
-(let parse2 (like "
-( 'one' :'1'
-| 'two' :'2'
-| 'three' :'3'
-| 'four' :'4'
-| 'five' :'5'
-| 'six' :'6'
-| 'seven' :'7'
-| 'eight' :'8'
-| 'nine' :'9'
-| {:digit}
-| :skip
-)*"))
-
-(to (part2-wrong)
-  (for sum-by [(line data)]
-    (let digits (parse2 line))
-    (~.number (chain digits.first digits.last))))
-
-;; Annoying: it turns out you need to process overlapping words, even
-;; though neither the text nor the example make this requirement
-;; clear. Could've adapted using !!lookahead, but I didn't think of
-;; that. Instead started over:
-
 (import (use 'english-numbers) numeralize)
 
 (let numeral-patterns (map<-values numeralize (1 .thru 9)))
