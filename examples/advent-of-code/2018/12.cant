@@ -2,7 +2,7 @@
 
 (let input (with-input-file ~.read-lines data-file))
 
-(let parse (like "{:skip :skip :skip :skip :skip} ' => ' :anyone"))
+(let parse (like "{:skip*5} ' => ' :anyone"))
 
 (let initial-lineup (input.first .from ("initial state: " .count)))
 (let inputs (each parse input.rest.rest))
@@ -11,12 +11,10 @@
 (out .display "\nPart 1\n")
 
 (let rules
-  (~.range (for where [(outcome (map<-lists inputs))]
-             (= outcome "#"))))
+  (~.range (where (be? "#") (map<-lists inputs))))
 
 (to (state<-lineup lineup)
-  (~.range (for where [(rune lineup)]
-             (= rune #\#))))
+  (~.range (where (be? #\#) lineup)))
 
 (to (part1)
   (let state0 (state<-lineup initial-lineup))

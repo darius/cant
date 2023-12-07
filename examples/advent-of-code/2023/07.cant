@@ -11,7 +11,7 @@ QQQJA 483")
 ;;  eg1)
   data-file.read-all)
 
-(let parse (like "{:skip :skip :skip :skip :skip} _ :count"))
+(let parse (like "{:skip*5} _ :count"))
 (let input-hands (for each [(line input.split-lines)]
                    {hand @(parse line)}))
 

@@ -2,7 +2,7 @@
 ;; XXX leaving out regexes, fnord, anonymous start
 
 (import (use 'parson-core)
-  nix grab either then feed-list feed push seclude delay
+  nix grab either then feed-list feed push seclude delay dynamic
   maybe many at-least-1 seek
   fail empty end skip-1 position keep-1 any-1 skip-any-1 lit-1 lit drop)
 
@@ -46,6 +46,17 @@
              (on (builder rules subs)
                (peg-op @(for each [({lifted _ p<-} lifted)]
                           (p<- builder rules subs))))})))
+
+;; Above, (lift peg-op) assumes peg-op takes and returns pegs;
+;; it wouldn't work on an op like `repeat` which in (repeat peg n)
+;; takes a number n. So here's an ad-hoc variant just for `repeat`.
+;; TODO maybe add `repeat` to parson-core too
+;; TODO optional arg for a range of repeat counts
+;; TODO document the syntax for this (like "'foo' *5")
+(to (lift-repeat {lifted refs p<-} count)
+  (push {lifted refs (on (builder rules subs)
+                       (let peg (p<- builder rules subs))
+                       (then @(`(,peg) .repeat count)))}))
 
 (to (literal<- text)
   {lifted (set<-)
@@ -121,7 +132,9 @@
                      (then primary
                            (either (then (lit "**") __ primary (lift many))
                                    (then (lit "++") __ primary (lift at-least-1))
-                                   (then (lit "*") __ (lift many))
+                                   (then (lit "*") __ (either
+                                                       (then unsigned-decimal __ (dynamic lift-repeat))
+                                                       (lift many)))
                                    (then (lit "+") __ (lift at-least-1))
                                    (then (lit "?") __ (lift maybe))
                                    empty)))))))
