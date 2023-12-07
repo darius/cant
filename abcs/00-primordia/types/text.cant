@@ -132,8 +132,8 @@
                    me
                    (" " .repeat half)))))
 
-  (to (~ .repeat n)
-    ("" .join (each ||me (march<- 0 n))))
+  (to (-- (~ .repeat _) message)
+    (text<-list (list-trait me message)))
 
   (to (~ .format @arguments)
     (text<-writer ||(format .to-sink it me @arguments)))

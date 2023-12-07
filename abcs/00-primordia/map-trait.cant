@@ -77,6 +77,16 @@
   (to ~.range
     (set<-list map.values))
 
+  ;; .set and .override are meant to be efficiently implemented in the
+  ;; primitive immutable map type, but this mvp implementation is
+  ;; totally generic:
+  
+  (to (~ .set key value)
+    (map<-items (link (~ key value) map.items)))
+
+  (to (~ .override other-map) ;TODO name; TODO efficient impl; TODO find where it's used
+    (map<-items (chain map.items other-map.items)))
+
   (to ~.inverse
     (let inverse (!map<-))
     (for each! [((~ k v) map.items)]
