@@ -1,0 +1,59 @@
+;; (Use run.cant to run this.)
+
+(let eg1 "\
+32T3K 765
+T55J5 684
+KK677 28
+KTJJT 220
+QQQJA 483")
+
+(let input
+;;  eg1)
+  data-file.read-all)
+
+(let parse (like "{:skip :skip :skip :skip :skip} _ :count"))
+(let input-hands (for each [(line input.split-lines)]
+                   {hand @(parse line)}))
+
+(to (part1)
+  (let card-scores (-> "AKQJT98765432" reverse ~.inverse))
+  (to (hand-sort-key {hand cards _})
+    (list<- (type<-hand cards) (each card-scores cards)))
+  (let ordered-hands (sort-by hand-sort-key input-hands))
+  (for sum-by [((~ rank0 {hand cards bid}) ordered-hands.items)]
+    (* bid rank0.+1)))
+
+(to (type<-hand cards)
+  (-> cards bag<- ~.values sort ||(hand-bags .find it)))
+
+(let hand-bags '((1 1 1 1 1) ;; high card
+                 (1 1 1 2)   ;; 1 pair
+                 (1 2 2)     ;; 2 pair
+                 (1 1 3)     ;; 3 of a kind
+                 (2 3)       ;; full house
+                 (1 4)       ;; 4 of a kind
+                 (5)))       ;; 5 of a kind
+
+(to (part2)
+  (let card-scores (-> "AKQT98765432J" reverse ~.inverse))
+  
+  (to (best-type<-hand cards)
+    (let nj (tally-by (be? #\J) cards))
+    (hm (if (= nj 0) (type<-hand cards))
+        (let others (skip (be? #\J) cards))
+        (if others.none? 6) ;; 5 of a kind
+        (else
+          (let label-choices (~.nub (link #\A others)))  ;; include the highest card for the "high card" type
+          (to (reassemble assignment)
+            (chain assignment others))
+          (max @(each ||(type<-hand (reassemble it))
+                      (grid* @(`(,label-choices) .repeat nj)))))))
+
+  ;; Repeated code, oh well...
+
+  (to (hand-sort-key {hand cards _})
+    (list<- (best-type<-hand cards) (each card-scores cards)))
+
+  (let ordered-hands (sort-by hand-sort-key input-hands))
+  (for sum-by [((~ rank0 {hand cards bid}) ordered-hands.items)]
+    (* bid rank0.+1)))
