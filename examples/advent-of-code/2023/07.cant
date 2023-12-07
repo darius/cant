@@ -38,16 +38,14 @@ QQQJA 483")
   (let card-scores (-> "AKQT98765432J" reverse ~.inverse))
   
   (to (best-type<-hand cards)
-    (let nj (tally-by (be? #\J) cards))
-    (hm (if (= nj 0) (type<-hand cards))
-        (let others (skip (be? #\J) cards))
-        (if others.none? 6) ;; 5 of a kind
-        (else
-          (let label-choices (~.nub (link #\A others)))  ;; include the highest card for the "high card" type
-          (to (reassemble assignment)
-            (chain assignment others))
-          (max @(each ||(type<-hand (reassemble it))
-                      (grid* @(`(,label-choices) .repeat nj)))))))
+    (let n-jokers (tally-by (be? #\J) cards))
+    (let others (skip (be? #\J) cards))
+    ;; Choices include the ace for the "high card" type, and in case
+    ;; it's an all-joker hand.
+    (let label-choices (~.nub (link #\A others))) 
+    (to (reassemble assignment) (chain assignment others))
+    (max @(each ||(type<-hand (reassemble it))
+                (grid* @(`(,label-choices) .repeat n-jokers)))))
 
   ;; Repeated code, oh well...
 
