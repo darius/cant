@@ -1,3 +1,18 @@
 (make-trait zilch-primitive me
-  ;; The zilch (end-of-file) object.
+  ;; The zilch (end-of-file) object. Just a marker with no interesting
+  ;; behavior.
+  
+  ;; Zilch quacks like a rune wrt to basic rune predicates, but we
+  ;; don't try to pretend further. Maybe this convenience is a bad
+  ;; idea? I've had like one occasion to take advantage of it so far;
+  ;; more commonly we read a line or an s-expression instead.
+  (to ~.letter?       #no)
+  (to ~.digit?        #no)
+  (to ~.whitespace?   #no)
+  (to ~.alphanumeric? #no)
+  (to ~.lowercase?    #no)
+  (to ~.uppercase?    #no)
+  (to ~.lowercase     me)
+  (to ~.uppercase     me)
+  (to ~.printable?    #no)
   )

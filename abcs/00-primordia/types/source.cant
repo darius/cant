@@ -3,6 +3,7 @@
   (to ~.read-rune   (__read-char me))
   (to ~.read-u8     (__get-u8 me))
   (to ~.read-all    (__read-all me))
+  (to ~.peek-rune   (__peek-char me))
 
   (to ~.close       (__close-source me))
 

@@ -349,6 +349,7 @@
     (__close-sink ,close-port)
     (__close-source ,close-source)
     (__read-char ,source-read-char)
+    (__peek-char ,source-read-char)
     (__char-ready? ,source-char-ready?)
     (__read-all ,source-read-all)
     (__write-char ,write-char)
