@@ -27,12 +27,9 @@
              extension)))))
 
 (to (csp-solve (-- problem {problem v-domains constraints}))
-  (let choices (!map<-items (for each [((~ var vals) v-domains.items)]
-                              (~ var vals.range))))
+  (let choices ((each-value ~.range v-domains) .copy))
   (csp-propagating problem choices)
-  (csp-search {problem (map<-items (for each [((~ var val-set) choices.items)]
-                                     (~ var val-set.keys)))
-                       constraints}))
+  (csp-search {problem (each-value ~.keys choices) constraints}))
 
 ;; Try to prune choices. Return yeah if any pruning was done.
 (to (csp-propagating problem choices)
