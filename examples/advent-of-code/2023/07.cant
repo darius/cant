@@ -24,15 +24,15 @@ QQQJA 483")
     (* bid rank0.+1)))
 
 (to (type<-hand cards)
-  (-> cards bag<- ~.values sort ||(hand-bags .find it)))
+  (-> cards bag<- ~.values sort hand-bags))
 
-(let hand-bags '((1 1 1 1 1) ;; high card
-                 (1 1 1 2)   ;; 1 pair
-                 (1 2 2)     ;; 2 pair
-                 (1 1 3)     ;; 3 of a kind
-                 (2 3)       ;; full house
-                 (1 4)       ;; 4 of a kind
-                 (5)))       ;; 5 of a kind
+(let hand-bags (~.inverse '((1 1 1 1 1) ;; high card
+                            (1 1 1 2)   ;; 1 pair
+                            (1 2 2)     ;; 2 pair
+                            (1 1 3)     ;; 3 of a kind
+                            (2 3)       ;; full house
+                            (1 4)       ;; 4 of a kind
+                            (5))))      ;; 5 of a kind
 
 (to (part2)
   (let card-scores (-> "AKQT98765432J" reverse ~.inverse))
