@@ -19,6 +19,9 @@ QQQJA 483")
   (let card-scores (-> "AKQJT98765432" reverse ~.inverse))
   (to (hand-sort-key {hand cards _})
     (list<- (type<-hand cards) (each card-scores cards)))
+  (total-winnings hand-sort-key))
+
+(to (total-winnings hand-sort-key)
   (let ordered-hands (sort-by hand-sort-key input-hands))
   (for sum-by [((~ rank0 {hand cards bid}) ordered-hands.items)]
     (* bid rank0.+1)))
@@ -47,9 +50,6 @@ QQQJA 483")
     (max @(each ||(type<-hand (reassemble it))
                 (choices .k-lists n-jokers))))
 
-  ;; Near-duplicate code for the rest...
   (to (hand-sort-key {hand cards _})
     (list<- (best-type<-hand cards) (each card-scores cards)))
-  (let ordered-hands (sort-by hand-sort-key input-hands))
-  (for sum-by [((~ rank0 {hand cards bid}) ordered-hands.items)]
-    (* bid rank0.+1)))
+  (total-winnings hand-sort-key))
