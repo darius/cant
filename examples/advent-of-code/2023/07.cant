@@ -47,11 +47,9 @@ QQQJA 483")
     (max @(each ||(type<-hand (reassemble it))
                 (grid* @(`(,label-choices) .repeat n-jokers)))))
 
-  ;; Repeated code, oh well...
-
+  ;; Near-duplicate code for the rest...
   (to (hand-sort-key {hand cards _})
     (list<- (best-type<-hand cards) (each card-scores cards)))
-
   (let ordered-hands (sort-by hand-sort-key input-hands))
   (for sum-by [((~ rank0 {hand cards bid}) ordered-hands.items)]
     (* bid rank0.+1)))
