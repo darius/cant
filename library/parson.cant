@@ -6,6 +6,16 @@
   maybe many at-least-1 seek
   fail empty end skip-1 position keep-1 any-1 skip-any-1 lit-1 lit drop)
 
+;; Utility defs
+
+(let unsigned-decimal
+  (seclude (then (grab (at-least-1 (skip-1 ~.digit?))) ;; TODO no leading 0s
+                 (feed ~.number))))
+
+(let signed-decimal
+  (seclude (then (grab (then (either (lit-1 #\-) (lit-1 #\+) empty)
+                             (at-least-1 (skip-1 ~.digit?))));; TODO no leading 0s
+                 (feed ~.number))))
 
 ;; {lifted refs p<-} is a 'lifted' parser.
 ;; - refs: A set of symbols, the names of grammar rules used by this parser.
@@ -176,13 +186,8 @@
          (~ 'tuple (feed-list tuple<-list))
          (~ 'drop drop)
          (~ 'whitespace (skip-1 ~.whitespace?))
-         (~ 'count (seclude
-                    (then (grab (at-least-1 (skip-1 ~.digit?))) ;; TODO no leading 0s
-                          (feed ~.number))))
-         (~ 'integer (seclude
-                      (then (grab (then (either (lit-1 #\-) (lit-1 #\+) empty)
-                                        (at-least-1 (skip-1 ~.digit?))));; TODO no leading 0s
-                            (feed ~.number))))
+         (~ 'count unsigned-decimal)
+         (~ 'integer signed-decimal)
          (~ 'position position)
          (~ 'None (push #no))
          ;; TODO: more
