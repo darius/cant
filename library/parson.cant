@@ -17,6 +17,14 @@
                              (at-least-1 (skip-1 ~.digit?))));; TODO no leading 0s
                  (feed ~.number))))
 
+;; m through n repeats of peg
+(to (repeated peg m @(optional n))
+  (then @(chain (`(,peg) .repeat m)
+                (hm (when n
+                      (let ?peg (maybe peg))
+                      (each ||?peg (m.+1 .thru n)))
+                    (else '())))))
+
 ;; {lifted refs p<-} is a 'lifted' parser.
 ;; - refs: A set of symbols, the names of grammar rules used by this parser.
 ;;     This is used to warn about undefined rules before you try to run anything.
@@ -51,12 +59,11 @@
 ;; it wouldn't work on an op like `repeat` which in (repeat peg n)
 ;; takes a number n. So here's an ad-hoc variant just for `repeat`.
 ;; TODO maybe add `repeat` to parson-core too
-;; TODO optional arg for a range of repeat counts
 ;; TODO document the syntax for this (like "'foo' *5")
-(to (lift-repeat {lifted refs p<-} count)
+(to (lift-repeat {lifted refs p<-} count @(optional thru-count))
   (push {lifted refs (on (builder rules subs)
                        (let peg (p<- builder rules subs))
-                       (then @(`(,peg) .repeat count)))}))
+                       (repeated peg count thru-count))}))
 
 (to (literal<- text)
   {lifted (set<-)
@@ -133,7 +140,10 @@
                            (either (then (lit "**") __ primary (lift many))
                                    (then (lit "++") __ primary (lift at-least-1))
                                    (then (lit "*") __ (either
-                                                       (then unsigned-decimal __ (dynamic lift-repeat))
+                                                       (then ;; Notation for 1..5 repeats: p*1-5
+                                                        unsigned-decimal __
+                                                        (maybe (then (lit "-") __ unsigned-decimal __))
+                                                        (dynamic lift-repeat))
                                                        (lift many)))
                                    (then (lit "+") __ (lift at-least-1))
                                    (then (lit "?") __ (lift maybe))

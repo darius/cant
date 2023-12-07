@@ -12,7 +12,7 @@
 (to (trm-parse program)
   (-> program parse-program ||(each insn<- it) ~.array))
 
-(let parse-program (like "[{'1'+} {'#' '#'? '#'? '#'? '#'?} :tuple]*"))
+(let parse-program (like "[{'1'+} {'#'*1-5} :tuple]*"))
 
 (to (insn<- (~ ones hashes))
   {insn (insn-table hashes.count) ones.count})
