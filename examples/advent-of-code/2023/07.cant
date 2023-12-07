@@ -40,12 +40,12 @@ QQQJA 483")
   (to (best-type<-hand cards)
     (let n-jokers (tally-by (be? #\J) cards))
     (let others (skip (be? #\J) cards))
-    ;; Choices include the ace for the "high card" type, and in case
-    ;; it's an all-joker hand.
-    (let label-choices (~.nub (link #\A others))) 
+    ;; Card choices include the ace: for the "high card" type and in
+    ;; case it's an all-joker hand.
+    (let choices ((link #\A others) .nub))
     (to (reassemble assignment) (chain assignment others))
     (max @(each ||(type<-hand (reassemble it))
-                (grid* @(`(,label-choices) .repeat n-jokers)))))
+                (choices .k-lists n-jokers))))
 
   ;; Near-duplicate code for the rest...
   (to (hand-sort-key {hand cards _})
