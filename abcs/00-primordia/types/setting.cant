@@ -20,9 +20,12 @@
     ;; TODO what's the answer for a not-yet-resolved variable?
     (__setting-binds? setting variable))
 
-  (to ~.variables
-    (__setting-variables setting))
+  (to ~.?parent
+    (__setting-parent setting))
 
+  (to ~.inner-variables
+    (__setting-inner-variables setting))
+  
   (to (~ .resolve-each! resolve variables)
     (for each! [(name variables)]
       (setting .resolve! name (resolve name))))
@@ -32,7 +35,10 @@
 
   (to (~ .selfie sink)
     (sink .display "#<setting ")
-    (sink .write setting.variables)   ;TODO a more concise/useful list
+    (sink .write setting.inner-variables)
+    (when setting.?parent
+      (sink .display " ..."))
     (sink .display ">"))
 
+  ;; TODO .map method?
   )

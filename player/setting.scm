@@ -9,7 +9,7 @@
         setting-extend-promises setting-resolve! setting-address-resolve!
         setting-extend
         setting-ensure-bound
-        setting-variables
+        setting-parent setting-inner-variables
         )
 (import (chezscheme) (player util) (player thing))
 
@@ -142,16 +142,11 @@
         (else
          (setting-extend-promises setting variables))))
 
-;; N.B. can include duplicates
-(define (setting-variables setting)
-  (let walking ((setting setting))
-    (append (let ((table (setting-table setting)))
-              (if (eq-hashtable? table)
-                  (vector->list (hashtable-keys table))
-                  table))
-            (if (setting-parent setting)
-                (walking (setting-parent setting))
-                '()))))
+(define (setting-inner-variables setting)
+  (let ((table (setting-table setting)))
+    (if (eq-hashtable? table)
+        (vector->list (hashtable-keys table))
+        table)))
 
 (define (frame-index vars v)
   (let scanning ((i 0) (vars vars))

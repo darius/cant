@@ -116,7 +116,13 @@
               (continue "At bottom.\n")
               (interacting callees.first callees.rest)))
         (be 'setting
-          (out .print frame.setting.variables) ;TODO more useful display: leave out globals, etc.
+          (let nonglobals (do listing [(s frame.setting)]
+                            ;; Omit the outermost, presumably global, frame.
+                            ;; TODO there seems to be an empty outermost non-#no parent, I'm kinda confused
+                            (if (and s s.?parent s.?parent.?parent)
+                                (link s.inner-variables (listing s.?parent))
+                                '())))
+          (out .print nonglobals)
           (continue))
         (be 'value
           (out .print (read-eval))
