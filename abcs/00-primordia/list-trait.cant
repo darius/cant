@@ -104,6 +104,9 @@
     ;; TODO return p.count on success?
     (= (list .from 0 p.count) p))   ;TODO more efficient
 
+  (to (~ .suffix? p)
+    (= (list .suffix p.count) p))
+
   (to (~ .join segments)
     (hm (if segments.none? '())
         (else (chain segments.first.values
