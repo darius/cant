@@ -54,3 +54,9 @@ computing.
 most systems don't elevate the first two priorities above it. OTOH
 there are educational systems like Little Smalltalk (a good one!)
 which I'm not sure have ever run a program for actual use.
+
+A goal that emerged: everyday tasks should go naturally in clear
+concise code. Since this quality comes mainly from library design, the
+language should enable a stdlib which supports it. (But vastly
+complicated external standards like HTML are out of scope, however
+'everyday' they are in our fallen world.)
