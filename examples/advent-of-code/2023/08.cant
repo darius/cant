@@ -45,12 +45,12 @@ XXX = (XXX, XXX)")
   ((nodes pos) ("LR" .find dir)))
 
 (to (part1)
-  (let cycling-steps (amassing$ step "AAA" turns.cycle))
-  ((keep-until (be? "ZZZ") cycling-steps) .count))
+  (let steps (amassing$ step "AAA" turns.cycle))
+  ((keep-until (be? "ZZZ") steps) .count))
 
 (to (part2)
   (to (period<- start)
-    (let cycling-steps (amassing$ step start turns.cycle))
-    ((keep-until (~ .suffix? "Z") cycling-steps) .count))
+    (let steps (amassing$ step start turns.cycle))
+    ((keep-until (~ .suffix? "Z") steps) .count))
     
   (lcm @(each period<- (keep (~ .suffix? "A") nodes.keys))))
