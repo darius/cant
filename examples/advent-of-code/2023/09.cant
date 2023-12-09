@@ -15,8 +15,7 @@
   (sum-by extrapolate inputs))
 
 (to (extrapolate ns)
-  (for fold [(ms (history ns)) (accum 0)]
-    (+ accum ms.last)))
+  (sum-by ~.last (history ns)))
 
 (to (delta ns)
   (each - ns.rest ns.but-last))
