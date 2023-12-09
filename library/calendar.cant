@@ -7,8 +7,13 @@
 ;; text parsing/unparsing
 ;; ... what else? BC/AD?
 
+;; TODO define a good interface
+;;   0-based integers for m and d are error-prone
+;;   {date y m d} when 1-based seems ok to expose even before we have data objects
+;;   convenient arithmetic: date + days, date - date, compare, etc.
+;;   want a units library which this integrates with (e.g. "date + 2 weeks")
+
 ;; TODO wider range of y handled
-;; TODO 0-based integers for m and d are error-prone: define a good interface
 ;; TODO bidirectional conversions are a job for relational programming
 
 ;; TODO from Gimpel:
