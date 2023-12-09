@@ -27,8 +27,7 @@ Distance:  9  40  200")
                  (-> (keep ~.digit? line) ~.text ~.number)))
   (count-ways-to-beat/faster @numbers))
 
-(import (use 'polynomials)
-  poly<- poly+ poly- poly* derivative find-root)
+(import (use 'polynomials) poly<- poly+ poly- poly* find-root)
 
 ;; Solve the equation v(t-v)-d = 0 for v, and return the width between the roots.
 (to (count-ways-to-beat/faster t d)
@@ -37,8 +36,6 @@ Distance:  9  40  200")
   (let dp (poly<- `(,d)))
   (let excessp (poly- (poly* vp (poly- tp vp))
                       dp))
-  (let peak (find-root (derivative excessp) 0.0)) ;; 0 is the starting guess
-  ;; Starting from both sides of the peak should yield the two different roots:
-  (let roots (each ||(find-root excessp it) (list<- peak.-1 peak.+1)))
-  (let `(,lo ,hi) roots)
+  (let `(,lo ,hi)  (each ||(find-root excessp it)
+                         (list<- 0 t))) ;; starting guesses on either side of the peak
   ((lo.ceiling.exact .thru hi.floor.exact) .count))
