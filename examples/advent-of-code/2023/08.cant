@@ -36,7 +36,7 @@ XXX = (XXX, XXX)")
 ;;  eg3)
   data-file.read-all)
 
-(let parse (like "{:skip*3} ' = (' [{:skip*3} ', ' {:skip*3} :list] ')'"))
+(let parse (like "{3} ' = (' [{3} ', ' {3} :list] ')'"))
 
 (let {inputs turns nodes} (do [(lines input.split-lines)]
                             {inputs lines.first (map<-lists (each parse lines.rest.rest))}))

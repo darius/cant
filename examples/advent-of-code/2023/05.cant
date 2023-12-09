@@ -68,17 +68,10 @@ humidity-to-location map:
 (to (part1)
   (min @(each location<-seed seeds-spec)))
 
-(to (part2-too-slow)
-  (let seed-spans (seeds-spec .segments 2))
-  (let seeds (chain @(for each [(`(,start ,length) seed-spans)]
-                       (start .span length))))
-  (min @(each location<-seed seeds)))
-
-;; OK, that worked but it'll be too inefficient, >9 billion seeds.
-;; What we can do is map a segment to a sequence of segments.
-;; Then the min of a segment is its first element.
-
 (to (part2)
+  ;; With >9 billion seeds, brute force is too slow.
+  ;; So map a segment to a sequence of segments.
+  ;; Then the min of a segment is its first element.
   (let seed-spans (seeds-spec .segments 2))
   (min @(each min-location<-seed-span seed-spans)))
 

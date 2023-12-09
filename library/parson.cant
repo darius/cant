@@ -65,6 +65,10 @@
                        (let peg (p<- builder rules subs))
                        (repeated peg count thru-count))}))
 
+(to (lift-skip-n count)
+  (let skip-n (repeated skip-any-1 count))
+  (push {lifted '() (on (builder rules subs) skip-n)}))
+
 (to (literal<- text)
   {lifted (set<-)
           (on (builder _ _) (builder .literal text))})
@@ -139,14 +143,13 @@
                      (then primary
                            (either (then (lit "**") __ primary (lift many))
                                    (then (lit "++") __ primary (lift at-least-1))
-                                   (then (lit "*") __ (either
-                                                       (then ;; Notation for 1..5 repeats: p*1-5
-                                                        unsigned-decimal __
-                                                        (maybe (then (lit "-") __ unsigned-decimal __))
-                                                        (dynamic lift-repeat))
-                                                       (lift many)))
+                                   (then (lit "*") __ (lift many))
                                    (then (lit "+") __ (lift at-least-1))
                                    (then (lit "?") __ (lift maybe))
+                                   (then (lit "^") __  ;; Notation for 1..5 repeats: p^1-5
+                                         unsigned-decimal __
+                                         (maybe (then (lit "-") __ unsigned-decimal __))
+                                         (dynamic lift-repeat))
                                    empty)))))))
 
 (let primary
@@ -158,7 +161,8 @@
            (then dqtext (feed keyword<-))
            (then (lit ":") (either (then word  (feed unquote<-))
                                    (then qtext (feed push-lit<-))))
-           (then name (feed rule-ref<-)))))
+           (then name (feed rule-ref<-))
+           (then unsigned-decimal __ (dynamic lift-skip-n))))) ;; Extra shorthand: "3" for ":skip^3"
 
 (let rule
   (seclude
