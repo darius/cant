@@ -87,6 +87,9 @@
 (to (poly+ p q)
   (poly<- (each (~ +) (zip .pad-left 0 p q))))
 
+(to (poly- p q)
+  (poly<- (each (~ -) (zip .pad-left 0 p q))))
+  
 (to (poly* p q)
   (let totals (array<-count (+ (poly-degree p) (poly-degree q) 1)
                             0))
@@ -99,5 +102,5 @@
   
 (export
   poly<- poly? show
-  evaluate poly+ poly* derivative find-root
+  evaluate poly+ poly- poly* derivative find-root
   poly-degree)
