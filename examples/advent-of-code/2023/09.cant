@@ -27,8 +27,8 @@
   (sum-by extrapolate-2 inputs))
 
 (to (extrapolate-2 ns)
-  (for fold [(ms (history ns)) (z 0)]
-    (- ms.first z)))
+  (for fold [(rows (history ns)) (z 0)]
+    (- rows.first z)))
 
 ;;  x y
 ;;   z
