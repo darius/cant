@@ -36,6 +36,6 @@ Distance:  9  40  200")
   (let dp (poly<- `(,d)))
   (let excessp (poly- (poly* vp (poly- tp vp))
                       dp))
-  (let `(,lo ,hi)  (each ||(find-root excessp it)
-                         (list<- 0 t))) ;; starting guesses on either side of the peak
+  (let `(,lo ,hi) (each ||(find-root excessp it)
+                        (list<- 0 t))) ;; starting guesses on either side of the peak
   ((lo.ceiling.exact .thru hi.floor.exact) .count))
