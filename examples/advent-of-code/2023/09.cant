@@ -1,0 +1,37 @@
+;; (Use run.cant to run this.)
+
+(let eg1 "\
+0 3 6 9 12 15
+1 3 6 10 15 21
+10 13 16 21 30 45")
+
+(let input
+;;  eg1)
+  data-file.read-all)
+
+(let inputs (each ||(each ~.number it.split) input.split-lines))
+
+(to (part1)
+  (sum-by extrapolate inputs))
+
+(to (extrapolate ns)
+  (for fold [(ms (history ns)) (accum 0)]
+    (+ accum ms.last)))
+
+(to (delta ns)
+  (each - ns.rest ns.but-last))
+
+(to (history ns)
+  (keep-until$ ||(every (be? 0) it) (iterating delta ns)))
+
+(to (part2)
+  (sum-by extrapolate-2 inputs))
+
+(to (extrapolate-2 ns)
+  (for fold [(ms (history ns)) (z 0)]
+    (- ms.first z)))
+
+;;  x y
+;;   z
+
+;; z = -x+y; x = y-z
