@@ -63,8 +63,7 @@ LJ...")
 
   (distances .set! start 0)
   (let starting-frontier (push empty (~ start 1)))
-  (let steps (keep-while$ yeah? (iterating ?step starting-frontier)))
-  steps.list
+  (let steps (keep-while yeah? (iterating ?step starting-frontier)))
 ;;  (dump distances)
   
   (max @(yeahs itself distances.values)))
