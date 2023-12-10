@@ -1,6 +1,6 @@
 (import (use 'binary-relations) collect)
 (import (use 'memoize) memoize)
-(import (use 'parson-core) feed keep-1)
+(import (use 'parson-core) feed feed-list)
 (let parson (use 'parson))
 (import parson grammar<- like)
 

@@ -248,13 +248,13 @@
   skeletons)
 
 ;; An amenity for concise code for the simplest parsers.
-(to (like template) ;; TODO optional subs argument(s)
+(to (like template @semantic-items)
   ;; TODO inefficient/error-prone to build a text and then parse it
   (let grammar (grammar<- ("_ = :whitespace*. start = loop :end. loop: ~d."
                            .format template)))
-  (let peg ((grammar (map<-)) 'start))
+  (let peg ((grammar (map<-items semantic-items)) 'start))
   (make parser                          ;TODO just return the peg
     (to (~ text)        (peg .parse text))
     (to (~ .parse text) (peg .parse-outcome text))))
 
-(export grammar<- feed push like)
+(export grammar<- feed feed-list push like)

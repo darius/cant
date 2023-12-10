@@ -11,9 +11,9 @@ Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green")
 ;;  eg1)
 
 (let parse
-  (like "'Game'_ :count ':'_ [[:count _ {:letter+} :reverse :tuple]**', ' :list]**'; '"))
-(let games (for each [((link game cube-sets) (each parse input.split-lines))]
-             (link game (each bag<-items cube-sets))))
+  (like "'Game'_ :count ':'_ [[:count _ {:letter+} :reverse :tuple]**', ' :bag]**'; '"
+        (~ 'bag (feed-list bag<-items))))
+(let games (each parse input.split-lines))
 
 (to (part1)
   (let limit (bag<-items (list<- (~ "red" 12) (~ "green" 13) (~ "blue" 14))))
