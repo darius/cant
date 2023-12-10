@@ -99,8 +99,31 @@
     (for each! [((~ j pj) rq.items)]
       (totals .update (+ i j) ||(+ it (* pi pj)))))
   (poly<- (reverse totals.values)))
-  
+
+;; A less horrible way to type in a polynomial, albeit still not the friendliest.
+(to (poly<-s-expr sx)
+  (let symbols (set<-))
+  ;; TODO error diagnostics
+  (let poly (do walking [sx]
+              (may sx
+                (be (? number?)
+                  (poly<- `(,sx)))
+                (be (? symbol?)
+                  (symbols .add! sx)
+                  (poly<- '(1 0)))
+                (be (link (? symbol? op) operands)
+                  (let builder (builder-map op))
+                  (builder @(each walking operands))))))
+  (surely (<= symbols.count 1))
+  poly)
+
+(let builder-map (map<- (~ '+ poly+)
+                        (~ '- poly-)
+                        (~ '* poly*)
+                        ;; TODO powers at least; variable-arg ops
+                        ))
+
 (export
-  poly<- poly? show
+  poly<- poly? show poly<-s-expr
   evaluate poly+ poly- poly* derivative find-root
   poly-degree)
