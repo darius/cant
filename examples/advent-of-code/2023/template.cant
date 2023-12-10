@@ -10,8 +10,6 @@
 ;;  data-file.read-all)
 
 ;(let parse (like "(:count | :skip)*"))
-;(let parse (like "[{:letter} :count :tuple] ** ','"))
-;(let parse ~.number)
 
 ;(let inputs (each parse input.split-lines))
 
