@@ -49,7 +49,6 @@ LJ...")
 
 (to (part1)
   (let distances (array<-count input.count #no))
-  (distances .set! start 0)
   
   (to (?step frontier)
     (may (peek frontier)
@@ -62,6 +61,7 @@ LJ...")
             (children .push! (~ pos distance.+1))))
         (extend more-frontier children.values))))
 
+  (distances .set! start 0)
   (let starting-frontier (push empty (~ start 1)))
   (let steps (keep-while$ yeah? (iterating ?step starting-frontier)))
   (~.list steps) ;; (steps .from 0 100))
