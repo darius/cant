@@ -57,7 +57,7 @@ LJ...")
       (be {nonempty (~ pos distance) more-frontier}
         (let children (flexarray<-))
         (for each! [(pos (arcs<- pos))]
-          (when (not (distances pos))
+          (unless (distances pos)
             (distances .set! pos distance)
             (children .push! (~ pos distance.+1))))
         (extend more-frontier children.values))))
