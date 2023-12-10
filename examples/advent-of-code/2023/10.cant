@@ -40,7 +40,8 @@ LJ...")
 
 (to (arcs<- pos)
   (for yeahs [(offset (rune-map .get (input pos) '()))]
-    (and (input .get (+ pos offset))
+    ;; Slightly tricky guard to stay inside the visible map.
+    (and (not= #\newline (input .get (+ pos offset) #\newline))
          (+ pos offset))))
 
 (surely (~.only (keep (be? #\S) input))) ;; Exactly 1 start position
