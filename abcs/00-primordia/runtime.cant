@@ -459,7 +459,7 @@
       (surely (<= 0 i))
       (hm (if (<= bound i) '())  ;; TODO do i-1 .rest's here too for consistency?
           (else (let n (- bound i))
-                (do copying [(j 0) (ll (lazy-list .from i))]
+                (do copying [(j 0) (ll (lazy-list .from i))] ;; TODO lift to custom impl of (~ .prefix n)
                   (if ll.none? ll
                       (link$ ll.first ($ (let j1 j.+1)
                                          (if (< j1 n) (copying j1 ll.rest) '()))))))))
@@ -481,7 +481,7 @@
       (surely (<= 0 i))
       (hm (if (<= bound i) '())  ;; TODO do i-1 .rest's here too for consistency?
           (else (let n (- bound i))
-                (do copying [(j 0) (ll (lazy-list .from i))]
+                (do copying [(j 0) (ll (lazy-list .from i))] ;; TODO lift to custom impl of (~ .prefix n)
                   (if ll.none? ll
                       (link/lazier ll.first ($ (let j1 j.+1)
                                                (if (< j1 n) (copying j1 ll.rest) '()))))))))
