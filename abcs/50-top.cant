@@ -161,7 +161,7 @@
 
 (import (use 'flexarray)  flexarray<- flexarray<-list)
 (import (use 'sort)       sort sort-by)
-(import (use 'bag)        bag<-)
+(import (use 'bag)        bag<- bag<-items)
 
 (the-signal-handler .^= fallback-signal-handler)
 

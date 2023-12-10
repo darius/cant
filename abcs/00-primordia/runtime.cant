@@ -543,6 +543,8 @@
             (if (and (integer? i) (<= first i) (< i limit))
                 (- i first)
                 default))
+          (to ~.last limit.-1)
+          ;; TODO other inefficient list-trait methods
           ;; TODO: .compare
           )))
   (to (~ limit)

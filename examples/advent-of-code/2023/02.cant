@@ -4,28 +4,24 @@
 Game 2: 1 blue, 2 green; 3 green, 4 blue, 1 red; 1 green, 1 blue
 Game 3: 8 green, 6 blue, 20 red; 5 blue, 4 red, 13 green; 5 green, 1 red
 Game 4: 1 green, 3 red, 6 blue; 3 green, 6 red; 3 green, 15 blue, 14 red
-Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green".split-lines)
+Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green")
 
-(let data
-  data-file.read-lines)
-;;eg1)
+(let input
+  data-file.read-all)
+;;  eg1)
 
-(let parse (like "'Game ' :count ': ' [[:count ' ' {:letter+} :list]**', ' :list]**'; '"))
-(let inputs (each parse data))
-
-(to ((fits? limits) counts)
-  (for every [(`(,n ,color) counts)]
-    (<= n (limits color))))
+(let parse
+  (like "'Game'_ :count ':'_ [[:count _ {:letter+} :reverse :tuple]**', ' :list]**'; '"))
+(let games (for each [((link game cube-sets) (each parse input.split-lines))]
+             (link game (each bag<-items cube-sets))))
 
 (to (part1)
-  (let possible? (fits? (map<- (~ "red" 12) (~ "green" 13) (~ "blue" 14))))
-  (sum (for yeahs [((link game cube-sets) inputs)]
-         (and (every possible? cube-sets) game))))
+  (let limit (bag<-items (list<- (~ "red" 12) (~ "green" 13) (~ "blue" 14))))
+  (sum (for yeahs [((link game bags) games)]
+         (and (every (~ .subset-of? limit) bags)
+              game))))
 
 (to (part2)
-  (for sum-by [((link game cube-sets) inputs)]
-    (let rgb-values
-      (each (~ .part 1) (collect (for gather [(cs cube-sets)]
-                                   (for each [(`(,n ,color) cs)]
-                                     (~ color n))))))
+  (for sum-by [((link game bags) games)]
+    (let rgb-values (each (~ .part 1) (collect (gather ~.items bags))))
     (* @(each ||(max @it) rgb-values))))

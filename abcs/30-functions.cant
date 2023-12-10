@@ -355,7 +355,7 @@
 (let computational-setting-library-imports
   '(use avast
     unwind-protect ;;TODO not exactly safe as currently defined
-    sort-by sort flexarray<- flexarray<-list bag<-))
+    sort-by sort flexarray<- flexarray<-list bag<- bag<-items))
 (let computational-setting
   (empty-setting .extend-promises
                  (chain computational-setting-library-imports

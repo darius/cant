@@ -2,7 +2,7 @@
 ;; XXX leaving out regexes, fnord, anonymous start
 
 (import (use 'parson-core)
-  nix grab either then feed-list feed push seclude delay dynamic
+  alter nix grab either then feed-list feed push seclude delay dynamic
   maybe many at-least-1 seek
   fail empty end skip-1 position keep-1 any-1 skip-any-1 lit-1 lit drop)
 
@@ -217,6 +217,7 @@
          (~ 'integer signed-decimal)
          (~ 'position position)
          (~ 'None (push #no))
+         (~ 'reverse (alter reverse))
          ;; TODO: more
          ))
 
