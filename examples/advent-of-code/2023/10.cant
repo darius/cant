@@ -43,7 +43,6 @@ LJ...")
 
 (surely (~.only (keep (be? #\S) input))) ;; Exactly 1 start position
 (let start (input .find #\S))
-(let infinity 1000000000)
 
 (to (part1)
   (let distances (array<-count input.count #no))
