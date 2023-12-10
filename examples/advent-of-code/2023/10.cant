@@ -1,9 +1,6 @@
 ;; (Use run.cant to run this.)
 
-(import (use 'queue)
-  empty empty?
-  push extend
-  peek list<-queue)
+(import (use 'queue) empty push extend peek)
 
 (let eg1 "\
 .....
@@ -76,5 +73,6 @@ LJ...")
 
 ;; I give up: breadth-first-search seems correct, matches AIMA
 ;; pseudocode, works on examples, the judge says it's wrong.
-;; Variations produce the same answers.
+;; Variations produce the same answers. The queue library has
+;; been used plenty; not worth checking for bugs there.
 ;; The problem input is big. Not motivated to figure this out rn.
