@@ -11,7 +11,7 @@
   (let keys ((each (~ 0) passport) .range))
   (required-keys .subset-of? keys))
 
-(let required-keys (-> "byr iyr eyr hgt hcl ecl pid" ~.split ~.range))
+(let required-keys "byr iyr eyr hgt hcl ecl pid".split.range)
 
 (to (part2)
   (tally-by valid2? inputs))
