@@ -16,12 +16,10 @@
 
   ;; Return a set of locations traced out by the path.
   (to (trace path)
-    (let result (set<-))
-    (for amass [(p '(0 0)) ((~ dir stride) path)]
-      (let dp (delta<- dir))
-      (for amass [(p p) (_ stride.till)]
-        (hey (vector+ p dp) ||(result .add! it))))
-    result)
+    (let deltas (for gather [((~ dir stride) path)]
+                  (`(,(delta<- dir)) .repeat stride)))
+    (let places (amassing vector+ '(0 0) deltas))
+    places.rest.range)
 
   (let crossings ((trace (inputs 0)) .intersect (trace (inputs 1))))
   (min @(for each [(p crossings.keys)]
@@ -38,14 +36,12 @@
 
   ;; Return a map from locations traced out by the path to their step-count.
   (to (trace path)
+    (let deltas (for gather [((~ dir stride) path)]
+                  (`(,(delta<- dir)) .repeat stride)))
+    (let places (amassing vector+ '(0 0) deltas))
     (let result (!map<-))
-    (let step (box<- 0))
-    (for amass [(p '(0 0)) ((~ dir stride) path)]
-      (let dp (delta<- dir))
-      (for amass [p (_ stride.till)]
-        (hey (vector+ p dp)
-             ||(result .set! it (min (result .get it infinity)
-                                     step.+1!)))))
+    (for each! [((~ i p) places.items.rest)]
+      (result .set! p (min i (result .get p infinity))))
     result)
 
   ;; TODO map .intersect
