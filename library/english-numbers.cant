@@ -63,7 +63,7 @@
 | 'nine'   :end :'ninth'
 | 'twelve' :end :'twelfth'
 |          :end :'th'
-| :anyone loop"))
+| {1} loop"))
 
 (to (ordinalize-suffix n)
   (surely (count? n))

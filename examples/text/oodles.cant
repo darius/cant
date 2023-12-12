@@ -17,7 +17,7 @@
 
 (let shrink (/ 4 5))                    ;TODO floating-point
 
-(let scan (like "{:letter+ '!'? | :skip}*"))
+(let scan (like "{:letter+ '!'? | 1}*"))
 
 (let menu
   (map<-lists

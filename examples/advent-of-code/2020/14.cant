@@ -1,7 +1,7 @@
 ;; (Use run.cant to run this.)
 
 (let input data-file.read-lines)
-(let parse (like "'mask = ' {:skip*} | 'mem[' :count '] = ' :count"))
+(let parse (like "'mask = ' {1*} | 'mem[' :count '] = ' :count"))
 (let program (each parse input))
 
 (to (part1)

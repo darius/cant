@@ -59,7 +59,7 @@
 ;; it wouldn't work on an op like `repeat` which in (repeat peg n)
 ;; takes a number n. So here's an ad-hoc variant just for `repeat`.
 ;; TODO maybe add `repeat` to parson-core too
-;; TODO document the syntax for this (like "'foo' *5")
+;; TODO document the syntax for this (like "'foo' ^5")
 (to (lift-repeat {lifted refs p<-} count @(optional thru-count))
   (push {lifted refs (on (builder rules subs)
                        (let peg (p<- builder rules subs))

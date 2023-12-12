@@ -15,13 +15,13 @@ factor   :  primary (  '*'    :star
 primary  :  '(' exp ')'
          |  '[' rune* ']'     :join :oneof
          |  '.'               :dot
-         |  '\\\\' :anyone    :literal
+         |  '\\\\' {1}        :literal
          |  !( '.' | '(' | ')'
              | '*' | '+' | '?'
              | '|' | '[' | ']')
-            :anyone           :literal.
-rune     :  '\\\\' :anyone
-         |  !']' :anyone.
+            {1}               :literal.
+rune     :  '\\\\' {1}
+         |  !']' {1}.
 "))
 
 (to (regex-parser<- builder)
