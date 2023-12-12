@@ -1,7 +1,5 @@
 ;; (Use run.cant to run this.)
 
-(import (use 'queue) empty push extend peek)
-
 (let eg1 "\
 .....
 .S-7.
