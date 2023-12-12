@@ -28,7 +28,7 @@ bal  :  ('(' bal ')' bal)?.
 
 (let balanced "
 bal  :  '(' c* ')'.
-c    :  !('(' | ')') :anyone
+c    :  !('(' | ')') {1}
      |  bal.
 ")
 (try balanced 'c (!map<-) `("(())"))
@@ -50,7 +50,7 @@ B     :  'b' S
 (let text "
 split  :  (p | chunk :join) split | .  # XXX why not a *?
 chunk  :  p
-       |  :anyone chunk.
+       |  {1} chunk.
 p      :  :whitespace.
 ")
 (let input "hello a world  is    nice    ")

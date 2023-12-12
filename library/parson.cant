@@ -203,7 +203,6 @@
 
 (let default-subs
   (map<- (~ 'skip skip-any-1)
-         (~ 'anyone any-1) ;TODO just drop this now that we have {skip}?
          (~ 'letter (skip-1 ~.letter?))
          (~ 'digit (skip-1 ~.digit?))
          (~ 'end end)
