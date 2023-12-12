@@ -116,7 +116,7 @@
 (let grammar (grammar<- "
 main: army**separator :end.
 army: army_name ':\n' [group* :list] :list.
-army_name: { (!':' :skip)* }.
+army_name: { (!':' 1)* }.
 group: :count ' units each with ' :count ' hit points ' opt_qualities 
        'with an attack that does ' :count ' ' word 
        ' damage at initiative ' :count '\n' :Group.
@@ -182,6 +182,6 @@ separator: '\n'.
         (so (let M ((+ L H) .quotient 2))
             (surely (< M H)))
         (if (ok? M)    (searching L M))
-        (else          (searching M H))))))
+        (else          (searching M H)))))
 
 (out .say "Part 2: ~w\n" (part-2))

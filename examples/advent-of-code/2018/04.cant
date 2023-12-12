@@ -11,7 +11,7 @@ nap:       timestamp 'falls asleep\n'
            timestamp 'wakes up\n'    :list.
 
 timestamp: '[' date _ time ']' _.
-date:      (!_ :skip)+.
+date:      (!_ 1)+.
 time:      :count :drop ':' :count.
 
 _:         :whitespace.

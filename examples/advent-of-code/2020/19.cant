@@ -6,7 +6,7 @@
 (let g1 (grammar<- "
 start: main :end.
 main: :count ': ' rhs.
-rhs: '\"' {:skip} '\"' :Lit | alt.
+rhs: '\"' {1} '\"' :Lit | alt.
 alt: seq ('|'_ alt :Alt)?.
 seq: :count :Ref _ (seq :Seq)?.
 _: :whitespace*.

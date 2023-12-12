@@ -4,12 +4,12 @@
 
 (let grammar (grammar<- "
 main: clause* :list '\n\n' program.  # N.B. no :end
-clause: 'Before: [' [:count ', ' :count ', ' :count ', ' :count :list] ']\n'
-        [:count ' ' :count ' ' :count ' ' :count :list] '\n'
-        'After:  [' [:count ', ' :count ', ' :count ', ' :count :list] ']\n\n' :list.
+clause: 'Before: [' [:count (', ' :count)^3 :list] ']\n'
+        [:count (' ' :count)^3 :list] '\n'
+        'After:  [' [:count (', ' :count)^3 :list] ']\n\n' :list.
 
 program: insn* :list.
-insn:    :count ' ' :count ' ' :count ' ' :count '\n' :list.
+insn:    :count (' ' :count)^3 '\n' :list.
 "))
 (let parser (-> (map<-) grammar (~ 'main)))
 
