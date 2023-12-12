@@ -118,7 +118,11 @@
     ;;TODO a method to get an empty seq of my type; and then factor out duplicate code
     (may n
       (be 0 '())             
-      (else (chain @(each ||list n.till)))))
+      (else (if (and (link? list) (null? list.rest))
+                (do [(element list.first)]
+                   ;; This case broken out for speed so you're not tempted to avoid .repeat
+                  (each ||element n.till))
+                (chain @(each ||list n.till))))))
 
   (to (~ .pad-right n padding)
     ;;TODO factor out duplicate code wrt text methods
