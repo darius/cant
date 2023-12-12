@@ -13,11 +13,15 @@
 
   (to (-- (~ .compare t) message)
     (if (text? t)
-        (__string-compare me t)    ; just a speedup
-        (list-trait me message)))   ; TODO but is this what we really want? (<=> "a" '(#\a))
+        (__string-compare me t) ; unnecessary to break out this case; just for speed
+        (list-trait me message))) ; TODO but is this what we really want? (<=> "a" '(#\a))
 
   (to (~ .join texts)
-    (text<-list ((list<-text me) .join texts)))
+    (hm (if (= me "") (__string-append @texts)) ;; just for speed again
+        (if texts.none? "")
+        (else (__string-append @(link texts.first
+                                      (for fold [(t texts.rest) (riffles '())]
+                                        (link me t riffles)))))))
 
   (to ~.values
     (list<-text me))
