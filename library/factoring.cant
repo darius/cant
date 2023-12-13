@@ -8,7 +8,7 @@
 ;; An incremental Sieve of Eratosthenes, implicitly leaving out the
 ;; even numbers. (Incremental because we don't know how high we're
 ;; going to be asked to go.) We keep a map keyed on the next numbers
-;; to cross out, for all the odd primes we've discovered so far. The
+;; to cross out, for all the odd primes we've encountered so far. The
 ;; step size for each odd prime p is 2p, since we only consider odd
 ;; numbers: so for p we'll first insert 2p at the key p^2, then after
 ;; we reach p^2 we'll delete it and insert 2p at the key p^2+2p, then
@@ -18,11 +18,10 @@
 ;; Sometimes multiple primes are at the same key, so the value for each
 ;; key is a list.
 
-;; Each odd prime found so far appears in a value of this map, in a
-;; list keyed by the next candidate multiple of the prime to check.
-;; E.g. 3 initially appears in (sieve 9) => '(6)
-;;   (at 9, because 6 will get skipped because it's even).
-;; Then after the sieve reaches 9, that key will be deleted and 3 will
+;; This map, `sieve`, holds the crossing-out agenda.
+;; E.g. the prime 3 is responsible for the entry (sieve 9) => '(6)
+;;   (at key 9 as that's 3^2, as explained above; step of 6 as that's 2*3).
+;; Then after the sieve reaches 9, that key will be deleted and 6 will
 ;; reappear in (sieve 15), and so on afterwards. 
 (let sieve (!map<-))
 
