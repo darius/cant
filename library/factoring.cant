@@ -58,12 +58,12 @@
   (surely (< 0 n))
   (if (= n 1)
       '()
-      (do trying [n (p the-primes.first) (primes the-primes.rest)]
+      (do trying [n (p the-primes.first) (ps the-primes.rest)]
         (if (n .even? p)
             (link p (if (= p n)
                         '()
-                        (trying (n .quotient p) p primes)))
-            (trying n primes.first primes.rest)))))
+                        (trying (n .quotient p) p ps)))
+            (trying n ps.first ps.rest)))))
 
 ;; TODO better algorithm?
 (to (prime? n)
@@ -71,10 +71,10 @@
   (and (< 1 n)
        (if (<= n last-known-prime.^)
            (known-primes .maps? n)
-           (do trying [(primes the-primes)]
-             (let p primes.first)
+           (do trying [(ps the-primes)]
+             (let p ps.first)
              (hm (if (n .even? p) #no)
-                 (if (< (p .** 2) n) (trying primes.rest))
+                 (if (< (p .** 2) n) (trying ps.rest))
                  (else #yes))))))
 
 ;; List n's divisors. Comes up a few times already in project-oiler, where the
