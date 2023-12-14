@@ -52,5 +52,5 @@ XXX = (XXX, XXX)")
   (to (period<- start)
     (let steps (amassing$ step start turns.cycle))
     ((keep-until (~ .suffix? "Z") steps) .count))
-    
+
   (lcm @(each period<- (keep (~ .suffix? "A") nodes.keys))))

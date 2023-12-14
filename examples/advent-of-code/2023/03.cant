@@ -25,8 +25,7 @@
 (to (symbol-rune? rune)
   (not (".\n0123456789" .find? rune)))
 
-(let symbols-at ;; list of symbol positions
-  (for keep [(pos input.keys)] (symbol-rune? (input pos))))
+(let symbols-at (where symbol-rune? input)) ;; list of symbol positions
 
 (let neighborhood ;; list of offsets from a position to its neighbors
   (do [(w ((input .find #\newline) .+1))] ;; width
@@ -37,7 +36,8 @@
            (number-starts .get (+ pos offset)))))
 
 (to (part1)
-  (-> (gather neighbors<- symbols-at) ~.nub ||(sum-by number-values it)))
+  (sum-by number-values
+          ((gather neighbors<- symbols-at) .nub)))
 
 (to (part2)
   (let gears (for yeahs [(pos symbols-at)]
