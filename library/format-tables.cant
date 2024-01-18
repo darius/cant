@@ -1,4 +1,4 @@
-;; Format a sequence of texts in columns.
+;; Lay out a plain-text table; also tabulate texts into columns.
 ;; Based on github.com/darius/columnize
 
 ;; Given a list of rows, each a list of things, return a list of lines.
