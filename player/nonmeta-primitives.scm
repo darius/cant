@@ -204,9 +204,14 @@
     (out ,(current-output-port))
     (err ,(current-error-port))
 
-    (link ,list*) ;;TODO insist that last argument = nil or pair? TODO is this n-arg form useful? 
+    (link ,list*) ;;TODO insist that last argument = nil or pair?
     (link? ,pair?)
     (null? ,null?)
+    ;; TODO I'm yoyoing here between list? and (lambda (x) (or (null? x) (pair? x))))
+    ;;   The problem is that we need a workable list type that fits both Scheme lists and Cant lazy lists
+    ;;   but we first need a design for data object definitions in Cant, and also a fallback for Scheme list
+    ;;   primitives when applied to "lists" that are not Scheme pair-lists. As interim definitions
+    ;;   of `list?`, these are both too hacky.
     (list? ,(lambda (x) (or (null? x) (pair? x))))
     (number? ,number?)
     (integer? ,integer?)
