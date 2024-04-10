@@ -3,7 +3,7 @@
 
 (to (run e)
   (out .say "Playing ~w\n" e)
-  (out .print (play (cant .parse-expression e) full-powered-setting)))
+  (out .print (play (cant .parse-expression e) computational-setting)))
 
 ;; TODO code duplicated from smoke-test.cant
 
