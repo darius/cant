@@ -1,0 +1,77 @@
+;; Error handling - oops, surely, ejectors
+
+;;; OOPS - raising errors
+
+;; (oops message args...) raises an error
+;; Uncomment to see:
+;; (oops "Something went wrong" 'with 'these 'values)
+
+;;; SURELY - assertions
+
+(to (divide a b)
+  (surely (not= b 0) "cannot divide by zero")
+  (/ a b))
+
+(out .say "10 / 2 = ~w\n" (divide 10 2))
+;; (divide 10 0)  ;; would fail assertion
+
+;;; EJECTORS - non-local returns (like call/cc but limited)
+
+;; with-ejector creates an ejector that can bail out of a computation
+(out .say "\nEjector example:\n")
+
+(let result
+  (with-ejector
+    (on (ej)
+      (out .say "  before ejection\n")
+      (ej .eject 'early-exit)
+      (out .say "  this never runs\n")
+      'normal-exit)))
+
+(out .say "  result: ~w\n" result)
+
+;; More practical: search with early exit
+(to (find-first pred xs)
+  (with-ejector
+    (on (found)
+      (for each! [(x xs)]
+        (when (pred x)
+          (found .eject x)))
+      #no)))  ;; not found
+
+(out .say "\nfind-first even in (1 3 5 6 7): ~w\n"
+  (find-first ~.even? '(1 3 5 6 7)))
+(out .say "find-first even in (1 3 5 7): ~w\n"
+  (find-first ~.even? '(1 3 5 7)))
+
+;; Ejectors become invalid after with-ejector returns
+;; Trying to use a stale ejector raises an error
+
+;;; EJECTOR-PROTECT - cleanup on non-local exit
+
+;; NOTE: ejector-protect is marked "TODO untested" in the interpreter
+;; and appears buggy when combined with ejectors. It works for normal
+;; completion but fails when an ejector fires through it.
+
+;; This works (normal completion):
+(out .say "\nejector-protect (normal path):\n")
+(let r1
+  (ejector-protect
+    ($ (out .say "  main code\n") 'result)
+    ($ (out .say "  cleanup\n"))))
+(out .say "  returned: ~w\n" r1)
+
+;; This FAILS currently (ejector path):
+;; (let r2
+;;   (with-ejector
+;;     (on (ej)
+;;       (ejector-protect
+;;         ($ (ej .eject 'early))
+;;         ($ (out .say "cleanup\n"))))))
+;; BUG: Match failure in interpreter
+
+;;; CATCHING ERRORS
+
+;; The signal handler mechanism allows catching errors
+;; but it's fairly low-level. See examples/failing.cant for details.
+;; Basic pattern uses the-signal-handler box.

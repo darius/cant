@@ -1,0 +1,21 @@
+;; Module example - defining a reusable module
+
+;; A module typically ends with an `export` that creates a map
+;; of the public names to their values
+
+(to (private-helper x)
+  "This won't be exported"
+  (* x x))
+
+(to (public-square x)
+  "Square a number"
+  (private-helper x))
+
+(to (public-cube x)
+  "Cube a number"
+  (* x (private-helper x)))
+
+(let public-constant 42)
+
+;; Export the public interface
+(export public-square public-cube public-constant)

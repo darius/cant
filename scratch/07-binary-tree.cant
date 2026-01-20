@@ -1,0 +1,72 @@
+;; Binary search tree - a more substantial example
+
+;; Trees are represented as terms:
+;; {empty} - empty tree
+;; {node value left right} - node with value and children
+
+(let empty-tree {empty})
+
+(to (tree-insert tree value)
+  "Insert a value into a BST, returning a new tree"
+  (may tree
+    (be {empty}
+      {node value {empty} {empty}})
+    (be {node v left right}
+      (hm (if (< value v)
+            {node v (tree-insert left value) right})
+          (if (> value v)
+            {node v left (tree-insert right value)})
+          (else tree)))))  ;; already present
+
+(to (tree-contains? tree value)
+  "Check if value is in the tree"
+  (may tree
+    (be {empty} #no)
+    (be {node v left right}
+      (hm (if (< value v) (tree-contains? left value))
+          (if (> value v) (tree-contains? right value))
+          (else #yes)))))
+
+(to (tree-to-list tree)
+  "In-order traversal to sorted list"
+  (may tree
+    (be {empty} '())
+    (be {node v left right}
+      (chain (tree-to-list left)
+             (link v (tree-to-list right))))))
+
+(to (tree-size tree)
+  "Count nodes in tree"
+  (may tree
+    (be {empty} 0)
+    (be {node _ left right}
+      (+ 1 (tree-size left) (tree-size right)))))
+
+(to (tree-depth tree)
+  "Maximum depth of tree"
+  (may tree
+    (be {empty} 0)
+    (be {node _ left right}
+      (+ 1 (max (tree-depth left) (tree-depth right))))))
+
+;; Build a tree
+(let t
+  (for amass [(tree empty-tree) (x '(5 3 7 1 4 6 8 2))]
+    (tree-insert tree x)))
+
+(out .say "Tree: ~w\n" t)
+(out .say "Size: ~w\n" (tree-size t))
+(out .say "Depth: ~w\n" (tree-depth t))
+(out .say "Sorted: ~w\n" (tree-to-list t))
+
+(out .say "\nMembership tests:\n")
+(for each! [(x '(1 2 3 4 5 6 7 8 9 10))]
+  (out .say "  contains ~w? ~w\n" x (tree-contains? t x)))
+
+;; Try with a different insertion order (should give different shape)
+(let t2
+  (for amass [(tree empty-tree) (x '(1 2 3 4 5 6 7 8))]
+    (tree-insert tree x)))
+
+(out .say "\nDegenerate tree (sorted insert):\n")
+(out .say "  Depth: ~w (vs size ~w)\n" (tree-depth t2) (tree-size t2))

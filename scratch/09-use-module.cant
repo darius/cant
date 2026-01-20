@@ -1,0 +1,23 @@
+;; Using a module with `use`
+
+;; Load our module - use with a string loads relative to current file
+(let math-module (use "08-module"))
+
+(out .say "Module: ~w\n" math-module)
+(out .say "Keys: ~w\n" math-module.keys)
+
+;; Access exports through the map
+(out .say "\nUsing module directly:\n")
+(out .say "  (math-module 'public-square) 5 = ~w\n"
+  ((math-module 'public-square) 5))
+
+;; Or use `import` to bind names locally
+(import math-module public-square public-cube public-constant)
+
+(out .say "\nAfter import:\n")
+(out .say "  (public-square 5) = ~w\n" (public-square 5))
+(out .say "  (public-cube 3) = ~w\n" (public-cube 3))
+(out .say "  public-constant = ~w\n" public-constant)
+
+;; Can't access private-helper
+;; (out .say "~w\n" (math-module 'private-helper))  ;; would fail

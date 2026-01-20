@@ -1,0 +1,55 @@
+;; Traits - delegation-based code sharing
+
+;; A trait is a function that takes (receiver, message) and handles
+;; messages the receiver doesn't handle itself.
+
+;; Simple trait for "named things"
+(make-trait named-trait me
+  (to ~.greeting ("Hi, I'm ~d" .format me.name))
+  (to ~.describe ("~d the ~d" .format me.name me.kind)))
+
+;; Object that uses the trait
+(make alice {extend named-trait}
+  (to ~.name "Alice")
+  (to ~.kind "gardener"))
+
+(out .say "alice.name: ~w\n" alice.name)
+(out .say "alice.kind: ~w\n" alice.kind)
+(out .say "alice.greeting: ~w\n" alice.greeting)
+(out .say "alice.describe: ~w\n" alice.describe)
+
+;; Another object using same trait, with different data
+(make bob {extend named-trait}
+  (to ~.name "Bob")
+  (to ~.kind "programmer"))
+
+(out .say "bob.greeting: ~w\n" bob.greeting)
+(out .say "bob.describe: ~w\n" bob.describe)
+
+;; Trait with open recursion - trait calls back into object methods
+(make-trait speaker-trait me
+  (to (~ .say-to someone)
+    ;; This calls me.name and me.message which must be defined by the object
+    (out .say "~d says to ~d: ~w\n" me.name someone me.message)))
+
+(make charlie {extend speaker-trait}
+  (to ~.name "Charlie")
+  (to ~.message "How are you?"))
+
+(charlie .say-to "Dana")
+
+;; Manual delegation (without {extend ...} sugar)
+;; Shows what {extend trait} is doing under the hood
+(to (make-delegating-object)
+  (make obj
+    (to ~.own-method "my own method")
+    (to ~.name "ManualDelegate")
+    (to ~.kind "experiment")
+    ;; A catch-all clause that delegates to the trait
+    (to message
+      (named-trait obj message))))
+
+(let dobj (make-delegating-object))
+(out .say "dobj.own-method: ~w\n" dobj.own-method)
+(out .say "dobj.greeting: ~w\n" dobj.greeting)  ;; handled by named-trait
+(out .say "dobj.describe: ~w\n" dobj.describe)  ;; handled by named-trait

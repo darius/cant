@@ -1,0 +1,40 @@
+;; Terms - tagged immutable data structures
+
+;; Create a term with a custom tag
+(let point {point 3 4})
+(out .say "point = ~w\n" point)
+(out .say "point.tag = ~w\n" point.tag)
+(out .say "point.parts = ~w\n" point.parts)
+(out .say "(point .part 0) = ~w\n" (point .part 0))
+(out .say "(point .part 1) = ~w\n" (point .part 1))
+
+;; Tuples use ~ as the tag
+(let tup {~ 'a 'b 'c})
+(out .say "tuple = ~w\n" tup)
+(out .say "tuple.tag = ~w\n" tup.tag)
+(out .say "tuple.parts = ~w\n" tup.parts)
+
+;; Terms are values - equality is structural
+(out .say "{point 1 2} = {point 1 2}? ~w\n" (= {point 1 2} {point 1 2}))
+(out .say "{point 1 2} = {point 1 3}? ~w\n" (= {point 1 2} {point 1 3}))
+
+;; Pattern matching on terms with `may`
+;; NOTE: sqrt and abs are METHODS on numbers, not global functions!
+;; Use ((expr) .sqrt) or n.sqrt - the x.method sugar only works for identifiers
+(to (point-distance p)
+  (may p
+    (be {point x y} ((+ (* x x) (* y y)) .sqrt))
+    (be {point-3d x y z} ((+ (* x x) (* y y) (* z z)) .sqrt))
+    (else (oops "not a point" p))))
+
+(out .say "distance of {point 3 4} = ~w\n" (point-distance {point 3 4}))
+(out .say "distance of {point-3d 1 2 2} = ~w\n" (point-distance {point-3d 1 2 2}))
+
+;; Terms can be used as callable messages
+;; When you call a term on an object, it sends itself as the message
+(let msg {.greet "Claude"})
+(make greeter
+  (to (~ .greet name) ("Hello, ~d!" .format name)))
+(out .say "direct call: ~w\n" (greeter .greet "Claude"))
+(out .say "term as message: ~w\n" (msg greeter))
+(out .say "also works as: ~w\n" (call greeter msg))

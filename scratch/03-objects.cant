@@ -1,0 +1,80 @@
+;; Objects - creation, state, and basic patterns
+
+;; Simple stateless object
+(make greeter
+  (to (~ .greet name) ("Hello, ~d!" .format name))
+  (to ~.default-greeting "Hello, stranger!"))
+
+(out .say "~w\n" (greeter .greet "World"))
+(out .say "~w\n" greeter.default-greeting)
+
+;; Object with mutable state using a box
+(to (make-counter initial)
+  (let n (box<- initial))
+  (make counter
+    (to ~.read n.^)
+    (to ~.inc! (n .^= n.^.+1))
+    (to ~.dec! (n .^= n.^.-1))
+    (to (~ .add! k) (n .^= (+ n.^ k)))
+    (to ~.reset! (n .^= initial))))
+
+(let c (make-counter 10))
+(out .say "initial: ~w\n" c.read)
+c.inc!
+c.inc!
+(out .say "after 2 incs: ~w\n" c.read)
+(c .add! 100)
+(out .say "after adding 100: ~w\n" c.read)
+c.reset!
+(out .say "after reset: ~w\n" c.read)
+
+;; Object that captures its environment (closure-like)
+(to (make-accumulator)
+  (let items (box<- '()))
+  (make accumulator
+    (to (~ .add! item)
+      (items .^= (link item items.^)))
+    (to ~.items items.^)
+    (to ~.count items.^.count)
+    (to ~.clear! (items .^= '()))))
+
+(let acc (make-accumulator))
+(acc .add! 'apple)
+(acc .add! 'banana)
+(acc .add! 'cherry)
+(out .say "items: ~w\n" acc.items)
+(out .say "count: ~w\n" acc.count)
+
+;; Nested object creation - a "bank account" with transaction history
+(to (make-account owner initial-balance)
+  (let balance (box<- initial-balance))
+  (let history (box<- '()))
+
+  (to (record! type amount)
+    (history .^= (link {transaction type amount balance.^} history.^)))
+
+  (make account
+    (to ~.owner owner)
+    (to ~.balance balance.^)
+    (to ~.history history.^)
+
+    (to (~ .deposit! amount)
+      (surely (> amount 0) "deposit must be positive")
+      (balance .^= (+ balance.^ amount))
+      (record! 'deposit amount)
+      balance.^)
+
+    (to (~ .withdraw! amount)
+      (surely (> amount 0) "withdrawal must be positive")
+      (surely (<= amount balance.^) "insufficient funds")
+      (balance .^= (- balance.^ amount))
+      (record! 'withdrawal amount)
+      balance.^)))
+
+(let acct (make-account "Alice" 100))
+(out .say "owner: ~w, balance: ~w\n" acct.owner acct.balance)
+(acct .deposit! 50)
+(out .say "after deposit 50: ~w\n" acct.balance)
+(acct .withdraw! 30)
+(out .say "after withdraw 30: ~w\n" acct.balance)
+(out .say "history: ~w\n" acct.history)

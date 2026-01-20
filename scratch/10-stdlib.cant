@@ -1,0 +1,52 @@
+;; Using standard library and exploring what's available
+
+;; Many useful functions are already in the standard environment.
+;; Note: can't shadow already-defined names with import.
+
+;; SORTING (already available, no import needed)
+(let xs '(3 1 4 1 5 9 2 6))
+(out .say "Original: ~w\n" xs)
+(out .say "Sorted: ~w\n" (sort-by itself xs))
+
+;; Sort by a key function
+(let words '("banana" "apple" "cherry" "date"))
+(out .say "\nWords: ~w\n" words)
+(out .say "By length: ~w\n" (sort-by ~.count words))
+(out .say "Alphabetical: ~w\n" (sort-by itself words))
+
+;; Flexarray is already global
+(out .say "\n--- Flexarray (already global) ---\n")
+(let fa (flexarray<- 'a 'b 'c))
+(out .say "Flexarray: ~w\n" fa)
+(fa .push! 'd)
+(fa .push! 'e)
+(out .say "After pushing d, e: ~w\n" fa)
+(out .say "Pop: ~w\n" fa.pop!)
+(out .say "After pop: ~w\n" fa)
+
+;; Complex numbers module
+;; NOTE: No complex<- constructor! Just use the {complex x y} term directly
+(out .say "\n--- Complex numbers (from library) ---\n")
+(let complex-mod (use 'complex))
+(import complex-mod c+ c* c-abs)
+
+(let z1 {complex 3 4})  ;; Direct term construction!
+(let z2 {complex 1 1})
+(out .say "z1 = ~w\n" z1)
+(out .say "z2 = ~w\n" z2)
+(out .say "z1 + z2 = ~w\n" (c+ z1 z2))
+(out .say "z1 * z2 = ~w\n" (c* z1 z2))
+(out .say "|z1| = ~w\n" (c-abs z1))
+
+;; The ratio library for exact fractions
+(out .say "\n--- Ratios (fractions) ---\n")
+(let ratio-mod (use 'ratio))
+(out .say "Ratio exports: ~w\n" ratio-mod.keys)
+(import ratio-mod ratio<- r+ r*)
+
+(let half (ratio<- 1 2))
+(let third (ratio<- 1 3))
+(out .say "1/2 = ~w\n" half)
+(out .say "1/3 = ~w\n" third)
+(out .say "1/2 + 1/3 = ~w\n" (r+ half third))
+(out .say "1/2 * 1/3 = ~w\n" (r* half third))

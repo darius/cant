@@ -1,0 +1,179 @@
+;; Algebraic simplification a la Norvig's PAIP chapter 8
+;;
+;; Expressions are terms: {+ a b}, {* a b}, {^ a b}, {- a}, {ln a}, etc.
+;; Variables are symbols: 'x, 'y
+;; Numbers are themselves.
+
+;;; Predicates
+
+(to (variable? x) (symbol? x))
+(to (expr? x) (or (number? x) (variable? x) (term? x)))
+
+;;; Constructors that auto-simplify
+
+(to (make+ a b)
+  (simplify-binary '+ a b
+    (on (a b)
+      (hm (if (= a 0) b)
+          (if (= b 0) a)
+          (if (and (number? a) (number? b)) (+ a b))
+          (if (= a b) (make* 2 a))
+          (else {+ a b})))))
+
+(to (make- a b)
+  (simplify-binary '- a b
+    (on (a b)
+      (hm (if (= b 0) a)
+          (if (= a b) 0)
+          (if (and (number? a) (number? b)) (- a b))
+          (else {- a b})))))
+
+(to (make* a b)
+  (simplify-binary '* a b
+    (on (a b)
+      (hm (if (= a 0) 0)
+          (if (= b 0) 0)
+          (if (= a 1) b)
+          (if (= b 1) a)
+          (if (and (number? a) (number? b)) (* a b))
+          (else {* a b})))))
+
+(to (make/ a b)
+  (simplify-binary '/ a b
+    (on (a b)
+      (hm (if (= b 1) a)
+          (if (= a b) 1)
+          (if (and (number? a) (number? b) (not= b 0)
+                   (integer? a) (integer? b) (= 0 (a .modulo b)))
+              (/ a b))
+          (else {/ a b})))))
+
+(to (make^ a b)
+  (simplify-binary '^ a b
+    (on (a b)
+      (hm (if (= b 0) 1)
+          (if (= b 1) a)
+          (if (= a 0) 0)
+          (if (= a 1) 1)
+          (if (and (number? a) (number? b) (integer? b) (>= b 0))
+              (a .** b))
+          (else {^ a b})))))
+
+(to (make-neg a)
+  (let sa (simplify a))
+  (hm (if (number? sa) (- sa))
+      (if (and (term? sa) (= sa.tag '-) (= 1 sa.parts.count))
+          (sa .part 0))  ;; --x = x
+      (else {- sa})))
+
+(to (make-ln a)
+  (let sa (simplify a))
+  (hm (if (= sa 1) 0)
+      (if (and (number? sa) (> sa 0)) sa.ln)
+      (else {ln sa})))
+
+;; Helper: simplify both args, then apply specific rules
+(to (simplify-binary tag a b specific-rules)
+  (let sa (simplify a))
+  (let sb (simplify b))
+  (specific-rules sa sb))
+
+;;; Main simplifier - recursively simplify subexpressions
+
+(to (simplify expr)
+  (hm (if (number? expr) expr)
+      (if (variable? expr) expr)
+      (if (term? expr)
+          (may expr
+            (be {+ a b} (make+ a b))
+            (be {- a b} (make- a b))
+            (be {- a}   (make-neg a))
+            (be {* a b} (make* a b))
+            (be {/ a b} (make/ a b))
+            (be {^ a b} (make^ a b))
+            (be {ln a}  (make-ln a))
+            (else expr)))
+      (else expr)))
+
+;;; Differentiation (to generate interesting expressions to simplify)
+
+(to (deriv expr var)
+  "Differentiate expr with respect to var, returning simplified result"
+  (hm (if (number? expr) 0)
+      (if (variable? expr)
+          (if (= expr var) 1 0))
+      (if (term? expr)
+          (may expr
+            (be {+ a b} (make+ (deriv a var) (deriv b var)))
+            (be {- a b} (make- (deriv a var) (deriv b var)))
+            (be {- a}   (make-neg (deriv a var)))
+            (be {* a b} (make+ (make* a (deriv b var))
+                               (make* (deriv a var) b)))
+            (be {/ a b} (make/ (make- (make* (deriv a var) b)
+                                      (make* a (deriv b var)))
+                               (make^ b 2)))
+            (be {^ a n} (if (number? n)
+                            (make* n (make* (make^ a (- n 1)) (deriv a var)))
+                            (deriv {* {ln a} n} var)))  ;; a^n = e^(n*ln(a))
+            (be {ln a}  (make/ (deriv a var) a))
+            (else (oops "Can't differentiate" expr))))
+      (else (oops "Not an expression" expr))))
+
+;;; Pretty printer for expressions
+
+(to (expr->text expr)
+  (hm (if (number? expr) ("~d" .format expr))
+      (if (variable? expr) ("~d" .format expr))
+      (if (term? expr)
+          (may expr
+            (be {+ a b} ("(~d + ~d)" .format (expr->text a) (expr->text b)))
+            (be {- a b} ("(~d - ~d)" .format (expr->text a) (expr->text b)))
+            (be {- a}   ("(-~d)" .format (expr->text a)))
+            (be {* a b} ("(~d * ~d)" .format (expr->text a) (expr->text b)))
+            (be {/ a b} ("(~d / ~d)" .format (expr->text a) (expr->text b)))
+            (be {^ a b} ("(~d ^ ~d)" .format (expr->text a) (expr->text b)))
+            (be {ln a}  ("ln(~d)" .format (expr->text a)))
+            (else ("~w" .format expr))))
+      (else ("~w" .format expr))))
+
+;;; Tests
+
+(out .say "=== Simplification Tests ===\n\n")
+
+(to (test-simplify label expr)
+  (let result (simplify expr))
+  (out .say "~d:\n  ~d\n  = ~d\n\n" label (expr->text expr) (expr->text result)))
+
+(test-simplify "x + 0" {+ 'x 0})
+(test-simplify "0 + x" {+ 0 'x})
+(test-simplify "x * 1" {* 'x 1})
+(test-simplify "x * 0" {* 'x 0})
+(test-simplify "x - x" {- 'x 'x})
+(test-simplify "x / x" {/ 'x 'x})
+(test-simplify "x ^ 0" {^ 'x 0})
+(test-simplify "x ^ 1" {^ 'x 1})
+(test-simplify "2 + 3" {+ 2 3})
+(test-simplify "(2 + 3) * (4 - 4)" {* {+ 2 3} {- 4 4}})
+(test-simplify "x + x" {+ 'x 'x})
+
+(out .say "=== Differentiation Tests ===\n\n")
+
+(to (test-deriv label expr var)
+  (let result (deriv expr var))
+  (out .say "d/d~d [~d]\n  = ~d\n\n" var (expr->text expr) (expr->text result)))
+
+(test-deriv "constant" 5 'x)
+(test-deriv "x" 'x 'x)
+(test-deriv "y (wrt x)" 'y 'x)
+(test-deriv "x + 1" {+ 'x 1} 'x)
+(test-deriv "x^2" {^ 'x 2} 'x)
+(test-deriv "x^3" {^ 'x 3} 'x)
+(test-deriv "x^2 + x" {+ {^ 'x 2} 'x} 'x)
+(test-deriv "3*x^2 + 2*x + 1" {+ {+ {* 3 {^ 'x 2}} {* 2 'x}} 1} 'x)
+
+;; More complex: d/dx (x^2 * (x + 1))
+(let complex-expr {* {^ 'x 2} {+ 'x 1}})
+(test-deriv "x^2 * (x + 1)" complex-expr 'x)
+
+;; Chain rule: d/dx ln(x^2 + 1)
+(test-deriv "ln(x^2 + 1)" {ln {+ {^ 'x 2} 1}} 'x)

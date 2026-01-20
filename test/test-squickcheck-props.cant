@@ -1,0 +1,406 @@
+;; Property-based tests using squickcheck
+;; A separate test suite for random property testing.
+
+(import ((use 'squickcheck) (export out))
+  a-bool a-count an-int a-rune a-printable-rune a-text a-printable-text
+  a-list-of a-tuple a-choice
+  all should context<-)
+
+(out .say "=== Squickcheck Property Tests ===\n\n")
+
+;;; Custom generators
+
+(to (a-small-count g)
+  (g .natural 10))
+
+(to (a-positive g)
+  (+ 1 (g .natural (- g.size 1))))
+
+(to ((a-sorted-list-of gen) g)
+  (sort ((a-list-of gen) g)))
+
+(to (a-nonempty-list g)
+  (let xs ((a-list-of a-count) g))
+  (if xs.none? '(0) xs))
+
+;;; ============================================================
+;;; Core list operations (from abcs)
+;;; ============================================================
+
+(out .say "--- List operations ---\n")
+
+;; reverse is an involution
+(for all [(xs (a-list-of a-count))]
+  (should = xs (reverse (reverse xs))))
+
+;; reverse preserves length
+(for all [(xs (a-list-of a-count))]
+  (should = xs.count ((reverse xs) .count)))
+
+;; chain is associative
+(for all [(xs (a-list-of a-count)) (ys (a-list-of a-count)) (zs (a-list-of a-count))]
+  (should = (chain (chain xs ys) zs)
+            (chain xs (chain ys zs))))
+
+;; chain with empty is identity
+(for all [(xs (a-list-of a-count))]
+  (should = xs (chain '() xs))
+  (should = xs (chain xs '())))
+
+;; chain length is sum of lengths
+(for all [(xs (a-list-of a-count)) (ys (a-list-of a-count))]
+  (should = (+ xs.count ys.count)
+            ((chain xs ys) .count)))
+
+;; each preserves length
+(for all [(xs (a-list-of an-int))]
+  (should = xs.count ((each ~.magnitude xs) .count)))
+
+;; keep + skip = original (as multisets)
+(for all [(xs (a-list-of an-int))]
+  (let evens (keep ~.even? xs))
+  (let odds  (skip ~.even? xs))
+  (should = (sort xs) (sort (chain evens odds))))
+
+;;; ============================================================
+;;; Sorting (library/sort.cant)
+;;; ============================================================
+
+(out .say "--- Sorting ---\n")
+
+;; sort and sort-by are global; import the rest
+(import (use 'sort) sorted? merge)
+
+;; sort produces sorted output
+(for all [(xs (a-list-of an-int))]
+  (should sorted? (sort xs)))
+
+;; sort is idempotent
+(for all [(xs (a-list-of an-int))]
+  (should = (sort xs) (sort (sort xs))))
+
+;; sort preserves length
+(for all [(xs (a-list-of an-int))]
+  (should = xs.count ((sort xs) .count)))
+
+;; sort preserves elements (as multiset)
+(for all [(xs (a-list-of a-count))]
+  (should = (sort xs) (sort (reverse xs))))
+
+;; merge of sorted lists is sorted
+(for all [(xs (a-sorted-list-of an-int)) (ys (a-sorted-list-of an-int))]
+  (should sorted? (merge xs ys)))
+
+;; merge preserves total count
+(for all [(xs (a-sorted-list-of an-int)) (ys (a-sorted-list-of an-int))]
+  (should = (+ xs.count ys.count) ((merge xs ys) .count)))
+
+;;; ============================================================
+;;; Sorted sets (library/sset.cant)
+;;; ============================================================
+
+(out .say "--- Sorted sets ---\n")
+
+(import (use 'sset)
+  sset<- sset<-list sset-union sset-difference sset-intersect sset-insert sset-remove)
+
+;; Union is commutative
+(for all [(xs (a-list-of a-small-count)) (ys (a-list-of a-small-count))]
+  (let sx (sset<-list xs))
+  (let sy (sset<-list ys))
+  (should = (sset-union sx sy) (sset-union sy sx)))
+
+;; Union is associative
+(for all [(xs (a-list-of a-small-count)) (ys (a-list-of a-small-count)) (zs (a-list-of a-small-count))]
+  (let sx (sset<-list xs))
+  (let sy (sset<-list ys))
+  (let sz (sset<-list zs))
+  (should = (sset-union (sset-union sx sy) sz)
+            (sset-union sx (sset-union sy sz))))
+
+;; Union with empty is identity
+(for all [(xs (a-list-of a-small-count))]
+  (let sx (sset<-list xs))
+  (should = sx (sset-union sx '())))
+
+;; Intersection is commutative
+(for all [(xs (a-list-of a-small-count)) (ys (a-list-of a-small-count))]
+  (let sx (sset<-list xs))
+  (let sy (sset<-list ys))
+  (should = (sset-intersect sx sy) (sset-intersect sy sx)))
+
+;; Difference: A - A = empty
+(for all [(xs (a-list-of a-small-count))]
+  (let sx (sset<-list xs))
+  (should = '() (sset-difference sx sx)))
+
+;; Insert increases size by 1 (when element not present)
+(for all [(xs (a-list-of a-small-count))]
+  (let sx (sset<-list xs))
+  (let fresh 999)  ;; won't be in xs with small-count (0-9) generator
+  (let inserted (sset-insert sx fresh))
+  (should = (+ sx.count 1) inserted.count))
+
+;; sset<-list produces sorted, deduplicated list
+(for all [(xs (a-list-of a-small-count))]
+  (let sx (sset<-list xs))
+  ;; Check sorted and no adjacent duplicates
+  (should = #yes (and (sorted? sx)
+                      (= sx.count sx.nub.count))))
+
+;;; ============================================================
+;;; Ratios (library/ratio.cant)
+;;; ============================================================
+
+(out .say "--- Ratios ---\n")
+
+(import (use 'ratio) ratio<- r+ r- r* r/ ratio-compare)
+
+;; Addition is commutative
+(for all [(a an-int) (b an-int) (c a-positive) (d a-positive)]
+  (let x (ratio<- a c))
+  (let y (ratio<- b d))
+  (should = (r+ x y) (r+ y x)))
+
+;; Addition is associative
+(for all [(a an-int) (b an-int) (c an-int)]
+  (let x (ratio<- a 1))
+  (let y (ratio<- b 1))
+  (let z (ratio<- c 1))
+  (should = (r+ (r+ x y) z) (r+ x (r+ y z))))
+
+;; Zero is additive identity
+(for all [(a an-int) (b a-positive)]
+  (let x (ratio<- a b))
+  (let zero (ratio<- 0))
+  (should = x (r+ x zero)))
+
+;; Multiplication is commutative
+(for all [(a an-int) (b an-int) (c a-positive) (d a-positive)]
+  (let x (ratio<- a c))
+  (let y (ratio<- b d))
+  (should = (r* x y) (r* y x)))
+
+;; One is multiplicative identity
+(for all [(a an-int) (b a-positive)]
+  (let x (ratio<- a b))
+  (let one (ratio<- 1))
+  (should = x (r* x one)))
+
+;; x - x = 0
+(for all [(a an-int) (b a-positive)]
+  (let x (ratio<- a b))
+  (let zero (ratio<- 0))
+  (should = zero (r- x x)))
+
+;; x / x = 1 (when x != 0)
+(for all [(a a-positive) (b a-positive)]
+  (let x (ratio<- a b))
+  (let one (ratio<- 1))
+  (should = one (r/ x x)))
+
+;;; ============================================================
+;;; Queue (library/queue.cant)
+;;; ============================================================
+
+(out .say "--- Queue ---\n")
+
+(import (use 'queue)
+  empty empty? push extend peek list<-queue)
+(let the-empty empty)  ;; rename to avoid confusion
+
+;; Push then peek retrieves element
+(for all [(x a-count)]
+  (may (peek (push the-empty x))
+    (be {nonempty first rest}
+      (should = x first))
+    (else (should = #yes #no))))  ;; fail
+
+;; Extend then list<-queue = original list
+(for all [(xs (a-list-of a-count))]
+  (should = xs (list<-queue (extend the-empty xs))))
+
+;; Empty queue is empty
+(should empty? the-empty)
+
+;; Non-empty queue is not empty
+(for all [(x a-count)]
+  (should not (empty? (push the-empty x))))
+
+;; Order is preserved (FIFO)
+(for all [(xs a-nonempty-list)]
+  (let q (extend the-empty xs))
+  (may (peek q)
+    (be {nonempty first _}
+      (should = xs.first first))
+    (else #yes)))  ;; shouldn't happen
+
+;;; ============================================================
+;;; Bag / multiset (library/bag.cant)
+;;; ============================================================
+
+(out .say "--- Bag ---\n")
+
+;; bag<- and bag<-items are global, no import needed
+
+;; Add then get increments count
+(for all [(x a-small-count)]
+  (let b (bag<-))
+  (should = 0 (b x))
+  (b .add! x)
+  (should = 1 (b x))
+  (b .add! x)
+  (should = 2 (b x)))
+
+;; Total equals sum of all adds
+(for all [(xs (a-list-of a-small-count))]
+  (let b (bag<-))
+  (b .add-all! xs)
+  (should = xs.count b.total))
+
+;; bag<- from list gives correct counts
+(for all [(xs (a-list-of a-small-count))]
+  (let b (bag<- xs))
+  (should = xs.count b.total))
+
+;;; ============================================================
+;;; Flexarray (library/flexarray.cant)
+;;; ============================================================
+
+(out .say "--- Flexarray ---\n")
+
+;; Note: flexarray<- is global
+
+;; Push then pop recovers element
+(for all [(x a-count)]
+  (let fa (flexarray<-))
+  (fa .push! x)
+  (should = x fa.pop!))
+
+;; Push increases count
+(for all [(xs (a-list-of a-count))]
+  (let fa (flexarray<-))
+  (for each! [(x xs)]
+    (fa .push! x))
+  (should = xs.count fa.count))
+
+;; Values match what was pushed
+(for all [(xs (a-list-of a-count))]
+  (let fa (flexarray<-))
+  (for each! [(x xs)]
+    (fa .push! x))
+  (should = xs fa.values))
+
+;; Indexing works
+(for all [(xs a-nonempty-list)]
+  (let fa (flexarray<-list xs))
+  (should = #yes (every ||(= (xs it) (fa it)) xs.count.till)))
+
+;;; ============================================================
+;;; Text operations
+;;; ============================================================
+
+(out .say "--- Text ---\n")
+
+;; Split then join recovers original (when sep not in parts)
+;; Use a separator that won't appear in printable text range
+(for all [(xs (a-list-of a-printable-text))]
+  (let sep (text<- (rune<- 1)))  ;; control character, won't be in printable text
+  (let joined (sep .join xs))
+  (should = xs (joined .split sep)))
+
+;; Uppercase then lowercase... well, at least same length
+(for all [(s a-printable-text)]
+  (should = s.count s.uppercase.count)
+  (should = s.count s.lowercase.count))
+
+;; Chain of texts
+(for all [(s1 a-printable-text) (s2 a-printable-text)]
+  (should = (+ s1.count s2.count) ((chain s1 s2) .count)))
+
+;; Prefix + from = original
+(for all [(s a-printable-text)]
+  (let n (s.count .quotient 2))  ;; pick middle point (0 for empty)
+  (should = s (chain (s .prefix n) (s .from n))))
+
+;;; ============================================================
+;;; Number operations
+;;; ============================================================
+
+(out .say "--- Numbers ---\n")
+
+;; Magnitude is non-negative
+(for all [(n an-int)]
+  (should not (n.magnitude .negative?)))
+
+;; Magnitude of magnitude is same
+(for all [(n an-int)]
+  (should = n.magnitude n.magnitude.magnitude))
+
+;; quotient and remainder satisfy division identity
+(for all [(n an-int) (d a-positive)]
+  (let q (n .quotient d))
+  (let r (n .remainder d))
+  (should = n (+ (* q d) r)))
+
+;; modulo is in [0, d) for positive d
+(for all [(n an-int) (d a-positive)]
+  (let m (n .modulo d))
+  (should not (m .negative?))
+  (should < m d))
+
+;; Bit operations: and with self is self
+(for all [(n a-count)]
+  (should = n (n .and n)))
+
+;; Bit operations: or with 0 is self
+(for all [(n a-count)]
+  (should = n (n .or 0)))
+
+;; Shift left then right recovers (for small shifts)
+(for all [(n a-count)]
+  (let shifted (n .<< 3))
+  (should = n (shifted .>> 3)))
+
+;;; ============================================================
+;;; Map operations
+;;; ============================================================
+
+(out .say "--- Maps ---\n")
+
+;; set then get recovers value
+(for all [(k a-small-count) (v a-count)]
+  (let m (!map<-))
+  (m .set! k v)
+  (should = v (m k)))
+
+;; Immutable map from items - later values override earlier for same key
+(for all [(ks (a-list-of a-small-count)) (vs (a-list-of a-count))]
+  (let items (zip .ragged ks vs))
+  (let m (map<-items items))
+  ;; Check that all keys are present (value might be overwritten by later item)
+  (should = #yes (every ||(m .maps? (it .part 0)) items)))
+
+;;; ============================================================
+;;; Zip operations
+;;; ============================================================
+
+(out .say "--- Zip ---\n")
+
+;; zip then unzip recovers original (for same-length lists)
+(for all [(xs (a-list-of a-count))]
+  (let ys (each ~.+1 xs))  ;; same length
+  (let zipped (zip xs ys))
+  (should = xs (each ||(it .part 0) zipped))
+  (should = ys (each ||(it .part 1) zipped)))
+
+;; zip.ragged handles different lengths
+(for all [(xs (a-list-of a-count)) (ys (a-list-of a-count))]
+  (let zipped (zip .ragged xs ys))
+  (should = (min xs.count ys.count) zipped.count))
+
+;;; ============================================================
+;;; Summary
+;;; ============================================================
+
+(out .say "\n=== Done ===\n")

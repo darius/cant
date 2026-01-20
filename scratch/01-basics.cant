@@ -1,0 +1,26 @@
+;; Basic Cant exploration - fundamentals
+
+;; Functions
+(to (square x) (* x x))
+(out .say "square 5 = ~w\n" (square 5))
+
+;; Lists
+(let xs '(1 2 3 4 5))
+(out .say "xs = ~w\n" xs)
+(out .say "xs.count = ~w\n" xs.count)
+(out .say "xs.first = ~w\n" xs.first)
+(out .say "xs.rest = ~w\n" xs.rest)
+
+;; each (like map)
+(out .say "squared: ~w\n" (each square xs))
+
+;; Method-as-value idiom - really nice!
+;; ~.count is the term {.count} which when called on an object
+;; sends the .count message to it
+(out .say "lengths: ~w\n" (each ~.count '("hello" "world" "!")))
+
+;; keep (like filter)
+(out .say "evens: ~w\n" (keep ~.even? '(1 2 3 4 5 6)))
+
+;; fold
+(out .say "sum: ~w\n" (fold + '(1 2 3 4 5) 0))
