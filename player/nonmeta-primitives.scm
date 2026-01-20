@@ -63,14 +63,6 @@
 
 (define box<- box)
       
-(define (vector-append v1 v2)
-  (let ((n1 (vector-length v1))
-        (n2 (vector-length v2)))
-    (let ((result (make-vector (+ n1 n2))))
-      (copy-range! result  0 v1 0 n1)
-      (copy-range! result n1 v2 0 n2)
-      result)))
-
 (define (subvector v lo hi)
   (let ((n (max 0 (- hi lo))))
     (let ((result (make-vector n)))
