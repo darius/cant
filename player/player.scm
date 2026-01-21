@@ -273,7 +273,7 @@
                (ejector-unwinding parent-k ejector-k result)))
           ((= k-action k-call-unwind-thunk)
            (let ((unwind-thunk (vector-ref k 2)))
-             (call unwind-thunk '()
+             (call unwind-thunk null-tuple
                    (cont<- k-keep-unwinding parent-k ejector-k result))))
           ((= (vector-ref parent-k 0) k-halt)
            (signal k "Ejected from a different sequel than the ejector's. XXX This couldn't happen in a decent design."))
