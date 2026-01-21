@@ -1,0 +1,54 @@
+;; Ejector tests
+
+(out .say "--- Basic ejection ---\n")
+(out .print
+ (with-ejector (on (ej)
+   (out .say "before\n")
+   (ej .eject 'early)
+   (out .say "after\n")  ; should not run
+   'normal)))
+
+(out .say "\n--- Ejector is enabled inside, disabled after ---\n")
+(let saved (box<-))
+(with-ejector (on (ej)
+  (out .say "inside: ~w\n" ej.enabled?)
+  (saved .^= ej)
+  'done))
+(out .say "after: ~w\n" saved.^.enabled?)
+
+(out .say "\n--- Disabled ejector selfie ---\n")
+(out .print saved.^)
+
+(out .say "\n--- ejector-protect normal completion ---\n")
+(out .print
+ (ejector-protect
+   ($ (out .say "main\n") 'result)
+   ($ (out .say "cleanup\n"))))
+
+(out .say "\n--- ejector-protect with ejection ---\n")
+(out .print
+ (with-ejector (on (ej)
+   (ejector-protect
+     ($ (out .say "main\n")
+        (ej .eject 'ejected)
+        'not-reached)
+     ($ (out .say "cleanup\n"))))))
+
+(out .say "\n--- Nested ejectors ---\n")
+(out .print
+ (with-ejector (on (outer)
+   (with-ejector (on (inner)
+     (out .say "innermost\n")
+     (outer .eject 'outer-wins)
+     'inner-result))
+   'outer-result)))
+
+(out .say "\n--- Ejector in loop (early exit) ---\n")
+(to (find-first pred xs)
+  (with-ejector (on (found)
+    (for each! [(x xs)]
+      (when (pred x)
+        (found .eject x)))
+    #no)))
+(out .print (find-first ~.even? '(1 3 5 6 7)))
+(out .print (find-first ~.even? '(1 3 5 7)))

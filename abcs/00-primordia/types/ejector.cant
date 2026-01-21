@@ -3,7 +3,12 @@
   (to (~ .eject value)
     (__eject me value))
 
+  (to ~.enabled?
+    (ejector-enabled? me))
+
   (to (~ .selfie sink)
-    (sink .display "#<ejector>"))       ;TODO show enabledness
+    (sink .display (if (ejector-enabled? me)
+                       "#<ejector>"
+                       "#<ejector disabled>")))
 
   )

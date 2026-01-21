@@ -134,6 +134,7 @@
              __evaluate
              oops
              ejector?
+             ejector-enabled?
              with-ejector
              __eject
              ejector-protect

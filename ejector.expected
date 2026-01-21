@@ -1,0 +1,28 @@
+--- Basic ejection ---
+before
+early
+
+--- Ejector is enabled inside, disabled after ---
+inside: #yes
+after: #no
+
+--- Disabled ejector selfie ---
+#<ejector disabled>
+
+--- ejector-protect normal completion ---
+main
+cleanup
+result
+
+--- ejector-protect with ejection ---
+main
+cleanup
+ejected
+
+--- Nested ejectors ---
+innermost
+outer-wins
+
+--- Ejector in loop (early exit) ---
+6
+#no

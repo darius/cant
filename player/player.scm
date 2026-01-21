@@ -198,6 +198,9 @@
 (define (ejector? x)
   (and (object? x) (eq? script/ejector (object-script x))))
 
+(define (ejector-enabled? ejector)
+  (and (unbox (object-datum ejector)) #t))
+
 ;; Call the receiver with a new, enabled ejector.
 (define with-ejector-prim
   (cps-prim<-
@@ -551,6 +554,7 @@
                     (__evaluate ,evaluate-prim)
                     (oops ,error-prim)
                     (ejector? ,ejector?)
+                    (ejector-enabled? ,ejector-enabled?)
                     (with-ejector ,with-ejector-prim)
                     (__eject ,eject-prim)
                     (ejector-protect ,ejector-protect-prim)
