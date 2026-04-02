@@ -20,7 +20,7 @@
         (hm (if (<= H (+ L 1))  H)
             (let mid ((+ L H) .quotient 2))
             (if (ok? mid)       (searching L mid))
-            (else               (searching mid H)))))))
+            (else               (searching mid H))))))
 
 (let newline (rune-set<- #\newline))
 
