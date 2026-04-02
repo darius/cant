@@ -1,15 +1,16 @@
 ;; List prime numbers
 ;; TODO add some way to reset/shrink the cache
 
-;; Return a lazy list of all primes < limit.
+;; Return a list of all primes < limit. (TODO did we want a lazy list?)
 (to (list-primes-till limit)
   (keep-while ||(< it limit) the-primes))
 
 ;; An incremental Sieve of Eratosthenes, implicitly leaving out the
-;; even numbers. (Incremental because we don't know how high we're
-;; going to be asked to go.) We keep a map keyed on the next numbers
-;; to cross out, for all the odd primes we've encountered so far. The
-;; step size for each odd prime p is 2p, since we only consider odd
+;; even numbers. (Incremental since we don't know how high we're going
+;; to be asked to go.) We keep a map `sieve` keyed on the next numbers
+;; to cross out, for all the odd primes we've encountered so far.
+;; 
+;; The step size for each odd prime p is 2p, since we only consider odd
 ;; numbers: so for p we'll first insert 2p at the key p^2, then after
 ;; we reach p^2 we'll delete it and insert 2p at the key p^2+2p, then
 ;; afterwards at p^2+4p, etc. (We start at p^2 because smaller
@@ -17,12 +18,11 @@
 ;; the factors of k.)
 ;; Sometimes multiple primes are at the same key, so the value for each
 ;; key is a list.
-
-;; This map, `sieve`, holds the crossing-out agenda.
+;; 
 ;; E.g. the prime 3 is responsible for the entry (sieve 9) => '(6)
-;;   (at key 9 as that's 3^2, as explained above; step of 6 as that's 2*3).
-;; Then after the sieve reaches 9, that key will be deleted and 6 will
-;; reappear in (sieve 15), and so on afterwards. 
+;;   (at key 9 as that's 3^2; step of 6 as that's 2*3).
+;;   Then after the sieve reaches 9, that key will be deleted and 6 will
+;;   reappear in (sieve 15), and so on afterwards. 
 (let sieve (!map<-))
 
 (to (next-sieve! step next-key)
@@ -33,11 +33,11 @@
 (let known-primes (set<- 2 3)) ;; Set of primes found so far, for a faster prime? function
 (let last-known-prime (box<- 3))
 
-;; Return a lazy list of the added primes.
+;; Return an infinite lazy list of the added primes.
 (to (sieving n)
-  (hm (when (let factors (sieve .get n))
+  (hm (when (let steps (sieve .get n))
         (sieve .delete! n)
-        (for each! [(step factors)]
+        (for each! [(step steps)]
           (next-sieve! step (+ n step))) 
         (sieving (+ n 2)))
       (else
