@@ -36,6 +36,16 @@
 
 ;; Misc primitives
 
+;; Chez Scheme has a vector-append already, but only in newer versions.
+;; TODO use the builtin instead
+(define (my-vector-append v1 v2)
+  (let* ((n1 (vector-length v1))
+         (n2 (vector-length v2))
+         (v (make-vector (+ n1 n2))))
+    (copy-range! v 0  v1 0 n1)
+    (copy-range! v n1 v2 0 n2)
+    v))
+
 (define (hashmap-place key keys none deleted)
   (let* ((m (vector-length keys))
          (mask (- m 1)))
@@ -323,7 +333,7 @@
     (__string-maps? ,prim-string-maps?)
     (__string-ref ,string-ref)
     (__substring ,prim-substring)
-    (__vector-append ,vector-append)
+    (__vector-append ,my-vector-append)
     (__vector-copy ,vector-copy)
     (__vector-length ,vector-length)
     (__vector-maps? ,prim-vector-maps?)
